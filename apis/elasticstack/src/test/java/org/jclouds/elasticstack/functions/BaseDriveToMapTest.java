@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.ClaimType;
+import org.jclouds.elasticstack.domain.Drive;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

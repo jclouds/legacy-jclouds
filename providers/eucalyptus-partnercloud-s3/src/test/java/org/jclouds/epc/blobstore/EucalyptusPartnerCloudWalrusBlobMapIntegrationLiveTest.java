@@ -24,6 +24,10 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest")
+@Test(groups = "live", testName = "EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest")
 public class EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest extends WalrusBlobMapIntegrationLiveTest {
+
+   public EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest() {
+      provider = "eucalyptus-partnercloud-s3";
+   }
 }

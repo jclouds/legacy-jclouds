@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.opsource.servers.domain.Account;
+import org.jclouds.opsource.servers.domain.DataCentersList;
 
 /**
  * Provides synchronous access to Account.
@@ -40,5 +41,12 @@ public interface AccountClient {
     * @return the user's details, including their organization ID.
     */
    Account getMyAccount();
+   
+   /**
+    * identifies the list of data centers available to the organization of the authenticating user
+    * @param orgId
+    * @return
+    */
+  DataCentersList getDataCentersWithLimits(String orgId);
 
 }

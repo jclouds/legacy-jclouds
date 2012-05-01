@@ -167,7 +167,12 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
       return blobStore.removeBlob(container, key);
    }
 
-   public ListenableFuture<Boolean> setObjectInfo(String container, String key, Map<String, String> userMetadata) {
+    @Override
+    public ListenableFuture<String> putObjectManifest(String container, String name) {
+        return null;
+    }
+
+    public ListenableFuture<Boolean> setObjectInfo(String container, String key, Map<String, String> userMetadata) {
       throw new UnsupportedOperationException();
    }
 

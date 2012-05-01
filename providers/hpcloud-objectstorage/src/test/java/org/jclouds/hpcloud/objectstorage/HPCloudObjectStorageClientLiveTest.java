@@ -36,10 +36,14 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "HPCloudObjectStorageClientLiveTest")
 public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTest<HPCloudObjectStorageClient> {
-
+   
+   public HPCloudObjectStorageClientLiveTest(){
+      provider = "hpcloud-objectstorage";
+   }
+   
    @Override
    public HPCloudObjectStorageClient getApi() {
-      return (HPCloudObjectStorageClient) context.getProviderSpecificContext().getApi();
+      return view.unwrap(HPCloudObjectStorageApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    @Override

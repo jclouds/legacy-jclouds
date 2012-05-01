@@ -20,10 +20,9 @@ package org.jclouds.trmk.vcloud_0_8.domain;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.VirtualSystemSettingData;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VAppImpl;
 
 import com.google.common.collect.ListMultimap;

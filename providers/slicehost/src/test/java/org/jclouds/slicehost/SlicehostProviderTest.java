@@ -18,8 +18,7 @@
  */
 package org.jclouds.slicehost;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class SlicehostProviderTest extends BaseProviderMetadataTest {
 
    public SlicehostProviderTest() {
-      super(new SlicehostProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new SlicehostProviderMetadata(), new SlicehostApiMetadata());
    }
 }

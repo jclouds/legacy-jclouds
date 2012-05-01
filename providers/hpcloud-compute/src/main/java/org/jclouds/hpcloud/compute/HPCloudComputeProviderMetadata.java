@@ -4,7 +4,7 @@
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not computee this file except in compliance
+ * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,14 +18,22 @@
  */
 package org.jclouds.hpcloud.compute;
 
-import java.net.URI;
-import java.util.Set;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.hpcloud.compute.config.HPCloudComputeServiceContextModule;
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
+import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 import com.google.common.collect.ImmutableSet;
-
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for HP Cloud Compute Services.
@@ -34,84 +42,64 @@ import com.google.common.collect.ImmutableSet;
  */
 public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "hpcloud-compute";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -300987074165012648L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public HPCloudComputeProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "tenantId:accessKey";
+   public HPCloudComputeProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Key";
-   }
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      // deallocating ip addresses can take a while
+      properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "HP Cloud Compute Services";
+      properties.setProperty(CREDENTIAL_TYPE, "apiAccessKeyCredentials");
+      properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
+      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://hpcloud.com");
+      protected Builder(){
+         id("hpcloud-compute")
+         .name("HP Cloud Compute Services")
+         .apiMetadata(new NovaApiMetadata().toBuilder()
+                  .identityName("tenantId:accessKey")
+                  .credentialName("secretKey")
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, HPCloudComputeServiceContextModule.class))
+                  .build())
+         .homepage(URI.create("http://hpcloud.com"))
+         .console(URI.create("https://manage.hpcloud.com/compute"))
+         .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
+         .iso3166Codes("US-NV")
+         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357")
+         .defaultProperties(HPCloudComputeProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public HPCloudComputeProviderMetadata build() {
+         return new HPCloudComputeProviderMetadata(this);
+      }
+
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.hpcloud.com/compute");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("TODO");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("hpcloud-compute", "hpcloud-objectstorage");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-NV");
-   }
-
 }

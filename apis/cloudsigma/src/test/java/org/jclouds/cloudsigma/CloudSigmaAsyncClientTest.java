@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudsigma.binders.BindServerToPlainTextStringTest;
 import org.jclouds.cloudsigma.domain.CreateDriveRequest;
 import org.jclouds.cloudsigma.domain.Drive;
@@ -44,12 +44,10 @@ import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -64,7 +62,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "CloudSigmaAsyncClientTest")
-public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncClient> {
+public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsyncClient> {
 
    public void testGetProfileInfo() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("getProfileInfo");
@@ -243,7 +241,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -413,7 +411,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -456,7 +454,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -562,7 +560,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -650,9 +648,8 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
    }
 
    @Override
-   public RestContextSpec<CloudSigmaClient, CloudSigmaAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      props.setProperty("cloudsigma.endpoint", "https://api.cloudsigma.com");
-      return new RestContextFactory().createContextSpec("cloudsigma", "foo", "bar", props);
+   protected ApiMetadata createApiMetadata() {
+      return new CloudSigmaApiMetadata();
    }
+
 }

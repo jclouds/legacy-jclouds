@@ -18,12 +18,17 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.ListCapacityOptions.Builder.hostId;
+import static org.jclouds.cloudstack.options.ListCapacityOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListCapacityOptions.Builder.podId;
+import static org.jclouds.cloudstack.options.ListCapacityOptions.Builder.type;
+import static org.jclouds.cloudstack.options.ListCapacityOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.Capacity;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.ListCapacityOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListCapacityOptions}

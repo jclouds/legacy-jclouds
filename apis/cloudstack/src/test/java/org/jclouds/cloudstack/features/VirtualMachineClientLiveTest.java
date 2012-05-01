@@ -53,7 +53,6 @@ import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.options.ListTemplatesOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;
@@ -67,6 +66,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.net.HostAndPort;
 import com.google.common.net.HostSpecifier;
 
 /**
@@ -282,7 +282,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       assert HostSpecifier.isValid(vm.getIPAddress());
       if (!InetAddresses2.isPrivateIPAddress(vm.getIPAddress())) {
          // not sure if the network is public or not, so we have to test
-         IPSocket socket = new IPSocket(vm.getIPAddress(), 22);
+         HostAndPort socket = HostAndPort.fromParts(vm.getIPAddress(), 22);
          System.err.printf("testing socket %s%n", socket);
          System.err.printf("testing ssh %s%n", socket);
          checkSSH(socket);

@@ -20,24 +20,23 @@ package org.jclouds.softlayer.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.softlayer.SoftLayerProviderMetadata;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.io.Closeables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerExperimentLiveTest")
-public class SoftLayerExperimentLiveTest extends BaseVersionedServiceLiveTest {
+public class SoftLayerExperimentLiveTest extends BaseComputeServiceContextLiveTest {
+
    public SoftLayerExperimentLiveTest() {
-      provider = "softlayer";
+      provider = "glesys";
    }
 
    @Test
@@ -45,14 +44,15 @@ public class SoftLayerExperimentLiveTest extends BaseVersionedServiceLiveTest {
       ComputeServiceContext context = null;
       try {
 
-         context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
+         context = ContextBuilder
+               .newBuilder(new SoftLayerProviderMetadata())
+               .overrides(setupProperties())
+               .modules(setupModules()).build(ComputeServiceContext.class);
 
          assertEquals(context.getComputeService().listAssignableLocations().size(), 6);
 
       } finally {
-         if (context != null)
-            context.close();
+         Closeables.closeQuietly(context);
       }
    }
 

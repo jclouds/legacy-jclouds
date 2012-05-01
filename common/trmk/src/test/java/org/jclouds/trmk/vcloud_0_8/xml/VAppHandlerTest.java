@@ -30,8 +30,8 @@ import java.util.Properties;
 import org.jclouds.Constants;
 import org.jclouds.cim.CIMPredicates;
 import org.jclouds.cim.ResourceAllocationSettingData;
-import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -39,7 +39,6 @@ import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
-import org.jclouds.trmk.vcloud_0_8.xml.VAppHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -18,8 +18,8 @@
  */
 package org.jclouds.aws.elb;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.elb.ELBApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,6 +31,6 @@ import org.testng.annotations.Test;
 public class AWSELBProviderTest extends BaseProviderMetadataTest {
 
    public AWSELBProviderTest() {
-      super(new AWSELBProviderMetadata(), ProviderMetadata.LOADBALANCER_TYPE);
+      super(new AWSELBProviderMetadata(), new ELBApiMetadata());
    }
 }

@@ -18,13 +18,14 @@
  */
 package org.jclouds.softlayer.predicates;
 
-import com.google.common.base.Predicate;
-import org.jclouds.softlayer.domain.ProductItem;
-import org.jclouds.softlayer.domain.ProductItemCategory;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemCategory;
+
+import com.google.common.base.Predicate;
 
 public class ProductItemPredicates {
 

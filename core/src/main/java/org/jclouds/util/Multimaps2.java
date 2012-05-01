@@ -23,9 +23,9 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class Multimaps2 {
     */
    @Deprecated
    public static <K, V> Map<K, Set<V>> toOldSchool(Multimap<K, V> in) {
-      ImmutableMap.Builder<K, Set<V>> out = ImmutableMap.<K, Set<V>> builder();
+      ImmutableMap.Builder<K, Set<V>> out = ImmutableMap.builder();
       for (K type : in.keySet())
          out.put(type, ImmutableSet.copyOf(in.get(type)));
       return out.build();
@@ -55,7 +55,7 @@ public class Multimaps2 {
     */
    @Deprecated
    public static <K, V> ImmutableMultimap<K, V> fromOldSchool(Map<K, Set<V>> in) {
-      Builder<K, V> out = ImmutableMultimap.<K, V> builder();
+      Builder<K, V> out = ImmutableMultimap.builder();
       for (K type : in.keySet())
          out.putAll(type, ImmutableSet.copyOf(in.get(type)));
       return out.build();

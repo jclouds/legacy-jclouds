@@ -18,13 +18,19 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.stratogen.vcloud.mycloud.config.StratoGenVCloudMyCloudComputeServiceContextModule;
+import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
@@ -33,84 +39,59 @@ import org.jclouds.providers.ProviderMetadata;
  */
 public class StratoGenVCloudMyCloudProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "stratogen-vcloud-mycloud";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -113107768473491412L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public StratoGenVCloudMyCloudProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "StratoGen VMware hosting";
+   public StratoGenVCloudMyCloudProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User at Organization (user@org)";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "Direct Internet");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+      protected Builder(){
+         id("stratogen-vcloud-mycloud")
+         .name("StratoGen VMware hosting")
+               .apiMetadata(
+                     new VCloudApiMetadata().toBuilder()
+                     .buildVersion("1.5.0.464915")
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, StratoGenVCloudMyCloudComputeServiceContextModule.class))
+                     .build())
+         .homepage(URI.create("http://www.stratogen.net"))
+         .console(URI.create("https://mycloud.stratogen.net/cloud/org/YOUR_ORG_HERE"))
+         .iso3166Codes("GB")
+         .endpoint("https://mycloud.greenhousedata.com/api")
+         .defaultProperties(StratoGenVCloudMyCloudProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public StratoGenVCloudMyCloudProviderMetadata build() {
+         return new StratoGenVCloudMyCloudProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.stratogen.net");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://mycloud.stratogen.net/cloud/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("stratogen-vcloud-mycloud");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("GB");
-   }
-
 }

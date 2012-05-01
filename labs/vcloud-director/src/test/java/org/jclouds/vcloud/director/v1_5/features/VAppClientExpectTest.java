@@ -22,50 +22,45 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
-import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
-import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
-import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.Sets;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 
 /**
  * Allows us to test the {@link VAppClient} via its side effects.
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user", "vapp" }, singleThreaded = true, testName = "VAppClientExpectTest")
-public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "VAppClientExpectTest")
+public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
    private URI vAppURI = URI.create(endpoint + vAppId);
@@ -128,22 +123,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    @Test(enabled = false)
-   public void testConsolidateVApp() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", vAppId + "/action/consolidate")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/consolidateVAppTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-		
-		Task expected = consolidateVAppTask();
-		
-		assertEquals(client.getVAppClient().consolidateVApp(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
    public void testControlAccess() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
@@ -159,7 +138,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		
 		ControlAccessParams expected = controlAccessParams();
 		         
-		assertEquals(client.getVAppClient().controlAccess(vAppURI, params), expected);
+		assertEquals(client.getVAppClient().modifyControlAccess(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -227,22 +206,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    @Test(enabled = false)
-   public void testInstallVMwareTools() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", vAppId + "/action/installVMwareTools")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/installVMwareToolsTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-		
-		Task expected = installVMwareToolsTask();
-		
-		assertEquals(client.getVAppClient().installVMwareTools(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
    public void testRecomposeVApp() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
@@ -259,27 +222,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		
 		Task expected = recomposeVAppTask();
 		
-		assertEquals(client.getVAppClient().recomposeVApp(vAppURI, params), expected);
-   }
-
-   @Test(enabled = false)
-   public void testRelocate() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", vAppId + "/action/relocate")
-            .xmlFilePayload("/vApp/relocateParams.xml", VCloudDirectorMediaType.RELOCATE_VM_PARAMS)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/relocateTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-     
-      RelocateParams params = RelocateParams.builder()
-            .build();
-		
-		Task expected = relocateTask();
-		
-		assertEquals(client.getVAppClient().relocate(vAppURI, params), expected);
+		assertEquals(client.getVAppClient().recompose(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -300,22 +243,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		Task expected = undeployTask();
 		
 		assertEquals(client.getVAppClient().undeploy(vAppURI, params), expected);
-   }
-
-   @Test(enabled = false)
-   public void testUpgradeHardwareVersion() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", vAppId + "/action/upgradeHardwareVersion")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/upgradeHardwareVersionTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-		
-		Task expected = upgradeHardwareVersionTask();
-		
-		assertEquals(client.getVAppClient().upgradeHardwareVersion(vAppURI), expected);
    }
 
    @Test(enabled = false)
@@ -431,42 +358,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    @Test(enabled = false)
-   public void testGetGuestCustomizationSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/guestCustomizationSection")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getGuestCustomizationSection.xml", VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION)
-            .httpResponseBuilder().build());
-		
-		GuestCustomizationSection expected = getGuestCustomizationSection();
-		
-		assertEquals(client.getVAppClient().getGuestCustomizationSection(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyGuestCustomizationSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/guestCustomizationSection")
-            .xmlFilePayload("/vApp/modifyGuestCustomizationSection.xml", VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyGuestCustomizationSectionTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-      
-      GuestCustomizationSection section = getGuestCustomizationSection().toBuilder()
-            .build();
-
-      Task expected = modifyGuestCustomizationSectionTask();
-
-      assertEquals(client.getVAppClient().modifyGuestCustomizationSection(vAppURI, section), expected);
-   }
-
-   @Test(enabled = false)
    public void testGetLeaseSettingsSection() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
@@ -500,46 +391,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		Task expected = modifyLeaseSettingsSectionTask();
 		
 		assertEquals(client.getVAppClient().modifyLeaseSettingsSection(vAppURI, section), expected);
-   }
-
-   @Test(enabled = false)
-   public void testEjectMedia() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/media/action/ejectMedia")
-            .xmlFilePayload("/vApp/ejectMediaParams.xml", VCloudDirectorMediaType.MEDIA_PARAMS)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/ejectMediaTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-      
-      MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
-            .build();
-
-      Task expected = ejectMediaTask();
-
-      assertEquals(client.getVAppClient().ejectMedia(vAppURI, params), expected);
-   }
-
-   @Test(enabled = false)
-   public void testInsertMedia() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/media/action/insertMedia")
-            .xmlFilePayload("/vApp/insertMediaParams.xml", VCloudDirectorMediaType.MEDIA_PARAMS)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/insertMediaTask.xml", VCloudDirectorMediaType.VAPP)
-            .httpResponseBuilder().build());
-      
-      MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
-            .build();
-
-      Task expected = insertMediaTask();
-
-      assertEquals(client.getVAppClient().insertMedia(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -579,42 +430,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    @Test(enabled = false)
-   public void testGetNetworkConnectionSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/networkConnectionSection")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getNetworkConnectionSection.xml", VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION)
-            .httpResponseBuilder().build());
-
-      NetworkConnectionSection expected = getNetworkConnectionSection();
-
-         assertEquals(client.getVAppClient().getNetworkConnectionSection(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyNetworkConnectionSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/networkConnectionSection")
-            .xmlFilePayload("/vApp/modifyNetworkConnectionSection.xml", VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyNetworkConnectionSectionTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-		      
-		NetworkConnectionSection section = getNetworkConnectionSection().toBuilder()
-		      .build();
-		
-		Task expected = modifyNetworkConnectionSectionTask();
-		
-		assertEquals(client.getVAppClient().modifyNetworkConnectionSection(vAppURI, section), expected);
-   }
-
-   @Test(enabled = false)
    public void testGetNetworkSection() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
@@ -628,42 +443,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		NetworkSection expected = getNetworkSection();
 		
 		assertEquals(client.getVAppClient().getNetworkSection(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetOperatingSystemSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/operatingSystemSection")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getOperatingSystemSection.xml", VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION)
-            .httpResponseBuilder().build());
-
-		OperatingSystemSection expected = getOperatingSystemSection();
-		
-		assertEquals(client.getVAppClient().getOperatingSystemSection(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyOperatingSystemSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/operatingSystemSection")
-            .xmlFilePayload("/vApp/modifyOperatingSystemSection.xml", VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyOperatingSystemSectionTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-		      
-      OperatingSystemSection section = getOperatingSystemSection().toBuilder()
-		      .build();
-		
-		Task expected = modifyOperatingSystemSectionTask();
-		
-		assertEquals(client.getVAppClient().modifyOperatingSystemSection(vAppURI, section), expected);
    }
 
    @Test(enabled = false)
@@ -733,89 +512,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    @Test(enabled = false)
-   public void testGetPendingQuestion() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/question")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getPendingQuestion.xml", VCloudDirectorMediaType.VM_PENDING_QUESTION)
-            .httpResponseBuilder().build());
-
-         VmPendingQuestion expected = getPendingQuestion();
-
-         assertEquals(client.getVAppClient().getPendingQuestion(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testAnswerQuestion() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/question/action/answer")
-            .xmlFilePayload("/vApp/answerQuestion.xml", VCloudDirectorMediaType.VM_PENDING_ANSWER)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .httpResponseBuilder().statusCode(204).build());
-
-         VmQuestionAnswer answer = null; // = VmQuestionAnswer.builder();
-//               .build;
-
-         client.getVAppClient().answerQuestion(vAppURI, answer);
-   }
-
-   @Test(enabled = false)
-   public void testGetRuntimeInfoSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/runtimeInfoSection")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getRuntimeInfoSection.xml", VCloudDirectorMediaType.RUNTIME_INFO_SECTION)
-            .httpResponseBuilder().build());
-
-      RuntimeInfoSection expected = getRuntimeInfoSection();
-
-      assertEquals(client.getVAppClient().getRuntimeInfoSection(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetScreenImage() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/screen")
-            .acceptMedia(VCloudDirectorMediaType.ANY_IMAGE)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .httpResponseBuilder()
-            .headers(Multimaps.forMap(ImmutableMap.of("Content-Type", "image/png")))
-            .message(new String(getScreenImage()))
-            .build());
-		
-		byte[] expected = getScreenImage();
-		
-		assertEquals(client.getVAppClient().getScreenImage(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetScreenTicket() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", vAppId + "/screen/action/acquireTicket")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getScreenTicket.xml", VCloudDirectorMediaType.SCREEN_TICKET)
-            .httpResponseBuilder().build());
-		
-		ScreenTicket expected = getScreenTicket();
-		
-		assertEquals(client.getVAppClient().getScreenTicket(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
    public void testGetStartupSection() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
@@ -849,238 +545,6 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		Task expected = modifyStartupSectionTask();
 		
 		assertEquals(client.getVAppClient().modifyStartupSection(vAppURI, section), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSection.xml", VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION)
-            .httpResponseBuilder().build());
-
-      VirtualHardwareSection expected = getVirtualHardwareSection();
-
-		assertEquals(client.getVAppClient().getVirtualHardwareSection(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyVirtualHardwareSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/virtualHardwareSection")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSection.xml", VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-      VirtualHardwareSection section = getVirtualHardwareSection().toBuilder()
-            .build();
-
-		Task expected = modifyVirtualHardwareSectionTask();
-		
-		assertEquals(client.getVAppClient().modifyVirtualHardwareSection(vAppURI, section), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSectionCpu() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection/cpu")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
-            .httpResponseBuilder().build());
-
-      ResourceAllocationSettingData expected = getVirtualHardwareSectionCpu();
-
-         assertEquals(client.getVAppClient().getVirtualHardwareSectionCpu(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionCpu() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("", vAppId + "/virtualHardwareSection/cpu")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpuTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-      ResourceAllocationSettingData cpu = getVirtualHardwareSectionCpu(); // .toBuilder();
-//               .build();
-
-         Task expected = modifyVirtualHardwareSectionCpuTask();
-
-         assertEquals(client.getVAppClient().modifyVirtualHardwareSectionCpu(vAppURI, cpu), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSectionDisks() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection/disks")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSectionDisks.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-            .httpResponseBuilder().build());
-
-         RasdItemsList expected = getVirtualHardwareSectionDisks();
-
-         assertEquals(client.getVAppClient().getVirtualHardwareSectionDisks(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionDisks() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/virtualHardwareSection/disks")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionDisks.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionDisksTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-         RasdItemsList disks = getVirtualHardwareSectionDisks().toBuilder()
-               .build();
-
-         Task expected = modifyVirtualHardwareSectionDisksTask();
-
-         assertEquals(client.getVAppClient().modifyVirtualHardwareSectionDisks(vAppURI, disks), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSectionMedia() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection/media")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSectionMedia.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-            .httpResponseBuilder().build());
-
-      RasdItemsList expected = getVirtualHardwareSectionMedia();
-
-      assertEquals(client.getVAppClient().getVirtualHardwareSectionMedia(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSectionMemory() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection/memory")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
-            .httpResponseBuilder().build());
-
-      ResourceAllocationSettingData expected = getVirtualHardwareSectionMemory();
-
-         assertEquals(client.getVAppClient().getVirtualHardwareSectionMemory(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionMemory() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/virtualHardwareSection/memory")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.VAPP)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemoryTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-      ResourceAllocationSettingData memory = getVirtualHardwareSectionCpu(); // .toBuilder();
-//               .build();
-
-         Task expected = modifyVirtualHardwareSectionMemoryTask();
-
-         assertEquals(client.getVAppClient().modifyVirtualHardwareSectionMemory(vAppURI, memory), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSectionNetworkCards() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection/networkCards")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSectionNetworkCards.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-            .httpResponseBuilder().build());
-
-         RasdItemsList expected = getVirtualHardwareSectionNetworkCards();
-
-         assertEquals(client.getVAppClient().getVirtualHardwareSectionNetworkCards(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionNetworkCards() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/virtualHardwareSection/networkCards")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionNetworkCards.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionNetworkCardsTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-         RasdItemsList networkCards = getVirtualHardwareSectionNetworkCards().toBuilder()
-               .build();
-
-         Task expected = modifyVirtualHardwareSectionNetworkCardsTask();
-
-         assertEquals(client.getVAppClient().modifyVirtualHardwareSectionNetworkCards(vAppURI, networkCards), expected);
-   }
-
-   @Test(enabled = false)
-   public void testGetVirtualHardwareSectionSerialPorts() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", vAppId + "/virtualHardwareSection/serialPorts")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getVirtualHardwareSectionSerialPorts.xml", VCloudDirectorMediaType.VAPP)
-            .httpResponseBuilder().build());
-
-         RasdItemsList expected = getVirtualHardwareSectionSerialPorts();
-
-         assertEquals(client.getVAppClient().getVirtualHardwareSectionSerialPorts(vAppURI), expected);
-   }
-
-   @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionSerialPorts() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", vAppId + "/virtualHardwareSection/serialPorts")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionSerialPorts.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionSerialPortsTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-         RasdItemsList serialPorts = getVirtualHardwareSectionSerialPorts().toBuilder()
-               .build();
-
-         Task expected = modifyVirtualHardwareSectionSerialPortsTask();
-
-         assertEquals(client.getVAppClient().modifyVirtualHardwareSectionSerialPorts(vAppURI, serialPorts), expected);
    }
 
    public static VApp getVApp() {
@@ -1414,8 +878,8 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
       return task;
    }
 
-   public static ResourceAllocationSettingData getVirtualHardwareSectionCpu() {
-      ResourceAllocationSettingData cpu = ResourceAllocationSettingData.builder()
+   public static RasdItem getVirtualHardwareSectionCpu() {
+      RasdItem cpu = RasdItem.builder()
             .build();
 
       return cpu;
@@ -1449,8 +913,8 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
       return media;
    }
 
-   public static ResourceAllocationSettingData getVirtualHardwareSectionMemory() {
-      ResourceAllocationSettingData memory = ResourceAllocationSettingData.builder()
+   public static RasdItem getVirtualHardwareSectionMemory() {
+      RasdItem memory = RasdItem.builder()
             .build();
 
       return memory;

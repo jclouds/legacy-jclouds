@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -31,12 +30,10 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.trmk.ecloud.config.TerremarkECloudRestClientModule;
 import org.jclouds.trmk.ecloud.domain.internal.ECloudOrgImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
@@ -61,7 +58,7 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseTerremarkECloudAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -75,8 +72,8 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTe
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("trmk-ecloud", "identity", "credential", new Properties());
+   public ProviderMetadata createProviderMetadata() {
+      return new TerremarkECloudProviderMetadata();
    }
 
    protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", TerremarkECloudMediaType.ORG_XML,
@@ -129,8 +126,7 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTe
                      .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))),
          ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF));
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static class TerremarkECloudRestClientModuleExtension extends TerremarkECloudRestClientModule {
 
       @Override

@@ -39,8 +39,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole

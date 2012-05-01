@@ -18,10 +18,9 @@
  */
 package org.jclouds.atmos.domain;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.atmos.domain.internal.AtmosObjectImpl.AtmosObjectFactory;
 import org.jclouds.io.PayloadEnclosing;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.ImplementedBy;

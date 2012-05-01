@@ -18,8 +18,8 @@
  */
 package org.jclouds.rimuhosting.miro.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -31,6 +31,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "live", sequential = true)
 public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+  
    public RimuHostingComputeServiceLiveTest() {
       provider = "rimuhosting";
    }

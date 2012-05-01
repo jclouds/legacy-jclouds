@@ -18,7 +18,8 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.*;
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class TagSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (equalsOrSuffix(qName, "tagSet")) {
-	        result = ImmutableMap.<String, String>builder();
+	        result = ImmutableMap.builder();
         } else if (qName.equals("item")) {
             inItem = true;
             key = null;

@@ -18,86 +18,164 @@
  */
 package org.jclouds.providers;
 
+import java.io.Serializable;
 import java.net.URI;
+import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
-/**
- * The ProviderMetadata interface allows jclouds to provide a plugin framework for gathering cloud
- * provider metadata.
- * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
- */
-public interface ProviderMetadata {
+import com.google.common.base.Optional;
 
-   public static final String BLOBSTORE_TYPE = "blobstore";
-   public static final String COMPUTE_TYPE = "compute";
-   public static final String LOADBALANCER_TYPE = "loadbalancer";
-   public static final String TABLE_TYPE = "table";
-   public static final String QUEUE_TYPE = "queue";
-   public static final String MONITOR_TYPE = "monitor";
+/**
+ * The ProviderMetadata interface allows jclouds to provide a plugin framework
+ * for gathering cloud provider metadata.
+ * 
+ * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
+ */
+public interface ProviderMetadata extends Serializable {
+  
+   /**
+    * 
+    * @author Adrian Cole
+    * @since 1.5
+    */
+   public static interface Builder {
+      /**
+       * @see ProviderMetadata#getId()
+       */
+      Builder id(String id);
+
+      /**
+       * @see ProviderMetadata#getName()
+       */
+      Builder name(String name);
+
+      /**
+       * @see ProviderMetadata#getApiMetadata()
+       */
+      Builder apiMetadata(ApiMetadata api);
+
+      /**
+       * @see ProviderMetadata#getEndpoint()
+       */
+      Builder endpoint(String endpoint);
+
+      /**
+       * @see ProviderMetadata#getDefaultProperties()
+       */
+      Builder defaultProperties(Properties defaultProperties);
+
+      /**
+       * @see ProviderMetadata#getConsole()
+       */
+      Builder console(@Nullable URI console);
+
+      /**
+       * @see ProviderMetadata#getHomepage()
+       */
+      Builder homepage(@Nullable URI homepage);
+
+      /**
+       * @see ProviderMetadata#getLinkedServices()
+       */
+      Builder linkedServices(Iterable<String> linkedServices);
+
+      /**
+       * @see ProviderMetadata#getLinkedServices()
+       */
+      Builder linkedServices(String... linkedServices);
+
+      /**
+       * @see ProviderMetadata#getLinkedServices()
+       */
+      Builder linkedService(String linkedService);
+
+      /**
+       * @see ProviderMetadata#getIso3166Code()
+       */
+      Builder iso3166Codes(Iterable<String> iso3166Codes);
+
+      /**
+       * @see ProviderMetadata#getIso3166Code()
+       */
+      Builder iso3166Codes(String... iso3166Codes);
+
+      /**
+       * @see ProviderMetadata#getIso3166Code()
+       */
+      Builder iso3166Code(String iso3166Code);
+
+      ProviderMetadata build();
+
+      Builder fromProviderMetadata(ProviderMetadata in);
+
+   }
+
+   /**
+    * @see Builder
+    * @since 1.5
+    */
+   Builder toBuilder();
 
    /**
     * 
-    * @return the provider's unique identifier
+    * @return the provider's unique identifier (ex. aws-ec2, trystack-nova)
     */
    public String getId();
 
    /**
     * 
-    * @return the provider's type
-    */
-   public String getType();
-
-   /**
-    * 
-    * @return the name (display name) of the provider
+    * @return the name (display name) of the provider (ex. GoGrid)
     */
    public String getName();
 
    /**
     * 
-    * @return the name (display name) of an identity on this provider (ex. user, email, account,
-    *         apikey)
+    * @return the provider's api
+    * @since 1.5
     */
-   public String getIdentityName();
+   public ApiMetadata getApiMetadata();
+
+   /**
+    * @see ApiMetadata#getEndpoint
+    * @return the url for the provider's api
+    */
+   public String getEndpoint();
+
+   /**
+    * Configuration Properties used when creating connections to this provider.
+    * For example, location information, or default networking configuration.
+    * 
+    * @return properties used to create connections to this provider
+    * @see ApiMetadata#getDefaultProperties
+    */
+   Properties getDefaultProperties();
 
    /**
     * 
-    * @return the name (display name) of a credential on this provider, or null if there is none
-    *         (ex. password, secret, rsaKey)
+    * @return the url for the provider's console, or absent if one doesn't exist
     */
-   @Nullable
-   public String getCredentialName();
+   Optional<URI> getConsole();
 
    /**
     * 
-    * @return the url for the provider's homepage
+    * @return the url for the provider's homepage, or absent if unknown
     */
-   public URI getHomepage();
+   Optional<URI> getHomepage();
 
    /**
     * 
-    * @return the url for the provider's console
+    * @return ids of all known {@link ProviderMetadata providers} which have the
+    *         same account as this.
     */
-   public URI getConsole();
+   Set<String> getLinkedServices();
 
    /**
-    * 
-    * @return the url for the API documentation related to this service
-    */
-   public URI getApiDocumentation();
-
-   /**
-    * 
-    * @return all known services linked to the same account on this provider
-    */
-   public Set<String> getLinkedServices();
-
-   /**
+    * iso 3166 codes; ex. US-CA,US
     * 
     * @return all known region/location ISO 3166 codes
     */
-   public Set<String> getIso3166Codes();
+   Set<String> getIso3166Codes();
 }

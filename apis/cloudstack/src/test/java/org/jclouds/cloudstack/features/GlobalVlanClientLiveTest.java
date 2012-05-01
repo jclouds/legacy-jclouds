@@ -18,31 +18,30 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import static com.google.common.collect.Iterables.find;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.domain.VlanIPRange;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
-import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
-import java.util.Set;
-
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Iterables.getFirst;
-import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.zoneId;
-import static org.testng.Assert.*;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code GlobalVlanClient}

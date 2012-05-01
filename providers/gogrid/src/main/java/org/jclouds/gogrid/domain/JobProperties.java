@@ -18,10 +18,10 @@
  */
 package org.jclouds.gogrid.domain;
 
+import java.util.Date;
+
 import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.Date;
 
 /**
  * State of a job.

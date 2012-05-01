@@ -18,12 +18,12 @@
  */
 package org.jclouds.glesys.domain;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
-
-import java.util.Set;
 
 /**
  * Structure containing all information about e-mail addresses for a GleSYS account

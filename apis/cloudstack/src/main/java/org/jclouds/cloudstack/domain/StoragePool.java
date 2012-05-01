@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.common.base.CaseFormat;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.CaseFormat;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a storage pool in CloudStack

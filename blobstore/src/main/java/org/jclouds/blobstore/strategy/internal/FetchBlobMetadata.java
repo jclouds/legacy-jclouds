@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
-import org.jclouds.javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
@@ -37,11 +36,13 @@ import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.javax.annotation.concurrent.NotThreadSafe;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -83,21 +84,21 @@ public class FetchBlobMetadata implements Function<PageSet<? extends StorageMeta
    public PageSet<? extends StorageMetadata> apply(PageSet<? extends StorageMetadata> in) {
       checkState(container != null, "container name should be initialized");
 
-      Iterable<BlobMetadata> returnv = transformParallel(Iterables.filter(in, new Predicate<StorageMetadata>() {
+      Iterable<BlobMetadata> returnv = Lists.newArrayList(transformParallel(Iterables.filter(in, new Predicate<StorageMetadata>() {
 
          @Override
          public boolean apply(StorageMetadata input) {
             return input.getType() == StorageType.BLOB;
          }
 
-      }), new Function<StorageMetadata, Future<BlobMetadata>>() {
+      }), new Function<StorageMetadata, Future<? extends BlobMetadata>>() {
 
          @Override
          public Future<BlobMetadata> apply(StorageMetadata from) {
             return ablobstore.blobMetadata(container, from.getName());
          }
 
-      }, userExecutor, maxTime, logger, String.format("getting metadata from containerName: %s", container));
+      }, userExecutor, maxTime, logger, String.format("getting metadata from containerName: %s", container)));
 
       return new PageSetImpl<BlobMetadata>(returnv, in.getNextMarker());
    }

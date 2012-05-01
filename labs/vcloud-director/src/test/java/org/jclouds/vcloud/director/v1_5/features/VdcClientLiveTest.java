@@ -31,23 +31,24 @@ import static org.testng.Assert.fail;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
+import org.jclouds.vcloud.director.v1_5.domain.params.CaptureVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -65,7 +66,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "vdc" }, singleThreaded = true, testName = "VdcClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VdcClientLiveTest")
 public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "vdc";
@@ -83,6 +84,17 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VAppTemplate clonedVAppTemplate;
    private VAppTemplate capturedVAppTemplate;
    private VAppTemplate uploadedVAppTemplate;
+   private boolean metadataSet = false;
+   
+   @Override
+   @BeforeClass(alwaysRun = true)
+   public void setupRequiredClients() {
+      vdcClient = context.getApi().getVdcClient();
+      vappTemplateClient = context.getApi().getVAppTemplateClient();
+      vappClient = context.getApi().getVAppClient();
+      
+      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+   }
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
@@ -105,21 +117,17 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          cleanUpVApp(composedVApp);
       }
       
-      context.getApi().getAdminVdcClient().getMetadataClient()
-         .deleteMetadataEntry(toAdminUri(vdcURI), "key");
-   }
-
-   @Override
-   @BeforeClass(alwaysRun = true)
-   public void setupRequiredClients() {
-      vdcClient = context.getApi().getVdcClient();
-      vappTemplateClient = context.getApi().getVAppTemplateClient();
-      vappClient = context.getApi().getVAppClient();
-      
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+      if (metadataSet) {
+         try {
+	         Task delete = adminContext.getApi().getVdcClient().getMetadataClient().deleteMetadataEntry(toAdminUri(vdcURI), "key");
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error deleting metadata entry");
+         }
+      }
    }
    
-   @Test(testName = "GET /vdc/{id}")
+   @Test(description = "GET /vdc/{id}")
    public void testGetVdc() {
       Vdc vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
@@ -128,7 +136,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVdc(vdc);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
+   @Test(description = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
    public void testCaptureVApp() {
       String name = name("captured-");
       
@@ -151,7 +159,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, capturedVAppTemplate.getName()));
    }
    
-   @Test(testName = "POST /vdc/{id}/action/cloneVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
+   @Test(description = "POST /vdc/{id}/action/cloneVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
    public void testCloneVApp() {
       CloneVAppParams cloneVappParams = CloneVAppParams.builder()
                .source(instantiatedVApp.getHref())
@@ -179,7 +187,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVApp(clonedVApp);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/cloneVAppTemplate")
+   @Test(description = "POST /vdc/{id}/action/cloneVAppTemplate")
    public void testCloneVAppTemplate() {
       clonedVAppTemplate = vdcClient.cloneVAppTemplate(vdcURI, CloneVAppTemplateParams.builder()
                .source(vAppTemplateURI)
@@ -192,7 +200,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVAppTemplate(clonedVAppTemplate);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/composeVApp")
+   @Test(description = "POST /vdc/{id}/action/composeVApp")
    public void testComposeVApp() {
       String name = name("composed-");
       
@@ -224,7 +232,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO Duplicates code in VAppClientLiveTest
-   @Test(testName = "POST /vdc/{id}/action/instantiateVAppTemplate")
+   @Test(description = "POST /vdc/{id}/action/instantiateVAppTemplate")
    public void testInstantiateVAppTemplate() {
       Vdc vdc = vdcClient.getVdc(vdcURI);
 
@@ -243,7 +251,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
             .parentNetwork(parentNetwork.get())
-            .fenceMode("bridged")
+            .fenceMode(FenceMode.BRIDGED)
             .build();
       
       NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
@@ -275,7 +283,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVApp(instantiatedVApp);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/uploadVAppTemplate")
+   @Test(description = "POST /vdc/{id}/action/uploadVAppTemplate")
    public void testUploadVAppTemplate() {
       // TODO Should test all 4 stages of upload; currently doing only stage 1 here.
       //  1. creating empty vApp template entity 
@@ -300,21 +308,25 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(uploadedVAppTemplate.getName(), name, 
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, uploadedVAppTemplate.getName()));
       
-      ResourceEntityType.Status expectedStatus = ResourceEntityType.Status.NOT_READY;
-      Integer actualStatus = uploadedVAppTemplate.getStatus();
-      assertEquals(actualStatus, expectedStatus.getValue(),
+      ResourceEntity.Status expectedStatus = ResourceEntity.Status.UNRESOLVED;
+      ResourceEntity.Status actualStatus = uploadedVAppTemplate.getStatus();
+      assertEquals(actualStatus, expectedStatus,
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "status", expectedStatus, actualStatus));
       
    }
    
-   @Test(testName = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
-   public void testSetupMetadata() {
-      context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
+   private void setupMetadata() {
+      adminContext.getApi().getVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
+      metadataSet = true;
    }
    
-   @Test(testName = "GET /vdc/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
+   @Test(description = "GET /vdc/{id}/metadata", dependsOnMethods = { "testGetVdc" } )
    public void testGetMetadata() {
+      if(adminContext != null) {
+         setupMetadata();
+      }
+      
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       
       // required for testing
@@ -324,7 +336,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
+   @Test(description = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
    public void testGetMetadataValue() {
       // First find a key
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);

@@ -18,67 +18,70 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.cloudservers.CloudServersProviderMetadata;
-
+import org.jclouds.cloudservers.CloudServersApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers in US.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers US.
  * 
  * @author Adrian Cole
  */
-public class CloudServersUSProviderMetadata extends CloudServersProviderMetadata {
+public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8728307961498165226L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudservers-us";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getName() {
-      return "Rackspace Cloud Servers US";
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudServersUSProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/servers");
+   public CloudServersUSProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.rackspacecloud.com");
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "US");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudfiles-us", "cloudservers-us", "cloudloadbalancers-us");
+      protected Builder(){
+         id("cloudservers-us")
+         .name("Rackspace Cloud Servers US")
+         .apiMetadata(new CloudServersApiMetadata())
+         .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/servers"))
+         .console(URI.create("https://manage.rackspacecloud.com"))
+         .linkedServices("cloudloadbalancers-us", "cloudservers-us", "cloudfiles-us")
+         .iso3166Codes("US-IL", "US-TX");
+      }
+
+      @Override
+      public CloudServersUSProviderMetadata build() {
+         return new CloudServersUSProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-IL", "US-TX");
-   }
-
 }

@@ -21,20 +21,12 @@ package org.jclouds.aws.ec2.services;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
-import java.util.Properties;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.domain.MonitoringState;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.BeforeGroups;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code MonitoringClient}
@@ -42,23 +34,20 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class MonitoringClientLiveTest extends BaseVersionedServiceLiveTest {
+public class MonitoringClientLiveTest extends BaseComputeServiceContextLiveTest {
    public MonitoringClientLiveTest() {
       provider = "aws-ec2";
    }
 
    private MonitoringClient client;
    private static final String DEFAULT_INSTANCE = "i-TODO";
-   private RestContext<AWSEC2Client, AWSEC2AsyncClient> context;
 
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getMonitoringServices();
+   
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getMonitoringServices();
    }
 
    @Test(enabled = false)

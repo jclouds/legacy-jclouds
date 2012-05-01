@@ -35,6 +35,7 @@ import org.jclouds.Constants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 
@@ -46,7 +47,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgsForLocations implements Function<Iterable<Location>, Iterable< Org>> {
+public class OrgsForLocations implements Function<Iterable<Location>, Iterable<Org>> {
    @Resource
    public Logger logger = Logger.NULL;
    private final VCloudAsyncClient aclient;
@@ -65,7 +66,7 @@ public class OrgsForLocations implements Function<Iterable<Location>, Iterable< 
    @Override
    public Iterable<Org> apply(Iterable<Location> from) {
 
-      return transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
+      return Iterables2.concreteCopy(transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {
@@ -79,14 +80,14 @@ public class OrgsForLocations implements Function<Iterable<Location>, Iterable< 
             return URI.create(from.getParent().getId());
          }
 
-      })), new Function<URI, Future<Org>>() {
+      })), new Function<URI, Future<? extends Org>>() {
 
          @Override
          public Future<Org> apply(URI from) {
             return aclient.getOrgClient().getOrg(from);
          }
 
-      }, executor, null, logger, "organizations for uris");
+      }, executor, null, logger, "organizations for uris"));
    }
 
 }

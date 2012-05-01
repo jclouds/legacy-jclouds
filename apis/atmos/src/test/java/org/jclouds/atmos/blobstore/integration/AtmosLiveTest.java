@@ -29,8 +29,11 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class AtmosLiveTest extends BaseBlobLiveTest {
+   public AtmosLiveTest() {
+      provider = "atmos";
+   }
    protected void checkMD5(String container, String name, byte[] md5) {
       // atmos does not support content-md5 yet
-      assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), null);
+      assertEquals(view.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), null);
    }
 }

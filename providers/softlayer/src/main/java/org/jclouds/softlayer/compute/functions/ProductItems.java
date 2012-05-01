@@ -18,14 +18,15 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 
-import java.util.NoSuchElementException;
-import java.util.Set;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 public class ProductItems {
 

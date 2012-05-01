@@ -27,4 +27,7 @@ import org.testng.annotations.Test;
 @Test(groups =  "live", testName = "SynapticStorageBlobLiveTest")
 public class SynapticStorageBlobLiveTest extends AtmosLiveTest {
 
+   public SynapticStorageBlobLiveTest() {
+      provider = "synaptic-storage";
+   }
 }

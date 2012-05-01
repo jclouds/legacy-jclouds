@@ -22,30 +22,32 @@ import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
-import org.omg.CORBA.Environment;
+import org.jclouds.dmtf.ovf.environment.EnvironmentType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * Represents a VM.
+ * Represents a virtual machine.
  *
  * <pre>
- * &lt;complexType name="Vm" /&gt;
+ * &lt;complexType name="VmType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlType(name = "Vm")
+@XmlRootElement(name = "Vm")
+@XmlType(name = "VmType")
 public class Vm extends AbstractVAppType {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVm(this);
    }

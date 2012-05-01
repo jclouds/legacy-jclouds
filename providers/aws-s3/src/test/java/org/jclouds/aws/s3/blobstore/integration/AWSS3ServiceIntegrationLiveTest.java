@@ -30,6 +30,10 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "AWSS3ServiceIntegrationLiveTest")
 public class AWSS3ServiceIntegrationLiveTest extends S3ServiceIntegrationLiveTest {
+   public AWSS3ServiceIntegrationLiveTest() {
+      provider = "aws-s3";
+   }
+   
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13");

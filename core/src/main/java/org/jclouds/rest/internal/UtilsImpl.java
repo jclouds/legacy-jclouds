@@ -18,23 +18,26 @@
  */
 package org.jclouds.rest.internal;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.annotations.Beta;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
+import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.Utils;
+import org.jclouds.xml.XMLParser;
 
+import com.google.common.annotations.Beta;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 /**
@@ -51,14 +54,16 @@ public class UtilsImpl implements Utils {
    private final ExecutorService userExecutor;
    private final ExecutorService ioExecutor;
    private final EventBus eventBus;
+   private final Map<String, Credentials> credentialStore;
    private final LoggerFactory loggerFactory;
    private Injector injector;
+   private XMLParser xml;
 
    @Inject
-   protected UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+   protected UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
          Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
-         LoggerFactory loggerFactory) {
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
+            Map<String, Credentials> credentialStore, LoggerFactory loggerFactory) {
       this.injector = injector;
       this.json = json;
       this.simpleClient = simpleClient;
@@ -68,7 +73,9 @@ public class UtilsImpl implements Utils {
       this.userExecutor = userThreads;
       this.ioExecutor = ioThreads;
       this.eventBus = eventBus;
+      this.credentialStore = credentialStore;
       this.loggerFactory = loggerFactory;
+      this.xml = xml;
    }
 
    @Override
@@ -171,6 +178,26 @@ public class UtilsImpl implements Utils {
    @Beta
    public Injector injector() {
       return getInjector();
+   }
+   
+   @Override
+   public XMLParser getXml() {
+      return xml;
+   }
+
+   @Override
+   public XMLParser xml() {
+      return xml;
+   }
+
+   @Override
+   public Map<String, Credentials> credentialStore() {
+      return credentialStore;
+   }
+
+   @Override
+   public Map<String, Credentials> getCredentialStore() {
+      return credentialStore;
    }
 
 }

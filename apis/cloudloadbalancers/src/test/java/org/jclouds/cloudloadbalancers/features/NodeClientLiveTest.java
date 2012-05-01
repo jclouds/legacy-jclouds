@@ -137,7 +137,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDownContext() {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          LoadBalancer lb = entry.getKey();
          LoadBalancerClient lbClient = client.getLoadBalancerClient(lb.getRegion());
@@ -147,6 +147,6 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
          }
          assert loadBalancerDeleted.apply(lb) : lb;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

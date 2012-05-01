@@ -19,15 +19,16 @@
 package org.jclouds.demo.tweetstore.controller;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.util.Map;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.TransientApiMetadata;
 import org.testng.annotations.Test;
 
 import com.google.appengine.api.taskqueue.Queue;
@@ -43,9 +44,10 @@ import com.google.common.collect.ImmutableMap;
 public class EnqueueStoresControllerTest {
 
     Map<String, BlobStoreContext> createBlobStores() {
-        Map<String, BlobStoreContext> contexts = ImmutableMap.of(
-                "test1", new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"), 
-                "test2", new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"));
+        TransientApiMetadata transientApiMetadata = TransientApiMetadata.builder().build();
+        Map<String, BlobStoreContext> contexts = ImmutableMap.<String, BlobStoreContext>of(
+                "test1", ContextBuilder.newBuilder(transientApiMetadata).build(BlobStoreContext.class), 
+                "test2", ContextBuilder.newBuilder(transientApiMetadata).build(BlobStoreContext.class));
         return contexts;
     }
 

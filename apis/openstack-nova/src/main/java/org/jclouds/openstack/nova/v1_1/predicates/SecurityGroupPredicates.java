@@ -33,7 +33,7 @@ import com.google.common.base.Predicate;
 public class SecurityGroupPredicates {
 
    /**
-    * matches name of the given extension
+    * matches name of the given security group
     * 
     * @param name
     * @return predicate that matches name
@@ -50,6 +50,28 @@ public class SecurityGroupPredicates {
          @Override
          public String toString() {
             return "nameEquals(" + name + ")";
+         }
+      };
+   }
+
+   /**
+    * matches name of the given security group
+    * 
+    * @param name
+    * @return predicate that matches name
+    */
+   public static Predicate<SecurityGroup> nameMatches(final Predicate<String> name) {
+      checkNotNull(name, "name must be defined");
+
+      return new Predicate<SecurityGroup>() {
+         @Override
+         public boolean apply(SecurityGroup ext) {
+            return name.apply(ext.getName());
+         }
+
+         @Override
+         public String toString() {
+            return "nameMatches(" + name + ")";
          }
       };
    }

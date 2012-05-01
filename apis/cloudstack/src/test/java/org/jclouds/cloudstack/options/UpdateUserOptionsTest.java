@@ -18,9 +18,6 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.email;
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.firstName;
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.lastName;
@@ -29,6 +26,10 @@ import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userApiKe
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userSecretKey;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code UpdateUserOptions}

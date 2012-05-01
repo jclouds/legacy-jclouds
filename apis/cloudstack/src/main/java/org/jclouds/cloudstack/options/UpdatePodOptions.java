@@ -18,11 +18,10 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to the GlobalPodClient.updatePod API call.

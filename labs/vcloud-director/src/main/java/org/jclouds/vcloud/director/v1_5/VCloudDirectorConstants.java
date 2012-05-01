@@ -18,6 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
+import org.jclouds.rest.RestContext;
+import org.jclouds.vcloud.director.v1_5.login.SessionAsyncClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+
+import com.google.common.reflect.TypeToken;
+
 /**
  * Constants used by VCloudDirector clients
  *
@@ -29,16 +35,6 @@ public class VCloudDirectorConstants {
    public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
    public static final String VCLOUD_VMW_NS = "http://www.vmware.com/schema/ovf";
-
-   public static final String VCLOUD_OVF_NS = "http://schemas.dmtf.org/ovf/envelope/1";
-
-   public static final String VCLOUD_OVF_ENV_NS = "http://schemas.dmtf.org/ovf/environment/1";
-
-   public static final String VCLOUD_CIM_NS = "http://schemas.dmtf.org/wbem/wscim/1/common";
-   
-   public static final String VCLOUD_CIM_VSSD_NS = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData";
-   
-   public static final String VCLOUD_CIM_RASD_NS = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData";
 
    /** The property used to configure the timeout for task completion. */
    public static final String PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED = "jclouds.vcloud-director.timeout.task-complete";
@@ -73,4 +69,11 @@ public class VCloudDirectorConstants {
 
    /** TODO javadoc */
    public static final String PROPERTY_NS_NAME_LEN_MAX = "jclouds.dns_name_length_max";
+
+   /** TODO javadoc */
+   public static final TypeToken<RestContext<SessionClient, SessionAsyncClient>> SESSION_CONTEXT_TYPE =
+         new TypeToken<RestContext<SessionClient, SessionAsyncClient>>() {
+				/** The serialVersionUID */
+				private static final long serialVersionUID = -3625362618882122604L;
+		   };
 }

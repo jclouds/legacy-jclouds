@@ -22,13 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.openstack.nova.NovaAsyncClient;
-import org.jclouds.openstack.nova.NovaClient;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -41,6 +37,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "NovaComputeServiceLiveTest")
 public class NovaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public NovaComputeServiceLiveTest() {
       provider = "nova";
    }
@@ -49,13 +46,7 @@ public class NovaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<NovaClient, NovaAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
-   }
-
+   
    @Override
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String group, String task) throws IOException {
       super.checkNodes(nodes, group, task);

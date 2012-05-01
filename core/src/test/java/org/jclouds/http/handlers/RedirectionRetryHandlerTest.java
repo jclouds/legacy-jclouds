@@ -18,31 +18,29 @@
  */
 package org.jclouds.http.handlers;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code RedirectionRetryHandler}
@@ -51,19 +49,10 @@ import com.google.inject.Provides;
  */
 @Test(groups = "unit")
 public class RedirectionRetryHandlerTest {
-   Injector injector = Guice.createInjector(new MockModule(), new RestModule(), new AbstractModule() {
-      @SuppressWarnings("unused")
-      @Provides
-      @Singleton
-      @Named("CONSTANTS")
-      protected Multimap<String, String> constants() {
-         return LinkedHashMultimap.create();
-      }
-
-      @Override
-      protected void configure() {
-      }
-   });
+   Injector injector = ContextBuilder.newBuilder(
+            AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class,
+                     IntegrationTestAsyncClient.class, "http://localhost")).modules(
+            ImmutableSet.<Module> of(new MockModule())).buildInjector();
 
    @Test
    public void test302DoesNotRetry() {

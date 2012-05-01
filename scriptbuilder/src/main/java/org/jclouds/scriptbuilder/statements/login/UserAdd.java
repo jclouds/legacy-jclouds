@@ -22,10 +22,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 
 import org.jclouds.crypto.Sha512Crypt;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
@@ -160,11 +160,11 @@ public class UserAdd implements Statement {
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
       String homeDir = defaultHome + "{fs}" + login;
-      ImmutableList.Builder<Statement> statements = ImmutableList.<Statement> builder();
+      ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       // useradd cannot create the default homedir
       statements.add(Statements.exec("{md} " + defaultHome));
 
-      ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.<String, String> builder();
+      ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.builder();
       userAddOptions.put("-s", shell);
       if (groups.size() > 0) {
          for (String group : groups)

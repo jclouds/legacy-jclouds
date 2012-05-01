@@ -18,6 +18,25 @@
  */
 package org.jclouds.elasticstack.binders;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.elasticstack.domain.IDEDevice;
+import org.jclouds.elasticstack.domain.Model;
+import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.domain.Server;
+import org.jclouds.elasticstack.domain.VNC;
+import org.jclouds.elasticstack.functions.ServerToMap;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -25,19 +44,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
-import org.jclouds.elasticstack.domain.*;
-import org.jclouds.elasticstack.functions.ServerToMap;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.util.Strings2;
-import org.testng.annotations.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * 

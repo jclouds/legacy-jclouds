@@ -53,7 +53,7 @@ public class CreateServerOptions implements MapBinder {
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
-      ImmutableMultimap.Builder<String, String> formParams = ImmutableMultimap.<String, String> builder();
+      ImmutableMultimap.Builder<String, String> formParams = ImmutableMultimap.builder();
       formParams.putAll(forMap(postParams));
       ServerSpec serverSpec = ServerSpec.class.cast(find(gRequest.getArgs(), instanceOf(ServerSpec.class)));
       formParams.put("datacenter", serverSpec.getDatacenter());

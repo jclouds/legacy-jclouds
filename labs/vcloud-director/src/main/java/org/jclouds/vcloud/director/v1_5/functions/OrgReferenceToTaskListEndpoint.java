@@ -23,9 +23,10 @@ import java.net.URI;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 
 import com.google.common.base.Function;
@@ -49,6 +50,9 @@ public class OrgReferenceToTaskListEndpoint implements Function<Object, URI> {
       Preconditions.checkArgument(input instanceof URI);
       URI reference = (URI) input;
       Org org = client.getOrg(reference);
+      if (org == null) {
+         throw new ResourceNotFoundException();
+      }
       for (Link link : org.getLinks()) {
          if (link.getType().equals(VCloudDirectorMediaType.TASKS_LIST)) {
             return link.getHref();

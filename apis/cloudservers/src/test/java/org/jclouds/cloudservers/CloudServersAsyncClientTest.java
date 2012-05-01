@@ -38,6 +38,7 @@ import java.util.Properties;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.DailyBackup;
@@ -49,7 +50,6 @@ import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -60,14 +60,12 @@ import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule.Ge
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -84,7 +82,7 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", singleThreaded = true, testName = "CloudServersAsyncClientTest")
-public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyncClient> {
+public class CloudServersAsyncClientTest extends BaseAsyncClientTest<CloudServersAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}.getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[] {}
          .getClass();
@@ -891,8 +889,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
-   protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
+      protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
 
       @Provides
       @Singleton
@@ -910,8 +907,8 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    protected String provider = "cloudservers";
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "user", "password", setupProperties());
+   protected ApiMetadata createApiMetadata() {
+      return new CloudServersApiMetadata();
    }
 
    @Override

@@ -25,12 +25,12 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.S3Client;
-import org.jclouds.s3.domain.BucketMetadata;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.domain.BucketMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

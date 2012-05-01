@@ -18,13 +18,17 @@
  */
 package org.jclouds.openstack.nova.options;
 
-import com.google.common.collect.ImmutableList;
-import org.testng.annotations.Test;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.maxResults;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.startAt;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListOptions}

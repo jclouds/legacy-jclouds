@@ -18,18 +18,18 @@
  */
 package org.jclouds.trmk.vcloud_0_8.binders;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -52,10 +52,10 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       @Override
       protected void configure() {
-         Properties props = new Properties();
+         Properties props = TerremarkVCloudApiMetadata.defaultProperties();
          props.setProperty("jclouds.vcloud.xml.ns", "http://www.vmware.com/vcloud/v0.8");
          props.setProperty("jclouds.vcloud.xml.schema", "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-         Names.bindProperties(binder(), new PropertiesBuilder(props).build());
+         Names.bindProperties(binder(), props);
       }
    });
 

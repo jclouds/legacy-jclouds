@@ -18,98 +18,71 @@
  */
 package org.jclouds.cloudsigma;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma LasVegas.
- *
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma Las Vegas.
+
+ * 
  * @author Adrian Cole
  */
 public class CloudSigmaLasVegasProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudsigma-lvs";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7837335150409122683L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "CloudSigma LasVegas";
+   public CloudSigmaLasVegasProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Email";
+   public CloudSigmaLasVegasProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.cloudsigma.com/en/our-cloud/features");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://gui.lvs.cloudsigma.com/");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://cloudsigma.com/en/platform-details/the-api");
-   }
+      protected Builder() {
+         id("cloudsigma-lvs")
+         .name("CloudSigma Las Vegas")
+         .apiMetadata(new CloudSigmaApiMetadata())
+         .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
+         .console(URI.create("https://gui.lvs.cloudsigma.com/"))
+         .iso3166Codes("US-NV")
+         .endpoint("https://api.lvs.cloudsigma.com")
+         .defaultProperties(CloudSigmaLasVegasProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudsigma-lvs");
-   }
+      @Override
+      public CloudSigmaLasVegasProviderMetadata build() {
+         return new CloudSigmaLasVegasProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-LV");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

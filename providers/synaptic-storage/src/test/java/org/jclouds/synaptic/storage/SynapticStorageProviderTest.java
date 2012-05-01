@@ -18,8 +18,8 @@
  */
 package org.jclouds.synaptic.storage;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.atmos.AtmosApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class SynapticStorageProviderTest extends BaseProviderMetadataTest {
 
    public SynapticStorageProviderTest() {
-      super(new SynapticStorageProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new SynapticStorageProviderMetadata(), new AtmosApiMetadata());
    }
 
 }

@@ -27,7 +27,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudAsyncClientTest;
-import org.jclouds.trmk.ecloud.features.TagOperationsAsyncClient;
 import org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandler;
 import org.testng.annotations.Test;
 

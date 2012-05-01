@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 public class InternetServicesHandler extends HandlerWithResult<Set<InternetService>> {
 
    private final InternetServiceHandler handler;
-   private Builder<InternetService> builder = ImmutableSet.<InternetService> builder();
+   private Builder<InternetService> builder = ImmutableSet.builder();
 
    @Inject
    public InternetServicesHandler(InternetServiceHandler handler) {

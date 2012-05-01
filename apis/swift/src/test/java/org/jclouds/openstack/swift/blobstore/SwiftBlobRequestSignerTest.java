@@ -26,13 +26,9 @@ import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CommonSwiftBlobRequestSigner}
@@ -41,12 +37,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SwiftBlobRequestSignerTest")
-public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest<CommonSwiftAsyncClient> {
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CommonSwiftAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CommonSwiftAsyncClient>>() {
-      };
-   }
+public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest {
 
    private BlobRequestSigner signer;
    private Factory blobFactory;

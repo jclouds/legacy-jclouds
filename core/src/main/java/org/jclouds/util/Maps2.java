@@ -154,5 +154,15 @@ public class Maps2 {
        }
        return result;
    }
+   
+   /**
+    * Covariant compatible version
+    * 
+    * @see {@link Maps#uniqueIndex(Iterable, Function)}
+    */
+   public static <K, V> ImmutableMap<K, V> uniqueIndex(
+         Iterable<? extends V> values, Function<? super V, ? extends K> keyFunction) {
+      return ImmutableMap.copyOf(Maps.uniqueIndex(values, keyFunction));
+   }
 
 }

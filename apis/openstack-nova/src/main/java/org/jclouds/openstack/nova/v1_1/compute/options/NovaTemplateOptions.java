@@ -25,16 +25,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.io.Payload;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -68,6 +66,8 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions eTo = NovaTemplateOptions.class.cast(to);
          eTo.autoAssignFloatingIp(shouldAutoAssignFloatingIp());
          eTo.securityGroupNames(getSecurityGroupNames());
+         eTo.generateKeyPair(shouldGenerateKeyPair());
+         eTo.keyPairName(getKeyPairName());
       }
    }
 
@@ -303,6 +303,15 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions options = new NovaTemplateOptions();
          return options.overrideLoginCredentials(credentials);
       }
+      
+      /**
+       * @see TemplateOptions#blockUntilRunning
+       */
+      public static NovaTemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+         NovaTemplateOptions options = new NovaTemplateOptions();
+         return options.blockUntilRunning(blockUntilRunning);
+      }
+      
    }
 
    // methods that only facilitate returning the correct object type
@@ -337,15 +346,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    @Override
    public NovaTemplateOptions installPrivateKey(String privateKey) {
       return NovaTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions runScript(Payload script) {
-      return NovaTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**
@@ -386,33 +386,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    @Override
    public NovaTemplateOptions runScript(Statement script) {
       return NovaTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return NovaTemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions overrideLoginUserWith(String loginUser) {
-      return NovaTemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions overrideLoginCredentialWith(String loginCredential) {
-      return NovaTemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
    }
 
    /**

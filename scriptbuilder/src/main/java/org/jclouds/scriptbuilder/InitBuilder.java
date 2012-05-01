@@ -36,6 +36,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
+ * will be removed in jclouds 1.6
+ * 
  * Creates an init script file
  * 
  * @see InitScript

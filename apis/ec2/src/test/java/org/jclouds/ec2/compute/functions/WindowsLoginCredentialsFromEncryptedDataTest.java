@@ -18,15 +18,15 @@
  */
 package org.jclouds.ec2.compute.functions;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+
 import org.jclouds.crypto.Crypto;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 /**
  * @author Richard Downer

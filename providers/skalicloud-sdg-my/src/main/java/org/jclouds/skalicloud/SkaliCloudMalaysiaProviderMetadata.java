@@ -18,98 +18,71 @@
  */
 package org.jclouds.skalicloud;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for SkaliCloud Malaysia.
- *
+ * 
  * @author Adrian Cole
  */
 public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "skalicloud-sdg-my";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 102653451946303901L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "SkaliCloud Malaysia";
+   public SkaliCloudMalaysiaProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public SkaliCloudMalaysiaProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.skalicloud.com");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://sdg-my.skalicloud.com");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.skalicloud.com/cloud-api");
-   }
+      protected Builder() {
+         id("skalicloud-sdg-my")
+         .name("SkaliCloud Malaysia")
+         .apiMetadata(new ElasticStackApiMetadata())
+         .homepage(URI.create("https://sdg-my.skalicloud.com"))
+         .console(URI.create("https://api.sdg-my.skalicloud.com/accounts"))
+         .iso3166Codes("MY-10")
+         .endpoint("https://api.sdg-my.skalicloud.com")
+         .defaultProperties(SkaliCloudMalaysiaProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("skalicloud-sdg-my");
-   }
+      @Override
+      public SkaliCloudMalaysiaProviderMetadata build() {
+         return new SkaliCloudMalaysiaProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("MY-10");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.lang.reflect.Method;
+
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.options.CreateAccountOptions;
 import org.jclouds.cloudstack.options.UpdateAccountOptions;
@@ -29,8 +31,6 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
-
-import java.lang.reflect.Method;
 
 /**
  * Tests behavior of {@code GlobalAccountAsyncClient}

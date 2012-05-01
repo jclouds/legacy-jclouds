@@ -29,7 +29,10 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AtmosInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
-
+   public AtmosInputStreamMapIntegrationLiveTest() {
+      provider = "atmos";
+   }
+   
    @Override
    @Test(enabled = false)
    public void testContainsBytesValue() throws InterruptedException, ExecutionException,

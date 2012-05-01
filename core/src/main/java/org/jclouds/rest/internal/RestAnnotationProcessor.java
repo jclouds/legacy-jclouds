@@ -243,7 +243,7 @@ public class RestAnnotationProcessor<T> {
          new CacheLoader<Method, Set<Integer>>() {
             @Override
             public Set<Integer> load(Method method) {
-               Builder<Integer> toReturn = ImmutableSet.<Integer> builder();
+               Builder<Integer> toReturn = ImmutableSet.builder();
                for (int index = 0; index < method.getParameterTypes().length; index++) {
                   Class<?> type = method.getParameterTypes()[index];
                   if (HttpRequestOptions.class.isAssignableFrom(type) || optionsVarArgsClass.isAssignableFrom(type))
@@ -348,7 +348,7 @@ public class RestAnnotationProcessor<T> {
       public int hashCode() {
          final int prime = 31;
          int result = 1;
-         result = prime * result + ((declaringPackage == null) ? 0 : declaringPackage.hashCode());
+         result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
          result = prime * result + ((name == null) ? 0 : name.hashCode());
          result = prime * result + parametersTypeHashCode;
          return result;
@@ -363,10 +363,10 @@ public class RestAnnotationProcessor<T> {
          if (getClass() != obj.getClass())
             return false;
          MethodKey other = (MethodKey) obj;
-         if (declaringPackage == null) {
-            if (other.declaringPackage != null)
+         if (declaringClass == null) {
+            if (other.declaringClass != null)
                return false;
-         } else if (!declaringPackage.equals(other.declaringPackage))
+         } else if (!declaringClass.equals(other.declaringClass))
             return false;
          if (name == null) {
             if (other.name != null)
@@ -380,11 +380,11 @@ public class RestAnnotationProcessor<T> {
 
       private final String name;
       private final int parametersTypeHashCode;
-      private final Package declaringPackage;
+      private final Class declaringClass;
 
       public MethodKey(Method method) {
          this.name = method.getName();
-         this.declaringPackage = method.getDeclaringClass().getPackage();
+         this.declaringClass = method.getDeclaringClass();
          int parametersTypeHashCode = 0;
          for (Class<?> param : method.getParameterTypes())
             parametersTypeHashCode += param.hashCode();
@@ -550,8 +550,7 @@ public class RestAnnotationProcessor<T> {
          utils.checkRequestHasRequiredProperties(request);
          return request;
       } catch (ExecutionException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -922,7 +921,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static Set<String> getHttpMethods(Method method) {
-      Builder<String> methodsBuilder = ImmutableSet.<String> builder();
+      Builder<String> methodsBuilder = ImmutableSet.builder();
       for (Annotation annotation : method.getAnnotations()) {
          HttpMethod http = annotation.annotationType().getAnnotation(HttpMethod.class);
          if (http != null)

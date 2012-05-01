@@ -38,8 +38,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -71,7 +71,7 @@ public class LocationIdToIso3166CodesFromConfiguration implements LocationIdToIs
          }
 
       });
-      Builder<String, Supplier<Set<String>>> codes = ImmutableMap.<String, Supplier<Set<String>>> builder();
+      Builder<String, Supplier<Set<String>>> codes = ImmutableMap.builder();
       for (String key : ImmutableSet.of(PROPERTY_REGION, PROPERTY_ZONE)) {
          String regionOrZoneString = stringsBoundWithRegionOrZonePrefix.get(key + "s");
          if (regionOrZoneString == null)

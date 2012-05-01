@@ -18,12 +18,13 @@
  */
 package org.jclouds.filesystem.predicates.validators.internal;
 
-import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyValidatorImpl;
-import java.io.File;
-import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
-import org.testng.annotations.Test;
+import static org.testng.Assert.fail;
 
-import static org.testng.Assert.*;
+import java.io.File;
+
+import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
+import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
+import org.testng.annotations.Test;
 
 
 /**

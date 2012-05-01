@@ -38,8 +38,8 @@ import java.util.Set;
 
 import javax.servlet.ServletContextEvent;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
@@ -80,9 +80,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
-
-      BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
-
       Properties props = loadJCloudsProperties(servletContextEvent);
 
       Module googleModule = new GoogleAppEngineConfigurationModule();
@@ -105,7 +102,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : getBlobstoreContexts(props)) {
-          providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
+          providerTypeToBlobStoreMap.put(hint, ContextBuilder.newBuilder(hint)
+                  .modules(modules).overrides(props).build(BlobStoreContext.class));
       }
 
       // get a queue for submitting store tweet requests

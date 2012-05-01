@@ -27,7 +27,6 @@ import java.net.UnknownHostException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;
-import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandler;
 import org.testng.annotations.Test;
 
 /**

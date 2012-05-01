@@ -34,11 +34,11 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.BridgedIf;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.NetworkAttachmentType;
@@ -47,6 +47,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 
 @Singleton
@@ -59,14 +60,16 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 	private final SshClient.Factory sshClientFactory;
 	private final RunScriptOnNode.Factory scriptRunnerFactory;
 	private final Supplier<NodeMetadata> hostSupplier;
+	private final MachineUtils machineUtils;
 
 	@Inject
 	public IMachineToSshClient(SshClient.Factory sshClientFactory,
 			RunScriptOnNode.Factory scriptRunnerFactory,
-			Supplier<NodeMetadata> hostSupplier) {
+			Supplier<NodeMetadata> hostSupplier, MachineUtils machineUtils) {
 		this.sshClientFactory = sshClientFactory;
 		this.scriptRunnerFactory = scriptRunnerFactory;
 		this.hostSupplier = hostSupplier;
+		this.machineUtils = machineUtils;
 	}
 
 	@Override
@@ -104,11 +107,14 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 				NetworkAttachmentType.Bridged)) {
 			String network = "1.1.1.1";
 			clientIpAddress = getIpAddressFromBridgedNIC(networkAdapter, network);
+		} else if (networkAdapter.getAttachmentType().equals(
+                        NetworkAttachmentType.HostOnly)) {
+	             clientIpAddress = machineUtils.getIpAddressFromHostOnlyNIC(vm.getName());
 		}
 		
 		checkNotNull(clientIpAddress, "clientIpAddress");
 		client = sshClientFactory.create(
-				new IPSocket(clientIpAddress, Integer.parseInt(sshPort)),
+				HostAndPort.fromParts(clientIpAddress, Integer.parseInt(sshPort)),
 				loginCredentials);
 		checkNotNull(client);
 		return client;

@@ -48,9 +48,9 @@ import com.google.common.base.Predicate;
 public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getEmailClient();
+   public void setupContext() {
+      super.setupContext();
+      client = gleContext.getApi().getEmailClient();
 
       serverId = createServer("test-email-jclouds").getServerId();
 
@@ -67,13 +67,13 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
    }
 
    @AfterGroups(groups = {"live"})
-   public void tearDown() {
+   public void tearDownContext() {
       client.delete("test@" + testDomain);
       client.delete("test1@" + testDomain);
       assertTrue(emailAccountCounter.apply(0));
-      context.getApi().getDomainClient().deleteDomain(testDomain);
-      context.getApi().getServerClient().destroyServer(serverId, DestroyServerOptions.Builder.discardIp());
-      super.tearDown();
+      gleContext.getApi().getDomainClient().deleteDomain(testDomain);
+      gleContext.getApi().getServerClient().destroyServer(serverId, DestroyServerOptions.Builder.discardIp());
+      super.tearDownContext();
    }
 
    private EmailClient client;

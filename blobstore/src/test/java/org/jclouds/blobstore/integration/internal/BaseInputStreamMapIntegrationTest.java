@@ -53,7 +53,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testValues() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          map.putAll(this.fiveInputs);
          // this will cause us to block until the bucket updates.
          assertConsistencyAwareMapSize(map, 5);
@@ -74,7 +74,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
-         InputStreamMap map = createMap(context, containerName);
+         InputStreamMap map = createMap(view, containerName);
          Set<String> keySet = Sets.newLinkedHashSet();
          for (int i = 0; i < maxResultsForTestListings() + 1; i++) {
             keySet.add(i + "");
@@ -100,7 +100,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testRemove() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          putStringWithMD5(map, "one", "two");
          InputStream old = map.remove("one");
          assertEquals(Strings2.toStringAndClose(old), "two");
@@ -120,7 +120,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testEntrySet() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          ((InputStreamMap) map).putAllStrings(this.fiveStrings);
          // this will cause us to block until the bucket updates.
          assertConsistencyAwareKeySize(map, 5);
@@ -143,7 +143,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testContainsStringValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, fiveStrings.get("one"));
       } finally {
@@ -155,7 +155,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testContainsFileValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, fiveFiles.get("one"));
       } finally {
@@ -167,7 +167,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testContainsInputStreamValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, this.fiveInputs.get("one"));
       } finally {
@@ -179,7 +179,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testContainsBytesValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, this.fiveBytes.get("one"));
       } finally {
@@ -192,7 +192,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutAll() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
          map.putAll(this.fiveInputs);
          assertConsistencyAwareMapSize(map, 5);
          assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
@@ -206,7 +206,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutAllBytes() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          ((InputStreamMap) map).putAllBytes(this.fiveBytes);
          assertConsistencyAwareMapSize(map, 5);
@@ -221,7 +221,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutAllFiles() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          ((InputStreamMap) map).putAllFiles(this.fiveFiles);
          assertConsistencyAwareMapSize(map, 5);
@@ -236,7 +236,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutAllStrings() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          ((InputStreamMap) map).putAllStrings(this.fiveStrings);
          assertConsistencyAwareMapSize(map, 5);
@@ -251,7 +251,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutString() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          InputStream old = ((InputStreamMap) map).putString("one", fiveStrings.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
@@ -280,7 +280,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutFile() throws IOException, InterruptedException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          InputStream old = ((InputStreamMap) map).putFile("one", fiveFiles.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
@@ -295,7 +295,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPutBytes() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          InputStream old = ((InputStreamMap) map).putBytes("one", fiveBytes.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
@@ -310,7 +310,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    public void testPut() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, containerName);
+         Map<String, InputStream> map = createMap(view, containerName);
 
          InputStream old = map.put("one", fiveInputs.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);

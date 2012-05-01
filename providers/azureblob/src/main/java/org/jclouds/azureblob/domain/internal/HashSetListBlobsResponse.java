@@ -21,9 +21,9 @@ package org.jclouds.azureblob.domain.internal;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;

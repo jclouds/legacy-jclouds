@@ -30,44 +30,81 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_1;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
+import org.jclouds.dmtf.cim.VirtualSystemSettingData;
+import org.jclouds.dmtf.ovf.Disk;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.ProductSection;
+import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.environment.EnvironmentType;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
-import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.Envelope;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.VirtualSystem;
+import org.jclouds.vcloud.director.v1_5.domain.network.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkServiceType;
+import org.jclouds.vcloud.director.v1_5.domain.network.RouterInfo;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.AuthenticationMechanism;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.ConnectorType;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapGroupAttributes;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings.LdapMode;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapUserAttributes;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.query.ContainerType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
+import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.net.InetAddresses;
 
@@ -76,11 +113,11 @@ import com.google.common.net.InetAddresses;
  */
 public class Checks {
 
-   public static void checkResourceEntityType(ResourceEntityType resourceEntity) {
+   public static void checkResourceEntityType(ResourceEntity resourceEntity) {
       checkResourceEntityType(resourceEntity, true);
    }
 
-   public static void checkResourceEntityType(ResourceEntityType resourceEntity, boolean ready) {
+   public static void checkResourceEntityType(ResourceEntity resourceEntity, boolean ready) {
       // Check optional fields
       // NOTE status cannot be checked (TODO: doesn't status have a range of valid values?)
       Set<File> files = resourceEntity.getFiles();
@@ -92,13 +129,13 @@ public class Checks {
       checkEntityType(resourceEntity);
    }
    
-   public static void checkEntityType(EntityType entity) {
+   public static void checkEntityType(Entity entity) {
       // Check required fields
       assertNotNull(entity.getName(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Name", "EntityType"));
 
       // Check optional fields
       // NOTE description cannot be checked
-      Set<Task> tasks = entity.getTasks();
+      List<Task> tasks = entity.getTasks();
       if (tasks != null && tasks != null && !tasks.isEmpty()) {
          for (Task task : tasks) checkTask(task);
       }
@@ -110,10 +147,17 @@ public class Checks {
    /**
     * Assumes the validTypes to be vcloud-specific types.
     * 
-    * @see checkReferenceType(ReferenceType, Collection<String>)
+    * @see #checkReferenceType(Reference, Collection)
     */
    public static void checkReferenceType(Reference reference) {
       checkReferenceType(reference, VCloudDirectorMediaType.ALL);
+   }
+
+   /**
+    * @see #checkReferenceType(Reference, Collection)
+    */
+   public static void checkReferenceType(Reference reference, String type) {
+      checkReferenceType(reference, ImmutableSet.of(type));
    }
    
    public static void checkReferenceType(Reference reference, Collection<String> validTypes) {
@@ -128,12 +172,28 @@ public class Checks {
       // NOTE name cannot be checked
    }
 
-   public static void checkResourceType(ResourceType resource) {
+   /**
+    * Assumes the validTypes to be vcloud-specific types.
+    * 
+    * @see #checkResourceType(ResourceType, Collection)
+    */
+   public static void checkResourceType(Resource resource) {
+      checkResourceType(resource, VCloudDirectorMediaType.ALL);
+   }
+
+   /**
+    * @see #checkResourceType(ResourceType, Collection)
+    */
+   public static void checkResourceType(Resource resource, String type) {
+      checkResourceType(resource, ImmutableSet.of(type));
+   }
+
+   public static void checkResourceType(Resource resource, Collection<String> validTypes) {
       // Check optional fields
       URI href = resource.getHref();
       if (href != null) checkHref(href);
       String type = resource.getType();
-      if (type != null) checkType(type);
+      if (type != null) checkType(type, validTypes);
       Set<Link> links = resource.getLinks();
       if (links != null && !links.isEmpty()) {
          for (Link link : links) checkLink(link);
@@ -281,41 +341,27 @@ public class Checks {
    public static void checkAdminOrg(AdminOrg org) {
       // required
       assertNotNull(org.getSettings(), String.format(NOT_NULL_OBJ_FIELD_FMT, "settings", "AdminOrg"));
+      checkResourceType(org, VCloudDirectorMediaType.ADMIN_ORG);
       
       // optional
-      if (org.getGroups() != null) {
-         checkGroupsList(org.getGroups());
+      for (Reference user : org.getUsers()) {
+         checkReferenceType(user, VCloudDirectorMediaType.ADMIN_USER);
       }
-      if (org.getCatalogs() != null) {
-         checkCatalogsList(org.getCatalogs());
+      for (Reference group : org.getGroups()) {
+         checkReferenceType(group, VCloudDirectorMediaType.GROUP);
       }
-      if (org.getVdcs() != null) {
-         checkVdcs(org.getVdcs());
+      for (Reference catalog : org.getCatalogs()) {
+         checkReferenceType(catalog, VCloudDirectorMediaType.ADMIN_CATALOG);
       }
-      if (org.getNetworks() != null) {
-         checkNetworks(org.getNetworks());
+      for (Reference vdc : org.getVdcs()) {
+         checkReferenceType(vdc, VCloudDirectorMediaType.VDC);
+      }
+      for (Reference network : org.getNetworks()) {
+         checkReferenceType(network, VCloudDirectorMediaType.ADMIN_NETWORK);
       }
       
       // Check parent type
       checkOrg(org);
-   }
-   
-   public static void checkCatalogsList(CatalogsList catalogList) {
-      for (Reference catalogItem : catalogList.getCatalogItems()) {
-         checkReferenceType(catalogItem);
-      }
-   }
-   
-   public static void checkVdcs(Vdcs vdcs) {
-      for (Reference vdc : vdcs.getVdcs()) {
-         checkReferenceType(vdc);
-      }
-   }
-   
-   public static void checkNetworks(Networks networks) {
-      for (Reference network : networks.getNetwork()) {
-         checkReferenceType(network);
-      }
    }
    
    public static void checkAdminCatalog(AdminCatalog catalog) {
@@ -323,15 +369,12 @@ public class Checks {
       checkCatalogType(catalog);
    }
 
-   public static void checkCatalogType(CatalogType catalog) {
+   public static void checkCatalogType(Catalog catalog) {
       // Check optional elements/attributes
       Owner owner = catalog.getOwner();
       if (owner != null) checkOwner(owner);
-      CatalogItems catalogItems = catalog.getCatalogItems();
-      if (catalogItems != null) {
-         for (Reference catalogItemReference : catalogItems.getCatalogItems()) {
-            checkReferenceType(catalogItemReference);
-         }
+      for (Reference catalogItemReference : catalog.getCatalogItems()) {
+         checkReferenceType(catalogItemReference, VCloudDirectorMediaType.CATALOG_ITEM);
       }
       // NOTE isPublished cannot be checked
       
@@ -352,11 +395,6 @@ public class Checks {
    public static void checkCatalogItem(CatalogItem catalogItem) {
       // Check parent type
       checkEntityType(catalogItem);
-   }
-
-   public static void checkImageType(String imageType) {
-      assertTrue(Media.ImageType.ALL.contains(imageType), 
-            "The Image type of a Media must be one of the allowed list");
    }
 
    public static void checkNetwork(Network network) {
@@ -582,6 +620,8 @@ public class Checks {
    }
 
    public static void checkVmPendingQuestion(VmPendingQuestion question) {
+      assertNotNull(question, String.format(NOT_NULL_OBJ_FMT, "VmPendingQuestion"));
+
       // Check required fields
       assertNotNull(question.getQuestion(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "Question"));
       assertNotNull(question.getQuestionId(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "QuestionId"));
@@ -694,17 +734,12 @@ public class Checks {
       // Check optional fields, dependant on IsSharedToEveryone state
       if (params.isSharedToEveryone()) {
          assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
+         assertNotNull(params.getAccessSettings(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "AccessSettings when isSharedToEveryone"));
+         assertTrue(params.getAccessSettings().size() >= 1, String.format(OBJ_FIELD_GTE_1, "ControlAccessParams", "AccessSettings.size", params.getAccessSettings().size()));
       } else {
-         AccessSettings accessSettings = params.getAccessSettings();
-         checkAccessSettings(accessSettings);
-      }
-   }
-
-   public static void checkAccessSettings(AccessSettings accessSettings) {
-      if (accessSettings != null && accessSettings.getAccessSettings() != null) {
-	      for (AccessSetting setting : accessSettings.getAccessSettings()) {
-	         checkAccessSetting(setting);
-	      }
+         for (AccessSetting setting : params.getAccessSettings()) {
+            checkAccessSetting(setting);
+         }
       }
    }
 
@@ -770,7 +805,8 @@ public class Checks {
    public static void checkMediaFor(String client, Media media) {
       // required
       assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
-      checkImageType(media.getImageType());
+      assertTrue(Media.ImageType.ALL.contains(media.getImageType()), 
+            "The Image type of a Media must be one of the allowed list");
       assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, client, "size"));
       assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, client, "size", media.getSize()));
       
@@ -778,36 +814,18 @@ public class Checks {
       checkResourceEntityType(media);
    }
    
-   public static void checkGroupsList(GroupsList groupsList) {
-      // Check optional fields
-      if (groupsList.getGroups() != null) {
-         for (Reference group : groupsList.getGroups()) {
-            checkReferenceType(group);
-         }
-      }
-   }
-   
    public static void checkGroup(Group group) {
       // Check optional fields
       // NOTE nameInSource cannot be checked
-      if (group.getUsersList() != null) {
-         checkUsersList(group.getUsersList());
+      for (Reference user : group.getUsersList()) {
+         checkReferenceType(user, VCloudDirectorMediaType.USER);
       }
       if (group.getRole() != null) {
-         checkReferenceType(group.getRole());
+         checkReferenceType(group.getRole(), VCloudDirectorMediaType.ROLE);
       }
       
       // parent type
       checkEntityType(group);
-   }
-
-   public static void checkUsersList(UsersList usersList) {
-      // Check optional fields
-      if (usersList.getUsers() != null) {
-         for (Reference user : usersList.getUsers()) {
-            checkReferenceType(user);
-         }
-      }
    }
    
    public static void checkOrgSettings(OrgSettings settings) {
@@ -881,7 +899,7 @@ public class Checks {
       // NOTE customUsersOu cannot be checked
       if (settings.getLdapMode() != null) {
          assertTrue(LdapMode.ALL.contains(settings.getLdapMode()),
-               String.format(REQUIRED_VALUE_OBJECT_FMT, "LdapMode", "OrdLdapSettings", settings.getLdapMode(),
+               String.format(REQUIRED_VALUE_OBJECT_FMT, "LdapMode", "OrgLdapSettings", settings.getLdapMode(),
                      Iterables.toString(OrgLdapSettings.LdapMode.ALL)));
       }
       if (settings.getCustomOrgLdapSettings() != null) {
@@ -1137,8 +1155,8 @@ public class Checks {
       
       // Check optional fields
       if (section.getNetworks() != null) {
-	      for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : section.getNetworks()) {
-	         checkNetwork(network);
+	      for (org.jclouds.dmtf.ovf.Network network : section.getNetworks()) {
+	         checkOvfNetwork(network);
 	      }
       }
 
@@ -1146,7 +1164,7 @@ public class Checks {
       checkOvfSectionType(section);
    }
 
-   public static void checkNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network network) {
+   public static void checkOvfNetwork(org.jclouds.dmtf.ovf.Network network) {
       assertNotNull(network, String.format(NOT_NULL_OBJ_FMT, "Network"));
       
       // Check optional fields
@@ -1237,9 +1255,8 @@ public class Checks {
       // Check required fields
       assertNotNull(val.getNetwork(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Network", "NetworkConnection"));
       assertNotNull(val.getIpAddressAllocationMode(), String.format(NOT_NULL_OBJ_FIELD_FMT, "IpAddressAllocationMode", "NetworkConnection"));
-      IpAddressAllocationMode mode = NetworkConnection.IpAddressAllocationMode.valueOf(val.getIpAddressAllocationMode());
-      assertTrue(NetworkConnection.IpAddressAllocationMode.ALL.contains(mode), 
-               String.format(REQUIRED_VALUE_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection", val.getIpAddressAllocationMode(), Iterables.toString(NetworkConnection.IpAddressAllocationMode.ALL)));
+      assertNotEquals(val.getIpAddressAllocationMode(), NetworkConnection.IpAddressAllocationMode.UNRECOGNIZED,
+            String.format(REQUIRED_VALUE_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection", val.getIpAddressAllocationMode(), Iterables.toString(NetworkConnection.IpAddressAllocationMode.ALL)));
       
       // Check optional fields
       if (val.getIpAddress() != null) {
@@ -1258,7 +1275,7 @@ public class Checks {
       // Check fields
       // TODO
 
-      for (ResourceAllocationSettingData item : items.getItems()) {
+      for (RasdItem item : items.getItems()) {
          checkResourceAllocationSettingData(item);
       }
    }
@@ -1271,7 +1288,7 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ProductSection"));
 
       if (val.getProperties() != null) {
-         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Property property : val.getProperties()) {
+         for (org.jclouds.dmtf.ovf.Property property : val.getProperties()) {
             checkOvfProperty(property);
          }
       }
@@ -1280,7 +1297,7 @@ public class Checks {
       checkOvfSectionType(val);
    }
 
-   private static void checkOvfProperty(org.jclouds.vcloud.director.v1_5.domain.ovf.Property val) {
+   private static void checkOvfProperty(org.jclouds.dmtf.ovf.Property val) {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "Property"));
    }
 
@@ -1288,16 +1305,12 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "NetworkSection"));
 
       if (val.getNetworks() != null) {
-         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : val.getNetworks()) {
+         for (org.jclouds.dmtf.ovf.Network network : val.getNetworks()) {
             checkOvfNetwork(network);
          }
       }
       
       checkOvfSectionType(val);
-   }
-
-   private static void checkOvfNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network val) {
-      assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "Network"));
    }
 
    public static void checkOvfEnvelope(Envelope val) {
@@ -1365,7 +1378,7 @@ public class Checks {
       
       if (section.getItems() != null) {
          for (ResourceAllocationSettingData item : section.getItems()) {
-            checkCimResourceAllocationSettingData(item);
+            checkCimResourceAllocationSettingData((RasdItem) item);
          }
       }
       if (section.getSystem() != null) {
@@ -1381,7 +1394,7 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "VirtualSystemSettingData"));
    }
 
-   private static void checkCimResourceAllocationSettingData(ResourceAllocationSettingData val) {
+   private static void checkCimResourceAllocationSettingData(RasdItem val) {
       // TODO Could do more assertions...
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocatoinSettingData"));
    }

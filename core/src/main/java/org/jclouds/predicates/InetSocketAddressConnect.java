@@ -27,8 +27,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 
+import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 
 /**
@@ -48,8 +48,8 @@ public class InetSocketAddressConnect implements SocketOpen {
    private int timeout = 2000;
 
    @Override
-   public boolean apply(IPSocket socketA) {
-      InetSocketAddress socketAddress = new InetSocketAddress(socketA.getAddress(), socketA
+   public boolean apply(HostAndPort socketA) {
+      InetSocketAddress socketAddress = new InetSocketAddress(socketA.getHostText(), socketA
                .getPort());
       Socket socket = null;
       try {

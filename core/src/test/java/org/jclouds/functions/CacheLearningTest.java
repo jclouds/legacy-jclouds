@@ -24,9 +24,9 @@ import java.util.concurrent.ExecutionException;
 
 import org.testng.annotations.Test;
 
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**

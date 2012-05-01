@@ -19,20 +19,21 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -42,8 +43,8 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user", "task" }, singleThreaded = true, testName = "TaskClientExpectTest")
-public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "TaskClientExpectTest")
+public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    @Test
    public void testTaskListForValidOrg() {
@@ -81,11 +82,11 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
               .name("Tasks Lists")
               .type("application/vnd.vmware.vcloud.tasksList+xml")
               .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-              .task(taskTwo())
               .task(taskOne())
+              .task(taskTwo())
               .build();
 
-      assertEquals(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")).toString(), expected.toString());
+      assertEquals(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")), expected);
    }
 
    @Test
@@ -162,20 +163,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
 
-		Error expected = Error.builder()
-				.message("No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".")
-				.majorErrorCode(403)
-				.minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-				.build();
-
-		try {
-			client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"));
-			fail("Should give HTTP 403 error");
-		} catch (VCloudDirectorException vde) {
-			assertEquals(vde.getError(), expected);
-		} catch (Exception e) {
-			fail("Should have thrown a VCloudDirectorException");
-		}
+		assertNull(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
    }
 
    @Test

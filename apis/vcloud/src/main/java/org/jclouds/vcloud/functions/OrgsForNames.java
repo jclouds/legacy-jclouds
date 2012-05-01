@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 
@@ -53,14 +54,14 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<Org>> {
 
    @Override
    public Iterable<Org> apply(Iterable<String> from) {
-      return transformParallel(from, new Function<String, Future<Org>>() {
+      return Iterables2.concreteCopy(transformParallel(from, new Function<String, Future<? extends Org>>() {
 
          @Override
          public Future<Org> apply(String from) {
             return aclient.getOrgClient().findOrgNamed(from);
          }
 
-      }, executor, null, logger, "organizations for names");
+      }, executor, null, logger, "organizations for names"));
    }
 
 }

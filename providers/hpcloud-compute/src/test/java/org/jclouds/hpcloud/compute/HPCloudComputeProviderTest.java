@@ -35,8 +35,8 @@
  */
 package org.jclouds.hpcloud.compute;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +47,6 @@ import org.testng.annotations.Test;
 public class HPCloudComputeProviderTest extends BaseProviderMetadataTest {
 
    public HPCloudComputeProviderTest() {
-      super(new HPCloudComputeProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new HPCloudComputeProviderMetadata(), new NovaApiMetadata());
    }
 }

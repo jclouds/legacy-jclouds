@@ -23,8 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.domain.S3Object;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.s3.domain.S3Object;
 
 import com.google.common.base.Function;
 

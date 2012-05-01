@@ -18,9 +18,9 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.createRunScript;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;

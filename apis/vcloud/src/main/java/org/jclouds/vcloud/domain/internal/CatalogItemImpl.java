@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.ReferenceType;

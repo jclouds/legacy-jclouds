@@ -18,16 +18,8 @@
  */
 package org.jclouds.crypto;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteProcessor;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.InputSupplier;
-import org.jclouds.encryption.internal.Base64;
-import org.jclouds.io.InputSuppliers;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.crypto.Mac;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,7 +29,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.crypto.Mac;
+
+import org.jclouds.encryption.internal.Base64;
+import org.jclouds.io.InputSuppliers;
+
+import com.google.common.annotations.Beta;
+import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteProcessor;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.InputSupplier;
 
 /**
  * functions related to but not in {@link com.google.common.io.ByteStreams}
@@ -174,8 +176,7 @@ public class CryptoStreams {
       try {
          return digest(supplier, MessageDigest.getInstance("SHA1"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -183,8 +184,7 @@ public class CryptoStreams {
       try {
          return sha1(ByteStreams.newInputStreamSupplier(in));
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
    
@@ -205,8 +205,7 @@ public class CryptoStreams {
       try {
          return digest(supplier, MessageDigest.getInstance("MD5"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -214,8 +213,7 @@ public class CryptoStreams {
       try {
          return md5(ByteStreams.newInputStreamSupplier(in));
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class CloudFilesServiceIntegrationLiveTest extends SwiftServiceIntegrationLiveTest {
-
+   public CloudFilesServiceIntegrationLiveTest(){
+      provider = "cloudfiles";
+   }
 }

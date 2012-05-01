@@ -18,13 +18,11 @@
  */
 package org.jclouds.azureblob;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Microsoft Azure Blob Service.
@@ -32,85 +30,55 @@ import org.jclouds.providers.ProviderMetadata;
  * @author Adrian Cole
  */
 public class AzureBlobProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "azureblob";
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8271570736207734777L;
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public AzureBlobProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Microsoft Azure Blob Service";
+   public AzureBlobProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Account Name";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Access Key";
+      protected Builder(){
+            id("azureblob")
+            .name("Microsoft Azure Blob Service")
+            .apiMetadata(new AzureBlobApiMetadata())
+            .endpoint("https://${jclouds.identity}.blob.core.windows.net")
+            .homepage(URI.create("http://www.microsoft.com/windowsazure/storage/"))
+            .console(URI.create("https://windows.azure.com/default.aspx"))
+            .linkedServices("azureblob", "azurequeue", "azuretable")
+            .iso3166Codes("US-TX","US-IL","IE-D","SG","NL-NH","HK")
+            .defaultProperties(AzureBlobProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public AzureBlobProviderMetadata build() {
+         return new AzureBlobProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.microsoft.com/windowsazure/storage/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://windows.azure.com/default.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("azureblob", "azurequeue", "azuretable");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-TX","US-IL","IE-D","SG","NL-NH","HK");
-   }
-
 }

@@ -18,13 +18,14 @@
  */
 package org.jclouds.bluelock.vcloud.zone01;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.vcloud.VCloudApiMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Zone 1.
@@ -33,84 +34,55 @@ import org.jclouds.providers.ProviderMetadata;
  */
 public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "bluelock-vcloud-zone01";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -2931858111365760610L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public BluelockVCloudZone01ProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Bluelock vCloud Zone 1";
+   public BluelockVCloudZone01ProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User at Organization (user@org)";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "internet01-.*");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+      protected Builder(){
+         id("bluelock-vcloud-zone01")
+         .name("Bluelock vCloud Zone 1")
+               .apiMetadata(
+                     new VCloudApiMetadata().toBuilder().buildVersion("1.5.0.464915").build())
+         .homepage(URI.create("http://www.bluelock.com/bluelock-cloud-hosting"))
+         .console(URI.create("https://zone01.bluelock.com/cloud/org/YOUR_ORG_HERE"))
+         .iso3166Codes("US-IN")
+         .endpoint("https://zone01.bluelock.com/api")
+         .defaultProperties(BluelockVCloudZone01ProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public BluelockVCloudZone01ProviderMetadata build() {
+         return new BluelockVCloudZone01ProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.bluelock.com/bluelock-cloud-hosting");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://zone01.bluelock.com/cloud/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("bluelock-vcloud-zone01");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-IN");
-   }
-
 }

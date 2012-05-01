@@ -18,9 +18,10 @@
  */
 package org.jclouds.rimuhosting.miro.domain;
 
-import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingTimestamp;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Ivan Meredith

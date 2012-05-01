@@ -22,16 +22,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Permission;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
+import org.jclouds.ec2.domain.Permission;
 import org.jclouds.ec2.options.CreateImageOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.RegisterImageBackedByEbsOptions;
 import org.jclouds.ec2.options.RegisterImageOptions;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides access to EC2 via their REST API.

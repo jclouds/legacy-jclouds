@@ -25,8 +25,8 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -47,9 +47,9 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
@@ -106,7 +106,7 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
    public Iterable<Entry<String, DescribeImagesOptions>> getDescribeQueriesForOwnersInRegions(Set<String> regions,
          String[] amiOwners) {
       DescribeImagesOptions options = getOptionsForOwners(amiOwners);
-      Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
+      Builder<String, DescribeImagesOptions> builder = ImmutableMap.builder();
       for (String region : regions)
          builder.put(region, options);
       return builder.build().entrySet();

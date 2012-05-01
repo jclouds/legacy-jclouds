@@ -18,8 +18,8 @@
  */
 package org.jclouds.elastichosts;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class ElasticHostsBlueSquareLondonProviderTest extends BaseProviderMetadataTest {
 
    public ElasticHostsBlueSquareLondonProviderTest() {
-      super(new ElasticHostsBlueSquareLondonProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new ElasticHostsBlueSquareLondonProviderMetadata(), new ElasticStackApiMetadata());
    }
 }

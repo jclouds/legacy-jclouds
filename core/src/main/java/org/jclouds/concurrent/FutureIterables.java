@@ -58,50 +58,51 @@ import com.google.inject.Inject;
 public class FutureIterables {
    @Resource
    private static Logger logger = Logger.CONSOLE;
-
+   
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
    private static int maxRetries = 5;
-
+   
    @Inject(optional = true)
    @Named(Constants.PROPERTY_RETRY_DELAY_START)
    private static long delayStart = 50L;
-
+   
    @Inject(optional = true)
    private static BackoffLimitedRetryHandler retryHandler = BackoffLimitedRetryHandler.INSTANCE;
-
+   
    public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
-            final Function<? super F, Future<T>> function) {
+         final Function<? super F, Future<? extends T>> function) {
       return transformParallel(fromIterable, function, org.jclouds.concurrent.MoreExecutors.sameThreadExecutor(), null);
    }
-
+   
    public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
-            final Function<? super F, Future<T>> function, ExecutorService exec, @Nullable Long maxTime) {
+         final Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime) {
       return transformParallel(fromIterable, function, exec, maxTime, logger, "transforming");
    }
-
+   
    public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
-            final Function<? super F, Future<T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
-            String logPrefix) {
+         final Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
+               String logPrefix) {
       return transformParallel(fromIterable, function, exec, maxTime, logger, logPrefix, retryHandler, maxRetries);
    }
-
+   
    @SuppressWarnings("unchecked")
    public static <F, T> Iterable<T> transformParallel(Iterable<F> fromIterable,
-            Function<? super F, Future<T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
-            String logPrefix, BackoffLimitedRetryHandler retryHandler, int maxRetries) {
+         Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
+               String logPrefix, BackoffLimitedRetryHandler retryHandler, int maxRetries) {
       Map<F, Exception> exceptions = newHashMap();
-      Map<F, Future<T>> responses = newHashMap();
+      Map<F, Future<? extends T>> responses = newHashMap();
       for (int i = 0; i < maxRetries; i++) {
-
+         
          for (F from : fromIterable) {
-            responses.put(from, function.apply(from));
+            Future<? extends T> to = function.apply(from);
+            responses.put(from, to);
          }
          exceptions = awaitCompletion(responses, exec, maxTime, logger, logPrefix);
          if (exceptions.size() > 0 && !any(exceptions.values(), containsThrowable(AuthorizationException.class))) {
             fromIterable = exceptions.keySet();
             retryHandler.imposeBackoffExponentialDelay(delayStart, 2, i + 1, maxRetries,
-                     String.format("error %s: %s: %s", logPrefix, fromIterable, exceptions));
+                  String.format("error %s: %s: %s", logPrefix, fromIterable, exceptions));
          } else {
             break;
          }
@@ -109,13 +110,13 @@ public class FutureIterables {
       //make sure we propagate any authorization exception so that we don't lock out accounts
       if (exceptions.size() > 0)
          return propagateAuthorizationOrOriginalException(new TransformParallelException((Map) responses, exceptions,
-                  logPrefix));
-
+               logPrefix));
+      
       return unwrap(responses.values());
    }
-
+   
    public static <T> Map<T, Exception> awaitCompletion(Map<T, ? extends Future<?>> responses, ExecutorService exec,
-            @Nullable Long maxTime, final Logger logger, final String logPrefix) {
+         @Nullable Long maxTime, final Logger logger, final String logPrefix) {
       final ConcurrentMap<T, Exception> errorMap = newConcurrentMap();
       if (responses.size() == 0)
          return errorMap;
@@ -126,7 +127,7 @@ public class FutureIterables {
       final long start = System.currentTimeMillis();
       for (final java.util.Map.Entry<T, ? extends Future<?>> future : responses.entrySet()) {
          Futures.makeListenable(future.getValue(), exec).addListener(new Runnable() {
-
+            
             @Override
             public void run() {
                try {
@@ -168,11 +169,11 @@ public class FutureIterables {
       }
       return errorMap;
    }
-
-   public static <T> Iterable<T> unwrap(Iterable<Future<T>> values) {
-      return transform(values, new Function<Future<T>, T>() {
+   
+   public static <T> Iterable<T> unwrap(Iterable<Future<? extends T>> values) {
+      return transform(values, new Function<Future<? extends T>, T>() {
          @Override
-         public T apply(Future<T> from) {
+         public T apply(Future<? extends T> from) {
             try {
                return from.get();
             } catch (InterruptedException e) {
@@ -189,20 +190,20 @@ public class FutureIterables {
          }
       });
    }
-
+   
    private static void logException(Logger logger, String logPrefix, int total, int complete, int errors, long start,
-            Exception e) {
+         Exception e) {
       String message = message(logPrefix, total, complete, errors, start);
       logger.error(e, message);
    }
-
+   
    private static String message(String prefix, int size, int complete, int errors, long start) {
       return String.format("%s, completed: %d/%d, errors: %d, rate: %dms/op", prefix, complete, size, errors,
-               (long) ((System.currentTimeMillis() - start) / ((double) size)));
+            (long) ((System.currentTimeMillis() - start) / ((double) size)));
    }
-
+   
    protected static boolean timeOut(long start, Long maxTime) {
       return maxTime != null ? System.currentTimeMillis() < start + maxTime : false;
    }
-
+   
 }

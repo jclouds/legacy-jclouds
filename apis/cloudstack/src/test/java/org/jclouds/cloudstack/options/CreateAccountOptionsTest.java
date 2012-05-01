@@ -18,13 +18,14 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.CreateAccountOptions.Builder.account;
 import static org.jclouds.cloudstack.options.CreateAccountOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.CreateAccountOptions.Builder.networkDomain;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code CreateAccountOptions}

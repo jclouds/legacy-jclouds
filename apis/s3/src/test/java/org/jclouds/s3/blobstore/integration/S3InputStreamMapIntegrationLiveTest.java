@@ -18,13 +18,18 @@
  */
 package org.jclouds.s3.blobstore.integration;
 
+import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" })
+@Test(groups = "live", testName = "S3InputStreamMapIntegrationLiveTest")
 public class S3InputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
 
+   public S3InputStreamMapIntegrationLiveTest() {
+      provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
 }

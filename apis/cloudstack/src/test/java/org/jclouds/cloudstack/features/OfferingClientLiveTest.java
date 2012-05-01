@@ -34,6 +34,8 @@ import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -64,7 +66,8 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
          } catch (NoSuchElementException e) {
             // This bug is present both in 2.2.8 and 2.2.12
-           assertTrue("2.2.8".equals(apiVersion) || "2.2.12".equals(apiVersion));
+            assertTrue(Predicates.in(ImmutableSet.of("2.2.8", "2.2.12")).apply(
+                     cloudStackContext.getProviderMetadata().getApiMetadata().getVersion()));
          }
       }
    }

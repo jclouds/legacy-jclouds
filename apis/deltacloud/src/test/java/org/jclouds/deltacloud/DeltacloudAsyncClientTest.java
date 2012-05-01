@@ -23,9 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.functions.ReturnVoidOnRedirectedDelete;
@@ -41,17 +41,14 @@ import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.RealmHandler;
 import org.jclouds.deltacloud.xml.RealmsHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptyMultimapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -67,9 +64,10 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "DeltacloudAsyncClientTest")
-public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncClient> {
+public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsyncClient> {
    public void testGetCollections() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DeltacloudAsyncClient.class.getMethod("getCollections");
       HttpRequest httpRequest = processor.createRequest(method);
@@ -85,7 +83,7 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
       assertRequestLineEquals(httpRequest, "GET http://localhost:3001/api HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
@@ -233,7 +231,7 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    public void testCreateInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DeltacloudAsyncClient.class.getMethod("createInstance", String.class,
-               CreateInstanceOptions[].class);
+            CreateInstanceOptions[].class);
       GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method, "imageId-1");
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api/instances HTTP/1.1");
@@ -250,9 +248,9 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    public void testCreateInstanceWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DeltacloudAsyncClient.class.getMethod("createInstance", String.class,
-               CreateInstanceOptions[].class);
+            CreateInstanceOptions[].class);
       GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method, "imageId-1",
-               CreateInstanceOptions.Builder.named("foo"));
+            CreateInstanceOptions.Builder.named("foo"));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\n");
@@ -268,8 +266,8 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    public void testPerformAction() throws IOException, SecurityException, NoSuchMethodException {
       Method method = DeltacloudAsyncClient.class.getMethod("performAction", HttpRequest.class);
-      HttpRequest request = processor.createRequest(method, HttpRequest.builder().method("POST").endpoint(
-               URI.create("https://delta/instance1/reboot")).build());
+      HttpRequest request = processor.createRequest(method,
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://delta/instance1/reboot")).build());
 
       assertRequestLineEquals(request, "POST https://delta/instance1/reboot HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
@@ -299,8 +297,7 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
       return new DeltacloudRestClientModuleExtension();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    public static class DeltacloudRestClientModuleExtension extends DeltacloudRestClientModule {
 
       @Override
@@ -314,7 +311,8 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
       }
 
       @Override
-      protected Supplier<URI> provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      protected Supplier<URI> provideHardwareProfileCollection(
+            Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
          return Suppliers.ofInstance(URI.create("http://localhost:3001/api/profiles"));
       }
 
@@ -329,15 +327,13 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
       }
 
       @Override
-      protected Supplier<URI> provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      protected Supplier<URI> provideInstanceStateCollection(
+            Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
          return Suppliers.ofInstance(URI.create("http://localhost:3001/api/instance_states"));
       }
    }
 
-   @Override
-   public RestContextSpec<DeltacloudClient, DeltacloudAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      props.setProperty("deltacloud.endpoint", "http://localhost:3001/api");
-      return new RestContextFactory().createContextSpec("deltacloud", "foo", "bar", props);
+   protected ApiMetadata createApiMetadata() {
+      return new DeltacloudApiMetadata();
    }
 }

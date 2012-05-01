@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.date.internal;
-import static org.jclouds.date.internal.DateUtils.*;
+import static org.jclouds.date.internal.DateUtils.findTZ;
+import static org.jclouds.date.internal.DateUtils.trimTZ;
+import static org.jclouds.date.internal.DateUtils.trimToMillis;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -155,6 +157,8 @@ public class SimpleDateFormatDateService implements DateService {
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
       toParse += tz;
+      if (toParse.charAt(10) == ' ')
+         toParse = new StringBuilder(toParse).replace(10, 11, "T").toString();
       synchronized (iso8601SecondsSimpleDateFormat) {
          try {
             return iso8601SecondsSimpleDateFormat.parse(toParse);

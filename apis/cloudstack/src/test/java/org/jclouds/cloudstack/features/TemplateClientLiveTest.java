@@ -18,22 +18,39 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import org.jclouds.cloudstack.domain.*;
-import org.jclouds.cloudstack.options.*;
+import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.net.URLDecoder;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.ExtractMode;
+import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.OSType;
+import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.TemplateExtraction;
+import org.jclouds.cloudstack.domain.TemplateMetadata;
+import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.Volume;
+import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.options.CreateTemplateOptions;
+import org.jclouds.cloudstack.options.ListNetworksOptions;
+import org.jclouds.cloudstack.options.ListVolumesOptions;
+import org.jclouds.cloudstack.options.RegisterTemplateOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.util.Set;
-
-import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
-import static org.testng.Assert.*;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code TemplateClient}
@@ -132,7 +149,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       String extractUrl = extract.getUrl();
       assertNotNull(extractUrl);
       URI uri = new URI(URLDecoder.decode(extractUrl, "utf-8"));
-      assertTrue(context.utils().http().exists(uri), "does not exist: " + uri);
+      assertTrue(cloudStackContext.utils().http().exists(uri), "does not exist: " + uri);
    }
 
    @Test(enabled = true)

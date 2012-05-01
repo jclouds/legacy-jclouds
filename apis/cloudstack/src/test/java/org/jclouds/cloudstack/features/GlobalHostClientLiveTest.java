@@ -23,11 +23,12 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import com.google.common.base.Strings;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Strings;
 
 /**
  * Tests behavior of {@code GlobalHostClient}

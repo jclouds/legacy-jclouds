@@ -69,12 +69,10 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
    @Override
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
       Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transformParallel(regions.get(),
-               new Function<String, Future<Set<SpotInstanceRequest>>>() {
-
-                  @SuppressWarnings("unchecked")
+               new Function<String, Future<? extends Set<SpotInstanceRequest>>>() {
                   @Override
-                  public Future<Set<SpotInstanceRequest>> apply(String from) {
-                     return (Future<Set<SpotInstanceRequest>>) client.getSpotInstanceServices()
+                  public Future<? extends Set<SpotInstanceRequest>> apply(String from) {
+                     return client.getSpotInstanceServices()
                               .describeSpotInstanceRequestsInRegion(from);
                   }
 

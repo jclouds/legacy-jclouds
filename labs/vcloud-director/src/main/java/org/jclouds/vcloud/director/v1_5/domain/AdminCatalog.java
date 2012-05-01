@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 /**
  * Admin representation of the container for meta data (key-value pair) associated to different
  * entities in the system.
@@ -39,12 +40,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "AdminCatalog")
 @XmlType(name = "AdminCatalogType")
-public class AdminCatalog extends CatalogType {
+public class AdminCatalog extends Catalog {
    
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromAdminCatalog(this);
    }
@@ -52,8 +54,9 @@ public class AdminCatalog extends CatalogType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends CatalogType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Catalog.Builder<B> {
       
+      @Override
       public AdminCatalog build() {
          return new AdminCatalog(this);
       }

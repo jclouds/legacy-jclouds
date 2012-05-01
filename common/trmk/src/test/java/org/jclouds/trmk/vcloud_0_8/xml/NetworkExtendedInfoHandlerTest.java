@@ -26,7 +26,6 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.trmk.vcloud_0_8.domain.NetworkExtendedInfo;
-import org.jclouds.trmk.vcloud_0_8.xml.NetworkExtendedInfoHandler;
 import org.testng.annotations.Test;
 
 /**

@@ -18,8 +18,8 @@
  */
 package org.jclouds.bluelock.vcloud.zone01;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class BluelockVCloudZone01ProviderTest extends BaseProviderMetadataTest {
 
    public BluelockVCloudZone01ProviderTest() {
-      super(new BluelockVCloudZone01ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new BluelockVCloudZone01ProviderMetadata(), new VCloudApiMetadata());
    }
 }

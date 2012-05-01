@@ -23,10 +23,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -69,13 +69,15 @@ public class HPCloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLi
 
    @Test
    public void testTemplateBuilder() {
-      Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu Oneiric 11.10 Server 64-bit 20111212");
+      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu Oneiric 11.10 Server 64-bit 20120311");
       assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "ubuntu");
       assertEquals(defaultTemplate.getLocation().getId(), "az-2.region-a.geo-1");
+      assertEquals(defaultTemplate.getImage().getLocation().getId(), "az-2.region-a.geo-1");
+      assertEquals(defaultTemplate.getHardware().getLocation().getId(), "az-2.region-a.geo-1");
       assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).shouldAutoAssignFloatingIp(), true);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }

@@ -34,7 +34,6 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.initializer>org.jclouds.walrus.blobstore.WalrusTestInitializer</test.initializer>
     <test.walrus.endpoint>http://ecc.eucalyptus.com:8773/services/Walrus</test.walrus.endpoint>
     <test.walrus.api-version>2006-03-01</test.walrus.api-version>
     <test.walrus.build-version></test.walrus.build-version>
@@ -101,7 +100,6 @@
                 </goals>
                 <configuration>
                   <systemPropertyVariables>
-                    <test.initializer>${test.initializer}</test.initializer>
                     <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                     <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                     <test.walrus.endpoint>${test.walrus.endpoint}</test.walrus.endpoint>

@@ -18,99 +18,90 @@
  */
 package org.jclouds.aws.ec2;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Amazon's
  * Elastic Compute Cloud (EC2) provider.
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
 public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "aws-ec2";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public AWSEC2ProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Amazon Elastic Compute Cloud (EC2)";
+   public AWSEC2ProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Access Key ID";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      // sometimes, like in ec2, stop takes a very long time, perhaps
+      // due to volume management. one example spent 2 minutes moving
+      // from stopping->stopped state on an ec2 micro
+      properties.setProperty(TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
+      properties.putAll(Region.regionProperties());
+      // Amazon Linux, Amazon Windows, alestic, canonical, and rightscale
+      properties.setProperty(PROPERTY_EC2_AMI_QUERY,
+               "owner-id=137112412989,801119661308,063491364108,099720109477,411009282317;state=available;image-type=machine");
+      // amis that work with the cluster instances
+      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1);
+      properties
+               .setProperty(
+                        PROPERTY_EC2_CC_AMI_QUERY,
+                        "virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;state=available;image-type=machine;root-device-type=ebs");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Access Key";
-   }
+      protected Builder(){
+         id("aws-ec2")
+         .name("Amazon Elastic Compute Cloud (EC2)")
+         .apiMetadata(new AWSEC2ApiMetadata())
+         .endpoint("https://ec2.us-east-1.amazonaws.com")
+         .homepage(URI.create("http://aws.amazon.com/ec2"))
+         .console(URI.create("https://console.aws.amazon.com/ec2/home"))
+         .defaultProperties(AWSEC2ProviderMetadata.defaultProperties())
+         .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+         .iso3166Codes("US-VA", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13");
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://aws.amazon.com/ec2/");
-   }
+      @Override
+      public AWSEC2ProviderMetadata build() {
+         return new AWSEC2ProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://console.aws.amazon.com/ec2/home");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("aws-s3", "aws-ec2", "aws-elb", "aws-simpledb");
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13");
-   }
-
 }

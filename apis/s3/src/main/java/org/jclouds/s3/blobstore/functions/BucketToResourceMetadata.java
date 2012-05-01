@@ -22,12 +22,12 @@ package org.jclouds.s3.blobstore.functions;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.domain.BucketMetadata;
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.domain.Location;
+import org.jclouds.s3.domain.BucketMetadata;
 
 import com.google.common.base.Function;
 

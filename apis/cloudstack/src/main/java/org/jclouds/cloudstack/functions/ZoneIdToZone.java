@@ -18,13 +18,14 @@
  */
 package org.jclouds.cloudstack.functions;
 
-import com.google.common.cache.CacheLoader;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.ZoneClient;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.cache.CacheLoader;
+import com.google.inject.Inject;
 
 /**
  * Defines a cache that allows a zone to be looked up by its ID.

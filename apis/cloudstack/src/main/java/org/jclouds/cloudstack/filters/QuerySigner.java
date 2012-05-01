@@ -18,11 +18,17 @@
  */
 package org.jclouds.cloudstack.filters;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Multimap;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
@@ -34,17 +40,15 @@ import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.util.Strings2;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
-import java.util.Map.Entry;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Multimap;
 
 /**
  * 
@@ -69,9 +73,8 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    private Logger signatureLog = Logger.NULL;
 
    @Inject
-   public QuerySigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-         @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, Crypto crypto, HttpUtils utils,
-         Provider<UriBuilder> builder) {
+   public QuerySigner(SignatureWire signatureWire, @Identity String accessKey, @Credential String secretKey,
+            Crypto crypto, HttpUtils utils, Provider<UriBuilder> builder) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
@@ -120,7 +123,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
       utils.logRequest(signatureLog, request, ">>");
 
       // encode each parameter value first,
-      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.<String> naturalOrder();
+      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.naturalOrder();
       for (Entry<String, String> entry : decodedParams.entries())
          builder.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
 

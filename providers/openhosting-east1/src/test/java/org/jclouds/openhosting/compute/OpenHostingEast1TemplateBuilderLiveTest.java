@@ -24,10 +24,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -52,16 +52,16 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case WINDOWS:
-                  return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
-               case UBUNTU:
-                  return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
-               case DEBIAN:
-                  return (input.version.equals("") || input.version.matches("[56].0")) && input.is64Bit;
-               case CENTOS:
-                  return (input.version.equals("") || input.version.matches("5.[567]")) && input.is64Bit;
-               default:
-                  return false;
+            case WINDOWS:
+               return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
+            case UBUNTU:
+               return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
+            case DEBIAN:
+               return (input.version.equals("") || input.version.matches("[56].0")) && input.is64Bit;
+            case CENTOS:
+               return (input.version.equals("") || input.version.matches("5.[567]")) && input.is64Bit;
+            default:
+               return false;
             }
          }
 
@@ -70,7 +70,7 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
@@ -80,6 +80,6 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-FL");
+      return ImmutableSet.<String> of("US-VA");
    }
 }

@@ -25,45 +25,47 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.Utils;
 import org.jclouds.domain.Credentials;
+import org.jclouds.internal.BaseView;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
+public class ComputeServiceContextImpl extends BaseView implements ComputeServiceContext {
    private final ComputeService computeService;
-   private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
-   private final Map<String, Credentials> credentialStore;
 
-   @SuppressWarnings( { "unchecked" })
    @Inject
-   public ComputeServiceContextImpl(ComputeService computeService, Map<String, Credentials> credentialStore,
-            Utils utils, @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
-      this.credentialStore = credentialStore;
-      this.utils = utils;
-      this.providerSpecificContext = providerSpecificContext;
+   public ComputeServiceContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
+            ComputeService computeService, Utils utils) {
+      super(backend, backendType);
       this.computeService = checkNotNull(computeService, "computeService");
+      this.utils = checkNotNull(utils, "utils");
    }
-
+   
+   @Override
    public ComputeService getComputeService() {
       return computeService;
    }
 
-   @SuppressWarnings( { "unchecked", "hiding" })
+   @SuppressWarnings("unchecked")
    @Override
    public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) providerSpecificContext;
+      return (RestContext<S, A>) delegate();
    }
 
    @Override
    public void close() {
-      providerSpecificContext.close();
+      delegate().close();
    }
 
    @Override
@@ -76,27 +78,14 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
       return utils;
    }
 
-   public int hashCode() {
-      return providerSpecificContext.hashCode();
-   }
-
    @Override
-   public String toString() {
-      return providerSpecificContext.toString();
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      return providerSpecificContext.equals(obj);
+   public Map<String, Credentials> credentialStore() {
+      return utils().credentialStore();
    }
 
    @Override
    public Map<String, Credentials> getCredentialStore() {
-      return credentialStore;
+      return utils().credentialStore();
    }
 
-   @Override
-   public Map<String, Credentials> credentialStore() {
-      return credentialStore;
-   }
 }

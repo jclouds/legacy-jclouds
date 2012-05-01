@@ -119,7 +119,12 @@ public class NovaComputeServiceAdapter implements
       String flavorId = template.getHardware().getProviderId();
 
       logger.debug(">> creating new server zone(%s) name(%s) image(%s) flavor(%s) options(%s)", zoneId, name, imageId, flavorId, options);
-      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      Server lightweightServer = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      Server heavyweightServer = novaClient.getServerClientForZone(zoneId).getServer(lightweightServer.getId());
+      Server server = Server.builder().fromServer(heavyweightServer)
+                                      .adminPass(lightweightServer.getAdminPass())
+                                      .build();
+
       logger.trace("<< server(%s)", server.getId());
 
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
@@ -131,7 +136,7 @@ public class NovaComputeServiceAdapter implements
 
    @Override
    public Iterable<FlavorInZone> listHardwareProfiles() {
-      Builder<FlavorInZone> builder = ImmutableSet.<FlavorInZone> builder();
+      Builder<FlavorInZone> builder = ImmutableSet.builder();
       for (final String zoneId : zoneIds.get()) {
          builder.addAll(transform(novaClient.getFlavorClientForZone(zoneId).listFlavorsInDetail(),
                   new Function<Flavor, FlavorInZone>() {
@@ -148,7 +153,7 @@ public class NovaComputeServiceAdapter implements
 
    @Override
    public Iterable<ImageInZone> listImages() {
-      Builder<ImageInZone> builder = ImmutableSet.<ImageInZone> builder();
+      Builder<ImageInZone> builder = ImmutableSet.builder();
       for (final String zoneId : zoneIds.get()) {
          builder.addAll(transform(filter(novaClient.getImageClientForZone(zoneId).listImagesInDetail(), ImagePredicates
                   .statusEquals(Image.Status.ACTIVE)), new Function<Image, ImageInZone>() {
@@ -165,7 +170,7 @@ public class NovaComputeServiceAdapter implements
 
    @Override
    public Iterable<ServerInZone> listNodes() {
-      Builder<ServerInZone> builder = ImmutableSet.<ServerInZone> builder();
+      Builder<ServerInZone> builder = ImmutableSet.builder();
       for (final String zoneId : zoneIds.get()) {
          builder.addAll(transform(novaClient.getServerClientForZone(zoneId).listServersInDetail(),
                   new Function<Server, ServerInZone>() {

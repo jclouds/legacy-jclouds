@@ -75,7 +75,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
 
    public Iterable<Blob> execute(final String container, ListContainerOptions options) {
       Iterable<? extends BlobMetadata> list = getAllBlobMetadata.execute(container, options);
-      return transformParallel(list, new Function<BlobMetadata, Future<Blob>>() {
+      return transformParallel(list, new Function<BlobMetadata, Future<? extends Blob>>() {
 
          @Override
          public Future<Blob> apply(BlobMetadata from) {

@@ -18,27 +18,30 @@
  */
 package org.jclouds.compute.internal;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
+import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
+import org.jclouds.xml.XMLParser;
 
 import com.google.common.base.Function;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -51,12 +54,13 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    private final Function<NodeMetadata, SshClient> sshForNode;
 
    @Inject
-   UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-         Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
-         LoggerFactory loggerFactory, Function<NodeMetadata, SshClient> sshForNode) {
-      super(injector, json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, eventBus,
-            loggerFactory);
+   UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+            Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
+            Map<String, Credentials> credentialStore, LoggerFactory loggerFactory,
+            Function<NodeMetadata, SshClient> sshForNode) {
+      super(injector, json, xml, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, eventBus,
+            credentialStore, loggerFactory);
       this.sshForNode = sshForNode;
    }
 

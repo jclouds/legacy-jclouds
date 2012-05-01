@@ -18,8 +18,7 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +30,7 @@ import org.testng.annotations.Test;
 public class HPCloudObjectStorageProviderTest extends BaseProviderMetadataTest {
 
    public HPCloudObjectStorageProviderTest() {
-      super(new HPCloudObjectStorageProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new HPCloudObjectStorageProviderMetadata(), new HPCloudObjectStorageApiMetadata());
    }
 
 }

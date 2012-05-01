@@ -35,8 +35,8 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudservers.CloudServersApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +47,6 @@ import org.testng.annotations.Test;
 public class CloudServersUSProviderTest extends BaseProviderMetadataTest {
 
    public CloudServersUSProviderTest() {
-      super(new CloudServersUSProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new CloudServersUSProviderMetadata(), new CloudServersApiMetadata());
    }
 }

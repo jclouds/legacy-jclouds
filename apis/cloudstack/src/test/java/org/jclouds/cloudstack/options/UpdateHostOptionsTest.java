@@ -18,13 +18,16 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.cloudstack.options.UpdateHostOptions.Builder.allocationState;
+import static org.jclouds.cloudstack.options.UpdateHostOptions.Builder.hostTags;
+import static org.jclouds.cloudstack.options.UpdateHostOptions.Builder.osCategoryId;
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.UpdateHostOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code UpdateHostOptions}

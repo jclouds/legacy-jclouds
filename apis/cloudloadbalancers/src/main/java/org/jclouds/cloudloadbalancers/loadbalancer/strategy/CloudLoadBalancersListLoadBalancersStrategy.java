@@ -72,7 +72,7 @@ public class CloudLoadBalancersListLoadBalancersStrategy implements ListLoadBala
 
    @Override
    public Iterable<? extends LoadBalancerMetadata> listLoadBalancers() {
-      return transform(concat(transformParallel(regions.get(), new Function<String, Future<Set<LoadBalancer>>>() {
+      return transform(concat(transformParallel(regions.get(), new Function<String, Future<? extends Set<LoadBalancer>>>() {
 
          @Override
          public ListenableFuture<Set<LoadBalancer>> apply(String from) {

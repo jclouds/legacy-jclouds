@@ -49,8 +49,8 @@ import com.google.common.collect.ImmutableSet.Builder;
  *      />
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResponse> {
-   private Builder<ObjectMetadata> contents = ImmutableSet.<ObjectMetadata> builder();
-   private Builder<String> commonPrefixes = ImmutableSet.<String> builder();
+   private Builder<ObjectMetadata> contents = ImmutableSet.builder();
+   private Builder<String> commonPrefixes = ImmutableSet.builder();
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 

@@ -35,8 +35,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.slicehost.SlicehostAsyncClient;
-import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.compute.functions.FlavorToHardware;
 import org.jclouds.slicehost.compute.functions.SliceToNodeMetadata;
 import org.jclouds.slicehost.compute.functions.SlicehostImageToImage;
@@ -57,12 +55,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class SlicehostComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<SlicehostClient, SlicehostAsyncClient, Slice, Flavor, org.jclouds.slicehost.domain.Image, Location> {
-   public SlicehostComputeServiceContextModule() {
-      super(SlicehostClient.class, SlicehostAsyncClient.class);
-   }
+public class SlicehostComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<Slice, Flavor, org.jclouds.slicehost.domain.Image, Location> {
 
    @SuppressWarnings("unchecked")
    @Override

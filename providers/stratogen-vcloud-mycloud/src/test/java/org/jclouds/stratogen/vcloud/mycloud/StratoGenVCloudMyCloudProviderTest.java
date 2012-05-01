@@ -18,8 +18,8 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class StratoGenVCloudMyCloudProviderTest extends BaseProviderMetadataTest {
 
    public StratoGenVCloudMyCloudProviderTest() {
-      super(new StratoGenVCloudMyCloudProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new StratoGenVCloudMyCloudProviderMetadata(), new VCloudApiMetadata());
    }
 }

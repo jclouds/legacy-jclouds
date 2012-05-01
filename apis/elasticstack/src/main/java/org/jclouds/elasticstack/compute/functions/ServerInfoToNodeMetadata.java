@@ -19,7 +19,6 @@
 package org.jclouds.elasticstack.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveInfo;
@@ -74,10 +74,13 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
    private final Function<String, Image> findImageForId;
    private final Supplier<Location> locationSupplier;
    private final Function<Device, Volume> deviceToVolume;
+   private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    ServerInfoToNodeMetadata(Function<Server, String> getImageIdFromServer, Function<String, Image> findImageForId,
-         Function<Device, Volume> deviceToVolume, Supplier<Location> locationSupplier) {
+         Function<Device, Volume> deviceToVolume, Supplier<Location> locationSupplier,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.deviceToVolume = checkNotNull(deviceToVolume, "deviceToVolume");
       this.findImageForId = checkNotNull(findImageForId, "findImageForId");
@@ -91,7 +94,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.ids(from.getUuid());
       builder.name(from.getName());
       builder.location(locationSupplier.get());
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
 
       String imageId = getImageIdFromServer.apply(from);
       if (imageId != null) {

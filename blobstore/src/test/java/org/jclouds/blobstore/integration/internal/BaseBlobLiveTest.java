@@ -51,18 +51,18 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
       httpStreamMD5 = checkNotNull(httpStreamMD5 != null ? httpStreamMD5 : sysHttpStreamMD5, "httpStreamMd5");
 
-      HttpResponse response = context.utils().http().invoke(
+      HttpResponse response = view.utils().http().invoke(
                HttpRequest.builder().method("GET").endpoint(URI.create(httpStreamUrl)).build());
       long length = response.getPayload().getContentMetadata().getContentLength();
 
       String name = "hello";
       byte[] md5 = CryptoStreams.hex(httpStreamMD5);
 
-      Blob blob = context.getBlobStore().blobBuilder(name).payload(response.getPayload()).contentLength(length)
+      Blob blob = view.getBlobStore().blobBuilder(name).payload(response.getPayload()).contentLength(length)
                .contentMD5(md5).build();
       String container = getContainerName();
       try {
-         context.getBlobStore().putBlob(container, blob);
+         view.getBlobStore().putBlob(container, blob);
          checkMD5(container, name, md5);
       } finally {
          returnContainer(container);
@@ -70,7 +70,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    protected void checkMD5(String container, String name, byte[] md5) {
-      assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), md5);
+      assertEquals(view.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), md5);
    }
 
 }

@@ -18,8 +18,7 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class RimuHostingProviderTest extends BaseProviderMetadataTest {
 
    public RimuHostingProviderTest() {
-      super(new RimuHostingProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new RimuHostingProviderMetadata(), new RimuHostingApiMetadata());
    }
 }

@@ -19,19 +19,27 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Represents an asynchronous or long-running task in the vCloud environment.
@@ -45,29 +53,60 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
-public class Task extends EntityType {
+public class Task extends Entity {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
+   
+   @XmlType(name = "TaskStatus")
+   @XmlEnum(String.class)
+   public static enum Status {
+      /** The task has been queued for execution. */
+      @XmlEnumValue("queued") QUEUED("queued"),
+      /** The task is awaiting preprocessing or, if it is a blocking task, administrative action. */
+      @XmlEnumValue("preRunning") PRE_RUNNING("preRunning"),
+      /** The task is runnning. */
+      @XmlEnumValue("running") RUNNING("running"),
+      /** The task completed with a status of success. */
+      @XmlEnumValue("success") SUCCESS("success"),
+      /** The task encountered an error while running. */
+      @XmlEnumValue("error") ERROR("error"),
+      /** The task was canceled by the owner or an administrator. */
+      @XmlEnumValue("canceled") CANCELED("canceled"),
+      /** The task was aborted by an administrative action. */
+      @XmlEnumValue("aborted") ABORTED("aborted"),
+      @XmlEnumValue("") UNRECOGNIZED("unrecognized");
+      
+      public static final List<Status> ALL = ImmutableList.of(QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
 
-   public static class Status {
-      public static final String QUEUED = "queued";
-      public static final String PRE_RUNNING = "preRunning";
-      public static final String RUNNING = "running";
-      public static final String SUCCESS = "success";
-      public static final String ERROR = "error";
-      public static final String CANCELED = "canceled";
-      public static final String ABORTED = "aborted";
+      protected final String stringValue;
 
-      public static final List<String> ALL = Arrays.asList(
-            QUEUED, PRE_RUNNING, RUNNING, SUCCESS,
-            ERROR, CANCELED, ABORTED
-      );
+      Status(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, Status> STATUS_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(Status.values()), new Function<Status, String>() {
+               @Override
+               public String apply(Status input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static Status fromValue(String value) {
+         Status status = STATUS_BY_ID.get(checkNotNull(value, "stringValue"));
+         return status == null ? UNRECOGNIZED : status;
+      }
    }
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromTask(this);
    }
@@ -75,7 +114,7 @@ public class Task extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Error error;
       private Reference org;
@@ -83,7 +122,7 @@ public class Task extends EntityType {
       private Reference user;
       private Object params;
       private Integer progress;
-      private String status;
+      private Status status;
       private String operation;
       private String operationName;
       private Date startTime;
@@ -142,6 +181,14 @@ public class Task extends EntityType {
        * @see Task#getStatus()
        */
       public B status(String status) {
+         this.status = Status.fromValue(status);
+         return self();
+      }
+
+      /**
+       * @see Task#getStatus()
+       */
+      public B status(Status status) {
          this.status = status;
          return self();
       }
@@ -241,7 +288,7 @@ public class Task extends EntityType {
    @XmlElement(name = "Params")
    private Object params;
    @XmlAttribute
-   private String status;
+   private Status status;
    @XmlAttribute
    private String operation;
    @XmlAttribute
@@ -300,19 +347,8 @@ public class Task extends EntityType {
 
    /**
     * The execution status of the task.
-    *
-    * One of:
-    * <ul>
-    * <li>queued - The task has been queued for execution.
-    * <li>preRunning - The task is awaiting preprocessing or, if it is a blocking task, administrative action.
-    * <li>running - The task is runnning.
-    * <li>success - The task completed with a status of success.
-    * <li>error - The task encountered an error while running.
-    * <li>canceled - The task was canceled by the owner or an administrator.
-    * <li>aborted - The task was aborted by an administrative action.
-    * </ul>
     */
-   public String getStatus() {
+   public Status getStatus() {
       return status;
    }
 

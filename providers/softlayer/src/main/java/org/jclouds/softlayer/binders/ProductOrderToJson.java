@@ -18,11 +18,12 @@
  */
 package org.jclouds.softlayer.binders;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
 import org.jclouds.rest.Binder;
@@ -30,10 +31,11 @@ import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
-import javax.inject.Inject;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Converts a ProductOrder into a json string valid for placing an order via the softlayer api The

@@ -28,11 +28,9 @@ import java.util.Set;
 
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
@@ -177,11 +175,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    }
 
    public static class Builder {
-      @Deprecated
-      public static AWSEC2TemplateOptions overrideLoginUserWith(String user) {
-         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return options.overrideLoginUserWith(user);
-      }
 
       public static AWSEC2TemplateOptions overrideLoginUser(String user) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
@@ -201,18 +194,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       public static AWSEC2TemplateOptions overrideAuthenticateSudo(boolean authenticateSudo) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return options.overrideAuthenticateSudo(authenticateSudo);
-      }
-
-      @Deprecated
-      public static AWSEC2TemplateOptions overrideLoginCredentialWith(String credential) {
-         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return options.overrideLoginCredentialWith(credential);
-      }
-
-      @Deprecated
-      public static AWSEC2TemplateOptions overrideCredentialsWith(Credentials credentials) {
-         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return options.overrideCredentialsWith(credentials);
       }
 
       public static AWSEC2TemplateOptions overrideLoginCredentials(LoginCredentials credentials) {
@@ -553,15 +534,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    /**
     * {@inheritDoc}
     */
-   @Deprecated
-   @Override
-   public AWSEC2TemplateOptions runScript(Payload script) {
-      return AWSEC2TemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public AWSEC2TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       return AWSEC2TemplateOptions.class.cast(super.blockUntilRunning(blockUntilRunning));
@@ -598,34 +570,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    public AWSEC2TemplateOptions runScript(Statement script) {
       return AWSEC2TemplateOptions.class.cast(super.runScript(script));
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public AWSEC2TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return AWSEC2TemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public AWSEC2TemplateOptions overrideLoginUserWith(String loginUser) {
-      return AWSEC2TemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public AWSEC2TemplateOptions overrideLoginCredentialWith(String loginCredential) {
-      return AWSEC2TemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
-   }
-
+   
    /**
     * {@inheritDoc}
     */

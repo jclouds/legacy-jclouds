@@ -44,9 +44,9 @@ public class ParseTemplatesFromHttpResponse implements Function<HttpResponse, Se
    private final ParseFirstJsonValueNamed<Map<String, Set<OSTemplate>>> parser;
 
    @Inject
-   public ParseTemplatesFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Map<String, Set<OSTemplate>>>(checkNotNull(gsonWrapper,
-               "gsonWrapper"), new TypeLiteral<Map<String, Set<OSTemplate>>>() {
+   public ParseTemplatesFromHttpResponse(GsonWrapper gsonView) {
+      this.parser = new ParseFirstJsonValueNamed<Map<String, Set<OSTemplate>>>(checkNotNull(gsonView,
+               "gsonView"), new TypeLiteral<Map<String, Set<OSTemplate>>>() {
       }, "templates");
    }
 

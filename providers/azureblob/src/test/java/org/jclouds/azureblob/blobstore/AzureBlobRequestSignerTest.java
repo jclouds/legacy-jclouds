@@ -21,20 +21,17 @@ package org.jclouds.azureblob.blobstore;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.jclouds.azureblob.AzureBlobAsyncClient;
+import org.jclouds.azureblob.AzureBlobProviderMetadata;
 import org.jclouds.azureblob.config.AzureBlobRestClientModule;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -50,7 +47,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "AzureBlobRequestSignerTest")
-public class AzureBlobRequestSignerTest extends RestClientTest<AzureBlobAsyncClient> {
+public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsyncClient> {
 
    private BlobRequestSigner signer;
    private Factory blobFactory;
@@ -123,8 +120,7 @@ public class AzureBlobRequestSignerTest extends RestClientTest<AzureBlobAsyncCli
       return new TestAzureBlobRestClientModule();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAzureBlobRestClientModule extends AzureBlobRestClientModule {
       @Override
       protected void configure() {
@@ -138,8 +134,7 @@ public class AzureBlobRequestSignerTest extends RestClientTest<AzureBlobAsyncCli
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("azureblob", "identity", "credential", new Properties());
+   public AzureBlobProviderMetadata createProviderMetadata() {
+      return new AzureBlobProviderMetadata();
    }
-
 }

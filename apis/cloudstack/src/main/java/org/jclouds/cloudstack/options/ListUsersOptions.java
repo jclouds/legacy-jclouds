@@ -18,8 +18,9 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.User;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control what user information is returned

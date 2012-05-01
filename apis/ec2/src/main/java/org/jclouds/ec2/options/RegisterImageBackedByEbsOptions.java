@@ -21,9 +21,8 @@ package org.jclouds.ec2.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.ec2.domain.Image.Architecture;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Contains options supported in the Form API for the RegisterImage operation. <h2>

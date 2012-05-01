@@ -18,28 +18,24 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
+import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.Properties;
+import java.util.Set;
+
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
-
-import java.util.Properties;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
-import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 /**
  * Tests behavior of {@code GlobaUserClient}
@@ -88,11 +84,9 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkAuthAsUser(ApiKeyPair keyPair) {
-      ComputeServiceContext context = new ComputeServiceContextFactory(setupRestProperties()).
-         createContext(provider, ImmutableSet.<Module>of(
-            new Log4JLoggingModule(), new SshjSshClientModule()), credentialsAsProperties(keyPair));
+      ComputeServiceContext context = createView(credentialsAsProperties(keyPair), setupModules());
 
-      CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
+      CloudStackClient client = context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi();
       Set<Account> accounts = client.getAccountClient().listAccounts();
 
       assert accounts.size() > 0;

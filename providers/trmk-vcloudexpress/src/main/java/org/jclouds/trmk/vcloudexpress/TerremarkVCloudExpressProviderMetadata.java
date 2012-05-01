@@ -18,91 +18,68 @@
  */
 package org.jclouds.trmk.vcloudexpress;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's vCloud Express.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's Enterprise Cloud.
  * 
  * @author Adrian Cole
  */
 public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7993337019540975194L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "trmk-vcloudexpress";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public TerremarkVCloudExpressProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "email";
+   public TerremarkVCloudExpressProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "password";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Terremark vCloud Express";
+      protected Builder(){
+            id("trmk-vcloudexpress")
+            .name("Terremark vCloud Express")
+            .apiMetadata(new TerremarkVCloudExpressApiMetadata())
+            .endpoint("https://services.vcloudexpress.terremark.com/api")
+            .homepage(URI.create("https://vcloudexpress.terremark.com/"))
+            .console(URI.create("https://my.vcloudexpress.terremark.com"))
+            .iso3166Codes("US-FL")
+            .defaultProperties(TerremarkVCloudExpressProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public TerremarkVCloudExpressProviderMetadata build() {
+         return new TerremarkVCloudExpressProviderMetadata(this);
+      }
+
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
+
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://vcloudexpress.terremark.com/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://my.vcloudexpress.terremark.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://community.vcloudexpress.terremark.com/en-us/product_docs/m/vcefiles/2342.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-FL");
-   }
-
 }

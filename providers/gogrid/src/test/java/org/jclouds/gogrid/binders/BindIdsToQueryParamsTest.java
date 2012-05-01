@@ -40,7 +40,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 public class BindIdsToQueryParamsTest {
 
    @Test
-   public void testWithWrapper() throws SecurityException, NoSuchMethodException {
+   public void testWithView() throws SecurityException, NoSuchMethodException {
 
       HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
 

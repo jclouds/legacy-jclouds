@@ -20,12 +20,12 @@ package org.jclouds.aws.s3.blobstore.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-
 import java.util.SortedMap;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.aws.s3.AWSS3ApiMetadata;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
@@ -70,8 +70,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    
    protected void prepareUploadPart(String container, String key, String uploadId, int part,
          Payload payload, long offset, long size, SortedMap<Integer, String> etags) {
-      AWSS3Client client = (AWSS3Client) ablobstore.getContext()
-         .getProviderSpecificContext().getApi();
+      AWSS3Client client = ablobstore.getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
       Payload chunkedPart = slicer.slice(payload, offset, size);
       String eTag = null;
       try {
@@ -101,7 +100,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       long chunkSize = algorithm.getChunkSize();
       if (parts > 0) {
          AWSS3Client client = (AWSS3Client) ablobstore.getContext()
-               .getProviderSpecificContext().getApi();
+               .unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
          String uploadId = client.initiateMultipartUpload(container,
                ObjectMetadataBuilder.create().key(key).build()); // TODO md5
          try {

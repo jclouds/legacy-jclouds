@@ -45,6 +45,7 @@ public class VApp extends AbstractVAppType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVApp(this);
    }

@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudonestorage;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.atmos.AtmosApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for PEER1's
@@ -32,77 +32,55 @@ import org.jclouds.providers.BaseProviderMetadata;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class CloudOneStorageProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudonestorage";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return BLOBSTORE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudOneStorageProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "PEER1 CloudOne Storage";
+   public CloudOneStorageProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Subtenant ID (UID)";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Shared Secret";
+      protected Builder(){
+         id("cloudonestorage")
+         .name("PEER1 CloudOne Storage")
+         .apiMetadata(new AtmosApiMetadata())
+         .homepage(URI.create("http://www.peer1.com/hosting/cloudone-storage.php"))
+         .console(URI.create("https://mypeer1.com/"))
+         .iso3166Codes("US-GA", "US-TX")
+         .endpoint("https://cloudonestorage.peer1.com")
+         .defaultProperties(CloudOneStorageProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public CloudOneStorageProviderMetadata build() {
+         return new CloudOneStorageProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.peer1.com/hosting/cloudone-storage.php");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://mypeer1.com/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.peer1.com/sites/default/files/pdf/Atmos_System_Management_API_Guide_1.3.0A.pdf");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-GA", "US-TX");
-   }
-
 }

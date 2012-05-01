@@ -18,14 +18,22 @@
  */
 package org.jclouds.cloudstack.compute.strategy;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
@@ -50,20 +58,14 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.primitives.Ints;
 
 /**
  * defines the connection between the {@link CloudStackClient} implementation
@@ -262,7 +264,7 @@ public class CloudStackComputeServiceAdapter implements
    }
 
    public void disableStaticNATOnIPAddresses(Set<Long> ipAddresses) {
-      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
+      Builder<Long> jobsToTrack = ImmutableSet.builder();
       for (Long ipAddress : ipAddresses) {
          Long disableStaticNAT = client.getNATClient().disableStaticNATOnPublicIP(ipAddress);
          if (disableStaticNAT != null) {
@@ -274,7 +276,7 @@ public class CloudStackComputeServiceAdapter implements
    }
 
    public Set<Long> deleteIPForwardingRulesForVMAndReturnDistinctIPs(long virtualMachineId) {
-      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
+      Builder<Long> jobsToTrack = ImmutableSet.builder();
 
       // immutable doesn't permit duplicates
       Set<Long> ipAddresses = Sets.newLinkedHashSet();

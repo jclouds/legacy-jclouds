@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
  * @author danikov
  */
 @XmlRootElement(name = "MetadataEntry")
-public class MetadataEntry extends ResourceType {
+public class MetadataEntry extends Resource {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
@@ -51,6 +51,7 @@ public class MetadataEntry extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromMetadataEntry(this);
    }
@@ -58,7 +59,7 @@ public class MetadataEntry extends ResourceType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       private String key;
       private String value;
 
@@ -130,7 +131,7 @@ public class MetadataEntry extends ResourceType {
       }
 
       public B fromMetadataEntry(MetadataEntry in) {
-         return fromResourceType(in).entry(key, value);
+         return fromResource(in).entry(key, value);
       }
 
    }

@@ -18,11 +18,6 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.User;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.ListUsersOptions.Builder.accountInDomain;
 import static org.jclouds.cloudstack.options.ListUsersOptions.Builder.accountType;
 import static org.jclouds.cloudstack.options.ListUsersOptions.Builder.domainId;
@@ -33,6 +28,12 @@ import static org.jclouds.cloudstack.options.ListUsersOptions.Builder.pageSize;
 import static org.jclouds.cloudstack.options.ListUsersOptions.Builder.state;
 import static org.jclouds.cloudstack.options.ListUsersOptions.Builder.userName;
 import static org.testng.Assert.assertEquals;
+
+import org.jclouds.cloudstack.domain.User;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code ListUsersOptions}

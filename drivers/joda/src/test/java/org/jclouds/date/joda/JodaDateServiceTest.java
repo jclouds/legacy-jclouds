@@ -18,7 +18,7 @@
  */
 package org.jclouds.date.joda;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;

@@ -26,8 +26,6 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
-import org.jclouds.savvis.vpdc.VPDCAsyncClient;
-import org.jclouds.savvis.vpdc.VPDCClient;
 import org.jclouds.savvis.vpdc.compute.functions.CIMOperatingSystemToImage;
 import org.jclouds.savvis.vpdc.compute.functions.NetworkToLocation;
 import org.jclouds.savvis.vpdc.compute.functions.VMSpecToHardware;
@@ -46,11 +44,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class VPDCComputeServiceContextModule extends
-         ComputeServiceAdapterContextModule<VPDCClient, VPDCAsyncClient, VM, VMSpec, CIMOperatingSystem, Network> {
-
-   public VPDCComputeServiceContextModule() {
-      super(VPDCClient.class, VPDCAsyncClient.class);
-   }
+         ComputeServiceAdapterContextModule<VM, VMSpec, CIMOperatingSystem, Network> {
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {

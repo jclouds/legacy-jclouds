@@ -106,7 +106,7 @@ public class ImageToOperatingSystem implements Function<Image, OperatingSystem> 
                   osFamily = OsFamily.UBUNTU;
                   osVersion = ubuntuVersion;
                } else {
-                  logger.trace("could not parse operating system family for image(%s): %s", imageNameParts);
+                  logger.trace("could not parse operating system family for image(%s): %s", from.getId(), imageNameParts);
                   osFamily = OsFamily.UNRECOGNIZED;
                }
             }

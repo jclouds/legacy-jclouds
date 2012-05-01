@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
-import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
@@ -41,6 +40,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Network;
 import org.jclouds.predicates.validators.DnsNameValidator;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.vcloud.TaskStillRunningException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -79,7 +79,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    @Inject
    protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudClient client,
             Predicate<URI> successTester, LoadingCache<URI, VAppTemplate> vAppTemplates,
-            Supplier<NetworkConfig> defaultNetworkConfig, @Named(PROPERTY_BUILD_VERSION) String buildVersion) {
+            Supplier<NetworkConfig> defaultNetworkConfig, @BuildVersion String buildVersion) {
       this.client = client;
       this.successTester = successTester;
       this.vAppTemplates = vAppTemplates;

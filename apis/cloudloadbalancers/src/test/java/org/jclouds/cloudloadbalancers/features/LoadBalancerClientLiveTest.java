@@ -46,19 +46,19 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    private Set<LoadBalancer> lbs = Sets.newLinkedHashSet();
 
    @Override
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       assertEquals(client.getConfiguredRegions(), Arrays.asList(regions));
       Logger.getAnonymousLogger().info("running against regions " + client.getConfiguredRegions());
    }
 
    @Override
-   protected void tearDown() {
+   protected void tearDownContext() {
       for (LoadBalancer lb : lbs) {
          client.getLoadBalancerClient(lb.getRegion()).removeLoadBalancer(lb.getId());
          assert loadBalancerDeleted.apply(lb) : lb;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateLoadBalancer() throws Exception {

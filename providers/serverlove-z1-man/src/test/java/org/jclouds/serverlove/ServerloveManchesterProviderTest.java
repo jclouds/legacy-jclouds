@@ -18,8 +18,8 @@
  */
 package org.jclouds.serverlove;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class ServerloveManchesterProviderTest extends BaseProviderMetadataTest {
 
    public ServerloveManchesterProviderTest() {
-      super(new ServerloveManchesterProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new ServerloveManchesterProviderMetadata(), new ElasticStackApiMetadata());
    }
 }

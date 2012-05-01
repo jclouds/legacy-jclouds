@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "CloudFilesUKBlobLiveTest")
 public class CloudFilesUKBlobLiveTest extends CloudFilesBlobLiveTest {
+   public CloudFilesUKBlobLiveTest() {
+      provider = "cloudfiles-uk";
+   }
 
 }

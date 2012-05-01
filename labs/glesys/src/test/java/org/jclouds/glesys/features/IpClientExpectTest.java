@@ -18,24 +18,25 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.IpDetails;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.testng.annotations.Test;
-
-import java.net.URI;
-import java.util.Set;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 import static org.testng.collections.Sets.newHashSet;
+
+import java.net.URI;
+import java.util.Set;
+
+import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.domain.IpDetails;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Allows us to test a client via its side effects.

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.ReferenceType;

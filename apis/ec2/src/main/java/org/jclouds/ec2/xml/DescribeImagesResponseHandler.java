@@ -27,12 +27,12 @@ import javax.inject.Inject;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.Image.ImageType;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
@@ -61,7 +61,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private Set<Image> contents = Sets.newLinkedHashSet();
+   protected Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
    private final Supplier<String> defaultRegion;
 
@@ -110,7 +110,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("architecture")) {
          architecture = Architecture.fromValue(currentText.toString().trim());
-      } else if (qName.equals("name")) {
+      // Nova Diablo uses the wrong name for this field
+      } else if (qName.equals("name") || qName.equals("displayName")) {
          this.name = currentText.toString().trim();
       } else if (qName.equals("description")) {
          description = currentText.toString().trim();

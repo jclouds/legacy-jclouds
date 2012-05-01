@@ -33,7 +33,6 @@ import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -43,13 +42,13 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.s3.domain.AccessControlList;
-import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
-import org.jclouds.s3.domain.AccessControlList.Grant;
-import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.Payer;
 import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
+import org.jclouds.s3.domain.AccessControlList.Grant;
+import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
@@ -479,13 +478,8 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
       checkFilters(request);
    }
 
-   @RequiresHttp
    @ConfiguresRestClient
    private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
-
-      public TestS3RestClientModule() {
-         super(S3Client.class, S3AsyncClient.class);
-      }
 
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {

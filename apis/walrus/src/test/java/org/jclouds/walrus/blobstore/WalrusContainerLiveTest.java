@@ -26,5 +26,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "WalrusContainerLiveTest")
 public class WalrusContainerLiveTest extends S3ContainerLiveTest {
-
+   
+   public WalrusContainerLiveTest() {
+      provider = "walrus";
+   }
+   
 }

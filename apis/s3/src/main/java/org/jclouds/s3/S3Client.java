@@ -20,10 +20,12 @@ package org.jclouds.s3;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.s3.domain.BucketMetadata;
@@ -35,18 +37,14 @@ import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.options.GetOptions;
 
 import com.google.inject.Provides;
-
-import java.util.concurrent.Future;
 
 /**
  * Provides access to S3 via their REST API.
  * <p/>
  * All commands return a Future of the result from S3. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in
+ * processing will be backend in an {@link ExecutionException} as documented in
  * {@link Future#get()}.
  * 
  * @author Adrian Cole

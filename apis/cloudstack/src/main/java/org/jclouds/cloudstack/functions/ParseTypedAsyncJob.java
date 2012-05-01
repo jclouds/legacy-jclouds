@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,10 +27,8 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.base.Strings;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.AsyncJob.Builder;
 import org.jclouds.cloudstack.domain.AsyncJobError;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
@@ -46,12 +43,15 @@ import org.jclouds.cloudstack.domain.TemplateExtraction;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Volume;
+import org.jclouds.cloudstack.domain.AsyncJob.Builder;
+import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;

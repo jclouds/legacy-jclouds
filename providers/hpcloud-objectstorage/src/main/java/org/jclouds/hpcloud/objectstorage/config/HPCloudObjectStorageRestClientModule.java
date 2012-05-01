@@ -32,7 +32,6 @@ import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.hpcloud.services.HPExtensionServiceType;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -62,14 +61,13 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class HPCloudObjectStorageRestClientModule extends
          RestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder().put(
             HPCloudCDNClient.class, HPCloudCDNAsyncClient.class).build();
 
    public HPCloudObjectStorageRestClientModule() {
-      super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    protected void configure() {

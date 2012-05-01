@@ -29,7 +29,6 @@ import org.jclouds.io.Payloads;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
-import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

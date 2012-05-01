@@ -56,12 +56,11 @@ public class AllVDCsInOrg implements Function<Org, Iterable<? extends org.jcloud
    @Override
    public Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> apply(final Org org) {
 
-      Iterable<org.jclouds.trmk.vcloud_0_8.domain.VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<ReferenceType, Future<org.jclouds.trmk.vcloud_0_8.domain.VDC>>() {
-               @SuppressWarnings("unchecked")
+      Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> catalogItems = transformParallel(org.getVDCs().values(),
+            new Function<ReferenceType, Future<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>() {
                @Override
-               public Future<org.jclouds.trmk.vcloud_0_8.domain.VDC> apply(ReferenceType from) {
-                  return (Future<org.jclouds.trmk.vcloud_0_8.domain.VDC>) aclient.getVDC(from.getHref());
+               public Future<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> apply(ReferenceType from) {
+                  return aclient.getVDC(from.getHref());
                }
 
             }, executor, null, logger, "vdcs in org " + org.getName());

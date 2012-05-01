@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudstack.config;
 
-import org.jclouds.compute.ComputeServiceContextFactory;
 
 /**
  * Configuration properties and constants used in CloudStack connections.
@@ -28,7 +27,7 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 public interface CloudStackProperties {
 
    /**
-    * Type of credentials specified during {@link ComputeServiceContextFactory#createContext}. If
+    * Type of credentials specified during {@link ComputeServiceContextBuilder#overrides}. If
     * {@link CredentialType#API_ACCESS_KEY_CREDENTIALS}, the request signing is used. If
     * {@link CredentialType#PASSWORD_CREDENTIALS}, login will happen and a session will be
     * persisted.

@@ -18,14 +18,14 @@
  */
 package org.jclouds.glesys.domain;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * The allowed arguments for archive manipulation, such as archivesize

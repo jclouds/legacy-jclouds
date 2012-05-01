@@ -101,7 +101,7 @@ overflow-y:auto;
   </td>
 </tr>
 <tr>
-  <td><img src="images/openshift-logo.png" alt="Powered by OpenShift Express" /></td>
+  <td><img src="/images/openshift-logo.png" alt="Powered by OpenShift Express" /></td>
 </tr>
 </table>
 </body>

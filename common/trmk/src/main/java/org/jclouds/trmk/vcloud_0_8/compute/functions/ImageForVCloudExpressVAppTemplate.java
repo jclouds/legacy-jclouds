@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Image;

@@ -71,7 +71,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
       HttpRequest addFloatingIPRequest = addFloatingIPForAddress("10.0.0.3");
 
       AllocateAndAddFloatingIpToNode fn = requestsSendResponses(
-               ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithAccessKeyAndSecretKey,
+               ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithUsernameAndPassword,
                         responseWithKeystoneAccess).put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(
                         allocateFloatingIP, allocateFloatingIPResponse)
                         .put(addFloatingIPRequest, addFloatingIPResponse).build()).getContext().utils().injector()
@@ -117,7 +117,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
       HttpRequest addFloatingIPRequest = addFloatingIPForAddress("10.0.0.5");
 
       AllocateAndAddFloatingIpToNode fn = requestsSendResponses(
-               ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithAccessKeyAndSecretKey,
+               ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithUsernameAndPassword,
                         responseWithKeystoneAccess).put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(
                         allocateFloatingIP, allocateFloatingIPResponse)
                         .put(addFloatingIPRequest, addFloatingIPResponse).put(listFloatingIPs,

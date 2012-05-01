@@ -18,18 +18,22 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.softlayer.compute.functions.ProductItems.capacity;
+import static org.jclouds.softlayer.compute.functions.ProductItems.description;
+import static org.jclouds.softlayer.compute.functions.ProductItems.item;
+import static org.jclouds.softlayer.compute.functions.ProductItems.price;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import java.util.NoSuchElementException;
+
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.NoSuchElementException;
-
-import static org.jclouds.softlayer.compute.functions.ProductItems.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests {@code ProductItems}

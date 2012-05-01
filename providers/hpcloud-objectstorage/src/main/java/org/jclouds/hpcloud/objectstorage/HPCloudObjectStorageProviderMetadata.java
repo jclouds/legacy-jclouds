@@ -18,99 +18,71 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
  * 
- * @author Jeremy Daggett
+ * @author Adrian Cole
  */
 public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "hpcloud-objectstorage";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3735142654912867384L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "HP Cloud Services Object Storage";
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
    
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "email:tenantId";
+   public HPCloudObjectStorageProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
+   public HPCloudObjectStorageProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://hpcloud.com");
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_BUILD_VERSION, "???"); //FIXME
+//      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External"); FIXME: needed?
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.hpcloud.com/objects/us-west");
+      protected Builder(){
+         id("hpcloud-objectstorage")
+         .name("HP Cloud Services Object Storage")
+         .apiMetadata(new HPCloudObjectStorageApiMetadata())
+         .homepage(URI.create("http://hpcloud.com"))
+         .console(URI.create("https://manage.hpcloud.com/objects/us-west"))
+         .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
+         .iso3166Codes("US-NV")
+         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357")
+         .defaultProperties(HPCloudObjectStorageProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public HPCloudObjectStorageProviderMetadata build() {
+         return new HPCloudObjectStorageProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("TODO");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("hpcloud-compute", "hpcloud-objectstorage");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-NV");
-   }
-
 }

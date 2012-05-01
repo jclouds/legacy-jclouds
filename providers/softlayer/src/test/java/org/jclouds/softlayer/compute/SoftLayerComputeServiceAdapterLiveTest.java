@@ -29,8 +29,6 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
@@ -42,8 +40,8 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.common.net.InetAddresses;
-import com.google.inject.Guice;
 
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerComputeServiceAdapterLiveTest")
 public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientLiveTest {
@@ -52,10 +50,9 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    private NodeAndInitialCredentials<VirtualGuest> guest;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      adapter = Guice.createInjector(module, new Log4JLoggingModule())
-            .getInstance(SoftLayerComputeServiceAdapter.class);
+   public void setupContext() {
+      super.setupContext();
+      adapter = view.utils().injector().getInstance(SoftLayerComputeServiceAdapter.class);
    }
 
    @Test
@@ -70,7 +67,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "node" + new Random().nextInt();
-      Template template = computeContext.getComputeService().templateBuilder().build();
+      Template template = view.getComputeService().templateBuilder().build();
 
       // test passing custom options
       template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
@@ -85,7 +82,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    protected void doConnectViaSsh(VirtualGuest guest, LoginCredentials creds) {
-      SshClient ssh = computeContext.utils().sshFactory().create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
+      SshClient ssh = view.utils().sshFactory().create(HostAndPort.fromParts(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -111,9 +108,9 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (guest != null)
          adapter.destroyNode(guest.getNodeId() + "");
-      super.tearDown();
+      super.tearDownContext();
    }
 }

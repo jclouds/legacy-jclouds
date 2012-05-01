@@ -26,7 +26,6 @@ import java.util.Set;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

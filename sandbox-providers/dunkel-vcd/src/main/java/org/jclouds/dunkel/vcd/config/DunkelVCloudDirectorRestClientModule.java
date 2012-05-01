@@ -18,15 +18,11 @@
  */
 package org.jclouds.dunkel.vcd.config;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
 
 /**
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class DunkelVCloudDirectorRestClientModule extends VCloudRestClientModule {
 

@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -46,15 +46,14 @@ public class BaseBlobMapTest {
 
    @BeforeClass
    void addDefaultObjectsSoThatTestsWillPass() {
-      context = new BlobStoreContextFactory().createContext("transient", "identity", "credential");
+      context =  ContextBuilder.newBuilder("transient").build(BlobStoreContext.class);
       map = (InputStreamMapImpl) context.createInputStreamMap("test");
    }
 
    public void testTypes() {
       TypeLiteral<Map<String, Map<String, Blob>>> type0 = new TypeLiteral<Map<String, Map<String, Blob>>>() {
       };
-      @SuppressWarnings("rawtypes")
-      TypeLiteral type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class,
+      TypeLiteral<?> type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class,
             Types.newParameterizedType(Map.class, String.class, Blob.class)));
       assertEquals(type0, type1);
 

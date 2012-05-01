@@ -18,11 +18,12 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.gson.Gson;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
@@ -30,11 +31,11 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.gson.Gson;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}

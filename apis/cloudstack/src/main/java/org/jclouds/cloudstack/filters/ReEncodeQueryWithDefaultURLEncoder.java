@@ -18,17 +18,18 @@
  */
 package org.jclouds.cloudstack.filters;
 
-import com.google.common.collect.Multimap;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import static com.google.common.collect.Iterables.getOnlyElement;
+
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.utils.ModifyRequest;
 
-import javax.ws.rs.core.UriBuilder;
-
-import static com.google.common.collect.Iterables.getOnlyElement;
+import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * By default, jclouds controls encoding based on rules which are different

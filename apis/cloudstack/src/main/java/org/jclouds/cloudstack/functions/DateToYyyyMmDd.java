@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.functions;
 
-import com.google.common.base.Function;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Function;
 
 /**
  * Convert a Date object into a "yyyy-MM-dd" String

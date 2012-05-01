@@ -70,8 +70,7 @@ public class InputSupplierMap<K, V> extends AbstractMap<K, V> {
       try {
          return (value != null || toMap.containsKey(key)) ? value.getInput() : null;
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -80,8 +79,7 @@ public class InputSupplierMap<K, V> extends AbstractMap<K, V> {
       try {
          return toMap.containsKey(key) ? toMap.remove(key).getInput() : null;
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -124,8 +122,7 @@ public class InputSupplierMap<K, V> extends AbstractMap<K, V> {
                      try {
                         return entry.getValue().getInput();
                      } catch (IOException e) {
-                        Throwables.propagate(e);
-                        return null;
+                        throw Throwables.propagate(e);
                      }
                   }
                };

@@ -67,6 +67,9 @@ public class NovaErrorHandler implements HttpErrorHandler {
                exception = new ResourceNotFoundException(message, exception);
             }
             break;
+         case 413:
+            exception = new InsufficientResourcesException(message, exception);
+            break;
       }
       command.setException(exception);
    }

@@ -18,6 +18,12 @@
  */
 package org.jclouds.rest.config;
 
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
@@ -30,20 +36,27 @@ import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.SeedAnnotationCache;
+import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -56,11 +69,24 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
-/**
- * 
- * @author Adrian Cole
- */
 public class RestModule extends AbstractModule {
+
+   public static final TypeLiteral<Supplier<URI>> URI_SUPPLIER_TYPE = new TypeLiteral<Supplier<URI>>() {
+   };
+   protected final Map<Class<?>, Class<?>> sync2Async;
+   protected final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+   
+   public RestModule() {
+      this(ImmutableMap.<Class<?>, Class<?>> of());
+   }
+   
+   public RestModule(Map<Class<?>, Class<?>> sync2Async) {
+      this.sync2Async = sync2Async;
+   }
+
+   protected void installLocations() {
+      install(new LocationModule());
+   }
 
    @Override
    protected void configure() {
@@ -73,6 +99,44 @@ public class RestModule extends AbstractModule {
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
       BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(
                HttpClient.class, HttpAsyncClient.class));
+      // this will help short circuit scenarios that can otherwise lock out users
+      bind(new TypeLiteral<AtomicReference<AuthorizationException>>() {
+      }).toInstance(authException);
+      bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
+      }).to(FilterStringsBoundToInjectorByName.class);
+      installLocations();
+   }
+   
+   @Provides
+   @Singleton
+   @Named("TIMEOUTS")
+   protected Map<String, Long> timeouts(Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
+      Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName.apply(new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            return input.startsWith(PROPERTY_TIMEOUTS_PREFIX);
+         }
+
+      });
+
+      Map<String, Long> longsByName = Maps.transformValues(stringBoundWithTimeoutPrefix, new Function<String, Long>() {
+
+         @Override
+         public Long apply(String input) {
+            return Long.valueOf(String.valueOf(input));
+         }
+
+      });
+      return Maps2.transformKeys(longsByName, new Function<String, String>() {
+
+         @Override
+         public String apply(String input) {
+            return input.replaceFirst(PROPERTY_TIMEOUTS_PREFIX, "");
+         }
+
+      });
+
    }
 
    @Provides
@@ -127,6 +191,14 @@ public class RestModule extends AbstractModule {
          return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 
+   }
+
+   @Provides
+   @Singleton
+   @Named("sync")
+   LoadingCache<ClassMethodArgs, Object> provideSyncDelegateMap(CreateClientForCaller createClientForCaller) {
+      createClientForCaller.sync2Async = sync2Async;
+      return CacheBuilder.newBuilder().build(createClientForCaller);
    }
 
 }

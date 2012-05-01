@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute.config;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,7 +29,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2PropertiesBuilder;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.predicates.AWSEC2InstancePresent;
@@ -39,7 +39,6 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
-import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -47,9 +46,9 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
+import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.compute.predicates.InstancePresent;
 import org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
@@ -66,14 +65,13 @@ import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * 
@@ -104,12 +102,11 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    }
 
    @Override
-   protected boolean shouldParseImagesOnDemand(Injector injector) {
+   protected boolean shouldEagerlyParseImages(Injector injector) {
+      Map<String, String> queries = injector.getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
+      }, ImageQuery.class));
       // If no queries defined, then will never lookup all images
-      String amiQuery = injector.getInstance(Key.get(String.class, Names.named(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY)));
-      String amiCcQuery = injector.getInstance(Key.get(String.class, Names.named(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY)));
-
-      return !(amiQuery.isEmpty() && amiCcQuery.isEmpty());
+      return queries.size() > 0;
    }
 
    // duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util

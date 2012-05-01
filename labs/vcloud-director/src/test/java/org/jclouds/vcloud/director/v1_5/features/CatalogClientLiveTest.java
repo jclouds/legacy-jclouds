@@ -24,18 +24,31 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.C
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkCatalogItem;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.*;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -48,7 +61,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user", "catalog" }, singleThreaded = true, testName = "CatalogClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
@@ -66,66 +79,77 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private Reference catalogRef;
 
    @Override
-   protected void setupRequiredClients() throws Exception {
+   protected void setupRequiredClients() {
       // TODO why do I need a guard clause here?
       if (adminCatalog != null) return;
       catalogClient = context.getApi().getCatalogClient();
       Reference orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
-
-      AdminCatalog newCatalog = AdminCatalog.builder()
-            .name(name("Test Catalog "))
-            .description("created by CatalogClientLiveTest")
-            .build();
       
-      AdminCatalogClient adminCatalogClient = context.getApi().getAdminCatalogClient();
-      adminCatalog = adminCatalogClient.createCatalog(orgRef.getHref(), newCatalog);
-      catalogRef = find(adminCatalog.getLinks(), and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG)));
-
-      Metadata newMetadata = Metadata.builder()
-            .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
-            .build();
-
-      Task mergeCatalogMetadata = adminCatalogClient.getMetadataClient().mergeMetadata(adminCatalog.getHref(), newMetadata);
-      checkTask(mergeCatalogMetadata);
-      assertTrue(retryTaskSuccess.apply(mergeCatalogMetadata), String.format(TASK_COMPLETE_TIMELY, "setupRequiredClients"));
+      if (adminContext != null) {
+         AdminCatalog newCatalog = AdminCatalog.builder()
+               .name(name("Test Catalog "))
+               .description("created by CatalogClientLiveTest")
+               .build();
+         
+         AdminCatalogClient adminCatalogClient = adminContext.getApi().getCatalogClient();
+         adminCatalog = adminCatalogClient.createCatalog(orgRef.getHref(), newCatalog);
+         catalogRef = find(adminCatalog.getLinks(), and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG)));
+   
+         Metadata newMetadata = Metadata.builder()
+               .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
+               .build();
+   
+         Task mergeCatalogMetadata = adminCatalogClient.getMetadataClient().mergeMetadata(adminCatalog.getHref(), newMetadata);
+         checkTask(mergeCatalogMetadata);
+         assertTrue(retryTaskSuccess.apply(mergeCatalogMetadata), String.format(TASK_COMPLETE_TIMELY, "setupRequiredClients"));
+      } else {
+         catalogRef = Reference.builder().href(catalogURI).build();
+      }
    }
    
    @AfterClass(alwaysRun = true)
    public void tearDown() {
-      if (catalogItem != null)
-         catalogClient.deleteCatalogItem(catalogItem.getHref());               
-         
-      if (media != null)
-         context.getApi().getMediaClient().deleteMedia(media.getHref());
-      
-      if (adminCatalog != null) {
-         context.getApi().getAdminCatalogClient().deleteCatalog(adminCatalog.getHref());
+      if (catalogItem != null) {
          try {
-            catalogClient.getCatalog(catalogRef.getHref());
-            fail("The Catalog should have been deleted");
-         } catch (VCloudDirectorException vcde) {
-            checkError(vcde.getError());
-            assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
+	         catalogClient.deleteCatalogItem(catalogItem.getHref());
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting catalog item '%s'", catalogItem.getName());
          }
       }
+      if (media != null) {
+         try {
+	         Task delete = context.getApi().getMediaClient().deleteMedia(media.getHref());
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting media '%s'", media.getName());
+         }
+      }
+      if (adminContext != null && adminCatalog != null) {
+         try {
+	         adminContext.getApi().getCatalogClient().deleteCatalog(adminCatalog.getHref());
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting catalog '%s'", adminCatalog.getName());
+         }
+      }
+      // TODO wait for tasks
    }
 
-   @Test(testName = "GET /catalog/{id}")
+   @Test(description = "GET /catalog/{id}")
    public void testGetCatalog() {
-      CatalogType catalog = catalogClient.getCatalog(catalogRef.getHref());
+      Catalog catalog = catalogClient.getCatalog(catalogRef.getHref());
       assertNotNull(catalog);
       // Double check it's pointing at the correct catalog
       assertEquals(catalog.getHref(), catalogRef.getHref());
    }
 
-   @Test(testName = "GET /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "GET /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
    public void testGetCatalogItem() {
       CatalogItem catalogItem = catalogClient.getCatalogItem(this.catalogItem.getHref());
       checkCatalogItem(catalogItem);
       assertEquals(catalogItem.getEntity().getHref(), this.catalogItem.getEntity().getHref());
    }
 
-   @Test(testName = "POST /catalog/{id}/catalogItems")
+   @Test(description = "POST /catalog/{id}/catalogItems")
    public void testAddCatalogItem() {
       assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
       
@@ -157,7 +181,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(catalogItem.getDescription(), "New Item");
    }
 
-   @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "PUT /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
    public void testUpdateCatalogItem() {     
       CatalogItem updatedCatalogItem = CatalogItem.builder().fromCatalogItem(catalogItem).name("UPDATEDNAME").build();
       catalogItem = catalogClient.updateCatalogItem(catalogItem.getHref(), updatedCatalogItem);
@@ -166,28 +190,20 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    // Note this runs after all the metadata tests
-   @Test(testName = "DELETE /catalogItem/{id}", dependsOnMethods = "testDeleteCatalogItemMetadataValue")
+   @Test(description = "DELETE /catalogItem/{id}", dependsOnMethods = "testDeleteCatalogItemMetadataValue")
    public void testDeleteCatalogItem() {
       catalogClient.deleteCatalogItem(catalogItem.getHref());
-      try {
-         catalogClient.getCatalogItem(catalogItem.getHref());
-         fail("The CatalogItem should have been deleted");
-      } catch (VCloudDirectorException vcde) {
-         checkError(vcde.getError());
-         // XXX
-         assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
-      } finally {
-         catalogItem = null;
-      }
+      catalogItem = catalogClient.getCatalogItem(catalogItem.getHref());
+      assertNull(catalogItem);
    }
 
-   @Test(testName = "GET /catalog/{id}/metadata")
+   @Test(description = "GET /catalog/{id}/metadata")
    public void testGetCatalogMetadata() {
       Metadata catalogMetadata = catalogClient.getMetadataClient().getMetadata(catalogRef.getHref());
       checkMetadata(catalogMetadata);
    }
 
-   @Test(testName = "GET /catalog/{id}/metadata/{key}")
+   @Test(description = "GET /catalog/{id}/metadata/{key}")
    public void testGetCatalogMetadataValue() {
       Metadata catalogMetadata = catalogClient.getMetadataClient().getMetadata(catalogRef.getHref());
       MetadataEntry existingMetadataEntry = Iterables.find(catalogMetadata.getMetadataEntries(), new Predicate<MetadataEntry>() {
@@ -202,13 +218,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkMetadataValue(metadataValue);
    }
 
-   @Test(testName = "GET /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "GET /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testGetCatalogItemMetadata() {
       Metadata catalogItemMetadata = catalogClient.getCatalogItemMetadataClient().getMetadata(catalogItem.getHref());
       checkMetadata(catalogItemMetadata);
    }
 
-   @Test(testName = "POST /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "POST /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testMergeCatalogItemMetadata() {
       Metadata newMetadata = Metadata.builder()
             .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
@@ -236,13 +252,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkMetadataValue(newKeyMetadataValue);
    }
 
-   @Test(testName = "GET /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testSetCatalogItemMetadataValue")
+   @Test(description = "GET /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testSetCatalogItemMetadataValue")
    public void testGetCatalogItemMetadataValue() {      
       MetadataValue metadataValue = catalogClient.getCatalogItemMetadataClient().getMetadataValue(catalogItem.getHref(), "KEY");
       checkMetadataValue(metadataValue);
    }
 
-   @Test(testName = "PUT /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testMergeCatalogItemMetadata")
+   @Test(description = "PUT /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testMergeCatalogItemMetadata")
    public void testSetCatalogItemMetadataValue() {
       MetadataValue newMetadataValue = MetadataValue.builder().value("NEW").build();
 
@@ -257,21 +273,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkMetadataValue(updatedMetadataValue);
    }
 
-   @Test(testName = "DELETE /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testGetCatalogItemMetadataValue")
+   @Test(description = "DELETE /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testGetCatalogItemMetadataValue")
    public void testDeleteCatalogItemMetadataValue() {
       Task deleteCatalogItemMetadataValue = catalogClient.getCatalogItemMetadataClient().deleteMetadataEntry(catalogItem.getHref(), "KEY");
       checkTask(deleteCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
-      try {
-	      catalogClient.getMetadataClient().getMetadataValue(catalogItem.getHref(), "KEY");
-	      fail("The CatalogItem MetadataValue for KEY should have been deleted");
-      } catch (VCloudDirectorException vcde) {
-         Error error = vcde.getError();
-         checkError(error);
-         Integer majorErrorCode = error.getMajorErrorCode();
-         assertEquals(majorErrorCode, Integer.valueOf(403),
-               String.format(CORRECT_VALUE_OBJECT_FMT, "MajorErrorCode", "Error", "403",Integer.toString(majorErrorCode)));
-      }
+      MetadataValue deleted = catalogClient.getMetadataClient().getMetadataValue(catalogItem.getHref(), "KEY");
+      assertNull(deleted);
    }
 }

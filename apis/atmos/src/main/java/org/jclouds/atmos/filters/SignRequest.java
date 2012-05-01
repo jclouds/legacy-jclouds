@@ -19,8 +19,6 @@
 package org.jclouds.atmos.filters;
 
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
-import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
 
@@ -46,13 +44,15 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -79,8 +79,8 @@ public class SignRequest implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SignRequest(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String uid,
-         @Named(PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider, Crypto crypto,
+   public SignRequest(SignatureWire signatureWire, @Identity String uid,
+         @Credential String encodedKey, @TimeStamp Provider<String> timeStampProvider, Crypto crypto,
          HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.uid = uid;

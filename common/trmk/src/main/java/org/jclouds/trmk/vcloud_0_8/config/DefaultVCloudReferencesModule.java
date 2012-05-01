@@ -18,14 +18,12 @@
  */
 package org.jclouds.trmk.vcloud_0_8.config;
 
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
-
 import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
@@ -55,7 +53,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.trmk.vcloud_0_8.endpoints.Org
    @Singleton
    protected Supplier<ReferenceType> provideDefaultOrg(DefaultOrgForUser defaultOrgURIForUser,
-         @Named(PROPERTY_IDENTITY) String user) {
+         @Identity String user) {
       return defaultOrgURIForUser.apply(user);
    }
 
@@ -106,7 +104,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
 
                      @Override
                      public Map<URI, ? extends Catalog> apply(Map<String, Map<String, ? extends Catalog>> arg0) {
-                        Builder<URI, Catalog> builder = ImmutableMap.<URI, Catalog> builder();
+                        Builder<URI, Catalog> builder = ImmutableMap.builder();
                         for (Map<String, ? extends Catalog> v1 : arg0.values()) {
                            for (Catalog v2 : v1.values()) {
                               builder.put(v2.getHref(), v2);

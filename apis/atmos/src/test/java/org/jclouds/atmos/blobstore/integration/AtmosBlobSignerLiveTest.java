@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class AtmosBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-
+   public AtmosBlobSignerLiveTest() {
+      provider = "atmos";
+   }
 }

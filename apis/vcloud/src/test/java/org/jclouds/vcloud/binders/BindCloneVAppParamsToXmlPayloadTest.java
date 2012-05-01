@@ -18,18 +18,18 @@
  */
 package org.jclouds.vcloud.binders;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
@@ -52,10 +52,10 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       @Override
       protected void configure() {
-         Properties props = new Properties();
+         Properties props = new VCloudApiMetadata().getDefaultProperties();
          props.setProperty("jclouds.vcloud.xml.ns", "http://www.vmware.com/vcloud/v1");
          props.setProperty("jclouds.vcloud.xml.schema", "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-         Names.bindProperties(binder(), new PropertiesBuilder(props).build());
+         Names.bindProperties(binder(), props);
       }
    });
 
@@ -72,7 +72,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.<String, String> builder();
+      Builder<String, String> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vapp/201");
       binder.bindToRequest(request, map.build());
@@ -92,7 +92,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.<String, String> builder();
+      Builder<String, String> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vapp/201");
       map.put("IsSourceDelete", "true");
@@ -111,7 +111,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.<String, String> builder();
+      Builder<String, String> map = ImmutableMap.builder();
       map.put("name", "my-vapp");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vapp/4181");
       binder.bindToRequest(request, map.build());

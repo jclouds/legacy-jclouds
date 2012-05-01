@@ -18,9 +18,7 @@
  */
 package org.jclouds.aws.ec2;
 
-import org.jclouds.aws.ec2.AWSEC2ProviderMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -32,6 +30,6 @@ import org.testng.annotations.Test;
 public class AWSEC2ProviderTest extends BaseProviderMetadataTest {
 
    public AWSEC2ProviderTest() {
-      super(new AWSEC2ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new AWSEC2ProviderMetadata(), new AWSEC2ApiMetadata());
    }
 }

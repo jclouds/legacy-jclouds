@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "AWSELBLoadBalancerServiceLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "AWSELBLoadBalancerServiceLiveTest")
 public class AWSELBLoadBalancerServiceLiveTest extends ELBLoadBalancerServiceLiveTest {
 
    public AWSELBLoadBalancerServiceLiveTest() {

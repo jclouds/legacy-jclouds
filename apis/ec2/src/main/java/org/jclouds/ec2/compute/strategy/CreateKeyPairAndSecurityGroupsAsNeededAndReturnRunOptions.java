@@ -21,13 +21,13 @@ package org.jclouds.ec2.compute.strategy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -47,6 +47,7 @@ import com.google.common.base.Function;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.inject.Inject;
 
 /**
  * 
@@ -159,12 +160,16 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
       return keyPair.getKeyName();
    }
 
+   @Inject(optional = true)
+   @Named(RESOURCENAME_DELIMITER)
+   char delimiter = '#';
+
    @VisibleForTesting
    public Set<String> getSecurityGroupsForTagAndOptions(String region, @Nullable String group, TemplateOptions options) {
-      Builder<String> groups = ImmutableSet.<String> builder();
+      Builder<String> groups = ImmutableSet.builder();
 
       if (group != null) {
-         String markerGroup = String.format("jclouds#%s#%s", group, region);
+         String markerGroup = String.format("jclouds#%s#%s", group, region).replace('#', delimiter);
          groups.add(markerGroup);
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;

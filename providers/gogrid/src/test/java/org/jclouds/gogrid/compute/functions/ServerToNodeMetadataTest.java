@@ -18,10 +18,10 @@
  */
 package org.jclouds.gogrid.compute.functions;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
@@ -32,6 +32,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -45,6 +46,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
@@ -52,6 +54,7 @@ import com.google.common.collect.ImmutableSet;
 //NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "ServerToNodeMetadataTest")
 public class ServerToNodeMetadataTest {
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @SuppressWarnings("unchecked")
    @Test
@@ -93,7 +96,7 @@ public class ServerToNodeMetadataTest {
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers
                .<Set<? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
-               .<Set<? extends Location>> ofInstance(locations));
+               .<Set<? extends Location>> ofInstance(locations), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);

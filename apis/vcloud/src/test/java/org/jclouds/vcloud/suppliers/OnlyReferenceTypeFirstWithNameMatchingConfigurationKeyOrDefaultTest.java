@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.suppliers;
 
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;

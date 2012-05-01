@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class CloudFilesBlobMapIntegrationLiveTest extends SwiftBlobMapIntegrationLiveTest {
-
+   public CloudFilesBlobMapIntegrationLiveTest(){
+      provider = "cloudfiles";
+   }
 }

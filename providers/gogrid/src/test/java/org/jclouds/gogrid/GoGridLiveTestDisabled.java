@@ -31,13 +31,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.Job;
@@ -53,15 +52,11 @@ import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.sshj.SshjSshClient;
 import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.AfterTest;
@@ -69,19 +64,19 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Module;
+import com.google.common.net.HostAndPort;
 
 /**
  * End to end live test for GoGrid
  * <p/>
- * Takes too long to execute.  Please split into multiple tests
+ * Takes too long to execute. Please split into multiple tests
  * 
  * @author Oleksiy Yarmula
  */
 @Test(enabled = false, groups = "live", singleThreaded = true, testName = "GoGridLiveTestDisabled")
-public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
+public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
+
    public GoGridLiveTestDisabled() {
       provider = "gogrid";
    }
@@ -96,16 +91,15 @@ public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
    private List<String> serversToDeleteAfterTheTests = new ArrayList<String>();
    private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
 
-   private RestContext<GoGridClient, GoGridAsyncClient> context;
+   private RestContext<GoGridClient, GoGridAsyncClient> gocontext;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      gocontext = view.unwrap();
 
-      client = context.getApi();
+      client = gocontext.getApi();
       serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),
                800, 20, TimeUnit.SECONDS);
       loadBalancerLatestJobCompleted = new RetryablePredicate<LoadBalancer>(new LoadBalancerLatestJobCompleted(client
@@ -344,17 +338,17 @@ public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
       createdServer = Iterables.getOnlyElement(response);
 
       Map<String, Credentials> credsMap = client.getServerServices().getServerCredentialsList();
-      Credentials instanceCredentials = credsMap.get(createdServer.getName());
+      LoginCredentials instanceCredentials = LoginCredentials.fromCredentials(credsMap.get(createdServer.getName()));
       assertNotNull(instanceCredentials);
 
-      IPSocket socket = new IPSocket(createdServer.getIp().getIp(), 22);
+      HostAndPort socket = HostAndPort.fromParts(createdServer.getIp().getIp(), 22);
 
-      RetryablePredicate<IPSocket> socketOpen = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180,
+      RetryablePredicate<HostAndPort> socketOpen = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180,
                5, TimeUnit.SECONDS);
 
       socketOpen.apply(socket);
 
-      SshClient sshClient = context.utils().injector().getInstance(SshClient.Factory.class).create(socket, instanceCredentials);
+      SshClient sshClient = gocontext.utils().injector().getInstance(SshClient.Factory.class).create(socket, instanceCredentials);
       sshClient.connect();
       String output = sshClient.exec("df").getOutput();
       assertTrue(output.contains("Filesystem"),

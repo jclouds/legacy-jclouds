@@ -39,8 +39,8 @@ import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -185,7 +185,7 @@ public class GsonModule extends AbstractModule {
 
       @Override
       public void write(JsonWriter out, Properties value) throws IOException {
-         Builder<String, String> srcMap = ImmutableMap.<String, String> builder();
+         Builder<String, String> srcMap = ImmutableMap.builder();
          for (Enumeration<?> propNames = value.propertyNames(); propNames.hasMoreElements();) {
             String propName = (String) propNames.nextElement();
             srcMap.put(propName, value.getProperty(propName));

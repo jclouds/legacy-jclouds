@@ -69,8 +69,8 @@ public class VCloudHardwareSupplier implements Supplier<Set<? extends Hardware>>
    @Override
    public Set<? extends Hardware> get() {
       Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
-      Iterable<Iterable<? extends Hardware>> sizes = transformParallel(orgs,
-               new Function<Org, Future<Iterable<? extends Hardware>>>() {
+      Iterable<? extends Iterable<? extends Hardware>> sizes = transformParallel(orgs,
+               new Function<Org, Future<? extends Iterable<? extends Hardware>>>() {
 
                   @Override
                   public Future<Iterable<? extends Hardware>> apply(final Org from) {

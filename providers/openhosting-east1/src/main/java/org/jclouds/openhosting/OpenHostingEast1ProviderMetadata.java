@@ -18,91 +18,71 @@
  */
 package org.jclouds.openhosting;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for OpenHosting's
- * East1 provider.
- *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for OpenHosting East1.
+ * 
+ * @author Adrian Cole
  */
 public class OpenHostingEast1ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "openhosting-east1";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "OpenHosting East1";
+   public OpenHostingEast1ProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User UUID";
+   public OpenHostingEast1ProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://east1.openhosting.com/");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://east1.openhosting.com/accounts/login");
-   }
+      protected Builder() {
+         id("openhosting-east1")
+         .name("OpenHosting East1")
+         .apiMetadata(new ElasticStackApiMetadata())
+         .homepage(URI.create("https://east1.openhosting.com"))
+         .console(URI.create("https://east1.openhosting.com/accounts"))
+         .iso3166Codes("US-VA")
+         .endpoint("https://api.east1.openhosting.com")
+         .defaultProperties(OpenHostingEast1ProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.openhosting.com/support/api/");
-   }
+      @Override
+      public OpenHostingEast1ProviderMetadata build() {
+         return new OpenHostingEast1ProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-FL");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

@@ -30,8 +30,8 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 
@@ -78,8 +78,8 @@ public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map
    }
 
    @Inject
-   public ParseIdToNameFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Set<IdName>>(checkNotNull(gsonWrapper, "gsonWrapper"),
+   public ParseIdToNameFromHttpResponse(GsonWrapper gsonView) {
+      this.parser = new ParseFirstJsonValueNamed<Set<IdName>>(checkNotNull(gsonView, "gsonView"),
             new TypeLiteral<Set<IdName>>() {
             }, "oscategory");
    }
@@ -88,7 +88,7 @@ public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map
       checkNotNull(response, "response");
       Set<IdName> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<Long, String> builder = ImmutableSortedMap.<Long, String> naturalOrder();
+      Builder<Long, String> builder = ImmutableSortedMap.naturalOrder();
       for (IdName entry : toParse)
          builder.put(entry.id, entry.name);
       return builder.build();

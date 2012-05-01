@@ -139,7 +139,7 @@ public class YamlImage {
          OsFamily family = parseOsFamilyOrUnrecognized(arg0.os_family);
 
          OperatingSystem operatingSystem = OperatingSystem.builder().description(arg0.os_description).family(family)
-                  .version(arg0.os_version).is64Bit(arg0.os_64bit).build();
+                  .version(arg0.os_version).is64Bit(arg0.os_64bit).arch(arg0.os_arch).build();
 
          return new ImageBuilder().id(arg0.id).name(arg0.name).description(arg0.description)
                   .operatingSystem(operatingSystem).build();
@@ -148,5 +148,16 @@ public class YamlImage {
 
    public Image toImage() {
       return toImage.apply(this);
+   }
+
+   @Override
+   public String toString() {
+      return "YamlImage [id=" + id + ", name=" + name + ", description=" + description + ", hostname=" + hostname
+               + ", location_id=" + location_id + ", os_arch=" + os_arch + ", os_family=" + os_family
+               + ", os_description=" + os_description + ", os_version=" + os_version + ", iso=" + iso
+               + ", keystroke_sequence=" + keystroke_sequence + ", preseed_cfg=" + preseed_cfg + ", login_port="
+               + login_port + ", os_64bit=" + os_64bit + ", group=" + group + ", tags=" + tags + ", metadata="
+               + metadata + ", username=" + username + ", credential=" + credential + ", credential_url="
+               + credential_url + ", sudo_password=" + sudo_password + "]";
    }
 }

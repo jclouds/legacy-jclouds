@@ -18,20 +18,22 @@
  */
 package org.jclouds.openstack.nova.options;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withAdminPass;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSecurityGroup;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+
+import javax.ws.rs.HttpMethod;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.HttpMethod;
-import java.net.URI;
-
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSecurityGroup;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withAdminPass;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}

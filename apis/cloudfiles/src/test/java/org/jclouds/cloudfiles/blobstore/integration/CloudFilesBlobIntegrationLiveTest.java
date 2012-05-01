@@ -28,6 +28,10 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class CloudFilesBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
+   public CloudFilesBlobIntegrationLiveTest(){
+      provider = "cloudfiles";
+   }
+   
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
       assert blob.getPayload().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob

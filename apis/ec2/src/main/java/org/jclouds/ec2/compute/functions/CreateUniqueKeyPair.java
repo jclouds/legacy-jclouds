@@ -19,9 +19,9 @@
 package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -34,6 +34,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 
 /**
  * 
@@ -74,8 +75,12 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
       }
       return keyPair;
    }
-
+   
+   @Inject(optional=true)
+   @Named(RESOURCENAME_DELIMITER) 
+   char delimiter = '#';
+   
    private String getNextName(String region, String group) {
-      return String.format("jclouds#%s#%s#%s", group, region, randomSuffix.get());
+      return String.format("jclouds#%s#%s#%s", group, region, randomSuffix.get()).replace('#', delimiter);
    }
 }

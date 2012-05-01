@@ -22,11 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.elb.config.ELBRestClientModule;
@@ -34,15 +34,12 @@ import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.elb.xml.DescribeLoadBalancersResponseHandler;
 import org.jclouds.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -56,7 +53,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "ELBAsyncClientTest")
-public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
+public class ELBAsyncClientTest extends BaseAsyncClientTest<ELBAsyncClient> {
 
    public void testCreateLoadBalancerInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ELBAsyncClient.class.getMethod("createLoadBalancerInRegion", String.class, String.class,
@@ -67,7 +64,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            String.format("Version=%s&Action=CreateLoadBalancer&Listeners.member.1.Protocol=http&LoadBalancerName=name&Listeners.member.1.LoadBalancerPort=80&Listeners.member.1.InstancePort=80", ELBAsyncClient.VERSION),
+            "Action=CreateLoadBalancer&Listeners.member.1.Protocol=http&LoadBalancerName=name&Listeners.member.1.LoadBalancerPort=80&Listeners.member.1.InstancePort=80",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -83,7 +80,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
 
       assertRequestLineEquals(request, "POST https://elasticloadbalancing.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, String.format("Version=%s&Action=DescribeLoadBalancers", ELBAsyncClient.VERSION),
+      assertPayloadEquals(request, "Action=DescribeLoadBalancers",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -101,7 +98,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            String.format("Version=%s&Action=DescribeLoadBalancers&LoadBalancerNames.member.1=1&LoadBalancerNames.member.2=2", ELBAsyncClient.VERSION),
+            "Action=DescribeLoadBalancers&LoadBalancerNames.member.1=1&LoadBalancerNames.member.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -121,7 +118,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            String.format("Version=%s&Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09", ELBAsyncClient.VERSION),
+            "Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -141,7 +138,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            String.format("Version=%s&Action=DeregisterInstancesFromLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09", ELBAsyncClient.VERSION),
+            "Action=DeregisterInstancesFromLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -157,7 +154,6 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       };
    }
 
-   @RequiresHttp
    @ConfiguresRestClient
    private static final class TestELBRestClientModule extends ELBRestClientModule {
       @Override
@@ -176,14 +172,10 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
    protected Module createModule() {
       return new TestELBRestClientModule();
    }
-
-   protected String provider = "elb";
-
-
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "identity", "credential",
-            new Properties());
+   public ApiMetadata createApiMetadata() {
+      return new ELBApiMetadata();
    }
 
    @Override

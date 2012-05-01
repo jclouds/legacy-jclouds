@@ -24,10 +24,9 @@ import static org.jclouds.io.Payloads.newPayload;
 import java.io.File;
 import java.io.InputStream;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 

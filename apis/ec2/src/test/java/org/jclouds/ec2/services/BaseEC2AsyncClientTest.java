@@ -28,25 +28,22 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.EC2ContextBuilder;
-import org.jclouds.ec2.EC2PropertiesBuilder;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.util.Suppliers2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -64,14 +61,9 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
-   @RequiresHttp
+public abstract class BaseEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
    @ConfiguresRestClient
    protected static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
-
-      public StubEC2RestClientModule() {
-         super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
-      }
 
       @Provides
       @Singleton
@@ -133,10 +125,6 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
       assertEquals(request.getFilters().get(0).getClass(), FormSigner.class);
    }
 
-   public BaseEC2AsyncClientTest() {
-      super();
-   }
-
    @Override
    @BeforeTest
    protected void setupFactory() throws IOException {
@@ -148,17 +136,9 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    protected Module createModule() {
       return new StubEC2RestClientModule();
    }
-
-   protected String provider = "ec2";
-
-   /**
-    * this is only here as "ec2" is not in rest.properties
-    */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return RestContextFactory.<EC2Client, EC2AsyncClient> contextSpec(provider, "https://ec2.us-east-1.amazonaws.com",
-            EC2AsyncClient.VERSION, "", "", "identity", "credential", EC2Client.class, EC2AsyncClient.class,
-            (Class) EC2PropertiesBuilder.class, (Class) EC2ContextBuilder.class, ImmutableSet.<Module> of());
+   protected ApiMetadata createApiMetadata() {
+      return new EC2ApiMetadata();
    }
 }

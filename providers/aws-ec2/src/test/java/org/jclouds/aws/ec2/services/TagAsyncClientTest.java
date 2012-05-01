@@ -50,7 +50,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DeleteTags&Tag.1.Key=yyy&Tag.1.Value=zzz&ResourceId.1=xxx",
+      assertPayloadEquals(request, "Action=DeleteTags&Tag.1.Key=yyy&Tag.1.Value=zzz&ResourceId.1=xxx",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -66,7 +66,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=CreateTags&Tag.1.Key=yyy&Tag.1.Value=zzz&ResourceId.1=xxx",
+      assertPayloadEquals(request, "Action=CreateTags&Tag.1.Key=yyy&Tag.1.Value=zzz&ResourceId.1=xxx",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -82,7 +82,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeTags",
+      assertPayloadEquals(request, "Action=DescribeTags",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -98,7 +98,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeTags&Filter.1.Name=key&Filter.1.Value.1=one&Filter.1.Value.2=two",
+      assertPayloadEquals(request, "Action=DescribeTags&Filter.1.Name=key&Filter.1.Value.1=one&Filter.1.Value.2=two",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

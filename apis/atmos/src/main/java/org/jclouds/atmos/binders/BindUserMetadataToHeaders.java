@@ -33,8 +33,8 @@ import org.jclouds.rest.Binder;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * @author Adrian Cole
@@ -52,7 +52,7 @@ public class BindUserMetadataToHeaders implements Binder, Function<UserMetadata,
 
    @Override
    public Map<String, String> apply(UserMetadata md) {
-      Builder<String, String> headers = ImmutableMap.<String, String> builder();
+      Builder<String, String> headers = ImmutableMap.builder();
       if (md.getMetadata().size() > 0) {
          String header = Joiner.on(',').withKeyValueSeparator("=").join(md.getMetadata());
          headers.put("x-emc-meta", header);

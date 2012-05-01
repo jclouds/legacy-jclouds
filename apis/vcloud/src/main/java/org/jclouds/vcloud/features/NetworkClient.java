@@ -21,9 +21,8 @@ package org.jclouds.vcloud.features;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 
 /**

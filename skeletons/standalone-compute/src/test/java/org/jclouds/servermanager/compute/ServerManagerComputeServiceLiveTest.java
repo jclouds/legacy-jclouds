@@ -21,15 +21,10 @@ package org.jclouds.servermanager.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
-
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.rest.RestContext;
-import org.jclouds.servermanager.ServerManager;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
@@ -40,18 +35,9 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
 public class ServerManagerComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public ServerManagerComputeServiceLiveTest() {
       provider = "servermanager";
-   }
-
-   @Override
-   protected Properties setupRestProperties() {
-      Properties restProperties = new Properties();
-      restProperties.setProperty("servermanager.contextbuilder",
-            ServerManagerComputeServiceContextBuilder.class.getName());
-      restProperties.setProperty("servermanager.endpoint", "http://host");
-      restProperties.setProperty("servermanager.api-version", "1");
-      return restProperties;
    }
 
    @Test
@@ -76,9 +62,4 @@ public class ServerManagerComputeServiceLiveTest extends BaseComputeServiceLiveT
             "node userMetadata did not match %s %s", userMetadata, node);
    }
    
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<ServerManager, ServerManager> goGridContext = new ComputeServiceContextFactory().createContext(
-            provider, identity, credential).getProviderSpecificContext();
-   }
 }

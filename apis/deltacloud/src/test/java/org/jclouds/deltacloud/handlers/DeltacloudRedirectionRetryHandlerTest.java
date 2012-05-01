@@ -18,29 +18,20 @@
  */
 package org.jclouds.deltacloud.handlers;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.jclouds.rest.config.RestModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
 
 /**
  * Tests behavior of {@code DeltacloudRedirectionRetry}
@@ -49,19 +40,7 @@ import com.google.inject.Provides;
  */
 @Test(groups = "unit")
 public class DeltacloudRedirectionRetryHandlerTest {
-   Injector injector = Guice.createInjector(new MockModule(), new RestModule(), new AbstractModule() {
-      @SuppressWarnings("unused")
-      @Provides
-      @Singleton
-      @Named("CONSTANTS")
-      protected Multimap<String, String> constants() {
-         return LinkedHashMultimap.create();
-      }
-
-      @Override
-      protected void configure() {
-      }
-   });
+   Injector injector = ContextBuilder.newBuilder("stub").buildInjector();
 
    @Test
    public void test302DoesNotRetryOnDelete() {

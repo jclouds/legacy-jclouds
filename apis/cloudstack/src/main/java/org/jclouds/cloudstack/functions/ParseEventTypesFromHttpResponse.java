@@ -20,17 +20,19 @@ package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Singleton;
 import java.util.Set;
+
+import javax.inject.Singleton;
+
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.json.internal.GsonWrapper;
 
 /**
  * @author Vijay Kiran
@@ -52,8 +54,8 @@ public class ParseEventTypesFromHttpResponse implements Function<HttpResponse, S
    }
 
    @Inject
-   public ParseEventTypesFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Set<EventType>>(checkNotNull(gsonWrapper, "gsonWrapper"),
+   public ParseEventTypesFromHttpResponse(GsonWrapper gsonView) {
+      this.parser = new ParseFirstJsonValueNamed<Set<EventType>>(checkNotNull(gsonView, "gsonView"),
             new TypeLiteral<Set<EventType>>() {
             }, "eventtype");
    }
@@ -62,7 +64,7 @@ public class ParseEventTypesFromHttpResponse implements Function<HttpResponse, S
       checkNotNull(response, "response");
       Set<EventType> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<String> builder = ImmutableSet.<String>builder();
+      Builder<String> builder = ImmutableSet.builder();
       for (EventType entry : toParse)
          builder.add(entry.name);
       return builder.build();

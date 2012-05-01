@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *      />
  * @author Andrei Savu
  */
+@Deprecated
 public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
 
    public static final GetMetricStatisticsOptions NONE = new GetMetricStatisticsOptions();
@@ -73,5 +74,7 @@ public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
          GetMetricStatisticsOptions options = new GetMetricStatisticsOptions();
          return options.unit(unit);
       }
+
     }
+
 }

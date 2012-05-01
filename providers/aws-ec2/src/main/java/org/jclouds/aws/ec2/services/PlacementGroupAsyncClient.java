@@ -19,20 +19,18 @@
 package org.jclouds.aws.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
-import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindGroupNamesToIndexedFormParams;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -53,7 +51,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = AWSEC2AsyncClient.VERSION)
 @VirtualHost
 public interface PlacementGroupAsyncClient {
 

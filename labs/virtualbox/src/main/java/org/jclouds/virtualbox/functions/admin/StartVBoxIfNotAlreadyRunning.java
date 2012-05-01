@@ -26,7 +26,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +37,6 @@ import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -47,6 +45,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.net.HostAndPort;
 
 @Singleton
 public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager> {
@@ -59,8 +58,6 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    private final RetryIfSocketNotYetOpen socketTester;
    private final Supplier<NodeMetadata> host;
    private final Supplier<URI> providerSupplier;
-//   private final String identity;
-//   private final String credential;
    private final Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode;
    private transient VirtualBoxManager manager;
 
@@ -75,28 +72,22 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
       this.socketTester.seconds(3L);
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
-//      this.identity = checkNotNull(identity, "identity");
-//      this.credential = checkNotNull(credential, "credential");
       this.managerForNode = checkNotNull(managerForNode, "managerForNode");
+      start();
    }
 
-   @PostConstruct
-   public void start() {
+   public synchronized void start() {
       URI provider = providerSupplier.get();
-      if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))) {
+      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))) {
          logger.debug("disabling password access");
          runScriptOnNodeFactory.create(host.get(), Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                   runAsRoot(false).wrapInInitScript(false)).init().call();
          logger.debug(">> starting vboxwebsrv");
          String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
-         if (host.get().getOperatingSystem() != null
-                  && host.get().getOperatingSystem().getDescription().equals("Mac OS X"))
-            vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && " + vboxwebsrv;
-
          runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
                   runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
          
-         if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))){
+         if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))){
             throw new RuntimeException("could not connect to virtualbox");
          }
       }

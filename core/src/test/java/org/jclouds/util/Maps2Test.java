@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -84,6 +85,20 @@ public class Maps2Test {
                     return (input.equals("baz") ? null : "foo");
                 }
             }), expected);
+   }
+   
+   @Test
+   public void testCovariantUniqueIndex() {
+      Iterable<Integer> values = Lists.newArrayList(1, 2, 3, 4, 5);
+      Map<Number, Number> map = Maps2.<Number, Number>uniqueIndex(values, new Function<Object, Double>() {
+
+         @Override
+         public Double apply(Object input) {
+            return (Integer)input + 0.1;
+         }
+      });
+      
+      assertEquals(map.get(1.1), 1);
    }
    
 }

@@ -58,6 +58,7 @@ import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.domain.WellKnownImage;
 import org.jclouds.elasticstack.reference.ElasticStackConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Iterables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -132,7 +133,7 @@ public class ElasticStackComputeServiceAdapter implements
 
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
-      Builder<Hardware> hardware = ImmutableSet.<Hardware> builder();
+      Builder<Hardware> hardware = ImmutableSet.builder();
       for (double cpu : new double[] { 1000, 5000, 10000, 20000 })
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192 }) {
             final float size = (float) cpu / 1000;
@@ -162,11 +163,11 @@ public class ElasticStackComputeServiceAdapter implements
     */
    @Override
    public Iterable<DriveInfo> listImages() {
-      Iterable<DriveInfo> drives = transformParallel(preinstalledImages.keySet(),
-            new Function<String, Future<DriveInfo>>() {
+      Iterable<? extends DriveInfo> drives = transformParallel(preinstalledImages.keySet(),
+            new Function<String, Future<? extends DriveInfo>>() {
 
                @Override
-               public Future<DriveInfo> apply(String input) {
+               public Future<? extends DriveInfo> apply(String input) {
                   try {
                      return Futures.immediateFuture(cache.getUnchecked(input));
                   } catch (CacheLoader.InvalidCacheLoadException e) {
@@ -183,7 +184,7 @@ public class ElasticStackComputeServiceAdapter implements
                }
 
             }, executor, null, logger, "drives");
-      return filter(drives, notNull());
+      return Iterables2.concreteCopy(filter(drives, notNull()));
    }
 
    @SuppressWarnings("unchecked")

@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox.compute;
 
+import static junit.framework.Assert.assertTrue;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 import static org.testng.Assert.assertEquals;
 
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.LoginCredentials;
@@ -42,7 +44,7 @@ import com.google.common.collect.Iterables;
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private NodeAndInitialCredentials<IMachine> machine;
-   
+
    @Inject
    protected VirtualBoxComputeServiceAdapter adapter;
 
@@ -50,17 +52,16 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef4";
-      String machineName = VIRTUALBOX_NODE_PREFIX + "default-ubuntu-11.04-i386-" + group + "-" + name;
-
-      Template template = context.getComputeService().templateBuilder().build();
+      Template template = view.getComputeService().templateBuilder().build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
-      
-      assertEquals(machine.getNode().getName(), machineName);
+      assertTrue(machine.getNode().getName().contains(group));
+      assertTrue(machine.getNode().getName().contains(name));
+      assertTrue(machine.getNode().getName().startsWith(VIRTUALBOX_NODE_PREFIX));
       doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
    }
-   
+
    protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
-      SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
+      SshClient ssh = view.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -76,16 +77,14 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
 
    @Test
    public void testListHardwareProfiles() {
-      Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertEquals(1, Iterables.size(profiles));
-      //TODO: check state;
+      Iterable<Hardware> profiles = adapter.listHardwareProfiles();
+      assertTrue(!Iterables.isEmpty(profiles));
    }
 
    @Test
    public void testListImages() {
       Iterable<Image> iMageIterable = adapter.listImages();
-      assertEquals(1, Iterables.size(iMageIterable));
-      //TODO: check state;
+      assertTrue(!Iterables.isEmpty(iMageIterable));
    }
 
    @AfterClass

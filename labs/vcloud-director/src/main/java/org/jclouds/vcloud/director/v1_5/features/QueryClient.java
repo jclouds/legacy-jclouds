@@ -21,25 +21,29 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
-import org.jclouds.vcloud.director.v1_5.domain.CatalogReference;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
 
 /**
- * Provides synchronous access to The REST API query interface.
+ * Provides synchronous access to the REST API query interface.
  * 
  * @see QueryAsyncClient
  * @author grkvlt@apache.org
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface QueryClient {
+
+   /**
+    * Redirects to the URL of an entity with the given VCD ID.
+    *
+    * <pre>
+    * GET /entity/{id}
+    * </pre>
+    */
+   Entity entity(String id);
 
    // TODO Add a typed object for filter syntax, or at least a fluent builder
    
@@ -174,7 +178,7 @@ public interface QueryClient {
    QueryResultRecords vmsQuery(String filter);
 
    /**
-    * Retrieves a list of {@link Medias by using REST API general QueryHandler.
+    * Retrieves a list of {@link Media}s by using REST API general QueryHandler.
     *
     * <pre>
     * GET /mediaList/query

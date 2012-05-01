@@ -30,7 +30,6 @@ import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -39,6 +38,7 @@ import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 
 /**
@@ -47,10 +47,12 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
+   protected AzureStorageRestClientModule() {
 
-   public AzureStorageRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+   }
+
+   public AzureStorageRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
 

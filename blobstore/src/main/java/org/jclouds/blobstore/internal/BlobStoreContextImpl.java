@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -31,31 +32,33 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.internal.BaseView;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
+
+import com.google.common.io.Closeables;
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
+public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
    private final BlobMap.Factory blobMapFactory;
    private final InputStreamMap.Factory inputStreamMapFactory;
    private final AsyncBlobStore ablobStore;
    private final BlobStore blobStore;
-   private final RestContext<S, A> providerSpecificContext;
    private final ConsistencyModel consistencyModel;
    private final Utils utils;
    private final BlobRequestSigner blobRequestSigner;
 
-   @SuppressWarnings("unchecked")
    @Inject
-   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
+   public BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
+            BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
-         @SuppressWarnings("rawtypes") RestContext providerSpecificContext, BlobRequestSigner blobRequestSigner) {
-      // unravel guice and avoid passing in a million type args by not injecting generic types for
-      // rest context
-      this.providerSpecificContext = checkNotNull(providerSpecificContext, "providerSpecificContext");
+            BlobRequestSigner blobRequestSigner) {
+      super(backend, backendType);
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");
@@ -100,17 +103,6 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
       return ablobStore;
    }
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) providerSpecificContext;
-   }
-
-   @Override
-   public void close() {
-      providerSpecificContext.close();
-   }
-
    @Override
    public Utils getUtils() {
       return utils();
@@ -122,22 +114,33 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    }
 
    @Override
+   public BlobRequestSigner getSigner() {
+      return blobRequestSigner;
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public <S, A> RestContext<S, A> getProviderSpecificContext() {
+      return (RestContext<S, A>) delegate();
+   }
+
+   @Override
+   public void close() {
+      Closeables.closeQuietly(delegate());
+   }
+
    public int hashCode() {
-      return providerSpecificContext.hashCode();
+      return delegate().hashCode();
    }
 
    @Override
    public String toString() {
-      return providerSpecificContext.toString();
+      return delegate().toString();
    }
 
    @Override
    public boolean equals(Object obj) {
-      return providerSpecificContext.equals(obj);
+      return delegate().equals(obj);
    }
 
-   @Override
-   public BlobRequestSigner getSigner() {
-      return blobRequestSigner;
-   }
 }

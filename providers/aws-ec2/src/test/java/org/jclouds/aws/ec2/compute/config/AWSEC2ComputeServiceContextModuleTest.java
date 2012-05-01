@@ -18,14 +18,14 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.fail;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
+import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 

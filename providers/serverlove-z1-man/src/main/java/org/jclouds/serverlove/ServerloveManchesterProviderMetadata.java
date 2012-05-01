@@ -18,98 +18,71 @@
  */
 package org.jclouds.serverlove;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Serverlove Manchester.
- *
+ * 
  * @author Adrian Cole
  */
 public class ServerloveManchesterProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "serverlove-z1-man";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8799752320729476294L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Serverlove Manchester";
+   public ServerloveManchesterProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public ServerloveManchesterProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.serverlove.com");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://www.serverlove.com/login");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.serverlove.com/cloud-server-faqs/api-questions");
-   }
+      protected Builder() {
+         id("serverlove-z1-man")
+         .name("Serverlove Manchester")
+         .apiMetadata(new ElasticStackApiMetadata())
+         .homepage(URI.create("http://www.serverlove.com"))
+         .console(URI.create("http://www.serverlove.com/accounts"))
+         .iso3166Codes("GB-MAN")
+         .endpoint("https://api.z1-man.serverlove.com")
+         .defaultProperties(ServerloveManchesterProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("serverlove-z1-man");
-   }
+      @Override
+      public ServerloveManchesterProviderMetadata build() {
+         return new ServerloveManchesterProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("GB-MAN");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

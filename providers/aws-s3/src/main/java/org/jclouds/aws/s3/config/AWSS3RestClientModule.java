@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfigured;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
@@ -42,6 +41,7 @@ import org.jclouds.s3.config.S3RestClientModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 
 /**
@@ -49,10 +49,13 @@ import com.google.inject.Provides;
  *
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3AsyncClient> {
-
+   
+   public AWSS3RestClientModule() {
+      super(TypeToken.of(AWSS3Client.class), TypeToken.of(AWSS3AsyncClient.class));
+   }
+   
    @Override
    protected Supplier<String> defaultRegionForBucket(@Region Supplier<String> defaultRegion) {
       return Suppliers.ofInstance(US_STANDARD);
@@ -70,11 +73,7 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    protected Supplier<URI> provideBucketURI(@Named(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT) String endpoint){
       return Suppliers.ofInstance(URI.create(endpoint));
    }
-   
-   public AWSS3RestClientModule() {
-      super(AWSS3Client.class, AWSS3AsyncClient.class);
-   }
-
+  
    @Singleton
    @Provides
    S3Client provide(AWSS3Client in) {
@@ -90,11 +89,10 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    /**
     * so that we can inject RestContext<S3Client, S3AsyncClient>
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Singleton
    @Provides
-   RestContext<S3Client, S3AsyncClient>
-   provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
+   RestContext<S3Client, S3AsyncClient> provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
       return (RestContext) in;
    }
 

@@ -22,8 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -50,7 +50,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Volume> {
-   private StringBuilder currentText = new StringBuilder();
+   protected StringBuilder currentText = new StringBuilder();
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -58,7 +58,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
    protected DateService dateService;
    @Inject
    @Region
-   Supplier<String> defaultRegion;
+   protected Supplier<String> defaultRegion;
    @Inject
    @Zone
    protected Supplier<Map<String, Supplier<Set<String>>>> regionToZonesSupplier;
@@ -66,23 +66,23 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
    @Zone
    protected Supplier<Set<String>> zonesSupplier;
    
-   private String id;
-   private int size;
-   private String snapshotId;
-   private String availabilityZone;
-   private Volume.Status volumeStatus;
-   private Date createTime;
-   private Set<Attachment> attachments = Sets.newLinkedHashSet();
+   protected String id;
+   protected int size;
+   protected String snapshotId;
+   protected String availabilityZone;
+   protected Volume.Status volumeStatus;
+   protected Date createTime;
+   protected Set<Attachment> attachments = Sets.newLinkedHashSet();
 
-   private String volumeId;
-   private String instanceId;
-   private String device;
-   private Attachment.Status attachmentStatus;
-   private Date attachTime;
+   protected String volumeId;
+   protected String instanceId;
+   protected String device;
+   protected Attachment.Status attachmentStatus;
+   protected Date attachTime;
 
-   private boolean inAttachmentSet;
+   protected boolean inAttachmentSet;
 
-   private String region;
+   protected String region;
 
    public Volume getResult() {
       return newVolume();

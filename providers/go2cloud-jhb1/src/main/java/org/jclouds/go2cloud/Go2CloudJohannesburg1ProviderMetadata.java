@@ -18,91 +18,72 @@
  */
 package org.jclouds.go2cloud;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Go2Cloud's
- * Johannesburg1 provider.
- *
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Go2Cloud's Johannesburg1
+ * provider.
+ * 
  * @author Adrian Cole
  */
 public class Go2CloudJohannesburg1ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "go2cloud-jhb1";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 5737728330686182812L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Go2Cloud Johannesburg1";
+   public Go2CloudJohannesburg1ProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User UUID";
+   public Go2CloudJohannesburg1ProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://jhb1.go2cloud.co.za/");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://jhb1.go2cloud.co.za/accounts");
-   }
+      protected Builder() {
+         id("go2cloud-jhb1")
+         .name("Go2Cloud Johannesburg1")
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
+         .homepage(URI.create("https://jhb1.go2cloud.co.za"))
+         .console(URI.create("https://jhb1.go2cloud.co.za/accounts"))
+         .iso3166Codes("ZA-GP")
+         .endpoint("https://api.jhb1.go2cloud.co.za")
+         .defaultProperties(Go2CloudJohannesburg1ProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.go2cloud.co.za/Home/QuickStart");
-   }
+      @Override
+      public Go2CloudJohannesburg1ProviderMetadata build() {
+         return new Go2CloudJohannesburg1ProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("ZA-GP");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -36,6 +34,7 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ComparisonChain;

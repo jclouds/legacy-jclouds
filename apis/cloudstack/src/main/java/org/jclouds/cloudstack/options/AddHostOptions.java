@@ -18,12 +18,13 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
-import java.util.Set;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to the GlobalHostClient.addHost() API call

@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -31,18 +30,19 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.xml.EnvelopeHandlerTest;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudVersionsClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.AllocationModel;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
@@ -75,10 +75,9 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BaseVCloudAsyncClientTest")
-public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -90,14 +89,12 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
    protected Module createModule() {
       return new VCloudRestClientModuleExtension();
    }
-
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      Properties overrides = new Properties();
-      overrides.setProperty("vcloud.endpoint", "https://vcenterprise.bluelock.com/api/v1.0");
-      return new RestContextFactory().createContextSpec("vcloud", "identity", "credential", overrides);
+   protected ProviderMetadata createProviderMetadata() {
+      return  AnonymousProviderMetadata.forApiWithEndpoint(new VCloudApiMetadata(), "https://vcenterprise.bluelock.com/api/v1.0");
    }
-
+   
    protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", VCloudMediaType.ORG_XML,
          URI.create("https://vcenterprise.bluelock.com/api/v1.0/org/1"));
 
@@ -129,8 +126,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
                      .create("https://vcenterprise.bluelock.com/api/v1.0/vdcItem/2"))),
          ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF), 0, 0, 0, false);
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    public static class VCloudRestClientModuleExtension extends VCloudRestClientModule {
 
       @Override
@@ -258,11 +254,11 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
          }
 
          @Override
-         public Map<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>> get() {
-            return ImmutableMap.<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>> of(
+         public Map<String, Map<String, Map<String, CatalogItem>>> get() {
+            return ImmutableMap.<String, Map<String, Map<String, CatalogItem>>> of(
                   ORG_REF.getName(), ImmutableMap
-                        .<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>> of(CATALOG_REF
-                              .getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.CatalogItem> of(
+                        .<String, Map<String, CatalogItem>> of(CATALOG_REF
+                              .getName(), ImmutableMap.<String, CatalogItem> of(
                               "template",
                               new CatalogItemImpl("template", URI
                                     .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"), "description",

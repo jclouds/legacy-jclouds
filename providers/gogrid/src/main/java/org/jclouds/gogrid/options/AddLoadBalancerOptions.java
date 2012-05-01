@@ -18,12 +18,14 @@
  */
 package org.jclouds.gogrid.options;
 
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.DESCRIPTION_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOAD_BALANCER_PERSISTENCE_TYPE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOAD_BALANCER_TYPE_KEY;
+
 import org.jclouds.gogrid.domain.LoadBalancerPersistenceType;
 import org.jclouds.gogrid.domain.LoadBalancerType;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
 
 /**
  * Optional parameters for adding a load balancer.

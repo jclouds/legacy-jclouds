@@ -19,40 +19,42 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.DhcpService;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.IpAddresses;
-import org.jclouds.vcloud.director.v1_5.domain.IpRange;
-import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
-import org.jclouds.vcloud.director.v1_5.domain.IpScope;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Network;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.domain.network.DhcpService;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Allows us to test a client via its side effects.
+ * Test the {@link NetworkClient} via its side effects.
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "user", "network" }, singleThreaded = true, testName = "NetworkClientExpectTest")
-public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "NetworkClientExpectTest")
+public class NetworkClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    @Test
    public void testGetNetwork() {
@@ -113,20 +115,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      Error expected = Error.builder()
-         .message("This operation is denied.")
-         .majorErrorCode(403)
-         .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-         .build();
-
-      try {
-         client.getNetworkClient().getNetwork(networkUri);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+      assertNull(client.getNetworkClient().getNetwork(networkUri));
    }
 
    @Test
@@ -142,20 +131,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-fake.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      Error expected = Error.builder()
-         .message("This operation is denied.")
-         .majorErrorCode(403)
-         .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-         .build();
-
-      try {
-         client.getNetworkClient().getNetwork(networkUri);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+      assertNull(client.getNetworkClient().getNetwork(networkUri));
    }
    
    @Test
@@ -242,7 +218,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                            .build())
                      .build())
                .build())
-            .fenceMode("isolated")
+            .fenceMode(FenceMode.ISOLATED)
             .retainNetInfoAcrossDeployments(false)
             .features(NetworkFeatures.builder()
                .service(DhcpService.builder()

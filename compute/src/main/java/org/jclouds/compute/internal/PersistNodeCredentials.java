@@ -18,10 +18,10 @@
  */
 package org.jclouds.compute.internal;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Function;

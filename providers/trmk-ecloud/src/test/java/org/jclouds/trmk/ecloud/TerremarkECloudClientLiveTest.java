@@ -18,11 +18,10 @@
  */
 package org.jclouds.trmk.ecloud;
 
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.trmk.ecloud.suppliers.TerremarkECloudInternetServiceAndPublicIpAddressSupplier;
 import org.jclouds.trmk.vcloud_0_8.TerremarkClientLiveTest;
@@ -33,13 +32,15 @@ import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
 
+import com.google.common.net.HostAndPort;
+
 /**
  * Tests behavior of {@code TerremarkECloudClient}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "TerremarkECloudClientLiveTest")
-public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
+public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient> {
 
    public TerremarkECloudClientLiveTest() {
       this.provider = "trmk-ecloud";
@@ -56,7 +57,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    }
 
    @Override
-   protected SshClient getConnectionFor(IPSocket socket) {
+   protected SshClient getConnectionFor(HostAndPort socket) {
       return sshFactory.create(socket, LoginCredentials.builder().user("ecloud").password("TmrkCl0ud1s#1!").privateKey(
                key.getPrivateKey()).authenticateSudo(true).build());
    }

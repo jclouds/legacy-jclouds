@@ -18,18 +18,21 @@
  */
 package org.jclouds.cloudstack.predicates;
 
-import com.google.common.base.Predicate;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetworkInZone;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.hasLoadBalancerService;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsPortForwarding;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
-import static org.jclouds.cloudstack.predicates.NetworkPredicates.*;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 /**
  * 

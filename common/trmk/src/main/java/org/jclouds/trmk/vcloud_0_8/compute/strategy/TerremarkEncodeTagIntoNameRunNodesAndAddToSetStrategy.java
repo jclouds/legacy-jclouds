@@ -32,6 +32,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -55,11 +56,11 @@ public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends Creat
    protected TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy(
             CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
             ListNodesStrategy listNodesStrategy,
-            @Named("NAMING_CONVENTION") String nodeNamingConvention,
+            GroupNamingConvention.Factory namingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
-      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, executor,
+      super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.createNewKeyPairUnlessUserSpecifiedOtherwise = createNewKeyPairUnlessUserSpecifiedOtherwise;
    }

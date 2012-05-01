@@ -19,17 +19,14 @@
 package org.jclouds.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
-import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.ec2.binders.BindVolumeIdsToIndexedFormParams;
@@ -47,6 +44,7 @@ import org.jclouds.ec2.xml.DescribeSnapshotsResponseHandler;
 import org.jclouds.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.ec2.xml.PermissionHandler;
 import org.jclouds.ec2.xml.SnapshotHandler;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
@@ -67,7 +65,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface ElasticBlockStoreAsyncClient {
 

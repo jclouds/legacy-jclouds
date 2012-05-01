@@ -36,19 +36,20 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.s3.S3ApiMetadata;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.AccessControlList;
-import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
-import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
-import org.jclouds.s3.domain.AccessControlList.Grant;
-import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
-import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.s3.domain.BucketMetadata;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.Payer;
 import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
+import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
+import org.jclouds.s3.domain.AccessControlList.Grant;
+import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
+import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.internal.StubS3AsyncClient;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -64,8 +65,13 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = { "integration", "live" })
 public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
+   public BucketsLiveTest() {
+      this.provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
+
    public S3Client getApi() {
-      return (S3Client) context.getProviderSpecificContext().getApi();
+      return (S3Client) view.unwrap(S3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    /**

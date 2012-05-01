@@ -18,14 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.UpdateZoneOptions.Builder.name;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.UpdateZoneOptions.Builder.name;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code GlobalZoneClient}

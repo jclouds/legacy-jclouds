@@ -28,7 +28,6 @@ import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.savvis.vpdc.domain.Network;
@@ -48,13 +47,14 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 
 @Test(groups = "live")
 public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    private VMClient client;
    private VM vm;
-   private RetryablePredicate<IPSocket> socketTester;
+   private RetryablePredicate<HostAndPort> socketTester;
 
    private String username = checkNotNull(System.getProperty("test." + provider + ".loginUser"), "test." + provider
             + ".loginUser");
@@ -63,10 +63,10 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    @Override
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       client = restContext.getApi().getVMClient();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
    }
 
    private String billingSiteId;
@@ -170,7 +170,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       System.out.printf("Creating vm's - vpdcId %s, vpdcName %s, networkName %s, name %s, os %s%n", vpdcId, vpdc.getName(), networkTier
                .getName().replace("-", " "), name, os);
 
-      Builder<VMSpec> vmSpecs = ImmutableSet.<VMSpec> builder();
+      Builder<VMSpec> vmSpecs = ImmutableSet.builder();
       int noOfVms = 2;
       for (int i = 0; i < noOfVms; i++) {
          // TODO: determine the sizes available in the VDC, for example there's
@@ -277,9 +277,9 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
        assert clonedVM.getHref() != null : clonedVM;
    }
 
-   protected void checkSSH(IPSocket socket) {
+   protected void checkSSH(HostAndPort socket) {
       socketTester.apply(socket);
-      SshClient client = context.utils().sshFactory()
+      SshClient client = view.utils().sshFactory()
             .create(socket, LoginCredentials.builder().user(username).password(password).build());
       try {
          client.connect();
@@ -293,10 +293,10 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (vm != null) {
          assert taskTester.apply(client.removeVMFromVDC(billingSiteId, vpdcId, vm.getId()).getId()) : vm;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

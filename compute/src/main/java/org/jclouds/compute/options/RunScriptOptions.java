@@ -22,15 +22,12 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.util.CredentialUtils;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Enables additional options for running a script.
@@ -128,33 +125,16 @@ public class RunScriptOptions {
          return delegate.shouldWrapInInitScript();
       }
 
-      @Deprecated
-      @Override
-      public RunScriptOptions overrideLoginUserWith(String loginUser) {
-         throw new IllegalArgumentException("loginUser is immutable");
-      }
-
       @Override
       public RunScriptOptions overrideLoginUser(String loginUser) {
          throw new IllegalArgumentException("loginUser is immutable");
       }
-
-      @Override
-      public RunScriptOptions overrideLoginCredentialWith(String loginCredential) {
-         throw new IllegalArgumentException("loginCredential is immutable");
-      }
-
+      
       @Override
       public RunScriptOptions wrapInInitScript(boolean wrapInInitScript) {
          throw new IllegalArgumentException("wrapInInitScript is immutable");
       }
-
-      @Deprecated
-      @Override
-      public RunScriptOptions overrideCredentialsWith(Credentials overridingCredentials) {
-         throw new IllegalArgumentException("overridingCredentials is immutable");
-      }
-
+      
       @Override
       public String getTaskName() {
          return delegate.getTaskName();
@@ -193,15 +173,6 @@ public class RunScriptOptions {
    protected Optional<String> loginPassword;
    protected Optional<String> loginPrivateKey;
 
-   /**
-    * to be removed in jclouds 1.4.0
-    * @see #overrideLoginCredentials
-    */
-   @Deprecated
-   public RunScriptOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return overrideLoginCredentials(LoginCredentials.fromCredentials(overridingCredentials));
-   }
-
    public RunScriptOptions overrideLoginCredentials(LoginCredentials overridingCredentials) {
       checkNotNull(overridingCredentials, "overridingCredentials");
       this.loginUser = overridingCredentials.getUser();
@@ -210,39 +181,14 @@ public class RunScriptOptions {
       this.authenticateSudo = overridingCredentials.shouldAuthenticateSudo() ? true : null;
       return this;
    }
-   
-   /**
-    * to be removed in jclouds 1.4.0
-    * @see #overrideLoginCredentials
-    */
-   @Deprecated
-   public RunScriptOptions overrideLoginUserWith(String loginUser) {
-      return overrideLoginUser(loginUser);
-   }
+  
 
    public RunScriptOptions overrideLoginUser(String loginUser) {
       checkNotNull(loginUser, "loginUser");
       this.loginUser = loginUser;
       return this;
    }
-   
-   /**
-    * to be removed in jclouds 1.4.0
-    * @see #overrideLoginCredentials
-    */
-   @Deprecated
-   public RunScriptOptions overrideLoginCredentialWith(String loginCredential) {
-      checkNotNull(loginCredential, "loginCredential");
-      if (CredentialUtils.isPrivateKeyCredential(loginCredential)) {
-         this.loginPrivateKey = Optional.of(loginCredential);
-         this.loginPassword = Optional.absent();
-      } else {
-         this.loginPrivateKey = Optional.absent();
-         this.loginPassword = Optional.of(loginCredential);
-      }
-      return this;
-   }
-
+  
    public RunScriptOptions overrideLoginPassword(String password) {
       checkNotNull(password, "password");
       this.loginPassword = Optional.of(password);
@@ -351,17 +297,6 @@ public class RunScriptOptions {
    }
 
    /**
-    * This will be removed in jclouds 1.4.0
-    * @see #getLoginPassword
-    * @see #getLoginPrivateKey
-    * @see #getLoginUser
-    */
-   @Deprecated
-   public Credentials getOverridingCredentials() {
-      return DefaultCredentialsFromImageOrOverridingCredentials.overrideDefaultCredentialsWithOptionsIfPresent(null, this);
-   }
-   
-   /**
     * @return true if the login password has been configured
     */
    public boolean hasLoginPasswordOption() {
@@ -444,12 +379,6 @@ public class RunScriptOptions {
          return options.nameTask(name);
       }
 
-      @Deprecated
-      public static RunScriptOptions overrideLoginUserWith(String user) {
-         RunScriptOptions options = new RunScriptOptions();
-         return options.overrideLoginUserWith(user);
-      }
-
       public static RunScriptOptions overrideLoginUser(String user) {
          RunScriptOptions options = new RunScriptOptions();
          return options.overrideLoginUser(user);
@@ -468,18 +397,6 @@ public class RunScriptOptions {
       public static RunScriptOptions overrideAuthenticateSudo(boolean authenticateSudo) {
          RunScriptOptions options = new RunScriptOptions();
          return options.overrideAuthenticateSudo(authenticateSudo);
-      }
-
-      @Deprecated
-      public static RunScriptOptions overrideLoginCredentialWith(String credential) {
-         RunScriptOptions options = new RunScriptOptions();
-         return options.overrideLoginCredentialWith(credential);
-      }
-
-      @Deprecated
-      public static RunScriptOptions overrideCredentialsWith(Credentials credentials) {
-         RunScriptOptions options = new RunScriptOptions();
-         return options.overrideCredentialsWith(credentials);
       }
 
       public static RunScriptOptions overrideLoginCredentials(LoginCredentials credentials) {

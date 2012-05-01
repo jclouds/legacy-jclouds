@@ -36,11 +36,11 @@
    */
 package org.jclouds.cloudstack.options;
 
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.ISO;
 
 import com.google.common.collect.ImmutableSet;
-
-import java.util.Set;
 
 /**
  * Options for the ISO listISOs method.

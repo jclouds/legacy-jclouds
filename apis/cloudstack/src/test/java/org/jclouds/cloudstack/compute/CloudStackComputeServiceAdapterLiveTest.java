@@ -23,9 +23,7 @@ import static com.google.inject.name.Names.bindProperties;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.fail;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -62,7 +60,6 @@ import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCred
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
 import org.testng.annotations.AfterGroups;
@@ -76,6 +73,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.net.HostAndPort;
 import com.google.common.net.InetAddresses;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -97,8 +95,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       Module module = new AbstractModule() {
 
          @Override
@@ -111,7 +109,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             }).annotatedWith(Memoized.class).to(NetworksForCurrentUser.class).in(Scopes.SINGLETON);
             bind(new TypeLiteral<Map<String, Credentials>>() {
             }).toInstance(credentialStore);
-            bind(CloudStackClient.class).toInstance(context.getApi());
+            bind(CloudStackClient.class).toInstance(cloudStackContext.getApi());
             bind(new TypeLiteral<Map<NetworkType, ? extends OptionsConverter>>() {}).
                toInstance(new CloudStackComputeServiceContextModule().optionsConverters());
             bind(Long.class).annotatedWith(Names.named(PROPERTY_SESSION_INTERVAL)).toInstance(60L);
@@ -141,15 +139,10 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             CloudStackComputeServiceAdapter.class);
 
       keyPairName = prefix + "-adapter-test-keypair";
-      try {
-         keyPair = ComputeTestUtils.setupKeyPair();
+      keyPair = ComputeTestUtils.setupKeyPair();
 
-         client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
-         client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
-
-      } catch (IOException e) {
-         fail("Unable to create keypair", e);
-      }
+      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
+      client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
    }
 
    @Test
@@ -164,7 +157,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    public void testCreateNodeWithGroupEncodedIntoName() throws InterruptedException {
       String group = prefix + "-foo";
       String name = group + "-node-" + new Random().nextInt();
-      Template template = computeContext.getComputeService().templateBuilder().build();
+      Template template = view.getComputeService().templateBuilder().build();
 
       if (!client
             .getTemplateClient()
@@ -187,7 +180,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       loginCredentials = prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials());
       
       assert InetAddresses.isInetAddress(address) : vm;
-      IPSocket socket = new IPSocket(address, 22);
+      HostAndPort socket = HostAndPort.fromParts(address, 22);
       checkSSH(socket);
    }
 

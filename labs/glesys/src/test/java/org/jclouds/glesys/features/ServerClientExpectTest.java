@@ -18,24 +18,41 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.*;
-import org.jclouds.glesys.options.*;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.jclouds.rest.ResourceNotFoundException;
-import org.testng.annotations.Test;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-import static org.testng.Assert.*;
+import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
+import org.jclouds.glesys.domain.Console;
+import org.jclouds.glesys.domain.Cost;
+import org.jclouds.glesys.domain.Ip;
+import org.jclouds.glesys.domain.OSTemplate;
+import org.jclouds.glesys.domain.ResourceUsage;
+import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerSpec;
+import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.domain.ServerUptime;
+import org.jclouds.glesys.options.CloneServerOptions;
+import org.jclouds.glesys.options.CreateServerOptions;
+import org.jclouds.glesys.options.DestroyServerOptions;
+import org.jclouds.glesys.options.EditServerOptions;
+import org.jclouds.glesys.options.ServerStatusOptions;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}
@@ -117,7 +134,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json")).build()).getServerClient();
 
-      ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.<OSTemplate> builder();
+      ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.builder();
 
       for (String name : new String[] { "Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
             "Debian 5.0 32-bit", "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11",

@@ -25,8 +25,6 @@ import java.util.logging.Level;
 
 import junit.framework.AssertionFailedError;
 
-import org.jclouds.logging.BaseLogger;
-
 import com.google.common.base.Predicate;
 
 /** A logger implementation for use in testing; all log messages are remembered, \

@@ -68,7 +68,7 @@ public class WireLiveTest {
    }
 
    static class BufferLogger implements Logger {
-      StringBuffer buff = new StringBuffer();
+      StringBuilder buff = new StringBuilder();
 
       public void debug(String message, Object... args) {
          buff.append(message);

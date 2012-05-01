@@ -18,13 +18,14 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.AllocationState;
-import org.jclouds.http.options.BaseHttpRequestOptions;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import org.jclouds.cloudstack.domain.AllocationState;
+import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control how a zone is updated

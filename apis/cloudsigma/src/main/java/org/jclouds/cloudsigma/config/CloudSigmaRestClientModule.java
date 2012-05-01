@@ -33,14 +33,13 @@ import org.jclouds.cloudsigma.domain.ServerMetrics;
 import org.jclouds.cloudsigma.functions.BaseDriveToMap;
 import org.jclouds.cloudsigma.functions.DriveDataToMap;
 import org.jclouds.cloudsigma.functions.MapToDevices;
-import org.jclouds.cloudsigma.functions.MapToDevices.DeviceToId;
 import org.jclouds.cloudsigma.functions.MapToDriveMetrics;
 import org.jclouds.cloudsigma.functions.MapToNICs;
 import org.jclouds.cloudsigma.functions.MapToServerMetrics;
 import org.jclouds.cloudsigma.functions.ServerToMap;
+import org.jclouds.cloudsigma.functions.MapToDevices.DeviceToId;
 import org.jclouds.cloudsigma.handlers.CloudSigmaErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -55,13 +54,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClient, CloudSigmaAsyncClient> {
-
-   public CloudSigmaRestClientModule() {
-      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
-   }
 
    @Override
    protected void bindErrorHandlers() {

@@ -18,20 +18,25 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.Task.Status;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
- * Test a {@link Task} to see if it has succeeded.
+ * Test a {@link Task} status is in a particular set of {@link Task.Status statuses}.
  * 
  * @author grkvlt@apache.org
  */
@@ -42,15 +47,14 @@ public class TaskStatusEquals implements Predicate<Task> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private Collection<String> expectedStatuses;
-   private Collection<String> failingStatuses;
+   private Collection<Status> expectedStatuses;
+   private Collection<Status> failingStatuses;
 
-   // TODO Use Task.Status, once it is turned into an enumeration
-   public TaskStatusEquals(TaskClient taskClient, String expectedStatus, Collection<String> failingStatuses) {
+   public TaskStatusEquals(TaskClient taskClient, Status expectedStatus, Set<Status> failingStatuses) {
       this(taskClient, Collections.singleton(expectedStatus), failingStatuses);
    }
 
-   public TaskStatusEquals(TaskClient taskClient, Collection<String> expectedStatuses, Collection<String> failingStatuses) {
+   public TaskStatusEquals(TaskClient taskClient, Set<Status> expectedStatuses, Set<Status> failingStatuses) {
       this.taskClient = taskClient;
       this.expectedStatuses = expectedStatuses;
       this.failingStatuses = failingStatuses;
@@ -59,6 +63,7 @@ public class TaskStatusEquals implements Predicate<Task> {
    /** @see Predicate#apply(Object) */
    @Override
    public boolean apply(Task task) {
+      checkNotNull(task, "task");
       logger.trace("looking for status on task %s", task);
 
       // TODO shouldn't we see if it's already done before getting it from API server?
@@ -68,22 +73,17 @@ public class TaskStatusEquals implements Predicate<Task> {
       if (task == null) return false;
       logger.trace("%s: looking for status %s: currently: %s", task, expectedStatuses, task.getStatus());
       
-      for (String failingStatus : failingStatuses) {
-         if (task.getStatus().equals(failingStatus)) {
-            throw new VCloudDirectorException(task);
-         }
+      if (failingStatuses.contains(task.getStatus())) {
+         throw new VCloudDirectorException(task);
       }
-      
-      for (String expectedStatus : expectedStatuses) {
-         if (task.getStatus().equals(expectedStatus)) {
-            return true;
-         }
+      if (expectedStatuses.contains(task.getStatus())) {
+         return true;
       }
       return false;
    }
 
    @Override
    public String toString() {
-      return "checkTaskSuccess()";
+      return "taskStatusEquals(" + Iterables.toString(expectedStatuses) + ")";
    }
 }

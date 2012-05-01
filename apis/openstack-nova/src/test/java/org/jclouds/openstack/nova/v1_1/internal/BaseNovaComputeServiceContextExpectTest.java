@@ -21,15 +21,14 @@ package org.jclouds.openstack.nova.v1_1.internal;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -78,8 +77,13 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
    }
 
    private ComputeServiceContext createComputeServiceContext(Function<HttpRequest, HttpResponse> fn, Module module,
-            Properties props) {
-      return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props);
+         Properties props) {
+      return createInjector(fn, module, props).getInstance(ComputeServiceContext.class);
    }
+   
+   @Override
+   protected ApiMetadata createApiMetadata() {
+      return new NovaApiMetadata();
+   }
+
 }

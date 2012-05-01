@@ -18,98 +18,68 @@
  */
 package org.jclouds.elastichosts;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts San Antonio Peer 1.
- *
+ * 
  * @author Adrian Cole
  */
 public class ElasticHostsPeer1SanAntonioProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "elastichosts-sat-p";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8914180153534735692L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "ElasticHosts San Antonio Peer 1";
+   public ElasticHostsPeer1SanAntonioProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public ElasticHostsPeer1SanAntonioProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://sat-p.elastichosts.com");
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://sat-p.elastichosts.com/accounts");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.elastichosts.com/cloud-hosting/api");
-   }
+      protected Builder() {
+         id("elastichosts-sat-p")
+         .name("ElasticHosts San Antonio Peer 1")
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
+         .homepage(URI.create("https://sat-p.elastichosts.com"))
+         .console(URI.create("https://sat-p.elastichosts.com/accounts"))
+         .iso3166Codes("US-TX")
+         .endpoint("https://api.sat-p.elastichosts.com")
+         .defaultProperties(ElasticHostsPeer1SanAntonioProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("elastichosts-sat-p");
-   }
+      @Override
+      public ElasticHostsPeer1SanAntonioProviderMetadata build() {
+         return new ElasticHostsPeer1SanAntonioProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-TX");
-   }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

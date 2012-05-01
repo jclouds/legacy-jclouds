@@ -26,12 +26,12 @@ import java.util.Set;
 import org.jclouds.ec2.compute.functions.EC2ImageParserTest;
 import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.Image.ImageType;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.location.Region;
@@ -91,6 +91,18 @@ public class DescribeImagesResponseHandlerTest {
       Set<Image> result = parseImages("/describe_images_ebs.xml");
 
       assertEquals(result, contents);
+   }
+   
+   public void testDiabloWithIncorrectDisplayNameField() {
+      Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.X86_64, "CentOS 6.2 Server 64-bit 20120125", "", "ami-0000054e",
+               "local (CentOS 6.2 Server 64-bit 20120125)", "", ImageState.AVAILABLE,
+               ImageType.MACHINE, true, Sets.<String> newHashSet(), "aki-0000054c", null, "ari-0000054d",
+               RootDeviceType.INSTANCE_STORE, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of(),
+               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+      
+      Set<Image> result = parseImages("/describe_images_nova.xml");
+
+      assertEquals(result.toString(), contents.toString());
    }
 
    static ParseSax<Set<Image>> createParser() {

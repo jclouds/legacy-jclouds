@@ -24,11 +24,11 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Map.Entry;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -72,9 +72,9 @@ public class BYONComputeServiceLiveTest {
                .append("\n");
 
       contextProperties.setProperty("byon.nodes", nodes.toString());
-
-      context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(
-               new SshjSshClientModule(), new Log4JLoggingModule()), contextProperties);
+      context = ContextBuilder.newBuilder(new BYONApiMetadata()).overrides(contextProperties).modules(
+               ImmutableSet.<Module> of(new SshjSshClientModule(), new Log4JLoggingModule())).build(
+               ComputeServiceContext.class);
    }
 
    public void testCanRunCommandAsCurrentUser() throws Exception {

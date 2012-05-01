@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<DescribeVolumesResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+    <requestId>req-9e45299b-980d-4893-a475-a574b1a94ed5</requestId>
+    <volumeSet>
+        <item>
+            <status>available (f06de98af01446b2ae6bd79f5fbf3b2a, att-openstack1, None, None)</status>
+            <availabilityZone>nova</availabilityZone>
+            <volumeId>vol-00000007</volumeId>
+            <attachmentSet>
+                <item/>
+            </attachmentSet>
+            <snapshotId/>
+            <createTime>2012-04-10T10:39:52.000Z</createTime>
+            <size>1</size>
+        </item>
+    </volumeSet>
+</DescribeVolumesResponse>

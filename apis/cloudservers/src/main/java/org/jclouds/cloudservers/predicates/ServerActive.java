@@ -23,10 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.logging.Logger;
 import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;

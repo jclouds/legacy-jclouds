@@ -18,34 +18,30 @@
  */
 package org.jclouds.compute;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess.Configuration;
 import org.jclouds.ssh.SshClient;
@@ -57,6 +53,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
@@ -65,7 +62,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName="StubComputeServiceIntegrationTest")
 public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
 
    private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
@@ -83,13 +80,13 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    protected void buildSocketTester() {
       SocketOpen socketOpen = createMock(SocketOpen.class);
 
-      expect(socketOpen.apply(new IPSocket("144.175.1.1", 22))).andReturn(true).times(5);
+      expect(socketOpen.apply(HostAndPort.fromParts("144.175.1.1", 22))).andReturn(true).times(5);
       // restart of jboss
-      expect(socketOpen.apply(new IPSocket("144.175.1.1", 8080))).andReturn(true).times(2);
+      expect(socketOpen.apply(HostAndPort.fromParts("144.175.1.1", 8080))).andReturn(true).times(2);
 
       replay(socketOpen);
 
-      preciseSocketTester = socketTester = new RetryablePredicate<IPSocket>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
+      preciseSocketTester = socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
    }
 
    @Override
@@ -143,26 +140,26 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client5 = createMock(SshClient.class);
 
             expect(
-                  factory.create(new IPSocket("144.175.1.1", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.1", 22),
                         LoginCredentials.builder().user("root").password("password1").build())).andReturn(client1);
             expect(
-                  factory.create(new IPSocket("144.175.1.1", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.1", 22),
                         LoginCredentials.builder().user("web").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client1New)
                   .times(10);
             runScriptAndService(client1, client1New);
 
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2)
                   .times(4);
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2New);
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("foo").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client2Foo);
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("root").password("romeo").build())).andThrow(
                   new AuthorizationException("Auth fail", null));
 
@@ -203,15 +200,15 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client2Foo.disconnect();
 
             expect(
-                  factory.create(new IPSocket("144.175.1.3", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.3", 22),
                         LoginCredentials.builder().user("root").password("password3").build())).andReturn(client3)
                   .times(2);
             expect(
-                  factory.create(new IPSocket("144.175.1.4", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.4", 22),
                         LoginCredentials.builder().user("root").password("password4").build())).andReturn(client4)
                   .times(2);
             expect(
-                  factory.create(new IPSocket("144.175.1.5", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.5", 22),
                         LoginCredentials.builder().user("root").password("password5").build())).andReturn(client5)
                   .times(2);
 
@@ -220,23 +217,23 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.1", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.1", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client1);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.2", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.2", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client2);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.3", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.3", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client3);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.4", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.4", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client4);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.5", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.5", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client5);
 
@@ -369,18 +366,12 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
-            expect(client.exec("java -version")).andReturn(new ExecResponse("", "1.7", 0));
+            expect(client.exec("java -version")).andReturn(new ExecResponse("", "OpenJDK", 0));
 
             client.disconnect();
          }
 
       };
-   }
-
-   @Override
-   protected void setupCredentials() {
-      identity = "stub";
-      credential = "stub";
    }
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
@@ -390,12 +381,6 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    public static Payload payloadEq(String value) {
       reportMatcher(new PayloadEquals(value));
       return null;
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<ConcurrentMap<String, NodeMetadata>, ConcurrentMap<String, NodeMetadata>> stubContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    private static class PayloadEquals implements IArgumentMatcher, Serializable {
@@ -453,7 +438,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    }
 
    @Override
-   protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
+   protected void setupKeyPairForTest() {
       keyPair = ImmutableMap.<String, String> of("public", "ssh-rsa", "private", "-----BEGIN RSA PRIVATE KEY-----");
    }
 
@@ -539,11 +524,6 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
-   }
-
-   @Override
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
-      super.cleanup();
    }
 
 }

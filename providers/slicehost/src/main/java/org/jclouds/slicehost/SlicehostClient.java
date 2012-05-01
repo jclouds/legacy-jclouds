@@ -34,7 +34,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Slicehost via their REST API.
  * <p/>
  * All commands return a ListenableFuture of the result from Slicehost. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * during processing will be backend in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @see SlicehostAsyncClient

@@ -18,12 +18,11 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.util.Set;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
-import org.omg.PortableInterceptor.ACTIVE;
-
-import java.util.Set;
 
 /**
  * @author Andrei Savu

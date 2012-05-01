@@ -18,8 +18,8 @@
  */
 package org.jclouds.epc;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.eucalyptus.EucalyptusApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class EucalyptusPartnerCloudEC2ProviderTest extends BaseProviderMetadataTest {
 
    public EucalyptusPartnerCloudEC2ProviderTest() {
-      super(new EucalyptusPartnerCloudEC2ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new EucalyptusPartnerCloudEC2ProviderMetadata(), new EucalyptusApiMetadata());
    }
 
 }

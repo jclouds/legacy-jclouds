@@ -26,8 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLException;
 
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.jclouds.rest.BaseRestClientExpectTest.RegisterContext;
+import org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -40,7 +41,6 @@ import com.google.common.base.Function;
  */
 @Test(groups = "unit", testName = "IntegrationTestClientExpectTest")
 // only needed as IntegrationTestClient is not registered in rest.properties
-@RegisterContext(sync = IntegrationTestClient.class, async = IntegrationTestAsyncClient.class)
 public class IntegrationTestClientExpectTest extends BaseRestClientExpectTest<IntegrationTestClient> {
    
    public void testRetryOnSSLExceptionClose() {
@@ -86,5 +86,10 @@ public class IntegrationTestClientExpectTest extends BaseRestClientExpectTest<In
 
       assertEquals(client.exists("rabbit"), false);
 
+   }
+
+   @Override
+   public ProviderMetadata createProviderMetadata() {
+      return new JcloudsTestBlobStoreProviderMetadata();
    }
 }

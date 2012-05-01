@@ -18,8 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+import static junit.framework.Assert.assertEquals;
+
+import java.net.URI;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.VlanIPRange;
 import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
@@ -27,9 +29,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static junit.framework.Assert.assertEquals;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test the CloudStack VlanClient

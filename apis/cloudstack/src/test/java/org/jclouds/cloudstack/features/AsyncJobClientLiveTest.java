@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
 import org.testng.annotations.Test;
 
 /**

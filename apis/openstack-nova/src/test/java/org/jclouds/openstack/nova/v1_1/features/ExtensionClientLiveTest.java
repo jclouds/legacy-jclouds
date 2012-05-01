@@ -42,8 +42,8 @@ public class ExtensionClientLiveTest extends BaseNovaClientLiveTest {
     */
    @Test
    public void testListExtensions() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         ExtensionClient client = context.getApi().getExtensionClientForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         ExtensionClient client = novaContext.getApi().getExtensionClientForZone(zoneId);
          Set<Extension> response = client.listExtensions();
          assert null != response;
          assertTrue(response.size() >= 0);

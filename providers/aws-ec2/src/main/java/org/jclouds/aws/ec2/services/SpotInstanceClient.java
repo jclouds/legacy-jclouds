@@ -21,14 +21,13 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions;
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides Spot Instance services for EC2. For more information, refer to the Amazon EC2 Developer

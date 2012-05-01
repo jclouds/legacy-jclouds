@@ -18,8 +18,8 @@
  */
 package org.jclouds.go2cloud;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class Go2CloudJohannesburg1ProviderTest extends BaseProviderMetadataTest {
 
    public Go2CloudJohannesburg1ProviderTest() {
-      super(new Go2CloudJohannesburg1ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new Go2CloudJohannesburg1ProviderMetadata(), new ElasticStackApiMetadata());
    }
 
 }

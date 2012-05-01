@@ -18,98 +18,77 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
+import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for RimuHosting.
- *
  * @author Adrian Cole
  */
 public class RimuHostingProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "rimuhosting";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8802226645589501365L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "RimuHosting";
+   public RimuHostingProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public RimuHostingProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_ZONES, "DCAUCKLAND,DCLONDON,DCDALLAS,DCSYDNEY");
+      properties.setProperty(PROPERTY_ZONE + ".DCAUCKLAND." + ISO3166_CODES, "NZ-AUK");
+      properties.setProperty(PROPERTY_ZONE + ".DCLONDON." + ISO3166_CODES, "GB-LND");
+      properties.setProperty(PROPERTY_ZONE + ".DCDALLAS." + ISO3166_CODES, "US-TX");
+      properties.setProperty(PROPERTY_ZONE + ".DCSYDNEY." + ISO3166_CODES, "AU-NSW");
+      properties.setProperty(PROPERTY_RIMUHOSTING_DEFAULT_DC, "DCDALLAS");
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://rimuhosting.com");
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://rimuhosting.com/cp");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://apidocs.rimuhosting.com");
-   }
+      protected Builder() {
+         id("rimuhosting")
+         .name("RimuHosting")
+         .apiMetadata(new RimuHostingApiMetadata())
+         .homepage(URI.create("http://www.rimuhosting.com"))
+         .console(URI.create("https://rimuhosting.com/cp"))
+         .iso3166Codes("NZ-AUK", "US-TX", "AU-NSW", "GB-LND")
+         .endpoint("https://api.rimuhosting.com/r")
+         .defaultProperties(RimuHostingProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("rimuhosting");
-   }
+      @Override
+      public RimuHostingProviderMetadata build() {
+         return new RimuHostingProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("NZ-AUK", "US-TX", "AU-NSW", "GB-LND");
-   }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

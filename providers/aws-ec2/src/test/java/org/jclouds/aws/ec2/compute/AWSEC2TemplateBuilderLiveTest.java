@@ -18,18 +18,23 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.inject.Module;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
 import org.jclouds.ec2.domain.InstanceType;
@@ -44,20 +49,17 @@ import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "AWSEC2TemplateBuilderLiveTest")
 public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    public AWSEC2TemplateBuilderLiveTest() {
@@ -94,9 +96,9 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderM1MEDIUMWithNegativeLookaroundDoesntMatchTestImages() {
 
-      Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_MEDIUM)
-            // need to select versions with double-digits so that lexicographic
-            // doesn't end up prefering 9.x vs 11.x
+      Template template = view.getComputeService().templateBuilder().hardwareId(InstanceType.M1_MEDIUM)
+      // need to select versions with double-digits so that lexicographic
+      // doesn't end up prefering 9.x vs 11.x
             .osVersionMatches("1[012].[10][04]")
             // negative lookahead for daily and testing, but ensure match
             // ubuntu-images
@@ -120,7 +122,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    @Test
    public void testUbuntuInstanceStoreGoesM1SmallNegativeLookaroundDoesntMatchTestImages() {
 
-      Template template = context.getComputeService().templateBuilder()
+      Template template = view.getComputeService().templateBuilder()
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE))
             // need to select versions with double-digits so that lexicographic
             // doesn't end up prefering 9.x vs 11.x
@@ -146,7 +148,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderCanUseImageIdAndhardwareIdAndAZ() {
 
-      Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
+      Template template = view.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
             .hardwareId(InstanceType.M2_2XLARGE).locationId("us-east-1a").build();
 
       System.out.println(template.getHardware());
@@ -166,7 +168,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
 
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.03.rc-0");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
@@ -180,7 +182,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    @Test
    public void testAmazonLinuxInstanceStore() throws IOException {
 
-      Template defaultTemplate = context.getComputeService().templateBuilder().osFamily(OsFamily.AMZN_LINUX)
+      Template defaultTemplate = view.getComputeService().templateBuilder().osFamily(OsFamily.AMZN_LINUX)
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.03.rc-0");
@@ -194,7 +196,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    @Test
    public void testFastestTemplateBuilder() throws IOException {
-      Template fastestTemplate = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX)
+      Template fastestTemplate = view.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX)
             .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
@@ -206,7 +208,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       assertEquals(getCores(fastestTemplate.getHardware()), 16.0d);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
 
-      fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
+      fastestTemplate = view.getComputeService().templateBuilder().fastest().build();
       System.out.println(fastestTemplate.getImage());
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
@@ -222,7 +224,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    @Test
    public void testTemplateBuilderMicro() throws IOException {
 
-      Template microTemplate = context.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
+      Template microTemplate = view.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
             .osFamily(OsFamily.UBUNTU).osVersionMatches("10.10").os64Bit(true).build();
 
       assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
@@ -244,8 +246,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -279,8 +280,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -317,15 +317,18 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-                  new Log4JLoggingModule(), TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)), 
-                  overrides);
+         
+         context = createView(
+               overrides,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(),
+                     TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)));
 
-         assert context.getComputeService().listAssignableLocations().size() < this.context.getComputeService().listAssignableLocations().size();
+         assert context.getComputeService().listAssignableLocations().size() < this.view.getComputeService()
+               .listAssignableLocations().size();
 
          assertOnlyOneRegionQueriedForAvailabilityZone(commandsInvoked);
 
-         assert context.getComputeService().listImages().size() < this.context.getComputeService().listImages().size();
+         assert context.getComputeService().listImages().size() < this.view.getComputeService().listImages().size();
 
          Template template = context.getComputeService().templateBuilder().imageId("eu-west-1/ami-a33b06d7").build();
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
@@ -345,22 +348,30 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    }
 
    private static void assertOnlyOneRegionQueriedForAvailabilityZone(List<HttpCommand> commandsInvoked)
-            throws NoSuchMethodException {
+         throws NoSuchMethodException {
       assert commandsInvoked.size() == 2 : commandsInvoked;
-      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 0), AvailabilityZoneAndRegionAsyncClient.class
-               .getMethod("describeRegions", DescribeRegionsOptions[].class));
-      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1), AvailabilityZoneAndRegionAsyncClient.class
-               .getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
+      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 0),
+            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
+      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1),
+            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class,
+                  DescribeAvailabilityZonesOptions[].class));
    }
 
    @Test
    public void testTemplateBuilderCanUseImageIdFromNonDefaultOwner() {
-      // This is the id of a public image, not owned by one of the four default owners
+      // This is the id of a public image, not owned by one of the four default
+      // owners
       String imageId = "us-east-1/ami-44d02f2d";
-      Template defaultTemplate = context.getComputeService().templateBuilder().imageId(imageId)
-               .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().imageId(imageId)
+            .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getId(), imageId);
+   }
+   
+   @Test
+   public void testAssignability() {
+      view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN);
+      view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN);
    }
 
    @Override

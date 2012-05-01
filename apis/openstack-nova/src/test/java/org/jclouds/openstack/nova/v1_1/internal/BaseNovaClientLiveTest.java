@@ -20,18 +20,23 @@ package org.jclouds.openstack.nova.v1_1.internal;
 
 import java.util.Properties;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
+import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
+import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageClient;
+import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -39,25 +44,63 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseNovaClientLiveTest extends BaseVersionedServiceLiveTest {
+public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
+
    public BaseNovaClientLiveTest() {
       provider = "openstack-nova";
    }
 
-   protected RestContext<NovaClient, NovaAsyncClient> context;
+   protected RestContext<NovaClient, NovaAsyncClient> novaContext;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(getLoggingModule(), new SshjSshClientModule()), overrides);
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      novaContext = view.unwrap();
    }
 
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      setIfTestSystemPropertyPresent(props, NovaProperties.AUTO_ALLOCATE_FLOATING_IPS);
+      return props;
+   }
+   
    @AfterGroups(groups = "live")
    protected void tearDown() {
-      if (context != null)
-         context.close();
+      if (novaContext != null)
+         novaContext.close();
+   }
+   
+   protected Server createServerInZone(String zoneId) {
+      ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
+      Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
+      blockUntilServerActive(server.getId(), serverClient);
+      return server;
+   }
+
+   private void blockUntilServerActive(String serverId, ServerClient client) {
+      Server currentDetails = null;
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
+            .getServer(serverId)) {
+         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         try {
+            Thread.sleep(5 * 1000);
+         } catch (InterruptedException e) {
+            throw Throwables.propagate(e);
+         }
+      }
+   }
+   
+   protected String imageIdForZone(String zoneId) {
+      ImageClient imageClient = novaContext.getApi().getImageClientForZone(zoneId);
+      return Iterables.getLast(imageClient.listImages()).getId();
+   }
+
+   protected String flavorRefForZone(String zoneId) {
+      FlavorClient flavorClient = novaContext.getApi().getFlavorClientForZone(zoneId);
+      return Iterables.getLast(flavorClient.listFlavors()).getId();
    }
 
 }

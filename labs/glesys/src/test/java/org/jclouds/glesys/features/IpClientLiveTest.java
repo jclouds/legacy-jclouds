@@ -39,9 +39,9 @@ import org.testng.annotations.Test;
 public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getIpClient();
+   public void setupContext() {
+      super.setupContext();
+      client = gleContext.getApi().getIpClient();
    }
 
    private IpClient client;
@@ -63,7 +63,7 @@ public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
       assertEquals(ipDetails.getIpversion(), "4");
       
       // TODO: Ask Glesys to include address in response for OpenVZ?
-      // assertEquals(ipDetails.getAddress(), openVzIp);
+      // assertEquals(ipDetails.getHostText(), openVzIp);
    }
 
    @Test

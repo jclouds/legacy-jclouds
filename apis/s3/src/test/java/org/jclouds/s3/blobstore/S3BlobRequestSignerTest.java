@@ -29,7 +29,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
@@ -116,13 +115,8 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
       return new TestS3RestClientModule();
    }
 
-   @RequiresHttp
    @ConfiguresRestClient
    private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
-
-      public TestS3RestClientModule() {
-         super(S3Client.class, S3AsyncClient.class);
-      }
 
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {

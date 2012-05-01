@@ -23,38 +23,31 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
+import org.jclouds.internal.BaseView;
 import org.jclouds.loadbalancer.LoadBalancerService;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
+
+import com.google.common.io.Closeables;
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerServiceContext {
+public class LoadBalancerServiceContextImpl extends BaseView implements LoadBalancerServiceContext {
    private final LoadBalancerService loadBalancerService;
-   private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
 
-   @SuppressWarnings({ "unchecked" })
    @Inject
-   public LoadBalancerServiceContextImpl(LoadBalancerService loadBalancerService, Utils utils,
-         @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
+   public LoadBalancerServiceContextImpl(@Provider Context backend,
+            @Provider TypeToken<? extends Context> backendType, LoadBalancerService loadBalancerService, Utils utils) {
+      super(backend, backendType);
       this.utils = utils;
-      this.providerSpecificContext = providerSpecificContext;
       this.loadBalancerService = checkNotNull(loadBalancerService, "loadBalancerService");
-   }
-
-   @SuppressWarnings({ "unchecked", "hiding" })
-   @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) providerSpecificContext;
-   }
-
-   @Override
-   public void close() {
-      providerSpecificContext.close();
    }
 
    @Override
@@ -72,18 +65,29 @@ public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerService
       return utils;
    }
 
+   @SuppressWarnings("unchecked")
+   @Override
+   public <S, A> RestContext<S, A> getProviderSpecificContext() {
+      return (RestContext<S, A>) delegate();
+   }
+
+   @Override
+   public void close() {
+      Closeables.closeQuietly(delegate());
+   }
+
    public int hashCode() {
-      return providerSpecificContext.hashCode();
+      return delegate().hashCode();
    }
 
    @Override
    public String toString() {
-      return providerSpecificContext.toString();
+      return delegate().toString();
    }
 
    @Override
    public boolean equals(Object obj) {
-      return providerSpecificContext.equals(obj);
+      return delegate().equals(obj);
    }
 
 }

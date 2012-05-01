@@ -23,7 +23,7 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;

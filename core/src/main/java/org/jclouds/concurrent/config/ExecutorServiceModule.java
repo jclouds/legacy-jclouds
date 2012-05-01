@@ -45,8 +45,6 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -126,7 +124,7 @@ public class ExecutorServiceModule extends AbstractModule {
 
    static class DescribingExecutorService implements ExecutorService {
 
-      private final ExecutorService delegate;
+      protected final ExecutorService delegate;
 
       public DescribingExecutorService(ExecutorService delegate) {
          this.delegate = checkNotNull(delegate, "delegate");
@@ -218,7 +216,7 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    static class DescribedFuture<T> implements Future<T> {
-      private final Future<T> delegate;
+      protected final Future<T> delegate;
       private final String description;
       private StackTraceElement[] submissionTrace;
 
@@ -325,12 +323,6 @@ public class ExecutorServiceModule extends AbstractModule {
    
    @Provides
    @Singleton
-   EventBus provideEventBus(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads){
-      return new AsyncEventBus(userThreads);
-   }
-   
-   @Provides
-   @Singleton
    @Named(Constants.PROPERTY_USER_THREADS)
    ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count, Closer closer) {
       if (userExecutorFromConstructor != null)
@@ -348,7 +340,7 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    @VisibleForTesting
-   static ExecutorService shutdownOnClose(final ExecutorService service, Closer closer) {
+   static <T extends ExecutorService> T shutdownOnClose(final T service, Closer closer) {
       closer.addToClose(new ShutdownExecutorOnClose(service));
       return service;
    }

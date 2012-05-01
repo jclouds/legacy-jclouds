@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +31,6 @@ import org.easymock.classextension.IMocksControl;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
-import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;

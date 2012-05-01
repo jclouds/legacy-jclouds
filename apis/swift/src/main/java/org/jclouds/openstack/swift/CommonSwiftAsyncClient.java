@@ -52,14 +52,7 @@ import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.ParamParser;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -182,5 +175,12 @@ public interface CommonSwiftAsyncClient {
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/{container}/{name}")
    ListenableFuture<Void> removeObject(@PathParam("container") String container, @PathParam("name") String name);
+
+   @PUT
+   @Path("/{container}/{name}")
+   @ResponseParser(ParseETagHeader.class)
+   @Headers(keys = "X-Object-Manifest", values="{container}/{name}")
+   ListenableFuture<String> putObjectManifest(@PathParam("container") String container,
+                                            @PathParam("name") String name);
 
 }

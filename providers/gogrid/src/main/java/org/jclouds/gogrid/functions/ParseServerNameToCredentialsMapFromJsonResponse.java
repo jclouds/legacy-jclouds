@@ -46,7 +46,7 @@ public class ParseServerNameToCredentialsMapFromJsonResponse implements
       this.json = json;
    }
 
-   // incidental wrapper class to assist in getting the correct data
+   // incidental view class to assist in getting the correct data
    // deserialized from json
    private static class Password implements Comparable<Password> {
       @SerializedName("username")

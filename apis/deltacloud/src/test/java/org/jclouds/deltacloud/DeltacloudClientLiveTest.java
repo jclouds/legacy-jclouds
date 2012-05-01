@@ -32,13 +32,14 @@ import org.jclouds.deltacloud.domain.TransitionOnAction;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 
@@ -94,7 +95,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
    @Test(dependsOnMethods = "testCreateInstance")
    public void testConnectivity() throws Exception {
       Logger.getAnonymousLogger().info("awaiting ssh");
-      assert socketTester.apply(new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22)) : instance;
+      assert socketTester.apply(HostAndPort.fromParts(Iterables.get(instance.getPublicAddresses(), 0), 22)) : instance;
       if (creds != null) {
          Logger.getAnonymousLogger().info("will connect ssh");
          doConnectViaSsh(instance, creds);
@@ -135,7 +136,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
 
    protected void doConnectViaSsh(Instance instance, LoginCredentials creds) throws IOException {
       SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class).create(
-               new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
+               HostAndPort.fromParts(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -150,9 +151,9 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
    }
 
    @Override
-   protected void tearDown() {
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       testDestroyInstance();
-      super.tearDown();
+      super.tearDownContext();
    }
-
 }

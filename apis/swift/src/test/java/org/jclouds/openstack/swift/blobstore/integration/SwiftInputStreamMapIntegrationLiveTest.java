@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
-
+   public SwiftInputStreamMapIntegrationLiveTest() {
+      provider = "swift";
+   }
 }

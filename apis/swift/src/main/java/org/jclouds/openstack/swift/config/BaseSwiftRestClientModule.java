@@ -23,7 +23,6 @@ import java.net.URI;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -47,18 +46,15 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class BaseSwiftRestClientModule<S extends CommonSwiftClient, A extends CommonSwiftAsyncClient> extends
          RestClientModule<S, A> {
    private final OpenStackAuthenticationModule module;
 
-   public BaseSwiftRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      this(new OpenStackAuthenticationModule(), syncClientType, asyncClientType);
+   public BaseSwiftRestClientModule() {
+      this(new OpenStackAuthenticationModule());
    }
 
-   public BaseSwiftRestClientModule(OpenStackAuthenticationModule module, Class<S> syncClientType,
-            Class<A> asyncClientType) {
-      super(syncClientType, asyncClientType);
+   public BaseSwiftRestClientModule(OpenStackAuthenticationModule module) {
       this.module = module;
    }
 

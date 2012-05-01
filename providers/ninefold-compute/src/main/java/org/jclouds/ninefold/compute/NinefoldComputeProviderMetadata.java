@@ -1,115 +1,73 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jclouds.ninefold.compute;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.cloudstack.CloudStackApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Ninefold
- * Compute.
- * 
+ * Compute. 
  * @author Adrian Cole
  */
 public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "ninefold-compute";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -4496340915519024L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Ninefold Compute";
+   public NinefoldComputeProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "API Key";
+   public NinefoldComputeProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty("ninefold-compute.image-id", "1215");
+      properties.setProperty("ninefold-compute.image.login-user", "user:Password01");
+      properties.setProperty("ninefold-compute.image.authenticate-sudo", "true");
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://ninefold.com/virtual-servers/");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://ninefold.com/portal/portal/login");
-   }
+      protected Builder() {
+         id("ninefold-compute")
+         .name("Ninefold Compute")
+         .apiMetadata(new CloudStackApiMetadata().toBuilder().version("2.2.12").build())
+         .homepage(URI.create("http://ninefold.com/virtual-servers/"))
+         .console(URI.create("https://ninefold.com/portal/portal/login"))
+         .iso3166Codes("AU-NSW")
+         .endpoint("https://api.ninefold.com/compute/v1.0/")
+         .defaultProperties(NinefoldComputeProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://ninefold.com/support/display/SPT/Cloud+Compute");
-   }
+      @Override
+      public NinefoldComputeProviderMetadata build() {
+         return new NinefoldComputeProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("AU-NSW");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of(getId(), "ninefold-storage");
    }
 }

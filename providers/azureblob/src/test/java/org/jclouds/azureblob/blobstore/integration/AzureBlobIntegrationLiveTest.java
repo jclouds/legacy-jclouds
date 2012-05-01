@@ -31,7 +31,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
-
+   public AzureBlobIntegrationLiveTest() {
+      provider = "azureblob";
+   }
    @Override
    public void testGetIfMatch() throws InterruptedException {
       // this currently fails

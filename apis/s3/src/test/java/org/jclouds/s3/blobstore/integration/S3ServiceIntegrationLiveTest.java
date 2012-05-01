@@ -18,13 +18,16 @@
  */
 package org.jclouds.s3.blobstore.integration;
 
+import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
-import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = {"live" })
 public class S3ServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
 
+   public S3ServiceIntegrationLiveTest() {
+      provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
 }

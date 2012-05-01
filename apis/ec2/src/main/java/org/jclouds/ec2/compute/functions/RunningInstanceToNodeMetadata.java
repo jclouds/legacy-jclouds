@@ -21,6 +21,7 @@ package org.jclouds.ec2.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
@@ -65,6 +66,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
@@ -114,7 +116,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       // collect all ip addresses into one bundle in case the api mistakenly put a private address
       // into the public address field
-      Builder<String> addressesBuilder = ImmutableSet.<String> builder();
+      Builder<String> addressesBuilder = ImmutableSet.builder();
       if (Strings.emptyToNull(instance.getIpAddress()) != null)
          addressesBuilder.add(instance.getIpAddress());
       if (Strings.emptyToNull(instance.getPrivateIpAddress()) != null)
@@ -195,6 +197,10 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       return group;
    }
 
+   @Inject(optional = true)
+   @Named(RESOURCENAME_DELIMITER)
+   char delimiter = '#';
+
    private String parseGroupFrom(final RunningInstance instance, final Set<String> data) {
       String group = null;
       try {
@@ -202,13 +208,13 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
             @Override
             public boolean apply(String input) {
-               return input.startsWith("jclouds#") && input.contains("#" + instance.getRegion());
+               return input.startsWith("jclouds" + delimiter) && input.contains(delimiter + instance.getRegion());
             }
-         })).split("#")[1];
+         })).split(delimiter + "")[1];
       } catch (NoSuchElementException e) {
          logger.debug("no group parsed from %s's data: %s", instance.getId(), data);
       } catch (IllegalArgumentException e) {
-         logger.debug("too many groups match %s; %s's data: %s", "jclouds#", instance.getId(), data);
+         logger.debug("too many groups match %s%s; %s's data: %s", "jclouds", delimiter, instance.getId(), data);
       }
       return group;
    }

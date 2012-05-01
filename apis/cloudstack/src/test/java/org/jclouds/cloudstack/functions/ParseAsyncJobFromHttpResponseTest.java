@@ -18,9 +18,6 @@
  */
 package org.jclouds.cloudstack.functions;
 
-import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
-import static org.jclouds.cloudstack.domain.AsyncJob.Status;
-import static org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -32,6 +29,9 @@ import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateExtraction;
+import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
+import org.jclouds.cloudstack.domain.AsyncJob.Status;
+import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.http.HttpResponse;

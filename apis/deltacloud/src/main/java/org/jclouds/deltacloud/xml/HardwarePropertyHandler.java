@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.deltacloud.domain.EnumHardwareProperty;
 import org.jclouds.deltacloud.domain.FixedHardwareProperty;
 import org.jclouds.deltacloud.domain.HardwareParameter;
@@ -32,6 +30,7 @@ import org.jclouds.deltacloud.domain.HardwareProperty;
 import org.jclouds.deltacloud.domain.RangeHardwareProperty;
 import org.jclouds.deltacloud.domain.HardwareProperty.Kind;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

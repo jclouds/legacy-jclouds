@@ -18,10 +18,12 @@
  */
 package org.jclouds.providers;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+
+import org.jclouds.apis.JcloudsTestComputeApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
@@ -29,77 +31,44 @@ import java.util.Set;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class JcloudsTestYetAnotherComputeProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getId()}
-    */
-   @Override
-   public String getId() {
-      return "test-yet-another-compute-provider";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getType()}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromProviderMetadata(this));
+   }
+   
+   public JcloudsTestYetAnotherComputeProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getName()}
-    */
-   @Override
-   public String getName() {
-      return "Test Yet Another Compute Provider";
+   public JcloudsTestYetAnotherComputeProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "user";
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "password";
-   }
+      protected Builder(){
+         id("test-yet-another-compute-provider")
+         .name("Test Yet Another Compute Provider")
+         .endpoint("mem3")
+         .homepage(URI.create("http://jclouds.org"))
+         .console(URI.create("http://jclouds.org/console"))
+         .iso3166Codes(ImmutableSet.of("JP-13"))
+         .apiMetadata(new JcloudsTestComputeApiMetadata());
+      }
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getHomepage()}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://jclouds.org");
-   }
+      @Override
+      public JcloudsTestYetAnotherComputeProviderMetadata build() {
+         return new JcloudsTestYetAnotherComputeProviderMetadata(this);
+      }
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getConsole()}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://jclouds.org/console");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://jclouds.org/documentation");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("JP-13");
    }
 
 }

@@ -18,8 +18,8 @@
  */
 package org.jclouds.elastichosts;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class ElasticHostsPeer1LosAngelesProviderTest extends BaseProviderMetadataTest {
 
    public ElasticHostsPeer1LosAngelesProviderTest() {
-      super(new ElasticHostsPeer1LosAngelesProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new ElasticHostsPeer1LosAngelesProviderMetadata(), new ElasticStackApiMetadata());
    }
 }

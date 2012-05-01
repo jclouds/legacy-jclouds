@@ -18,9 +18,11 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import com.google.common.cache.LoadingCache;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import static org.jclouds.http.HttpUtils.releasePayload;
+
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.domain.Credentials;
@@ -29,10 +31,9 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-
-import static org.jclouds.http.HttpUtils.releasePayload;
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * This will parse and set an appropriate exception on the command object.

@@ -20,7 +20,6 @@ package org.jclouds.opsource.servers.config;
 import java.util.Map;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -30,6 +29,10 @@ import org.jclouds.opsource.servers.OpSourceServersAsyncClient;
 import org.jclouds.opsource.servers.OpSourceServersClient;
 import org.jclouds.opsource.servers.features.AccountAsyncClient;
 import org.jclouds.opsource.servers.features.AccountClient;
+import org.jclouds.opsource.servers.features.ServerAsyncClient;
+import org.jclouds.opsource.servers.features.ServerClient;
+import org.jclouds.opsource.servers.features.ServerImageAsyncClient;
+import org.jclouds.opsource.servers.features.ServerImageClient;
 import org.jclouds.opsource.servers.handlers.OpSourceServersErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -42,16 +45,18 @@ import com.google.inject.Scopes;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class OpSourceServersRestClientModule extends
       RestClientModule<OpSourceServersClient, OpSourceServersAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(AccountClient.class, AccountAsyncClient.class).build();
+         .put(AccountClient.class, AccountAsyncClient.class)
+         .put(ServerImageClient.class, ServerImageAsyncClient.class)
+         .put(ServerClient.class, ServerAsyncClient.class)
+         .build();
 
    public OpSourceServersRestClientModule() {
-      super(OpSourceServersClient.class, OpSourceServersAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Override

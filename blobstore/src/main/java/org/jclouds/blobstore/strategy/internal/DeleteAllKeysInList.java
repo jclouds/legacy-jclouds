@@ -22,7 +22,9 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -30,20 +32,20 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.blobstore.strategy.ListContainerStrategy;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**
@@ -57,7 +59,6 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final ListContainerStrategy listContainer;
    protected final BackoffLimitedRetryHandler retryHandler;
    private final ExecutorService userExecutor;
 
@@ -71,12 +72,11 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
    @Inject
    DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            AsyncBlobStore connection, ListContainerStrategy listContainer,
+            AsyncBlobStore connection,
             BackoffLimitedRetryHandler retryHandler) {
 
       this.userExecutor = userExecutor;
       this.connection = connection;
-      this.listContainer = listContainer;
       this.retryHandler = retryHandler;
    }
 
@@ -84,19 +84,31 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       execute(containerName, recursive());
    }
 
-   public void execute(final String containerName, final ListContainerOptions options) {
+   public void execute(final String containerName, ListContainerOptions options) {
       String message = options.getDir() != null ? String.format("clearing path %s/%s",
                containerName, options.getDir()) : String.format("clearing container %s",
                containerName);
+      options = options.clone();
       if (options.isRecursive())
          message = message + " recursively";
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
+      PageSet<? extends StorageMetadata> listing;
       Iterable<? extends StorageMetadata> toDelete;
-      for (int i = 0; i < 3; i++) { // TODO parameterize
-         toDelete = getResourcesToDelete(containerName, options);
-         if (Iterables.isEmpty(toDelete)) {
-            break;
+      int maxErrors = 3; // TODO parameterize
+      for (int i = 0; i < maxErrors; ) {
+         try {
+            listing = connection.list(containerName, options).get();
+         } catch (ExecutionException ee) {
+            ++i;
+            if (i == maxErrors) {
+               throw new BlobRuntimeException("list error", ee.getCause());
+            }
+            retryHandler.imposeBackoffExponentialDelay(i, message);
+            continue;
+         } catch (InterruptedException ie) {
+            throw Throwables.propagate(ie);
          }
+         toDelete = filterListing(listing, options);
 
          Map<StorageMetadata, Future<?>> responses = Maps.newHashMap();
          try {
@@ -127,24 +139,30 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
          }
          if (!exceptions.isEmpty()) {
-            retryHandler.imposeBackoffExponentialDelay(i + 1, message);
+            ++i;
+            retryHandler.imposeBackoffExponentialDelay(i, message);
+            continue;
          }
+
+         String marker = listing.getNextMarker();
+         if (marker == null) {
+            break;
+         }
+         options = options.afterMarker(marker);
       }
       if (!exceptions.isEmpty())
          throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
-      toDelete = getResourcesToDelete(containerName, options);
-      assert Iterables.isEmpty(toDelete) : String.format("items remaining %s: %s", message,
-               toDelete);
    }
 
    private boolean parentIsFolder(final ListContainerOptions options, final StorageMetadata md) {
       return (options.getDir() != null && md.getName().indexOf('/') == -1);
    }
 
-   private Iterable<? extends StorageMetadata> getResourcesToDelete(final String containerName,
+   private Iterable<? extends StorageMetadata> filterListing(
+            final PageSet<? extends StorageMetadata> listing,
             final ListContainerOptions options) {
-      Iterable<? extends StorageMetadata> toDelete = Iterables.filter(listContainer.execute(
-               containerName, options), new Predicate<StorageMetadata>() {
+      Iterable<? extends StorageMetadata> toDelete = Iterables.filter(listing,
+               new Predicate<StorageMetadata>() {
 
          @Override
          public boolean apply(StorageMetadata input) {

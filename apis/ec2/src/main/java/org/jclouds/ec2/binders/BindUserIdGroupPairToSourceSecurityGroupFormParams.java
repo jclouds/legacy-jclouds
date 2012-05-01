@@ -43,7 +43,7 @@ public class BindUserIdGroupPairToSourceSecurityGroupFormParams implements Binde
       checkArgument(checkNotNull(input, "input") instanceof UserIdGroupPair,
             "this binder is only valid for UserIdGroupPair!");
       UserIdGroupPair pair = (UserIdGroupPair) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       builder.put("SourceSecurityGroupOwnerId", pair.getUserId());
       builder.put("SourceSecurityGroupName", pair.getGroupName());
       return ModifyRequest.putFormParams(request, builder.build());

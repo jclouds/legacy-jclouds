@@ -41,9 +41,13 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live")
 public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFilesClient> {
 
+   public CloudFilesClientLiveTest(){
+      provider = "cloudfiles";
+   }
+   
    @Override
    public CloudFilesClient getApi() {
-      return (CloudFilesClient) context.getProviderSpecificContext().getApi();
+      return view.unwrap(CloudFilesApiMetadata.CONTEXT_TOKEN).getApi();
    }
    
    @Override

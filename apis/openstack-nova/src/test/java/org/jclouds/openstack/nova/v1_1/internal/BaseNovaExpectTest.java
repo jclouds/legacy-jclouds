@@ -20,10 +20,12 @@ package org.jclouds.openstack.nova.v1_1.internal;
 
 import java.net.URI;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.collect.ImmutableMultimap;
 
@@ -47,6 +49,7 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
             credential);
       keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
             credential);
+      
       authToken = KeystoneFixture.INSTANCE.getAuthToken();
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
       // now, createContext arg will need tenant prefix
@@ -62,9 +65,19 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
                         .put("X-Auth-Token", authToken).build()).build();
 
       extensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/extension_list_normal.json")).build();
+            .payload(payloadFromResource("/extension_list_full.json")).build();
       
       unmatchedExtensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list.json")).build();
+   }
+   
+   protected HttpRequest.Builder standardRequestBuilder(URI endpoint) {
+      return HttpRequest.builder().method("GET")
+            .headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
+            .endpoint(endpoint);
+   }
+
+   protected HttpResponse.Builder standardResponseBuilder(int status) {
+      return HttpResponse.builder().statusCode(status);
    }
 }

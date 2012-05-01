@@ -19,8 +19,6 @@
 package org.jclouds.atmos.filters;
 
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
-import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.net.URI;
 
@@ -37,6 +35,8 @@ import org.jclouds.http.HttpException;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -66,7 +66,7 @@ public class ShareUrl implements Function<String, URI> {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public ShareUrl(@Named(PROPERTY_IDENTITY) String uid, @Named(PROPERTY_CREDENTIAL) String encodedKey,
+   public ShareUrl(@Identity String uid, @Credential String encodedKey,
             @Provider Supplier<URI> provider, @TimeStamp javax.inject.Provider<Long> timeStampProvider,
             javax.inject.Provider<UriBuilder> uriBuilders, Crypto crypto) {
       this.uid = uid;

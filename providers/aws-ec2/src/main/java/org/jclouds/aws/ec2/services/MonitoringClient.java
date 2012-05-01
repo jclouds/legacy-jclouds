@@ -21,11 +21,10 @@ package org.jclouds.aws.ec2.services;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
-import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides monitoring services for EC2. For more information, refer to the Amazon CloudWatch

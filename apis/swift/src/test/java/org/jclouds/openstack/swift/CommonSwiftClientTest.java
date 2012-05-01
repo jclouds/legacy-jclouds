@@ -24,17 +24,20 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
+import javax.inject.Singleton;
+
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.openstack.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindSwiftObjectMetadataToRequest}
@@ -43,8 +46,14 @@ import com.google.inject.Module;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SwiftClientTest")
-public abstract class CommonSwiftClientTest<A extends CommonSwiftAsyncClient> extends RestClientTest<A> {
-
+public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsyncClient> {
+   
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>>() {
+      };
+   }
+   
    @Override
    protected void checkFilters(HttpRequest request) {
    }
@@ -55,21 +64,30 @@ public abstract class CommonSwiftClientTest<A extends CommonSwiftAsyncClient> ex
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
    protected static class TestSwiftRestClientModule extends
-            BaseSwiftRestClientModule<CommonSwiftClient, CommonSwiftAsyncClient> {
+            BaseSwiftRestClientModule<SwiftClient, SwiftAsyncClient> {
       private TestSwiftRestClientModule() {
-         super(new TestOpenStackAuthenticationModule(), CommonSwiftClient.class, CommonSwiftAsyncClient.class);
+         super(new TestOpenStackAuthenticationModule());
+      }
+      @Provides
+      @Singleton
+      CommonSwiftClient provideCommonSwiftClient(SwiftClient in) {
+         return in;
+      }
+
+      @Provides
+      @Singleton
+      CommonSwiftAsyncClient provideCommonSwiftClient(SwiftAsyncClient in) {
+         return in;
       }
    }
 
    protected String provider = "swift";
 
-   @Override
-   public RestContextSpec<CommonSwiftClient, CommonSwiftAsyncClient> createContextSpec() {
-      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "user", "password", setupProperties());
+   protected ApiMetadata createApiMetadata() {
+      return new SwiftApiMetadata();
    }
-
+   
    @Override
    protected Properties setupProperties() {
       Properties properties = new Properties();

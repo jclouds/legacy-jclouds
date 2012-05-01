@@ -22,11 +22,11 @@ import java.net.UnknownHostException;
 
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
 import org.testng.annotations.Test;
 
+import com.google.common.net.HostAndPort;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -42,7 +42,7 @@ public class JschSshClientModuleTest {
 
       Injector i = Guice.createInjector(new JschSshClientModule(), new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      SshClient connection = factory.create(new IPSocket("localhost", 22), LoginCredentials.builder().user("username")
+      SshClient connection = factory.create(HostAndPort.fromParts("localhost", 22), LoginCredentials.builder().user("username")
             .password("password").build());
       assert connection instanceof JschSshClient;
    }

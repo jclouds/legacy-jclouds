@@ -22,17 +22,15 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.slicehost.filters.SlicehostBasic;
 import org.jclouds.slicehost.xml.FlavorHandler;
@@ -52,7 +50,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SlicehostAsyncClientTest")
-public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClient> {
+public class SlicehostAsyncClientTest extends BaseAsyncClientTest<SlicehostAsyncClient> {
 
    public void testCreateSlice() throws IOException, SecurityException, NoSuchMethodException {
       Method method = SlicehostAsyncClient.class.getMethod("createSlice", String.class, int.class, int.class);
@@ -253,8 +251,8 @@ public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClien
    }
 
    @Override
-   public RestContextSpec<SlicehostClient, SlicehostAsyncClient> createContextSpec() {
-      return new RestContextFactory().createContextSpec("slicehost", "apikey", null, new Properties());
+   public ProviderMetadata createProviderMetadata() {
+      return new SlicehostProviderMetadata();
    }
 
 }

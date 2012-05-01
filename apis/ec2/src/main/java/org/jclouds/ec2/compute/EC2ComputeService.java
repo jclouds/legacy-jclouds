@@ -21,6 +21,7 @@ package org.jclouds.ec2.compute;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 import static org.jclouds.util.Preconditions2.checkNotEmpty;
 
 import java.util.Map;
@@ -30,7 +31,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -39,6 +39,7 @@ import org.jclouds.Constants;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -69,12 +70,14 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
@@ -100,16 +103,21 @@ public class EC2ComputeService extends BaseComputeService {
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-         ConcurrentMap<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap) {
+         ConcurrentMap<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
+         Optional<ImageExtension> imageExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
             templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
             initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials, timeouts,
-            executor);
+            executor, imageExtension);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
    }
+
+   @Inject(optional = true)
+   @Named(RESOURCENAME_DELIMITER)
+   char delimiter = '#';
 
    /**
     * @throws IllegalStateException If the security group was in use
@@ -118,7 +126,7 @@ public class EC2ComputeService extends BaseComputeService {
    void deleteSecurityGroup(String region, String group) {
       checkNotEmpty(region, "region");
       checkNotEmpty(group, "group");
-      String groupName = String.format("jclouds#%s#%s", group, region);
+      String groupName = String.format("jclouds#%s#%s", group, region).replace('#', delimiter);
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", groupName);
          ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
@@ -133,11 +141,11 @@ public class EC2ComputeService extends BaseComputeService {
       for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
          if (
          // when the keypair is unique per group
-         keyPair.getKeyName().equals("jclouds#" + group)
-               || keyPair.getKeyName().matches(String.format("jclouds#%s#%s", group, "[0-9a-f]+"))
+         keyPair.getKeyName().equals("jclouds"+ delimiter + group)
+               || keyPair.getKeyName().matches(String.format("jclouds#%s#%s", group, "[0-9a-f]+").replace('#', delimiter))
                // old keypair pattern too verbose as it has an unnecessary
                // region qualifier
-               || keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+"))) {
+               || keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+").replace('#', delimiter))) {
             Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(ec2Client.getInstanceServices()
                   .describeInstancesInRegion(region)), usingKeyPairAndNotDead(keyPair)));
             if (instancesUsingKeyPair.size() > 0) {
@@ -186,7 +194,7 @@ public class EC2ComputeService extends BaseComputeService {
     */
    @Override
    protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
-      Builder<String, String> regionGroups = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> regionGroups = ImmutableMultimap.builder();
       for (NodeMetadata nodeMetadata : deadNodes) {
          if (nodeMetadata.getGroup() != null)
             regionGroups.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());

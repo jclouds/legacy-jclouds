@@ -20,9 +20,8 @@ package org.jclouds.slicehost.xml;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.slicehost.domain.Slice.Status;
 import org.xml.sax.SAXException;

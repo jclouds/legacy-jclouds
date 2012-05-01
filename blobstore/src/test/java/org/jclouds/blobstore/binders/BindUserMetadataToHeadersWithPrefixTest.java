@@ -25,9 +25,9 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -47,8 +47,8 @@ public class BindUserMetadataToHeadersWithPrefixTest {
       BindUserMetadataToHeadersWithPrefix binder = new BindUserMetadataToHeadersWithPrefix(
             new BindMapToHeadersWithPrefix("prefix:"));
 
-      Blob blob = new RestContextFactory().createContextBuilder("transient", "identity", "credential").buildInjector()
-            .getInstance(Blob.Factory.class).create(null);
+      Blob blob = ContextBuilder.newBuilder("transient").buildInjector().getInstance(Blob.Factory.class).create(null);
+
       blob.getMetadata().setUserMetadata(ImmutableMap.of("imageName", "foo", "serverId", "2"));
 
       assertEquals(

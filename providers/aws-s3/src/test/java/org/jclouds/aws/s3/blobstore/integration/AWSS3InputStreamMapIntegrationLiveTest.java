@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "AWSS3InputStreamMapIntegrationLiveTest")
 public class AWSS3InputStreamMapIntegrationLiveTest extends S3InputStreamMapIntegrationLiveTest {
-
+   public AWSS3InputStreamMapIntegrationLiveTest() {
+      provider = "aws-s3";
+   }
 }

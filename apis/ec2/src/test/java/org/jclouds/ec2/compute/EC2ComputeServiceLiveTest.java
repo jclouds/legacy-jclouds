@@ -23,20 +23,21 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDevice;
@@ -53,8 +54,6 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.InetAddresses2;
@@ -62,10 +61,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Module;
 
 /**
@@ -103,13 +102,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      SecurityGroupClient securityGroupClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getSecurityGroupServices();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      KeyPairClient keyPairClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getKeyPairServices();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
       String group = this.group + "o";
@@ -182,8 +181,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          Properties overrides = setupProperties();
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "true");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          // create a node
          Set<? extends NodeMetadata> nodes =
@@ -200,11 +198,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          // Check that the address is public and port 22 is accessible
          String ip = Iterables.getOnlyElement(publicIps);
          assertFalse(InetAddresses2.isPrivateIPAddress(ip));
-         IPSocket socket = new IPSocket(ip, 22);
+         HostAndPort socket = HostAndPort.fromParts(ip, 22);
          assertTrue(socketTester.apply(socket), String.format("failed to open socket %s on node %s", socket, node));
 
          // check that there is an elastic ip correlating to it
-         EC2Client ec2 = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
+         EC2Client ec2 = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi());
          Set<PublicIpInstanceIdPair> ipidpairs =
                ec2.getElasticIPAddressServices().describeAddressesInRegion(region, publicIps.toArray(new String[0]));
          assertEquals(ipidpairs.size(), 1, String.format("there should only be one address pair (%s)",
@@ -235,19 +233,19 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testMapEBS() throws Exception {
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
-      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getElasticBlockStoreServices();
 
       String group = this.group + "e";
       int volumeSize = 8;
       
-      final Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+      final Template template = view.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
                .osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageDescriptionMatches(".*ebs.*").build();
 
-      Location zone = Iterables.find(context.getComputeService().listAssignableLocations(), new Predicate<Location>() {
+      Location zone = Iterables.find(view.getComputeService().listAssignableLocations(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location arg0) {

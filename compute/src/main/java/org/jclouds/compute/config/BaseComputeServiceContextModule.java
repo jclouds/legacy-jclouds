@@ -17,9 +17,9 @@
  * under the License.
  */
 package org.jclouds.compute.config;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_ID;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
@@ -31,6 +31,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
@@ -61,6 +62,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -175,7 +177,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       template = provideTemplate(injector, template);
       String imageId = config.apply(provider + ".image-id");
       if (imageId == null)
-         imageId = config.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
+         imageId = config.apply(IMAGE_ID);
       if (imageId != null)
          template.imageId(imageId);
       return template;
@@ -198,17 +200,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Named("DEFAULT")
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
       return options;
-   }
-
-   /**
-    * supplies how the tag is encoded into the name. A string of hex characters
-    * is the last argument and tag is the first
-    */
-   @Provides
-   @Named("NAMING_CONVENTION")
-   @Singleton
-   protected String provideNamingConvention() {
-      return "%s-%s";
    }
 
    @Provides
@@ -236,14 +227,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
-      if (shouldParseImagesOnDemand(injector)) {
+      if (shouldEagerlyParseImages(injector)) {
          return supplyImageCache(authException, seconds, imageSupplier);
       } else {
          return supplyNonParsingImageCache(authException, seconds, imageSupplier, injector);
       }
    }
 
-   protected boolean shouldParseImagesOnDemand(Injector injector) {
+   protected boolean shouldEagerlyParseImages(Injector injector) {
       return true;
    }
 
@@ -310,5 +301,12 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
          }
       };
    }
+   
+   @Provides
+   @Singleton
+   protected Optional<ImageExtension> provideImageExtension(Injector i){
+      return Optional.absent();
+   }
+   
 
 }

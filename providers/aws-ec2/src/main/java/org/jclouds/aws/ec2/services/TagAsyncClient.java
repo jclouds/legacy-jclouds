@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static org.jclouds.aws.reference.FormParameters.*;
+import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParams;
@@ -54,7 +53,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author grkvlt@apache.org
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = AWSEC2AsyncClient.VERSION)
 @VirtualHost
 public interface TagAsyncClient {
     /**

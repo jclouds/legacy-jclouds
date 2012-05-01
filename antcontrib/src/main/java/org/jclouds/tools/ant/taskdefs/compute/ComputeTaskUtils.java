@@ -18,8 +18,6 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
-import static org.jclouds.rest.RestContextFactory.getPropertiesFromResource;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.NoSuchElementException;
@@ -28,9 +26,9 @@ import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -73,16 +71,18 @@ public class ComputeTaskUtils {
          @SuppressWarnings("unchecked")
          @Override
          public ComputeServiceContext load(URI from) {
-            Properties props = getPropertiesFromResource("/rest.properties");
+            Properties props = new Properties();
             props.putAll(projectProvider.get().getProperties());
+            Set<Module> modules = ImmutableSet.<Module> of(new AntLoggingModule(projectProvider.get(),
+                     ComputeServiceConstants.COMPUTE_LOGGER), new JschSshClientModule());
             // adding the properties to the factory will allow us to pass
             // alternate endpoints
             String provider = from.getHost();
             Credentials creds = Credentials.parse(from);
-            return new ComputeServiceContextFactory(props).createContext(provider, creds.identity, creds.credential,
-                     ImmutableSet.of((Module) new AntLoggingModule(projectProvider.get(),
-                              ComputeServiceConstants.COMPUTE_LOGGER), new JschSshClientModule()), props);
-
+            return ContextBuilder.newBuilder(provider)
+                                 .credentials(creds.identity, creds.credential)
+                                 .modules(modules)
+                                 .overrides(props).buildView(ComputeServiceContext.class);
          }
 
       });

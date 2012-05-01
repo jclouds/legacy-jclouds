@@ -53,10 +53,14 @@ import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
+import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -73,6 +77,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public static String[] mandatoryParametersForSignature = new String[] { ACTION, SIGNATURE_METHOD, SIGNATURE_VERSION,
             VERSION };
    private final SignatureWire signatureWire;
+   private final String apiVersion;
    private final String accessKey;
    private final String secretKey;
    private final Provider<String> dateService;
@@ -84,10 +89,11 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    private Logger signatureLog = Logger.NULL;
 
    @Inject
-   public FormSigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, @TimeStamp Provider<String> dateService,
+   public FormSigner(SignatureWire signatureWire, @ApiVersion String apiVersion, @Identity String accessKey,
+            @Credential String secretKey, @TimeStamp Provider<String> dateService,
             Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
+      this.apiVersion = apiVersion;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.dateService = dateService;
@@ -99,6 +105,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST), "request is not ready to sign; host not present");
       Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getPayload().getRawContent()
                .toString());
+      decodedParams.replaceValues(VERSION, ImmutableSet.of(apiVersion));
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);

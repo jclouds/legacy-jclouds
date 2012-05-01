@@ -17,9 +17,8 @@
  * under the License.
  */
 package org.jclouds.trmk.vcloud_0_8.compute.strategy;
-
+import static org.jclouds.compute.config.ComputeServiceProperties.BLACKLIST_NODES;
 import static org.jclouds.compute.reference.ComputeServiceConstants.COMPUTE_LOGGER;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_BLACKLIST_NODES;
 
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +62,7 @@ public class TerremarkVCloudListNodesStrategy implements ListNodesStrategy {
    Set<String> blackListVAppNames = ImmutableSet.<String> of();
 
    @Inject(optional = true)
-   void setBlackList(@Named(PROPERTY_BLACKLIST_NODES) String blackListNodes) {
+   void setBlackList(@Named(BLACKLIST_NODES) String blackListNodes) {
       if (blackListNodes != null && !"".equals(blackListNodes))
          this.blackListVAppNames = ImmutableSet.copyOf(Splitter.on(',').split(blackListNodes));
    }

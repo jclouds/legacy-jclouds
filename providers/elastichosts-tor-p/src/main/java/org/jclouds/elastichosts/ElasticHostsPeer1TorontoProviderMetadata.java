@@ -18,97 +18,69 @@
  */
 package org.jclouds.elastichosts;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
+
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts Toronto Peer 1.
- *
+ * 
  * @author Adrian Cole
  */
 public class ElasticHostsPeer1TorontoProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "elastichosts-tor-p";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3573428301472783315L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "ElasticHosts Toronto Peer 1";
+   public ElasticHostsPeer1TorontoProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public ElasticHostsPeer1TorontoProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://tor-p.elastichosts.com");
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://tor-p.elastichosts.com/accounts");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.elastichosts.com/cloud-hosting/api");
-   }
+      protected Builder() {
+         id("elastichosts-tor-p")
+         .name("ElasticHosts Toronto Peer 1")
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
+         .homepage(URI.create("https://tor-p.elastichosts.com"))
+         .console(URI.create("https://tor-p.elastichosts.com/accounts"))
+         .iso3166Codes("CA-ON")
+         .endpoint("https://api.tor-p.elastichosts.com")
+         .defaultProperties(ElasticHostsPeer1TorontoProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("elastichosts-tor-p");
-   }
+      @Override
+      public ElasticHostsPeer1TorontoProviderMetadata build() {
+         return new ElasticHostsPeer1TorontoProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("CA-ON");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

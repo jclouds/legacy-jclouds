@@ -18,7 +18,6 @@
  */
 package org.jclouds.compute.util;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
 import static org.testng.Assert.assertEquals;
 
@@ -47,11 +46,6 @@ public class ComputeServiceUtilsTest {
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
          .getInstance(Json.class));
-
-   @Test
-   public void testParseGroupFromName() {
-      assertEquals(parseGroupFromName("gogrid--849"), "gogrid-");
-   }
 
    @Test
    public void testParseVersionOrReturnEmptyStringUbuntu1004() {

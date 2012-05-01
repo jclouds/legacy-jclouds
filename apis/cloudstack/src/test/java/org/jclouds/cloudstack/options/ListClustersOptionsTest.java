@@ -18,14 +18,23 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.allocationState;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.clusterType;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.hypervisor;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.id;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.managedState;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.name;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.podId;
+import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.ListClustersOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListClustersOptions}

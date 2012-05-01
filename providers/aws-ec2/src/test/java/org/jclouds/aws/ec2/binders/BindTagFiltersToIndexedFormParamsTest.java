@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.binders;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;

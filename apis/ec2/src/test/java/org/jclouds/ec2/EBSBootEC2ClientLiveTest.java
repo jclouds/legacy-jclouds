@@ -27,15 +27,14 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
@@ -60,28 +59,24 @@ import org.jclouds.ec2.predicates.VolumeAttached;
 import org.jclouds.ec2.predicates.VolumeAvailable;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * Adapted from the following sources: {@link http://gist.github.com/249915}, {@link http
@@ -93,7 +88,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = false, singleThreaded = true, testName = "EBSBootEC2ClientLiveTest")
-public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
+public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest {
    public EBSBootEC2ClientLiveTest() {
       provider = "ec2";
    }
@@ -112,7 +107,7 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
    private KeyPair keyPair;
    private String securityGroupName;
 
-   private RetryablePredicate<IPSocket> socketTester;
+   private RetryablePredicate<HostAndPort> socketTester;
    private RetryablePredicate<Attachment> attachTester;
    private RetryablePredicate<Volume> volumeTester;
    private RunningInstance instance;
@@ -127,16 +122,15 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
    private Attachment attachment;
    private String mkEbsBoot;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).buildInjector();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      Injector injector = view.utils().injector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 120, 1, TimeUnit.SECONDS);
 
       VolumeAvailable volumeAvailable = injector.getInstance(VolumeAvailable.class);
       volumeTester = new RetryablePredicate<Volume>(volumeAvailable, 60, 1, TimeUnit.SECONDS);
@@ -279,7 +273,7 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
 
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
-      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(instance.getIpAddress(), 22),
             LoginCredentials.builder().user("ubuntu").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
@@ -516,7 +510,7 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22),
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(address, 22),
             LoginCredentials.builder().user("ubuntu").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
@@ -544,7 +538,7 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
       instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), instance.getIpAddress());
-      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 22));
+      assert socketTester.apply(HostAndPort.fromParts(instance.getIpAddress(), 22));
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance.getDnsName());
       sshPing(instance);
       System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instance.getId());

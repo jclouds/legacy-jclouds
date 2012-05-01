@@ -55,7 +55,7 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
 
       assertRequestLineEquals(request, "POST https://ec2.us-west-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-west-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeAvailabilityZones",
+      assertPayloadEquals(request, "Action=DescribeAvailabilityZones",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -73,7 +73,7 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2010-06-15&Action=DescribeAvailabilityZones&ZoneName.1=us-east-1a&ZoneName.2=us-east-1b",
+            "Action=DescribeAvailabilityZones&ZoneName.1=us-east-1a&ZoneName.2=us-east-1b",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -90,7 +90,7 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeRegions", "application/x-www-form-urlencoded",
+      assertPayloadEquals(request, "Action=DescribeRegions", "application/x-www-form-urlencoded",
             false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -108,7 +108,7 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2010-06-15&Action=DescribeRegions&RegionName.1=us-east-1&RegionName.2=us-west-1",
+            "Action=DescribeRegions&RegionName.1=us-east-1&RegionName.2=us-west-1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

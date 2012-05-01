@@ -30,6 +30,11 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "NinefoldStorageServiceIntegrationLiveTest")
 public class NinefoldStorageServiceIntegrationLiveTest extends AtmosServiceIntegrationLiveTest {
+
+   public NinefoldStorageServiceIntegrationLiveTest() {
+      provider = "ninefold-storage";
+   }
+   
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("AU-NSW");

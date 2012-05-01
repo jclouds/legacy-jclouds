@@ -25,7 +25,6 @@ import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
@@ -50,9 +49,9 @@ import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.VCloudToken;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.FindLocationForResource;
@@ -95,16 +94,13 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
-public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-      extends RestClientModule<S, A> {
+public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A> {
 
-   public TerremarkVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      super(syncClientType, asyncClientType);
+   public TerremarkVCloudRestClientModule() {
    }
 
-   public TerremarkVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegateMap) {
-      super(syncClientType, asyncClientType, delegateMap);
+   public TerremarkVCloudRestClientModule(Map<Class<?>, Class<?>> delegateMap) {
+      super(delegateMap);
    }
 
    @Override
@@ -150,7 +146,7 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
 
                @Override
                public Map<String, String> apply(Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org> arg0) {
-                  Builder<String, String> returnVal = ImmutableMap.<String, String> builder();
+                  Builder<String, String> returnVal = ImmutableMap.builder();
                   for (Entry<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org> orgr : arg0.entrySet()) {
                      for (String vdc : orgr.getValue().getVDCs().keySet()) {
                         returnVal.put(vdc, orgr.getKey());
@@ -315,7 +311,7 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
    @Singleton
    @VCloudLogin
    protected Supplier<URI> provideAuthenticationURI(final TerremarkVCloudVersionsClient versionService,
-            @Named(PROPERTY_API_VERSION) final String version) {
+            @ApiVersion final String version) {
       return new Supplier<URI>() {
 
          @Override

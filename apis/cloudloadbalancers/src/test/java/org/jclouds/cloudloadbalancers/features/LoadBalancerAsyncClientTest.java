@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes;
-import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes.Builder;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
+import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes.Builder;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.Type;
 import org.jclouds.cloudloadbalancers.functions.UnwrapLoadBalancer;
 import org.jclouds.cloudloadbalancers.functions.UnwrapLoadBalancers;

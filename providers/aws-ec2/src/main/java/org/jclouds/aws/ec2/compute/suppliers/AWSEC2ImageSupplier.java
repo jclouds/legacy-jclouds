@@ -34,9 +34,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.collect.ForwardingSet;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.compute.config.ClusterCompute;
+import org.jclouds.aws.ec2.compute.config.ImageQuery;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -49,6 +49,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -73,31 +74,31 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
    private final ExecutorService executor;
 
    private final Supplier<Set<String>> regions;
-   private final String amiQuery;
+   private final Map<String, String> queries;
    private final Iterable<String> clusterRegions;
-   private final String ccAmiQuery;
    private final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache;
    
    @Inject
    protected AWSEC2ImageSupplier(@Region Supplier<Set<String>> regions,
-            @Named(PROPERTY_EC2_AMI_QUERY) String amiQuery, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
-            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, 
+            @ImageQuery Map<String, String> queries, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
             Supplier<LoadingCache<RegionAndName, ? extends Image>> cache,
             CallForImages.Factory factory, @ClusterCompute Set<String> clusterComputeIds,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.factory = factory;
       this.regions = regions;
-      this.amiQuery = amiQuery;
+      this.queries = queries;
       this.clusterRegions = Splitter.on(',').split(clusterRegions);
-      this.ccAmiQuery = ccAmiQuery;
       this.cache = cache;
       this.clusterComputeIds = clusterComputeIds;
       this.executor = executor;
    }
    
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Override
    public Set<? extends Image> get() {
+      String amiQuery = queries.get(PROPERTY_EC2_AMI_QUERY);
+      String ccAmiQuery = queries.get(PROPERTY_EC2_CC_AMI_QUERY);
+
       Future<Iterable<Image>> normalImages = images(regions.get(), amiQuery, PROPERTY_EC2_AMI_QUERY);
       ImmutableSet<Image> clusterImages;
       try {
@@ -124,7 +125,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
 
       final Map<RegionAndName, ? extends Image> imageMap = ImagesToRegionAndIdMap.imagesToMap(parsedImages);
       cache.get().invalidateAll();
-      cache.get().asMap().putAll((Map)imageMap);
+      cache.get().asMap().putAll((Map) imageMap);
       logger.debug("<< images(%d)", imageMap.size());
       
       // TODO Used to be mutable; was this assumed anywhere?
@@ -136,7 +137,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
    }
    
    private Future<Iterable<Image>> images(Iterable<String> regions, String query, String tag) {
-      if (query.equals("")) {
+      if (query == null) {
          logger.debug(">> no %s specified, skipping image parsing", tag);
          return Futures.<Iterable<Image>> immediateFuture(ImmutableSet.<Image> of());
       } else {
@@ -149,7 +150,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
       INSTANCE;
       @Override
       public Multimap<String, String> apply(String arg0) {
-         ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+         ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.builder();
          for (String pair : Splitter.on(';').split(arg0)) {
             String[] keyValue = pair.split("=");
             if (keyValue.length == 1)

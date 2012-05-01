@@ -37,7 +37,6 @@ import org.jclouds.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromH
 import org.jclouds.cloudloadbalancers.location.RegionUrisFromPropertiesAndAccountIDPathSuffix;
 import org.jclouds.cloudloadbalancers.reference.RackspaceConstants;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -64,7 +63,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class CloudLoadBalancersRestClientModule extends
          RestClientModule<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
@@ -75,7 +73,7 @@ public class CloudLoadBalancersRestClientModule extends
             .build();
 
    public CloudLoadBalancersRestClientModule() {
-      super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    protected void installLocations() {

@@ -24,16 +24,15 @@ import java.util.concurrent.ConcurrentMap;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.TransientBlobRequestSigner;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
+import org.jclouds.rest.config.BinderUtils;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -49,9 +48,9 @@ public class TransientBlobStoreContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<BlobStoreContext>() {
-      }).to(new TypeLiteral<BlobStoreContextImpl<TransientBlobStore, AsyncBlobStore>>() {
-      }).in(Scopes.SINGLETON);
+      bind(AsyncBlobStore.class).to(TransientAsyncBlobStore.class).asEagerSingleton();
+      // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
+      BinderUtils.bindClient(binder(), TransientBlobStore.class, AsyncBlobStore.class, ImmutableMap.<Class<?>, Class<?>>of());
       bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
       }).toInstance(map);
       bind(new TypeLiteral<ConcurrentMap<String, Location>>() {

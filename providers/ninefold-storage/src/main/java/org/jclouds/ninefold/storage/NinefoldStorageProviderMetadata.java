@@ -18,12 +18,12 @@
  */
 package org.jclouds.ninefold.storage;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.atmos.AtmosApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Ninefold's
@@ -32,77 +32,55 @@ import org.jclouds.providers.BaseProviderMetadata;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class NinefoldStorageProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "ninefold-storage";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return BLOBSTORE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public NinefoldStorageProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Ninefold Storage";
+   public NinefoldStorageProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Subtenant ID (UID)";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Shared Secret";
+      protected Builder(){
+          id("ninefold-storage")
+         .name("Ninefold Storage")
+         .apiMetadata(new AtmosApiMetadata())
+         .homepage(URI.create("http://ninefold.com/cloud-storage/"))
+         .console(URI.create("https://ninefold.com/portal/"))
+         .iso3166Codes("AU-NSW")
+         .endpoint("http://onlinestorage.ninefold.com")
+         .defaultProperties(NinefoldStorageProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public NinefoldStorageProviderMetadata build() {
+         return new NinefoldStorageProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://ninefold.com/cloud-storage/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://ninefold.com/portal/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://ninefold.com/support/display/SPT/API+Documentation");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("AU-NSW");
-   }
-
 }

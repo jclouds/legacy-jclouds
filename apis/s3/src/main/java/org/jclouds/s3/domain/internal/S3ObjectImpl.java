@@ -22,11 +22,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
+import org.jclouds.http.internal.PayloadEnclosingImpl;
+import org.jclouds.io.Payload;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.MutableObjectMetadata;
 import org.jclouds.s3.domain.S3Object;
-import org.jclouds.http.internal.PayloadEnclosingImpl;
-import org.jclouds.io.Payload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;

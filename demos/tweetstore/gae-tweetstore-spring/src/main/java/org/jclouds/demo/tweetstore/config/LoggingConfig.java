@@ -18,9 +18,9 @@
  */
 package org.jclouds.demo.tweetstore.config;
 
-import org.jclouds.logging.Logger;
+import static org.jclouds.logging.LoggingModules.firstOrJDKLoggingModule;
+
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.logging.jdk.JDKLogger;
 
 /**
  * Spring config that provides a logger.
@@ -28,11 +28,5 @@ import org.jclouds.logging.jdk.JDKLogger;
  * @author Andrew Phillips
  */
 abstract class LoggingConfig {
-    private static final LoggerFactory FACTORY = new JDKLogger.JDKLoggerFactory();
-    protected final Logger logger;
-    
-    protected LoggingConfig() {
-        logger = FACTORY.getLogger(this.getClass().getName());
-    }
-
+    protected static final LoggerFactory LOGGER_FACTORY = firstOrJDKLoggingModule().createLoggerFactory();
 }

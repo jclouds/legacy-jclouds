@@ -18,19 +18,24 @@
  */
 package org.jclouds.aws.s3;
 
-import com.google.common.collect.ImmutableMultimap;
+import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
+
+import java.net.URI;
+
 import org.jclouds.aws.s3.internal.BaseAWSS3ClientExpectTest;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
-import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.Injector;
 
 /**
  * @author Andrei Savu
@@ -40,6 +45,11 @@ public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
 
    @Test
    public void testPutWithReducedRedundancy() {
+      Injector injector = createInjector(Functions.forMap(ImmutableMap.<HttpRequest, HttpResponse>of()), createModule(), setupProperties());
+
+      Blob blob = injector.getInstance(BlobBuilder.class).name("test").payload("content").build();
+      BlobToObject blobToObject = injector.getInstance(BlobToObject.class);
+      
       AWSS3Client client = requestSendsResponse(
          HttpRequest.builder()
             .method("PUT")
@@ -64,14 +74,7 @@ public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
             .build()
       );
 
-      Blob blob = blobStore.blobBuilder("test").payload("content").build();
-      BlobToObject blobToObject = getInstance(BlobToObject.class);
-
       client.putObject("test", blobToObject.apply(blob),
          storageClass(StorageClass.REDUCED_REDUNDANCY));
-   }
-
-   public <T> T getInstance(Class<T> klass) {
-      return blobStoreContext.utils().injector().getInstance(klass);
    }
 }

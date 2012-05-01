@@ -27,10 +27,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
@@ -51,7 +50,7 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
    
    @Test
    public void testTemplateBuilderCanUseImageIdWithoutFetchingAllImages() throws Exception {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       String defaultImageId = defaultTemplate.getImage().getId();
       String defaultImageProviderId = defaultTemplate.getImage().getProviderId();
 
@@ -59,10 +58,10 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
       try {
          // Track http commands
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
-         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, 
-                  ImmutableSet.<Module> of(new Log4JLoggingModule(), 
-                  TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)), 
-                  setupProperties());
+         context = createView(
+               setupProperties(),
+               ImmutableSet.<Module> of(new Log4JLoggingModule(),
+                     TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)));
          
          Template template = context.getComputeService().templateBuilder().imageId(defaultImageId)
                   .build();

@@ -18,9 +18,9 @@
  */
 package org.jclouds.ec2.domain;
 
-import java.util.Date;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Date;
 
 /**
  * @author Adrian Cole

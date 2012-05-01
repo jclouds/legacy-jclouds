@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class HPCloudObjectStorageContainerIntegrationLiveTest extends SwiftContainerIntegrationLiveTest {
+   public HPCloudObjectStorageContainerIntegrationLiveTest() {
+      provider = "hpcloud-objectstorage";
+   }
 
 }

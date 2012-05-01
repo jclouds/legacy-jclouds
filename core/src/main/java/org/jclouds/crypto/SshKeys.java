@@ -54,8 +54,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Iterables;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -149,7 +149,7 @@ public class SshKeys {
 
    public static Map<String, String> generate(KeyPairGenerator generator) {
       KeyPair pair = generateRsaKeyPair(generator);
-      Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMap.builder();
       builder.put("public", encodeAsOpenSSH(RSAPublicKey.class.cast(pair.getPublic())));
       builder.put("private", encodeAsPem(RSAPrivateKey.class.cast(pair.getPrivate())));
       return builder.build();

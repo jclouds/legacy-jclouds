@@ -19,7 +19,6 @@
 package org.jclouds.io;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.io.ByteStreams.toByteArray;
 
 import java.io.File;
@@ -30,14 +29,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.io.payloads.UrlEncodedFormPayload;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Multimap;
@@ -132,8 +130,7 @@ public class Payloads {
       try {
          return calculateMD5(payload, MessageDigest.getInstance("MD5"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -143,7 +140,7 @@ public class Payloads {
     * @see #calculateMD5(Payload, MessageDigest)
     */
    public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing, MessageDigest md5) throws IOException {
-      checkState(payloadEnclosing != null, "payloadEnclosing");
+      checkNotNull(payloadEnclosing, "payloadEnclosing");
       Payload newPayload = calculateMD5(payloadEnclosing.getPayload(), md5);
       if (newPayload != payloadEnclosing.getPayload())
          payloadEnclosing.setPayload(newPayload);
@@ -161,8 +158,7 @@ public class Payloads {
       try {
          return calculateMD5(payloadEnclosing, MessageDigest.getInstance("MD5"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 }

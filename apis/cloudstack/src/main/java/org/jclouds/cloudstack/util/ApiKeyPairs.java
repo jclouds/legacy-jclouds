@@ -18,30 +18,26 @@
  */
 package org.jclouds.cloudstack.util;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
-import org.jclouds.Constants;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.ApiKeyPair;
-import org.jclouds.cloudstack.domain.User;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.rest.RestContextFactory;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
+import org.jclouds.cloudstack.CloudStackApiMetadata;
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.ApiKeyPair;
+import org.jclouds.cloudstack.domain.User;
 
 /**
  * @author Andrei Savu
  */
 public class ApiKeyPairs {
-
-   private final static String PROVIDER = "cloudstack";
 
    /**
     * Retrieve the API key pair for a given CloudStack user
@@ -59,12 +55,19 @@ public class ApiKeyPairs {
     */
    public static ApiKeyPair loginToEndpointAsUsernameInDomainWithPasswordAndReturnApiKeyPair(
          URI endpoint, String username, String password, String domain) {
-      ComputeServiceContext context = null;
+      CloudStackContext context = null;
       try {
-         context = new ComputeServiceContextFactory(setupRestProperties()).
-            createContext(PROVIDER, ImmutableSet.<Module>of(), setupProperties(endpoint, username, password, domain));
+         Properties overrides = new Properties();
+         overrides.put(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+         overrides.put(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+         overrides.put("jclouds.cloudstack.credential-type", "passwordCredentials");
+         
+         context =  ContextBuilder.newBuilder(new CloudStackApiMetadata())
+               .endpoint(checkNotNull(endpoint, "endpoint").toASCIIString())
+               .credentials(String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")), password)
+               .overrides(overrides).build(CloudStackContext.class);
 
-         CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
+         CloudStackClient client = context.getProviderSpecificContext().getApi();
          Set<Account> listOfAccounts = client.getAccountClient().listAccounts();
 
          domain = (domain.equals("") || domain.equals("/")) ? "ROOT" : domain;
@@ -84,23 +87,4 @@ public class ApiKeyPairs {
       }
    }
 
-   private static Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
-
-   private static Properties setupProperties(URI endpoint, String username, String password, String domain) {
-      Properties overrides = new Properties();
-
-      overrides.put(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.put(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-      overrides.put("jclouds.cloudstack.credential-type", "passwordCredentials");
-
-      overrides.put(PROVIDER + ".endpoint", checkNotNull(endpoint, "endpoint").toASCIIString());
-      overrides.put(PROVIDER + ".identity",
-         String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")));
-      overrides.put(PROVIDER + ".credential", checkNotNull(password, "password"));
-
-      return overrides;
-   }
 }

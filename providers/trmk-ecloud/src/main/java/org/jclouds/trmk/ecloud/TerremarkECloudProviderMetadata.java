@@ -18,13 +18,11 @@
  */
 package org.jclouds.trmk.ecloud;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's Enterprise Cloud.
@@ -32,77 +30,55 @@ import org.jclouds.providers.ProviderMetadata;
  * @author Adrian Cole
  */
 public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -759809591681141530L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "trmk-ecloud";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public TerremarkECloudProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Terremark Enterprise Cloud";
+   public TerremarkECloudProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "email";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "password";
+      protected Builder(){
+            id("trmk-ecloud")
+            .name("Terremark Enterprise Cloud v2.8")
+            .apiMetadata(new TerremarkECloudApiMetadata())
+            .endpoint("https://services.enterprisecloud.terremark.com/api")
+            .homepage(URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx"))
+            .console(URI.create("https://icenter.digitalops.net"))
+            .iso3166Codes("US-FL", "US-VA", "NL-NH", "BR-SP");
+      }
+
+      @Override
+      public TerremarkECloudProviderMetadata build() {
+         return new TerremarkECloudProviderMetadata(this);
+      }
+
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
+
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://icenter.digitalops.net");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID=");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-FL", "US-VA", "NL-NH", "BR-SP");
-   }
-
 }

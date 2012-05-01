@@ -29,21 +29,18 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
@@ -65,20 +62,20 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          public boolean apply(OsFamilyVersion64Bit input) {
             // For each os-type both 32- and 64-bit are supported.
             switch (input.family) {
-               case UBUNTU:
-                  return input.version.equals("") || input.version.equals("10.04") || input.version.equals("8");
-               case DEBIAN:
-                  return input.version.equals("") || input.version.matches("[56].0");
-               case FEDORA:
-                  return input.version.equals("") || input.version.equals("13") || input.version.equals("15");
-               case RHEL:
-                  return input.version.equals("") || input.version.equals("5") || input.version.equals("6");
-               case CENTOS:
-                  return input.version.equals("") || input.version.equals("5") || input.version.equals("6.0");
-               case WINDOWS:
-                  return input.version.equals("") || input.version.equals("2003") || input.version.equals("2008");
-               default:
-                  return false;
+            case UBUNTU:
+               return input.version.equals("") || input.version.equals("10.04") || input.version.equals("8");
+            case DEBIAN:
+               return input.version.equals("") || input.version.matches("[56].0");
+            case FEDORA:
+               return input.version.equals("") || input.version.equals("13") || input.version.equals("15");
+            case RHEL:
+               return input.version.equals("") || input.version.equals("5") || input.version.equals("6");
+            case CENTOS:
+               return input.version.equals("") || input.version.equals("5") || input.version.equals("6.0");
+            case WINDOWS:
+               return input.version.equals("") || input.version.equals("2003") || input.version.equals("2008");
+            default:
+               return false;
             }
          }
 
@@ -87,7 +84,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
@@ -106,8 +103,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "1000");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          // TODO add something to the template about port speed?
          context.getComputeService().templateBuilder().build();
@@ -125,8 +121,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "100");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          // TODO add something to the template about port speed?
          context.getComputeService().templateBuilder().build();
@@ -144,8 +139,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE, "SAN");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 16.0d);
@@ -165,8 +159,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "Private [0-9]+ x ([.0-9]+) GHz Core[s]?");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
+         context = createView(overrides, setupModules());
 
          Template template = context.getComputeService().templateBuilder().build();
          assertEquals(getCores(template.getHardware()), 1.0d);
@@ -186,9 +179,8 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "Private [0-9]+ x ([.0-9]+) GHz Core[s]?");
 
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()), overrides);
-
+         context = createView(overrides, setupModules());
+         
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 8.0d);
          assertEquals(template.getHardware().getRam(), 16);
@@ -199,9 +191,10 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
             context.close();
       }
    }
+
    @Test
    public void testFastestTemplateBuilder() throws IOException {
-      Template template = context.getComputeService().templateBuilder().fastest().build();
+      Template template = view.getComputeService().templateBuilder().fastest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
       assertEquals(template.getHardware().getRam(), 1);
       assertEquals(getSpace(template.getHardware()), 25.0d);
@@ -210,7 +203,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Test
    public void testBiggestTemplateBuilder() throws IOException {
-      Template template = context.getComputeService().templateBuilder().biggest().build();
+      Template template = view.getComputeService().templateBuilder().biggest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
       assertEquals(template.getHardware().getRam(), 16);
       assertEquals(getSpace(template.getHardware()), 100.0d);

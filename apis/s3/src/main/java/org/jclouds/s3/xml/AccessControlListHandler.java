@@ -24,11 +24,11 @@ import java.net.URI;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.s3.domain.AccessControlList;
-import org.jclouds.s3.domain.CanonicalUser;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grantee;
 import org.jclouds.s3.domain.AccessControlList.GroupGrantee;
+import org.jclouds.s3.domain.CanonicalUser;
 import org.xml.sax.Attributes;
 
 /**

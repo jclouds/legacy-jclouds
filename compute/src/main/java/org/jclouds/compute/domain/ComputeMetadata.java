@@ -20,10 +20,9 @@ package org.jclouds.compute.domain;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.domain.ResourceMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
 

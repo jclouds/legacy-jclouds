@@ -18,8 +18,8 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudfiles.CloudFilesApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class CloudFilesUKProviderTest extends BaseProviderMetadataTest {
 
    public CloudFilesUKProviderTest() {
-      super(new CloudFilesUKProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new CloudFilesUKProviderMetadata(), new CloudFilesApiMetadata());
    }
 }

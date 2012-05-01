@@ -18,9 +18,9 @@
  */
 package org.jclouds.openstack.swift.functions;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
@@ -30,7 +30,6 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
-import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

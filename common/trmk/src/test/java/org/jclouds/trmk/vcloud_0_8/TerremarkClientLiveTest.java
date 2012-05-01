@@ -32,9 +32,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -42,19 +42,14 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.cim.CIMPredicates;
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.ssh.SshException;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.CustomizationParameters;
@@ -77,19 +72,18 @@ import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.predicates.TaskSuccess;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
-@Test(groups =  "live" , singleThreaded = true)
-public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTest {
+@Test(groups = "live", singleThreaded = true)
+public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient> extends BaseComputeServiceContextLiveTest {
 
    protected String expectedOs = "Ubuntu Linux (64-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (64-bit)";
@@ -99,7 +93,7 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    protected InternetService is;
    protected Node node;
    protected VApp vApp;
-   protected RetryablePredicate<IPSocket> socketTester;
+   protected RetryablePredicate<HostAndPort> socketTester;
    protected RetryablePredicate<URI> successTester;
    protected Injector injector;
 
@@ -107,17 +101,18 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    protected VDC vdc;
    protected String serverName;
    protected KeyPair key;
-   
+   protected S connection;
+
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    public TerremarkClientLiveTest() {
       this.provider = "trmk-vcloudexpress";
-      StringBuffer name = new StringBuffer();
+      StringBuilder name = new StringBuilder();
       for (int i = 0; i < 15; i++)
          name.append("d");
       serverName = name.toString();// "adriantest";
    }
-   
+
    @Test
    public void testKeysList() throws Exception {
       for (Org org : orgs) {
@@ -192,9 +187,10 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
 
       // lookup the datacenter you are deploying into
       vdc = connection.findVDCInOrgNamed(null, null);
-   
+
       // create an options object to collect the configuration we want.
-      InstantiateVAppTemplateOptions instantiateOptions = createInstantiateOptions().sshKeyFingerprint(key.getFingerPrint());
+      InstantiateVAppTemplateOptions instantiateOptions = createInstantiateOptions().sshKeyFingerprint(
+            key.getFingerPrint());
 
       CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(null, null, itemName);
 
@@ -204,7 +200,6 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
       // our options
       CustomizationParameters customizationOptions = connection.getCustomizationOptions(item.getCustomizationOptions()
             .getHref());
-
 
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
@@ -275,8 +270,7 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
       assertNotNull(key.getPrivateKey());
       assertNotNull(key.getFingerPrint());
       assertEquals(key.isDefault(), false);
-      assertEquals(key.getFingerPrint(), connection.findKeyPairInOrg(org.getHref(), key.getName())
-            .getFingerPrint());
+      assertEquals(key.getFingerPrint(), connection.findKeyPairInOrg(org.getHref(), key.getName()).getFingerPrint());
    }
 
    protected abstract Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp);
@@ -293,7 +287,7 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
       assert successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
 
-      StringBuffer name = new StringBuffer();
+      StringBuilder name = new StringBuilder();
       for (int i = 0; i < 15; i++)
          name.append("b");
       String newName = name.toString();
@@ -435,26 +429,26 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    }
 
    protected void doCheckPass(String address) throws IOException {
-      IPSocket socket = new IPSocket(address, 22);
+      HostAndPort socket = HostAndPort.fromParts(address, 22);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), socket);
       assert socketTester.apply(socket);
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), socket);
 
-      SshClient connection = getConnectionFor(socket);
+      SshClient ssh = getConnectionFor(socket);
       try {
-         connection.connect();
-         System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), socket);
-         System.out.println(connection.exec("df -h"));
-         System.out.println(connection.exec("ls -al /dev/sd*"));
-         System.out.println(connection.exec("echo '$Ep455l0ud!2'|sudo -S fdisk -l"));
+         ssh.connect();
+         System.out.printf("%d: %s ssh ssh made%n", System.currentTimeMillis(), socket);
+         System.out.println(ssh.exec("df -h"));
+         System.out.println(ssh.exec("ls -al /dev/sd*"));
+         System.out.println(ssh.exec("echo '$Ep455l0ud!2'|sudo -S fdisk -l"));
       } finally {
-         if (connection != null)
-            connection.disconnect();
+         if (ssh != null)
+            ssh.disconnect();
       }
    }
 
-   protected abstract SshClient getConnectionFor(IPSocket socket);
+   protected abstract SshClient getConnectionFor(HostAndPort socket);
 
    @AfterGroups(groups = { "live" })
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
@@ -483,29 +477,25 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
 
    }
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides).buildInjector();
+   @SuppressWarnings("unchecked")
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      injector = view.utils().injector();
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
+      socketTester = new RetryablePredicate<HostAndPort>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
       // it
       // longer
       // then
       // default internet
       // service timeout
       successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
-      context = createContextWithProperties(setupProperties());
-      connection = context.getApi();
+      connection = (S) RestContext.class.cast(view.unwrap()).getApi();
       orgs = listOrgs();
    }
 
-   protected TerremarkVCloudClient connection;
-   protected RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> context;
 
    @Test
    public void testOrg() throws Exception {
@@ -522,10 +512,11 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    @Test
    public void testPropertiesCanOverrideDefaultOrg() throws Exception {
       for (Org org : orgs) {
-         RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> newContext = null;
+         RestContext<S, A> newContext = null;
          try {
-            newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                  VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName())));
+            newContext = createView(
+                  overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName())),
+                  setupModules()).unwrap();
             assertEquals(newContext.getApi().findOrgNamed(null), org);
          } finally {
             newContext.close();
@@ -556,11 +547,12 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    public void testPropertiesCanOverrideDefaultCatalog() throws Exception {
       for (Org org : orgs) {
          for (ReferenceType cat : org.getCatalogs().values()) {
-            RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> newContext = null;
+            RestContext<S, A> newContext = null;
             try {
-               newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, cat.getName())));
+               newContext = createView(
+                     overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                           VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, cat.getName())), setupModules())
+                     .unwrap();
                assertEquals(newContext.getApi().findCatalogInOrgNamed(null, null), connection.getCatalog(cat.getHref()));
             } finally {
                newContext.close();
@@ -598,12 +590,13 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
          for (ReferenceType vdc : org.getVDCs().values()) {
             VDC response = connection.getVDC(vdc.getHref());
             for (ReferenceType net : response.getAvailableNetworks().values()) {
-               RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> newContext = null;
+               RestContext<S, A> newContext = null;
                try {
-                  newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
-                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
-                        VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())));
+                  newContext = createView(
+                        overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                              VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
+                              VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())), setupModules())
+                        .unwrap();
                   assertEquals(newContext.getApi().findNetworkInOrgVDCNamed(null, null, net.getName()),
                         connection.getNetwork(net.getHref()));
                } finally {
@@ -676,11 +669,12 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    public void testPropertiesCanOverrideDefaultVDC() throws Exception {
       for (Org org : orgs) {
          for (ReferenceType vdc : org.getVDCs().values()) {
-            RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> newContext = null;
+            RestContext<S, A> newContext = null;
             try {
-               newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName())));
+               newContext = createView(
+                     overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                           VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName())), setupModules())
+                     .unwrap();
                assertEquals(newContext.getApi().findVDCInOrgNamed(null, null), connection.getVDC(vdc.getHref()));
             } finally {
                newContext.close();
@@ -707,11 +701,12 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    public void testPropertiesCanOverrideDefaultTasksList() throws Exception {
       for (Org org : orgs) {
          for (ReferenceType tasksList : org.getTasksLists().values()) {
-            RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> newContext = null;
+            RestContext<S, A> newContext = null;
             try {
-               newContext = createContextWithProperties(overrideDefaults(ImmutableMap.of(
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
-                     VCloudConstants.PROPERTY_VCLOUD_DEFAULT_TASKSLIST, tasksList.getName())));
+               newContext = createView(
+                     overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
+                           VCloudConstants.PROPERTY_VCLOUD_DEFAULT_TASKSLIST, tasksList.getName())), setupModules())
+                     .unwrap();
                assertEquals(newContext.getApi().findTasksListInOrgNamed(null, null),
                      connection.getTasksList(tasksList.getHref()));
             } finally {
@@ -740,15 +735,9 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
 
    protected Iterable<Org> orgs;
 
-   public RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> createContextWithProperties(
-         Properties overrides) {
-      return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-   }
-
    @AfterGroups(groups = { "live" })
    public void teardownClient() {
-      context.close();
+      view.close();
    }
 
    protected Iterable<Org> listOrgs() {

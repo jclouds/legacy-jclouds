@@ -19,7 +19,6 @@
 package org.jclouds.openstack.nova.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -36,6 +35,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -63,6 +63,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    protected final Map<ServerStatus, NodeState> serverToNodeState;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final Server instance;
@@ -93,7 +94,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Inject
    ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState,
                         @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
-                        @Memoized Supplier<Set<? extends Hardware>> hardwares) {
+                        @Memoized Supplier<Set<? extends Hardware>> hardwares,
+                        GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -108,7 +111,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.location(new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId()).description(
             from.getHostId()).parent(location.get()).build());
       builder.userMetadata(from.getMetadata());
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       Image image = parseImage(from);
       if (image != null) {
          builder.imageId(image.getId());

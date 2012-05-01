@@ -18,10 +18,10 @@
  */
 package org.jclouds.glesys.domain;
 
+import java.util.Date;
+
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.Date;
 
 /**
  * Domain data for a Glesys account.

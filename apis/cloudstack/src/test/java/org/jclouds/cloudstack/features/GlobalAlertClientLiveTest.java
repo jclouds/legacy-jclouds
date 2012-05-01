@@ -18,13 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.domain.Alert;
-import org.jclouds.cloudstack.options.ListAlertsOptions;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import static org.testng.Assert.*;
+import org.jclouds.cloudstack.domain.Alert;
+import org.jclouds.cloudstack.options.ListAlertsOptions;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code GlobalAlertsClient}

@@ -18,10 +18,9 @@
  */
 package org.jclouds.loadbalancer;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * A means of specifying the interface between the {@link LoadBalancerService LoadBalancerServices}

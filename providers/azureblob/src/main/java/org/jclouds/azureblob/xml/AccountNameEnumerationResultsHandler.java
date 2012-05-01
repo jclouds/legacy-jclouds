@@ -25,10 +25,10 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.azureblob.domain.ContainerProperties;
-import org.jclouds.azureblob.domain.internal.ContainerPropertiesImpl;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
+import org.jclouds.azureblob.domain.ContainerProperties;
+import org.jclouds.azureblob.domain.internal.ContainerPropertiesImpl;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;

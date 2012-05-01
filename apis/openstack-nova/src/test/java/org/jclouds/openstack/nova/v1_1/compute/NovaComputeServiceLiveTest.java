@@ -1,6 +1,10 @@
 package org.jclouds.openstack.nova.v1_1.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
+import java.util.Properties;
+
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -48,5 +52,13 @@ public class NovaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    public void testDestroyNodes() {
       super.testDestroyNodes();
+   }
+
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      setIfTestSystemPropertyPresent(props, NovaProperties.AUTO_ALLOCATE_FLOATING_IPS);
+      return props;
    }
 }

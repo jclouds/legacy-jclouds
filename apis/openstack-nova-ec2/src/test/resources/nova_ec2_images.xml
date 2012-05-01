@@ -1,0 +1,259 @@
+<?xml version="1.0" ?>
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+    <requestId>b5ad23de-f77d-
+        4b66-bfc2-ab01ceccb97b</requestId>
+    <imagesSet>
+        <item>
+            <displayName>Debian Squeeze 6.0.3 Server 64-bit 20120123</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-00000551</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Debian Squeeze 6.0.3 Server 64-bit
+                20120123)</imageLocation>
+            <kernelId>aki-0000054f</kernelId>
+            <ramdiskId>ari-00000550</ramdiskId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>Debian Squeeze 6.0.3 Server 64-bit 20120123
+                (Ramdisk)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ari-00000550</imageId>
+            <imageState>available</imageState>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Debian Squeeze 6.0.3 Server 64-bit
+                20120123 (Ramdisk))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>ramdisk</imageType>
+        </item>
+        <item>
+            <displayName>Debian Squeeze 6.0.3 Server 64-bit 20120123
+                (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-0000054f</imageId>
+            <imageState>available</imageState>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Debian Squeeze 6.0.3 Server 64-bit
+                20120123 (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+        <item>
+            <displayName>CentOS 6.2 Server 64-bit 20120125</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-0000054e</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 6.2 Server 64-bit 20120125)</imageLocation>
+            <kernelId>aki-0000054c</kernelId>
+            <ramdiskId>ari-0000054d</ramdiskId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>CentOS 6.2 Server 64-bit 20120125 (Ramdisk)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ari-0000054d</imageId>
+            <imageState>available</imageState>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 6.2 Server 64-bit 20120125
+                (Ramdisk))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>ramdisk</imageType>
+        </item>
+        <item>
+            <displayName>CentOS 6.2 Server 64-bit 20120125 (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-0000054c</imageId>
+            <imageState>available</imageState>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 6.2 Server 64-bit 20120125
+                (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Oneiric 11.10 Server 64-bit 20111212</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-000004da</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Oneiric 11.10 Server 64-bit
+                20111212)</imageLocation>
+            <kernelId>aki-000004d9</kernelId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Oneiric 11.10 Server 64-bit 20111212
+                (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-000004d9</imageId>
+            <imageState>available</imageState>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Oneiric 11.10 Server 64-bit
+                20111212 (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Natty 11.04 Server 64-bit 20111212</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-000004d8</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Natty 11.04 Server 64-bit
+                20111212)</imageLocation>
+            <kernelId>aki-000004d7</kernelId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Natty 11.04 Server 64-bit 20111212
+                (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-000004d7</imageId>
+            <imageState>available</imageState>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Natty 11.04 Server 64-bit
+                20111212 (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Maverick 10.10 Server 64-bit 20111212</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-000004d6</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Maverick 10.10 Server 64-bit
+                20111212)</imageLocation>
+            <kernelId>aki-000004d5</kernelId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Maverick 10.10 Server 64-bit 20111212
+                (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-000004d5</imageId>
+            <imageState>available</imageState>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Maverick 10.10 Server 64-bit
+                20111212 (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Lucid 10.04 LTS Server 64-bit 20111212</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-000004d4</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Lucid 10.04 LTS Server 64-bit
+                20111212)</imageLocation>
+            <kernelId>aki-000004d3</kernelId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>Ubuntu Lucid 10.04 LTS Server 64-bit 20111212
+                (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-000004d3</imageId>
+            <imageState>available</imageState>
+            <architecture>amd64</architecture>
+            <imageLocation>local (Ubuntu Lucid 10.04 LTS Server 64-bit
+                20111212 (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+        <item>
+            <displayName>CentOS 5.6 Server 64-bit 20111207</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-000004d2</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 5.6 Server 64-bit 20111207)</imageLocation>
+            <kernelId>aki-000004d0</kernelId>
+            <ramdiskId>ari-000004d1</ramdiskId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+        <item>
+            <displayName>CentOS 5.6 Server 64-bit 20111207 (Ramdisk)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ari-000004d1</imageId>
+            <imageState>available</imageState>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 5.6 Server 64-bit 20111207
+                (Ramdisk))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>ramdisk</imageType>
+        </item>
+        <item>
+            <displayName>CentOS 5.6 Server 64-bit 20111207 (Kernel)</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>aki-000004d0</imageId>
+            <imageState>available</imageState>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 5.6 Server 64-bit 20111207
+                (Kernel))</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>

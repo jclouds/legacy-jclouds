@@ -28,7 +28,6 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VAppTemplateImpl;
-import org.jclouds.trmk.vcloud_0_8.xml.VAppTemplateHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;

@@ -18,66 +18,82 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.cloudloadbalancers.reference.Region.LON;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers in UK.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers UK.
  * 
- * @author Dan Lo Bianco
+ * @author Adrian Cole
  */
-public class CloudLoadBalancersUKProviderMetadata extends CloudLoadBalancersProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudloadbalancers-uk";
+public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 5566019798179959163L;
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getName() {
-      return "Rackspace Cloud Load Balancers UK";
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
    
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-load-balancers/");
+   public CloudLoadBalancersUKProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://lon.manage.rackspacecloud.com");
+   public CloudLoadBalancersUKProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudfiles-uk", "cloudservers-uk", "cloudloadbalancers-uk");
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, LON);
+      properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
+      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ISO3166_CODES, "GB-SLG");
+      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT,
+            String.format("https://lon.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
+      return properties;
    }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("GB-SLG");
+      protected Builder(){
+         id("cloudloadbalancers-uk")
+         .name("Rackspace Cloud Load Balancers UK")
+         .apiMetadata(new CloudLoadBalancersApiMetadata())
+         .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-load-balancers"))
+         .console(URI.create("https://lon.manage.rackspacecloud.com"))
+         .linkedServices("cloudloadbalancers-uk", "cloudservers-uk", "cloudfiles-uk")
+         .iso3166Codes("GB-SLG")
+         .endpoint("https://lon.auth.api.rackspacecloud.com");
+      }
+
+      @Override
+      public CloudLoadBalancersUKProviderMetadata build() {
+         return new CloudLoadBalancersUKProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
 }

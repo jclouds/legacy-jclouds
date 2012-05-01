@@ -18,13 +18,19 @@
  */
 package org.jclouds.greenhousedata.element.vcloud;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCloudComputeServiceContextModule;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Green House Data Element vCloud
@@ -33,84 +39,59 @@ import org.jclouds.providers.ProviderMetadata;
  */
 public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "greenhousedata-element-vcloud";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8503534430849704022L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public GreenHouseDataElementVCloudProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Green House Data Element vCloud";
+   public GreenHouseDataElementVCloudProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User at Organization (user@org)";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+      protected Builder(){
+         id("greenhousedata-element-vcloud")
+         .name("Green House Data Element vCloud")
+               .apiMetadata(
+                     new VCloudApiMetadata().toBuilder()
+                     .buildVersion("1.5.0.464915")
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
+                     .build())
+         .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
+         .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))
+         .iso3166Codes("US-WY")
+         .endpoint("https://mycloud.greenhousedata.com/api")
+         .defaultProperties(GreenHouseDataElementVCloudProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public GreenHouseDataElementVCloudProviderMetadata build() {
+         return new GreenHouseDataElementVCloudProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://mycloud.greenhousedata.com/cloud/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("greenhousedata-element-vcloud");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-WY");
-   }
-
 }

@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class AzureBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-
+   public AzureBlobSignerLiveTest() {
+      provider = "azureblob";
+   }
 }

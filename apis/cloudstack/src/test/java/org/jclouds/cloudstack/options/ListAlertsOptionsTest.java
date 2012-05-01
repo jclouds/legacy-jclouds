@@ -18,13 +18,14 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.ListAlertsOptions.Builder.id;
 import static org.jclouds.cloudstack.options.ListAlertsOptions.Builder.keyword;
 import static org.jclouds.cloudstack.options.ListAlertsOptions.Builder.type;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListAlertsOptions}

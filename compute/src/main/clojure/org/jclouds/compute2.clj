@@ -29,6 +29,7 @@
 
  You can inquire about which providers are loaded via the following:
   (seq (org.jclouds.providers.Providers/allCompute))
+  (seq (org.jclouds.apis.Apis/allCompute))
 
 Here's an example of getting some compute configuration from rackspace:
 
@@ -63,9 +64,10 @@ Here's an example of creating and running a small linux node in the group webser
     (org.jclouds predicate) [clojure.core.incubator :only (-?>)])
   (:import java.io.File
     java.util.Properties
+    [org.jclouds ContextBuilder]
     [org.jclouds.domain Location]
     [org.jclouds.compute
-     ComputeService ComputeServiceContext ComputeServiceContextFactory]
+     ComputeService ComputeServiceContext]
     [org.jclouds.compute.domain
      Template TemplateBuilder ComputeMetadata NodeMetadata Hardware
      OsFamily Image]
@@ -83,13 +85,13 @@ Here's an example of creating and running a small linux node in the group webser
     (let [module-keys (set (keys module-lookup))
           ext-modules (filter #(module-keys %) options)
           opts (apply hash-map (filter #(not (module-keys %)) options))]
-      (.. (ComputeServiceContextFactory.)
-        (createContext
-          provider provider-identity provider-credential
-          (apply modules (concat ext-modules (opts :extensions)))
-          (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
+      (.. (ContextBuilder/newBuilder provider)
+          (credentials provider-identity provider-credential)
+          (modules (apply modules (concat ext-modules (opts :extensions))))
+          (overrides (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
             (Properties.) (dissoc opts :extensions)))
-        (getComputeService))))
+          (buildView ComputeServiceContext)
+          (getComputeService))))
   ([#^ComputeServiceContext compute-context]
     (.getComputeService compute-context)))
 
@@ -345,14 +347,8 @@ Here's an example of creating and running a small linux node in the group webser
     (make-option-map
       kw-memfn-1arg
       [;; RunScriptOptions
-         ;; deprecated
-         :override-credentials-with
          :override-login-credentials
-         ;; deprecated
-         :override-login-user-with
          :override-login-user
-         ;; deprecated
-         :override-login-credential-with
          :override-login-password :override-login-privateKey
          :override-authenticate-sudo
          

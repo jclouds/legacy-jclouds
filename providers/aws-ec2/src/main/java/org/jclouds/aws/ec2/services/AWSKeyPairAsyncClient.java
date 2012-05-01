@@ -19,20 +19,18 @@
 package org.jclouds.aws.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
-import static org.jclouds.aws.reference.FormParameters.VERSION;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.functions.EncodedRSAPublicKeyToBase64;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.services.KeyPairAsyncClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.xml.KeyPairResponseHandler;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -47,7 +45,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = AWSEC2AsyncClient.VERSION)
 @VirtualHost
 public interface AWSKeyPairAsyncClient extends KeyPairAsyncClient {
 

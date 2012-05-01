@@ -18,99 +18,78 @@
  */
 package org.jclouds.gogrid;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of @ link org.jclouds.types.ProviderMetadata} for GoGrid.
- * 
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for GoGrid.
  * @author Adrian Cole
  */
 public class GoGridProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "gogrid";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 503149209800711396L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "GoGrid";
+   public GoGridProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "API Key";
+   public GoGridProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Shared Secret";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_ZONES, "1,2,3");
+      properties.setProperty(PROPERTY_ZONE + ".1." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_ZONE + ".2." + ISO3166_CODES, "US-VA");
+      properties.setProperty(PROPERTY_ZONE + ".3." + ISO3166_CODES, "NL-NH");
+      properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
+      properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "1");
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.gogrid.com");
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://my.gogrid.com/gogrid");
-   }
+      protected Builder() {
+         id("gogrid")
+         .name("GoGrid")
+         .apiMetadata(new GoGridApiMetadata())
+         .homepage(URI.create("http://www.gogrid.com"))
+         .console(URI.create("https://my.gogrid.com/gogrid"))
+         .iso3166Codes("US-CA", "US-VA", "BR-SP")
+         .endpoint("https://api.gogrid.com/api")
+         .defaultProperties(GoGridProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://wiki.gogrid.com/wiki/index.php/API");
-   }
+      @Override
+      public GoGridProviderMetadata build() {
+         return new GoGridProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("gogrid");
-   }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA", "US-VA", "BR-SP");
    }
-
 }

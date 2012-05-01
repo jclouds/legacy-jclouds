@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.functions.admin;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
@@ -35,7 +36,6 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
-import org.jclouds.net.IPSocket;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -43,6 +43,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Suppliers;
+import com.google.common.net.HostAndPort;
 
 @Test(groups = "live", singleThreaded = true, testName = "StartVBoxIfNotAlreadyRunningLiveTest")
 public class StartVBoxIfNotAlreadyRunningLiveTest {
@@ -57,10 +58,10 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       URI provider = URI.create("http://localhost:18083/");
       String identity = "adminstrator";
       String credential = "12345";
-
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true);
-
-      manager.connect(provider.toASCIIString(), identity, credential);
+      expect(client.seconds(3)).andReturn(client);
+      expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(true).anyTimes();
+      manager.connect(provider.toASCIIString(), "", "");
+      expectLastCall().anyTimes();
 
       replay(manager, runScriptOnNodeFactory, client);
 
@@ -84,8 +85,9 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       URI provider = URI.create("http://localhost:18083/");
       String identity = "adminstrator";
       String credential = "12345";
-
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(false);
+      
+      expect(client.seconds(3)).andReturn(client);
+      expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(false).once().andReturn(true).once();
       expect(
                runScriptOnNodeFactory.create(host, Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                         runAsRoot(false).wrapInInitScript(false))).andReturn(runScriptOnNode);
@@ -96,14 +98,15 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
                runScriptOnNodeFactory.create(host, Statements.exec("vboxwebsrv -t 10000 -v -b"), runAsRoot(false)
                         .wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv"))).andReturn(
                runScriptOnNode);
+      
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
       
-      manager.connect(provider.toASCIIString(), identity, credential);
+      manager.connect(provider.toASCIIString(), "", "");
 
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential).start();
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential);
       verify(manager, runScriptOnNodeFactory, runScriptOnNode, client);
 
    }

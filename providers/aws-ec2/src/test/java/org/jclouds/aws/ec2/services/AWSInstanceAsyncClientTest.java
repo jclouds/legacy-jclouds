@@ -62,7 +62,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeInstances", "application/x-www-form-urlencoded",
+      assertPayloadEquals(request, "Action=DescribeInstances", "application/x-www-form-urlencoded",
             false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -78,7 +78,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeInstances&InstanceId.1=1&InstanceId.2=2",
+      assertPayloadEquals(request, "Action=DescribeInstances&InstanceId.1=1&InstanceId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -95,7 +95,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=TerminateInstances&InstanceId.1=1&InstanceId.2=2",
+      assertPayloadEquals(request, "Action=TerminateInstances&InstanceId.1=1&InstanceId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -113,11 +113,11 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       try {
-         assertPayloadEquals(request, "Version=2011-05-15&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=1",
+         assertPayloadEquals(request, "Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=1",
                "application/x-www-form-urlencoded", false);
       } catch (AssertionError e) {
          // mvn 3.0 osx 10.6.5 somehow sorts differently
-         assertPayloadEquals(request, "Version=2011-05-15&Action=RunInstances&ImageId=ami-voo&MaxCount=1&MinCount=1",
+         assertPayloadEquals(request, "Action=RunInstances&ImageId=ami-voo&MaxCount=1&MinCount=1",
                "application/x-www-form-urlencoded", false);
       }
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -145,13 +145,13 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       try {
          assertPayloadEquals(
                request,
-               "Version=2011-05-15&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=us-east-1a",
+               "Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=us-east-1a",
                "application/x-www-form-urlencoded", false);
       } catch (AssertionError e) {
          // mvn 3.0 osx 10.6.5 somehow sorts differently
          assertPayloadEquals(
                request,
-               "Version=2011-05-15&Action=RunInstances&ImageId=ami-voo&MaxCount=5&MinCount=1&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=us-east-1a",
+               "Action=RunInstances&ImageId=ami-voo&MaxCount=5&MinCount=1&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=us-east-1a",
                "application/x-www-form-urlencoded", false);
       }
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -168,7 +168,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=StopInstances&Force=true&InstanceId.1=1&InstanceId.2=2",
+      assertPayloadEquals(request, "Action=StopInstances&Force=true&InstanceId.1=1&InstanceId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -185,7 +185,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=RebootInstances&InstanceId.1=1&InstanceId.2=2",
+      assertPayloadEquals(request, "Action=RebootInstances&InstanceId.1=1&InstanceId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -202,7 +202,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=StartInstances&InstanceId.1=1&InstanceId.2=2",
+      assertPayloadEquals(request, "Action=StartInstances&InstanceId.1=1&InstanceId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -220,7 +220,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=userData&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=userData&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -238,7 +238,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=rootDeviceName&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=rootDeviceName&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -256,7 +256,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=ramdisk&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=ramdisk&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -275,7 +275,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=disableApiTermination&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=disableApiTermination&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -292,7 +292,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=kernel&InstanceId=1",
+      assertPayloadEquals(request, "Action=DescribeInstanceAttribute&Attribute=kernel&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -310,7 +310,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=instanceType&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=instanceType&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -330,7 +330,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -349,7 +349,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=DescribeInstanceAttribute&Attribute=blockDeviceMapping&InstanceId=1",
+            "Action=DescribeInstanceAttribute&Attribute=blockDeviceMapping&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -367,7 +367,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1",
+            "Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1",
             "application/x-www-form-urlencoded", false);
       filter.filter(request);// ensure encoding worked properly
       assertPayloadEquals(
@@ -389,7 +389,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&Attribute=ramdisk&Value=test&InstanceId=1",
+            "Action=ModifyInstanceAttribute&Attribute=ramdisk&Value=test&InstanceId=1",
             "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -406,7 +406,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&Attribute=kernel&Value=test&InstanceId=1",
+            "Action=ModifyInstanceAttribute&Attribute=kernel&Value=test&InstanceId=1",
             "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -425,7 +425,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&Attribute=disableApiTermination&Value=true&InstanceId=1",
+            "Action=ModifyInstanceAttribute&Attribute=disableApiTermination&Value=true&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -443,7 +443,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&Attribute=instanceType&Value=c1.medium&InstanceId=1",
+            "Action=ModifyInstanceAttribute&Attribute=instanceType&Value=c1.medium&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -463,7 +463,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&Value=terminate&InstanceId=1",
+            "Action=ModifyInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&Value=terminate&InstanceId=1",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -486,7 +486,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true",
+            "Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true",
             "application/x-www-form-urlencoded", false);
       filter.filter(request);// ensure encoding worked properly
       assertPayloadEquals(

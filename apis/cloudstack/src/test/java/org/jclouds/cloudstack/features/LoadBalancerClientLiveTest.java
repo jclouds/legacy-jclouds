@@ -30,6 +30,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
@@ -39,8 +41,6 @@ import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
-import org.jclouds.cloudstack.predicates.NetworkPredicates;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterGroups;
@@ -49,8 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
-import javax.annotation.Nullable;
+import com.google.common.net.HostAndPort;
 
 /**
  * Tests behavior of {@code LoadBalancerClientLiveTest}
@@ -67,8 +66,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
 
       loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 60, 1, 1,
             TimeUnit.SECONDS);
@@ -156,7 +155,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private void loopAndCheckSSH() throws IOException {
       for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
          try {
-            checkSSH(new IPSocket(ip.getIPAddress(), 22));
+            checkSSH(HostAndPort.fromParts(ip.getIPAddress(), 22));
             return;
          } catch (SshException e) {
             e.printStackTrace();
@@ -177,7 +176,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
             rule.getId(), vm.getId())));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
       assertEquals(rule.getState(), State.ADD);
-      checkSSH(new IPSocket(ip.getIPAddress(), 22));
+      checkSSH(HostAndPort.fromParts(ip.getIPAddress(), 22));
    }
 
    @AfterGroups(groups = "live")

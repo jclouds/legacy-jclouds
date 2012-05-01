@@ -20,18 +20,13 @@ package org.jclouds.azureblob.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.azureblob.AzureBlobProviderMetadata;
 import org.jclouds.azureblob.blobstore.strategy.FindMD5InBlobProperties;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -39,20 +34,14 @@ import com.google.inject.Module;
 @Test(groups = "unit")
 public class AzureBlobStoreModuleTest {
 
-   Injector createInjector() {
-      return new RestContextFactory().createContextBuilder("azureblob", "uid", "key",
-               ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule())).buildInjector();
-   }
-
    @Test
    void testContextImpl() {
 
-      Injector injector = createInjector();
-      BlobStoreContext handler = injector.getInstance(BlobStoreContext.class);
-      assertEquals(handler.getClass(), BlobStoreContextImpl.class);
-      ContainsValueInListStrategy valueList = injector
-               .getInstance(ContainsValueInListStrategy.class);
+      Injector injector = ContextBuilder.newBuilder(new AzureBlobProviderMetadata()).credentials("foo", "bar")
+            .buildInjector();
+      ContainsValueInListStrategy valueList = injector.getInstance(ContainsValueInListStrategy.class);
 
       assertEquals(valueList.getClass(), FindMD5InBlobProperties.class);
    }
+
 }

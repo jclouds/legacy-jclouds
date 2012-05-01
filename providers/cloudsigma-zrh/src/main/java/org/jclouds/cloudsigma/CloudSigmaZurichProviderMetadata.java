@@ -18,98 +18,71 @@
  */
 package org.jclouds.cloudsigma;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma Zurich.
- *
+
+ * 
  * @author Adrian Cole
  */
 public class CloudSigmaZurichProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudsigma-zrh";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7104853865766042528L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "CloudSigma Zurich";
+   public CloudSigmaZurichProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Email";
+   public CloudSigmaZurichProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.cloudsigma.com/en/our-cloud/features");
-   }
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://gui.zrh.cloudsigma.com/");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://cloudsigma.com/en/platform-details/the-api");
-   }
+      protected Builder() {
+         id("cloudsigma-zrh")
+         .name("CloudSigma Zurich")
+         .apiMetadata(new CloudSigmaApiMetadata())
+         .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
+         .console(URI.create("https://gui.zrh.cloudsigma.com/"))
+         .iso3166Codes("CH-ZH")
+         .endpoint("https://api.zrh.cloudsigma.com")
+         .defaultProperties(CloudSigmaZurichProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudsigma-zrh");
-   }
+      @Override
+      public CloudSigmaZurichProviderMetadata build() {
+         return new CloudSigmaZurichProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("CH-ZH");
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

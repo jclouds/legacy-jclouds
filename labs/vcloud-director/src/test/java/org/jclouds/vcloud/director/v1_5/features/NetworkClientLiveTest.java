@@ -2,14 +2,14 @@
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- *(Link.builder().regarding copyright ownership.  jclouds licenses this file
+ * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless(Link.builder().required by applicable law or agreed to in writing,
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
@@ -34,8 +34,9 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Network;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -48,7 +49,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "network" }, singleThreaded = true, testName = "NetworkClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String NETWORK = "network";
@@ -57,22 +58,28 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience reference to API client.
     */
    protected NetworkClient networkClient;
+   
+   private boolean metadataSet = false;
     
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
-      context.getApi().getAdminNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 
-            "key", MetadataValue.builder().value("value").build());
    }
    
-   @AfterClass(groups = { "live" })
-   public void cleanUp() throws Exception {
-      context.getApi().getAdminNetworkClient().getMetadataClient()
-      .deleteMetadataEntry(toAdminUri(networkURI), "key");
+   @AfterClass(alwaysRun = true)
+   public void cleanUp() {
+      if (metadataSet) {
+         try {
+	         Task delete = adminContext.getApi().getNetworkClient().getMetadataClient().deleteMetadataEntry(toAdminUri(networkURI), "key");
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting metadata");
+         }
+      }
    }
    
-   @Test(testName = "GET /network/{id}")
+   @Test(description = "GET /network/{id}")
    public void testGetNetwork() {
       // required for testing
       assertNotNull(networkURI, String.format(REF_REQ_LIVE, NETWORK));
@@ -87,8 +94,18 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkOrgNetwork(network);
    }
    
-   @Test(testName = "GET /network/{id}/metadata")
+   private void setupMetadata() {
+      adminContext.getApi().getNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 
+            "key", MetadataValue.builder().value("value").build());
+      metadataSet = true;
+   }
+   
+   @Test(description = "GET /network/{id}/metadata", dependsOnMethods = { "testGetNetwork" })
    public void testGetMetadata() {
+      if (adminContext != null) {
+         setupMetadata();
+      }
+      
       Metadata metadata = networkClient.getMetadataClient().getMetadata(networkURI);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
@@ -109,7 +126,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /network/{id}/metadata/{key}")
+   @Test(description = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetMetadataValue() {
       MetadataValue metadataValue = networkClient.getMetadataClient().getMetadataValue(networkURI, "key");
        

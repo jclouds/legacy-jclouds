@@ -25,8 +25,8 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.jclouds.cim.ResourceAllocationSettingData;
-import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;

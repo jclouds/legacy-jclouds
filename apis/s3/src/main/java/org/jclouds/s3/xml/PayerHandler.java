@@ -20,8 +20,8 @@ package org.jclouds.s3.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
-import org.jclouds.s3.domain.Payer;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.s3.domain.Payer;
 
 /**
  * Parses the response from Amazon S3 GET Request Payment

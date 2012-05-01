@@ -22,10 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
@@ -48,7 +47,7 @@ public class BindNetworkConnectionSectionToXmlPayloadTest {
 
       @Override
       protected void bindConfigurations() {
-         bindProperties(new VCloudPropertiesBuilder(new Properties()).build());
+         bindProperties(new VCloudApiMetadata().getDefaultProperties());
       }
    }));
 

@@ -31,16 +31,13 @@ import java.util.Properties;
 
 import javax.inject.Singleton;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersContextBuilder;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersPropertiesBuilder;
 import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
-import org.jclouds.cloudloadbalancers.features.LoadBalancerAsyncClient;
-import org.jclouds.cloudloadbalancers.features.LoadBalancerClient;
 import org.jclouds.cloudloadbalancers.reference.Region;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.openstack.filters.AuthenticateRequest;
@@ -48,13 +45,10 @@ import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule.Ge
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -62,7 +56,7 @@ import com.google.inject.Provides;
 /**
  * @author Adrian Cole
  */
-public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    protected String provider;
 
@@ -76,7 +70,6 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
    protected static class TestCloudLoadBalancersRestClientModule extends CloudLoadBalancersRestClientModule {
       @Override
       protected void installLocations() {
@@ -84,6 +77,7 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
             protected void configure() {
             }
 
+            @SuppressWarnings("unused")
             @Provides
             @Singleton
             GetAuth provideGetAuth() {
@@ -131,15 +125,9 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
       return overrides;
    }
 
-   /**
-    * this is only here as "cloudloadbalancers" is not in rest.properties
-    */
-   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return RestContextFactory.<LoadBalancerClient, LoadBalancerAsyncClient> contextSpec(provider, "https://auth",
-               "1.0", "", "", "identity", "credential", LoadBalancerClient.class, LoadBalancerAsyncClient.class,
-               (Class) CloudLoadBalancersPropertiesBuilder.class, (Class) CloudLoadBalancersContextBuilder.class,
-               ImmutableSet.<Module> of());
+   protected ApiMetadata createApiMetadata() {
+      return new CloudLoadBalancersApiMetadata();
    }
+
 }

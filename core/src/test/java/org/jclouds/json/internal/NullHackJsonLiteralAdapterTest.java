@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
 import org.jclouds.util.Patterns;
 import org.testng.annotations.Test;
 

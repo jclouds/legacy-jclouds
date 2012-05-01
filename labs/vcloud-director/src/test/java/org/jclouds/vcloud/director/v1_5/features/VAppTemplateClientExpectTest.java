@@ -31,6 +31,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.text.ParseException;
@@ -38,33 +39,35 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.FirewallRule;
-import org.jclouds.vcloud.director.v1_5.domain.FirewallRuleProtocols;
-import org.jclouds.vcloud.director.v1_5.domain.FirewallService;
-import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.IpRange;
-import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
-import org.jclouds.vcloud.director.v1_5.domain.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.NatOneToOneVmRule;
-import org.jclouds.vcloud.director.v1_5.domain.NatRule;
-import org.jclouds.vcloud.director.v1_5.domain.NatService;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRule;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRuleProtocols;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallService;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatOneToOneVmRule;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatRule;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
+import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -74,8 +77,8 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adam Lowe
  */
-@Test(groups = { "unit", "user", "vapptemplate" }, testName = "VAppTemplateClientExpectTest")
-public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+@Test(groups = { "unit", "user" }, testName = "VAppTemplateClientExpectTest")
+public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    public VAppTemplateClientExpectTest() {
       TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
@@ -100,7 +103,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       assertEquals(template, exampleTemplate());
 
-      Task task = client.editVAppTemplate(uri, exampleTemplate());
+      Task task = client.modifyVAppTemplate(uri, exampleTemplate());
       assertNotNull(task);
 
       task = client.deleteVappTemplate(uri);
@@ -119,7 +122,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getVAppTemplate(uri);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorEditVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -128,7 +131,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId).xmlFilePayload("/vapptemplate/vAppTemplate.xml", VAPP_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.editVAppTemplate(uri, exampleTemplate());
+      client.modifyVAppTemplate(uri, exampleTemplate());
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -153,11 +156,11 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Task task = client.consolidateVappTemplate(uri);
+      Task task = client.consolidateVm(uri);
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testConsolidateMissingVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -166,7 +169,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/consolidate").acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.consolidateVappTemplate(uri);
+      client.consolidateVm(uri);
    }
 
    public void testDisableDownloadVAppTemplate() {
@@ -179,7 +182,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      client.disableDownloadVappTemplate(uri);
+      client.disableDownload(uri);
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -191,7 +194,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/disableDownload").httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.disableDownloadVappTemplate(uri);
+      client.disableDownload(uri);
    }
 
    public void testEnableDownloadVAppTemplate() {
@@ -204,11 +207,11 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Task task = client.enableDownloadVappTemplate(uri);
+      Task task = client.enableDownload(uri);
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testEnableDownloadMissingVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -217,7 +220,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/enableDownload").acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.enableDownloadVappTemplate(uri);
+      client.enableDownload(uri);
    }
    
    public void testRelocateVAppTemplate() {
@@ -234,7 +237,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
       RelocateParams params = RelocateParams.builder().datastore(datastore).build();
 
-      Task task = client.relocateVappTemplate(uri, params);
+      Task task = client.relocateVm(uri, params);
       assertNotNull(task);
    }
 
@@ -250,7 +253,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
       RelocateParams params = RelocateParams.builder().datastore(datastore).build();
 
-      client.relocateVappTemplate(uri, params);
+      client.relocateVm(uri, params);
    }
 
    @Test
@@ -266,15 +269,14 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      CustomizationSection section = client.getVAppTemplateCustomizationSection(uri);
+      CustomizationSection section = client.getCustomizationSection(uri);
 
       assertEquals(section, exampleCustomizationSection());
 
-      Task task = client.editVAppTemplateCustomizationSection(uri, exampleCustomizationSection());
+      Task task = client.modifyCustomizationSection(uri, exampleCustomizationSection());
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
    public void testErrorGetCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -283,10 +285,10 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/customizationSection").acceptMedia(CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getVAppTemplateCustomizationSection(uri);
+      assertNull(client.getCustomizationSection(uri));
    }
    
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorEditCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -295,7 +297,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/customizationSection").xmlFilePayload("/vapptemplate/customizationSection.xml", CUSTOMIZATION_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.editVAppTemplateCustomizationSection(uri, exampleCustomizationSection());
+      client.modifyCustomizationSection(uri, exampleCustomizationSection());
    }
    
    public void testGuestCustomizationSection() {
@@ -310,11 +312,11 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      GuestCustomizationSection section = client.getVAppTemplateGuestCustomizationSection(uri);
+      GuestCustomizationSection section = client.getGuestCustomizationSection(uri);
 
       assertEquals(section, exampleGuestCustomizationSection());
 
-      Task task = client.editVAppTemplateGuestCustomizationSection(uri, exampleGuestCustomizationSection());
+      Task task = client.modifyGuestCustomizationSection(uri, exampleGuestCustomizationSection());
       assertNotNull(task);
    }
 
@@ -327,7 +329,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/guestCustomizationSection").acceptMedia(GUEST_CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.getVAppTemplateGuestCustomizationSection(uri);
+      client.getGuestCustomizationSection(uri);
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -339,7 +341,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/guestCustomizationSection").xmlFilePayload("/vapptemplate/guestCustomizationSection.xml", GUEST_CUSTOMIZATION_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.editVAppTemplateGuestCustomizationSection(uri, exampleGuestCustomizationSection());
+      client.modifyGuestCustomizationSection(uri, exampleGuestCustomizationSection());
    }
 
    public void testLeaseSettingsSection() throws ParseException {
@@ -354,15 +356,14 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      LeaseSettingsSection section = client.getVappTemplateLeaseSettingsSection(uri);
+      LeaseSettingsSection section = client.getLeaseSettingsSection(uri);
 
       assertEquals(section, exampleLeaseSettingsSection());
 
-      Task task = client.editVappTemplateLeaseSettingsSection(uri, exampleLeaseSettingsSection());
+      Task task = client.modifyLeaseSettingsSection(uri, exampleLeaseSettingsSection());
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
    public void testErrorGetLeaseSettingsSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -371,10 +372,10 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/leaseSettingsSection").acceptMedia(LEASE_SETTINGS_SECTION).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getVappTemplateLeaseSettingsSection(uri);
+      assertNull(client.getLeaseSettingsSection(uri));
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorEditLeaseSettingsSection() throws ParseException {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -383,7 +384,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/leaseSettingsSection").xmlFilePayload("/vapptemplate/leaseSettingsSection.xml", LEASE_SETTINGS_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.editVappTemplateLeaseSettingsSection(uri, exampleLeaseSettingsSection());
+      client.modifyLeaseSettingsSection(uri, exampleLeaseSettingsSection());
    }
 
    public void testVappTemplateMetadata() {
@@ -455,7 +456,6 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
    public void testErrorGetMetadataValue() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -464,7 +464,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getMetadataClient().getMetadataValue(uri, "12345");
+      assertNull(client.getMetadataClient().getMetadataValue(uri, "12345"));
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -479,7 +479,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getMetadataClient().setMetadata(uri, "12345", exampleMetadataValue());
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testDeleteMissingMetadataValue() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -504,11 +504,11 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       assertNotNull(client);
 
-      NetworkConfigSection section = client.getVAppTemplateNetworkConfigSection(uri);
+      NetworkConfigSection section = client.getNetworkConfigSection(uri);
 
       assertEquals(section, exampleNetworkConfigSection());
 
-      Task task = client.editVAppTemplateNetworkConfigSection(uri, exampleNetworkConfigSection());
+      Task task = client.modifyNetworkConfigSection(uri, exampleNetworkConfigSection());
       assertNotNull(task);
    }
 
@@ -521,7 +521,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/networkConfigSection").acceptMedia(NETWORK_CONFIG_SECTION).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.getVAppTemplateNetworkConfigSection(uri);
+      client.getNetworkConfigSection(uri);
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -533,7 +533,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/networkConfigSection").xmlFilePayload("/vapptemplate/networkConfigSection.xml", NETWORK_CONFIG_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.editVAppTemplateNetworkConfigSection(uri, exampleNetworkConfigSection());
+      client.modifyNetworkConfigSection(uri, exampleNetworkConfigSection());
    }
 
    private VAppTemplate exampleTemplate() {
@@ -680,7 +680,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
                   .ipRanges(IpRanges.builder().ipRange(IpRange.builder().startAddress("10.147.56.1").endAddress("10.147.56.1").build()).build())
                   .build())
             .parentNetwork(Reference.builder().href(URI.create("http://vcloud.example.com/api/v1.0/network/54")).type("application/vnd.vmware.vcloud.network+xml").name("Internet").build())
-            .fenceMode("natRouted")
+            .fenceMode(FenceMode.NAT_ROUTED)
             .features(NetworkFeatures.builder().services(ImmutableSet.of(firewallService, natService)).build())
             .build();
       

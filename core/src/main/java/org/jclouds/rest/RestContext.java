@@ -18,16 +18,11 @@
  */
 package org.jclouds.rest;
 
-import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.jclouds.Constants;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
+import org.jclouds.Context;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -41,7 +36,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(RestContextImpl.class)
-public interface RestContext<S, A> extends Location {
+public interface RestContext<S, A> extends Context {
 
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
@@ -57,45 +52,5 @@ public interface RestContext<S, A> extends Location {
     * @return a connection to the cloud where all methods block
     */
    S getApi();
-
-   URI getEndpoint();
-   
-   /**
-    * @return version of the api presented by this service
-    * @see Constants#PROPERTY_API_VERSION
-    */
-   String getApiVersion();
-
-   /**
-    * @return version of software this service is running
-    * @see Constants#PROPERTY_BUILD_VERSION
-    */
-   String getBuildVersion();
-
-   String getIdentity();
-
-   /**
-    * retrieves a list of credentials for resources created within this context, keyed on {@code id}
-    * of the resource. We are testing this approach for resources such as compute nodes, where you
-    * could access this externally.
-    * 
-    */
-   @Beta
-   Map<String, Credentials> getCredentialStore();
-
-   @Beta
-   Map<String, Credentials> credentialStore();
-
-   Utils getUtils();
-
-   /**
-    * @see #getUtils
-    */
-   Utils utils();
-
-   /**
-    * Closes all connections to Cloud Files.
-    */
-   void close();
 
 }

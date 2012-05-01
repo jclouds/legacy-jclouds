@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class AtmosContainerLiveTest extends BaseContainerLiveTest {
-
+   public AtmosContainerLiveTest() {
+      provider = "atmos";
+   }
 }

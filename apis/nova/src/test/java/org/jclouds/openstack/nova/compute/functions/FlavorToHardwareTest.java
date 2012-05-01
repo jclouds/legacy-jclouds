@@ -18,8 +18,17 @@
  */
 package org.jclouds.openstack.nova.compute.functions;
 
-import com.google.common.collect.ImmutableList;
-import org.jclouds.compute.domain.*;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -27,11 +36,7 @@ import org.jclouds.openstack.nova.domain.Flavor;
 import org.jclouds.openstack.nova.functions.ParseFlavorFromJsonResponseTest;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Adrian Cole

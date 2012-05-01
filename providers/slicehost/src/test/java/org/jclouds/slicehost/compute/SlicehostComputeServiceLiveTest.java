@@ -18,8 +18,8 @@
  */
 package org.jclouds.slicehost.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
 public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public SlicehostComputeServiceLiveTest() {
       provider = "slicehost";
    }

@@ -40,7 +40,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.DatacenterToLocation;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
@@ -68,13 +67,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class SoftLayerComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<SoftLayerClient, SoftLayerAsyncClient, VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter> {
-
-   public SoftLayerComputeServiceContextModule() {
-      super(SoftLayerClient.class, SoftLayerAsyncClient.class);
-   }
+public class SoftLayerComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter> {
 
    @Override
    protected void configure() {

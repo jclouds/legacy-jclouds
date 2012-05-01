@@ -20,8 +20,6 @@ package org.jclouds.trmk.vcloudexpress.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
@@ -29,11 +27,13 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClient;
+import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -45,6 +45,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
 public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public TerremarkVCloudExpressComputeServiceLiveTest() {
       provider = "trmk-vcloudexpress";
    }
@@ -74,7 +75,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
             "node userMetadata did not match %s %s", userMetadata, node);
    }
-   
+
    @Override
    public void testListImages() throws Exception {
       for (Image image : client.listImages()) {
@@ -95,8 +96,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
-         RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+         RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = view.unwrap();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

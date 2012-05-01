@@ -18,8 +18,7 @@
  */
 package org.jclouds.aws.s3;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +30,7 @@ import org.testng.annotations.Test;
 public class AWSS3ProviderTest extends BaseProviderMetadataTest {
 
    public AWSS3ProviderTest() {
-      super(new AWSS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new AWSS3ProviderMetadata(), new AWSS3ApiMetadata());
    }
 
 }

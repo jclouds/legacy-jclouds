@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.ServiceOffering;
@@ -27,8 +29,6 @@ import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack zone features.

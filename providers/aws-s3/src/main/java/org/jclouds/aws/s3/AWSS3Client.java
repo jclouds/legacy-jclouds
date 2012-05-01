@@ -21,12 +21,10 @@ package org.jclouds.aws.s3;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
 
 /**
@@ -57,6 +55,7 @@ public interface AWSS3Client extends S3Client {
     * @return ID for the initiated multipart upload.
     */
    String initiateMultipartUpload(String bucketName, ObjectMetadata objectMetadata, PutObjectOptions... options);
+
 
    /**
     * This operation aborts a multipart upload. After a multipart upload is aborted, no additional

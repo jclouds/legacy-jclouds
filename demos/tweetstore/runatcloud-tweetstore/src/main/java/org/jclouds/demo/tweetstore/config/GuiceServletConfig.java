@@ -38,8 +38,8 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.paas.PlatformServices;
 import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
@@ -78,7 +78,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
         ServletContext servletContext = servletContextEvent.getServletContext();
 
         Properties props = new PropertiesLoader(servletContext).get();
@@ -101,7 +100,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
         // instantiate and store references to all blobstores by provider name
         providerTypeToBlobStoreMap = Maps.newHashMap();
         for (String hint : getBlobstoreContexts(props)) {
-            providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
+            providerTypeToBlobStoreMap.put(hint, ContextBuilder.newBuilder(hint)
+                    .modules(modules).overrides(props).build(BlobStoreContext.class));
         }
 
         // get a queue for submitting store tweet requests and the application's base URL

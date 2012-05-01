@@ -43,14 +43,16 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * Signs the Azure Storage request.
@@ -75,8 +77,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyLiteAuthentication(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String identity,
-         @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
+   public SharedKeyLiteAuthentication(SignatureWire signatureWire, @Identity String identity,
+         @Credential String encodedKey, @TimeStamp Provider<String> timeStampProvider,
          Crypto crypto, HttpUtils utils) {
       this.crypto = crypto;
       this.utils = utils;

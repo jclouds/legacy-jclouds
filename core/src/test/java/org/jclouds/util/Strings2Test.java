@@ -18,12 +18,13 @@
  */
 package org.jclouds.util;
 
-import com.google.common.collect.ImmutableMap;
-import org.testng.annotations.Test;
-
 import static org.jclouds.util.Strings2.urlDecode;
 import static org.jclouds.util.Strings2.urlEncode;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole

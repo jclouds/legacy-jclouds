@@ -18,99 +18,79 @@
  */
 package org.jclouds.epc;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.walrus.WalrusApiMetadata;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Eucalpytus'
- * Partner Cloud S3 provider.
+ * Implementation of {@link org.jclouds.providers.ProviderMetadata} for Eucalyptus Partner Cloud S3.
  * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
 public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "eucalyptus-partnercloud-s3";
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return BLOBSTORE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public EucalyptusPartnerCloudS3ProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Eucalyptus Partner Cloud (S3)";
+   public EucalyptusPartnerCloudS3ProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + ".Walrus." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + "." + "Walrus" + "." + ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
+      return properties;
    }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+      protected Builder(){
+         id("eucalyptus-partnercloud-s3")
+         .name("Eucalyptus Partner Cloud (S3)")
+         .apiMetadata(new WalrusApiMetadata())
+         .homepage(URI.create("http://www.eucalyptus.com/partners"))
+         .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
+         .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
+         .iso3166Codes("US-CA")
+         .endpoint("http://partnercloud.eucalyptus.com:8773/services/Walrus")
+         .defaultProperties(EucalyptusPartnerCloudS3ProviderMetadata.defaultProperties());
+      }
+
+      @Override
+      public EucalyptusPartnerCloudS3ProviderMetadata build() {
+         return new EucalyptusPartnerCloudS3ProviderMetadata(this);
+      }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.eucalyptus.com/partners");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://partnercloud.eucalyptus.com:8443");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://open.eucalyptus.com/wiki/IntroducingEucalyptus_v2.0");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA");
-   }
-
 }

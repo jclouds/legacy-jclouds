@@ -18,17 +18,22 @@
  */
 package org.jclouds.softlayer.parse;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.softlayer.config.SoftLayerParserModule;
-import org.jclouds.softlayer.domain.*;
+import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.OperatingSystem;
+import org.jclouds.softlayer.domain.Password;
+import org.jclouds.softlayer.domain.PowerState;
+import org.jclouds.softlayer.domain.VirtualGuest;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 

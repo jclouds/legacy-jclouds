@@ -41,7 +41,6 @@ import org.jclouds.gogrid.services.GridLoadBalancerClient;
 import org.jclouds.gogrid.services.GridServerAsyncClient;
 import org.jclouds.gogrid.services.GridServerClient;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -61,7 +60,6 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  * @author Oleksiy Yarmula
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGridAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
@@ -73,7 +71,7 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
          .build();
 
    public GoGridRestClientModule() {
-      super(GoGridClient.class, GoGridAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Provides

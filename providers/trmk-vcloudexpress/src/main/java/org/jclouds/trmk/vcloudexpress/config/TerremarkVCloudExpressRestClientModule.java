@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloudexpress.config;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
@@ -36,14 +35,9 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class TerremarkVCloudExpressRestClientModule extends
       TerremarkVCloudRestClientModule<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
-
-   public TerremarkVCloudExpressRestClientModule() {
-      super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class);
-   }
 
    @Provides
    @Singleton

@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" })
 public class TransientServiceIntegrationTest extends BaseServiceIntegrationTest {
-
+   public TransientServiceIntegrationTest() {
+      provider = "transient";
+   }
 }

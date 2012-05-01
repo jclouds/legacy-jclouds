@@ -25,7 +25,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 
-import org.jclouds.openstack.options.BaseListOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

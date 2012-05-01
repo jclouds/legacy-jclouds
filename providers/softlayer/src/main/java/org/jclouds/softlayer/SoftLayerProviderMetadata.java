@@ -18,98 +18,98 @@
  */
 package org.jclouds.softlayer;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for SoftLayer.
- *
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for SoftLayer.
  * @author Adrian Cole
  */
 public class SoftLayerProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "softlayer";
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 2196535609684739834L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "SoftLayer";
+   public SoftLayerProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "API Username";
+   public SoftLayerProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY, "" + 60 * 60 * 1000);
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME, "Cloud Server");
+      // ex: for private (ex. don't share hardware) use "Private [0-9]+ x ([.0-9]+) GHz Core[s]?"
+      // ex: for private and public use ".*[0-9]+ x ([.0-9]+) GHz Core[s]?"
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "[0-9]+ x ([0-9.]+) GHz Core[s]?");
+      // SAN or LOCAL
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE, "LOCAL");
+      // 10, 100, 1000
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "10");
+      ImmutableSet.Builder<String> prices = ImmutableSet.builder();
+      prices.add("21"); // 1 IP Address
+      prices.add("55"); // Host Ping: categoryCode: monitoring, notification
+      prices.add("57"); // Email and Ticket: categoryCode: notification
+      prices.add("58"); // Automated Notification: categoryCode: response
+      prices.add("1800"); // 0 GB Bandwidth: categoryCode: bandwidth
+      prices.add("905"); // Reboot / Remote Console: categoryCode: remote_management
+      prices.add("418"); // Nessus Vulnerability Assessment & Reporting: categoryCode:
+                         // vulnerability_scanner
+      prices.add("420"); // Unlimited SSL VPN Users & 1 PPTP VPN User per account: categoryCode:
+                         // vpn_management
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES, Joiner.on(',').join(prices.build()));
+
+      return properties;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.softlayer.com");
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.softlayer.com");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://sldn.softlayer.com/article/REST");
-   }
+      protected Builder() {
+         id("softlayer")
+         .name("SoftLayer")
+         .apiMetadata(new SoftLayerApiMetadata())
+         .homepage(URI.create("http://www.softlayer.com"))
+         .console(URI.create("https://manage.softlayer.com"))
+         .iso3166Codes("SG","US-CA","US-TX","US-VA","US-WA","US-TX")
+         .endpoint("https://api.softlayer.com/rest")
+         .defaultProperties(SoftLayerProviderMetadata.defaultProperties());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("softlayer");
-   }
+      @Override
+      public SoftLayerProviderMetadata build() {
+         return new SoftLayerProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("SG","US-CA","US-TX","US-VA","US-WA","US-TX");
-   }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
+   }
 }

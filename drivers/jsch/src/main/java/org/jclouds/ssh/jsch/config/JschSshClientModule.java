@@ -24,13 +24,13 @@ import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
 
+import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -64,14 +64,14 @@ public class JschSshClientModule extends AbstractModule {
       }
 
       @Override
-      public SshClient create(IPSocket socket, LoginCredentials credentials) {
+      public SshClient create(HostAndPort socket, LoginCredentials credentials) {
          SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, credentials, timeout);
          injector.injectMembers(client);// add logger
          return client;
       }
       
       @Override
-      public SshClient create(IPSocket socket, Credentials credentials) {
+      public SshClient create(HostAndPort socket, Credentials credentials) {
          return create(socket, LoginCredentials.fromCredentials(credentials));
       }
    }

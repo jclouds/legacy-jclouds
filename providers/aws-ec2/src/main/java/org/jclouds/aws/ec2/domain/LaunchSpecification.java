@@ -24,12 +24,11 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -49,7 +48,7 @@ public class LaunchSpecification {
    }
 
    public static class Builder {
-      protected ImmutableMap.Builder<String, String> securityGroupIdToNames = ImmutableMap.<String, String> builder();
+      protected ImmutableMap.Builder<String, String> securityGroupIdToNames = ImmutableMap.builder();
       protected String imageId;
       protected String instanceType;
       protected String kernelId;
@@ -58,13 +57,13 @@ public class LaunchSpecification {
       protected String ramdiskId;
       protected Boolean monitoringEnabled;
       protected ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet
-            .<BlockDeviceMapping> builder();
-      protected ImmutableSet.Builder<String> securityGroupIds = ImmutableSet.<String> builder();
-      protected ImmutableSet.Builder<String> securityGroupNames = ImmutableSet.<String> builder();
+            .builder();
+      protected ImmutableSet.Builder<String> securityGroupIds = ImmutableSet.builder();
+      protected ImmutableSet.Builder<String> securityGroupNames = ImmutableSet.builder();
       protected byte[] userData;
 
       public void clear() {
-         securityGroupIdToNames = ImmutableMap.<String, String> builder();
+         securityGroupIdToNames = ImmutableMap.builder();
          imageId = null;
          instanceType = null;
          kernelId = null;
@@ -72,9 +71,9 @@ public class LaunchSpecification {
          availabilityZone = null;
          ramdiskId = null;
          monitoringEnabled = false;
-         blockDeviceMappings = ImmutableSet.<BlockDeviceMapping> builder();
-         securityGroupIds = ImmutableSet.<String> builder();
-         securityGroupNames = ImmutableSet.<String> builder();
+         blockDeviceMappings = ImmutableSet.builder();
+         securityGroupIds = ImmutableSet.builder();
+         securityGroupNames = ImmutableSet.builder();
          userData = null;
       }
 

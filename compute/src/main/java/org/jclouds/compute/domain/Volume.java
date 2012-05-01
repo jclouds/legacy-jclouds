@@ -18,9 +18,8 @@
  */
 package org.jclouds.compute.domain;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
 

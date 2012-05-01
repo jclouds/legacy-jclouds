@@ -18,9 +18,7 @@
  */
 package org.jclouds.trmk.ecloud;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.trmk.ecloud.TerremarkECloudProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -32,6 +30,6 @@ import org.testng.annotations.Test;
 public class TerremarkECloudProviderTest extends BaseProviderMetadataTest {
 
    public TerremarkECloudProviderTest() {
-      super(new TerremarkECloudProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new TerremarkECloudProviderMetadata(), new TerremarkECloudApiMetadata());
    }
 }

@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 public class OpSourceServersClientExperimentLiveTest extends BaseOpSourceServersClientLiveTest {
 
    public void testImplicitSession() {
-      Account account = context.getApi().getAccountClient().getMyAccount();
+      Account account = restContext.getApi().getAccountClient().getMyAccount();
       assert account.getOrgId() != null;
    }
 

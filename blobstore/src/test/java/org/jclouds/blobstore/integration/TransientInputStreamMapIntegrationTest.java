@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" })
 public class TransientInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
-
+   public TransientInputStreamMapIntegrationTest() {
+      provider = "transient";
+   }
 }

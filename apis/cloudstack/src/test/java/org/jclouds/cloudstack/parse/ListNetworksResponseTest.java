@@ -18,7 +18,9 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.collect.*;
+import java.net.URI;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
@@ -27,8 +29,11 @@ import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.Set;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * 

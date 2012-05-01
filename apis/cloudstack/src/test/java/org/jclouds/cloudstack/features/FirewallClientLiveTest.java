@@ -26,7 +26,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import com.google.common.base.Predicates;
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.Network;
@@ -35,14 +36,13 @@ import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.CreateFirewallRuleOptions;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-
-import javax.annotation.Nullable;
+import com.google.common.base.Predicates;
+import com.google.common.net.HostAndPort;
 
 /**
  * Tests behavior of {@code FirewallClientLiveTest}
@@ -61,8 +61,8 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       prefix += "rule";
       try {
          network = find(client.getNetworkClient().listNetworks(), Predicates.and(supportsPortForwarding(),
@@ -112,7 +112,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(portForwardingRule.getProtocol(), PortForwardingRule.Protocol.TCP);
 
       checkPortForwardingRule(portForwardingRule);
-      checkSSH(new IPSocket(ip.getIPAddress(), 22));
+      checkSSH(HostAndPort.fromParts(ip.getIPAddress(), 22));
    }
 
    @Test(dependsOnMethods = "testCreatePortForwardingRule")

@@ -23,8 +23,6 @@ import java.net.URI;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -32,7 +30,6 @@ import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
-import org.jclouds.openstack.handlers.RetryOnRenew;
 import org.jclouds.openstack.nova.NovaAsyncClient;
 import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.ServerManagement;
@@ -49,13 +46,11 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsyncClient> {
 
    private final OpenStackAuthenticationModule module;
 
    public NovaRestClientModule(OpenStackAuthenticationModule module) {
-      super(NovaClient.class, NovaAsyncClient.class);
       this.module = module;
    }
 

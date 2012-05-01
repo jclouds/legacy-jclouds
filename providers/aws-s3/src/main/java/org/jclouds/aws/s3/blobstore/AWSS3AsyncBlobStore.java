@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
+import static org.jclouds.s3.domain.ObjectMetadata.StorageClass.REDUCED_REDUNDANCY;
+
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -25,8 +27,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import com.google.common.cache.CacheLoader;
 import org.jclouds.Constants;
+import org.jclouds.aws.s3.AWSS3ApiMetadata;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
@@ -40,8 +42,6 @@ import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
@@ -50,14 +50,13 @@ import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.s3.domain.AccessControlList;
-
-import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.ObjectMetadata;
 
-import static org.jclouds.s3.domain.ObjectMetadata.StorageClass.REDUCED_REDUNDANCY;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  *
@@ -113,8 +112,8 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted from cache loader
       }
-      return S3AsyncClient.class.cast(getContext().getProviderSpecificContext().getApi())
-         .putObject(container, blob2Object.apply(blob), options);
-   }
+      return getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getAsyncApi().putObject(container,
+               blob2Object.apply(blob), options);
+  }
 
 }

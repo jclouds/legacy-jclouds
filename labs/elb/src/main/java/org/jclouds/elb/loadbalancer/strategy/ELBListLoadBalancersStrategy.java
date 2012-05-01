@@ -74,14 +74,14 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
    }
 
    @Override
-   public Iterable<? extends LoadBalancerMetadata> listLoadBalancers() {
+   public Iterable<LoadBalancerMetadata> listLoadBalancers() {
       Iterable<? extends LoadBalancer> loadBalancers;
       Set<String> regions = this.regions.get();
       if (regions.size() > 0)
-         loadBalancers = concat(transformParallel(regions, new Function<String, Future<Set<? extends LoadBalancer>>>() {
+         loadBalancers = concat(transformParallel(regions, new Function<String, Future<? extends Set<? extends LoadBalancer>>>() {
 
             @Override
-            public ListenableFuture<Set<? extends LoadBalancer>> apply(String from) {
+            public ListenableFuture<? extends Set<? extends LoadBalancer>> apply(String from) {
                return aclient.describeLoadBalancersInRegion(from);
             }
 

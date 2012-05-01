@@ -21,13 +21,12 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides access to EC2 via their REST API.

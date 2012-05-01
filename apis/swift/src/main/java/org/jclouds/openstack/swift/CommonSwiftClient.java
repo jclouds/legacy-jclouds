@@ -113,4 +113,5 @@ public interface CommonSwiftClient {
     */
    boolean objectExists(String container, String name);
 
+   String putObjectManifest(String container, String name);
 }

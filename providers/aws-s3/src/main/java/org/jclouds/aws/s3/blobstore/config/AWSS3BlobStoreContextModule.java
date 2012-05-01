@@ -18,23 +18,17 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
-import org.jclouds.aws.s3.AWSS3AsyncClient;
-import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.internal.ParallelMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.S3BlobStore;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
 
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -50,12 +44,6 @@ public class AWSS3BlobStoreContextModule extends S3BlobStoreContextModule {
       bind(S3BlobStore.class).to(AWSS3BlobStore.class).in(Scopes.SINGLETON);
       bind(MultipartUploadStrategy.class).to(SequentialMultipartUploadStrategy.class);
       bind(AsyncMultipartUploadStrategy.class).to(ParallelMultipartUploadStrategy.class);
-   }
-
-   @Override
-   protected void bindContext() {
-      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<AWSS3Client, AWSS3AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
    }
 
 }

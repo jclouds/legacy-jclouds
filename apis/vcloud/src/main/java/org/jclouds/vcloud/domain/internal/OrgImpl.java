@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jclouds.javax.annotation.Nullable;
-
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 
 import com.google.common.collect.Iterables;

@@ -18,7 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8.suppliers;
 
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
@@ -26,7 +26,6 @@ import java.util.NoSuchElementException;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
-import org.jclouds.trmk.vcloud_0_8.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;

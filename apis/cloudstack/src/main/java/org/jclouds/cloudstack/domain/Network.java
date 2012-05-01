@@ -20,11 +20,12 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+
+import javax.annotation.Nullable;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

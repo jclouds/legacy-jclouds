@@ -18,61 +18,52 @@
  */
 package org.jclouds.vcloud.director.v1_5.login;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.Properties;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.ContextBuilder;
+import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.testng.annotations.AfterGroups;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.reflect.TypeToken;
 
 /**
- * Tests behavior of {@code SessionClient}. Note this class is tested completely independently of
- * VCloudClient as it is a dependency of the VCloud context working.
+ * Tests behavior of {@link SessionClient}. Note this class is tested completely independently of
+ * {@link VCloudDirectorClient} as it is a dependency of the {@code vcloud-director} context working.
  * 
  * @author Adrian Cole
  */
 @Listeners(FormatApiResultsListener.class)
-@Test(groups = { "live", "user", "login" }, testName = "SessionClientLiveTest")
-public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
+@Test(groups = { "live", "user" }, testName = "SessionClientLiveTest")
+public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<SessionClient, SessionAsyncClient>> {
+
    public SessionClientLiveTest() {
       provider = "vcloud-director";
    }
 
-   private RestContext<SessionClient, SessionAsyncClient> context;
-
+   @Override
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      RestContextSpec<SessionClient, SessionAsyncClient> contextSpec = contextSpec("vcloud-director", endpoint,
-               apiVersion, buildVersion, "", identity, credential, SessionClient.class, SessionAsyncClient.class);
-
-      context = createContextBuilder(contextSpec, overrides).withModules(
-               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildContext();
-
+   public void setupContext() {
+      super.setupContext();
       // session client isn't typically exposed to the user, as it is implicit
-      client = context.utils().injector().getInstance(SessionClient.class);
+      client = context.getApi();
    }
 
    private SessionClient client;
    private SessionWithToken sessionWithToken;
-
+   
    @Test(testName = "POST /sessions")
    public void testLogin() {
       String user = identity.substring(0, identity.lastIndexOf('@'));
@@ -86,21 +77,32 @@ public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
       assertNotNull(sessionWithToken.getToken());
    }
 
-   @Test(testName = "GET /session", dependsOnMethods = "testLogin")
+   @Test(description = "GET /session", dependsOnMethods = "testLogin")
    public void testGetSession() {
       assertEquals(client.getSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken()),
                sessionWithToken.getSession());
    }
 
-   @Test(testName = "DELETE /session", dependsOnMethods = "testGetSession")
+   @Test(description = "DELETE /session", dependsOnMethods = "testGetSession")
    public void testLogout() {
       client.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (context != null)
-         context.close();
+   @Override
+   protected TypeToken<RestContext<SessionClient, SessionAsyncClient>> contextType() {
+      return VCloudDirectorConstants.SESSION_CONTEXT_TYPE;
+   }
+
+   @Override
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(SessionClient.class, SessionAsyncClient.class, endpoint);
+   }
+
+   @Override
+   protected ContextBuilder newBuilder() {
+      ProviderMetadata pm = createProviderMetadata();
+      ContextBuilder builder = ContextBuilder.newBuilder(pm);
+      return builder;
    }
 
 }

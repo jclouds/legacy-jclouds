@@ -18,11 +18,12 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
-import java.util.Set;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control how a firewall rule is created

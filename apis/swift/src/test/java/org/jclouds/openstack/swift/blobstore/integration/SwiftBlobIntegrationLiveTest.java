@@ -18,10 +18,19 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.InputSupplier;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.blobstore.options.PutOptions;
+import org.jclouds.crypto.CryptoStreams;
+import org.testng.ITestContext;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.*;
 
 /**
  * 
@@ -30,13 +39,25 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+   private InputSupplier<InputStream> oneHundredOneConstitutions;
+   private byte[] oneHundredOneConstitutionsMD5;
 
+   public SwiftBlobIntegrationLiveTest() {
+      provider = "swift";
+   }
    @Override
    @Test(enabled = false)
    public void testGetTwoRanges() {
       // not supported in swift
    }
 
+    @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
+    @Override
+    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
+        super.setUpResourcesOnThisThread(testContext);
+        oneHundredOneConstitutions = getTestDataSupplier();
+        oneHundredOneConstitutionsMD5 = CryptoStreams.md5(oneHundredOneConstitutions);
+    }
 
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
@@ -58,5 +79,23 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
    public Object[][] createData() {
       return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" }, { "colon:" },
                { "asteri*k" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
+   }
+    
+   public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
+       FileOutputStream fous = new FileOutputStream(new File("target/const.txt"));
+       ByteStreams.copy(oneHundredOneConstitutions.getInput(), fous);
+       fous.flush();
+       fous.close();
+       String containerName = getContainerName();
+
+       try {
+           BlobStore blobStore = view.getBlobStore();
+           blobStore.createContainerInLocation(null, containerName);
+           Blob blob = blobStore.blobBuilder("const.txt")
+                   .payload(new File("target/const.txt")).contentMD5(oneHundredOneConstitutionsMD5).build();
+           blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+       } finally {
+           returnContainer(containerName);
+       }
    }
 }

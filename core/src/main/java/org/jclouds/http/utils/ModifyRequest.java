@@ -18,6 +18,20 @@
  */
 package org.jclouds.http.utils;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
+
+import java.net.URI;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.ws.rs.core.UriBuilder;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.util.Strings2;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -25,18 +39,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.util.Strings2;
-
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 
 /**
  * 

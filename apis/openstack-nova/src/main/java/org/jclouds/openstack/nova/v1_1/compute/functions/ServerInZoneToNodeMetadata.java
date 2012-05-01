@@ -20,11 +20,9 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.net.Inet4Address;
 import java.util.Map;
@@ -42,6 +40,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -51,14 +50,17 @@ import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
+import org.jclouds.util.InetAddresses2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.net.InetAddresses;
 
 /**
- * A function for transforming a nova-specific Server into a generic NodeMetadata object.
+ * A function for transforming a nova-specific Server into a generic
+ * NodeMetadata object.
  * 
  * @author Matt Stephenson, Adam Lowe, Adrian Cole
  */
@@ -70,10 +72,13 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
    protected final Supplier<Map<String, Location>> locationIndex;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    public ServerInZoneToNodeMetadata(Supplier<Map<String, Location>> locationIndex,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.locationIndex = checkNotNull(locationIndex, "locationIndex");
       this.images = checkNotNull(images, "images");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -91,21 +96,28 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.name(from.getName());
       builder.hostname(from.getName());
       builder.location(from.getHostId() != null ? new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId())
-               .description(from.getHostId()).parent(zone).build() : zone);
+            .description(from.getHostId()).parent(zone).build() : zone);
       builder.userMetadata(from.getMetadata());
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.imageId(ZoneAndId.fromZoneAndId(serverInZone.getZone(), from.getImage().getId()).slashEncode());
       builder.operatingSystem(findOperatingSystemForServerOrNull(serverInZone));
       builder.hardware(findHardwareForServerOrNull(serverInZone));
       builder.state(from.getStatus().getNodeState());
-      builder.publicAddresses(filter(transform(concat(from.getPublicAddresses(), from.getInternetAddresses()),
-               AddressToStringTransformationFunction.INSTANCE), isInet4Address));
-      builder.privateAddresses(filter(transform(from.getPrivateAddresses(),
-               AddressToStringTransformationFunction.INSTANCE), isInet4Address));
+      builder.publicAddresses(filter(
+            transform(filter(from.getAddresses().values(), Predicates.not(isPrivateAddress)),
+                  AddressToStringTransformationFunction.INSTANCE), isInet4Address));
+      builder.privateAddresses(filter(
+            transform(filter(from.getAddresses().values(), isPrivateAddress), AddressToStringTransformationFunction.INSTANCE), isInet4Address));
 
       return builder.build();
    }
-
+   
+   private static final Predicate<Address> isPrivateAddress = new Predicate<Address>() {
+      public boolean apply(Address in) {
+         return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
+      }
+   };
+   
    public static final Predicate<String> isInet4Address = new Predicate<String>() {
       @Override
       public boolean apply(String input) {
@@ -130,17 +142,17 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
 
    protected Hardware findHardwareForServerOrNull(ServerInZone serverInZone) {
       return findObjectOfTypeForServerOrNull(hardwares.get(), "hardware", serverInZone.getServer().getFlavor().getId(),
-               serverInZone);
+            serverInZone);
    }
 
    protected OperatingSystem findOperatingSystemForServerOrNull(ServerInZone serverInZone) {
       Image image = findObjectOfTypeForServerOrNull(images.get(), "image", serverInZone.getServer().getImage().getId(),
-               serverInZone);
+            serverInZone);
       return (image != null) ? image.getOperatingSystem() : null;
    }
 
    public <T extends ComputeMetadata> T findObjectOfTypeForServerOrNull(Set<? extends T> supply, String type,
-            final String objectId, final ZoneAndId serverInZone) {
+         final String objectId, final ZoneAndId serverInZone) {
       try {
          return find(supply, new Predicate<T>() {
             @Override

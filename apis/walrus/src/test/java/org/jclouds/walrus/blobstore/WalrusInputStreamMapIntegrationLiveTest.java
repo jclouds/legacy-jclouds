@@ -26,5 +26,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "WalrusInputStreamMapIntegrationLiveTest")
 public class WalrusInputStreamMapIntegrationLiveTest extends S3InputStreamMapIntegrationLiveTest {
-
+   
+   public WalrusInputStreamMapIntegrationLiveTest() {
+      provider = "walrus";
+   }
+   
 }

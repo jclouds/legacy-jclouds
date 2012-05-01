@@ -23,12 +23,11 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import java.util.Date;
 import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.cloudservers.CloudServersApiMetadata;
 import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.cloudservers.CloudServersContextBuilder;
-import org.jclouds.cloudservers.CloudServersPropertiesBuilder;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.openstack.keystone.v1_1.internal.BaseKeystoneRestClientExpectTest;
@@ -47,14 +46,18 @@ public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClient
    public BaseCloudServersRestClientExpectTest() {
       provider = "cloudservers";
    }
+   
+   @Override
+   protected ApiMetadata createApiMetadata() {
+      return new CloudServersApiMetadata();
+   }
+
 
    @Override
-   protected Properties setupRestProperties() {
+   protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_REGIONS, "US");
       overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".contextbuilder", CloudServersContextBuilder.class.getName());
-      overrides.setProperty(provider + ".propertiesbuilder", CloudServersPropertiesBuilder.class.getName());
       return overrides;
    }
 
@@ -77,8 +80,7 @@ public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClient
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
-   protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
+      protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
 
       @Override
       public Supplier<Date> provideCacheBusterDate() {

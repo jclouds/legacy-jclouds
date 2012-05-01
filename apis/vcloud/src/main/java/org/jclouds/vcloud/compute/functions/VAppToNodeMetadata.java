@@ -21,7 +21,6 @@ package org.jclouds.vcloud.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getIpsFromVApp;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
@@ -37,6 +36,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
@@ -57,10 +57,13 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
    protected final Function<VApp, Hardware> hardwareForVApp;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
    protected final Map<String, Credentials> credentialStore;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    protected VAppToNodeMetadata(Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
-         FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp) {
+         FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.hardwareForVApp = checkNotNull(hardwareForVApp, "hardwareForVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
@@ -74,14 +77,14 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.name(from.getName());
       builder.hostname(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.operatingSystem(toComputeOs(from, null));
       builder.hardware(hardwareForVApp.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
       Set<String> addresses = getIpsFromVApp(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
-      
+
       // normally, we don't affect the credential store when reading vApps.
       // However, login user, etc, is actually in the metadata, so lets see
       Credentials fromApi = getCredentialsFrom(from);

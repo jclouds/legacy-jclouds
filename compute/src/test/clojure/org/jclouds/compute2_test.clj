@@ -29,7 +29,7 @@
     org.jclouds.compute.options.TemplateOptions$Builder
     org.jclouds.compute.options.RunScriptOptions
     org.jclouds.compute.options.RunScriptOptions$Builder
-    org.jclouds.domain.Credentials
+    org.jclouds.domain.LoginCredentials
     java.util.NoSuchElementException
     ))
 
@@ -99,7 +99,7 @@ list, Alan Dipert and MeikelBrandmeyer."
 
 (deftest run-script-on-nodes-matching-with-options-test
   (let [echo (Statements/exec "echo hello")
-        script-options (.. (RunScriptOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+        script-options (.. (RunScriptOptions$Builder/overrideLoginCredentials (.build (.password (.user (org.jclouds.domain.LoginCredentials/builder) "user")  "pwd")))
                         (runAsRoot false)
                         (wrapInInitScript false))
         pred #(= (.getGroup %) "scriptednode")]
@@ -110,7 +110,7 @@ list, Alan Dipert and MeikelBrandmeyer."
 
 (deftest run-script-on-node-with-options-test
   (let [echo (Statements/exec "echo hello")
-        script-options (.. (RunScriptOptions$Builder/overrideCredentialsWith (Credentials. "user" "password"))
+        script-options (.. (RunScriptOptions$Builder/overrideLoginCredentials (.build (.password (.user (org.jclouds.domain.LoginCredentials/builder) "user")  "pwd")))
                         (runAsRoot false)
                         (wrapInInitScript false))
         test_node (create-node compute-stub "scriptednode" (build-template compute-stub {}))]
@@ -128,23 +128,23 @@ list, Alan Dipert and MeikelBrandmeyer."
       (is (> (-> (build-template service {:min-ram 512})
                  bean :hardware bean :ram)
              512))
-      (let [credentials (org.jclouds.domain.Credentials. "user" "pwd")
+      (let [credentials (.build (.password (.user (org.jclouds.domain.LoginCredentials/builder) "user")  "pwd"))
             f (juxt #(.identity %) #(.credential %))
             template (build-template
                       service
-                      {:override-credentials-with credentials})
+                      {:override-login-credentials credentials})
             node (create-node service "something" template)]
         (is (= (-> node bean :credentials f)
                (f credentials)))
         (let [identity "fred"
             f #(.identity %)
-            template (build-template service {:override-login-user-with identity})
+            template (build-template service {:override-login-user identity})
             node (create-node service "something" template)]
         (is (= (-> node bean :credentials f) identity)))
         (let [credential "fred"
               f #(.credential %)
               template (build-template
-                        service {:override-login-credential-with credential})
+                        service {:override-login-password credential})
               node (create-node service "something" template)]
           (is (= (-> node bean :credentials f) credential)))))
     (testing "enumerated"

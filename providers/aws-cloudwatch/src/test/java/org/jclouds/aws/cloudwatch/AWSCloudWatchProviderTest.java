@@ -18,8 +18,8 @@
  */
 package org.jclouds.aws.cloudwatch;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.cloudwatch.CloudWatchApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,6 +31,6 @@ import org.testng.annotations.Test;
 public class AWSCloudWatchProviderTest extends BaseProviderMetadataTest {
 
    public AWSCloudWatchProviderTest() {
-      super(new AWSCloudWatchProviderMetadata(), ProviderMetadata.MONITOR_TYPE);
+      super(new AWSCloudWatchProviderMetadata(), new CloudWatchApiMetadata());
    }
 }

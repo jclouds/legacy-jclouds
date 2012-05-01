@@ -18,13 +18,13 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.softlayer.domain.ProductPackage;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import static org.testng.Assert.assertTrue;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code AccountClient}
@@ -34,9 +34,9 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "live")
 public class AccountClientLiveTest extends BaseSoftLayerClientLiveTest {
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getAccountClient();
+   public void setupContext() {
+      super.setupContext();
+      client = socontext.getApi().getAccountClient();
    }
 
    private AccountClient client;

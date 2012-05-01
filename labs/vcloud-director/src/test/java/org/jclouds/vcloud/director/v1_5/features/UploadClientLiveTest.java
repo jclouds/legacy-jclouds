@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "upload" }, singleThreaded = true, testName = "UploadClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "UploadClientLiveTest")
 public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String UPLOAD = "upload";
@@ -43,7 +43,7 @@ public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       uploadClient = context.getApi().getUploadClient();
    }
 
-   @Test(testName = "PUT ???", enabled = false)
+   @Test(description = "PUT ???", enabled = false)
    public void testUpload() {
    }
 }

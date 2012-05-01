@@ -18,9 +18,9 @@
  */
 package org.jclouds.cloudsigma.options;
 
+import static org.jclouds.cloudsigma.options.CloneDriveOptions.Builder.affinity;
 import static org.jclouds.cloudsigma.options.CloneDriveOptions.Builder.size;
 import static org.jclouds.cloudsigma.options.CloneDriveOptions.Builder.tags;
-import static org.jclouds.cloudsigma.options.CloneDriveOptions.Builder.affinity;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 

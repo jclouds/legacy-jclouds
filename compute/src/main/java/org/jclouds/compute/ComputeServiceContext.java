@@ -18,8 +18,10 @@
  */
 package org.jclouds.compute;
 
+import java.io.Closeable;
 import java.util.Map;
 
+import org.jclouds.View;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
@@ -35,34 +37,25 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(ComputeServiceContextImpl.class)
-public interface ComputeServiceContext {
+public interface ComputeServiceContext extends Closeable, View {
 
    ComputeService getComputeService();
 
-   <S, A> RestContext<S, A> getProviderSpecificContext();
-
    /**
-    * retrieves a list of credentials for resources created within this context, keyed on {@code id}
-    * of the resource with a namespace prefix (ex. {@code node#}. We are testing this approach for
-    * resources such as compute nodes, where you could access this externally.
-    * <p/>
-    * <h4>accessing credentials for a node</h4>
-    * <p/>
-    * the key is in the form {@code node#id}.
-    * <ul>
-    * <li>if the node id is {@code 8}, then the key will be {@code node#8}</li>
-    * <li>if the node id is {@code us-east-1/i-asdfdas}, then the key will be {@code
-    * node#us-east-1/i-asdfdas}</li>
-    * <li>if the node id is {@code http://cloud/instances/1}, then the key will be {@code
-    * node#http://cloud/instances/1}</li>
-    * </ul>
+    * will be removed in jclouds 1.6
+    * 
+    * @see Utils#getCredentialStore()
     */
+   @Deprecated
    @Beta
    Map<String, Credentials> getCredentialStore();
 
    /**
-    * @see ComputeServiceContext#getCredentialStore
+    * will be removed in jclouds 1.6
+    * 
+    * @see Utils#credentialStore()
     */
+   @Deprecated
    @Beta
    Map<String, Credentials> credentialStore();
 
@@ -73,5 +66,15 @@ public interface ComputeServiceContext {
     */
    Utils utils();
 
+   /**
+    * will be removed in jclouds 1.6
+    * 
+    * @see View#getInputType
+    * @see View#unwrap
+    */
+   @Deprecated
+   <S, A> RestContext<S, A> getProviderSpecificContext();
+
+   @Override
    void close();
 }

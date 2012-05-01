@@ -53,8 +53,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * defines the connection between the {@link VCloudClient} implementation and the jclouds
@@ -124,7 +124,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Override
    public Iterable<VApp> listNodes() {
       // TODO: parallel or cache
-      Builder<VApp> nodes = ImmutableSet.<VApp> builder();
+      Builder<VApp> nodes = ImmutableSet.builder();
       for (Org org : nameToOrg.get().values()) {
          for (ReferenceType vdc : org.getVDCs().values()) {
             for (ReferenceType resource : client.getVDCClient().getVDC(vdc.getHref()).getResourceEntities().values()) {

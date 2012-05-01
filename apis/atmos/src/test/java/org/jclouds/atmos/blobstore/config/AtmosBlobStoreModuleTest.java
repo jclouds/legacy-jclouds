@@ -20,13 +20,14 @@ package org.jclouds.atmos.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.atmos.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,8 +41,12 @@ import com.google.inject.Module;
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {
-      return new RestContextFactory().createContextBuilder("atmos", "uid", "key",
-               ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule())).buildInjector();
+      return ContextBuilder
+            .newBuilder(new AtmosApiMetadata())
+            .credentials("uid", "key")
+            .modules(
+                  ImmutableSet.<Module> of(new MockModule(),new NullLoggingModule()))
+            .buildInjector();
    }
 
    @Test

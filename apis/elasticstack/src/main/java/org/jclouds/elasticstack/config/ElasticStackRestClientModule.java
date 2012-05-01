@@ -33,14 +33,13 @@ import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.CreateDriveRequestToMap;
 import org.jclouds.elasticstack.functions.DriveDataToMap;
 import org.jclouds.elasticstack.functions.MapToDevices;
-import org.jclouds.elasticstack.functions.ServerToMap;
-import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.elasticstack.functions.MapToDriveMetrics;
 import org.jclouds.elasticstack.functions.MapToNICs;
 import org.jclouds.elasticstack.functions.MapToServerMetrics;
+import org.jclouds.elasticstack.functions.ServerToMap;
+import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.elasticstack.handlers.ElasticStackErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -55,13 +54,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class ElasticStackRestClientModule extends RestClientModule<ElasticStackClient, ElasticStackAsyncClient> {
-
-   public ElasticStackRestClientModule() {
-      super(ElasticStackClient.class, ElasticStackAsyncClient.class);
-   }
 
    @Override
    protected void configure() {

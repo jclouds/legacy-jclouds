@@ -28,15 +28,11 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
-import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
-import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -51,8 +47,8 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testListFloatingIPs() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
@@ -73,8 +69,8 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testAllocateAndDeallocateFloatingIPs() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
@@ -104,14 +100,13 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testAddAndRemoveFloatingIp() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
-         ServerClient serverClient = context.getApi().getServerClientForZone(zoneId);
-         Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
-         blockUntilServerActive(server.getId(), serverClient);
+         ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
+         Server server = createServerInZone(zoneId);
          FloatingIP floatingIP = client.allocate();
          assertNotNull(floatingIP);
          try {
@@ -121,25 +116,6 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
             client.removeFloatingIPFromServer(floatingIP.getIp(), server.getId());
             serverClient.deleteServer(server.getId());
          }
-      }
-   }
-
-   private String imageIdForZone(String zoneId) {
-      ImageClient imageClient = context.getApi().getImageClientForZone(zoneId);
-      return Iterables.getLast(imageClient.listImages()).getId();
-   }
-
-   private String flavorRefForZone(String zoneId) {
-      FlavorClient flavorClient = context.getApi().getFlavorClientForZone(zoneId);
-      return Iterables.getLast(flavorClient.listFlavors()).getId();
-   }
-
-   private void blockUntilServerActive(String serverId, ServerClient client) throws InterruptedException {
-      Server currentDetails = null;
-      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
-            .getServer(serverId)) {
-         System.out.printf("blocking on status active%n%s%n", currentDetails);
-         Thread.sleep(5 * 1000);
       }
    }
 
@@ -181,7 +157,7 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
          try {
             Server server = client.getServer(serverId);
             boolean ipInServerAddresses = false;
-            Multimap<Address.Type, Address> addresses = server.getAddresses();
+            Multimap<String, Address> addresses = server.getAddresses();
             for (Address address : addresses.values()) {
                if (address.getAddr().equals(floatingIP)) {
                   ipInServerAddresses = true;

@@ -18,10 +18,12 @@
  */
 package org.jclouds.providers;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
+
+import org.jclouds.apis.JcloudsTestBlobStoreApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.
@@ -30,76 +32,43 @@ import java.util.Set;
  */
 public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3444555273226423853L;
+
+   public static Builder builder() {
+      return new Builder();
+   }
+   
    @Override
-   public String getId() {
-      return "test-blobstore-provider";
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromProviderMetadata(this));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+   public JcloudsTestBlobStoreProviderMetadata() {
+      super(builder());
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Test Blobstore Provider";
+   public JcloudsTestBlobStoreProviderMetadata(Builder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "user";
-   }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "password";
-   }
+      protected Builder(){
+         id("test-blobstore-api")
+         .name("Test Blobstore Provider")
+         .endpoint("http://mock")
+         .homepage(URI.create("http://jclouds.org"))
+         .console(URI.create("http://jclouds.org/console"))
+         .iso3166Codes(ImmutableSet.of("US-VA", "US-CA", "US-FL"))
+         .apiMetadata(new JcloudsTestBlobStoreApiMetadata());
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://jclouds.org");
-   }
+      @Override
+      public JcloudsTestBlobStoreProviderMetadata build() {
+         return new JcloudsTestBlobStoreProviderMetadata(this);
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://jclouds.org/console");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://jclouds.org/documentation");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-CA", "US-FL");
    }
 
 }

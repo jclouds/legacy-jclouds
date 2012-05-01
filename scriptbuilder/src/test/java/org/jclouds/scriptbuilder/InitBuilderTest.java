@@ -42,6 +42,7 @@ import com.google.common.io.Resources;
  * 
  * @author Adrian Cole
  */
+@Deprecated
 public class InitBuilderTest {
 
    InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",

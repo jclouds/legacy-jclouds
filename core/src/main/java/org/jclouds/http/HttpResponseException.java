@@ -20,9 +20,8 @@ package org.jclouds.http;
 
 import java.io.IOException;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Strings2;
 
 /**

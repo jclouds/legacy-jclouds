@@ -38,9 +38,9 @@ import org.apache.commons.cli.ParseException;
 public class RunAtCloudServer {
     protected StaxSdkAppServer2 server;
 
-    public void writePropertiesAndStartServer(final String address, final String port, 
-            final String warfile, final String environments, 
-            final String serverBaseDirectory, Properties props) throws IOException, InterruptedException, ParseException, ServletException {
+    public void writePropertiesAndStartServer(final String port, final String warfile, 
+            final String environments, final String serverBaseDirectory, 
+            Properties props) throws IOException, InterruptedException, ParseException, ServletException {
         String filename = String.format(
                 "%1$s/WEB-INF/jclouds.properties", warfile);
         System.err.println("file: " + filename);

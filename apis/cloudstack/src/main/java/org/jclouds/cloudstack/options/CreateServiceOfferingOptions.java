@@ -18,11 +18,12 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.StorageType;
 import org.jclouds.cloudstack.domain.SystemVmType;
 
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to control how service offerings are created

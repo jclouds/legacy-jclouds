@@ -18,9 +18,8 @@
  */
 package org.jclouds.http;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.io.Payload;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;

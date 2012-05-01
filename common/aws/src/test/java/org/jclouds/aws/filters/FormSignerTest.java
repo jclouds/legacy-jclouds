@@ -20,21 +20,26 @@ package org.jclouds.aws.filters;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.PropertiesBuilder;
+import java.net.URI;
+
+import javax.ws.rs.core.HttpHeaders;
+
+import org.jclouds.ContextBuilder;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
 
@@ -46,11 +51,13 @@ import com.google.inject.name.Names;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "FormSignerTest")
 public class FormSignerTest {
-   @SuppressWarnings("unchecked")
-   public static final RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> DUMMY_SPEC = new RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient>(
-            "provider", "endpoint", "apiVersion", "buildVersion", "", "identity", "credential",
-            IntegrationTestClient.class, IntegrationTestAsyncClient.class, PropertiesBuilder.class,
-            (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(), new NullLoggingModule(),
+   public static final Injector INJECTOR = ContextBuilder
+         .newBuilder(
+               AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
+                     "http://localhost"))
+         .credentials("identity", "credential")
+         .apiVersion("apiVersion")
+         .modules(ImmutableList.<Module> of(new MockModule(), new NullLoggingModule(),
                      new AbstractModule() {
                         @Override
                         protected void configure() {
@@ -59,13 +66,23 @@ public class FormSignerTest {
                            bind(String.class).annotatedWith(TimeStamp.class).toInstance("2009-11-08T15:54:08.897Z");
                         }
 
-                     }));
+                     })).buildInjector();
+   FormSigner filter = INJECTOR.getInstance(FormSigner.class);
+
+   @Test
+   void testBuildCanonicalizedStringSetsVersion() {
+
+      assertEquals(
+               filter.filter(
+                        HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).headers(
+                                 ImmutableMultimap.of(HttpHeaders.HOST, "localhost")).payload(
+                                 Payloads.newStringPayload("Action=DescribeImages&ImageId.1=ami-2bb65342")).build())
+                        .getPayload().getRawContent(),
+               "Action=DescribeImages&ImageId.1=ami-2bb65342&Signature=ugnt4m2eHE7Ka%2FvXTr9EhKZq7bhxOfvW0y4pAEqF97w%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=apiVersion&AWSAccessKeyId=identity");
+   }
 
    @Test
    void testBuildCanonicalizedString() {
-      FormSigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector().getInstance(
-               FormSigner.class);
-
       assertEquals(
                filter.buildCanonicalizedString(new ImmutableMultimap.Builder<String, String>().put("AWSAccessKeyId",
                         "foo").put("Action", "DescribeImages").put("Expires", "2008-02-10T12:00:00Z").put("ImageId.1",

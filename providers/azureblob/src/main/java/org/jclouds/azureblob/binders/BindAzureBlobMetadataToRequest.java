@@ -33,8 +33,8 @@ import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 @Singleton
 public class BindAzureBlobMetadataToRequest implements Binder {
@@ -57,7 +57,7 @@ public class BindAzureBlobMetadataToRequest implements Binder {
       checkArgument(blob.getPayload().getContentMetadata().getContentLength() != null
             && blob.getPayload().getContentMetadata().getContentLength() >= 0, "size must be set");
 
-      Builder<String, String> headers = ImmutableMap.<String, String> builder();
+      Builder<String, String> headers = ImmutableMap.builder();
 
       headers.put("x-ms-blob-type", blob.getProperties().getType().toString());
 

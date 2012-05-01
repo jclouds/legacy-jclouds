@@ -37,7 +37,6 @@ import org.jclouds.cloudstack.features.NATClientLiveTest;
 import org.jclouds.cloudstack.features.VirtualMachineClientLiveTest;
 import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
-import org.jclouds.net.IPSocket;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -45,6 +44,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HostAndPort;
 
 /**
  * Tests behavior of {@code StaticNATVirtualMachineInNetwork}
@@ -61,7 +61,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
-      super.setupClient();
+      super.setupContext();
       prefix += "nat";
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
@@ -106,7 +106,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       assertEquals(rule.getStartPort(), 22);
       assertEquals(rule.getProtocol(), "tcp");
       checkRule(rule);
-      IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
+      HostAndPort socket = HostAndPort.fromParts(ip.getIPAddress(), 22);
       checkSSH(socket);
    }
 

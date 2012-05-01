@@ -22,8 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Singleton;
 
-import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.s3.options.ListBucketOptions;
 
 import com.google.common.base.Function;
 

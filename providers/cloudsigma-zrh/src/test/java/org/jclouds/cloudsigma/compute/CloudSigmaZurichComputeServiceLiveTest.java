@@ -18,6 +18,15 @@
  */
 package org.jclouds.cloudsigma.compute;
 
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.get;
+import static org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions.Builder.diskDriveAffinity;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
+import org.jclouds.cloudsigma.CloudSigmaApiMetadata;
 import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions;
 import org.jclouds.cloudsigma.domain.AffinityType;
@@ -29,14 +38,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.testng.annotations.Test;
-
-import java.util.Set;
-
-import static com.google.common.collect.Iterables.contains;
-import static com.google.common.collect.Iterables.get;
-import static org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions.Builder.diskDriveAffinity;
-import static org.jclouds.compute.predicates.NodePredicates.inGroup;
-import static org.testng.Assert.assertTrue;
 
 /**
  * 
@@ -63,8 +64,8 @@ public class CloudSigmaZurichComputeServiceLiveTest extends CloudSigmaComputeSer
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
          NodeMetadata node = get(nodes, 0);
 
-         CloudSigmaClient api = CloudSigmaClient.class.cast(client.getContext()
-            .getProviderSpecificContext().getApi());
+         CloudSigmaClient api = CloudSigmaClient.class.cast(client.getContext().unwrap(
+                  CloudSigmaApiMetadata.CONTEXT_TOKEN).getApi());
 
          // Note: I wanted to use node.getHardware().getVolumes() but there is no
          // way to go from a Volume to a DriveInfo

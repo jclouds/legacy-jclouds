@@ -18,8 +18,7 @@
  */
 package org.jclouds.gogrid;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class GoGridProviderTest extends BaseProviderMetadataTest {
 
    public GoGridProviderTest() {
-      super(new GoGridProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new GoGridProviderMetadata(), new GoGridApiMetadata());
    }
 }

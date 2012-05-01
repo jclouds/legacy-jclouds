@@ -28,9 +28,6 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.predicates.AtomicNodeSuspended;
-import org.jclouds.compute.predicates.NodeRunning;
-import org.jclouds.compute.predicates.NodeSuspended;
-import org.jclouds.compute.predicates.NodeTerminated;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
@@ -73,34 +70,6 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
             timeouts.nodeSuspended);
    }
    
-   @Provides
-   @Singleton
-   @Named("NODE_RUNNING")
-   @Deprecated
-   protected Predicate<NodeMetadata> nodeRunning(NodeRunning stateRunning, Timeouts timeouts) {
-      return timeouts.nodeRunning == 0 ? stateRunning : new RetryablePredicate<NodeMetadata>(stateRunning,
-            timeouts.nodeRunning);
-   }
-
-   @Provides
-   @Singleton
-   @Named("NODE_TERMINATED")
-   @Deprecated
-   protected Predicate<NodeMetadata> serverTerminated(NodeTerminated stateTerminated, Timeouts timeouts) {
-      return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<NodeMetadata>(stateTerminated,
-            timeouts.nodeTerminated);
-   }
-   
-
-   @Provides
-   @Singleton
-   @Named("NODE_SUSPENDED")
-   @Deprecated
-   protected Predicate<NodeMetadata> serverSuspended(NodeSuspended stateSuspended, Timeouts timeouts) {
-      return timeouts.nodeSuspended == 0 ? stateSuspended : new RetryablePredicate<NodeMetadata>(stateSuspended,
-            timeouts.nodeSuspended);
-   }
-
    @Provides
    @Singleton
    @Named("SCRIPT_COMPLETE")

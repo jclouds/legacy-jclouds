@@ -27,9 +27,9 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.s3.domain.AccessControlList;
-import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.s3.domain.AccessControlList.Permission;
+import org.jclouds.s3.domain.ObjectMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;

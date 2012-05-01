@@ -18,15 +18,16 @@
  */
 package org.jclouds.softlayer.features;
 
-import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.lang.reflect.Method;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code AccountAsyncClient}

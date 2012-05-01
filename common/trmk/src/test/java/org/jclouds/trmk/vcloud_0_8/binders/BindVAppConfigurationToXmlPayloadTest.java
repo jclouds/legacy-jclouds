@@ -27,15 +27,15 @@ import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.chang
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VAppImpl;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.util.Strings2;
 import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
@@ -59,7 +59,8 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       @Override
       protected void bindConfigurations() {
-         bindProperties(new TerremarkVCloudPropertiesBuilder(new Properties()).build());
+         bind(String.class).annotatedWith(ApiVersion.class).toInstance("0.8");
+         bindProperties(TerremarkVCloudApiMetadata.defaultProperties());
       }
    }));
 

@@ -18,14 +18,12 @@
  */
 package org.jclouds.cloudsigma.compute.options;
 
+import java.util.Map;
+
 import org.jclouds.cloudsigma.domain.AffinityType;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
-
-import java.util.Map;
 
 public class CloudSigmaTemplateOptions extends TemplateOptions implements Cloneable {
 
@@ -110,12 +108,6 @@ public class CloudSigmaTemplateOptions extends TemplateOptions implements Clonea
          return CloudSigmaTemplateOptions.class.cast(options.userMetadata(userMetadata));
       }
 
-      @Deprecated
-      public static CloudSigmaTemplateOptions overrideLoginUserWith(String user) {
-         CloudSigmaTemplateOptions options = new CloudSigmaTemplateOptions();
-         return options.overrideLoginUserWith(user);
-      }
-
       public static CloudSigmaTemplateOptions overrideLoginUser(String user) {
          CloudSigmaTemplateOptions options = new CloudSigmaTemplateOptions();
          return options.overrideLoginUser(user);
@@ -134,18 +126,6 @@ public class CloudSigmaTemplateOptions extends TemplateOptions implements Clonea
       public static CloudSigmaTemplateOptions overrideAuthenticateSudo(boolean authenticateSudo) {
          CloudSigmaTemplateOptions options = new CloudSigmaTemplateOptions();
          return options.overrideAuthenticateSudo(authenticateSudo);
-      }
-
-      @Deprecated
-      public static CloudSigmaTemplateOptions overrideLoginCredentialWith(String credential) {
-         CloudSigmaTemplateOptions options = new CloudSigmaTemplateOptions();
-         return options.overrideLoginCredentialWith(credential);
-      }
-
-      @Deprecated
-      public static CloudSigmaTemplateOptions overrideCredentialsWith(Credentials credentials) {
-         CloudSigmaTemplateOptions options = new CloudSigmaTemplateOptions();
-         return options.overrideCredentialsWith(credentials);
       }
 
       public static CloudSigmaTemplateOptions overrideLoginCredentials(LoginCredentials credentials) {
@@ -191,15 +171,6 @@ public class CloudSigmaTemplateOptions extends TemplateOptions implements Clonea
    /**
     * {@inheritDoc}
     */
-   @Deprecated
-   @Override
-   public CloudSigmaTemplateOptions runScript(Payload script) {
-      return CloudSigmaTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public CloudSigmaTemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       return CloudSigmaTemplateOptions.class.cast(super.blockUntilRunning(blockUntilRunning));
@@ -235,33 +206,6 @@ public class CloudSigmaTemplateOptions extends TemplateOptions implements Clonea
    @Override
    public CloudSigmaTemplateOptions runScript(Statement script) {
       return CloudSigmaTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public CloudSigmaTemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return CloudSigmaTemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public CloudSigmaTemplateOptions overrideLoginUserWith(String loginUser) {
-      return CloudSigmaTemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public CloudSigmaTemplateOptions overrideLoginCredentialWith(String loginCredential) {
-      return CloudSigmaTemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
    }
 
    /**

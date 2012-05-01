@@ -18,11 +18,11 @@
  */
 package org.jclouds.softlayer.handlers;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
@@ -33,7 +33,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.softlayer.handlers.SoftLayerErrorHandler;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 

@@ -66,9 +66,8 @@ package org.jclouds.crypto;
 
 import java.security.MessageDigest;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.encryption.internal.JCECrypto;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Throwables;
 
@@ -161,7 +160,7 @@ public class Sha512Crypt {
       byte[] s_bytes = null;
       int cnt, cnt2;
       int rounds = ROUNDS_DEFAULT; // Default number of rounds.
-      StringBuffer buffer;
+      StringBuilder buffer;
 
       /* -- */
 
@@ -182,7 +181,7 @@ public class Sha512Crypt {
          }
       } else {
          java.util.Random randgen = new java.util.Random();
-         StringBuffer saltBuf = new StringBuffer();
+         StringBuilder saltBuf = new StringBuilder();
 
          while (saltBuf.length() < 16) {
             int index = (int) (randgen.nextFloat() * SALTCHARS.length());
@@ -287,7 +286,7 @@ public class Sha512Crypt {
          alt_result = ctx.digest();
       }
 
-      buffer = new StringBuffer(sha512_salt_prefix);
+      buffer = new StringBuilder(sha512_salt_prefix);
 
       if (rounds != 5000) {
          buffer.append(sha512_rounds_prefix);
@@ -334,7 +333,7 @@ public class Sha512Crypt {
    private static final String b64_from_24bit(byte B2, byte B1, byte B0, int size) {
       int v = ((((int) B2) & 0xFF) << 16) | ((((int) B1) & 0xFF) << 8) | ((int) B0 & 0xff);
 
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
 
       while (--size >= 0) {
          result.append(itoa64.charAt((int) (v & 0x3f)));

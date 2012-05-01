@@ -18,7 +18,6 @@
  */
 package org.jclouds.gogrid.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -34,6 +33,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerState;
@@ -58,6 +58,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    private final Supplier<Set<? extends Image>> images;
    private final Supplier<Set<? extends Hardware>> hardwares;
    private final Supplier<Set<? extends Location>> locations;
+   private final GroupNamingConvention nodeNamingConvention;
 
    static class FindImageForServer implements Predicate<Image> {
       private final Server instance;
@@ -92,7 +93,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Inject
    ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
-         @Memoized Supplier<Set<? extends Location>> locations) {
+         @Memoized Supplier<Set<? extends Location>> locations,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -106,7 +109,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.name(from.getName());
       Location location = Iterables.find(locations.get(), LocationPredicates.idEquals(from.getDatacenter().getId() + ""));
       builder.location(location);
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.hardware(parseHardware(from));
       builder.imageId(from.getImage().getId() + "");
 

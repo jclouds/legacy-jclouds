@@ -21,8 +21,6 @@ package org.jclouds.deltacloud.compute.config;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.deltacloud.DeltacloudAsyncClient;
-import org.jclouds.deltacloud.DeltacloudClient;
 import org.jclouds.deltacloud.compute.functions.DeltacloudImageToImage;
 import org.jclouds.deltacloud.compute.functions.HardwareProfileToHardware;
 import org.jclouds.deltacloud.compute.functions.InstanceToNodeMetadata;
@@ -40,13 +38,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class DeltacloudComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<DeltacloudClient, DeltacloudAsyncClient, Instance, HardwareProfile, org.jclouds.deltacloud.domain.Image, Realm> {
-
-   public DeltacloudComputeServiceContextModule() {
-      super(DeltacloudClient.class, DeltacloudAsyncClient.class);
-   }
+public class DeltacloudComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<Instance, HardwareProfile, org.jclouds.deltacloud.domain.Image, Realm> {
 
    @Override
    protected void configure() {
