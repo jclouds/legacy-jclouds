@@ -18,10 +18,17 @@
  */
 package org.jclouds.cloudwatch.config;
 
+import java.util.Map;
+
 import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.cloudwatch.CloudWatchAsyncClient;
 import org.jclouds.cloudwatch.CloudWatchClient;
+import org.jclouds.cloudwatch.features.MetricAsyncClient;
+import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.rest.ConfiguresRestClient;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the Monitoring connection.
@@ -30,5 +37,12 @@ import org.jclouds.rest.ConfiguresRestClient;
  */
 @ConfiguresRestClient
 public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+         .put(MetricClient.class, MetricAsyncClient.class)
+         .build();
+   
+   public CloudWatchRestClientModule() {
+      super(TypeToken.of(CloudWatchClient.class), TypeToken.of(CloudWatchAsyncClient.class), DELEGATE_MAP);
+   }
 
 }

@@ -64,7 +64,7 @@ public class EnqueueStoresController extends HttpServlet {
     protected Logger logger = Logger.NULL;
 
     @Inject
-    public EnqueueStoresController(Map<String, BlobStoreContext<?, ?>> contexts, TaskQueue taskQueue,
+    public EnqueueStoresController(Map<String, BlobStoreContext> contexts, TaskQueue taskQueue,
             @Named(PaasConstants.PROPERTY_PLATFORM_BASE_URL) String baseUrl) {
         contextNames = contexts.keySet();
         this.taskQueue = taskQueue;

@@ -28,7 +28,6 @@ import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.savvis.vpdc.domain.Network;
@@ -48,13 +47,14 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 
 @Test(groups = "live")
 public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    private VMClient client;
    private VM vm;
-   private RetryablePredicate<IPSocket> socketTester;
+   private RetryablePredicate<HostAndPort> socketTester;
 
    private String username = checkNotNull(System.getProperty("test." + provider + ".loginUser"), "test." + provider
             + ".loginUser");
@@ -66,7 +66,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
    public void setupContext() {
       super.setupContext();
       client = restContext.getApi().getVMClient();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
    }
 
    private String billingSiteId;
@@ -277,7 +277,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
        assert clonedVM.getHref() != null : clonedVM;
    }
 
-   protected void checkSSH(IPSocket socket) {
+   protected void checkSSH(HostAndPort socket) {
       socketTester.apply(socket);
       SshClient client = view.utils().sshFactory()
             .create(socket, LoginCredentials.builder().user(username).password(password).build());

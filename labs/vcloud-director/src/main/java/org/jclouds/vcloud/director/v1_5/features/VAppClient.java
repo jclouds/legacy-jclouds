@@ -27,26 +27,14 @@ import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
-import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
-import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
-import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 
 /**
  * Provides synchronous access to {@link VApp} objects.
@@ -59,9 +47,9 @@ import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 public interface VAppClient {
 
    /**
-    * Retrieves a vApp/VM.
+    * Retrieves a {@link VApp}.
     *
-    * The vApp/VM could be in one of these statuses:
+    * The {@link VApp} could be in one of these statuses:
     * <ul>
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION FAILED_CREATION(-1)} -
     *    Transient entity state, e.g., model object is created but the corresponding VC backing does not
@@ -101,7 +89,7 @@ public interface VAppClient {
    VApp getVApp(URI vAppURI);
 
    /**
-    * Modifies the name/description of a vApp/VM.
+    * Modifies the name/description of a {@link VApp}.
     *
     * <pre>
     * PUT /vApp/{id}
@@ -112,7 +100,7 @@ public interface VAppClient {
    Task modifyVApp(URI vAppURI, VApp vApp);
 
    /**
-    * Deletes a vApp/VM.
+    * Deletes a {@link VApp}.
     *
     * <pre>
     * DELETE /vApp/{id}
@@ -123,18 +111,7 @@ public interface VAppClient {
    Task deleteVApp(URI vAppURI);
 
    /**
-    * Consolidates a vm.
-    *
-    * <pre>
-    * POST /vApp/{id}/action/consolidate
-    * </pre>
-    *
-    * @since 1.5
-    */
-   Task consolidateVm(URI vAppURI);
-
-   /**
-    * Modifies the control access of a vApp.
+    * Modifies the control access of a {@link VApp}.
     *
     * <pre>
     * POST /vApp/{id}/action/controlAccess
@@ -145,7 +122,7 @@ public interface VAppClient {
    ControlAccessParams modifyControlAccess(URI vAppURI, ControlAccessParams params);
 
    /**
-    * Deploys a vApp/VM.
+    * Deploys a {@link VApp}.
     *
     * Deployment means allocation of all resource for a vApp/VM like CPU and memory
     * from a vDC resource pool. Deploying a vApp automatically deploys all of the
@@ -162,7 +139,7 @@ public interface VAppClient {
    Task deploy(URI vAppURI, DeployVAppParams params);
 
    /**
-    * Discard suspended state of a vApp/VM.
+    * Discard suspended state of a {@link VApp}.
     *
     * Discarding suspended state of a vApp automatically discarded suspended
     * states of all of the virtual machines it contains.
@@ -176,7 +153,7 @@ public interface VAppClient {
    Task discardSuspendedState(URI vAppURI);
 
    /**
-    * Place the vApp into maintenance mode.
+    * Place the {@link VApp} into maintenance mode.
     *
     * While in maintenance mode, a system admin can operate on the vApp as
     * usual, but end users are restricted to read-only operations. Any
@@ -192,7 +169,7 @@ public interface VAppClient {
    void enterMaintenanceMode(URI vAppURI);
 
    /**
-    * Take the vApp out of maintenance mode.
+    * Take the {@link VApp} out of maintenance mode.
     *
     * <pre>
     * POST /vApp/{id}/action/exitMaintenanceMode
@@ -203,20 +180,7 @@ public interface VAppClient {
    void exitMaintenanceMode(URI vAppURI);
 
    /**
-    * Installs VMware tools to the virtual machine.
-    *
-    * It should be running in order for them to be installed.
-    *
-    * <pre>
-    * POST /vApp/{id}/action/installVMwareTools
-    * </pre>
-    *
-    * @since 1.5
-    */
-   Task installVMwareTools(URI vAppURI);
-
-   /**
-    * Recompose a vApp by removing its own VMs and/or adding new ones from other
+    * Recompose a {@link VApp} by removing its own VMs and/or adding new ones from other
     * vApps or vApp templates.
     *
     * To remove VMs you should put their references in elements. The way you add
@@ -234,18 +198,7 @@ public interface VAppClient {
    Task recompose(URI vAppURI, RecomposeVAppParams params);
 
    /**
-    * Relocates a vm.
-    *
-    * <pre>
-    * POST /vApp/{id}/action/relocate
-    * </pre>
-    *
-    * @since 1.5
-    */
-   Task relocateVm(URI vAppURI, RelocateParams params);
-
-   /**
-    * Undeploy a vApp/VM.
+    * Undeploy a {@link VApp}.
     *
     * Undeployment means deallocation of all resources for a vApp/VM like CPU
     * and memory from a vDC resource pool. Undeploying a vApp automatically
@@ -260,19 +213,7 @@ public interface VAppClient {
    Task undeploy(URI vAppURI, UndeployVAppParams params);
 
    /**
-    * Upgrade virtual hardware version of a VM to the highest supported virtual
-    * hardware version of provider vDC where the VM locates.
-    *
-    * <pre>
-    * POST /vApp/{id}/action/upgradeHardwareVersion
-    * </pre>
-    *
-    * @since 1.5
-    */
-   Task upgradeHardwareVersion(URI vAppURI);
-
-   /**
-    * Retrieves the control access information for a vApp.
+    * Retrieves the control access information for a {@link VApp}.
     *
     * The vApp could be shared to everyone or could be shared to specific user,
     * by modifying the control access values.
@@ -286,7 +227,7 @@ public interface VAppClient {
    ControlAccessParams getControlAccess(URI vAppURI);
 
    /**
-    * Powers off a vApp/VM.
+    * Powers off a {@link VApp}.
     *
     * If the operation is used over a vApp then all VMs are powered off. This operation is allowed only when the vApp/VM is powered on.
     *
@@ -299,7 +240,7 @@ public interface VAppClient {
    Task powerOff(URI vAppURI);
 
    /**
-    * Powers on a vApp/VM.
+    * Powers on a {@link VApp}.
     *
     * If the operation is used over a vApp then all VMs are powered on. This
     * operation is allowed only when the vApp/VM is powered off.
@@ -313,7 +254,7 @@ public interface VAppClient {
    Task powerOn(URI vAppURI);
 
    /**
-    * Reboots a vApp/VM.
+    * Reboots a {@link VApp}.
     *
     * The vApp/VM should be started in order to reboot it.
     *
@@ -326,7 +267,7 @@ public interface VAppClient {
    Task reboot(URI vAppURI);
 
    /**
-    * Resets a vApp/VM.
+    * Resets a {@link VApp}.
     *
     * If the operation is used over a vApp then all VMs are reset. This
     * operation is allowed only when the vApp/VM is powered on.
@@ -340,7 +281,7 @@ public interface VAppClient {
    Task reset(URI vAppURI);
 
    /**
-    * Shutdowns a vApp/VM.
+    * Shuts down a {@link VApp}.
     *
     * If the operation is used over a vApp then all VMs are shutdown. This
     * operation is allowed only when the vApp/VM is powered on.
@@ -354,7 +295,7 @@ public interface VAppClient {
    Task shutdown(URI vAppURI);
 
    /**
-    * Suspends a vApp/VM.
+    * Suspends a {@link VApp}.
     *
     * If the operation is used over a vApp then all VMs are suspended. This
     * operation is allowed only when the vApp/VM is powered on.
@@ -368,29 +309,7 @@ public interface VAppClient {
    Task suspend(URI vAppURI);
 
    /**
-    * Retrieves the guest customization section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/guestCustomizationSection
-    * </pre>
-    *
-    * @since 1.0
-    */
-   GuestCustomizationSection getGuestCustomizationSection(URI vmURI);
-
-   /**
-    * Modifies the guest customization section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/guestCustomizationSection
-    * </pre>
-    *
-    * @since 1.0
-    */
-   Task modifyGuestCustomizationSection(URI vmURI, GuestCustomizationSection section);
-
-   /**
-    * Retrieves the lease settings section of a vApp or vApp template.
+    * Retrieves the lease settings section of a {@link VApp}.
     *
     * <pre>
     * GET /vApp/{id}/leaseSettingsSection
@@ -401,7 +320,7 @@ public interface VAppClient {
    LeaseSettingsSection getLeaseSettingsSection(URI vAppURI);
 
    /**
-    * Modifies the lease settings section of a vApp or vApp template.
+    * Modifies the lease settings section of a {@link VApp}.
     *
     * <pre>
     * PUT /vApp/{id}/leaseSettingsSection
@@ -412,29 +331,7 @@ public interface VAppClient {
    Task modifyLeaseSettingsSection(URI vAppURI, LeaseSettingsSection section);
 
    /**
-    * Ejects a media from a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/media/action/ejectMedia
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task ejectMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
-
-   /**
-    * Inserts a media into a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/media/action/insertMedia
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task insertMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
-
-   /**
-    * Retrieves the network config section of a vApp or vApp template.
+    * Retrieves the network config section of a {@link VApp}.
     *
     * <pre>
     * GET /vApp/{id}/networkConfigSection
@@ -442,10 +339,10 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   NetworkConfigSection getNetworkConfigSection(URI vmURI);
+   NetworkConfigSection getNetworkConfigSection(URI vAppURI);
 
    /**
-    * Modifies the network config section of a vApp.
+    * Modifies the network config section of a {@link VApp}.
     *
     * <pre>
     * PUT /vApp/{id}/networkConfigSection
@@ -453,32 +350,10 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyNetworkConfigSection(URI vmURI, NetworkConfigSection section);
+   Task modifyNetworkConfigSection(URI vAppURI, NetworkConfigSection section);
 
    /**
-    * Retrieves the network connection section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/networkConnectionSection
-    * </pre>
-    *
-    * @since 0.9
-    */
-   NetworkConnectionSection getNetworkConnectionSection(URI vmURI);
-
-   /**
-    * Modifies the network connection section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/networkConnectionSection
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyNetworkConnectionSection(URI vmURI, NetworkConnectionSection section);
-
-   /**
-    * Retrieves the network section of a vApp or vApp template.
+    * Retrieves the network section of a {@link VApp}.
     *
     * <pre>
     * GET /vApp/{id}/networkSection
@@ -489,29 +364,7 @@ public interface VAppClient {
    NetworkSection getNetworkSection(URI vAppURI);
 
    /**
-    * Retrieves the operating system section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/operatingSystemSection
-    * </pre>
-    *
-    * @since 0.9
-    */
-   OperatingSystemSection getOperatingSystemSection(URI vmURI);
-
-   /**
-    * Modifies the operating system section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/operatingSystemSection
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyOperatingSystemSection(URI vmURI, OperatingSystemSection section);
-
-   /**
-    * Retrieves the owner of a vApp.
+    * Retrieves the owner of a {@link VApp}.
     *
     * <pre>
     * GET /vApp/{id}/owner
@@ -522,7 +375,7 @@ public interface VAppClient {
    Owner getOwner(URI vAppURI);
 
    /**
-    * Changes VApp owner.
+    * Changes {@link VApp} owner.
     *
     * <pre>
     * PUT /vApp/{id}/owner
@@ -533,7 +386,7 @@ public interface VAppClient {
    void modifyOwner(URI vAppURI, Owner owner);
 
    /**
-    * Retrieves VAppTemplate/VM product sections.
+    * Retrieves {@link VApp} product sections.
     *
     * <pre>
     * GET /vApp/{id}/productSections
@@ -544,7 +397,7 @@ public interface VAppClient {
    ProductSectionList getProductSections(URI vAppURI);
 
    /**
-    * Modifies the product section information of a vApp/VM.
+    * Modifies the product section information of a {@link VApp}.
     *
     * <pre>
     * PUT /vApp/{id}/productSections
@@ -555,74 +408,7 @@ public interface VAppClient {
    Task modifyProductSections(URI vAppURI, ProductSectionList sectionList);
 
    /**
-    * Retrieves a pending question for a VM.
-    *
-    * The user should answer to the question by operation {@link #answerQuestion(URI, VmQuestionAnswer)}.
-    * Usually questions will be asked when the VM is powering on.
-    *
-    * <pre>
-    * GET /vApp/{id}/question
-    * </pre>
-    *
-    * @since 0.9
-    */
-   VmPendingQuestion getPendingQuestion(URI vAppURI);
-
-   /**
-    * Answer on a pending question.
-    *
-    * The answer IDs of choice and question should match the ones returned from operation {@link #getPendingQuestion(URI)}.
-    *
-    * <pre>
-    * POST /vApp/{id}/question/action/answer
-    * </pre>
-    *
-    * @since 0.9
-    */
-   void answerQuestion(URI vAppURI, VmQuestionAnswer answer);
-
-   /**
-    * Retrieves the runtime info section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/runtimeInfoSection
-    * </pre>
-    *
-    * @since 1.5
-    */
-   RuntimeInfoSection getRuntimeInfoSection(URI vmURI);
-
-   /**
-    * Retrieves the thumbnail of the screen of a VM.
-    *
-    * The content type of the response may vary (e.g. {@code image/png}, {@code image/gif}).
-    *
-    * <pre>
-    * GET /vApp/{id}/screen
-    * </pre>
-    *
-    * @since 0.9
-    */
-   byte[] getScreenImage(URI vAppURI);
-
-   /**
-    * Retrieve a screen ticket for remote console connection to a VM.
-    *
-    * A screen ticket is a string that includes the virtual machine's IP address, its managed object reference, and a string
-    * that has been encoded as described in RFC 2396. Each VM element in a vApp includes a link where rel="screen:acquireTicket".
-    * You can use that link to request a screen ticket that you can use with the vmware-vmrc utility to open a VMware Remote
-    * Console for the virtual machine represented by that VM element. The vApp should be running to get a valid screen ticket.
-    *
-    * <pre>
-    * GET /vApp/{id}/screen/action/acquireTicket
-    * </pre>
-    *
-    * @since 0.9
-    */
-   ScreenTicket getScreenTicket(URI vAppURI);
-
-   /**
-    * Retrieves the startup section of a VApp.
+    * Retrieves the startup section of a {@link VApp}.
     *
     * <pre>
     * GET /vApp/{id}/startupSection
@@ -633,7 +419,7 @@ public interface VAppClient {
    StartupSection getStartupSection(URI vAppURI);
 
    /**
-    * Modifies the startup section of a VApp.
+    * Modifies the startup section of a {@link VApp}.
     *
     * <pre>
     * PUT /vApp/{id}/startupSection
@@ -644,150 +430,7 @@ public interface VAppClient {
    Task modifyStartupSection(URI vAppURI, StartupSection section);
 
    /**
-    * Retrieves the virtual hardware section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection
-    * </pre>
-    *
-    * @since 0.9
-    */
-   VirtualHardwareSection getVirtualHardwareSection(URI vmURI);
-
-   /**
-    * Modifies the virtual hardware section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/virtualHardwareSection
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyVirtualHardwareSection(URI vmURI, VirtualHardwareSection section);
-
-   /**
-    * Retrieves the CPU properties in virtual hardware section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection/cpu
-    * </pre>
-    *
-    * @since 0.9
-    */
-   RasdItem getVirtualHardwareSectionCpu(URI vmURI);
-
-   /**
-    * Modifies the CPU properties in virtual hardware section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/virtualHardwareSection/cpu
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyVirtualHardwareSectionCpu(URI vmURI, RasdItem rasd);
-
-   /**
-    * Retrieves a list of ResourceAllocationSettingData items for disks from virtual hardware section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection/disks
-    * </pre>
-    *
-    * @since 0.9
-    */
-   RasdItemsList getVirtualHardwareSectionDisks(URI vmURI);
-
-   /**
-    * Modifies the disks list in virtual hardware section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/virtualHardwareSection/disks
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyVirtualHardwareSectionDisks(URI vmURI, RasdItemsList rasdItemsList);
-
-   /**
-    * Retrieves the list of ResourceAllocationSettingData items that represents the floppies and CD/DVD drives in a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection/media
-    * </pre>
-    *
-    * @since 0.9
-    */
-   RasdItemsList getVirtualHardwareSectionMedia(URI vmURI);
-
-   /**
-    * Retrieves the ResourceAllocationSettingData item that contains memory information from virtual hardware section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection/memory
-    * </pre>
-    *
-    * @since 0.9
-    */
-   RasdItem getVirtualHardwareSectionMemory(URI vmURI);
-
-   /**
-    * Modifies the memory properties in virtual hardware section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/virtualHardwareSection/memory
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyVirtualHardwareSectionMemory(URI vmURI, RasdItem rasd);
-
-   /**
-    * Retrieves a list of ResourceAllocationSettingData items for network cards from virtual hardware section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection/networkCards
-    * </pre>
-    *
-    * @since 0.9
-    */
-   RasdItemsList getVirtualHardwareSectionNetworkCards(URI vmURI);
-
-   /**
-    * Modifies the network cards list in virtual hardware section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/virtualHardwareSection/networkCards
-    * </pre>
-    *
-    * @since 0.9
-    */
-   Task modifyVirtualHardwareSectionNetworkCards(URI vmURI, RasdItemsList rasdItemsList);
-
-   /**
-    * Retrieves a list of ResourceAllocationSettingData items for serial ports from virtual hardware section of a VM.
-    *
-    * <pre>
-    * GET /vApp/{id}/virtualHardwareSection/serialPorts
-    * </pre>
-    *
-    * @since 1.5
-    */
-   RasdItemsList getVirtualHardwareSectionSerialPorts(URI vmURI);
-
-   /**
-    * Modifies the serial ports list in virtual hardware section of a VM.
-    *
-    * <pre>
-    * PUT /vApp/{id}/virtualHardwareSection/serialPorts
-    * </pre>
-    *
-    * @since 1.5
-    */
-   Task modifyVirtualHardwareSectionSerialPorts(URI vmURI, RasdItemsList rasdItemsList);
-
-   /**
-    * @return synchronous access to {@link Metadata} features
+    * Synchronous access to {@link VApp} {@link Metadata} features.
     */
    @Delegate
    MetadataClient.Writeable getMetadataClient();

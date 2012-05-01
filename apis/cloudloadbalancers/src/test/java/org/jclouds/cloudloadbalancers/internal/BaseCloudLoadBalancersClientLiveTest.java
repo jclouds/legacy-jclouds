@@ -28,12 +28,12 @@ import org.jclouds.cloudloadbalancers.predicates.LoadBalancerActive;
 import org.jclouds.cloudloadbalancers.predicates.LoadBalancerDeleted;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
+import com.google.common.net.HostAndPort;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -51,7 +51,7 @@ public class BaseCloudLoadBalancersClientLiveTest extends BaseViewLiveTest<LoadB
    protected CloudLoadBalancersClient client;
    protected RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> lbContext;
    protected String[] regions = {};
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
    protected RetryablePredicate<LoadBalancer> loadBalancerActive;
    protected RetryablePredicate<LoadBalancer> loadBalancerDeleted;
 

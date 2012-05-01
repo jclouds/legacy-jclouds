@@ -23,12 +23,16 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.ws.rs.DefaultValue;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 
 /**
  * A container used to group or isolate resources and/or identity objects. Depending on the service
  * operator, a tenant may map to a customer, account, organization, or project.
- * 
+ *
  * @author Adrian Cole
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Service-Concepts-e1362.html"
  *      />
@@ -46,6 +50,7 @@ public class Tenant implements Comparable<Tenant> {
    public static class Builder {
       protected String id;
       protected String name;
+      protected String description;
 
       /**
        * @see Tenant#getId()
@@ -63,8 +68,16 @@ public class Tenant implements Comparable<Tenant> {
          return this;
       }
 
+      /**
+       * @see Tenant#getDescription()
+       */
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
       public Tenant build() {
-         return new Tenant(id, name);
+         return new Tenant(id, name, description);
       }
 
       public Builder fromTenant(Tenant from) {
@@ -74,15 +87,17 @@ public class Tenant implements Comparable<Tenant> {
 
    protected final String id;
    protected final String name;
+   protected final String description;
 
-   public Tenant(String id, String name) {
+   protected Tenant(String id, String name, String description) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
+      this.description = description;
    }
 
    /**
     * When providing an ID, it is assumed that the tenant exists in the current OpenStack deployment
-    * 
+    *
     * @return the id of the tenant in the current OpenStack deployment
     */
    public String getId() {
@@ -96,6 +111,14 @@ public class Tenant implements Comparable<Tenant> {
       return name;
    }
 
+   /**
+    * @return the description of the tenant
+    */
+   @Nullable
+   public String getDescription() {
+      return description;
+   }
+
    @Override
    public boolean equals(Object object) {
       if (this == object) {
@@ -103,7 +126,8 @@ public class Tenant implements Comparable<Tenant> {
       }
       if (object instanceof Tenant) {
          final Tenant other = Tenant.class.cast(object);
-         return equal(id, other.id) && equal(name, other.name);
+         return equal(id, other.id) && equal(name, other.name)
+               && equal(description, other.description);
       } else {
          return false;
       }
@@ -111,12 +135,12 @@ public class Tenant implements Comparable<Tenant> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name);
+      return Objects.hashCode(id, name, description);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).toString();
+      return toStringHelper("").add("id", id).add("name", name).add("description", description).toString();
    }
 
    @Override

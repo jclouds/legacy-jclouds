@@ -30,12 +30,11 @@ import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
-import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.predicates.InstanceFinished;
 import org.jclouds.deltacloud.predicates.InstanceRunning;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -48,6 +47,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Module;
 
 /**
@@ -64,7 +64,7 @@ public class ReadOnlyDeltacloudClientLiveTest extends BaseComputeServiceContextL
 
    protected DeltacloudClient client;
 
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
    protected ImmutableMap<State, Predicate<Instance>> stateChanges;
 
    @Override
@@ -72,7 +72,7 @@ public class ReadOnlyDeltacloudClientLiveTest extends BaseComputeServiceContextL
    public void setupContext() {
       super.setupContext();
       client = view.unwrap(DeltacloudApiMetadata.CONTEXT_TOKEN).getApi();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
       stateChanges = ImmutableMap.<Instance.State, Predicate<Instance>> of(//
                Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,
                         TimeUnit.SECONDS),//

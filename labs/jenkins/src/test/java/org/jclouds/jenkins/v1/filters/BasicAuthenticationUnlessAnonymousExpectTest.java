@@ -56,7 +56,7 @@ public class BasicAuthenticationUnlessAnonymousExpectTest extends BaseJenkinsCli
 
       JenkinsClient clientWhenServersExist = requestSendsResponse(getComputerView, getComputerViewResponse);
 
-      assertEquals(clientWhenServersExist.getComputerClient().getComputerView().toString(),
+      assertEquals(clientWhenServersExist.getComputerClient().getView().toString(),
             new ParseComputerViewTest().expected().toString());
    }
 }

@@ -40,7 +40,8 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true)
+@Test(groups = "live", testName ="CloudWatchClientLiveTest", singleThreaded = true)
+@Deprecated
 public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<CloudWatchClient, CloudWatchAsyncClient>> {
    public CloudWatchClientLiveTest() {
       provider = "cloudwatch";
@@ -55,10 +56,6 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
       client = context.getApi();
    }
 
-   @Test
-   protected void testGetMetricStatisticsInRegion() {
-      getEC2MetricStatisticsInRegion(null);
-   }
 
    protected Set<Datapoint> getEC2MetricStatisticsInRegion(String region) {
       Calendar cal = Calendar.getInstance();
@@ -74,4 +71,5 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
    protected TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> contextType() {
       return CloudWatchApiMetadata.CONTEXT_TOKEN;
    }
+
 }

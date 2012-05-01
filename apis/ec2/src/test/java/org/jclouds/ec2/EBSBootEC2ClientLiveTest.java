@@ -39,6 +39,8 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
+import org.jclouds.ec2.domain.Image.Architecture;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -48,8 +50,6 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.domain.Image.Architecture;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.ec2.predicates.InstanceStateStopped;
@@ -59,7 +59,6 @@ import org.jclouds.ec2.predicates.VolumeAttached;
 import org.jclouds.ec2.predicates.VolumeAvailable;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.InitScript;
@@ -76,6 +75,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 
 /**
@@ -107,7 +107,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
    private KeyPair keyPair;
    private String securityGroupName;
 
-   private RetryablePredicate<IPSocket> socketTester;
+   private RetryablePredicate<HostAndPort> socketTester;
    private RetryablePredicate<Attachment> attachTester;
    private RetryablePredicate<Volume> volumeTester;
    private RunningInstance instance;
@@ -130,7 +130,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 120, 1, TimeUnit.SECONDS);
 
       VolumeAvailable volumeAvailable = injector.getInstance(VolumeAvailable.class);
       volumeTester = new RetryablePredicate<Volume>(volumeAvailable, 60, 1, TimeUnit.SECONDS);
@@ -273,7 +273,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
 
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
-      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(instance.getIpAddress(), 22),
             LoginCredentials.builder().user("ubuntu").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
@@ -510,7 +510,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22),
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(address, 22),
             LoginCredentials.builder().user("ubuntu").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
@@ -538,7 +538,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
       instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), instance.getIpAddress());
-      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 22));
+      assert socketTester.apply(HostAndPort.fromParts(instance.getIpAddress(), 22));
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance.getDnsName());
       sshPing(instance);
       System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instance.getId());

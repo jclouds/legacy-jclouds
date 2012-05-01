@@ -24,22 +24,36 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
+import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Region;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.inject.Provides;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
  * <p/>
  * 
  * @see <a
- *      href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/DeveloperGuide/index.html"
+ *      href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface CloudWatchClient {
-
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
+   
    /**
     * This call returns data for one or more statistics of given a metric. For more information, see
     * Statistic and Metric.
@@ -76,8 +90,15 @@ public interface CloudWatchClient {
     *           The statistics to be returned for the given metric. ex. Average
     * @param options
     *          more filtering options (e.g. instance ID)
+    * @see MetricsClient#getMetricStatistics
     */
+   @Deprecated
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
-            Date startTime, Date endTime, int period, Statistics statistics, GetMetricStatisticsOptions... options);
-
+          Date startTime, Date endTime, int period, Statistics statistics, GetMetricStatisticsOptions... options);
+   
+   /**
+    * Provides synchronous access to Metric features.
+    */
+   @Delegate
+   MetricClient getMetricClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

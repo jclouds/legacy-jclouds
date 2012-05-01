@@ -26,10 +26,10 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 
 /**
@@ -55,7 +55,7 @@ public class CreateSshClientOncePortIsListeningOnNode implements Function<NodeMe
       checkNotNull(node.getCredentials().identity, "no login identity found for node %s", node.getId());
       checkNotNull(node.getCredentials().credential, "no credential found for %s on node %s", node
                .getCredentials().identity, node.getId());
-      IPSocket socket = ComputeServiceUtils.findReachableSocketOnNode(socketTester, node, node.getLoginPort());
+      HostAndPort socket = ComputeServiceUtils.findReachableSocketOnNode(socketTester, node, node.getLoginPort());
       return sshFactory.create(socket, node.getCredentials());
    }
 }

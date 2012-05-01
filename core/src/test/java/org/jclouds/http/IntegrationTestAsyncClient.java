@@ -202,6 +202,6 @@ public interface IntegrationTestAsyncClient {
    }
 
    @Provides
-   StringBuffer newStringBuffer();
+   StringBuilder newStringBuilder();
 
 }

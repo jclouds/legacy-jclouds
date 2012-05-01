@@ -1,0 +1,16 @@
+<ListMetricsResponse xmlns="http://monitoring.amazonaws.com/doc/2010-08-01/">
+  <ListMetricsResult>
+    <Metrics>
+      <member>
+        <Dimensions>
+          <member>
+            <Name>InstanceId</Name>
+            <Value>i-689fcf0f</Value>
+          </member>
+        </Dimensions>
+        <MetricName>CPUUtilization</MetricName>
+        <Namespace>AWS/EC2</Namespace>
+      </member>
+    </Metrics>
+  </ListMetricsResult>
+</ListMetricsResponse>

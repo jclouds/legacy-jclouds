@@ -55,6 +55,7 @@ public class Endpoint implements Comparable<Endpoint> {
       protected String region;
       protected URI publicURL;
       protected URI internalURL;
+      protected URI adminURL;
       protected String tenantId;
 
       /**
@@ -90,6 +91,14 @@ public class Endpoint implements Comparable<Endpoint> {
       }
 
       /**
+       * @see Endpoint#getInternalURL()
+       */
+      public Builder adminURL(URI adminURL) {
+         this.adminURL = checkNotNull(adminURL, "adminURL");
+         return this;
+      }
+      
+      /**
        * @see Endpoint#getTenantId()
        */
       public Builder tenantId(@Nullable String tenantId) {
@@ -98,7 +107,7 @@ public class Endpoint implements Comparable<Endpoint> {
       }
 
       public Endpoint build() {
-         return new Endpoint(versionId, region, publicURL, internalURL, tenantId);
+         return new Endpoint(versionId, region, publicURL, internalURL, adminURL, tenantId);
       }
 
       public Builder fromEndpoint(Endpoint from) {
@@ -113,17 +122,20 @@ public class Endpoint implements Comparable<Endpoint> {
    protected final String region;
    protected final URI publicURL;
    protected final URI internalURL;
+   protected final URI adminURL;
+   
    // renamed half-way through
    @Deprecated
    protected String tenantName;
    protected final String tenantId;
 
    protected Endpoint(String versionId, String region, @Nullable URI publicURL, @Nullable URI internalURL,
-            @Nullable String tenantId) {
+            @Nullable URI adminURL, @Nullable String tenantId) {
       this.versionId = checkNotNull(versionId, "versionId");
       this.region = checkNotNull(region, "region");
       this.publicURL = publicURL;
       this.internalURL = internalURL;
+      this.adminURL = adminURL;
       this.tenantId = tenantId;
    }
 
@@ -161,6 +173,14 @@ public class Endpoint implements Comparable<Endpoint> {
    }
 
    /**
+    * @return the admin url of the endpoint
+    */
+   @Nullable
+   public URI getAdminURL() {
+      return adminURL;
+   }
+
+   /**
     * @return the tenant versionId of the endpoint or null
     */
    @Nullable
@@ -176,7 +196,7 @@ public class Endpoint implements Comparable<Endpoint> {
       if (object instanceof Endpoint) {
          final Endpoint other = Endpoint.class.cast(object);
          return equal(getVersionId(), other.getVersionId()) && equal(region, other.region) && equal(publicURL, other.publicURL)
-                  && equal(internalURL, other.internalURL) && equal(getTenantId(), other.getTenantId());
+                  && equal(internalURL, other.internalURL) && equal(adminURL, other.adminURL) && equal(getTenantId(), other.getTenantId());
       } else {
          return false;
       }
@@ -184,13 +204,13 @@ public class Endpoint implements Comparable<Endpoint> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(getVersionId(), region, publicURL, internalURL, getTenantId());
+      return Objects.hashCode(getVersionId(), region, publicURL, internalURL, adminURL, getTenantId());
    }
 
    @Override
    public String toString() {
       return toStringHelper("").add("versionId", getVersionId()).add("region", region).add("publicURL", publicURL).add("internalURL",
-               internalURL).add("tenantId", getTenantId()).toString();
+               internalURL).add("adminURL", adminURL).add("tenantId", getTenantId()).toString();
    }
 
    @Override

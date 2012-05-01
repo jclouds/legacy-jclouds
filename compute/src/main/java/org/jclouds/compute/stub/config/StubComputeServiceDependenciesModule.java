@@ -33,7 +33,6 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.annotations.Identity;
 
@@ -41,6 +40,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -128,10 +128,10 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
       }
 
       @Override
-      public boolean apply(IPSocket input) {
-         if (input.getAddress().indexOf(publicIpPrefix) == -1)
+      public boolean apply(HostAndPort input) {
+         if (input.getHostText().indexOf(publicIpPrefix) == -1)
             return false;
-         String id = input.getAddress().replace(publicIpPrefix, "");
+         String id = input.getHostText().replace(publicIpPrefix, "");
          NodeMetadata node = nodes.get(id);
          return node != null && node.getState() == NodeState.RUNNING;
       }

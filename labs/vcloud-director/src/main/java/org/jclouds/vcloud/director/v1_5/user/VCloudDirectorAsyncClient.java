@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VmAsyncClient;
 
 import com.google.inject.Provides;
 
@@ -105,4 +106,10 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    VAppTemplateAsyncClient getVAppTemplateClient();
+
+   /**
+    * @return asynchronous access to {@link Vm} features
+    */
+   @Delegate
+   VmAsyncClient getVmClient();
 }

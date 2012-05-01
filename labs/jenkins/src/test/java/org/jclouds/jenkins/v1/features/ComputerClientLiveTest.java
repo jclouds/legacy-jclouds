@@ -34,13 +34,13 @@ import org.testng.annotations.Test;
 public class ComputerClientLiveTest extends BaseJenkinsClientLiveTest {
 
    public void testGetComputerView(){
-      ComputerView view = getClient().getComputerView();
+      ComputerView view = getClient().getView();
       assertNotNull(view);
       assertNotNull(view.getDisplayName());
       for (Computer computerFromView : view.getComputers()) {
          assertNotNull(computerFromView.getDisplayName());
          if (!"master".equals(computerFromView.getDisplayName())) {
-            Computer computerFromGetRequest = getClient().getComputer(computerFromView.getDisplayName());
+            Computer computerFromGetRequest = getClient().get(computerFromView.getDisplayName());
             assertEquals(computerFromGetRequest, computerFromView);
          }
       }

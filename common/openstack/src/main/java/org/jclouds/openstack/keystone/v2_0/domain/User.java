@@ -98,10 +98,16 @@ public class User implements Comparable<User> {
    protected final String name;
    protected final Set<Role> roles;
 
-   public User(String id, String name, Set<Role> roles) {
+   protected User(String id, String name, Set<Role> roles) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.roles = ImmutableSet.copyOf(checkNotNull(roles, "roles"));
+   }
+   
+   protected User() {
+      id = null;
+      name = null;
+      roles = ImmutableSet.of();
    }
 
    /**

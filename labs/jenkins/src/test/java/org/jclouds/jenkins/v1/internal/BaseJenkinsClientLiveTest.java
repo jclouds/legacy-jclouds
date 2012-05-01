@@ -23,8 +23,7 @@ import org.jclouds.jenkins.v1.JenkinsApiMetadata;
 import org.jclouds.jenkins.v1.JenkinsAsyncClient;
 import org.jclouds.jenkins.v1.JenkinsClient;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -42,18 +41,12 @@ public class BaseJenkinsClientLiveTest extends BaseContextLiveTest<RestContext<J
    }
 
    protected RestContext<JenkinsClient, JenkinsAsyncClient> jenkinsContext;
-
-   @BeforeGroups(groups = { "integration", "live" })
+   
+   @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setupContext() {
       super.setupContext();
       jenkinsContext = context;
-   }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (jenkinsContext != null)
-         jenkinsContext.close();
    }
 
    @Override

@@ -175,7 +175,7 @@ public abstract class BaseJettyTest {
       client = context.getApi();
       assert client != null;
 
-      assert client.newStringBuffer() != null;
+      assert client.newStringBuilder() != null;
    }
 
    private static void handlePost(HttpServletRequest request, HttpServletResponse response) throws IOException {

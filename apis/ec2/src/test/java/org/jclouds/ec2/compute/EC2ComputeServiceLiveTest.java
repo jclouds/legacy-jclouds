@@ -54,7 +54,6 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
-import org.jclouds.net.IPSocket;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.InetAddresses2;
@@ -65,6 +64,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Module;
 
 /**
@@ -198,7 +198,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          // Check that the address is public and port 22 is accessible
          String ip = Iterables.getOnlyElement(publicIps);
          assertFalse(InetAddresses2.isPrivateIPAddress(ip));
-         IPSocket socket = new IPSocket(ip, 22);
+         HostAndPort socket = HostAndPort.fromParts(ip, 22);
          assertTrue(socketTester.apply(socket), String.format("failed to open socket %s on node %s", socket, node));
 
          // check that there is an elastic ip correlating to it

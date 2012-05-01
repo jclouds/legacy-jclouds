@@ -33,7 +33,6 @@ import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
-import org.jclouds.net.IPSocket;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
@@ -41,6 +40,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 
 /**
  * Tests behavior of {@code SecurityGroupClient}
@@ -178,7 +178,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
          loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       // ingress port 22
-      checkSSH(new IPSocket(vm.getIPAddress(), 22));
+      checkSSH(HostAndPort.fromParts(vm.getIPAddress(), 22));
       // ingress icmp disabled as this is platform dependent and may actually
       // just try tcp port 7
       // assert InetAddress.getByName(vm.getIPAddress()).isReachable(1000) : vm;

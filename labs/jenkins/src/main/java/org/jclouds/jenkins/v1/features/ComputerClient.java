@@ -37,12 +37,13 @@ public interface ComputerClient {
    /**
     * @return overview of all configured computers
     */
-   ComputerView getComputerView();
+   ComputerView getView();
    
    /**
     * 
     * @param displayName display name of the computer
     * @return computer or null if not found
     */
-   Computer getComputer(String displayName);
+   Computer get(String displayName);
+   
 }

@@ -39,7 +39,6 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
@@ -49,6 +48,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -95,7 +95,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
    protected SshClient.Factory sshFactory;
    protected String group;
 
-   protected RetryablePredicate<IPSocket> socketTester;
+   protected RetryablePredicate<HostAndPort> socketTester;
    protected Set<? extends NodeMetadata> nodes;
    protected Template template;
    protected Map<String, String> keyPair;
@@ -139,7 +139,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
 
    protected void buildSocketTester() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 60, 1, TimeUnit.SECONDS);
    }
 
    abstract protected Module getSshModule();

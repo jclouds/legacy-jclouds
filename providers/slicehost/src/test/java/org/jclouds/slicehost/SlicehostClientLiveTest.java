@@ -32,7 +32,6 @@ import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.slicehost.domain.Flavor;
@@ -46,6 +45,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 
 /**
@@ -62,7 +62,7 @@ public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected SlicehostClient client;
    protected SshClient.Factory sshFactory;
-   private Predicate<IPSocket> socketTester;
+   private Predicate<HostAndPort> socketTester;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -73,7 +73,7 @@ public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
       client = injector.getInstance(SlicehostClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 120, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
    }
 
@@ -254,7 +254,7 @@ public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    private void doCreateMarkerFile(Slice newDetails, String pass) throws IOException {
       String ip = getIp(newDetails);
-      IPSocket socket = new IPSocket(ip, 22);
+      HostAndPort socket = HostAndPort.fromParts(ip, 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());

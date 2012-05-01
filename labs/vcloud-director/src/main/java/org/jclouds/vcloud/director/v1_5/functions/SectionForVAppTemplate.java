@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.functions;
 
-import java.util.Set;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -27,7 +25,6 @@ import org.jclouds.dmtf.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 /**
  * @author danikov
@@ -45,7 +42,6 @@ public class SectionForVAppTemplate<S extends SectionType> implements Function<V
    @SuppressWarnings("unchecked")
    @Override
    public S apply(VAppTemplate from) {
-      Set<S> sections = Sets.newLinkedHashSet();
       for (SectionType section : from.getSections()) {
          if (sectionType.isAssignableFrom(section.getClass())) {
             return (S)section;

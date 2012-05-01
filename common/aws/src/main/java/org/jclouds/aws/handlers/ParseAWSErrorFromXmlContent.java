@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.handlers;
 
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.IOException;
@@ -65,7 +66,9 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = null;
-         String message = null;
+         // it is important to always read fully and close streams
+         byte[] data = closeClientButKeepContentStream(response);
+         String message = data != null ? new String(data) : null;
          if (response.getPayload() != null) {
             String contentType = response.getPayload().getContentMetadata().getContentType();
             if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {

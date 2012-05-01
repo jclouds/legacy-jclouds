@@ -73,7 +73,7 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
          .name("Amazon CloudWatch Api")
          .identityName("Access Key ID")
          .credentialName("Secret Access Key")
-         .version(CloudWatchAsyncClient.VERSION)
+         .version("2010-08-01")
          .documentation(URI.create("http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/"))
          .defaultEndpoint("https://monitoring.us-east-1.amazonaws.com")
          .defaultProperties(CloudWatchApiMetadata.defaultProperties())

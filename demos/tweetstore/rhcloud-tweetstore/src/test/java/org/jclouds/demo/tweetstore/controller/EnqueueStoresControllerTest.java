@@ -23,8 +23,8 @@ import static org.easymock.EasyMock.*;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.TransientApiMetadata;
 import org.jclouds.demo.paas.RunnableHttpRequest;
 import org.jclouds.demo.paas.RunnableHttpRequest.Factory;
@@ -43,16 +43,16 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit")
 public class EnqueueStoresControllerTest {
 
-    Map<String, BlobStoreContext<?, ?>> createBlobStores() {
+    Map<String, BlobStoreContext> createBlobStores() {
         TransientApiMetadata transientApiMetadata = TransientApiMetadata.builder().build();
-        Map<String, BlobStoreContext<?, ?>> contexts = ImmutableMap.<String, BlobStoreContext<?, ?>>of(
-                "test1", BlobStoreContextBuilder.newBuilder(transientApiMetadata).build(), 
-                "test2", BlobStoreContextBuilder.newBuilder(transientApiMetadata).build());
+        Map<String, BlobStoreContext> contexts = ImmutableMap.<String, BlobStoreContext>of(
+                "test1", ContextBuilder.newBuilder(transientApiMetadata).build(BlobStoreContext.class), 
+                "test2", ContextBuilder.newBuilder(transientApiMetadata).build(BlobStoreContext.class));
         return contexts;
     }
 
     public void testEnqueueStores() {
-        Map<String, BlobStoreContext<?, ?>> stores = createBlobStores();
+        Map<String, BlobStoreContext> stores = createBlobStores();
         TaskQueue taskQueue = createMock(TaskQueue.class);
         Factory httpRequestFactory = createMock(Factory.class);
         EnqueueStoresController function = new EnqueueStoresController(stores, 

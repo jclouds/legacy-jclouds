@@ -1,0 +1,10 @@
+{"endpoints": [
+                    {
+                        "adminURL": "https://csnode.jclouds.org:35357/v2.0/",
+                        "publicURL": "https://csnode.jclouds.org/v2.0/",
+                        "region": "region-a.geo-1",
+                        "id": "2.0",
+                        "versionId":"2.0",
+                        "list": "https://csnode.jclouds.org/extension"
+                    }
+                ]}

@@ -53,7 +53,7 @@ public class ComputerClientExpectTest extends BaseJenkinsClientExpectTest {
 
       JenkinsClient clientWhenServersExist = requestSendsResponse(getComputerView, getComputerViewResponse);
 
-      assertEquals(clientWhenServersExist.getComputerClient().getComputerView().toString(),
+      assertEquals(clientWhenServersExist.getComputerClient().getView().toString(),
             new ParseComputerViewTest().expected().toString());
    }
    
@@ -71,7 +71,7 @@ public class ComputerClientExpectTest extends BaseJenkinsClientExpectTest {
 
       JenkinsClient clientWhenServersExist = requestSendsResponse(getComputer, getComputerResponse);
 
-      assertEquals(clientWhenServersExist.getComputerClient().getComputer("Ruboto").toString(),
+      assertEquals(clientWhenServersExist.getComputerClient().get("Ruboto").toString(),
             new ParseComputerTest().expected().toString());
    }
 }

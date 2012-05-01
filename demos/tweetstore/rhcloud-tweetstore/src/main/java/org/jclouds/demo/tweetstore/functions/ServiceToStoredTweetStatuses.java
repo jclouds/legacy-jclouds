@@ -18,6 +18,7 @@
  */
 package org.jclouds.demo.tweetstore.functions;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
@@ -39,11 +41,11 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ServiceToStoredTweetStatuses implements Function<String, Iterable<StoredTweetStatus>> {
 
-   private final Map<String, BlobStoreContext<?, ?>> contexts;
+   private final Map<String, BlobStoreContext> contexts;
    private final String container;
 
    @Inject
-   public ServiceToStoredTweetStatuses(Map<String, BlobStoreContext<?, ?>> contexts,
+   public ServiceToStoredTweetStatuses(Map<String, BlobStoreContext> contexts,
             @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container) {
       this.contexts = contexts;
       this.container = container;
@@ -53,8 +55,8 @@ public class ServiceToStoredTweetStatuses implements Function<String, Iterable<S
    protected Logger logger = Logger.NULL;
 
    public Iterable<StoredTweetStatus> apply(String service) {
-      BlobStoreContext<?, ?> context = contexts.get(service);
-      String host = context.getProviderSpecificContext().getEndpoint().getHost();
+      BlobStoreContext context = contexts.get(service);
+      String host = URI.create(context.unwrap(Context.class).getProviderMetadata().getEndpoint()).getHost();
       try {
          BlobMap blobMap = context.createBlobMap(container);
          Set<String> blobs = blobMap.keySet();

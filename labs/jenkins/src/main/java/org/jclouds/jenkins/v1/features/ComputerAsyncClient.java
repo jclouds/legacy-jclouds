@@ -46,19 +46,20 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface ComputerAsyncClient {
 
    /**
-    * @see ComputerClient#getComputerView
+    * @see ComputerClient#getView
     */
    @GET
    @Path("/computer/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ComputerView> getComputerView();
+   ListenableFuture<ComputerView> getView();
    
    /**
-    * @see ComputerClient#getComputer
+    * @see ComputerClient#get
     */
    @GET
    @Path("/computer/{displayName}/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Computer> getComputer(@PathParam("displayName") String displayName);
+   ListenableFuture<Computer> get(@PathParam("displayName") String displayName);
+
 }

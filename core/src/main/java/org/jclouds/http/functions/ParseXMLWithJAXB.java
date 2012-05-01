@@ -72,7 +72,7 @@ public class ParseXMLWithJAXB<T> implements Function<HttpResponse, T> {
       try {
          return apply(xml);
       } catch (Exception e) {
-         StringBuffer message = new StringBuffer();
+         StringBuilder message = new StringBuilder();
          message.append("Error parsing input");
          logger.error(e, message.toString());
          throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);

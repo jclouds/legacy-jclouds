@@ -61,6 +61,7 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", testName = "CloudWatchAsyncClientTest")
+@Deprecated
 public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsyncClient> {
 
    public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {
@@ -90,7 +91,7 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
       };
    }
 
-      @ConfiguresRestClient
+   @ConfiguresRestClient
    private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
 
       @Override

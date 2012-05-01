@@ -28,6 +28,8 @@ import org.jclouds.jenkins.v1.JenkinsAsyncClient;
 import org.jclouds.jenkins.v1.JenkinsClient;
 import org.jclouds.jenkins.v1.features.ComputerAsyncClient;
 import org.jclouds.jenkins.v1.features.ComputerClient;
+import org.jclouds.jenkins.v1.features.JobAsyncClient;
+import org.jclouds.jenkins.v1.features.JobClient;
 import org.jclouds.jenkins.v1.handlers.JenkinsErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -44,6 +46,7 @@ public class JenkinsRestClientModule extends RestClientModule<JenkinsClient, Jen
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(ComputerClient.class, ComputerAsyncClient.class)
+         .put(JobClient.class, JobAsyncClient.class)
          .build();
 
    public JenkinsRestClientModule() {
