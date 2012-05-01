@@ -18,36 +18,34 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import org.jclouds.javax.annotation.Nullable;
-
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.ImmutableSet;
+
 /**
+ *  the list of {@link Datapoint} for the metric
+ *  
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html" />
  *
  * @author Jeremy Whitlock
  */
-public class GetMetricStatisticsResponse {
+public class GetMetricStatisticsResponse extends ForwardingSet<Datapoint> {
 
    private final Set<Datapoint> datapoints;
    private final String label;
 
    public GetMetricStatisticsResponse(@Nullable Set<Datapoint> datapoints, String label) {
+      // Default to an empty set
       if (datapoints == null) {
-         this.datapoints = Sets.newLinkedHashSet();
+         this.datapoints = ImmutableSet.<Datapoint>of();
       } else {
-         this.datapoints = datapoints;
+         this.datapoints = ImmutableSet.<Datapoint>copyOf(datapoints);
       }
       this.label = label;
-   }
-
-   /**
-    * return the list of {@link Datapoint} for the metric
-    */
-   public Set<Datapoint> getDatapoints() {
-      return datapoints;
    }
 
    /**
@@ -89,6 +87,11 @@ public class GetMetricStatisticsResponse {
       return Objects.toStringHelper(this)
                     .add("label", label)
                     .add("datapoints", datapoints).toString();
+   }
+
+   @Override
+   protected Set<Datapoint> delegate() {
+      return datapoints;
    }
 
 }

@@ -18,32 +18,42 @@
  */
 package org.jclouds.cloudwatch;
 
-import org.jclouds.cloudwatch.domain.Datapoint;
-import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
-import org.jclouds.cloudwatch.domain.Statistics;
-import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
-import org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2;
-import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.javax.annotation.Nullable;
-
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.Statistics;
+import org.jclouds.cloudwatch.features.MetricClient;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Region;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.inject.Provides;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
  * <p/>
  * 
  * @see <a
- *      href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/DeveloperGuide/index.html"
+ *      href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface CloudWatchClient {
-
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
+   
    /**
     * This call returns data for one or more statistics of given a metric. For more information, see
     * Statistic and Metric.
@@ -80,35 +90,15 @@ public interface CloudWatchClient {
     *           The statistics to be returned for the given metric. ex. Average
     * @param options
     *          more filtering options (e.g. instance ID)
+    * @see MetricsClient#getMetricStatistics
     */
    @Deprecated
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
           Date startTime, Date endTime, int period, Statistics statistics, GetMetricStatisticsOptions... options);
-
+   
    /**
-    * Returns a list of valid metrics stored for the AWS account owner.
-    *
-    * <p/>
-    * <h3>Note</h3> Up to 500 results are returned for any one call. To retrieve further results, use returned
-    * NextToken ({@link org.jclouds.cloudwatch.domain.ListMetricsResponse#getNextToken()})
-    * value with subsequent calls  .To retrieve all available metrics with one call, use
-    * {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}.
-    *
-    * @param region the region to query metrics in
-    * @param options the options describing the metrics query
-    *
-    * @return the response object
+    * Provides synchronous access to Metric features.
     */
-   ListMetricsResponse listMetrics(@Nullable String region, ListMetricsOptions options);
-
-    /**
-     * Gets statistics for the specified metric.
-     *
-     * @param region the region to gather metrics in
-     * @param options the options describing the metric statistics query
-     *
-     * @return the response object
-     */
-   GetMetricStatisticsResponse getMetricStatistics(@Nullable String region, GetMetricStatisticsOptionsV2 options);
-
+   @Delegate
+   MetricClient getMetricClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

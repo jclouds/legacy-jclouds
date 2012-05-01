@@ -26,6 +26,7 @@ import java.util.Set;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -40,18 +41,24 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "GetMetricStatisticsResponseHandlerTest")
 public class GetMetricStatisticsResponseHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
-      DateService dateService = injector.getInstance(DateService.class);
       InputStream is = getClass().getResourceAsStream("/get_metric_statistics.xml");
 
-      Set<Datapoint> expected = ImmutableSet.of(new Datapoint(0.17777777777777778, null, null, dateService
-               .iso8601SecondsDateParse("2009-01-16T00:00:00Z"), 9.0, null, Unit.PERCENT, null), new Datapoint(
-               0.1, null, null, dateService.iso8601SecondsDateParse("2009-01-16T00:01:00Z"), 8.0, null,
-               Unit.PERCENT, null));
+      Set<Datapoint> expected = expected();
 
       GetMetricStatisticsResponseHandler handler = injector.getInstance(GetMetricStatisticsResponseHandler.class);
       Set<Datapoint> result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
+   }
+
+   DateService dateService = new SimpleDateFormatDateService();
+
+   public Set<Datapoint> expected() {
+
+      Set<Datapoint> expected = ImmutableSet.of(new Datapoint(0.17777777777777778, null, null, dateService
+               .iso8601SecondsDateParse("2009-01-16T00:00:00Z"), 9.0, null, Unit.PERCENT, null), new Datapoint(0.1,
+               null, null, dateService.iso8601SecondsDateParse("2009-01-16T00:01:00Z"), 8.0, null, Unit.PERCENT, null));
+      return expected;
    }
 
 }

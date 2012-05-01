@@ -24,7 +24,7 @@ import org.jclouds.javax.annotation.Nullable;
 import java.util.Date;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?DT_Datapoint.html"
+ * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference?DT_Datapoint.html"
  *      />
  * 
  * @author Adrian Cole

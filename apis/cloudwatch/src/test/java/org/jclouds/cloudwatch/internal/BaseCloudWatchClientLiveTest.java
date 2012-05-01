@@ -16,33 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudwatch.config;
+package org.jclouds.cloudwatch.internal;
 
-import java.util.Map;
-
-import org.jclouds.aws.config.FormSigningRestClientModule;
+import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.cloudwatch.CloudWatchApiMetadata;
 import org.jclouds.cloudwatch.CloudWatchAsyncClient;
 import org.jclouds.cloudwatch.CloudWatchClient;
-import org.jclouds.cloudwatch.features.MetricAsyncClient;
-import org.jclouds.cloudwatch.features.MetricClient;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestContext;
+import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Configures the Monitoring connection.
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
-public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(MetricClient.class, MetricAsyncClient.class)
-         .build();
+@Test(groups = "live")
+public class BaseCloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<CloudWatchClient, CloudWatchAsyncClient>> {
+
+   public BaseCloudWatchClientLiveTest() {
+      provider = "cloudwatch";
+   }
    
-   public CloudWatchRestClientModule() {
-      super(TypeToken.of(CloudWatchClient.class), TypeToken.of(CloudWatchAsyncClient.class), DELEGATE_MAP);
+   @Override
+   protected TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> contextType() {
+      return CloudWatchApiMetadata.CONTEXT_TOKEN;
    }
 
 }

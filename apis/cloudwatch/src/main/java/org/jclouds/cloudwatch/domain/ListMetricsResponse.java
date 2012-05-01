@@ -18,18 +18,21 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import org.jclouds.javax.annotation.Nullable;
-
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.ImmutableSet;
+
 /**
+ * list of {@link Metric}
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_ListMetrics.html" />
  *
  * @author Jeremy Whitlock
  */
-public class ListMetricsResponse {
+public class ListMetricsResponse extends ForwardingSet<Metric>{
 
    private final Set<Metric> metrics;
    private final String nextToken;
@@ -37,18 +40,11 @@ public class ListMetricsResponse {
    public ListMetricsResponse(@Nullable Set<Metric> metrics, @Nullable String nextToken) {
       // Default to an empty set
       if (metrics == null) {
-         this.metrics = Sets.newLinkedHashSet();
+         this.metrics = ImmutableSet.<Metric>of();
       } else {
-         this.metrics = metrics;
+         this.metrics = ImmutableSet.<Metric>copyOf(metrics);
       }
       this.nextToken = nextToken;
-   }
-
-   /**
-    * return the list of {@link Metric}
-    */
-   public Set<Metric> getMetrics() {
-      return metrics;
    }
 
    /**
@@ -91,6 +87,11 @@ public class ListMetricsResponse {
       return Objects.toStringHelper(this)
                     .add("metrics", metrics)
                     .add("nextToken", nextToken).toString();
+   }
+
+   @Override
+   protected Set<Metric> delegate() {
+      return metrics;
    }
 
 }

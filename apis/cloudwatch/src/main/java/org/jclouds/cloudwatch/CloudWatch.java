@@ -21,6 +21,7 @@ package org.jclouds.cloudwatch;
 import com.google.common.collect.AbstractIterator;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
+import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 
 import java.util.Iterator;
@@ -41,15 +42,16 @@ public class CloudWatch {
     *
     * @return iterable of metrics fitting the criteria
     */
-   public static Iterable<Metric> listMetrics(final CloudWatchClient cloudWatchClient,
-                                              final String region, final ListMetricsOptions options) {
+   public static Iterable<Metric> listMetrics(CloudWatchClient cloudWatchClient, String region,
+            final ListMetricsOptions options) {
+      final MetricClient metricClientForRegion = cloudWatchClient.getMetricClientForRegion(region);
       return new Iterable<Metric>() {
          public Iterator<Metric> iterator() {
             return new AbstractIterator<Metric>() {
 
                private ListMetricsOptions lastOptions = options;
-               private ListMetricsResponse response = cloudWatchClient.listMetrics(region, lastOptions);
-               private Iterator<Metric> iterator = response.getMetrics().iterator();
+               private ListMetricsResponse response = metricClientForRegion.listMetrics(lastOptions);
+               private Iterator<Metric> iterator = response.iterator();
 
                /**
                 * {@inheritDoc}
@@ -64,8 +66,8 @@ public class CloudWatch {
                                                         .namespace(lastOptions.getNamespace())
                                                         .nextToken(response.getNextToken())
                                                         .build();
-                        response = cloudWatchClient.listMetrics(region, lastOptions);
-                        iterator = response.getMetrics().iterator();
+                        response = metricClientForRegion.listMetrics(lastOptions);
+                        iterator = response.iterator();
                      }
                      if (iterator.hasNext()) {
                         return iterator.next();

@@ -16,21 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudwatch.options;
+package org.jclouds.cloudwatch.domain;
+
+import java.util.Date;
+import java.util.Set;
+
+import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import org.jclouds.cloudwatch.domain.Dimension;
-import org.jclouds.cloudwatch.domain.Statistics;
-import org.jclouds.cloudwatch.domain.Unit;
-import org.jclouds.date.DateService;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.javax.annotation.Nullable;
-
-import java.util.Date;
-import java.util.Set;
 
 /**
  * Options use to get statistics for the specified metric.
@@ -40,9 +36,8 @@ import java.util.Set;
  * @author Jeremy Whitlock
  */
 @Beta
-public class GetMetricStatisticsOptionsV2 extends BaseHttpRequestOptions {
+public class GetMetricStatistics {
 
-   private static final DateService dateService = new SimpleDateFormatDateService();
    private final Set<Dimension> dimensions;
    private final Date endTime;
    private final String metricName;
@@ -55,7 +50,7 @@ public class GetMetricStatisticsOptionsV2 extends BaseHttpRequestOptions {
    /**
     * Private constructor to enforce using {@link Builder}.
     */
-   private GetMetricStatisticsOptionsV2(@Nullable Set<Dimension> dimensions, Date endTime, String metricName,
+   private GetMetricStatistics(@Nullable Set<Dimension> dimensions, Date endTime, String metricName,
                                         String namespace, int period, Date startTime, Set<Statistics> statistics,
                                         Unit unit) {
       this.dimensions = dimensions;
@@ -330,7 +325,7 @@ public class GetMetricStatisticsOptionsV2 extends BaseHttpRequestOptions {
        * @throws NullPointerException if any of the required fields are null
        * @throws IllegalArgumentException if any of the provided fields don't meet required criteria
        */
-      public GetMetricStatisticsOptionsV2 build() {
+      public GetMetricStatistics build() {
          Preconditions.checkNotNull(endTime, "endTime cannot be null.");
          Preconditions.checkNotNull(metricName, "metricName cannot be null.");
          Preconditions.checkNotNull(namespace, "namespace cannot be null.");
@@ -340,34 +335,8 @@ public class GetMetricStatisticsOptionsV2 extends BaseHttpRequestOptions {
          Preconditions.checkNotNull(unit, "unit cannot be null.");
          Preconditions.checkArgument(statistics.size() >= 1, "statistics must have at least one member");
 
-         GetMetricStatisticsOptionsV2 options = new GetMetricStatisticsOptionsV2(dimensions, endTime, metricName,
-                                                                                 namespace, period, startTime,
-                                                                                 statistics, unit);
-         int dimensionIndex = 1;
-         int statisticIndex = 1;
-
-         for (Dimension dimension : dimensions) {
-            options.formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
-            options.formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
-            dimensionIndex++;
-         }
-
-         options.formParameters.put("EndTime", dateService.iso8601SecondsDateFormat(endTime));
-         options.formParameters.put("MetricName", metricName);
-         options.formParameters.put("Namespace", namespace);
-         options.formParameters.put("Period", Integer.toString(period));
-         options.formParameters.put("StartTime", dateService.iso8601SecondsDateFormat(startTime));
-
-         for (Statistics statistic : statistics) {
-            options.formParameters.put("Statistics.member." + statisticIndex, statistic.toString());
-            statisticIndex++;
-         }
-
-         options.formParameters.put("Unit", unit.toString());
-
-         return options;
+         return new GetMetricStatistics(dimensions, endTime, metricName,namespace, period, startTime,  statistics, unit);
       }
-
    }
 
 }
