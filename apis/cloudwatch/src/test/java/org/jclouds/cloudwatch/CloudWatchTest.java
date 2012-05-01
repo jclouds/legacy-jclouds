@@ -39,8 +39,8 @@ import static org.easymock.EasyMock.expect;
 public class CloudWatchTest {
 
    /**
-    * Tests {@link CloudWatch#listMetrics(CloudWatchClient, org.jclouds.cloudwatch.options.ListMetricsOptions)} where a
-    * single response returns all results.
+    * Tests {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}
+    * where a single response returns all results.
     *
     * @throws Exception if anything goes wrong
     */
@@ -50,18 +50,18 @@ public class CloudWatchTest {
       ListMetricsOptions options = ListMetricsOptions.builder().build();
       ListMetricsResponse response = new ListMetricsResponse(ImmutableSet.of(createMock(Metric.class)), null);
 
-      expect(client.listMetrics(options))
+      expect(client.listMetrics(null, options))
             .andReturn(response)
             .once();
 
       EasyMock.replay(client);
 
-      Assert.assertEquals(1, Iterables.size(CloudWatch.listMetrics(client, options)));
+      Assert.assertEquals(1, Iterables.size(CloudWatch.listMetrics(client, null, options)));
    }
 
    /**
-    * Tests {@link CloudWatch#listMetrics(CloudWatchClient, org.jclouds.cloudwatch.options.ListMetricsOptions)} where
-    * retrieving all results requires multiple requests.
+    * Tests {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}
+    * where retrieving all results requires multiple requests.
     *
     * @throws Exception if anything goes wrong
     */
@@ -72,16 +72,17 @@ public class CloudWatchTest {
       ListMetricsResponse response1 = new ListMetricsResponse(ImmutableSet.of(createMock(Metric.class)), "NEXTTOKEN");
       ListMetricsResponse response2 = new ListMetricsResponse(ImmutableSet.of(createMock(Metric.class)), null);
 
-      expect(client.listMetrics(anyObject(ListMetricsOptions.class)))
+      // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
+      expect(client.listMetrics(EasyMock.eq(""), anyObject(ListMetricsOptions.class)))
             .andReturn(response1)
             .once();
-      expect(client.listMetrics(anyObject(ListMetricsOptions.class)))
+      expect(client.listMetrics(EasyMock.eq(""), anyObject(ListMetricsOptions.class)))
             .andReturn(response2)
             .once();
 
       EasyMock.replay(client);
 
-      Assert.assertEquals(2, Iterables.size(CloudWatch.listMetrics(client, options)));
+      Assert.assertEquals(2, Iterables.size(CloudWatch.listMetrics(client, "", options)));
    }
 
 }

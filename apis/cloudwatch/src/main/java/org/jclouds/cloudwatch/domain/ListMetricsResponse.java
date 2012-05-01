@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudwatch.domain;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -34,7 +34,7 @@ public class ListMetricsResponse {
    private final Set<Metric> metrics;
    private final String nextToken;
 
-   public ListMetricsResponse(Set<Metric> metrics, String nextToken) {
+   public ListMetricsResponse(@Nullable Set<Metric> metrics, @Nullable String nextToken) {
       // Default to an empty set
       if (metrics == null) {
          this.metrics = Sets.newLinkedHashSet();
@@ -63,6 +63,14 @@ public class ListMetricsResponse {
     * {@inheritDoc}
     */
    @Override
+   public int hashCode() {
+      return Objects.hashCode(metrics, nextToken);
+   }
+
+    /**
+    * {@inheritDoc}
+    */
+   @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
@@ -71,17 +79,8 @@ public class ListMetricsResponse {
       if (getClass() != obj.getClass())
          return false;
       ListMetricsResponse other = (ListMetricsResponse)obj;
-      if (metrics == null) {
-         if (other.metrics != null)
-            return false;
-      } else if (!metrics.equals(other.metrics))
-         return false;
-      if (nextToken == null) {
-         if (other.nextToken != null)
-            return false;
-      } else if (!nextToken.equals(other.nextToken))
-         return false;
-      return true;
+      return Objects.equal(this.metrics, other.metrics) &&
+             Objects.equal(this.nextToken, other.nextToken);
    }
 
    /**
@@ -89,27 +88,9 @@ public class ListMetricsResponse {
     */
    @Override
    public String toString() {
-      StringBuilder builder = new StringBuilder();
-
-      builder.append("[metrics=[");
-
-      Iterator<Metric> iterator = metrics.iterator();
-
-      while (iterator.hasNext()) {
-         builder.append(iterator.next());
-
-         if (iterator.hasNext()) {
-            builder.append(", ");
-         }
-      }
-
-      builder.append("]");
-
-      builder.append(", nextToken=")
-             .append(nextToken)
-             .append("]");
-
-      return builder.toString();
+      return Objects.toStringHelper(this)
+                    .add("metrics", metrics)
+                    .add("nextToken", nextToken).toString();
    }
 
 }

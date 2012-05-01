@@ -25,48 +25,36 @@ import org.jclouds.javax.annotation.Nullable;
 import java.util.Set;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_Metric.html" />
+ * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html" />
  *
  * @author Jeremy Whitlock
  */
-public class Metric {
+public class GetMetricStatisticsResponse {
 
-   private final Set<Dimension> dimensions;
-   private final String metricName;
-   private final String namespace;
+   private final Set<Datapoint> datapoints;
+   private final String label;
 
-   public Metric (String metricName, String namespace, @Nullable Set<Dimension> dimensions) {
-      // Default to an empty set
-      if (dimensions == null) {
-         this.dimensions = Sets.newLinkedHashSet();
+   public GetMetricStatisticsResponse(@Nullable Set<Datapoint> datapoints, String label) {
+      if (datapoints == null) {
+         this.datapoints = Sets.newLinkedHashSet();
       } else {
-         this.dimensions = dimensions;
+         this.datapoints = datapoints;
       }
-
-      this.metricName = metricName;
-      this.namespace = namespace;
+      this.label = label;
    }
 
    /**
-    * return the metric name for the metric.
+    * return the list of {@link Datapoint} for the metric
     */
-   public String getMetricName() {
-      return metricName;
+   public Set<Datapoint> getDatapoints() {
+      return datapoints;
    }
 
    /**
-    * return the namespace for the metric
+    * return the label describing the specified metric
     */
-   public String getNamespace() {
-      return namespace;
-   }
-
-   /**
-    * return the available dimensions for the metric
-    */
-   @Nullable
-   public Set<Dimension> getDimensions() {
-      return dimensions;
+   public String getLabel() {
+      return label;
    }
 
    /**
@@ -74,7 +62,7 @@ public class Metric {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(dimensions, metricName, namespace);
+      return Objects.hashCode(datapoints, label);
    }
 
     /**
@@ -88,11 +76,10 @@ public class Metric {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Metric other = (Metric)obj;
-      return Objects.equal(this.dimensions, other.dimensions) &&
-             Objects.equal(this.metricName, other.metricName) &&
-             Objects.equal(this.namespace, other.namespace);
-  }
+      GetMetricStatisticsResponse other = (GetMetricStatisticsResponse)obj;
+      return Objects.equal(this.datapoints, other.datapoints) &&
+             Objects.equal(this.label, other.label);
+   }
 
    /**
     * {@inheritDoc}
@@ -100,9 +87,8 @@ public class Metric {
    @Override
    public String toString() {
       return Objects.toStringHelper(this)
-                    .add("namespace", namespace)
-                    .add("metricName", metricName)
-                    .add("dimension", dimensions).toString();
+                    .add("label", label)
+                    .add("datapoints", datapoints).toString();
    }
 
 }
