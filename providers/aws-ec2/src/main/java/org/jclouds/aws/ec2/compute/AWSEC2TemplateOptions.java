@@ -81,13 +81,16 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
          if (getSpotPrice() != null)
             eTo.spotPrice(getSpotPrice());
          if (getSpotOptions() != null)
-            eTo.spotOptions(getSpotOptions());
+             eTo.spotOptions(getSpotOptions());
+         if (shouldEncodeGroupInTags())
+             eTo.encodeGroupInTags();
       }
    }
 
    private boolean monitoringEnabled;
    private String placementGroup = null;
    private boolean noPlacementGroup;
+   private boolean encodeGroupInTags = false;
    private String subnetId;
    private Float spotPrice;
    private RequestSpotInstancesOptions spotOptions = RequestSpotInstancesOptions.NONE;
@@ -113,6 +116,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       checkState(!noPlacementGroup, "you cannot specify both options placementGroup and noPlacementGroup");
       Preconditions2.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
       this.placementGroup = placementGroup;
+      return this;
+   }
+
+   /**
+    * Encode the group name in metadata tags.
+    */
+   public AWSEC2TemplateOptions encodeGroupInTags() {
+      this.encodeGroupInTags = true;
       return this;
    }
 
@@ -647,6 +658,13 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     */
    public boolean isMonitoringEnabled() {
       return monitoringEnabled;
+   }
+
+   /**
+    * @return true (default false) if we are supposed to encode group name in metadata tags
+    */
+   public boolean shouldEncodeGroupInTags() {
+      return encodeGroupInTags;
    }
 
    /**

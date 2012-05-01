@@ -95,8 +95,6 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    final Map<String, Credentials> credentialStore;
    final Provider<TemplateBuilder> templateBuilderProvider;
 
-
-
    @Inject
    protected EC2CreateNodesInGroupThenAddToSet(
             EC2Client client,
@@ -214,8 +212,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             int count, Template template) {
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
-      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
-               group, template);
+      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region, group, template);
       return createNodesInRegionAndZone(region, zone, group, count, template, instanceOptions);
    }
 
@@ -239,5 +236,4 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       }
       return started;
    }
-
 }

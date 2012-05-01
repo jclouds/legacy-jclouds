@@ -20,8 +20,8 @@ package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -110,18 +110,18 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
          if (logger.isDebugEnabled())
             logger.debug(">> requesting %d spot instances region(%s) price(%f) spec(%s) options(%s)", count, region,
                      spotPrice, spec, options);
-         return addTagsToInstancesInRegion(tags, transform(client
+         return addTagsToInstancesInRegion(template.getOptions(), transform(client
                   .getSpotInstanceServices().requestSpotInstancesInRegion(region, spotPrice, count, spec, options),
                   spotConverter), region, group);
       } else {
-         return addTagsToInstancesInRegion(tags, super.createNodesInRegionAndZone(
+         return addTagsToInstancesInRegion(template.getOptions(), super.createNodesInRegionAndZone(
                   region, zone, group, count, template, instanceOptions), region, group);
       }
 
    }
 
-   public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(Map<String, String> metadata,
-            Iterable<? extends RunningInstance> iterable, String region, String group) {
+   public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(TemplateOptions options, Iterable<? extends RunningInstance> iterable, String region, String group) {
+      Map<String, String> metadata = options.getUserMetadata();
       if (metadata.size() > 0 || generateInstanceNames) {
          for (String id : transform(iterable, new Function<RunningInstance, String>() {
 
@@ -131,16 +131,23 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             }
 
          }))
-            aclient.getTagServices()
-                     .createTagsInRegion(region, ImmutableSet.of(id), metadataForId(id, group, metadata));
+         aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id), metadataForId(options, id, group, metadata));
       }
       return iterable;
    }
 
-   private Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
-      return generateInstanceNames && !metadata.containsKey("Name") ? ImmutableMap.<String, String> builder().putAll(
-               metadata).put("Name", id.replaceAll(".*-", group + "-")).build() : metadata;
+   protected Map<String, String> metadataForId(TemplateOptions options, String id, String group, Map<String, String> metadata) {
+      ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder().putAll(metadata);
+      AWSEC2TemplateOptions ec2opts = AWSEC2TemplateOptions.class.cast(options);
+      if (generateInstanceNames && !metadata.containsKey("Name")) {
+          builder.put("Name", id.replaceAll(".*-", group + "-"));
+      }
+      if (ec2opts.shouldEncodeGroupInTags() && !metadata.containsKey("Group")) {
+          builder.put("Group", group);
+      }
+      return builder.build();
    }
+
 
    private Float getSpotPriceOrNull(TemplateOptions options) {
       return options instanceof AWSEC2TemplateOptions ? AWSEC2TemplateOptions.class.cast(options).getSpotPrice() : null;
