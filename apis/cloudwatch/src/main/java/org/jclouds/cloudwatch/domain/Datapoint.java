@@ -119,7 +119,7 @@ public class Datapoint {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), average, customUnit, maximum, minimum, samples, sum, timestamp, unit);
+      return Objects.hashCode(average, customUnit, maximum, minimum, samples, sum, timestamp, unit);
    }
 
    @Override
@@ -132,7 +132,7 @@ public class Datapoint {
          return false;
       Datapoint other = (Datapoint) obj;
       return Objects.equal(this.average, other.average) &&
-             Objects.equal(this.customUnit, other.maximum) &&
+             Objects.equal(this.customUnit, other.customUnit) &&
              Objects.equal(this.maximum, other.maximum) &&
              Objects.equal(this.minimum, other.minimum) &&
              Objects.equal(this.samples, other.samples) &&

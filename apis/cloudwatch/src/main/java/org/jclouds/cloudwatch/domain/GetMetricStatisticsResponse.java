@@ -62,7 +62,7 @@ public class GetMetricStatisticsResponse {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), datapoints, label);
+      return Objects.hashCode(datapoints, label);
    }
 
     /**

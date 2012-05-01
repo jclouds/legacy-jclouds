@@ -54,7 +54,7 @@ public class Dimension {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), name, value);
+      return Objects.hashCode(name, value);
    }
 
    /**

@@ -69,7 +69,7 @@ import static org.testng.Assert.assertEquals;
 public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsyncClient> {
 
    /**
-    * Tests that {@link CloudWatchAsyncClient#getMetricStatistics(org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2)}
+    * Tests that {@link CloudWatchAsyncClient#getMetricStatistics(String, org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2)}
     * works as expected.
     *
     * @throws Exception if anything goes wrong
@@ -97,8 +97,9 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
                                                                              .statistic(statistic1)
                                                                              .statistic(statistic2)
                                                                              .unit(unit).build();
-      Method method = CloudWatchAsyncClient.class.getMethod("getMetricStatistics", GetMetricStatisticsOptionsV2.class);
-      HttpRequest request = processor.createRequest(method, goodOptions);
+      Method method = CloudWatchAsyncClient.class.getMethod("getMetricStatistics", String.class,
+                                                            GetMetricStatisticsOptionsV2.class);
+      HttpRequest request = processor.createRequest(method, null, goodOptions);
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
@@ -122,17 +123,17 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
    }
 
    /**
-    * Tests that {@link CloudWatchAsyncClient#listMetrics(org.jclouds.cloudwatch.options.ListMetricsOptions)} works
+    * Tests that {@link CloudWatchAsyncClient#listMetrics(String, org.jclouds.cloudwatch.options.ListMetricsOptions)} works
     * as expected.
     *
     * @throws Exception if anything goes wrong
     */
    public void testListMetrics() throws Exception {
-      Method method = CloudWatchAsyncClient.class.getMethod("listMetrics", ListMetricsOptions.class);
+      Method method = CloudWatchAsyncClient.class.getMethod("listMetrics", String.class, ListMetricsOptions.class);
       HttpRequest request;
 
       // Test an empty request
-      request = processor.createRequest(method, ListMetricsOptions.builder().build());
+      request = processor.createRequest(method, null, ListMetricsOptions.builder().build());
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
@@ -147,12 +148,12 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
       String metricName = EC2Constants.MetricName.CPU_UTILIZATION;
       String nextToken = "SOMENEXTTOKEN";
       String namespace = Namespaces.EC2;
-      request = processor.createRequest(method, ListMetricsOptions.builder()
-                                        .dimension(dimension1)
-                                        .metricName(metricName)
-                                        .namespace(namespace)
-                                        .nextToken(nextToken)
-                                        .build());
+      request = processor.createRequest(method, null, ListMetricsOptions.builder()
+                                                                        .dimension(dimension1)
+                                                                        .metricName(metricName)
+                                                                        .namespace(namespace)
+                                                                        .nextToken(nextToken)
+                                                                        .build());
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
@@ -167,12 +168,12 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
 
       // Test a request with multiple dimensions and no NextToken
       Dimension dimension2 = new Dimension(EC2Constants.Dimension.INSTANCE_TYPE, "t1.micro");
-      request = processor.createRequest(method, ListMetricsOptions.builder()
-                                                                  .dimension(dimension1)
-                                                                  .dimension(dimension2)
-                                                                  .metricName(metricName)
-                                                                  .namespace(namespace)
-                                                                  .build());
+      request = processor.createRequest(method, null, ListMetricsOptions.builder()
+                                                                        .dimension(dimension1)
+                                                                        .dimension(dimension2)
+                                                                        .metricName(metricName)
+                                                                        .namespace(namespace)
+                                                                        .build());
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");

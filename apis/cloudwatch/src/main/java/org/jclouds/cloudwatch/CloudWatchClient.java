@@ -92,21 +92,23 @@ public interface CloudWatchClient {
     * <h3>Note</h3> Up to 500 results are returned for any one call. To retrieve further results, use returned
     * NextToken ({@link org.jclouds.cloudwatch.domain.ListMetricsResponse#getNextToken()})
     * value with subsequent calls  .To retrieve all available metrics with one call, use
-    * {@link CloudWatch#listMetrics(CloudWatchClient, org.jclouds.cloudwatch.options.ListMetricsOptions)}.
+    * {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}.
     *
+    * @param region the region to query metrics in
     * @param options the options describing the metrics query
     *
     * @return the response object
     */
-   ListMetricsResponse listMetrics(ListMetricsOptions options);
+   ListMetricsResponse listMetrics(@Nullable String region, ListMetricsOptions options);
 
     /**
      * Gets statistics for the specified metric.
      *
+     * @param region the region to gather metrics in
      * @param options the options describing the metric statistics query
      *
      * @return the response object
      */
-   GetMetricStatisticsResponse getMetricStatistics(GetMetricStatisticsOptionsV2 options);
+   GetMetricStatisticsResponse getMetricStatistics(@Nullable String region, GetMetricStatisticsOptionsV2 options);
 
 }

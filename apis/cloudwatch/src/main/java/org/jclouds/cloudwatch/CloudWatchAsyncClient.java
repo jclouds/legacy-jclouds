@@ -79,21 +79,25 @@ public interface CloudWatchAsyncClient {
          GetMetricStatisticsOptions... options);
 
    /**
-    * @see CloudWatchClient#listMetrics(org.jclouds.cloudwatch.options.ListMetricsOptions)
+    * @see CloudWatchClient#listMetrics(String, org.jclouds.cloudwatch.options.ListMetricsOptions)
     */
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
    @FormParams(keys = "Action", values = "ListMetrics")
-   ListenableFuture<? extends ListMetricsResponse> listMetrics(ListMetricsOptions options);
+   ListenableFuture<? extends ListMetricsResponse> listMetrics(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         ListMetricsOptions options);
 
    /**
-    * @see CloudWatchClient#getMetricStatistics(org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2)
+    * @see CloudWatchClient#getMetricStatistics(String, org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2)
     */
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
    @FormParams(keys = "Action", values = "GetMetricStatistics")
-   ListenableFuture<? extends GetMetricStatisticsResponse> getMetricStatistics(GetMetricStatisticsOptionsV2 options);
+   ListenableFuture<? extends GetMetricStatisticsResponse> getMetricStatistics(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         GetMetricStatisticsOptionsV2 options);
 
 }

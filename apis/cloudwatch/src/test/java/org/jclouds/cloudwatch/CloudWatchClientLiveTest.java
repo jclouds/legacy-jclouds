@@ -66,7 +66,7 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
 
    @Test
    protected void testGetMetricStatisticsV2() {
-      ListMetricsResponse metricsResponse = client.listMetrics(ListMetricsOptions.builder().build());
+      ListMetricsResponse metricsResponse = client.listMetrics(null, ListMetricsOptions.builder().build());
 
       // Walk through all datapoints in all metrics until we find a metric datapoint that returns statistics
       if (metricsResponse.getMetrics().size() > 0) {
@@ -91,7 +91,7 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
                                                  .statistics(ImmutableSet.of(Statistics.MAXIMUM,
                                                                              Statistics.MINIMUM))
                                                  .unit(Unit.PERCENT).build();
-               GetMetricStatisticsResponse response = client.getMetricStatistics(options);
+               GetMetricStatisticsResponse response = client.getMetricStatistics(null, options);
 
                if (response.getDatapoints().size() > 0) {
                   checkNotNull(response.getLabel());
@@ -123,7 +123,7 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
       String testDimensionValue = "t1.micro";
 
       // Test an empty request (pulls all stored metric options across all products)
-      response = client.listMetrics(ListMetricsOptions.builder().build());
+      response = client.listMetrics(null, ListMetricsOptions.builder().build());
 
       performDefaultMetricsTests(response);
 
@@ -157,12 +157,12 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
       }
 
       // Test with a NextToken, even if it's null
-      response = client.listMetrics(ListMetricsOptions.builder().nextToken(response.getNextToken()).build());
+      response = client.listMetrics(null, ListMetricsOptions.builder().nextToken(response.getNextToken()).build());
 
       performDefaultMetricsTests(response);
 
       // Test with a Namespace
-      response = client.listMetrics(ListMetricsOptions.builder().namespace(testNamespace).build());
+      response = client.listMetrics(null, ListMetricsOptions.builder().namespace(testNamespace).build());
 
       performDefaultMetricsTests(response);
 
@@ -172,7 +172,7 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
       }
 
       // Test with a MetricName
-      response = client.listMetrics(ListMetricsOptions.builder().metricName(testMetricName).build());
+      response = client.listMetrics(null, ListMetricsOptions.builder().metricName(testMetricName).build());
 
       performDefaultMetricsTests(response);
 
@@ -185,8 +185,7 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
       if (testDimensionName != null) {
          Dimension testDimension = new Dimension(testDimensionName, testDimensionValue);
 
-         response = client.listMetrics(ListMetricsOptions.builder()
-                                                         .dimension(testDimension).build());
+         response = client.listMetrics(null, ListMetricsOptions.builder().dimension(testDimension).build());
 
          performDefaultMetricsTests(response);
 

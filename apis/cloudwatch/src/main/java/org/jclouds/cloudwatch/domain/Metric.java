@@ -74,7 +74,7 @@ public class Metric {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), dimensions, metricName, namespace);
+      return Objects.hashCode(dimensions, metricName, namespace);
    }
 
     /**

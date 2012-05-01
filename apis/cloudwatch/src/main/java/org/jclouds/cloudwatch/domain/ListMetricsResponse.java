@@ -64,7 +64,7 @@ public class ListMetricsResponse {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), metrics, nextToken);
+      return Objects.hashCode(metrics, nextToken);
    }
 
     /**
