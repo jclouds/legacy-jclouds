@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudwatch.domain;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -73,33 +73,11 @@ public class Metric {
     * {@inheritDoc}
     */
    @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-
-      builder.append("[metricName=")
-             .append(metricName)
-             .append(", namespace=")
-             .append(namespace);
-
-
-      builder.append(", dimensions=[");
-
-      Iterator<Dimension> iterator = dimensions.iterator();
-
-      while (iterator.hasNext()) {
-         builder.append(iterator.next());
-
-         if (iterator.hasNext()) {
-            builder.append(", ");
-         }
-      }
-
-      builder.append("]]");
-
-      return builder.toString();
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), dimensions, metricName, namespace);
    }
 
-   /**
+    /**
     * {@inheritDoc}
     */
    @Override
@@ -111,22 +89,20 @@ public class Metric {
       if (getClass() != obj.getClass())
          return false;
       Metric other = (Metric)obj;
-      if (metricName == null) {
-         if (other.metricName != null)
-            return false;
-      } else if (!metricName.equals(other.metricName))
-         return false;
-      if (namespace == null) {
-         if (other.namespace != null)
-            return false;
-      } else if (!namespace.equals(other.namespace))
-         return false;
-      if (dimensions == null) {
-         if (other.dimensions != null)
-            return false;
-      } else if (!dimensions.equals(other.dimensions))
-         return false;
-     return true;
+      return Objects.equal(this.dimensions, other.dimensions) &&
+             Objects.equal(this.metricName, other.metricName) &&
+             Objects.equal(this.namespace, other.namespace);
   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this)
+                    .add("namespace", namespace)
+                    .add("metricName", metricName)
+                    .add("dimension", dimensions).toString();
+   }
 
 }

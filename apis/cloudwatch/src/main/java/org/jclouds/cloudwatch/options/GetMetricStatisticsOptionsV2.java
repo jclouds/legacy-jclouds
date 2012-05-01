@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudwatch.options;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.jclouds.cloudwatch.domain.Dimension;
@@ -38,6 +39,7 @@ import java.util.Set;
  *
  * @author Jeremy Whitlock
  */
+@Beta
 public class GetMetricStatisticsOptionsV2 extends BaseHttpRequestOptions {
 
    private static final DateService dateService = new SimpleDateFormatDateService();

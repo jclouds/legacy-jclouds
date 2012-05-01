@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudwatch.domain;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -61,6 +61,14 @@ public class GetMetricStatisticsResponse {
     * {@inheritDoc}
     */
    @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), datapoints, label);
+   }
+
+    /**
+    * {@inheritDoc}
+    */
+   @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
@@ -69,17 +77,8 @@ public class GetMetricStatisticsResponse {
       if (getClass() != obj.getClass())
          return false;
       GetMetricStatisticsResponse other = (GetMetricStatisticsResponse)obj;
-      if (datapoints == null) {
-         if (other.datapoints != null)
-            return false;
-      } else if (!datapoints.equals(other.datapoints))
-         return false;
-      if (label == null) {
-         if (other.label != null)
-            return false;
-      } else if (!label.equals(other.label))
-         return false;
-      return true;
+      return Objects.equal(this.datapoints, other.datapoints) &&
+             Objects.equal(this.label, other.label);
    }
 
    /**
@@ -87,25 +86,9 @@ public class GetMetricStatisticsResponse {
     */
    @Override
    public String toString() {
-      StringBuilder builder = new StringBuilder();
-
-      builder.append("[label=")
-             .append(label)
-             .append(", datapoints=[");
-
-      Iterator<Datapoint> iterator = datapoints.iterator();
-
-      while (iterator.hasNext()) {
-         builder.append(iterator.next());
-
-         if (iterator.hasNext()) {
-            builder.append(", ");
-         }
-      }
-
-      builder.append("]]");
-
-      return builder.toString();
+      return Objects.toStringHelper(this)
+                    .add("label", label)
+                    .add("datapoints", datapoints).toString();
    }
 
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudwatch.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_Dimension.html" />
  *
@@ -51,6 +53,14 @@ public class Dimension {
     * {@inheritDoc}
     */
    @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), name, value);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
@@ -59,17 +69,8 @@ public class Dimension {
       if (getClass() != obj.getClass())
          return false;
       Dimension other = (Dimension)obj;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (value == null) {
-         if (other.value != null)
-            return false;
-      } else if (!value.equals(other.value))
-         return false;
-      return true;
+      return Objects.equal(this.name, other.name) &&
+             Objects.equal(this.value, other.value);
    }
 
    /**
@@ -77,7 +78,9 @@ public class Dimension {
     */
    @Override
    public String toString() {
-      return "[name=" + name + ", value=" + value + "]";
+      return Objects.toStringHelper(this)
+                    .add("name", name)
+                    .add("value", value).toString();
    }
 
 }
