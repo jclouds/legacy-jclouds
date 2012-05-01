@@ -194,7 +194,7 @@
     </interfaces>
 
     <socket-binding-group name="standard-sockets" default-interface="public">
-        <socket-binding name="http" port="${rhcloud.jboss.port:8080}"/>
+        <socket-binding name="http" port="${jboss.port:8080}"/>
         <socket-binding name="https" port="8443"/>
         <socket-binding name="jmx-connector-registry" port="1090"/>
         <socket-binding name="jmx-connector-server" port="1091"/>

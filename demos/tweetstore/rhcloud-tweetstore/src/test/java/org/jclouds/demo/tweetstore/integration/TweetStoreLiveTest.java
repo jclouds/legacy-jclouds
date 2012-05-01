@@ -172,7 +172,7 @@ public class TweetStoreLiveTest {
     }
    
    @BeforeTest(dependsOnMethods = "clearAndCreateContainers")
-   @Parameters({ "warfile", "rhcloud.jboss.address", "rhcloud.jboss.port", "rhcloud.jboss.home" })
+   @Parameters({ "warfile", "jboss.address", "jboss.port", "jboss.home" })
    public void startDevAppServer(final String warfile, final String address, final String port,
            String serverHome) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
