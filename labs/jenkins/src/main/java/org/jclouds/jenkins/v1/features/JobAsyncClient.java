@@ -18,6 +18,8 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import java.util.Map;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,14 +27,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
+import org.jclouds.jenkins.v1.binders.BindMapToOptionalParams;
 import org.jclouds.jenkins.v1.domain.JobDetails;
 import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
 import org.jclouds.jenkins.v1.functions.ReturnVoidOn302Or404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.binders.BindMapToMatrixParams;
+import org.jclouds.rest.binders.BindMapToStringPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -80,6 +87,15 @@ public interface JobAsyncClient {
    @Path("/job/{displayName}/build")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Void> build(@PathParam("displayName") String displayName);
+   
+   /**
+    * @see JobClient#buildJobWithParameters
+    */
+   @POST
+   @Path("/job/{displayName}/buildWithParameters")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Void> buildWithParameters(@PathParam("displayName") String displayName,
+            @BinderParam(BindMapToOptionalParams.class) Map<String, String> parameters);
    
    /**
     * @see JobClient#fetchConfigXML
