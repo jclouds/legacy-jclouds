@@ -20,10 +20,9 @@ package org.jclouds.jenkins.v1.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.utils.ModifyRequest.addQueryParam;
+import static org.jclouds.http.utils.ModifyRequest.addQueryParams;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -31,6 +30,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.Multimaps;
 
 /**
  * Binds the map to parameters.
@@ -50,9 +51,7 @@ public class BindMapToOptionalParams implements Binder {
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map, "this binder is only valid for Maps!");
       Map<String, String> map = (Map<String, String>) input;
-      for (Entry<String, String> entry : map.entrySet()) {
-         request = addQueryParam(request, entry.getKey(), entry.getValue(), builder.get());
-      }
+      request = addQueryParams(request, Multimaps.forMap(map), builder.get());
       return request;
    }
 
