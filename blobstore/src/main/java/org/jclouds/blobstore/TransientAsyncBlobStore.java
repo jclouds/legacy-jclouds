@@ -282,13 +282,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(null);
    }
 
-   public ListenableFuture<Blob> removeBlobAndReturnOld(String container, String key) {
-      if (getContainerToBlobs().containsKey(container)) {
-         return immediateFuture(getContainerToBlobs().get(container).remove(key));
-      }
-      return immediateFuture(null);
-   }
-
    /**
     * {@inheritDoc}
     */
@@ -309,7 +302,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(null);
    }
 
-   public ListenableFuture<Boolean> deleteContainerImpl(final String container) {
+   public ListenableFuture<Boolean> deleteContainerIfEmpty(final String container) {
       Boolean returnVal = true;
       if (getContainerToBlobs().containsKey(container)) {
          if (getContainerToBlobs().get(container).size() == 0)
@@ -360,20 +353,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
       getContainerToLocation().put(name, location != null ? location : defaultLocation.get());
       return immediateFuture(Boolean.TRUE);
-   }
-
-   /**
-    * throws IllegalStateException if the container already exists
-    */
-   public ListenableFuture<Void> createContainerInLocationIfAbsent(final Location location, final String name) {
-      ConcurrentMap<String, Blob> container = getContainerToBlobs().putIfAbsent(name,
-               new ConcurrentHashMap<String, Blob>());
-      if (container == null) {
-         getContainerToLocation().put(name, location != null ? location : defaultLocation.get());
-         return immediateFuture((Void) null);
-      } else {
-         return Futures.immediateFailedFuture(new IllegalStateException("container " + name + " already exists"));
-      }
    }
 
    public String getFirstQueryOrNull(String string, @Nullable HttpRequestOptions options) {
@@ -497,19 +476,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       container.put(blob.getMetadata().getName(), blob);
 
       return immediateFuture(Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.ETAG)));
-   }
-
-   public ListenableFuture<Blob> putBlobAndReturnOld(String containerName, Blob in) {
-      ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
-      if (container == null) {
-         return Futures.immediateFailedFuture(new IllegalStateException("containerName not found: " + containerName));
-      }
-
-      Blob blob = createUpdatedCopyOfBlobInContainer(containerName, in);
-
-      Blob old = container.put(blob.getMetadata().getName(), blob);
-
-      return immediateFuture(old);
    }
 
    protected Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
@@ -674,7 +640,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return getContainerToBlobs().containsKey(container);
    }
 
-   public ConcurrentMap<String, Location> getContainerToLocation() {
+   private ConcurrentMap<String, Location> getContainerToLocation() {
       return containerToLocation;
    }
 
