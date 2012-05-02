@@ -27,8 +27,6 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.partition;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
@@ -179,13 +177,10 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          final String finalMarker = options.getMarker();
          StorageMetadata lastMarkerMetadata = find(contents, new Predicate<StorageMetadata>() {
             public boolean apply(StorageMetadata metadata) {
-               return metadata.getName().compareTo(finalMarker) >= 0;
+               return metadata.getName().compareTo(finalMarker) > 0;
             }
          });
          contents = contents.tailSet(lastMarkerMetadata);
-         if (finalMarker.equals(lastMarkerMetadata.getName())) {
-            contents.remove(lastMarkerMetadata);
-         }
       }
 
       final String prefix = options.getDir();
@@ -198,26 +193,23 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       String marker = null;
-      Integer maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
-      if (contents.size() > 0) {
-         SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, maxResults);
-         if (!contentsSlice.contains(contents.last())) {
+      int maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
+      if (!contents.isEmpty()) {
+         StorageMetadata lastElement = contents.last();
+         contents = newTreeSet(Iterables.limit(contents, maxResults));
+         if (!contents.contains(lastElement)) {
             // Partial listing
-            marker = contentsSlice.last().getName();
-         } else {
-            marker = null;
+            marker = contents.last().getName();
          }
-         contents = contentsSlice;
       }
 
       final String delimiter = options.isRecursive() ? null : "/";
       if (delimiter != null) {
-         SortedSet<String> commonPrefixes = null;
-         Iterable<String> iterable = transform(contents, new CommonPrefixes(prefix != null ? prefix : null, delimiter));
-         commonPrefixes = iterable != null ? newTreeSet(iterable) : new TreeSet<String>();
+         SortedSet<String> commonPrefixes = newTreeSet(
+                transform(contents, new CommonPrefixes(prefix, delimiter)));
          commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
 
-         contents = newTreeSet(filter(contents, new DelimiterFilter(prefix != null ? prefix : null, delimiter)));
+         contents = newTreeSet(filter(contents, new DelimiterFilter(prefix, delimiter)));
 
          Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
                   new Function<String, StorageMetadata>() {
@@ -441,11 +433,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          }
          return NO_PREFIX;
       }
-   }
-
-   public static <T extends Comparable<?>> SortedSet<T> firstSliceOfSize(Iterable<T> elements, int size) {
-      List<List<T>> slices = partition(newArrayList(elements), size);
-      return newTreeSet(slices.get(0));
    }
 
    public static HttpResponseException returnResponseException(int code) {
