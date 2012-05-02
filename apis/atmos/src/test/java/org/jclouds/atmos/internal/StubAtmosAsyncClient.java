@@ -137,7 +137,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
    public ListenableFuture<Void> deletePath(String path) {
       if (path.indexOf('/') == path.length() - 1) {
          // chop off the trailing slash
-         return Futures.compose(blobStore.deleteContainerImpl(path.substring(0, path.length() - 1)),
+         return Futures.compose(blobStore.deleteContainerIfEmpty(path.substring(0, path.length() - 1)),
                   new Function<Boolean, Void>() {
 
                      public Void apply(Boolean from) {
