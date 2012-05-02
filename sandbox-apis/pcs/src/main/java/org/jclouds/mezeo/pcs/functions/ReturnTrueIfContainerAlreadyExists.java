@@ -18,13 +18,12 @@
  */
 package org.jclouds.mezeo.pcs.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -40,7 +39,7 @@ public class ReturnTrueIfContainerAlreadyExists implements Function<Exception, B
             return true;
          }
       }
-      return Boolean.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
 }

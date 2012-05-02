@@ -19,7 +19,6 @@
 package org.jclouds.rest.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -54,7 +53,7 @@ public class ReturnEmptyMultimapOnNotFoundOr404 implements Function<Exception, O
       } else if (rto404.apply(from)) {
          return ImmutableMultimap.of();
       }
-      return Multimap.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
 }

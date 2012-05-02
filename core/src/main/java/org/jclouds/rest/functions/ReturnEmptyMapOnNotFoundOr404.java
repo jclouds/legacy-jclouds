@@ -19,7 +19,6 @@
 package org.jclouds.rest.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class ReturnEmptyMapOnNotFoundOr404 implements Function<Exception, Object
       } else if (rto404.apply(from)) {
          return ImmutableMap.of();
       }
-      return Map.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
 }

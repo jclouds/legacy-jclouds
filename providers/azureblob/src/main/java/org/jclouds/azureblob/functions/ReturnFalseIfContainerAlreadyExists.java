@@ -18,11 +18,10 @@
  */
 package org.jclouds.azureblob.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import org.jclouds.azure.storage.AzureStorageResponseException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -37,7 +36,7 @@ public class ReturnFalseIfContainerAlreadyExists implements Function<Exception, 
             return false;
          }
       }
-      return Boolean.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
 }

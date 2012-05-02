@@ -19,7 +19,6 @@
 package org.jclouds.atmos.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.net.URI;
 
@@ -30,6 +29,7 @@ import org.jclouds.rest.InvocationContext;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class ReturnEndpointIfAlreadyExists implements Function<Exception, URI>,
       if (checkNotNull(from, "exception") instanceof KeyAlreadyExistsException) {
          return endpoint;
       }
-      return URI.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
    @Override

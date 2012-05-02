@@ -18,8 +18,6 @@
  */
 package org.jclouds.rest.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponseException;
@@ -27,6 +25,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -50,7 +49,7 @@ public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> 
                   throw new IllegalStateException(from);
             }
       }
-      return propagateOrNull(from);
+      throw Throwables.propagate(from);
    }
 
 }

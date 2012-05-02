@@ -21,13 +21,13 @@ package org.jclouds.s3.functions;
 import static com.google.common.base.Predicates.equalTo;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -46,6 +46,6 @@ public class ReturnTrueOn404OrNotFoundFalseOnIllegalState implements Function<Ex
       if (returnValueOnCodeOrNull(from, true, equalTo(404)) != null)
          return true;
 
-      return Boolean.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 }
