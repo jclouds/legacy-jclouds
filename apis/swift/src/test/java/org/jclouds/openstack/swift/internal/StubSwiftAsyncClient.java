@@ -98,7 +98,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    }
 
    public ListenableFuture<Boolean> containerExists(final String container) {
-      return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
+      return blobStore.containerExists(container);
    }
 
    public ListenableFuture<Boolean> createContainer(String container) {
@@ -106,7 +106,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    }
 
    public ListenableFuture<Boolean> deleteContainerIfEmpty(String container) {
-      return blobStore.deleteContainerImpl(container);
+      return blobStore.deleteContainerIfEmpty(container);
    }
 
    public ListenableFuture<Boolean> disableCDN(String container) {
