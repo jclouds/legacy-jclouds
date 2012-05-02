@@ -18,14 +18,13 @@
  */
 package org.jclouds.s3.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -42,6 +41,6 @@ public class ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState implements Funct
       } else if (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null) {
          return false;
       }
-      return Boolean.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 }

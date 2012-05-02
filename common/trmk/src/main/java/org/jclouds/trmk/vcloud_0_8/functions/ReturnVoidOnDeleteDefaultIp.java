@@ -18,8 +18,6 @@
  */
 package org.jclouds.trmk.vcloud_0_8.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
@@ -28,6 +26,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * There's no current way to determine if an IP is the default outbound one. In this case, we may
@@ -49,6 +48,6 @@ public class ReturnVoidOnDeleteDefaultIp implements Function<Exception, Void> {
       } else if (from instanceof AuthorizationException) {
          return null;
       }
-      return Void.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 }

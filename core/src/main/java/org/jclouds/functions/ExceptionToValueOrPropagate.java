@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -50,7 +49,7 @@ public class ExceptionToValueOrPropagate<E extends Exception, T> implements Func
       Iterable<E> matchingThrowables = Iterables.filter(throwables, matchingClass);
       if (Iterables.size(matchingThrowables) >= 1)
          return value;
-      return (T) Throwables2.propagateOrNull(from);
+      throw Throwables.propagate(from);
    }
 
 }

@@ -20,11 +20,11 @@ package org.jclouds.http.functions;
 
 import static com.google.common.base.Predicates.equalTo;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -35,7 +35,9 @@ public class ReturnFalseOn404 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
       Boolean returnVal = returnValueOnCodeOrNull(from, false, equalTo(404));
-      return returnVal != null ? returnVal : Boolean.class.cast(propagateOrNull(from));
+      if (returnVal != null)
+         return returnVal;
+      throw Throwables.propagate(from);
    }
 
 }

@@ -21,17 +21,19 @@ package org.jclouds.openstack.swift.functions;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.ImmutableSet.of;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 @Singleton
 public class ReturnTrueOn404FalseOn409 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
       Boolean returnVal = returnValueOnCodeOrNull(from, true, in(of(404, 409)));
-      return returnVal != null ? returnVal : Boolean.class.cast(propagateOrNull(from));
+      if (returnVal != null)
+         return returnVal;
+      throw Throwables.propagate(from);
    }
 }
