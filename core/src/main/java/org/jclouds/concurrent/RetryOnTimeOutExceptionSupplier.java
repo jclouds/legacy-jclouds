@@ -48,9 +48,7 @@ public class RetryOnTimeOutExceptionSupplier<T> implements Supplier<T> {
          } catch (Exception e) {
             if ((ex = Throwables2.getFirstThrowableOfType(e, TimeoutException.class)) != null)
                continue;
-            propagate(e);
-            assert false;
-            return null;
+            throw propagate(e);
          }
       }
       if (ex != null)

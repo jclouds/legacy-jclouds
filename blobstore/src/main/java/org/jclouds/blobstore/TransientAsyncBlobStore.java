@@ -251,9 +251,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          HttpUtils.copy(in.getContentMetadata(), out.getContentMetadata());
          return out;
       } catch (Exception e) {
-         propagate(e);
-         assert false : "exception should have propagated: " + e;
-         return null;
+         throw propagate(e);
       }
    }
 
