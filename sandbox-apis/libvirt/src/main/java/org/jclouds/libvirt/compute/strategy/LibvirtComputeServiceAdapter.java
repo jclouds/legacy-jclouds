@@ -116,9 +116,9 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
          credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));
          return newDomain;
       } catch (LibvirtException e) {
-         return propogate(e);
+         throw Throwables.propagate(e);
       } catch (Exception e) {
-         return propogate(e);
+         throw Throwables.propagate(e);
       }
    }
 
@@ -138,7 +138,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
          }
          return images;
       } catch (Exception e) {
-         return propogate(e);
+         throw Throwables.propagate(e);
       }
    }
 
@@ -151,7 +151,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
          }
          return domains;
       } catch (LibvirtException e) {
-         return propogate(e);
+         throw Throwables.propagate(e);
       }
    }
 
@@ -168,7 +168,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       } catch (LibvirtException e) {
          if (e.getMessage().indexOf("Domain not found: no domain with matching uuid") != -1)
             return null;
-         propogate(e);
+         Throwables.propagate(e);
       }
       return d;
    }
@@ -187,9 +187,9 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
          client.domainLookupByUUIDString(id).undefine();
 
       } catch (LibvirtException e) {
-         propogate(e);
+         Throwables.propagate(e);
       } catch (Exception e) {
-         propogate(e);
+         Throwables.propagate(e);
       }
    }
 
@@ -198,20 +198,8 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       try {
          client.domainLookupByUUIDString(id).reboot(0);
       } catch (LibvirtException e) {
-         propogate(e);
+         Throwables.propagate(e);
       }
-   }
-
-   protected <T> T propogate(LibvirtException e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
-   }
-
-   protected <T> T propogate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
    }
 
    private static StorageVol cloneVolume(StoragePool storagePool, StorageVol from) throws LibvirtException,
@@ -224,7 +212,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       try {
          client.domainLookupByUUIDString(id).resume();
       } catch (LibvirtException e) {
-         propogate(e);
+         Throwables.propagate(e);
       }
    }
 
@@ -233,7 +221,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       try {
          client.domainLookupByUUIDString(id).suspend();
       } catch (LibvirtException e) {
-         propogate(e);
+         Throwables.propagate(e);
       }
    }
 

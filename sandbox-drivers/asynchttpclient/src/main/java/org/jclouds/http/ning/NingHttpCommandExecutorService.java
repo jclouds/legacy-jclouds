@@ -192,8 +192,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
             in = BaseHttpCommandExecutorService.consumeOnClose(nativeResponse.getResponseBodyAsStream());
          } catch (IOException e) {
             Closeables.closeQuietly(in);
-            propagate(e);
-            assert false : "should have propagated exception";
+            throw propagate(e);
          }
 
          Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
