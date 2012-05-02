@@ -115,8 +115,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          in = bufferAndCloseStream(connection.getErrorStream());
       } catch (RuntimeException e) {
          closeQuietly(in);
-         propagate(e);
-         assert false : "should have propagated exception";
+         throw propagate(e);
       }
 
       int responseCode = connection.getResponseCode();

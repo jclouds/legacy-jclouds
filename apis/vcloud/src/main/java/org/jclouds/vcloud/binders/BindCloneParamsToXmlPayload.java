@@ -122,9 +122,7 @@ public abstract class BindCloneParamsToXmlPayload<O extends CloneOptions> implem
       try {
          return getOptionClass().newInstance();
       } catch (Exception e) {
-         Throwables.propagate(e);
-         assert false : "unreachable code";
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

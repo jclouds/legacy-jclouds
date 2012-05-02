@@ -262,9 +262,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
                .build()));
          return metadata;
       } catch (Exception e) {
-         propagate(e);
-         assert false : "exception should have propagated: " + e;
-         return null;
+         throw propagate(e);
       }
    }
 
