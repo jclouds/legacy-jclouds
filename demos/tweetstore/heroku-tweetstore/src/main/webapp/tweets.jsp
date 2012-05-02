@@ -101,8 +101,7 @@ overflow-y:auto;
   </td>
 </tr>
 <tr>
-  <td><img src="http://di388e0fcqllf.cloudfront.net/images/badges/powered-by-cloudbees-button.png" 
-alt="Powered by RUN@cloud" /></td>
+  <td><img src="images/heroku-logo.png" alt="Powered by Heroku" /></td>
 </tr>
 </table>
 </body>
