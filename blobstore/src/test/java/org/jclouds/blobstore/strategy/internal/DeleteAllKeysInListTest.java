@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.io.Closeables;
@@ -38,40 +38,60 @@ import com.google.inject.Injector;
 public class DeleteAllKeysInListTest {
    private BlobStore blobstore;
    private DeleteAllKeysInList deleter;
+   private static final String containerName = "container";
+   private static final String directoryName = "directory";
 
-   @BeforeClass
+   @BeforeMethod
    void setupBlobStore() {
       Injector injector = ContextBuilder.newBuilder("transient").buildInjector();
       blobstore = injector.getInstance(BlobStore.class);
       deleter = injector.getInstance(DeleteAllKeysInList.class);
+      createDataSet();
+   }
+
+   @AfterMethod
+   void close() {
+      Closeables.closeQuietly(blobstore.getContext());
    }
 
    public void testExecuteWithoutOptionsClearsRecursively() {
-      blobstore.createContainerInLocation(null, "goodies");
-      for (int i = 0; i < 1001; i++) {
-         blobstore.putBlob("goodies", blobstore.blobBuilder(i + "").payload(i + "").build());
-      }
-      assertEquals(blobstore.countBlobs("goodies"), 1001);
-      deleter.execute("goodies");
-      assertEquals(blobstore.countBlobs("goodies"), 0);
+      deleter.execute(containerName);
+      assertEquals(blobstore.countBlobs(containerName), 0);
+   }
+
+   public void testExecuteRecursive() {
+      deleter.execute(containerName, ListContainerOptions.Builder.recursive());
+      assertEquals(blobstore.countBlobs(containerName), 0);
    }
 
    public void testExecuteNonRecursive() {
-      blobstore.createContainerInLocation(null, "foo");
-      for (int i = 0; i < 1001; i++) {
-         blobstore.putBlob("foo", blobstore.blobBuilder(i + "").payload(i + "").build());
-      }
-      for (int i = 0; i < 1001; i++) {
-         blobstore.putBlob("foo", blobstore.blobBuilder("dir/" + i + "").payload(i + "").build());
-      }
-      assertEquals(blobstore.countBlobs("foo"), 2002);
-      deleter.execute("foo", ListContainerOptions.Builder.inDirectory("dir"));
-      assertEquals(blobstore.countBlobs("foo"), 1001);
+      deleter.execute(containerName, ListContainerOptions.NONE);
+      assertEquals(blobstore.countBlobs(containerName), 2222);
    }
 
-   @AfterClass
-   void close() {
-      if (blobstore != null)
-         Closeables.closeQuietly(blobstore.getContext());
+   public void testExecuteInDirectory() {
+      deleter.execute(containerName, ListContainerOptions.Builder.inDirectory(directoryName));
+      assertEquals(blobstore.countBlobs(containerName), 1111);
+   }
+
+   /**
+    * Create a container "container" with 1111 blobs named "blob-%d".  Create a
+    * subdirectory "directory" which contains 2222 more blobs named
+    * "directory/blob-%d".
+    */
+   private void createDataSet() {
+      String blobNameFmt = "blob-%d";
+      String directoryBlobNameFmt = "%s/blob-%d";
+
+      blobstore.createContainerInLocation(null, containerName);
+      for (int i = 0; i < 1111; i++) {
+         String blobName = String.format(blobNameFmt, i);
+         blobstore.putBlob(containerName, blobstore.blobBuilder(blobName).payload(blobName).build());
+      }
+      for (int i = 0; i < 2222; i++) {
+         String directoryBlobName = String.format(directoryBlobNameFmt, directoryName, i);
+         blobstore.putBlob(containerName, blobstore.blobBuilder(directoryBlobName).payload(directoryBlobName).build());
+      }
+      assertEquals(blobstore.countBlobs(containerName), 3333);
    }
 }
