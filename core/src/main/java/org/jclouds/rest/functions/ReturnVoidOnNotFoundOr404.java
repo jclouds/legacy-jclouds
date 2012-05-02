@@ -19,7 +19,6 @@
 package org.jclouds.rest.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -55,6 +54,6 @@ public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
          if (value != null && value)
             return null;
       }
-      return Void.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 }

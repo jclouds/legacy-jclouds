@@ -18,8 +18,6 @@
  */
 package org.jclouds.rimuhosting.miro.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -32,6 +30,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.gson.reflect.TypeToken;
 
@@ -68,6 +67,6 @@ public class ParseRimuHostingException implements Function<Exception, Object> {
             throw new RuntimeException(firstResponse.getErrorInfo().getErrorMessage(), e);
          }
       }
-      return propagateOrNull(e);
+      throw Throwables.propagate(e);
    }
 }

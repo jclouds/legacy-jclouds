@@ -18,13 +18,12 @@
  */
 package org.jclouds.blobstore.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.KeyNotFoundException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -37,6 +36,6 @@ public class ReturnNullOnKeyNotFound implements Function<Exception, Object> {
       if (from instanceof KeyNotFoundException) {
          return null;
       }
-      return propagateOrNull(from);
+      throw Throwables.propagate(from);
    }
 }

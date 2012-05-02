@@ -19,7 +19,6 @@
 package org.jclouds.rest.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class ReturnEmptyListOnNotFoundOr404 implements Function<Exception, Objec
       } else if (rto404.apply(from)) {
          return ImmutableList.of();
       }
-      return List.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
 }
