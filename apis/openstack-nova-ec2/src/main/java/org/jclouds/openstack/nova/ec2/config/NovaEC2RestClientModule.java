@@ -37,12 +37,14 @@ import com.google.inject.Scopes;
 /**
  * 
  * @author Adrian Cole
+ * @author Adam Lowe
  */
 @ConfiguresRestClient
 public class NovaEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
 
    @Override
    protected void configure() {
+      install(new NovaEC2ParserModule());
       super.configure();
       bind(CreateVolumeResponseHandler.class).to(NovaCreateVolumeResponseHandler.class).in(Scopes.SINGLETON);
       bind(DescribeImagesResponseHandler.class).to(NovaDescribeImagesResponseHandler.class);
