@@ -18,7 +18,11 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.core.UriInfo;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.jenkins.v1.domain.JobDetails;
@@ -54,6 +58,8 @@ public interface JobClient {
     * @param displayName
     */
    void build(String displayName);
+
+   void buildWithParameters(String displayName, Map<String, String> parameters);
    
    String fetchConfigXML(String displayName);
    
