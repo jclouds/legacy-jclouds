@@ -101,7 +101,7 @@ overflow-y:auto;
   </td>
 </tr>
 <tr>
-  <td><img src="images/heroku-logo.png" alt="Powered by Heroku" /></td>
+  <td><img src="/images/heroku-logo.png" alt="Powered by Heroku" /></td>
 </tr>
 </table>
 </body>
