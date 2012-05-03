@@ -64,6 +64,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.io.Closeables;
 import com.google.inject.CreationException;
 
 /**
@@ -730,23 +731,39 @@ public class FilesystemAsyncBlobStoreTest {
          */
         final String containerName = "containerWithRanges";
         String payload = "abcdefgh";
+        InputStream is;
         Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(payload)).build();
         blobStore.putBlob(containerName, blob);
 
         GetOptions getOptionsRangeStartAt = new GetOptions();
         getOptionsRangeStartAt.startAt(1);
         Blob blobRangeStartAt = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeStartAt);
-        Assert.assertEquals("bcdefgh", IOUtils.toString(blobRangeStartAt.getPayload().getInput()));
+        is = blobRangeStartAt.getPayload().getInput();
+        try {
+            Assert.assertEquals("bcdefgh", IOUtils.toString(is));
+        } finally {
+            Closeables.closeQuietly(is);
+        }
 
         GetOptions getOptionsRangeTail = new GetOptions();
         getOptionsRangeTail.tail(3);
         Blob blobRangeTail = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeTail);
-        Assert.assertEquals("fgh", IOUtils.toString(blobRangeTail.getPayload().getInput()));
+        is = blobRangeTail.getPayload().getInput();
+        try {
+            Assert.assertEquals("fgh", IOUtils.toString(is));
+        } finally {
+            Closeables.closeQuietly(is);
+        }
 
         GetOptions getOptionsFragment = new GetOptions();
         getOptionsFragment.range(4, 6);
         Blob blobFragment = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsFragment);
-        Assert.assertEquals("efg", IOUtils.toString(blobFragment.getPayload().getInput()));
+        is = blobFragment.getPayload().getInput();
+        try {
+            Assert.assertEquals("efg", IOUtils.toString(is));
+        } finally {
+            Closeables.closeQuietly(is);
+        }
     }
 
     /** Test that BlobRequestSigner creates expected URIs.  */
