@@ -18,13 +18,18 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
+
 import java.util.Properties;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
+import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
@@ -36,7 +41,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -100,7 +107,13 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected String flavorRefForZone(String zoneId) {
       FlavorClient flavorClient = novaContext.getApi().getFlavorClientForZone(zoneId);
-      return Iterables.getLast(flavorClient.listFlavors()).getId();
+      return DEFAULT_FLAVOR_ORDERING.min(flavorClient.listFlavorsInDetail()).getId();
    }
 
+   static final Ordering<Flavor> DEFAULT_FLAVOR_ORDERING = new Ordering<Flavor>() {
+      public int compare(Flavor left, Flavor right) {
+         return ComparisonChain.start().compare(left.getVcpus(), right.getVcpus()).compare(left.getRam(), right.getRam())
+               .compare(left.getDisk(), right.getDisk()).result();
+      }
+   };
 }
