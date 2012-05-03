@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package org.jclouds.hpcloud.compute.compute;
+package org.jclouds.ec2.compute;
 
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.internal.BaseImageExtensionLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
@@ -26,15 +27,16 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 
 /**
+ * Live test for ec2 {@link ImageExtension} implementation
  * 
  * @author David Alves
  * 
  */
-@Test(groups = "live", singleThreaded = true, testName = "HPCloudComputeImageExtensionLivetest")
-public class HPCloudComputeImageExtensionLivetest extends BaseImageExtensionLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "EC2ImageExtensionLiveTest")
+public class EC2ImageExtensionLiveTest extends BaseImageExtensionLiveTest {
 
-   public HPCloudComputeImageExtensionLivetest() {
-      provider = "hpcloud-compute";
+   public EC2ImageExtensionLiveTest() {
+      provider = "ec2";
    }
 
    @Override
@@ -42,8 +44,4 @@ public class HPCloudComputeImageExtensionLivetest extends BaseImageExtensionLive
       return new SshjSshClientModule();
    }
 
-   @Override
-   public long getSpawnNodeMaxWait() {
-      return 2400L;
-   }
 }

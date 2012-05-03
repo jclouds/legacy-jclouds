@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.openstack.nova.v1_1.compute;
+package org.jclouds.ec2.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -30,9 +30,9 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
@@ -40,100 +40,109 @@ import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
+import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.domain.Reservation;
+import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.options.CreateImageOptions;
+import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
-@Singleton
-public class NovaImageExtension implements ImageExtension {
+/**
+ * EC2 implementation of {@link ImageExtension} please note that {@link #createImage(ImageTemplate)}
+ * only works by cloning EBS backed instances for the moment.
+ * 
+ * @author David Alves
+ * 
+ */
+public class EC2ImageExtension implements ImageExtension {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final NovaClient novaClient;
-   private final Function<ImageInZone, Image> imageInZoneToImage;
-   private final ExecutorService executor;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
    long maxWait = 3600;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_WAIT_PERIOD")
    long waitPeriod = 1;
+   private final EC2Client ec2Client;
+   private final ExecutorService executor;
+   private final Function<org.jclouds.ec2.domain.Image, Image> ecImageToImage;
 
    @Inject
-   public NovaImageExtension(NovaClient novaClient, Function<ImageInZone, Image> imageInZoneToImage,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
-      this.novaClient = checkNotNull(novaClient);
-      this.imageInZoneToImage = imageInZoneToImage;
-      this.executor = userThreads;
+   public EC2ImageExtension(EC2Client ec2Client, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            EC2ImageParser ec2ImageToImage) {
+      this.ec2Client = checkNotNull(ec2Client);
+      this.executor = checkNotNull(userThreads);
+      this.ecImageToImage = checkNotNull(ec2ImageToImage);
    }
 
    @Override
-   public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
-      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Server server = novaClient.getServerClientForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
-      if (server == null)
-         throw new NoSuchElementException("Cannot find server with id: " + zoneAndId);
+   public ImageTemplate buildImageTemplateFromNode(String name, String id) {
+      String[] parts = AWSUtils.parseHandle(id);
+      String region = parts[0];
+      String instanceId = parts[1];
+      Reservation<? extends RunningInstance> instance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
+               .describeInstancesInRegion(region, instanceId));
+      if (instance == null)
+         throw new NoSuchElementException("Cannot find server with id: " + id);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
       return template;
    }
 
    @Override
    public ListenableFuture<Image> createImage(ImageTemplate template) {
-      checkState(template instanceof CloneImageTemplate,
-               " openstack-nova only supports creating images through cloning.");
+      checkState(template instanceof CloneImageTemplate, " ec2 only supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
-      final ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(cloneTemplate.getSourceNodeId());
+      String[] parts = AWSUtils.parseHandle(cloneTemplate.getSourceNodeId());
+      final String region = parts[0];
+      String instanceId = parts[1];
 
-      final String newImageId = novaClient.getServerClientForZone(zoneAndId.getZone()).createImageFromServer(
-               cloneTemplate.getName(), zoneAndId.getId());
-      logger.info(">> Registered new Image %s, waiting for it to become available.", newImageId);
+      final String imageId = ec2Client.getAMIServices().createImageInRegion(region, cloneTemplate.getName(),
+               instanceId, CreateImageOptions.NONE);
 
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
             return Retryables.retryGettingResultOrFailing(new PredicateWithResult<String, Image>() {
 
-               org.jclouds.openstack.nova.v1_1.domain.Image result;
+               org.jclouds.ec2.domain.Image result;
                RuntimeException lastFailure;
 
                @Override
                public boolean apply(String input) {
-                  result = checkNotNull(findImage(ZoneAndId.fromZoneAndId(zoneAndId.getZone(), newImageId)));
-                  switch (result.getStatus()) {
-                     case ACTIVE:
-                        logger.info("<< Image %s is available for use.", newImageId);
+                  result = checkNotNull(findImage(region, input));
+                  switch (result.getImageState()) {
+                     case AVAILABLE:
+                        logger.info("<< Image %s is available for use.", input);
                         return true;
-                     case UNKNOWN:
-                     case SAVING:
-                        logger.debug("<< Image %s is not available yet.", newImageId);
+                     case UNRECOGNIZED:
+                        logger.debug("<< Image %s is not available yet.", input);
                         return false;
                      default:
-                        lastFailure = new IllegalStateException("Image was not created: " + newImageId);
+                        lastFailure = new IllegalStateException("Image was not created: " + input);
                         throw lastFailure;
                   }
                }
 
                @Override
                public Image getResult() {
-                  return imageInZoneToImage.apply(new ImageInZone(result, zoneAndId.getZone()));
+                  return ecImageToImage.apply(result);
                }
 
                @Override
                public Throwable getLastFailure() {
                   return lastFailure;
                }
-            }, newImageId, maxWait, waitPeriod, TimeUnit.SECONDS,
+            }, imageId, maxWait, waitPeriod, TimeUnit.SECONDS,
                      "Image was not created within the time limit, Giving up! [Limit: " + maxWait + " secs.]");
          }
       }), executor);
@@ -141,24 +150,20 @@ public class NovaImageExtension implements ImageExtension {
 
    @Override
    public boolean deleteImage(String id) {
-      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      String[] parts = AWSUtils.parseHandle(id);
+      String region = parts[0];
+      String instanceId = parts[1];
       try {
-         this.novaClient.getImageClientForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
+         ec2Client.getAMIServices().deregisterImageInRegion(region, instanceId);
+         return true;
       } catch (Exception e) {
          return false;
       }
-      return true;
    }
 
-   private org.jclouds.openstack.nova.v1_1.domain.Image findImage(final ZoneAndId zoneAndId) {
-      return Iterables.tryFind(novaClient.getImageClientForZone(zoneAndId.getZone()).listImagesInDetail(),
-               new Predicate<org.jclouds.openstack.nova.v1_1.domain.Image>() {
-                  @Override
-                  public boolean apply(org.jclouds.openstack.nova.v1_1.domain.Image input) {
-                     return input.getId().equals(zoneAndId.getId());
-                  }
-               }).orNull();
+   private org.jclouds.ec2.domain.Image findImage(String region, String id) {
+      return Iterables.getOnlyElement(ec2Client.getAMIServices().describeImagesInRegion(region,
+               new DescribeImagesOptions().imageIds(id)));
 
    }
-
 }

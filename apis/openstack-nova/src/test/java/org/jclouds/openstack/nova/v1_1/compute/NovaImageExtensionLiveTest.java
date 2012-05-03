@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package org.jclouds.hpcloud.compute.compute;
+package org.jclouds.openstack.nova.v1_1.compute;
 
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.internal.BaseImageExtensionLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
@@ -26,15 +27,16 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 
 /**
+ * Live test for openstack-nova {@link ImageExtension} implementation.
  * 
  * @author David Alves
  * 
  */
-@Test(groups = "live", singleThreaded = true, testName = "HPCloudComputeImageExtensionLivetest")
-public class HPCloudComputeImageExtensionLivetest extends BaseImageExtensionLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "NovaImageExtensionLiveTest")
+public class NovaImageExtensionLiveTest extends BaseImageExtensionLiveTest {
 
-   public HPCloudComputeImageExtensionLivetest() {
-      provider = "hpcloud-compute";
+   public NovaImageExtensionLiveTest() {
+      provider = "openstack-nova";
    }
 
    @Override
@@ -42,8 +44,4 @@ public class HPCloudComputeImageExtensionLivetest extends BaseImageExtensionLive
       return new SshjSshClientModule();
    }
 
-   @Override
-   public long getSpawnNodeMaxWait() {
-      return 2400L;
-   }
 }

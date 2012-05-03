@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.openstack.nova.v1_1.compute;
+package org.jclouds.cloudservers.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -33,6 +33,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.cloudservers.domain.Server;
+import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
@@ -41,10 +44,6 @@ import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
@@ -53,16 +52,22 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * CloudServers implementation of {@link ImageExtension}
+ * 
+ * @author David Alves
+ * 
+ */
 @Singleton
-public class NovaImageExtension implements ImageExtension {
+public class CloudServersImageExtension implements ImageExtension {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final NovaClient novaClient;
-   private final Function<ImageInZone, Image> imageInZoneToImage;
+   private final CloudServersClient syncClient;
    private final ExecutorService executor;
+   private final Function<org.jclouds.cloudservers.domain.Image, Image> cloudserversImageToImage;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
    long maxWait = 3600;
@@ -71,19 +76,19 @@ public class NovaImageExtension implements ImageExtension {
    long waitPeriod = 1;
 
    @Inject
-   public NovaImageExtension(NovaClient novaClient, Function<ImageInZone, Image> imageInZoneToImage,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
-      this.novaClient = checkNotNull(novaClient);
-      this.imageInZoneToImage = imageInZoneToImage;
+   public CloudServersImageExtension(CloudServersClient novaClient,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            Function<org.jclouds.cloudservers.domain.Image, Image> cloudserversImageToImage) {
+      this.syncClient = checkNotNull(novaClient);
       this.executor = userThreads;
+      this.cloudserversImageToImage = cloudserversImageToImage;
    }
 
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
-      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Server server = novaClient.getServerClientForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      Server server = syncClient.getServer(Integer.parseInt(id));
       if (server == null)
-         throw new NoSuchElementException("Cannot find server with id: " + zoneAndId);
+         throw new NoSuchElementException("Cannot find server with id: " + id);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
       return template;
    }
@@ -93,69 +98,65 @@ public class NovaImageExtension implements ImageExtension {
       checkState(template instanceof CloneImageTemplate,
                " openstack-nova only supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
-      final ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(cloneTemplate.getSourceNodeId());
-
-      final String newImageId = novaClient.getServerClientForZone(zoneAndId.getZone()).createImageFromServer(
-               cloneTemplate.getName(), zoneAndId.getId());
-      logger.info(">> Registered new Image %s, waiting for it to become available.", newImageId);
-
+      final org.jclouds.cloudservers.domain.Image image = syncClient.createImageFromServer(cloneTemplate.getName(),
+               Integer.parseInt(cloneTemplate.getSourceNodeId()));
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(new PredicateWithResult<String, Image>() {
+            return Retryables.retryGettingResultOrFailing(new PredicateWithResult<Integer, Image>() {
 
-               org.jclouds.openstack.nova.v1_1.domain.Image result;
+               org.jclouds.cloudservers.domain.Image result;
                RuntimeException lastFailure;
 
                @Override
-               public boolean apply(String input) {
-                  result = checkNotNull(findImage(ZoneAndId.fromZoneAndId(zoneAndId.getZone(), newImageId)));
+               public boolean apply(Integer input) {
+                  result = checkNotNull(findImage(input));
                   switch (result.getStatus()) {
                      case ACTIVE:
-                        logger.info("<< Image %s is available for use.", newImageId);
+                        logger.info("<< Image %s is available for use.", input);
                         return true;
                      case UNKNOWN:
                      case SAVING:
-                        logger.debug("<< Image %s is not available yet.", newImageId);
+                        logger.debug("<< Image %s is not available yet.", input);
                         return false;
                      default:
-                        lastFailure = new IllegalStateException("Image was not created: " + newImageId);
+                        lastFailure = new IllegalStateException("Image was not created: " + input);
                         throw lastFailure;
                   }
                }
 
                @Override
                public Image getResult() {
-                  return imageInZoneToImage.apply(new ImageInZone(result, zoneAndId.getZone()));
+                  return cloudserversImageToImage.apply(image);
                }
 
                @Override
                public Throwable getLastFailure() {
                   return lastFailure;
                }
-            }, newImageId, maxWait, waitPeriod, TimeUnit.SECONDS,
+            }, image.getId(), maxWait, waitPeriod, TimeUnit.SECONDS,
                      "Image was not created within the time limit, Giving up! [Limit: " + maxWait + " secs.]");
          }
       }), executor);
+
    }
 
    @Override
    public boolean deleteImage(String id) {
-      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
       try {
-         this.novaClient.getImageClientForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
+         this.syncClient.deleteImage(Integer.parseInt(id));
       } catch (Exception e) {
          return false;
       }
       return true;
    }
 
-   private org.jclouds.openstack.nova.v1_1.domain.Image findImage(final ZoneAndId zoneAndId) {
-      return Iterables.tryFind(novaClient.getImageClientForZone(zoneAndId.getZone()).listImagesInDetail(),
-               new Predicate<org.jclouds.openstack.nova.v1_1.domain.Image>() {
+   private org.jclouds.cloudservers.domain.Image findImage(final int id) {
+      return Iterables.tryFind(syncClient.listImages(ListOptions.NONE),
+               new Predicate<org.jclouds.cloudservers.domain.Image>() {
                   @Override
-                  public boolean apply(org.jclouds.openstack.nova.v1_1.domain.Image input) {
-                     return input.getId().equals(zoneAndId.getId());
+                  public boolean apply(org.jclouds.cloudservers.domain.Image input) {
+                     return input.getId() == id;
                   }
                }).orNull();
 

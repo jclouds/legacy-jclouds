@@ -29,6 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -36,6 +37,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.EC2ComputeService;
+import org.jclouds.ec2.compute.EC2ImageExtension;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
@@ -104,6 +106,8 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
       bind(WindowsLoginCredentialsFromEncryptedData.class);
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(EC2ImageExtension.class);
    }
 
    /**

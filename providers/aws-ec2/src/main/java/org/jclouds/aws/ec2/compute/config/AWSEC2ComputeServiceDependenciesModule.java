@@ -40,11 +40,13 @@ import org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypair;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.compute.EC2ImageExtension;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
@@ -94,6 +96,8 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(EC2ImageExtension.class);
    }
 
    @Provides

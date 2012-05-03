@@ -22,16 +22,22 @@ package org.jclouds.compute.internal;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 
@@ -47,40 +53,74 @@ import com.google.common.collect.Iterables;
  */
 public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceContextLiveTest {
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
+   protected String imageId;
+
    /**
     * Returns the template for the base node, override to test different templates.
     * 
     * @return
     */
    public Template getNodeTemplate() {
-      return view.getComputeService().templateBuilder().any().build();
+      return view.getComputeService().templateBuilder().build();
+   }
+
+   /**
+    * Returns the maximum amount of time (in seconds) to wait for a node spawned from the new image
+    * to become available, override to increase this time.
+    * 
+    * @return
+    */
+   public long getSpawnNodeMaxWait() {
+      return 600L;
+   }
+
+   /**
+    * Lists the images found in the {@link ComputeService}, subclasses may override to constrain
+    * search.
+    * 
+    * @return
+    */
+   protected Iterable<? extends Image> listImages() {
+      return view.getComputeService().listImages();
    }
 
    @Test(groups = { "integration", "live" }, singleThreaded = true)
-   public void testCreateImage() throws RunNodesException, InterruptedException {
+   public void testCreateImage() throws RunNodesException, InterruptedException, ExecutionException {
 
       ComputeService computeService = view.getComputeService();
 
       Optional<ImageExtension> imageExtension = computeService.getImageExtension();
+
       assertTrue("image extension was not present", imageExtension.isPresent());
 
-      Set<? extends Image> imagesBefore = computeService.listImages();
+      Template template = getNodeTemplate();
 
-      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1,
-               getNodeTemplate()));
+      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1, template));
+
+      checkReachable(node);
+
+      logger.info("Creating image from node %s, started with template: %s", node, template);
 
       ImageTemplate newImageTemplate = imageExtension.get().buildImageTemplateFromNode("test-create-image",
                node.getId());
 
-      Image image = imageExtension.get().createImage(newImageTemplate);
+      Image image = imageExtension.get().createImage(newImageTemplate).get();
+
+      logger.info("Image created: %s", image);
 
       assertEquals("test-create-image", image.getName());
 
+      imageId = image.getId();
+
       computeService.destroyNode(node.getId());
 
-      Set<? extends Image> imagesAfter = computeService.listImages();
+      Optional<? extends Image> optImage = getImage();
 
-      assertTrue(imagesBefore.size() == imagesAfter.size() - 1);
+      assertTrue(optImage.isPresent());
 
    }
 
@@ -89,16 +129,16 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
 
       ComputeService computeService = view.getComputeService();
 
-      Template template = computeService.templateBuilder().fromImage(getImage().get()).build();
+      Optional<? extends Image> optImage = getImage();
 
-      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1, template));
+      assertTrue(optImage.isPresent());
 
-      SshClient client = view.utils().sshForNode().apply(node);
-      client.connect();
+      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1, view
+               .getComputeService()
+               // fromImage does not use the arg image's id (but we do need to set location)
+               .templateBuilder().imageId(optImage.get().getId()).fromImage(optImage.get()).build()));
 
-      ExecResponse hello = client.exec("echo hello");
-
-      assertEquals(hello.getOutput().trim(), "hello");
+      checkReachable(node);
 
       view.getComputeService().destroyNode(node.getId());
 
@@ -123,12 +163,25 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
    }
 
    private Optional<? extends Image> getImage() {
-      return Iterables.tryFind(view.getComputeService().listImages(), new Predicate<Image>() {
+      return Iterables.tryFind(listImages(), new Predicate<Image>() {
          @Override
          public boolean apply(Image input) {
-            return input.getId().contains("test-create-image");
+            return input.getId().equals(imageId);
          }
       });
    }
 
+   private void checkReachable(NodeMetadata node) {
+      SshClient client = view.utils().sshForNode().apply(node);
+      assertTrue(new RetryablePredicate<SshClient>(new Predicate<SshClient>() {
+         @Override
+         public boolean apply(SshClient input) {
+            input.connect();
+            if (input.exec("id").getExitStatus() == 0) {
+               return true;
+            }
+            return false;
+         }
+      }, getSpawnNodeMaxWait(), 1l, TimeUnit.SECONDS).apply(client));
+   }
 }
