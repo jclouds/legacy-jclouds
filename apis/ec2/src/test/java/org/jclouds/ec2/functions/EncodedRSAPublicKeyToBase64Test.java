@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.ec2.functions;
+package org.jclouds.ec2.functions;
 
 import static org.testng.Assert.assertEquals;
 
