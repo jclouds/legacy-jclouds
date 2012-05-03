@@ -19,11 +19,12 @@
 
 package org.jclouds.virtualbox.domain;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.jaxws.RuntimeFaultMsg;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Maps the error codes in the Virtual Box Java API into enum values.
@@ -47,25 +48,41 @@ import org.virtualbox_4_1.jaxws.RuntimeFaultMsg;
  */
 public enum ErrorCode {
 
-   VBOX_E_OBJECT_NOT_FOUND(2159738881L), VBOX_E_INVALID_VM_STATE(2159738882L), VBOX_E_VM_ERROR(2159738883L), VBOX_E_FILE_ERROR(
-         2159738884L), VBOX_E_IPRT_ERROR(2159738885L), VBOX_E_PDM_ERROR(2159738886L), VBOX_E_INVALID_OBJECT_STATE(
-         2159738887L), VBOX_E_HOST_ERROR(2159738888L), VBOX_E_NOT_SUPPORTED(2159738889L), VBOX_E_XML_ERROR(2159738890L), VBOX_E_INVALID_SESSION_STATE(
-         2159738891L), VBOX_E_OBJECT_IN_USE(2159738892L), VBOX_E_ACCESSDENIED(2147942405L), VBOX_E_POINTER(2147500035L), VBOX_E_FAIL(
-         2147500037L), VBOX_E_NOTIMPL(2147500033L), VBOX_E_OUTOFMEMORY(2147942414L), VBOX_E_INVALIDARG(2147942487L), VBOX_E_UNEXPECTED(
-         2147549183L), VBOX_E_UNKNOWN_ERROR_CODE(-1L), VBOX_E_ERROR_CODE_UNAVAILABLE(-2L);
+   VBOX_E_OBJECT_NOT_FOUND(2159738881L),
+   VBOX_E_INVALID_VM_STATE(2159738882L),
+   VBOX_E_VM_ERROR(2159738883L),
+   VBOX_E_FILE_ERROR(2159738884L),
+   VBOX_E_IPRT_ERROR(2159738885L),
+   VBOX_E_PDM_ERROR(2159738886L),
+   VBOX_E_INVALID_OBJECT_STATE(2159738887L),
+   VBOX_E_HOST_ERROR(2159738888L),
+   VBOX_E_NOT_SUPPORTED(2159738889L),
+   VBOX_E_XML_ERROR(2159738890L),
+   VBOX_E_INVALID_SESSION_STATE(2159738891L),
+   VBOX_E_OBJECT_IN_USE(2159738892L),
+   VBOX_E_ACCESSDENIED(2147942405L),
+   VBOX_E_POINTER(2147500035L),
+   VBOX_E_FAIL(2147500037L),
+   VBOX_E_NOTIMPL(2147500033L),
+   VBOX_E_OUTOFMEMORY(2147942414L),
+   VBOX_E_INVALIDARG(2147942487L),
+   VBOX_E_UNEXPECTED(2147549183L),
+   VBOX_E_UNKNOWN_ERROR_CODE(-1L),
+   VBOX_E_ERROR_CODE_UNAVAILABLE(-2L);
 
-   private long code;
+   private final long code;
 
    ErrorCode(long code) {
       this.code = code;
    }
 
-   private static Map<Long, ErrorCode> table = new HashMap<Long, ErrorCode>();
-
+   private final static Map<Long, ErrorCode> TABLE;
    static {
+      ImmutableMap.Builder<Long, ErrorCode> builder = ImmutableMap.builder();
       for (ErrorCode errorCode : ErrorCode.values()) {
-         table.put(errorCode.code, errorCode);
+         builder.put(errorCode.code, errorCode);
       }
+      TABLE = builder.build();
    }
 
    /**
@@ -80,7 +97,7 @@ public enum ErrorCode {
       if (backend instanceof RuntimeFaultMsg) {
          final RuntimeFaultMsg faultCode = (RuntimeFaultMsg) backend;
          final int resultCode = faultCode.getFaultInfo().getResultCode();
-         final ErrorCode errorCode = table.get(unsignedIntToLong(resultCode));
+         final ErrorCode errorCode = TABLE.get(unsignedIntToLong(resultCode));
          if (errorCode != null) {
             return errorCode;
          }
