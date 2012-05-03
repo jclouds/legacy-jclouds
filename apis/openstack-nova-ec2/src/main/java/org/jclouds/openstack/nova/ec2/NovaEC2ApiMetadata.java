@@ -29,8 +29,6 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.EC2ApiMetadata;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2ComputeServiceContextModule;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
@@ -48,12 +46,12 @@ import com.google.inject.Module;
 public class NovaEC2ApiMetadata extends EC2ApiMetadata {
 
    /** The serialVersionUID */
-   private static final long serialVersionUID = -1492951757032303845L;
-   
-   public static final TypeToken<RestContext<EC2Client, EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<EC2Client, EC2AsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
+   private static final long serialVersionUID = -8539835226183747429L;
+
+   public static final TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>>() {
+      private static final long serialVersionUID = -6449920293625658712L;
    };
-   
+
    private static Builder builder() {
       return new Builder();
    }
@@ -90,12 +88,13 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
 
    public static class Builder extends EC2ApiMetadata.Builder {
       protected Builder(){
-         super(EC2Client.class, EC2AsyncClient.class);
+         super(NovaEC2Client.class, NovaEC2AsyncClient.class);
          id("openstack-nova-ec2")
          .name("OpenStack Nova's EC2-clone API")
          .version("2009-04-04")
          .defaultEndpoint("http://localhost:8773/services/Cloud")
          .defaultProperties(NovaEC2ApiMetadata.defaultProperties())
+         .context(CONTEXT_TOKEN)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaEC2RestClientModule.class, EC2ResolveImagesModule.class, NovaEC2ComputeServiceContextModule.class));
       }
       
