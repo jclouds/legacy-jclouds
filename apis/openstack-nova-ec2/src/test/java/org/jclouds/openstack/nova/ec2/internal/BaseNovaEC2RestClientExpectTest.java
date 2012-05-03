@@ -8,9 +8,9 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.ec2.EC2Client;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.nova.ec2.NovaEC2Client;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
@@ -19,7 +19,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
-public abstract class BaseNovaEC2RestClientExpectTest extends BaseRestClientExpectTest<EC2Client> {
+public abstract class BaseNovaEC2RestClientExpectTest extends BaseRestClientExpectTest<NovaEC2Client> {
    protected static final String CONSTANT_DATE = "2012-04-16T15:54:08.897Z";
    protected DateService dateService = new SimpleDateFormatDateService();
    protected URI endpoint = URI.create("http://localhost:8773/services/Cloud/");
