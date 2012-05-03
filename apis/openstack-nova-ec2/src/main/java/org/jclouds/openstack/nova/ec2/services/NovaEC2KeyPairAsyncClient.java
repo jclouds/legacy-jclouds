@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.ec2.services;
+package org.jclouds.openstack.nova.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
@@ -45,10 +45,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(FormSigner.class)
 @VirtualHost
-public interface AWSKeyPairAsyncClient extends KeyPairAsyncClient {
+public interface NovaEC2KeyPairAsyncClient extends KeyPairAsyncClient {
 
    /**
-    * @see AWSKeyPairClient#importKeyPairInRegion
+    * @see NovaEC2KeyPairClient#importKeyPairInRegion(String, String, String)
     */
    @POST
    @Path("/")
