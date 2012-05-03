@@ -68,6 +68,8 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
            URI.create("http://docs.openstack.org/compute/ext/hosts/api/v1.1"))
       .put(URI.create(ExtensionNamespaces.VOLUMES),
            URI.create("http://docs.openstack.org/compute/ext/volumes/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.VIRTUAL_INTERFACES),
+           URI.create("http://docs.openstack.org/compute/ext/virtual_interfaces/api/v1.1"))         
       .build();
    
    @Inject

@@ -28,6 +28,7 @@ import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.VolumeAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
@@ -126,5 +127,12 @@ public interface NovaAsyncClient {
     */
    @Delegate
    Optional<VolumeAsyncClient> getVolumeExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to Virtual Interface features.
+    */
+   @Delegate
+   Optional<VirtualInterfaceAsyncClient> getVirtualInterfaceExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 }
