@@ -126,7 +126,8 @@
                                         <warfile>${project.build.directory}/${project.artifactId}</warfile>
                                     </systemPropertyVariables>
                                     <environmentVariables>
-                                        <PORT>${test.jetty.port}</PORT>
+                                        <PUBLIC_HOST>${test.jetty.address}</PUBLIC_HOST>
+                                        <PUBLIC_PORT>${test.jetty.port}</PUBLIC_PORT>
                                     </environmentVariables>
                                 </configuration>
                             </execution>

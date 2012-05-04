@@ -43,7 +43,8 @@ import com.google.inject.Guice;
 public class PlatformServicesInitializer implements ServletContextListener {
     public static final String PLATFORM_SERVICES_ATTRIBUTE_NAME = PlatformServices.class.getName();
 
-    protected static final String PORT_VARIABLE = "PORT";
+    protected static final String HOST_VARIABLE = "PUBLIC_HOST";
+    protected static final String PORT_VARIABLE = "PUBLIC_PORT";
 
     @Override
     public void contextInitialized(ServletContextEvent contextEvent) {
@@ -66,8 +67,9 @@ public class PlatformServicesInitializer implements ServletContextListener {
     }
 
     protected static String getBaseUrl(ServletContext context) {
-        return format("http://localhost:%s%s", checkNotNull(System.getenv(PORT_VARIABLE), PORT_VARIABLE), 
-                context.getContextPath());
+        // use the public URL while https://support.heroku.com/requests/51088 is open
+        return format("http://%s:%s/%s", checkNotNull(System.getenv(HOST_VARIABLE), HOST_VARIABLE), 
+                checkNotNull(System.getenv(PORT_VARIABLE), PORT_VARIABLE), context.getContextPath());
     }
 
     // TODO: make the number and names of queues configurable
