@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests parsing and guice wiring of ServerExtraDataClient
+ * Tests parsing and guice wiring of ServerWithSecurityGroupsClient
  *
  * @author Adam Lowe
  */
@@ -44,7 +44,7 @@ public class ServerWithSecurityGroupsClientExpectTest extends BaseNovaClientExpe
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(200).payload(payloadFromResource("/server_with_security_groups.json")).build()
-      ).getServerExtraDataExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerWithSecurityGroupsExtensionForZone("az-1.region-a.geo-1").get();
 
       ServerWithSecurityGroups server = client.getServer("8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
       assertEquals(server.getId(), "8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
@@ -58,7 +58,7 @@ public class ServerWithSecurityGroupsClientExpectTest extends BaseNovaClientExpe
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(404).build()
-      ).getServerExtraDataExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerWithSecurityGroupsExtensionForZone("az-1.region-a.geo-1").get();
       assertNull(client.getServer("8d0a6ca5-8849-4b3d-b86e-f24c92490ebb"));
    }
 }

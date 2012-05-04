@@ -26,13 +26,16 @@ import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 
 /**
- * Provides synchronous access to Server details including security groups.
+ * Provides synchronous access to Server details including security group, referred to as the CREATESERVEREXT extension
+ * in the nova documentation
  * <p/>
- * NOTE: the equivalent to listServersInDetail() doesn't work, so not extending ServerClient at this time.
+ * NOTE: the equivalent to listServersInDetail() isn't available at the other end, so not extending ServerClient at this
+ * time.
  *
  * @author Adam Lowe
  * @see org.jclouds.openstack.nova.v1_1.features.ServerClient
  * @see ServerWithSecurityGroupsAsyncClient
+ * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.createserverext.html"/>
  */
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.CREATESERVEREXT)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)

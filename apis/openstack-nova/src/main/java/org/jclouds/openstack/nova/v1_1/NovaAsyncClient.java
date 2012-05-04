@@ -143,7 +143,7 @@ public interface NovaAsyncClient {
     * Provides asynchronous access to Server Extra Data features.
     */
    @Delegate
-   Optional<ServerWithSecurityGroupsAsyncClient> getServerExtraDataExtensionForZone(
+   Optional<ServerWithSecurityGroupsAsyncClient> getServerWithSecurityGroupsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**

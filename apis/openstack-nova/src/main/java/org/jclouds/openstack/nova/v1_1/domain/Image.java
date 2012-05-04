@@ -160,7 +160,7 @@ public class Image extends Resource {
       /**
        * @see Image#getMetadata()
        */
-      public T metadata(Map<java.lang.String, java.lang.String> metadata) {
+      public T metadata(Map<String, String> metadata) {
          this.metadata = metadata;
          return self();
       }

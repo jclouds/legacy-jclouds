@@ -126,7 +126,6 @@ public interface NovaClient {
    Optional<SimpleTenantUsageClient> getSimpleTenantUsageExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
-
    /**
     * Provides synchronous access to Volume features.
     */
@@ -141,17 +140,15 @@ public interface NovaClient {
    Optional<VirtualInterfaceClient> getVirtualInterfaceExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
-
    /**
     * Provides synchronous access to Server Extra Data features.
     */
    @Delegate
-   Optional<ServerWithSecurityGroupsClient> getServerExtraDataExtensionForZone(
+   Optional<ServerWithSecurityGroupsClient> getServerWithSecurityGroupsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
-
    /**
-    * Provides asynchronous access to Server Admin Actions features.
+    * Provides synchronous access to Server Admin Actions features.
     */
    @Delegate
    Optional<AdminActionsClient> getAdminActionsExtensionForZone(

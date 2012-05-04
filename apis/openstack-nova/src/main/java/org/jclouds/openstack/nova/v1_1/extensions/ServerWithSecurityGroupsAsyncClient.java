@@ -38,10 +38,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to Servers with Security Groups.
- * 
+ *
+ * @author Adam Lowe
  * @see org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient
  * @see ServerWithSecurityGroupsClient
- * @author Adam Lowe
+ * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.createserverext.html"/>
  */
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.CREATESERVEREXT)
 @SkipEncoding({'/', '='})

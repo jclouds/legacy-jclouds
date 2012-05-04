@@ -50,7 +50,7 @@ public class ServerWithSecurityGroupsClientLiveTest extends BaseNovaClientLiveTe
       super.setupContext();
       zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
       serverClient = novaContext.getApi().getServerClientForZone(zone);
-      clientOption = novaContext.getApi().getServerExtraDataExtensionForZone(zone);
+      clientOption = novaContext.getApi().getServerWithSecurityGroupsExtensionForZone(zone);
    }
 
    public void testGetServer() {
