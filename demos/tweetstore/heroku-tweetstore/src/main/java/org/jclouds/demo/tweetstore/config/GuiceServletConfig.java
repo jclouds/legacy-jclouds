@@ -45,6 +45,7 @@ import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.config.util.PropertiesLoader;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
+import org.jclouds.demo.tweetstore.controller.ClearTweetsController;
 import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 
@@ -138,6 +139,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
                 serve("/store/*").with(StoreTweetsController.class);
                 serve("/tweets/*").with(AddTweetsController.class);
                 serve("/stores/*").with(EnqueueStoresController.class);
+                serve("/clear/*").with(ClearTweetsController.class);
             }
         });
     }

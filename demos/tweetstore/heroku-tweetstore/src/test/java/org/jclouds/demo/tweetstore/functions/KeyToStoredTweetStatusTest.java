@@ -41,10 +41,11 @@ import org.testng.annotations.Test;
 public class KeyToStoredTweetStatusTest {
 
    BlobMap createMap() throws InterruptedException, ExecutionException {
-       BlobStoreContext context = 
-           ContextBuilder.newBuilder(TransientApiMetadata.builder().build()).build(BlobStoreContext.class);
-      context.getBlobStore().createContainerInLocation(null, "test1");
-      return context.createBlobMap("test1");
+      BlobStoreContext context = 
+          ContextBuilder.newBuilder(TransientApiMetadata.builder().build()).build(BlobStoreContext.class);
+      String container = KeyToStoredTweetStatusTest.class.getName() + "#container"; 
+      context.getBlobStore().createContainerInLocation(null, container);
+      return context.createBlobMap(container);
    }
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {

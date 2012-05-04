@@ -57,20 +57,21 @@ public class StoreTweetsControllerTest {
       return createMock(Twitter.class);
    }
 
-   Map<String, BlobStoreContext> createBlobStores() throws InterruptedException, ExecutionException {
+   Map<String, BlobStoreContext> createBlobStores(String container) throws InterruptedException, ExecutionException {
       TransientApiMetadata transientApiMetadata = TransientApiMetadata.builder().build();
       Map<String, BlobStoreContext> contexts = ImmutableMap.<String, BlobStoreContext>of(
                "test1", ContextBuilder.newBuilder(transientApiMetadata).build(BlobStoreContext.class), 
                "test2", ContextBuilder.newBuilder(transientApiMetadata).build(BlobStoreContext.class));
       for (BlobStoreContext blobstore : contexts.values()) {
-         blobstore.getAsyncBlobStore().createContainerInLocation(null, "favo").get();
+         blobstore.getAsyncBlobStore().createContainerInLocation(null, container).get();
       }
       return contexts;
    }
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
-      Map<String, BlobStoreContext> stores = createBlobStores();
-      StoreTweetsController function = new StoreTweetsController(stores, "favo", createTwitter());
+      String container = StoreTweetsControllerTest.class.getName() + "#container";
+      Map<String, BlobStoreContext> stores = createBlobStores(container);
+      StoreTweetsController function = new StoreTweetsController(stores, container, createTwitter());
 
       User frank = createMock(User.class);
       expect(frank.getScreenName()).andReturn("frank").atLeastOnce();
@@ -102,7 +103,7 @@ public class StoreTweetsControllerTest {
       verify(jimmyStatus);
 
       for (Entry<String, BlobStoreContext> entry : stores.entrySet()) {
-         BlobMap map = entry.getValue().createBlobMap("favo");
+         BlobMap map = entry.getValue().createBlobMap(container);
          Blob frankBlob = map.get("1");
          assertEquals(frankBlob.getMetadata().getName(), "1");
          assertEquals(frankBlob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME), "frank");

@@ -60,7 +60,7 @@ public class ServiceToStoredTweetStatusesTest {
    }
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
-      String container = "container";
+      String container = ServiceToStoredTweetStatusesTest.class.getName() + "#container";
       Map<String, BlobStoreContext> contexts = createServices(container);
 
       ServiceToStoredTweetStatuses function = new ServiceToStoredTweetStatuses(contexts, container);
