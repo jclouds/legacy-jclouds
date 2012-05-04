@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain.dmtf;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.dmtf.DMTFConstants.OVF_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
@@ -44,7 +43,7 @@ import com.google.common.collect.Sets;
  * 
  * @author grkvlt@apache.org
  */
-@XmlRootElement(name = "Item", namespace = OVF_NS)
+@XmlRootElement(name = "Item", namespace = VCLOUD_1_5_NS)
 public class RasdItem extends ResourceAllocationSettingData {
 
    public static Builder<?> builder() {

@@ -107,8 +107,8 @@ public class VCloudDirectorTestSession implements Closeable {
 
    @Override
    public void close() {
+      // NOTE we only need to close the user context to log out
       Closeables.closeQuietly(userContext);
-      Closeables.closeQuietly(adminContext);
    }
 
    public VCloudDirectorContext getUserContext() {
