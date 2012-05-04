@@ -85,5 +85,8 @@ public interface ExtensionNamespaces {
     * Instance rescue mode
     */
    public static final String RESCUE = "http://docs.openstack.org/ext/rescue/api/v1.1";
-
+   /**
+    * Admin Action extension
+    */
+   public static final String ADMIN_ACTIONS = "http://docs.openstack.org/ext/admin-actions/api/v1.1";
 }

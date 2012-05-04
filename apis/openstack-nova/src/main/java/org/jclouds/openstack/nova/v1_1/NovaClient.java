@@ -25,11 +25,14 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
+import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsClient;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceClient;
 import org.jclouds.openstack.nova.v1_1.extensions.VolumeClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
@@ -123,7 +126,6 @@ public interface NovaClient {
    Optional<SimpleTenantUsageClient> getSimpleTenantUsageExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
-
    /**
     * Provides synchronous access to Volume features.
     */
@@ -131,4 +133,25 @@ public interface NovaClient {
    Optional<VolumeClient> getVolumeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
+   /**
+    * Provides synchronous access to Virtual Interface features.
+    */
+   @Delegate
+   Optional<VirtualInterfaceClient> getVirtualInterfaceExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Server Extra Data features.
+    */
+   @Delegate
+   Optional<ServerWithSecurityGroupsClient> getServerWithSecurityGroupsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Server Admin Actions features.
+    */
+   @Delegate
+   Optional<AdminActionsClient> getAdminActionsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+   
 }

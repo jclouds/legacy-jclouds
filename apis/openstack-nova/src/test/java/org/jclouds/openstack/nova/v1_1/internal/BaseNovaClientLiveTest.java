@@ -18,13 +18,18 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
+
 import java.util.Properties;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
+import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
@@ -36,7 +41,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -76,15 +83,19 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    protected Server createServerInZone(String zoneId) {
       ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
       Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
-      blockUntilServerActive(server.getId(), serverClient);
+      blockUntilServerInState(server.getId(), serverClient, Status.ACTIVE);
       return server;
    }
 
-   private void blockUntilServerActive(String serverId, ServerClient client) {
+   /** 
+    * Will block until the requested server is in the correct state, if Extended Server Status extension is loaded
+    * this will continue to block while any task is in progress.
+    */
+   protected void blockUntilServerInState(String serverId, ServerClient client, Status status) {
       Server currentDetails = null;
-      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != status || currentDetails.getTaskState() != null; currentDetails = client
             .getServer(serverId)) {
-         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         System.out.printf("blocking on status %s%n%s%n", status, currentDetails);
          try {
             Thread.sleep(5 * 1000);
          } catch (InterruptedException e) {
@@ -100,7 +111,13 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected String flavorRefForZone(String zoneId) {
       FlavorClient flavorClient = novaContext.getApi().getFlavorClientForZone(zoneId);
-      return Iterables.getLast(flavorClient.listFlavors()).getId();
+      return DEFAULT_FLAVOR_ORDERING.min(flavorClient.listFlavorsInDetail()).getId();
    }
 
+   static final Ordering<Flavor> DEFAULT_FLAVOR_ORDERING = new Ordering<Flavor>() {
+      public int compare(Flavor left, Flavor right) {
+         return ComparisonChain.start().compare(left.getVcpus(), right.getVcpus()).compare(left.getRam(), right.getRam())
+               .compare(left.getDisk(), right.getDisk()).result();
+      }
+   };
 }
