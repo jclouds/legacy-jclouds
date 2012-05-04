@@ -18,15 +18,12 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
-
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
-import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -68,117 +65,130 @@ public class Image extends Resource {
 
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromImage(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromImage(this);
    }
 
-   public static class Builder extends Resource.Builder {
-
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       private Date updated;
       private Date created;
       private String tenantId;
       private String userId;
-      private Status status;
+      private Image.Status status;
       private int progress;
       private int minDisk;
       private int minRam;
       private Resource server;
-      private Map<String, String> metadata = Maps.newLinkedHashMap();
+      private Map<String, String> metadata = ImmutableMap.of();
 
-      public Builder updated(Date updated) {
+      /**
+       * @see Image#getUpdated()
+       */
+      public T updated(Date updated) {
          this.updated = updated;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /**
+       * @see Image#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder tenantId(String tenantId) {
+      /**
+       * @see Image#getTenantId()
+       */
+      public T tenantId(String tenantId) {
          this.tenantId = tenantId;
-         return this;
+         return self();
       }
 
-      public Builder userId(String userId) {
+      /**
+       * @see Image#getUserId()
+       */
+      public T userId(String userId) {
          this.userId = userId;
-         return this;
+         return self();
       }
 
-      public Builder status(Status status) {
+      /**
+       * @see Image#getStatus()
+       */
+      public T status(Image.Status status) {
          this.status = status;
-         return this;
+         return self();
       }
 
-      public Builder progress(int progress) {
+      /**
+       * @see Image#getProgress()
+       */
+      public T progress(int progress) {
          this.progress = progress;
-         return this;
+         return self();
       }
 
-      public Builder minDisk(int minDisk) {
+      /**
+       * @see Image#getMinDisk()
+       */
+      public T minDisk(int minDisk) {
          this.minDisk = minDisk;
-         return this;
+         return self();
       }
 
-      public Builder minRam(int minRam) {
+      /**
+       * @see Image#getMinRam()
+       */
+      public T minRam(int minRam) {
          this.minRam = minRam;
-         return this;
+         return self();
       }
 
-      public Builder server(Resource server) {
+      /**
+       * @see Image#getServer()
+       */
+      public T server(Resource server) {
          this.server = server;
-         return this;
+         return self();
       }
 
-      public Builder metadata(Map<String, String> metadata) {
+      /**
+       * @see Image#getMetadata()
+       */
+      public T metadata(Map<java.lang.String, java.lang.String> metadata) {
          this.metadata = metadata;
-         return this;
+         return self();
       }
 
       public Image build() {
-         return new Image(id, name, links, updated, created, tenantId, userId, status, progress, minDisk, minRam,
-                  server, metadata);
+         return new Image(this);
       }
 
-      public Builder fromImage(Image in) {
-         return fromResource(in).status(in.getStatus()).updated(in.getUpdated()).created(in.getCreated()).progress(
-                  in.getProgress()).server(in.getServer()).metadata(in.getMetadata());
+      public T fromImage(Image in) {
+         return super.fromResource(in)
+               .updated(in.getUpdated())
+               .created(in.getCreated())
+               .tenantId(in.getTenantId())
+               .userId(in.getUserId())
+               .status(in.getStatus())
+               .progress(in.getProgress())
+               .minDisk(in.getMinDisk())
+               .minRam(in.getMinRam())
+               .server(in.getServer())
+               .metadata(in.getMetadata());
       }
 
-      /**
-       * {@inheritDoc}
-       */
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder id(String id) {
-         return Builder.class.cast(super.id(id));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResource(Resource in) {
-         return Builder.class.cast(super.fromResource(in));
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
@@ -195,19 +205,18 @@ public class Image extends Resource {
    private final Resource server;
    private final Map<String, String> metadata;
 
-   protected Image(String id, String name, Set<Link> links, Date updated, Date created, String tenantId, String userId,
-            Status status, int progress, int minDisk, int minRam, Resource server, Map<String, String> metadata) {
-      super(id, name, links);
-      this.updated = updated;
-      this.created = created;
-      this.tenantId = tenantId;
-      this.userId = userId;
-      this.status = status;
-      this.progress = progress;
-      this.minDisk = minDisk;
-      this.minRam = minRam;
-      this.server = server;
-      this.metadata = ImmutableMap.<String, String> copyOf(metadata);
+   protected Image(Builder<?> builder) {
+      super(builder);
+      this.updated = builder.updated;
+      this.created = builder.created;
+      this.tenantId = builder.tenantId;
+      this.userId = builder.userId;
+      this.status = builder.status;
+      this.progress = builder.progress;
+      this.minDisk = builder.minDisk;
+      this.minRam = builder.minRam;
+      this.server = builder.server;
+      this.metadata = ImmutableMap.copyOf(builder.metadata);
    }
 
    public Date getUpdated() {
@@ -252,11 +261,18 @@ public class Image extends Resource {
    }
 
    @Override
-   public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("updated", updated).add(
-               "created", created).add("tenantId", tenantId).add("userId", userId).add("status", status).add(
-               "progress", progress).add("minDisk", minDisk).add("minRam", minRam).add("server", server).add(
-               "metadata", metadata).toString();
+   protected Objects.ToStringHelper string() {
+      return super.string()
+            .add("updated", updated)
+            .add("created", created)
+            .add("tenantId", tenantId)
+            .add("userId", userId)
+            .add("status", status)
+            .add("progress", progress)
+            .add("minDisk", minDisk)
+            .add("minRam", minRam)
+            .add("server", server)
+            .add("metadata", metadata);
    }
 
 }

@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.util.Multimaps2;
@@ -36,7 +35,6 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.gson.annotations.SerializedName;
@@ -67,7 +65,7 @@ public class Server extends Resource {
                NodeState.PENDING), VERIFY_RESIZE(NodeState.PENDING), REVERT_RESIZE(NodeState.PENDING), PASSWORD(
                NodeState.PENDING), REBOOT(NodeState.PENDING), HARD_REBOOT(NodeState.PENDING), DELETED(
                NodeState.TERMINATED), UNKNOWN(NodeState.UNRECOGNIZED), ERROR(NodeState.ERROR), UNRECOGNIZED(
-               NodeState.UNRECOGNIZED);
+               NodeState.UNRECOGNIZED), PAUSED(NodeState.SUSPENDED);
 
       private final NodeState nodeState;
 
@@ -92,216 +90,263 @@ public class Server extends Resource {
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromServer(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServer(this);
    }
 
-   public static class Builder extends Resource.Builder {
-      protected String uuid;
-      protected String tenantId;
-      protected String userId;
-      protected Date updated;
-      protected Date created;
-      protected String hostId;
-      protected String accessIPv4;
-      protected String accessIPv6;
-      protected Status status;
-      protected String configDrive;
-      protected Resource image;
-      protected Resource flavor;
-      protected Map<String, String> metadata = Maps.newHashMap();
-      // TODO: get gson multimap ad
-      protected Multimap<String, Address> addresses = LinkedHashMultimap.create();
-      protected String adminPass;
-      protected String keyName;
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
+      private String uuid;
+      private String tenantId;
+      private String userId;
+      private Date updated;
+      private Date created;
+      private String hostId;
+      private String accessIPv4;
+      private String accessIPv6;
+      private Server.Status status;
+      private Resource image;
+      private Resource flavor;
+      private String adminPass;
+      private String keyName;
+      private String configDrive;
+      private Multimap<String, Address> addresses = ImmutableMultimap.of();
+      private Map<String, String> metadata = ImmutableMap.of();
+      private String taskState;
+      private String vmState;
+      private String powerState;
+      private String instanceName;
+      private String hostName;
+      private String hypervisorName;
+      private String diskConfig;
 
       /**
        * @see Server#getUuid()
        */
-      public Builder uuid(@Nullable String uuid) {
+      public T uuid(String uuid) {
          this.uuid = uuid;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getTenantId()
        */
-      public Builder tenantId(String tenantId) {
+      public T tenantId(String tenantId) {
          this.tenantId = tenantId;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getUserId()
        */
-      public Builder userId(String userId) {
+      public T userId(String userId) {
          this.userId = userId;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getUpdated()
        */
-      public Builder updated(Date updated) {
+      public T updated(Date updated) {
          this.updated = updated;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getCreated()
        */
-      public Builder created(Date created) {
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getHostId()
        */
-      public Builder hostId(@Nullable String hostId) {
+      public T hostId(String hostId) {
          this.hostId = hostId;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getAccessIPv4()
        */
-      public Builder accessIPv4(@Nullable String accessIPv4) {
+      public T accessIPv4(String accessIPv4) {
          this.accessIPv4 = accessIPv4;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getAccessIPv6()
        */
-      public Builder accessIPv6(@Nullable String accessIPv6) {
+      public T accessIPv6(String accessIPv6) {
          this.accessIPv6 = accessIPv6;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getStatus()
        */
-      public Builder status(Status status) {
+      public T status(Server.Status status) {
          this.status = status;
-         return this;
-      }
-
-      /**
-       * @see Server#getConfigDrive()
-       */
-      public Builder configDrive(@Nullable String configDrive) {
-         this.configDrive = configDrive;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getImage()
        */
-      public Builder image(Resource image) {
+      public T image(Resource image) {
          this.image = image;
-         return this;
+         return self();
       }
 
       /**
-       * @see Server#getImage()
+       * @see Server#getFlavor()
        */
-      public Builder flavor(Resource flavor) {
+      public T flavor(Resource flavor) {
          this.flavor = flavor;
-         return this;
+         return self();
       }
 
-      /**
-       * @see Server#getMetadata()
-       */
-      public Builder metadata(Map<String, String> metadata) {
-         this.metadata = ImmutableMap.copyOf(metadata);
-         return this;
-      }
-
-      /**
-       * @see Server#getAddresses()
-       */
-      public Builder addresses(Multimap<String, Address> addresses) {
-         this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses"));
-         return this;
-      }
-      
       /**
        * @see Server#getAdminPass()
        */
-      public Builder adminPass(String adminPass) {
+      public T adminPass(String adminPass) {
          this.adminPass = adminPass;
-         return this;
+         return self();
       }
 
       /**
        * @see Server#getKeyName()
        */
-      public Builder keyName(@Nullable String keyName) {
+      public T keyName(String keyName) {
          this.keyName = keyName;
-         return this;
+         return self();
       }
 
-      @Override
+      /**
+       * @see Server#getConfigDrive()
+       */
+      public T configDrive(String configDrive) {
+         this.configDrive = configDrive;
+         return self();
+      }
+
+      /**
+       * @see Server#getAddresses()
+       */
+      public T addresses(Multimap<String, Address> addresses) {
+         this.addresses = addresses;
+         return self();
+      }
+
+      /**
+       * @see Server#getMetadata()
+       */
+      public T metadata(Map<String, String> metadata) {
+         this.metadata = metadata;
+         return self();
+      }
+
+      /**
+       * @see Server#getTaskState()
+       */
+      public T taskState(String taskState) {
+         this.taskState = taskState;
+         return self();
+      }
+
+      /**
+       * @see Server#getVmState()
+       */
+      public T vmState(String vmState) {
+         this.vmState = vmState;
+         return self();
+      }
+
+      /**
+       * @see Server#getPowerState()
+       */
+      public T powerState(String powerState) {
+         this.powerState = powerState;
+         return self();
+      }
+
+      /**
+       * @see Server#getInstanceName()
+       */
+      public T instanceName(String instanceName) {
+         this.instanceName = instanceName;
+         return self();
+      }
+
+      /**
+       * @see Server#getHostName()
+       */
+      public T hostName(String hostName) {
+         this.hostName = hostName;
+         return self();
+      }
+
+      /**
+       * @see Server#getHypervisorName()
+       */
+      public T hypervisorName(String hypervisorName) {
+         this.hypervisorName = hypervisorName;
+         return self();
+      }
+
+      /**
+       * @see Server#getDiskConfig()
+       */
+      public T diskConfig(String diskConfig) {
+         this.diskConfig = diskConfig;
+         return self();
+      }
+
       public Server build() {
-         return new Server(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6,
-                  status, configDrive, image, flavor, adminPass, keyName, addresses, metadata);
+         return new Server(this);
       }
 
-      public Builder fromServer(Server in) {
-         return fromResource(in).uuid(in.getUuid()).tenantId(in.getTenantId()).userId(in.getUserId()).updated(
-                  in.getUpdated()).created(in.getCreated()).hostId(in.getHostId()).accessIPv4(in.getAccessIPv4())
-                  .accessIPv6(in.getAccessIPv6()).status(in.getStatus()).configDrive(in.getConfigDrive()).image(
-                           in.getImage()).flavor(in.getFlavor()).adminPass(in.getAdminPass()).keyName(in.getKeyName())
-                  .addresses(in.getAddresses()).metadata(in.getMetadata());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder id(String id) {
-         return Builder.class.cast(super.id(id));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder links(Link... links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResource(Resource in) {
-         return Builder.class.cast(super.fromResource(in));
+      public T fromServer(Server in) {
+         return super.fromResource(in)
+               .uuid(in.getUuid())
+               .tenantId(in.getTenantId())
+               .userId(in.getUserId())
+               .updated(in.getUpdated())
+               .created(in.getCreated())
+               .hostId(in.getHostId())
+               .accessIPv4(in.getAccessIPv4())
+               .accessIPv6(in.getAccessIPv6())
+               .status(in.getStatus())
+               .image(in.getImage())
+               .flavor(in.getFlavor())
+               .adminPass(in.getAdminPass())
+               .keyName(in.getKeyName())
+               .configDrive(in.getConfigDrive())
+               .addresses(in.getAddresses())
+               .metadata(in.getMetadata())
+               .taskState(in.getTaskState())
+               .vmState(in.getVmState())
+               .powerState(in.getPowerState())
+               .instanceName(in.getInstanceName())
+               .hostName(in.getHostName())
+               .hypervisorName(in.getHypervisorName())
+               .diskConfig(in.getDiskConfig());
       }
    }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
    protected final String uuid;
    @SerializedName("tenant_id")
    protected final String tenantId;
@@ -324,28 +369,51 @@ public class Server extends Resource {
    protected final Map<String, Set<Address>> addresses;
    protected final Map<String, String> metadata;
 
-   protected Server(String id, String name, Set<Link> links, @Nullable String uuid, String tenantId, String userId,
-            Date updated, Date created, @Nullable String hostId, @Nullable String accessIPv4,
-            @Nullable String accessIPv6, Status status, @Nullable String configDrive, Resource image, Resource flavor,
-            String adminPass, @Nullable String keyName, Multimap<String, Address> addresses,
-            Map<String, String> metadata) {
-      super(id, name, links);
-      this.uuid = uuid; // TODO: see what version this came up in
-      this.tenantId = checkNotNull(tenantId, "tenantId");
-      this.userId = checkNotNull(userId, "userId");
-      this.updated = checkNotNull(updated, "updated");
-      this.created = checkNotNull(created, "created");
-      this.hostId = hostId;
-      this.accessIPv4 = accessIPv4;
-      this.accessIPv6 = accessIPv6;
-      this.status = checkNotNull(status, "status");
-      this.configDrive = configDrive;
-      this.image = checkNotNull(image, "image");
-      this.flavor = checkNotNull(flavor, "flavor");
-      this.metadata = Maps.newHashMap(metadata);
-      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses")));
-      this.adminPass = adminPass;
-      this.keyName = keyName;
+   // Extended status extension
+   @SerializedName("OS-EXT-STS:task_state")
+   protected final String taskState;
+   @SerializedName("OS-EXT-STS:vm_state")
+   protected final String vmState;
+   @SerializedName("OS-EXT-STS:power_state")
+   protected final String powerState;
+
+   // Extended server attributes extension
+   @SerializedName("OS-EXT-SRV-ATTR:instance_name")
+   protected final String instanceName;
+   @SerializedName("OS-EXT-SRV-ATTR:host")
+   protected final String hostName;
+   @SerializedName("OS-EXT-SRV-ATTR:hypervisor_hostname")
+   protected final String hypervisorName;
+
+   // Disk Config extension
+   @SerializedName("OS-DCF:diskConfig")
+   protected final String diskConfig;
+
+   protected Server(Builder<?> builder) {
+      super(builder);
+      this.uuid = builder.uuid; // TODO: see what version this came up in
+      this.tenantId = checkNotNull(builder.tenantId, "tenantId");
+      this.userId = checkNotNull(builder.userId, "userId");
+      this.updated = checkNotNull(builder.updated, "updated");
+      this.created = checkNotNull(builder.created, "created");
+      this.hostId = builder.hostId;
+      this.accessIPv4 = builder.accessIPv4;
+      this.accessIPv6 = builder.accessIPv6;
+      this.status = checkNotNull(builder.status, "status");
+      this.configDrive = builder.configDrive;
+      this.image = checkNotNull(builder.image, "image");
+      this.flavor = checkNotNull(builder.flavor, "flavor");
+      this.metadata = Maps.newHashMap(builder.metadata);
+      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(builder.addresses, "addresses")));
+      this.adminPass = builder.adminPass;
+      this.keyName = builder.keyName;
+      this.taskState = builder.taskState;
+      this.vmState = builder.vmState;
+      this.powerState = builder.powerState;
+      this.instanceName = builder.instanceName;
+      this.hostName = builder.hostName;
+      this.hypervisorName = builder.hypervisorName;
+      this.diskConfig = builder.diskConfig;
    }
 
    /**
@@ -437,6 +505,79 @@ public class Server extends Resource {
    public String getKeyName() {
       return keyName;
    }
+
+
+   /**
+    * State of task running against this instance (e.g. "suspending")
+    * <p/>
+    * NOTE: This field is only present if the Extended Status extension is installed.
+    */
+   @Nullable
+   public String getTaskState() {
+      return this.taskState;
+   }
+
+   /**
+    * State of task running against this instance (e.g. "suspending")
+    * <p/>
+    * NOTE: This field is only present if the Extended Status extension is installed.
+    */
+   @Nullable
+   public String getVmState() {
+      return this.vmState;
+   }
+
+   /**
+    * State of task running against this instance (e.g. "suspending")
+    * <p/>
+    * NOTE: This field is only present if the Extended Status extension is installed.
+    */
+   @Nullable
+   public String getPowerState() {
+      return this.powerState;
+   }
+
+   /**
+    * The name of the instance?
+    * <p/>
+    * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
+    */
+   @Nullable
+   public String getInstanceName() {
+      return this.instanceName;
+   }
+
+   /**
+    * The host name of the host this Server is running on
+    * <p/>
+    * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
+    * @see #getHostId()
+    */
+   @Nullable
+   public String getHostName() {
+      return this.hostName;
+   }
+
+   /**
+    * The name of the hypervisor this Server is running on
+    * <p/>
+    * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
+    */
+   @Nullable
+   public String getHypervisorName() {
+      return this.hypervisorName;
+   }
+
+   /**
+    * State of task running against this instance (e.g. "suspending")
+    * <p/>
+    * NOTE: This field is only present if the Disk Config extension is installed.
+    */
+   @Nullable
+   public String getDiskConfig() {
+      return this.diskConfig;
+   }
+
 
    // hashCode/equals from super is ok
 
