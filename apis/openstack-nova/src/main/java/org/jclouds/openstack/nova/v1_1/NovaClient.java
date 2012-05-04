@@ -29,6 +29,7 @@ import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageClient;
 import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceClient;
 import org.jclouds.openstack.nova.v1_1.extensions.VolumeClient;
@@ -137,6 +138,14 @@ public interface NovaClient {
     */
    @Delegate
    Optional<VirtualInterfaceClient> getVirtualInterfaceExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+
+   /**
+    * Provides synchronous access to Server Extra Data features.
+    */
+   @Delegate
+   Optional<ServerWithSecurityGroupsClient> getServerExtraDataExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

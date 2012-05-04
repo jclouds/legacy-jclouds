@@ -101,23 +101,23 @@ public class Server extends Resource {
    }
 
    public static class Builder extends Resource.Builder {
-      private String uuid;
-      private String tenantId;
-      private String userId;
-      private Date updated;
-      private Date created;
-      private String hostId;
-      private String accessIPv4;
-      private String accessIPv6;
-      private Status status;
-      private String configDrive;
-      private Resource image;
-      private Resource flavor;
-      private Map<String, String> metadata = Maps.newHashMap();
+      protected String uuid;
+      protected String tenantId;
+      protected String userId;
+      protected Date updated;
+      protected Date created;
+      protected String hostId;
+      protected String accessIPv4;
+      protected String accessIPv6;
+      protected Status status;
+      protected String configDrive;
+      protected Resource image;
+      protected Resource flavor;
+      protected Map<String, String> metadata = Maps.newHashMap();
       // TODO: get gson multimap ad
-      private Multimap<String, Address> addresses = LinkedHashMultimap.create();
-      private String adminPass;
-      private String keyName;
+      protected Multimap<String, Address> addresses = LinkedHashMultimap.create();
+      protected String adminPass;
+      protected String keyName;
 
       /**
        * @see Server#getUuid()
@@ -375,8 +375,7 @@ public class Server extends Resource {
    }
 
    /**
-    * 
-    * @return host identifier, or null if in {@link ServerState#BUILD}
+    * @return host identifier, or null if in {@link Status#BUILD}
     */
    @Nullable
    public String getHostId() {
