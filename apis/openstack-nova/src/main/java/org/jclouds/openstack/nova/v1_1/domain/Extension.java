@@ -18,14 +18,12 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
-
 import java.net.URI;
 import java.util.Date;
-import java.util.Set;
 
-import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
+
+import com.google.common.base.Objects;
 
 /**
  * The OpenStack Compute API is extensible. Extensions serve two purposes: They
@@ -39,94 +37,86 @@ import org.jclouds.openstack.domain.Resource;
  *      />
  */
 public class Extension extends Resource {
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromExtension(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromExtension(this);
    }
 
-   public static class Builder extends Resource.Builder {
-
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       private URI namespace;
       private String alias;
       private Date updated;
       private String description;
 
-      public Builder namespace(URI namespace) {
+      /**
+       * @see Extension#getNamespace()
+       */
+      public T namespace(URI namespace) {
          this.namespace = namespace;
-         return this;
+         return self();
       }
 
-      public Builder alias(String alias) {
+      /**
+       * @see Extension#getAlias()
+       */
+      public T alias(String alias) {
+         id(alias);
          this.alias = alias;
-         return this;
+         return self();
       }
 
-      public Builder updated(Date updated) {
+      /**
+       * @see Extension#getUpdated()
+       */
+      public T updated(Date updated) {
          this.updated = updated;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see Extension#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       public Extension build() {
-         return new Extension(name, links, namespace, alias, updated, description);
+         return new Extension(this);
       }
 
-      public Builder fromExtension(Extension in) {
-         return fromResource(in).namespace(in.getNamespace()).alias(in.getAlias()).updated(in.getUpdated())
-               .description(in.getDescription());
+      public T fromExtension(Extension in) {
+         return super.fromResource(in)
+               .namespace(in.getNamespace())
+               .alias(in.getAlias())
+               .updated(in.getUpdated())
+               .description(in.getDescription())
+               ;
       }
 
-      /**
-       * {@inheritDoc}
-       */
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder id(String id) {
-         return alias(id);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResource(Resource in) {
-         return Builder.class.cast(super.fromResource(in));
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
-   private URI namespace;
-   private String alias;
-   private Date updated;
-   private String description;
+   private final URI namespace;
+   private final String alias;
+   private final Date updated;
+   private final String description;
 
-   protected Extension(String name, Set<Link> links, URI namespace, String alias, Date updated, String description) {
-      super(alias, name, links);
-      this.namespace = namespace;
-      this.alias = alias;
-      this.updated = updated;
-      this.description = description;
+   protected Extension(Builder<?> builder) {
+      super(builder);
+      this.namespace = builder.namespace;
+      this.alias = builder.alias;
+      this.updated = builder.updated;
+      this.description = builder.description;
    }
 
    public URI getNamespace() {
@@ -151,9 +141,11 @@ public class Extension extends Resource {
    }
 
    @Override
-   public String toString() {
-      return toStringHelper("").add("id", getId()).add("name", name).add("links", links).add("namespace", namespace)
-            .add("alias", alias).add("updated", updated).add("description", description).toString();
+   public Objects.ToStringHelper string() {
+      return super.string()
+            .add("namespace", namespace)
+            .add("alias", alias)
+            .add("updated", updated)
+            .add("description", description);
    }
-
 }

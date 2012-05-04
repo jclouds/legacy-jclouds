@@ -23,11 +23,14 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
+import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.VolumeAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
@@ -127,4 +130,27 @@ public interface NovaAsyncClient {
    @Delegate
    Optional<VolumeAsyncClient> getVolumeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to Virtual Interface features.
+    */
+   @Delegate
+   Optional<VirtualInterfaceAsyncClient> getVirtualInterfaceExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+
+   /**
+    * Provides asynchronous access to Server Extra Data features.
+    */
+   @Delegate
+   Optional<ServerWithSecurityGroupsAsyncClient> getServerWithSecurityGroupsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to Server Admin Actions features.
+    */
+   @Delegate
+   Optional<AdminActionsAsyncClient> getAdminActionsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
 }

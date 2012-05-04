@@ -20,14 +20,19 @@ package org.jclouds.openstack.nova.v1_1.config;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
+import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.ServerWithSecurityGroups;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -39,13 +44,17 @@ import com.google.inject.Provides;
 
 /**
  * @author Adrian Cole
+ * @author Adam Lowe
  */
 public class NovaParserModule extends AbstractModule {
 
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(HostResourceUsage.class, new HostResourceUsageAdapter());
+      return ImmutableMap.<Type, Object> of(
+            HostResourceUsage.class, new HostResourceUsageAdapter(),
+            ServerWithSecurityGroups.class, new ServerWithSecurityGroupsAdapter()
+      );
    }
 
    @Override
@@ -79,4 +88,22 @@ public class NovaParserModule extends AbstractModule {
       }
    }
 
+   @Singleton
+   public static class ServerWithSecurityGroupsAdapter implements JsonDeserializer<ServerWithSecurityGroups> {
+      @Override
+      public ServerWithSecurityGroups deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+         Server server = context.deserialize(jsonElement, Server.class);
+         ServerWithSecurityGroups.Builder result = ServerWithSecurityGroups.builder().fromServer(server);
+         Set<String> names = Sets.newLinkedHashSet();
+         if (jsonElement.getAsJsonObject().get("security_groups") != null) {
+            JsonArray x = jsonElement.getAsJsonObject().get("security_groups").getAsJsonArray();
+            for(JsonElement y : x) {
+               names.add(y.getAsJsonObject().get("name").getAsString());
+            }
+            result.securityGroupNames(names);
+         }
+         return result.build();
+      }
+   }
 }

@@ -219,12 +219,20 @@ public class NovaComputeServiceAdapter implements
 
    @Override
    public void resumeNode(String id) {
-      throw new UnsupportedOperationException("suspend not supported");
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      if (novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().resumeServer(zoneAndId.getId());
+      }
+      throw new UnsupportedOperationException("resume requires installation of the Admin Actions extension");
    }
 
    @Override
    public void suspendNode(String id) {
-      throw new UnsupportedOperationException("suspend not supported");
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      if (novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().suspendServer(zoneAndId.getId());
+      }
+      throw new UnsupportedOperationException("suspend requires installation of the Admin Actions extension");
    }
 
 }
