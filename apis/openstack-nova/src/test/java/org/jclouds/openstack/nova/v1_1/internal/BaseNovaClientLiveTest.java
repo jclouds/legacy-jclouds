@@ -83,15 +83,19 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    protected Server createServerInZone(String zoneId) {
       ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
       Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
-      blockUntilServerActive(server.getId(), serverClient);
+      blockUntilServerInState(server.getId(), serverClient, Status.ACTIVE);
       return server;
    }
 
-   private void blockUntilServerActive(String serverId, ServerClient client) {
+   /** 
+    * Will block until the requested server is in the correct state, if Extended Server Status extension is loaded
+    * this will continue to block while any task is in progress.
+    */
+   protected void blockUntilServerInState(String serverId, ServerClient client, Status status) {
       Server currentDetails = null;
-      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != status || currentDetails.getTaskState() != null; currentDetails = client
             .getServer(serverId)) {
-         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         System.out.printf("blocking on status %s%n%s%n", status, currentDetails);
          try {
             Thread.sleep(5 * 1000);
          } catch (InterruptedException e) {

@@ -23,6 +23,7 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
+import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
@@ -143,6 +144,13 @@ public interface NovaAsyncClient {
     */
    @Delegate
    Optional<ServerWithSecurityGroupsAsyncClient> getServerExtraDataExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to Server Admin Actions features.
+    */
+   @Delegate
+   Optional<AdminActionsAsyncClient> getAdminActionsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

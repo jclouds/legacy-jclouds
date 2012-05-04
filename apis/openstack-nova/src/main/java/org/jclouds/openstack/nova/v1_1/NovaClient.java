@@ -25,6 +25,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
+import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsClient;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
@@ -148,4 +149,12 @@ public interface NovaClient {
    Optional<ServerWithSecurityGroupsClient> getServerExtraDataExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
+
+   /**
+    * Provides asynchronous access to Server Admin Actions features.
+    */
+   @Delegate
+   Optional<AdminActionsClient> getAdminActionsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+   
 }
