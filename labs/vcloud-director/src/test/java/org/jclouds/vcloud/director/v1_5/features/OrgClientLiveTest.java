@@ -185,7 +185,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkControlAccessParams(params);
    }
 
-   @Test(description = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
+   @Test(description = "POST /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
    public void testModifyControlAccess() {
       // Setup params
       ControlAccessParams params = orgClient.getControlAccess(orgURI, testCatalogId);

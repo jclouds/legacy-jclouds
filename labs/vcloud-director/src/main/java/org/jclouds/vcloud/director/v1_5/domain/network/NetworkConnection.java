@@ -76,7 +76,7 @@ public class NetworkConnection {
       @XmlEnumValue("pool") POOL("pool"),
       @XmlEnumValue("dhcp") DHCP("dhcp"),
       @XmlEnumValue("manual") MANUAL("manual"),
-      @XmlEnumValue("none") NONE("none"),
+      @XmlEnumValue("NONE") NONE("none"),
       @XmlEnumValue("") UNRECOGNIZED("unrecognized");
       
       public static final List<IpAddressAllocationMode> ALL = ImmutableList.of(POOL, DHCP, MANUAL, NONE);
