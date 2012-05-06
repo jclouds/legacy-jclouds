@@ -28,7 +28,6 @@ import javax.servlet.ServletContextListener;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.demo.paas.PlatformServices;
-import org.jclouds.demo.paas.service.scheduler.Scheduler;
 import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -54,8 +53,7 @@ public class PlatformServicesInitializer implements ServletContextListener {
 
     protected static PlatformServices createServices(ServletContext context) {
         HttpCommandExecutorService httpClient = createHttpClient(context);
-        return new PlatformServices(getBaseUrl(context), new Scheduler(httpClient), 
-                createTaskQueues(httpClient));
+        return new PlatformServices(getBaseUrl(context), createTaskQueues(httpClient));
     }
 
     protected static HttpCommandExecutorService createHttpClient(

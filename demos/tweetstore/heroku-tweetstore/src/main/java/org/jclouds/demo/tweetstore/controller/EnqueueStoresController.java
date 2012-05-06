@@ -19,7 +19,6 @@
 package org.jclouds.demo.tweetstore.controller;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.jclouds.demo.paas.RunnableHttpRequest.PLATFORM_REQUEST_ORIGINATOR_HEADER;
 
 import java.io.IOException;
 import java.net.URI;
@@ -85,7 +84,7 @@ public class EnqueueStoresController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!nullToEmpty(request.getHeader(PLATFORM_REQUEST_ORIGINATOR_HEADER)).equals("scheduler")) {
+        if (!nullToEmpty(request.getHeader("X-Heroku-Cron")).equals("true")) {
             response.sendError(401);
         }
 

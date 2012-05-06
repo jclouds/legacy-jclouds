@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.jclouds.demo.paas.service.scheduler.Scheduler;
 import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -36,21 +35,15 @@ import com.google.common.collect.ImmutableMap;
  */
 public class PlatformServices {
     protected final String baseUrl;
-    protected final Scheduler scheduler;
     private ImmutableMap<String, TaskQueue> taskQueues;
 
-    public PlatformServices(String baseUrl, Scheduler scheduler, Map<String, TaskQueue> taskQueues) {
+    public PlatformServices(String baseUrl, Map<String, TaskQueue> taskQueues) {
         this.baseUrl = baseUrl;
-        this.scheduler = scheduler;
         this.taskQueues = ImmutableMap.copyOf(taskQueues);
     }
 
     public String getBaseUrl() {
         return baseUrl;
-    }
-
-    public Scheduler getScheduler() {
-        return scheduler;
     }
 
     public @Nullable TaskQueue getTaskQueue(String name) {
