@@ -40,25 +40,8 @@ import com.google.common.base.Throwables;
  * @author Adrian Cole
  */
 public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLiveTest {
-   // boolean get
-   // (
-   // int id) throws Exception {
-   // S3Bucket s3Bucket = new S3Bucket();
-   // s3Bucket.setName(bucketPrefix + "-jclouds-puts");
-   // S3Object object = new
-   // S3Object();
-   // object.setKey(id + "");
-   // //object.setContentType("text/plain");
-   // object.setContentType("application/octetstream");
-   // //object.setPayload("this is a test");
-   // object.setPayload(test);
-   // return getApi()Provider.getObject(s3Bucket,
-   // object.getKey()).get(120,TimeUnit.SECONDS) !=
-   // S3Object.NOT_FOUND;
 
-   // }
-   protected void overrideWithSysPropertiesAndPrint(Properties overrides, String contextName) {
-      overrides.putAll(System.getProperties());
+   protected void printPropertiesOfContext(Properties overrides, String contextName) {
       System.out.printf("%s: loopCount(%s), perContext(%s), perHost(%s), ioWorkers(%s), userThreads(%s)%n", contextName,
             loopCount, overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT), overrides
                   .getProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST), overrides.getProperty(PROPERTY_IO_WORKER_THREADS),

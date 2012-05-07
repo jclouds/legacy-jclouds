@@ -25,19 +25,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
+import org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.s3.S3AsyncClient;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -45,7 +43,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, sequential = true, groups = { "disabled" })
+@Test(enabled = false, singleThreaded = true, timeOut = 2 * 60 * 1000, groups = "live", testName = "JCloudsGaePerformanceLiveTest")
 public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override
@@ -134,27 +132,23 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
       new LocalServiceTestHelper(new LocalURLFetchServiceTestConfig()).setUp();
    }
 
-   private BlobStoreContext perfContext;
-
-   @BeforeClass(groups = { "live" })
-   void setup() {
-      String accesskeyid = System.getProperty("jclouds.test.identity");
-      String secretkey = System.getProperty("jclouds.test.credential");
-      Properties overrides = new Properties();
-      String contextName = "gae";
-      overrideWithSysPropertiesAndPrint(overrides, contextName);
-      context = new BlobStoreContextFactory().createContext("aws-s3", accesskeyid, secretkey, ImmutableSet.of(
-            new NullLoggingModule(), new GoogleAppEngineConfigurationModule()), overrides);
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      printPropertiesOfContext(overrides, "apachehc");
+      return overrides;
    }
-
-   @AfterClass(groups = { "live" })
-   void tearDown() {
-      if (perfContext != null)
-         perfContext.close();
+   
+   @Override
+   protected Iterable<Module> setupModules() {
+      return ImmutableSet.<Module>builder()
+                         .add(new NullLoggingModule())
+                         .add(new AsyncGoogleAppEngineConfigurationModule())
+                         .add(new EnterpriseConfigurationModule()).build();
    }
-
+   
    @Override
    public S3AsyncClient getApi() {
-      return (S3AsyncClient) perfContext.getProviderSpecificContext().getAsyncApi();
+      return view.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getAsyncApi();
    }
 }

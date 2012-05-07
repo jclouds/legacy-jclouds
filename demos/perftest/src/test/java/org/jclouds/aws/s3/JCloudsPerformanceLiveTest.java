@@ -26,15 +26,14 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.netty.config.NettyPayloadModule;
 import org.jclouds.s3.S3AsyncClient;
-import org.testng.ITestContext;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests the default JClouds client.
@@ -42,28 +41,34 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  * 
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
+@Test(singleThreaded = true, timeOut = 2 * 60 * 1000, groups = "live", testName = "JCloudsPerformanceLiveTest")
 public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
-
-   @Override
-   @BeforeClass(groups = { "integration", "live" })
-   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
+   
+   public JCloudsPerformanceLiveTest(){
       exec = Executors.newCachedThreadPool();
-      String accesskeyid = System.getProperty("test.aws-s3.identity");
-      String secretkey = System.getProperty("test.aws-s3.credential");
-      Properties overrides = new Properties();
+   }
+   
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
       overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 50 + "");
       overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 30 + "");
       overrides.setProperty(PROPERTY_IO_WORKER_THREADS, 50 + "");
       overrides.setProperty(PROPERTY_USER_THREADS, 0 + "");
-      String contextName = "standard";
-      overrideWithSysPropertiesAndPrint(overrides, contextName);
-      context = new BlobStoreContextFactory().createContext("aws-s3", accesskeyid, secretkey, ImmutableSet.of(
-            new NullLoggingModule(), new EnterpriseConfigurationModule()), overrides);
+      printPropertiesOfContext(overrides, "default");
+      return overrides;
    }
-
+   
+   @Override
+   protected Iterable<Module> setupModules() {
+      return ImmutableSet.<Module>builder()
+                         .add(new NullLoggingModule())
+                         .add(new NettyPayloadModule())
+                         .add(new EnterpriseConfigurationModule()).build();
+   }
+   
    @Override
    public S3AsyncClient getApi() {
-      return (S3AsyncClient) context.getProviderSpecificContext().getAsyncApi();
+      return view.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getAsyncApi();
    }
 }

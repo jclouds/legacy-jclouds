@@ -46,9 +46,15 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTest {
+   
+   public BasePerformanceLiveTest(){
+      provider = "aws-s3";
+   }
+   
    static {
       containerCount = 1;
    }
+   
    protected int timeoutSeconds = 15;
    protected int loopCount = Integer.parseInt(System.getProperty("test.aws-s3.loopcount", "1000"));
    protected ExecutorService exec;
