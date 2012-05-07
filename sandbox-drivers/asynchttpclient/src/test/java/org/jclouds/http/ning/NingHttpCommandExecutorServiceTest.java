@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.jclouds.http.ning.config.NingHttpCommandExecutorServiceModule;
+import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
@@ -37,6 +38,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
+@Test(testName = "NingHttpCommandExecutorServiceTest")
 public class NingHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    static {
       System.setProperty("http.conn-manager.timeout", 1000 + "");
