@@ -24,22 +24,14 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAU
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_VERSION;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
-import org.jclouds.ContextBuilder;
-import org.jclouds.byon.BYONApiMetadata;
-import org.jclouds.byon.Node;
-import org.jclouds.byon.functions.NodeToNodeMetadata;
-import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -51,11 +43,8 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.virtualbox.Host;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.compute.VirtualBoxImageExtension;
 import org.jclouds.virtualbox.domain.CloneSpec;
@@ -86,17 +75,13 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -157,24 +142,11 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Server>() {
       }).to((Class) PreseedCfgServer.class).asEagerSingleton();
 
-      // for byon
-      bind(new TypeLiteral<Function<URI, InputStream>>() {
-      }).to(SupplyFromProviderURIOrNodesProperty.class);
-
       bind(new TypeLiteral<Function<IMachine, SshClient>>() {
       }).to(IMachineToSshClient.class);
 
       bind(ExecutionType.class).toInstance(ExecutionType.HEADLESS);
       bind(LockType.class).toInstance(LockType.Write);
-   }
-
-   @Provides
-   @Host
-   @Singleton
-   protected ComputeServiceContext provideHostController() {
-      return ContextBuilder.newBuilder(new BYONApiMetadata()).credentials("", "")
-               .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()))
-               .build(ComputeServiceContext.class);
    }
 
    @Provides
@@ -197,12 +169,6 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   protected Supplier defaultClient(Supplier<VirtualBoxManager> in) {
-      return in;
-   }
-
-   @Provides
-   @Singleton
    protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
       return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning, 500l, TimeUnit.MILLISECONDS);
    }
@@ -211,19 +177,6 @@ public class VirtualBoxComputeServiceContextModule extends
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(VIRTUALBOX_DEFAULT_IMAGE_OS).osVersionMatches(VIRTUALBOX_DEFAULT_IMAGE_VERSION)
                .osArchMatches(VIRTUALBOX_DEFAULT_IMAGE_ARCH);
-   }
-
-   @Provides
-   @Singleton
-   protected Supplier<NodeMetadata> host(Supplier<LoadingCache<String, Node>> nodes, NodeToNodeMetadata converter)
-            throws ExecutionException {
-      return Suppliers.compose(Functions.compose(converter, new Function<LoadingCache<String, Node>, Node>() {
-
-         @Override
-         public Node apply(LoadingCache<String, Node> arg0) {
-            return arg0.apply("host");
-         }
-      }), nodes);
    }
 
    @Override

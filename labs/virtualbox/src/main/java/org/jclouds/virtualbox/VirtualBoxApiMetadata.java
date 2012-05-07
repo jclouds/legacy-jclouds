@@ -33,7 +33,7 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.virtualbox.config.DefaultCacheNodeStoreModule;
+import org.jclouds.virtualbox.config.HardcodeLocalhostAsNodeMetadataSupplier;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 
 import com.google.common.collect.ImmutableSet;
@@ -106,7 +106,7 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
          .buildVersion("4.1.8r75467")
          .defaultProperties(VirtualBoxApiMetadata.defaultProperties())
          .view(ComputeServiceContext.class)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(DefaultCacheNodeStoreModule.class, VirtualBoxComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(HardcodeLocalhostAsNodeMetadataSupplier.class, VirtualBoxComputeServiceContextModule.class));
       }
 
       @Override

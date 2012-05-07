@@ -29,12 +29,12 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
@@ -74,7 +74,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
             CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
             IMachineToNodeMetadata imachineToNodeMetadata, Predicate<SshClient> sshResponds,
             Function<IMachine, SshClient> sshClientForIMachine, MachineUtils machineUtils,
-            MachineController machineController, @Named(Constants.PROPERTY_BUILD_VERSION) String version,
+            MachineController machineController, @BuildVersion String version,
             @Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
