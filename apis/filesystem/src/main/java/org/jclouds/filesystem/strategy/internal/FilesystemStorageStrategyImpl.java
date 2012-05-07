@@ -199,15 +199,11 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       filesystemContainerNameValidator.validate(container);
       filesystemBlobKeyValidator.validate(blobKey);
       File outputFile = getFileForBlobKey(container, blobKey);
-      if (payload.getRawContent().equals(outputFile)){
-         // we shouldn't re-copy the same contents
-         return;
-      }
       FileOutputStream output = null;
       try {
          Files.createParentDirs(outputFile);
          if (payload.getRawContent() instanceof File)
-            Files.copy(File.class.cast(payload.getRawContent()), outputFile);
+            Files.copy((File) payload.getRawContent(), outputFile);
          else {
             output = new FileOutputStream(outputFile);
             payload.writeTo(output);
