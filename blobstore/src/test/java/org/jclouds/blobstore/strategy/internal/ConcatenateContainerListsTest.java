@@ -20,8 +20,8 @@ package org.jclouds.blobstore.strategy.internal;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.testng.annotations.AfterClass;
@@ -29,7 +29,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.common.io.Closeables;
 import com.google.inject.Injector;
 
 /**
@@ -43,7 +42,7 @@ public class ConcatenateContainerListsTest {
 
    @BeforeClass
    void setupBlobStore() {
-      Injector injector = ContextBuilder.newBuilder("transient").buildInjector();
+      Injector injector = new BlobStoreContextFactory().createContext("transient", "foo", "bar").utils().injector();
       blobstore = injector.getInstance(BlobStore.class);
       concatter = injector.getInstance(ConcatenateContainerLists.class);
    }
@@ -77,6 +76,6 @@ public class ConcatenateContainerListsTest {
    @AfterClass
    void close() {
       if (blobstore != null)
-         Closeables.closeQuietly(blobstore.getContext());
+         blobstore.getContext().close();
    }
 }
