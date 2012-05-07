@@ -21,36 +21,46 @@ package org.jclouds.aws.s3;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jets3t.service.S3Service;
+import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
-import org.testng.ITestContext;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.appengine.repackaged.com.google.common.base.Throwables;
+import com.google.inject.Module;
 
 /**
  * Runs operations that jets3t is capable of performing.
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
+@Test(singleThreaded = true, timeOut = 2 * 60 * 1000, groups = "live", testName = "Jets3tPerformanceLiveTest")
 public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
-   private S3Service jetClient;
-
-   @BeforeClass(groups = { "integration", "live" })
-   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
-      super.setUpResourcesOnThisThread(testContext);
+   
+   public Jets3tPerformanceLiveTest(){
       exec = Executors.newCachedThreadPool();
-      jetClient = new RestS3Service(new AWSCredentials(System.getProperty("test.aws-s3.identity"),
-            System.getProperty("test.aws-s3.credential")));
+   }
+   
+   private S3Service jetClient;
+   
+   @Override
+   protected BlobStoreContext createView(Properties props, Iterable<Module> modules) {
+      try {
+         jetClient = new RestS3Service(new AWSCredentials(System.getProperty("test.aws-s3.identity"),
+                  System.getProperty("test.aws-s3.credential")));
+      } catch (S3ServiceException e) {
+         throw Throwables.propagate(e);
+      }
+      return super.createView(props, modules);
    }
 
    @Override
@@ -93,7 +103,6 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
    @Test(enabled = false)
    protected Future<?> putByteArray(String bucket, String key, byte[] data, String contentType) {
       throw new UnsupportedOperationException();
-
    }
 
    @Override

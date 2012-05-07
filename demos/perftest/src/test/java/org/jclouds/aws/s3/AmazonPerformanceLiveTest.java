@@ -21,13 +21,13 @@ package org.jclouds.aws.s3;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.testng.ITestContext;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.testng.annotations.Test;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -35,24 +35,29 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.google.inject.Module;
 
 /**
  * Runs operations that amazon s3 sample code is capable of performing.
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
+@Test(singleThreaded = true, timeOut = 2 * 60 * 1000, groups = "live", testName = "AmazonPerformanceLiveTest")
 public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
+   
+   public AmazonPerformanceLiveTest(){
+      exec = Executors.newCachedThreadPool();
+   }
+   
    private AmazonS3 s3;
 
-   @BeforeClass(groups = { "integration", "live" })
-   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
-      super.setUpResourcesOnThisThread(testContext);
-      exec = Executors.newCachedThreadPool();
+   @Override
+   protected BlobStoreContext createView(Properties props, Iterable<Module> modules) {
       s3 = new AmazonS3Client(new BasicAWSCredentials(System.getProperty("test.aws-s3.identity"),
-            System.getProperty("test.aws-s3.credential")));
+               System.getProperty("test.aws-s3.credential")));
+      return super.createView(props, modules);
    }
-
+   
    @Override
    @Test(enabled = false)
    public void testPutStringSerial() throws Exception {
