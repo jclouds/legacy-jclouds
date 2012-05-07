@@ -26,8 +26,6 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.partition;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
@@ -48,10 +46,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -126,10 +124,14 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    protected final FilesystemStorageStrategy storageStrategy;
 
    @Inject
-   protected FilesystemAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
-         HttpGetOptionsListToGetOptions httpGetOptionsConverter, IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-         BlobUtils blobUtils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-         Supplier<Location> defaultLocation, @Memoized Supplier<Set<? extends Location>> locations,
+   protected FilesystemAsyncBlobStore(BlobStoreContext context,
+         DateService dateService, Crypto crypto,
+         HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+         IfDirectoryReturnNameStrategy ifDirectoryReturnName,
+         BlobUtils blobUtils,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+         Supplier<Location> defaultLocation,
+         @Memoized Supplier<Set<? extends Location>> locations,
          FilesystemStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.dateService = dateService;
@@ -146,9 +148,8 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<PageSet<? extends StorageMetadata>> list(final String container, ListContainerOptions options) {
 
       // Check if the container exists
-      if (!containerExistsSyncImpl(container)) {
+      if (!containerExistsSyncImpl(container))
          return immediateFailedFuture(cnfe(container));
-      }
 
       // Loading blobs from container
       Iterable<String> blobBelongingToContainer = null;
@@ -183,11 +184,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             final String finalMarker = options.getMarker();
             StorageMetadata lastMarkerMetadata = find(contents, new Predicate<StorageMetadata>() {
                public boolean apply(StorageMetadata metadata) {
-                  return metadata.getName().equals(finalMarker);
+                  return metadata.getName().compareTo(finalMarker) > 0;
                }
             });
             contents = contents.tailSet(lastMarkerMetadata);
-            contents.remove(lastMarkerMetadata);
          }
 
          final String prefix = options.getDir();
@@ -199,30 +199,26 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             }));
          }
 
-         Integer maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
-         if (contents.size() > 0) {
-            SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, maxResults);
-            if (!contentsSlice.contains(contents.last())) {
+         int maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
+         if (!contents.isEmpty()) {
+            StorageMetadata lastElement = contents.last();
+            contents = newTreeSet(Iterables.limit(contents, maxResults));
+            if (!contents.contains(lastElement)) {
                // Partial listing
-               marker = contentsSlice.last().getName();
-            } else {
-               marker = null;
+               marker = contents.last().getName();
             }
-            contents = contentsSlice;
          }
 
          final String delimiter = options.isRecursive() ? null : File.separator;
          if (delimiter != null) {
-            SortedSet<String> commonPrefixes = null;
-            Iterable<String> iterable = transform(contents, new CommonPrefixes(prefix != null ? prefix : null,
-                  delimiter));
-            commonPrefixes = iterable != null ? newTreeSet(iterable) : new TreeSet<String>();
+            SortedSet<String> commonPrefixes = newTreeSet(
+                   transform(contents, new CommonPrefixes(prefix, delimiter)));
             commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
 
-            contents = newTreeSet(filter(contents, new DelimiterFilter(prefix != null ? prefix : null, delimiter)));
+            contents = newTreeSet(filter(contents, new DelimiterFilter(prefix, delimiter)));
 
-            Iterables.<StorageMetadata> addAll(contents,
-                  transform(commonPrefixes, new Function<String, StorageMetadata>() {
+            Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
+                  new Function<String, StorageMetadata>() {
                      public StorageMetadata apply(String o) {
                         MutableStorageMetadata md = new MutableStorageMetadataImpl();
                         md.setType(StorageType.RELATIVE_PATH);
@@ -245,7 +241,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
    }
 
-   private ContainerNotFoundException cnfe(String name) {
+   private ContainerNotFoundException cnfe(final String name) {
       return new ContainerNotFoundException(name, String.format("container %s not in filesystem", name));
    }
 
@@ -284,8 +280,22 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<Void> removeBlob(String container, String key) {
+   public ListenableFuture<Void> removeBlob(final String container, final String key) {
       storageStrategy.removeBlob(container, key);
+      return immediateFuture(null);
+   }
+
+   /**
+    * Override parent method because it uses strange futures and listenables
+    * that creates problem in the test if more than one test that deletes the
+    * container is executed
+    *
+    * @param container
+    * @return
+    */
+   @Override
+   public ListenableFuture<Void> deleteContainer(final String container) {
+      deleteAndVerifyContainerGone(container);
       return immediateFuture(null);
    }
 
@@ -293,9 +303,8 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<Boolean> containerExists(String containerName) {
-      boolean exists = containerExistsSyncImpl(containerName);
-      return immediateFuture(exists);
+   public ListenableFuture<Boolean> containerExists(final String containerName) {
+      return immediateFuture(containerExistsSyncImpl(containerName));
    }
 
    /**
@@ -419,11 +428,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       }
    }
 
-   public static <T extends Comparable<?>> SortedSet<T> firstSliceOfSize(Iterable<T> elements, int size) {
-      List<List<T>> slices = partition(newArrayList(elements), size);
-      return newTreeSet(slices.get(0));
-   }
-
    public static HttpResponseException returnResponseException(int code) {
       HttpResponse response = null;
       response = new HttpResponse(code, null, null);
@@ -474,18 +478,20 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<String> putBlob(String containerName, Blob object) {
-      String blobKey = object.getMetadata().getName();
+   public ListenableFuture<String> putBlob(String containerName, Blob blob) {
+      checkNotNull(containerName, "containerName must be set");
+      checkNotNull(blob, "blob must be set");
+      String blobKey = blob.getMetadata().getName();
 
-      logger.debug("Put object with key [%s] to container [%s]", blobKey, containerName);
-      String eTag = getEtag(object);
+      logger.debug("Put blob with key [%s] to container [%s]", blobKey, containerName);
+      String eTag = getEtag(blob);
       try {
          // TODO
          // must override existing file?
 
-         storageStrategy.writePayloadOnFile(containerName, blobKey, object.getPayload());
+         storageStrategy.writePayloadOnFile(containerName, blobKey, blob.getPayload());
       } catch (IOException e) {
-         logger.error(e, "An error occurred storing the new object with name [%s] to container [%s].", blobKey,
+         logger.error(e, "An error occurred storing the new blob with name [%s] to container [%s].", blobKey,
                containerName);
          Throwables.propagate(e);
       }
@@ -584,35 +590,15 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
+   public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
          Blob blob = getBlob(container, key).get();
-         return Futures.<BlobMetadata> immediateFuture(blob != null ? blob.getMetadata() : null);
+         return immediateFuture(blob != null ? (BlobMetadata) blob.getMetadata() : null);
       } catch (Exception e) {
          if (size(filter(getCausalChain(e), KeyNotFoundException.class)) >= 1)
             return immediateFuture(null);
          return immediateFailedFuture(e);
       }
-   }
-
-   @Override
-   protected boolean deleteAndVerifyContainerGone(String container) {
-      storageStrategy.deleteContainer(container);
-      return containerExistsSyncImpl(container);
-   }
-
-   /**
-    * Override parent method because it uses strange futures and listenables
-    * that creates problem in the test if more than one test that deletes the
-    * container is executed
-    * 
-    * @param container
-    * @return
-    */
-   @Override
-   public ListenableFuture<Void> deleteContainer(String container) {
-      deleteAndVerifyContainerGone(container);
-      return immediateFuture(null);
    }
 
    /**
@@ -627,7 +613,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    /**
-    * 
     * Calculates the object MD5 and returns it as eTag
     * 
     * @param object
@@ -643,6 +628,12 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
       String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
       return eTag;
+   }
+
+   @Override
+   protected boolean deleteAndVerifyContainerGone(final String container) {
+      storageStrategy.deleteContainer(container);
+      return containerExistsSyncImpl(container);
    }
 
    @Override
