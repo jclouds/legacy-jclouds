@@ -37,6 +37,7 @@ import org.jclouds.json.Json;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
+import org.jclouds.json.internal.OptionalTypeAdapterFactory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -75,6 +76,7 @@ public class GsonModule extends AbstractModule {
       }.getType(), byteListAdapter.nullSafe());
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
+      builder.registerTypeAdapterFactory(new OptionalTypeAdapterFactory());
 
       // complicated (serializers/deserializers as they need context to operate)
       builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());
