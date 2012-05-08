@@ -89,4 +89,10 @@ public interface ExtensionNamespaces {
     * Admin Action extension
     */
    public static final String ADMIN_ACTIONS = "http://docs.openstack.org/ext/admin-actions/api/v1.1";
+
+   /**
+    * Extended Server Status extension
+    */
+   public static final String EXTENDED_STATUS = "http://docs.openstack.org/ext/extended_status/api/v1.1";
+
 }

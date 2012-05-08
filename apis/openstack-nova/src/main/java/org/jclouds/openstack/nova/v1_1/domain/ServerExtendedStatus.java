@@ -25,12 +25,14 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Additional attributes delivered by Extended Server Status extension
+ * Additional attributes delivered by Extended Server Status extension (alias "OS-EXT-STS")
  *
  * @author Adam Lowe
  * @see <a href=
  *       "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_status.html"
  *       />
+ * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
+ * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
  */
 public class ServerExtendedStatus {
    public static final String PREFIX = "OS-EXT-STS:";

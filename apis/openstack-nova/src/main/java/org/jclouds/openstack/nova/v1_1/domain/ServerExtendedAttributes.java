@@ -23,12 +23,14 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Additional attributes delivered by Extended Server Attributes extension
+ * Additional attributes delivered by Extended Server Attributes extension (alias "OS-EXT-SRV-ATTR")
  *
  * @author Adam Lowe
  * @see <a href=
  *        "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_server_attributes.html"
  *       />
+ * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
+ * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
  */
 public class ServerExtendedAttributes {
    public static final String PREFIX = "OS-EXT-SRV-ATTR:";

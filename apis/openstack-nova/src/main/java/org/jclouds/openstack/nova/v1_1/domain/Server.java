@@ -463,18 +463,24 @@ public class Server extends Resource {
 
 
    /**
-    * Retrieves the extended server status fields
+    * Retrieves the extended server status fields (alias "OS-EXT-STS")
     * <p/>
     * NOTE: This field is only present if the Extended Status extension is installed.
+    * 
+    * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
     */
    public Optional<ServerExtendedStatus> getExtendedStatus() {
       return this.extendedStatus;
    }
 
    /**
-    * Retrieves the extended server attributes fields
+    * Retrieves the extended server attributes fields (alias "OS-EXT-SRV-ATTR")
     * <p/>
     * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
+    *
+    * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
     */
    public Optional<ServerExtendedAttributes> getExtendedAttributes() {
       return this.extendedAttributes;
