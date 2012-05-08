@@ -122,9 +122,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
    protected final Crypto crypto;
-   protected final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    protected final Provider<UriBuilder> uriBuilders;
-   protected final ConcurrentMap<String, Location> containerToLocation;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
@@ -139,21 +137,15 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         Factory blobFactory,
-         ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs, Provider<UriBuilder> uriBuilders,
-         ConcurrentMap<String, Location> containerToLocation) {
+         Factory blobFactory, Provider<UriBuilder> uriBuilders) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.crypto = crypto;
-      this.containerToBlobs = containerToBlobs;
       this.uriBuilders = uriBuilders;
-      this.containerToLocation = containerToLocation;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
-      getContainerToLocation().put("stub", defaultLocation.get());
-      getContainerToBlobs().put("stub", new ConcurrentHashMap<String, Blob>());
-      this.storageStrategy = new TransientStorageStrategy();
+      this.storageStrategy = new TransientStorageStrategy(defaultLocation);
    }
 
    /**
@@ -161,16 +153,18 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list(final String container, ListContainerOptions options) {
-      final Map<String, Blob> realContents = getContainerToBlobs().get(container);
 
       // Check if the container exists
-      if (realContents == null)
+      if (!storageStrategy.containerExists(container))
          return immediateFailedFuture(cnfe(container));
 
-      SortedSet<StorageMetadata> contents = newTreeSet(transform(realContents.keySet(),
+      // Loading blobs from container
+      Iterable<String> blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+
+      SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
             new Function<String, StorageMetadata>() {
                public StorageMetadata apply(String key) {
-                  Blob oldBlob = realContents.get(key);
+                  Blob oldBlob = loadBlob(container, key);
                   checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
                         + container);
                   checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
@@ -297,7 +291,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> clearContainer(final String container) {
-      getContainerToBlobs().get(container).clear();
+      storageStrategy.clearContainer(container);
       return immediateFuture(null);
    }
 
@@ -313,7 +307,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Boolean> deleteContainerIfEmpty(final String container) {
       Boolean returnVal = true;
       if (storageStrategy.containerExists(container)) {
-         if (getContainerToBlobs().get(container).size() == 0)
+         if (Iterables.isEmpty(storageStrategy.getBlobKeysInsideContainer(container)))
             storageStrategy.deleteContainer(container);
          else
             returnVal = false;
@@ -342,7 +336,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
                   MutableStorageMetadata cmd = create();
                   cmd.setName(name);
                   cmd.setType(StorageType.CONTAINER);
-                  cmd.setLocation(getContainerToLocation().get(name));
+                  cmd.setLocation(storageStrategy.getLocation(name));
                   return cmd;
                }
             }), null));
@@ -356,20 +350,15 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(final Location location, final String name) {
-      if (storageStrategy.containerExists(name)) {
-         return immediateFuture(Boolean.FALSE);
-      }
-      getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
-      getContainerToLocation().put(name, location != null ? location : defaultLocation.get());
-      return immediateFuture(Boolean.TRUE);
+   public ListenableFuture<Boolean> createContainerInLocation(final Location location,
+         final String name) {
+      boolean result = storageStrategy.createContainerInLocation(name, location);
+      return immediateFuture(result);
    }
 
-   public String getFirstQueryOrNull(String string, @Nullable HttpRequestOptions options) {
-      if (options == null)
-         return null;
-      Collection<String> values = options.buildQueryParameters().get(string);
-      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   private Blob loadBlob(final String container, final String key) {
+      logger.debug("Opening blob in container: %s - %s", container, key);
+      return storageStrategy.getBlob(container, key);
    }
 
    protected static class DelimiterFilter implements Predicate<StorageMetadata> {
@@ -477,22 +466,21 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<String> putBlob(String containerName, Blob blob) {
       checkNotNull(containerName, "containerName must be set");
       checkNotNull(blob, "blob must be set");
-      ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
       String blobKey = blob.getMetadata().getName();
 
       logger.debug("Put blob with key [%s] to container [%s]", blobKey, containerName);
-      if (container == null) {
+      if (!storageStrategy.containerExists(containerName)) {
          return Futures.immediateFailedFuture(new IllegalStateException("containerName not found: " + containerName));
       }
 
       blob = createUpdatedCopyOfBlobInContainer(containerName, blob);
 
-      container.put(blob.getMetadata().getName(), blob);
+      storageStrategy.putBlob(containerName, blob);
 
       return immediateFuture(Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.ETAG)));
    }
 
-   protected Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
+   private Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
       checkNotNull(in, "blob");
       checkNotNull(in.getPayload(), "blob.payload");
       ByteArrayPayload payload = (in.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(in
@@ -558,13 +546,12 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          return immediateFailedFuture(cnfe(containerName));
       }
       // If the blob doesn't exist, a null object is returned
-      Map<String, Blob> realContents = getContainerToBlobs().get(containerName);
-      if (!realContents.containsKey(key)) {
+      if (!storageStrategy.blobExists(containerName, key)) {
          logger.debug("Item %s does not exist in container %s", key, containerName);
          return immediateFuture(null);
       }
 
-      Blob blob = realContents.get(key);
+      Blob blob = loadBlob(containerName, key);
 
       if (options != null) {
          if (options.getIfMatch() != null) {
@@ -652,18 +639,10 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return returnVal;
    }
 
-   public ConcurrentMap<String, ConcurrentMap<String, Blob>> getContainerToBlobs() {
-      return containerToBlobs;
-   }
-
    @Override
    protected boolean deleteAndVerifyContainerGone(final String container) {
       storageStrategy.deleteContainer(container);
       return storageStrategy.containerExists(container);
-   }
-
-   private ConcurrentMap<String, Location> getContainerToLocation() {
-      return containerToLocation;
    }
 
    @Override
@@ -678,30 +657,5 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       if (options.isPublicRead())
          throw new UnsupportedOperationException("publicRead");
       return createContainerInLocation(location, container);
-   }
-
-   private class TransientStorageStrategy {
-      public Iterable<String> getAllContainerNames() {
-         return getContainerToBlobs().keySet();
-      }
-
-      public boolean containerExists(final String containerName) {
-         return getContainerToBlobs().containsKey(containerName);
-      }
-
-      public void deleteContainer(final String containerName) {
-         getContainerToBlobs().remove(containerName);
-      }
-
-      public boolean blobExists(final String containerName, final String blobName) {
-         Map<String, Blob> map = containerToBlobs.get(containerName);
-         return map != null && map.containsKey(blobName);
-      }
-
-      public void removeBlob(final String containerName, final String blobName) {
-         if (storageStrategy.containerExists(containerName)) {
-            getContainerToBlobs().get(containerName).remove(blobName);
-         }
-      }
    }
 }
