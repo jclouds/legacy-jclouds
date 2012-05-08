@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,9 +33,12 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.functions.GroupNamingConvention;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.openstack.domain.Link;
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
@@ -144,7 +148,7 @@ public class ServerInZoneToNodeMetadataTest {
       Set<Image> images = ImmutableSet.<Image> of();
       Set<Hardware> hardwares = ImmutableSet.<Hardware> of();
 
-      Server serverToConvert = new ParseCreatedServerTest().expected();
+      Server serverToConvert = expectedServer();
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
@@ -158,6 +162,41 @@ public class ServerInZoneToNodeMetadataTest {
       assertEquals(serverToConvert.getId(), convertedNodeMetadata.getProviderId());
 
       assertEquals(convertedNodeMetadata.getLocation(), zone);
+
+   }
+
+   public Server expectedServer() {
+      return Server
+            .builder()
+            .id("71752")
+            .uuid("47491020-6a78-4f63-9475-23195ac4515c")
+            .tenantId("37936628937291")
+            .userId("54297837463082")
+            .name("test-e92")
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-03-19T06:21:13Z"))
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-03-19T06:21:13Z"))
+            .status(Server.Status.BUILD)
+            .image(
+                  Resource
+                        .builder()
+                        .id("1241")
+                        .links(
+                              Link.create(
+                                    Link.Relation.BOOKMARK,
+                                    URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/images/1241")))
+                        .build())
+            .flavor(
+                  Resource
+                        .builder()
+                        .id("100")
+                        .links(
+                              Link.create(
+                                    Link.Relation.BOOKMARK,
+                                    URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/flavors/100")))
+                        .build())
+            .links(
+                  Link.create(Link.Relation.SELF, URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/71752")),
+                  Link.create(Link.Relation.BOOKMARK, URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/servers/71752"))).build();
 
    }
 }

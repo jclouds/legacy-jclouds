@@ -26,6 +26,7 @@ import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
@@ -78,9 +79,9 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    
    protected Server createServerInZone(String zoneId) {
       ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
-      Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
+      ServerCreated server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
       blockUntilServerInState(server.getId(), serverClient, Status.ACTIVE);
-      return server;
+      return serverClient.getServer(server.getId());
    }
 
    /** 
@@ -89,7 +90,9 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
     */
    protected void blockUntilServerInState(String serverId, ServerClient client, Status status) {
       Server currentDetails = null;
-      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != status || currentDetails.getTaskState() != null; currentDetails = client
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != status ||
+           (currentDetails.getExtendedStatus().isPresent() && currentDetails.getExtendedStatus().get().getTaskState() != null);
+           currentDetails = client
             .getServer(serverId)) {
          System.out.printf("blocking on status %s%n%s%n", status, currentDetails);
          try {

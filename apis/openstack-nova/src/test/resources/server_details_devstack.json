@@ -1,0 +1,44 @@
+{"server": {
+	"OS-EXT-STS:task_state": null,
+	"addresses": {
+	    "private": [{"version": 4, "addr": "10.0.0.8"}]
+	},
+	"links":
+		[
+		{
+			"href": "http://172.16.89.149:8774/v2/7f312675f9b84c97bff8f5054e181419/servers/141b775f-7ac1-45f0-9a95-146260f33a53", "rel": "self"
+		},
+		{
+			"href": "http://172.16.89.149:8774/7f312675f9b84c97bff8f5054e181419/servers/141b775f-7ac1-45f0-9a95-146260f33a53", "rel": "bookmark"
+		}
+	],
+	"image": {
+		"id": "8e6f5bc4-a210-45b2-841f-c510eae14300", "links": [
+		{
+			"href": "http://172.16.89.149:8774/7f312675f9b84c97bff8f5054e181419/images/8e6f5bc4-a210-45b2-841f-c510eae14300", "rel": "bookmark"
+		}]
+	},
+	"OS-EXT-STS:vm_state": "paused",
+	"OS-EXT-SRV-ATTR:instance_name": "instance-00000014",
+	"flavor": {
+		"id": "1",
+		"links": [{"href": "http://172.16.89.149:8774/7f312675f9b84c97bff8f5054e181419/flavors/1", "rel": "bookmark"}]
+	},
+	"id": "141b775f-7ac1-45f0-9a95-146260f33a53",
+	"user_id": "89c01b67395d4bea945f7f5bfd7f344a",
+	"OS-DCF:diskConfig": "MANUAL",
+	"accessIPv4": "",
+	"accessIPv6": "",
+	"OS-EXT-STS:power_state": 3,
+	"config_drive": "",
+	"status": "PAUSED",
+	"updated": "2012-05-04T15:07:48Z",
+	"hostId": "eab9a77d1c44b8833e4a3dc6d2d9d50de556e780a319f184d8c82d9b",
+	"OS-EXT-SRV-ATTR:host": "ubuntu",
+	"key_name": "",
+	"OS-EXT-SRV-ATTR:hypervisor_hostname": null,
+	"name": "test",
+	"created": "2012-05-04T15:07:36Z",
+	"tenant_id": "7f312675f9b84c97bff8f5054e181419",
+	"metadata": {}
+}}
