@@ -163,8 +163,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
             new Function<String, StorageMetadata>() {
                public StorageMetadata apply(String key) {
-                  Blob oldBlob = loadFileBlob(container, key);
-
+                  Blob oldBlob = loadBlob(container, key);
                   checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
                         + container);
                   checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
@@ -342,13 +341,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(result);
    }
 
-   public String getFirstQueryOrNull(String string, @Nullable HttpRequestOptions options) {
-      if (options == null)
-         return null;
-      Collection<String> values = options.buildQueryParameters().get(string);
-      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
-   }
-
    /**
     * Load the blob with the given key belonging to the container with the given
     * name. There must exist a resource on the file system whose complete name
@@ -361,7 +353,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     * 
     * @return the blob belonging to the given container with the given key
     */
-   private Blob loadFileBlob(String container, String key) {
+   private Blob loadBlob(final String container, final String key) {
       logger.debug("Opening blob in container: %s - %s", container, key);
       BlobBuilder builder = blobUtils.blobBuilder();
       builder.name(key);
@@ -527,7 +519,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          return immediateFuture(null);
       }
 
-      Blob blob = loadFileBlob(containerName, key);
+      Blob blob = loadBlob(containerName, key);
 
       if (options != null) {
          if (options.getIfMatch() != null) {
