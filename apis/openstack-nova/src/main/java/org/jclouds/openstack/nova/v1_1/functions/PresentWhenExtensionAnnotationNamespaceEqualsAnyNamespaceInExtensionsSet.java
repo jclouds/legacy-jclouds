@@ -74,6 +74,8 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
            URI.create("http://docs.openstack.org/compute/ext/createserverext/api/v1.1"))
       .put(URI.create(ExtensionNamespaces.ADMIN_ACTIONS),
            URI.create("http://docs.openstack.org/compute/ext/admin-actions/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.EXTENDED_STATUS),
+           URI.create("http://docs.openstack.org/compute/ext/extended_status/api/v1.1"))
       .build();
    
    @Inject
