@@ -190,6 +190,12 @@ public class NovaTemplateOptionsTest {
       authorizePublicKey(null);
    }
 
+   @Test
+   public void testUserData() {
+       NovaTemplateOptions options = new NovaTemplateOptions();
+       options.userData("test".getBytes());
+       assertEquals(new String(options.getUserData()), "test");
+   }
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testblockOnPortBadFormat() {
       NovaTemplateOptions options = new NovaTemplateOptions();

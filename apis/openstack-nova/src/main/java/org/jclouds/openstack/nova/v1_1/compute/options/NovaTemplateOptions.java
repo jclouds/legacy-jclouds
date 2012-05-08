@@ -19,8 +19,10 @@
 package org.jclouds.openstack.nova.v1_1.compute.options;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,6 +70,9 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          eTo.securityGroupNames(getSecurityGroupNames());
          eTo.generateKeyPair(shouldGenerateKeyPair());
          eTo.keyPairName(getKeyPairName());
+         if (getUserData() != null) {
+             eTo.userData(getUserData());
+         }
       }
    }
 
@@ -75,6 +80,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    protected Set<String> securityGroupNames = ImmutableSet.of();
    protected boolean generateKeyPair = false;
    protected String keyPairName;
+   protected byte[] userData;
 
    @Override
    public boolean equals(Object o) {
@@ -85,19 +91,21 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       NovaTemplateOptions that = NovaTemplateOptions.class.cast(o);
       return super.equals(that) && equal(this.autoAssignFloatingIp, that.autoAssignFloatingIp)
             && equal(this.securityGroupNames, that.securityGroupNames)
-            && equal(this.generateKeyPair, that.generateKeyPair) && equal(this.keyPairName, that.keyPairName);
+            && equal(this.generateKeyPair, that.generateKeyPair)
+            && equal(this.keyPairName, that.keyPairName)
+            && Arrays.equals(this.userData, that.userData);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), autoAssignFloatingIp, securityGroupNames, generateKeyPair, keyPairName);
+      return Objects.hashCode(super.hashCode(), autoAssignFloatingIp, securityGroupNames, generateKeyPair, keyPairName, userData);
    }
 
    @Override
    public ToStringHelper string() {
       return super.string().add("autoAssignFloatingIp", autoAssignFloatingIp)
             .add("securityGroupNames", securityGroupNames).add("generateKeyPair", generateKeyPair)
-            .add("keyPairName", keyPairName);
+            .add("keyPairName", keyPairName).add("UserData", userData);
    }
 
    public static final NovaTemplateOptions NONE = new NovaTemplateOptions();
@@ -182,6 +190,10 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    public Set<String> getSecurityGroupNames() {
       return securityGroupNames;
    }
+
+   public byte[] getUserData() {
+       return userData;
+    }
 
    public static class Builder {
 
@@ -312,6 +324,14 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          return options.blockUntilRunning(blockUntilRunning);
       }
       
+      /**
+       * @see NovaTemplateOptions#userData
+       */
+      public static NovaTemplateOptions userData(byte[] userData) {
+         NovaTemplateOptions options = new NovaTemplateOptions();
+         return NovaTemplateOptions.class.cast(options.userData(userData));
+      }
+
    }
 
    // methods that only facilitate returning the correct object type
@@ -442,6 +462,17 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    @Override
    public NovaTemplateOptions userMetadata(String key, String value) {
       return NovaTemplateOptions.class.cast(super.userMetadata(key, value));
+   }
+
+   /**
+    * User data as bytes (not base64-encoded)
+    */
+   public NovaTemplateOptions userData(byte[] userData) {
+       // This limit may not be needed for nova
+       checkArgument(checkNotNull(userData, "userData").length <= 16 * 1024,
+               "userData cannot be larger than 16kb");
+       this.userData = userData;
+       return this;
    }
 
 }
