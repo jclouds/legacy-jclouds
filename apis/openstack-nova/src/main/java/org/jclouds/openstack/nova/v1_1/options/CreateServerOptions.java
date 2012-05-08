@@ -110,6 +110,7 @@ public class CreateServerOptions implements MapBinder {
    private Set<String> securityGroupNames = ImmutableSet.of();
    private Map<String, String> metadata = ImmutableMap.of();
    private List<File> personality = Lists.newArrayList();
+   private byte[] userData;
 
    @Override
    public boolean equals(Object object) {
@@ -132,8 +133,9 @@ public class CreateServerOptions implements MapBinder {
    }
 
    protected ToStringHelper string() {
-      return toStringHelper("").add("keyName", "keyName").add("securityGroupNames", securityGroupNames).add("metadata",
-               metadata).add("personality", personality).add("adminPassPresent", adminPass != null);
+      return toStringHelper("").add("keyName", "keyName").add("securityGroupNames", securityGroupNames)
+              .add("metadata", metadata).add("personality", personality)
+              .add("adminPassPresent", adminPass != null).add("userData", new String(userData));
    }
 
    @Override
@@ -152,6 +154,7 @@ public class CreateServerOptions implements MapBinder {
       String key_name;
       @SerializedName(value = "security_groups")
       Set<SecurityGroup> securityGroupNames;
+      String user_data;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -172,6 +175,8 @@ public class CreateServerOptions implements MapBinder {
          server.personality = personality;
       if (keyName != null)
          server.key_name = keyName;
+      if (userData != null)
+          server.user_data = Base64.encodeBytes(userData);
       if (securityGroupNames.size() > 0) {
          server.securityGroupNames = Sets.newHashSet();
          for (String groupName : securityGroupNames) {
@@ -238,6 +243,16 @@ public class CreateServerOptions implements MapBinder {
       }
       this.metadata = ImmutableMap.copyOf(metadata);
       return this;
+   }
+
+   /**
+    * Custom user-data can be also be supplied at launch time.
+    * It is retrievable by the instance and is often used for launch-time configuration
+    * by instance scripts.
+    */
+   public CreateServerOptions userData(byte[] userData) {
+       this.userData = userData;
+       return this;
    }
 
    /**

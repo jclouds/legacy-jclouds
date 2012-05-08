@@ -103,6 +103,7 @@ public class NovaComputeServiceAdapter implements
       CreateServerOptions options = new CreateServerOptions();
       options.metadata(templateOptions.getUserMetadata());
       options.securityGroupNames(templateOptions.getSecurityGroupNames());
+      options.userData(templateOptions.getUserData());
 
       Optional<String> privateKey = Optional.absent();
       if (templateOptions.getKeyPairName() != null) {
