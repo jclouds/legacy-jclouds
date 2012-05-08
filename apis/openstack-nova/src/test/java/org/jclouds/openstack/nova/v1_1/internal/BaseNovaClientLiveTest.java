@@ -18,12 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
-
 import java.util.Properties;
 
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;

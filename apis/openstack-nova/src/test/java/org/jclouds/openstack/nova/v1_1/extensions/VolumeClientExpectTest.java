@@ -18,7 +18,10 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;

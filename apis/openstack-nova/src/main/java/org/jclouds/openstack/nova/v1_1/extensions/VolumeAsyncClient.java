@@ -30,11 +30,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.nova.v1_1.domain.Volume;
 import org.jclouds.openstack.nova.v1_1.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v1_1.domain.VolumeSnapshot;
-import org.jclouds.openstack.nova.v1_1.domain.Volume;
-import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
 import org.jclouds.openstack.nova.v1_1.options.CreateVolumeOptions;
+import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;

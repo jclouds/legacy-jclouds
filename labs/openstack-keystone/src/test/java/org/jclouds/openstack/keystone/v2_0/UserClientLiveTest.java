@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 

@@ -25,16 +25,13 @@ import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.net.HttpHeaders;
 
 /**
  * Base class for writing KeyStone 2.0 Rest Client Expect tests

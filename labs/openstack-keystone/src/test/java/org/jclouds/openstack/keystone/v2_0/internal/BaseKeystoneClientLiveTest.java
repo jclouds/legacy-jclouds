@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.internal;
 
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
-
 import java.util.Properties;
 
 import org.jclouds.apis.BaseContextLiveTest;
@@ -27,7 +25,6 @@ import org.jclouds.openstack.keystone.v2_0.KeystoneApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;

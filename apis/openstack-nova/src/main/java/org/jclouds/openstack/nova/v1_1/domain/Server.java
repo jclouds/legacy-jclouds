@@ -30,9 +30,9 @@ import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.util.Multimaps2;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;

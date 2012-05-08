@@ -1,13 +1,12 @@
 package org.jclouds.openstack.nova.ec2.services;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;

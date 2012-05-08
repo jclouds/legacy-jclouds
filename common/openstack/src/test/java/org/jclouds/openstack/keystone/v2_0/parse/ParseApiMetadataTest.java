@@ -26,14 +26,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
-import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
-import org.jclouds.openstack.keystone.v2_0.domain.Role;
-import org.jclouds.openstack.keystone.v2_0.domain.Service;
-import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
-import org.jclouds.openstack.keystone.v2_0.domain.Token;
-import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 

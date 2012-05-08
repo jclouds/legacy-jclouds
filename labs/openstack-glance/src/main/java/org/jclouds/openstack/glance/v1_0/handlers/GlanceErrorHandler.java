@@ -20,9 +20,6 @@ package org.jclouds.openstack.glance.v1_0.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpCommand;
