@@ -565,8 +565,12 @@ public class FilesystemAsyncBlobStoreTest {
 
         // when location doesn't exists
         blobKey = TestUtils.createRandomBlobKey();
-        result = blobStore.blobExists(CONTAINER_NAME, blobKey);
-        assertFalse(result, "Blob exists");
+        try {
+            blobStore.blobExists(CONTAINER_NAME, blobKey);
+            fail();
+        } catch (ContainerNotFoundException cnfe) {
+            // expected
+        }
 
         // when location exists
         blobStore.createContainerInLocation(null, CONTAINER_NAME);

@@ -148,7 +148,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<PageSet<? extends StorageMetadata>> list(final String container, ListContainerOptions options) {
 
       // Check if the container exists
-      if (!containerExistsSyncImpl(container))
+      if (!storageStrategy.containerExists(container))
          return immediateFailedFuture(cnfe(container));
 
       // Loading blobs from container
@@ -242,7 +242,9 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    private ContainerNotFoundException cnfe(final String name) {
-      return new ContainerNotFoundException(name, String.format("container %s not in filesystem", name));
+      return new ContainerNotFoundException(name, String.format(
+            "container %s not in %s", name,
+            storageStrategy.getAllContainerNames()));
    }
 
    public static MutableBlobMetadata copy(MutableBlobMetadata in) {
@@ -304,7 +306,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> containerExists(final String containerName) {
-      return immediateFuture(containerExistsSyncImpl(containerName));
+      return immediateFuture(storageStrategy.containerExists(containerName));
    }
 
    /**
@@ -503,6 +505,8 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> blobExists(final String containerName, final String key) {
+      if (!storageStrategy.containerExists(containerName))
+         return immediateFailedFuture(cnfe(containerName));
       return immediateFuture(storageStrategy.blobExists(containerName, key));
    }
 
@@ -513,7 +517,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Blob> getBlob(final String containerName, final String key, GetOptions options) {
       logger.debug("Retrieving blob with key %s from container %s", key, containerName);
       // If the container doesn't exist, an exception is thrown
-      if (!containerExistsSyncImpl(containerName)) {
+      if (!storageStrategy.containerExists(containerName)) {
          logger.debug("Container %s does not exist", containerName);
          return immediateFailedFuture(cnfe(containerName));
       }
@@ -602,17 +606,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    /**
-    * Each container is a directory, so in order to check if a container exists
-    * the corresponding directory must exists. Synchronous implementation
-    * 
-    * @param containerName
-    * @return
-    */
-   private boolean containerExistsSyncImpl(String containerName) {
-      return storageStrategy.containerExists(containerName);
-   }
-
-   /**
     * Calculates the object MD5 and returns it as eTag
     * 
     * @param object
@@ -633,7 +626,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    protected boolean deleteAndVerifyContainerGone(final String container) {
       storageStrategy.deleteContainer(container);
-      return containerExistsSyncImpl(container);
+      return storageStrategy.containerExists(container);
    }
 
    @Override

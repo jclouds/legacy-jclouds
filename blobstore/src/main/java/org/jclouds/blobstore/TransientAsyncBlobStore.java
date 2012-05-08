@@ -128,6 +128,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
+   protected final TransientStorageStrategy storageStrategy;
 
    @Inject
    protected TransientAsyncBlobStore(BlobStoreContext context,
@@ -152,6 +153,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       getContainerToLocation().put("stub", defaultLocation.get());
       getContainerToBlobs().put("stub", new ConcurrentHashMap<String, Blob>());
+      this.storageStrategy = new TransientStorageStrategy();
    }
 
    /**
@@ -246,8 +248,9 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    private ContainerNotFoundException cnfe(final String name) {
-      return new ContainerNotFoundException(name, String.format("container %s not in %s", name, getContainerToBlobs()
-               .keySet()));
+      return new ContainerNotFoundException(name, String.format(
+            "container %s not in %s", name,
+            storageStrategy.getAllContainerNames()));
    }
 
    public static MutableBlobMetadata copy(MutableBlobMetadata in) {
@@ -285,9 +288,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> removeBlob(final String container, final String key) {
-      if (getContainerToBlobs().containsKey(container)) {
-         getContainerToBlobs().get(container).remove(key);
-      }
+      storageStrategy.removeBlob(container, key);
       return immediateFuture(null);
    }
 
@@ -305,17 +306,15 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> deleteContainer(final String container) {
-      if (getContainerToBlobs().containsKey(container)) {
-         getContainerToBlobs().remove(container);
-      }
+      deleteAndVerifyContainerGone(container);
       return immediateFuture(null);
    }
 
    public ListenableFuture<Boolean> deleteContainerIfEmpty(final String container) {
       Boolean returnVal = true;
-      if (getContainerToBlobs().containsKey(container)) {
+      if (storageStrategy.containerExists(container)) {
          if (getContainerToBlobs().get(container).size() == 0)
-            getContainerToBlobs().remove(container);
+            storageStrategy.deleteContainer(container);
          else
             returnVal = false;
       }
@@ -327,7 +326,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> containerExists(final String containerName) {
-      return immediateFuture(getContainerToBlobs().containsKey(containerName));
+      return immediateFuture(storageStrategy.containerExists(containerName));
    }
 
    /**
@@ -335,7 +334,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
-      Iterable<String> containers = getContainerToBlobs().keySet();
+      Iterable<String> containers = storageStrategy.getAllContainerNames();
 
       return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(transform(
             containers, new Function<String, StorageMetadata>() {
@@ -358,7 +357,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(final Location location, final String name) {
-      if (getContainerToBlobs().containsKey(name)) {
+      if (storageStrategy.containerExists(name)) {
          return immediateFuture(Boolean.FALSE);
       }
       getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
@@ -542,10 +541,9 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> blobExists(final String containerName, final String key) {
-      if (!getContainerToBlobs().containsKey(containerName))
+      if (!storageStrategy.containerExists(containerName))
          return immediateFailedFuture(cnfe(containerName));
-      Map<String, Blob> realContents = getContainerToBlobs().get(containerName);
-      return immediateFuture(realContents.containsKey(key));
+      return immediateFuture(storageStrategy.blobExists(containerName, key));
    }
 
    /**
@@ -555,7 +553,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Blob> getBlob(final String containerName, final String key, GetOptions options) {
       logger.debug("Retrieving blob with key %s from container %s", key, containerName);
       // If the container doesn't exist, an exception is thrown
-      if (!getContainerToBlobs().containsKey(containerName)) {
+      if (!storageStrategy.containerExists(containerName)) {
          logger.debug("Container %s does not exist", containerName);
          return immediateFailedFuture(cnfe(containerName));
       }
@@ -660,8 +658,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Override
    protected boolean deleteAndVerifyContainerGone(final String container) {
-      getContainerToBlobs().remove(container);
-      return getContainerToBlobs().containsKey(container);
+      storageStrategy.deleteContainer(container);
+      return storageStrategy.containerExists(container);
    }
 
    private ConcurrentMap<String, Location> getContainerToLocation() {
@@ -680,5 +678,30 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       if (options.isPublicRead())
          throw new UnsupportedOperationException("publicRead");
       return createContainerInLocation(location, container);
+   }
+
+   private class TransientStorageStrategy {
+      public Iterable<String> getAllContainerNames() {
+         return getContainerToBlobs().keySet();
+      }
+
+      public boolean containerExists(final String containerName) {
+         return getContainerToBlobs().containsKey(containerName);
+      }
+
+      public void deleteContainer(final String containerName) {
+         getContainerToBlobs().remove(containerName);
+      }
+
+      public boolean blobExists(final String containerName, final String blobName) {
+         Map<String, Blob> map = containerToBlobs.get(containerName);
+         return map != null && map.containsKey(blobName);
+      }
+
+      public void removeBlob(final String containerName, final String blobName) {
+         if (storageStrategy.containerExists(containerName)) {
+            getContainerToBlobs().get(containerName).remove(blobName);
+         }
+      }
    }
 }
