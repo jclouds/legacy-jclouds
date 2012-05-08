@@ -42,6 +42,7 @@ import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptions
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
@@ -119,17 +120,14 @@ public class NovaComputeServiceAdapter implements
       String flavorId = template.getHardware().getProviderId();
 
       logger.debug(">> creating new server zone(%s) name(%s) image(%s) flavor(%s) options(%s)", zoneId, name, imageId, flavorId, options);
-      Server lightweightServer = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
-      Server heavyweightServer = novaClient.getServerClientForZone(zoneId).getServer(lightweightServer.getId());
-      Server server = Server.builder().fromServer(heavyweightServer)
-                                      .adminPass(lightweightServer.getAdminPass())
-                                      .build();
+      ServerCreated lightweightServer = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      Server server = novaClient.getServerClientForZone(zoneId).getServer(lightweightServer.getId());
 
       logger.trace("<< server(%s)", server.getId());
 
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
       if (!privateKey.isPresent())
-         credentialsBuilder.password(server.getAdminPass());
+         credentialsBuilder.password(lightweightServer.getAdminPass());
       return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), credentialsBuilder
                .build());
    }

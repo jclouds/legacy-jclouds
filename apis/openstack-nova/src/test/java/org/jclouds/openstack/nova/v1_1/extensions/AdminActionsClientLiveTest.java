@@ -26,7 +26,7 @@ import static org.testng.Assert.fail;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.nova.v1_1.domain.BackupType;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
@@ -89,7 +89,7 @@ public class AdminActionsClientLiveTest extends BaseNovaClientLiveTest {
 
    @AfterMethod(alwaysRun = true)
    public void ensureServerIsActiveAgain() {
-      blockUntilServerInState(testServerId, serverClient, Server.Status.ACTIVE);
+      blockUntilServerInState(testServerId, serverClient, Status.ACTIVE);
    }
    
    public void testSuspendAndResume() {
@@ -103,14 +103,14 @@ public class AdminActionsClientLiveTest extends BaseNovaClientLiveTest {
          } catch (HttpResponseException e) {
          }
          assertTrue(client.suspendServer(testServerId));
-         blockUntilServerInState(testServerId, serverClient, Server.Status.SUSPENDED);
+         blockUntilServerInState(testServerId, serverClient, Status.SUSPENDED);
          try {
             client.suspendServer(testServerId);
             fail("Suspended an already suspended server!");
          } catch (HttpResponseException e) {
          }
          assertTrue(client.resumeServer(testServerId));
-         blockUntilServerInState(testServerId, serverClient, Server.Status.ACTIVE);
+         blockUntilServerInState(testServerId, serverClient, Status.ACTIVE);
          try {
             client.resumeServer(testServerId);
             fail("Resumed an already resumed server!");
@@ -153,14 +153,14 @@ public class AdminActionsClientLiveTest extends BaseNovaClientLiveTest {
          } catch (HttpResponseException e) {
          }
          assertTrue(client.pauseServer(testServerId));
-         blockUntilServerInState(testServerId, serverClient, Server.Status.PAUSED);
+         blockUntilServerInState(testServerId, serverClient, Status.PAUSED);
          try {
             client.pauseServer(testServerId);
             fail("paused a paused server!");
          } catch (HttpResponseException e) {
          }
          assertTrue(client.unpauseServer(testServerId));
-         blockUntilServerInState(testServerId, serverClient, Server.Status.ACTIVE);
+         blockUntilServerInState(testServerId, serverClient, Status.ACTIVE);
          try {
             client.unpauseServer(testServerId);
             fail("Unpaused a server we just unpaused!");
@@ -182,7 +182,7 @@ public class AdminActionsClientLiveTest extends BaseNovaClientLiveTest {
             Thread.sleep(30000);
          }
          
-         blockUntilServerInState(testServerId, serverClient, Server.Status.ACTIVE);
+         blockUntilServerInState(testServerId, serverClient, Status.ACTIVE);
          
          Image backupImage = imageClient.getImage(backupImageId);
          assertEquals(backupImage.getId(), backupImageId);
