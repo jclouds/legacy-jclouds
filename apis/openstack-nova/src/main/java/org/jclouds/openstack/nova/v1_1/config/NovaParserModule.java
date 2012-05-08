@@ -28,8 +28,11 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.ServerExtendedAttributes;
+import org.jclouds.openstack.nova.v1_1.domain.ServerExtendedStatus;
 import org.jclouds.openstack.nova.v1_1.domain.ServerWithSecurityGroups;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
@@ -51,9 +54,10 @@ public class NovaParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(
+      return ImmutableMap.<Type, Object>of(
             HostResourceUsage.class, new HostResourceUsageAdapter(),
-            ServerWithSecurityGroups.class, new ServerWithSecurityGroupsAdapter()
+            ServerWithSecurityGroups.class, new ServerWithSecurityGroupsAdapter(),
+            Server.class, new ServerAdapter()
       );
    }
 
@@ -98,7 +102,7 @@ public class NovaParserModule extends AbstractModule {
          Set<String> names = Sets.newLinkedHashSet();
          if (jsonElement.getAsJsonObject().get("security_groups") != null) {
             JsonArray x = jsonElement.getAsJsonObject().get("security_groups").getAsJsonArray();
-            for(JsonElement y : x) {
+            for (JsonElement y : x) {
                names.add(y.getAsJsonObject().get("name").getAsString());
             }
             result.securityGroupNames(names);
@@ -106,4 +110,33 @@ public class NovaParserModule extends AbstractModule {
          return result.build();
       }
    }
+
+   @Singleton
+   public static class ServerAdapter implements JsonDeserializer<Server> {
+      @Override
+      public Server deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+         Server serverBase = apply((ServerInternal) context.deserialize(jsonElement, ServerInternal.class));
+         Server.Builder result = Server.builder().fromServer(serverBase);
+         ServerExtendedStatus extendedStatus = context.deserialize(jsonElement, ServerExtendedStatus.class);
+         if (!Objects.equal(extendedStatus, ServerExtendedStatus.builder().build())) {
+            result.extendedStatus(extendedStatus);
+         }
+         ServerExtendedAttributes extraAttributes = context.deserialize(jsonElement, ServerExtendedAttributes.class);
+         if (!Objects.equal(extraAttributes, ServerExtendedAttributes.builder().build())) {
+            result.extraAttributes(extraAttributes);
+         }
+         return result.build();
+      }
+
+      public Server apply(ServerInternal in) {
+         return in.toBuilder().build();
+      }
+
+      private static class ServerInternal extends Server {
+         protected ServerInternal() {
+         }
+      }
+   }
+
 }

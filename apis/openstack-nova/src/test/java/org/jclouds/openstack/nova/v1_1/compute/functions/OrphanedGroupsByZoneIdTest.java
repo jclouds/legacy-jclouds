@@ -64,7 +64,7 @@ public class OrphanedGroupsByZoneIdTest {
    @Test
    public void testWhenComputeServiceSaysAllNodesAreDeadBothGroupsAreReturned() {
 
-      ServerInZone withoutHost = new ServerInZone(new ParseCreatedServerTest().expected(), "az-1.region-a.geo-1");
+      ServerInZone withoutHost = new ServerInZone(new ServerInZoneToNodeMetadataTest().expectedServer(), "az-1.region-a.geo-1");
       ServerInZone withHost = new ServerInZone(new ParseServerTest().expected(), "az-1.region-a.geo-1");
       
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
@@ -80,7 +80,7 @@ public class OrphanedGroupsByZoneIdTest {
    @Test
    public void testWhenComputeServiceSaysAllNodesAreDeadNoGroupsAreReturned() {
 
-      ServerInZone withoutHost = new ServerInZone(new ParseCreatedServerTest().expected(), "az-1.region-a.geo-1");
+      ServerInZone withoutHost = new ServerInZone(new ServerInZoneToNodeMetadataTest().expectedServer(), "az-1.region-a.geo-1");
       ServerInZone withHost = new ServerInZone(new ParseServerTest().expected(), "az-1.region-a.geo-1");
 
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers

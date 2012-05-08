@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
@@ -80,7 +81,7 @@ public interface ServerClient {
     */
    // blocking call
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
+   ServerCreated createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**
     * Terminate and delete a server.

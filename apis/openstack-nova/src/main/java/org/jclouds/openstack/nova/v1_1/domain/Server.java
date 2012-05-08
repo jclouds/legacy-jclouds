@@ -31,6 +31,7 @@ import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.util.Multimaps2;
 
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -67,7 +68,7 @@ public class Server extends Resource {
                NodeState.TERMINATED), UNKNOWN(NodeState.UNRECOGNIZED), ERROR(NodeState.ERROR), UNRECOGNIZED(
                NodeState.UNRECOGNIZED), PAUSED(NodeState.SUSPENDED);
 
-      private final NodeState nodeState;
+      protected final NodeState nodeState;
 
       Status(NodeState nodeState) {
          this.nodeState = nodeState;
@@ -111,17 +112,15 @@ public class Server extends Resource {
       private Server.Status status;
       private Resource image;
       private Resource flavor;
-      private String adminPass;
       private String keyName;
       private String configDrive;
       private Multimap<String, Address> addresses = ImmutableMultimap.of();
       private Map<String, String> metadata = ImmutableMap.of();
-      private String taskState;
-      private String vmState;
-      private String powerState;
-      private String instanceName;
-      private String hostName;
-      private String hypervisorName;
+      // Extended status extension
+      private ServerExtendedStatus extendedStatus;
+      // Extended server attributes extension
+      private ServerExtendedAttributes extendedAttributes;
+      // Disk Config extension
       private String diskConfig;
 
       /**
@@ -213,14 +212,6 @@ public class Server extends Resource {
       }
 
       /**
-       * @see Server#getAdminPass()
-       */
-      public T adminPass(String adminPass) {
-         this.adminPass = adminPass;
-         return self();
-      }
-
-      /**
        * @see Server#getKeyName()
        */
       public T keyName(String keyName) {
@@ -251,52 +242,20 @@ public class Server extends Resource {
          this.metadata = metadata;
          return self();
       }
-
+      
       /**
-       * @see Server#getTaskState()
+       * @see Server#getExtendedStatus()
        */
-      public T taskState(String taskState) {
-         this.taskState = taskState;
+      public T extendedStatus(ServerExtendedStatus extendedStatus) {
+         this.extendedStatus = extendedStatus;
          return self();
       }
 
       /**
-       * @see Server#getVmState()
+       * @see Server#getExtendedAttributes() 
        */
-      public T vmState(String vmState) {
-         this.vmState = vmState;
-         return self();
-      }
-
-      /**
-       * @see Server#getPowerState()
-       */
-      public T powerState(String powerState) {
-         this.powerState = powerState;
-         return self();
-      }
-
-      /**
-       * @see Server#getInstanceName()
-       */
-      public T instanceName(String instanceName) {
-         this.instanceName = instanceName;
-         return self();
-      }
-
-      /**
-       * @see Server#getHostName()
-       */
-      public T hostName(String hostName) {
-         this.hostName = hostName;
-         return self();
-      }
-
-      /**
-       * @see Server#getHypervisorName()
-       */
-      public T hypervisorName(String hypervisorName) {
-         this.hypervisorName = hypervisorName;
+      public T extraAttributes(ServerExtendedAttributes extendedAttributes) {
+         this.extendedAttributes = extendedAttributes;
          return self();
       }
 
@@ -325,18 +284,13 @@ public class Server extends Resource {
                .status(in.getStatus())
                .image(in.getImage())
                .flavor(in.getFlavor())
-               .adminPass(in.getAdminPass())
                .keyName(in.getKeyName())
                .configDrive(in.getConfigDrive())
                .addresses(in.getAddresses())
                .metadata(in.getMetadata())
-               .taskState(in.getTaskState())
-               .vmState(in.getVmState())
-               .powerState(in.getPowerState())
-               .instanceName(in.getInstanceName())
-               .hostName(in.getHostName())
-               .hypervisorName(in.getHypervisorName())
-               .diskConfig(in.getDiskConfig());
+               .extendedStatus(in.getExtendedStatus().orNull())
+               .extraAttributes(in.getExtendedAttributes().orNull())
+               .diskConfig(in.getDiskConfig().orNull());
       }
    }
 
@@ -347,47 +301,38 @@ public class Server extends Resource {
       }
    }
    
-   protected final String uuid;
+   private final String uuid;
    @SerializedName("tenant_id")
-   protected final String tenantId;
+   private final String tenantId;
    @SerializedName("user_id")
-   protected final String userId;
-   protected final Date updated;
-   protected final Date created;
-   protected final String hostId;
-   protected final String accessIPv4;
-   protected final String accessIPv6;
-   protected final Status status;
-   protected final Resource image;
-   protected final Resource flavor;
-   protected final String adminPass;
+   private final String userId;
+   private final Date updated;
+   private final Date created;
+   private final String hostId;
+   private final String accessIPv4;
+   private final String accessIPv6;
+   private final Status status;
+   private final Resource image;
+   private final Resource flavor;
    @SerializedName("key_name")
-   protected final String keyName;
+   private final String keyName;
    @SerializedName("config_drive")
-   protected final String configDrive;
+   private final String configDrive;
    // TODO: get gson multimap adapter!
-   protected final Map<String, Set<Address>> addresses;
-   protected final Map<String, String> metadata;
+   private final Map<String, Set<Address>> addresses;
+   private final Map<String, String> metadata;
 
    // Extended status extension
-   @SerializedName("OS-EXT-STS:task_state")
-   protected final String taskState;
-   @SerializedName("OS-EXT-STS:vm_state")
-   protected final String vmState;
-   @SerializedName("OS-EXT-STS:power_state")
-   protected final String powerState;
+   // @Prefixed("OS-EXT-STS:")
+   private final Optional<ServerExtendedStatus> extendedStatus;
 
    // Extended server attributes extension
-   @SerializedName("OS-EXT-SRV-ATTR:instance_name")
-   protected final String instanceName;
-   @SerializedName("OS-EXT-SRV-ATTR:host")
-   protected final String hostName;
-   @SerializedName("OS-EXT-SRV-ATTR:hypervisor_hostname")
-   protected final String hypervisorName;
+   // @Prefixed("OS-EXT-SRV-ATTR:")
+   private final Optional<ServerExtendedAttributes> extendedAttributes;
 
    // Disk Config extension
    @SerializedName("OS-DCF:diskConfig")
-   protected final String diskConfig;
+   private final Optional<String> diskConfig;
 
    protected Server(Builder<?> builder) {
       super(builder);
@@ -405,16 +350,33 @@ public class Server extends Resource {
       this.flavor = checkNotNull(builder.flavor, "flavor");
       this.metadata = Maps.newHashMap(builder.metadata);
       this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(builder.addresses, "addresses")));
-      this.adminPass = builder.adminPass;
       this.keyName = builder.keyName;
-      this.taskState = builder.taskState;
-      this.vmState = builder.vmState;
-      this.powerState = builder.powerState;
-      this.instanceName = builder.instanceName;
-      this.hostName = builder.hostName;
-      this.hypervisorName = builder.hypervisorName;
-      this.diskConfig = builder.diskConfig;
+      this.extendedStatus = Optional.fromNullable(builder.extendedStatus);
+      this.extendedAttributes = Optional.fromNullable(builder.extendedAttributes);
+      this.diskConfig = builder.diskConfig == null ? Optional.<String>absent() : Optional.of(builder.diskConfig);
    }
+
+   protected Server() {
+      // for GSON
+      this.uuid = null;
+      this.tenantId = null;
+      this.userId = null;
+      this.updated = null;
+      this.created = null;
+      this.hostId = null;
+      this.accessIPv4 = null;
+      this.accessIPv6 = null;
+      this.status = null;
+      this.configDrive = null;
+      this.image = null;
+      this.flavor = null;
+      this.metadata = ImmutableMap.of();
+      this.addresses = ImmutableMap.of();
+      this.keyName = null;
+      this.extendedStatus = Optional.absent();
+      this.extendedAttributes = Optional.absent();
+      this.diskConfig = Optional.absent();
+  }
 
    /**
     * only present until the id is in uuid form
@@ -490,14 +452,6 @@ public class Server extends Resource {
    }
 
    /**
-    * @return the administrative password for this server; only present on first request.
-    */
-   @Nullable
-   public String getAdminPass() {
-      return adminPass;
-   }
-
-   /**
     * @return keyName if extension is present and there is a valur for this server
     * @see KeyPairClient
     */
@@ -508,64 +462,21 @@ public class Server extends Resource {
 
 
    /**
-    * State of task running against this instance (e.g. "suspending")
+    * Retrieves the extended server status fields
     * <p/>
     * NOTE: This field is only present if the Extended Status extension is installed.
     */
-   @Nullable
-   public String getTaskState() {
-      return this.taskState;
+   public Optional<ServerExtendedStatus> getExtendedStatus() {
+      return this.extendedStatus;
    }
 
    /**
-    * State of task running against this instance (e.g. "suspending")
-    * <p/>
-    * NOTE: This field is only present if the Extended Status extension is installed.
-    */
-   @Nullable
-   public String getVmState() {
-      return this.vmState;
-   }
-
-   /**
-    * State of task running against this instance (e.g. "suspending")
-    * <p/>
-    * NOTE: This field is only present if the Extended Status extension is installed.
-    */
-   @Nullable
-   public String getPowerState() {
-      return this.powerState;
-   }
-
-   /**
-    * The name of the instance?
+    * Retrieves the extended server attributes fields
     * <p/>
     * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
     */
-   @Nullable
-   public String getInstanceName() {
-      return this.instanceName;
-   }
-
-   /**
-    * The host name of the host this Server is running on
-    * <p/>
-    * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
-    * @see #getHostId()
-    */
-   @Nullable
-   public String getHostName() {
-      return this.hostName;
-   }
-
-   /**
-    * The name of the hypervisor this Server is running on
-    * <p/>
-    * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
-    */
-   @Nullable
-   public String getHypervisorName() {
-      return this.hypervisorName;
+   public Optional<ServerExtendedAttributes> getExtendedAttributes() {
+      return this.extendedAttributes;
    }
 
    /**
@@ -573,8 +484,7 @@ public class Server extends Resource {
     * <p/>
     * NOTE: This field is only present if the Disk Config extension is installed.
     */
-   @Nullable
-   public String getDiskConfig() {
+   public Optional<String> getDiskConfig() {
       return this.diskConfig;
    }
 
@@ -587,6 +497,7 @@ public class Server extends Resource {
                "userId", userId).add("hostId", getHostId()).add("updated", updated).add("created", created).add(
                "accessIPv4", getAccessIPv4()).add("accessIPv6", getAccessIPv6()).add("status", status).add(
                "configDrive", getConfigDrive()).add("image", image).add("flavor", flavor).add("metadata", metadata)
-               .add("addresses", getAddresses()).add("adminPass", adminPass);
+               .add("addresses", getAddresses()).add("diskConfig", diskConfig)
+               .add("extendedStatus", extendedStatus).add("extendedAttributes", extendedAttributes);
    }
 }

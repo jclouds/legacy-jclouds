@@ -116,6 +116,12 @@ public class Resource implements Comparable<Resource> {
       this.links = ImmutableSet.copyOf(checkNotNull(builder.links, "links"));
    }
 
+   protected Resource() {
+      this.id = null;
+      this.name = null;
+      this.links = ImmutableSet.of();
+   }
+
    /**
     * When providing an ID, it is assumed that the resource exists in the current OpenStack
     * deployment
