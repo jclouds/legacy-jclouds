@@ -28,6 +28,12 @@ import org.jclouds.joyent.sdc.v6_5.SDCAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.SDCClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterClient;
+import org.jclouds.joyent.sdc.v6_5.features.DatasetAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.DatasetClient;
+import org.jclouds.joyent.sdc.v6_5.features.MachineAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.MachineClient;
+import org.jclouds.joyent.sdc.v6_5.features.PackageAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.PackageClient;
 import org.jclouds.joyent.sdc.v6_5.handlers.SDCErrorHandler;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
@@ -45,6 +51,9 @@ import com.google.common.collect.ImmutableMap;
 public class SDCRestClientModule extends RestClientModule<SDCClient, SDCAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
       .put(DatacenterClient.class, DatacenterAsyncClient.class)
+      .put(MachineClient.class, MachineAsyncClient.class)
+      .put(DatasetClient.class, DatasetAsyncClient.class)
+      .put(PackageClient.class, PackageAsyncClient.class)
       .build();
 
    public SDCRestClientModule() {
@@ -54,6 +63,7 @@ public class SDCRestClientModule extends RestClientModule<SDCClient, SDCAsyncCli
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      install(new SDCParserModule());
       super.configure();
    }
 
