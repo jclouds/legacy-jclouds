@@ -22,6 +22,7 @@ The following document will help you get started, if you are unfamiliar with ecl
 
 *  At the root directory where you checked out, execute `mvn clean install eclipse:eclipse -Dmaven.javadoc.skip=true -DdownloadSources=true -DdownloadJavadocs=true`
    *  If the module you are working on is not in the default build list, change to that directory and execute `mvn eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true`
+   *  Note: if you are running windows, add `-DskipTests` as some tests fail on windows
 
 *  Open eclipse
    *  Setup M2_REPO classpath variable
