@@ -246,7 +246,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             storageStrategy.getAllContainerNames()));
    }
 
-   public static MutableBlobMetadata copy(MutableBlobMetadata in) {
+   private static MutableBlobMetadata copy(MutableBlobMetadata in) {
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       ObjectOutput os;
       try {
@@ -269,12 +269,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          lowerCaseUserMetadata.put(entry.getKey().toLowerCase(), entry.getValue());
       }
       metadata.setUserMetadata(lowerCaseUserMetadata);
-   }
-
-   public static MutableBlobMetadata copy(MutableBlobMetadata in, String newKey) {
-      MutableBlobMetadata newMd = copy(in);
-      newMd.setName(newKey);
-      return newMd;
    }
 
    /**
