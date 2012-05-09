@@ -16,32 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5;
+package org.jclouds.joyent.sdc.v6_5.config;
 
-import org.jclouds.joyent.sdc.v6_5.features.DatacenterAsyncClient;
-import org.jclouds.joyent.sdc.v6_5.features.ServerAsyncClient;
-import org.jclouds.rest.annotations.Delegate;
+import java.lang.reflect.Type;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
+import org.jclouds.joyent.sdc.v6_5.domain.Server;
+import org.jclouds.joyent.sdc.v6_5.functions.internal.SDCTypeAdapters;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
- * Provides asynchronous access to SDC via their REST API.
- * <p/>
- * 
- * @see SDCClient
- * @see <a href="http://sdc.joyent.org/sdcapi.html">api doc</a>
  * @author Adrian Cole
  */
-public interface SDCAsyncClient {
-  
-   /**
-    * Provides asynchronous access to Datacenter features.
-    */
-   @Delegate
-   DatacenterAsyncClient getDatacenterClient();
-   
-   /**
-    * Provides asynchronous access to Server features.
-    */
-   @Delegate
-   ServerAsyncClient getServerClient();
+public class SDCParserModule extends AbstractModule {
+
+   @Provides
+   @Singleton
+   public Map<Type, Object> provideCustomAdapterBindings() {
+      return ImmutableMap.<Type, Object> of(Server.State.class, new SDCTypeAdapters.ServerStateAdapter(),
+    		  Server.Type.class, new SDCTypeAdapters.ServerTypeAdapter());
+   }
+
+   @Override
+   protected void configure() {
+   }
 
 }

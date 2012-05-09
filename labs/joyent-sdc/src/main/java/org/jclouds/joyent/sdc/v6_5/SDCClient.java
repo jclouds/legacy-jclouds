@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterClient;
+import org.jclouds.joyent.sdc.v6_5.features.ServerClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -40,5 +41,11 @@ public interface SDCClient {
     */
    @Delegate
    DatacenterClient getDatacenterClient();
+   
+   /**
+    * Provides synchronous access to Server features.
+    */
+   @Delegate
+   ServerClient getServerClient();
 
 }
