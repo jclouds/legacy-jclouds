@@ -20,8 +20,8 @@ The following document will help you get started, if you are unfamiliar with ecl
   *  Otherwise clone from read-only, or clone your fork of jclouds, see the 
   	 [Developer's Guide](http://code.google.com/p/jclouds/wiki/DevelopersGuide) for more information.
 
-*  At the root directory where you checked out, execute `mvn clean install eclipse:configure-workspace  eclipse:eclipse -Dmaven.javadoc.skip=true`
-   *  If the module you are working on is not in the default build list, change to that directory and execute `mvn eclipse:configure-workspace eclipse:eclipse`
+*  At the root directory where you checked out, execute `mvn clean install eclipse:eclipse -Dmaven.javadoc.skip=true -DdownloadSources=true -DdownloadJavadocs=true`
+   *  If the module you are working on is not in the default build list, change to that directory and execute `mvn eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true`
 
 *  Open eclipse
    *  Setup M2_REPO classpath variable
