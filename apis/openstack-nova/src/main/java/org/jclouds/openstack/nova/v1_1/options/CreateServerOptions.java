@@ -133,9 +133,10 @@ public class CreateServerOptions implements MapBinder {
    }
 
    protected ToStringHelper string() {
-      return toStringHelper("").add("keyName", "keyName").add("securityGroupNames", securityGroupNames)
+      return toStringHelper("").add("keyName", keyName).add("securityGroupNames", securityGroupNames)
               .add("metadata", metadata).add("personality", personality)
-              .add("adminPassPresent", adminPass != null).add("userData", new String(userData));
+              .add("adminPassPresent", adminPass != null)
+              .add("userData", userData == null ? null : new String(userData));
    }
 
    @Override
@@ -258,9 +259,6 @@ public class CreateServerOptions implements MapBinder {
    /**
     * A keypair name can be defined when creating a server. This key will be
     * linked to the server and used to SSH connect to the machine
-    * 
-    * @param keyName
-    * @return
     */
    public String getKeyPairName() {
       return keyName;
