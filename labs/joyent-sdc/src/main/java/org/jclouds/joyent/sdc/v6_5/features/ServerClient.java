@@ -16,32 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5;
+package org.jclouds.joyent.sdc.v6_5.features;
 
-import org.jclouds.joyent.sdc.v6_5.features.DatacenterAsyncClient;
-import org.jclouds.joyent.sdc.v6_5.features.ServerAsyncClient;
-import org.jclouds.rest.annotations.Delegate;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.joyent.sdc.v6_5.domain.Server;
+
 
 /**
- * Provides asynchronous access to SDC via their REST API.
+ * Provides synchronous access to Server.
  * <p/>
  * 
- * @see SDCClient
- * @see <a href="http://sdc.joyent.org/sdcapi.html">api doc</a>
- * @author Adrian Cole
+ * @author Gérald Pereira
+ * @see ServerAsyncClient
+ * @see <a href="https://customer.glesys.com/api.php" />
  */
-public interface SDCAsyncClient {
-  
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface ServerClient {
+
    /**
-    * Provides asynchronous access to Datacenter features.
+    * Get a list of all servers on this account.
+    * 
+    * @return an account's associated server objects.
     */
-   @Delegate
-   DatacenterAsyncClient getDatacenterClient();
+   Set<Server> listServers();
    
-   /**
-    * Provides asynchronous access to Server features.
-    */
-   @Delegate
-   ServerAsyncClient getServerClient();
+
+   Server getServer(String id);
 
 }
