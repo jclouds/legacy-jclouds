@@ -80,7 +80,7 @@ public class MediaClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    @Test
    public void testCloneMedia() {
-      URI cloneUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia");
+      URI vdcURI = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -105,7 +105,7 @@ public class MediaClientExpectTest extends VCloudDirectorAdminClientExpectTest {
          .build();
       Media expected = cloneMedia();
       
-      assertEquals(client.getMediaClient().cloneMedia(cloneUri, params), expected);
+      assertEquals(client.getMediaClient().cloneMedia(vdcURI, params), expected);
    }
    
    @Test
