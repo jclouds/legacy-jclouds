@@ -53,7 +53,7 @@ public class AdminCatalogClientExpectTest extends VCloudDirectorAdminClientExpec
    public void testCreateCatalog() {
       VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs")
+            .apiCommand("POST", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogs")
             .xmlFilePayload("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
             .acceptMedia(VCloudDirectorMediaType.ADMIN_CATALOG)
             .httpRequestBuilder().build(), 
