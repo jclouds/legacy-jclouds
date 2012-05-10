@@ -3,8 +3,10 @@ package org.jclouds.ec2.compute.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.EC2Client;
@@ -21,22 +23,23 @@ public final class GetImageWhenStatusAvailablePredicateWithResult implements Pre
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final String region;
    private final EC2Client ec2Client;
    private final EC2ImageParser ec2ImageToImage;
    private org.jclouds.ec2.domain.Image result;
    private RuntimeException lastFailure;
 
-   public GetImageWhenStatusAvailablePredicateWithResult(EC2Client ec2Client, EC2ImageParser ec2ImageToImage,
-            String region) {
-      this.region = region;
+   @Inject
+   public GetImageWhenStatusAvailablePredicateWithResult(EC2Client ec2Client, EC2ImageParser ec2ImageToImage) {
       this.ec2Client = ec2Client;
       this.ec2ImageToImage = ec2ImageToImage;
    }
 
    @Override
    public boolean apply(String input) {
-      result = checkNotNull(findImage(input));
+      String[] parts = AWSUtils.parseHandle(input);
+      String region = parts[0];
+      String imageId = parts[1];
+      result = checkNotNull(findImage(imageId, region));
       switch (result.getImageState()) {
          case AVAILABLE:
             logger.info("<< Image %s is available for use.", input);
@@ -60,7 +63,7 @@ public final class GetImageWhenStatusAvailablePredicateWithResult implements Pre
       return lastFailure;
    }
 
-   private org.jclouds.ec2.domain.Image findImage(String id) {
+   private org.jclouds.ec2.domain.Image findImage(String id, String region) {
       return Iterables.getOnlyElement(ec2Client.getAMIServices().describeImagesInRegion(region,
                new DescribeImagesOptions().imageIds(id)));
 

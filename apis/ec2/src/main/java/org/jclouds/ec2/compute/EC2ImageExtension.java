@@ -108,9 +108,9 @@ public class EC2ImageExtension implements ImageExtension {
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(imageReadyPredicate, imageId, maxWait, waitPeriod,
-                     TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
-                              + " secs.]");
+            return Retryables.retryGettingResultOrFailing(imageReadyPredicate, region + "/" + imageId, maxWait,
+                     waitPeriod, TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: "
+                              + maxWait + " secs.]");
          }
       }), executor);
    }
