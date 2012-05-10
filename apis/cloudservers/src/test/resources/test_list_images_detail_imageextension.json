@@ -3,58 +3,63 @@
         { 
             "id" : 2, 
             "name" : "CentOS 5.2", 
-            "updated" : "2010-10-10T12:00:00Z", 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2010-08-10T12:00:00Z", 
-            "status" : "ACTIVE" 
+    "status" : "ACTIVE" 
         }, 
         { 
             "id" : 743, 
-            "name" : "My Server Backup1", 
-            "serverId" : 12, 
-            "updated" : "2010-10-10T12:00:00Z", 
+            "name" : "My Server Backup", 
+    "serverId" : 12, 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2009-07-07T09:56:16-05:00", 
-            "status" : "SAVING", 
-            "progress" : 80 
+    "status" : "SAVING", 
+    "progress" : 80 
         }
+        , 
         { 
             "id" : 744, 
-            "name" : "My Server Backup2", 
-            "serverId" : 12, 
-            "updated" : "2010-10-10T12:00:00Z", 
+            "name" : "My Server Backup", 
+    "serverId" : 12, 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2009-07-07T09:56:16-05:00", 
-            "status" : "UNRECOGNIZED", 
+    "status" : "QUEUED"
         }
+        , 
         { 
             "id" : 745, 
-            "name" : "My Server Backup3", 
-            "serverId" : 12, 
-            "updated" : "2010-10-10T12:00:00Z", 
+            "name" : "My Server Backup", 
+    "serverId" : 12, 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2009-07-07T09:56:16-05:00", 
-            "status" : "UNKNOWN", 
+    "status" : "UNRECOGNIZED"
         }
+        , 
         { 
             "id" : 746, 
-            "name" : "My Server Backup4", 
-            "serverId" : 12, 
-            "updated" : "2010-10-10T12:00:00Z", 
+            "name" : "My Server Backup", 
+    "serverId" : 12, 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2009-07-07T09:56:16-05:00", 
-            "status" : "PREPARING", 
-        } 
+    "status" : "UNKNOWN"
+        }
+        , 
         { 
             "id" : 747, 
-            "name" : "My Server Backup5", 
-            "serverId" : 12, 
-            "updated" : "2010-10-10T12:00:00Z", 
+            "name" : "My Server Backup", 
+    "serverId" : 12, 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2009-07-07T09:56:16-05:00", 
-            "status" : "QUEUED", 
-        } 
+    "status" : "PREPARING"
+        }
+        , 
         { 
             "id" : 748, 
-            "name" : "My Server Backup6", 
-            "serverId" : 12, 
-            "updated" : "2010-10-10T12:00:00Z", 
+            "name" : "My Server Backup", 
+    "serverId" : 12, 
+    "updated" : "2010-10-10T12:00:00Z", 
             "created" : "2009-07-07T09:56:16-05:00", 
-            "status" : "FAILED", 
+    "status" : "FAILED"
         } 
     ] 
 } 
