@@ -18,6 +18,7 @@
  */
 package org.jclouds.location.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.net.URI;
@@ -35,6 +36,8 @@ import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
+import org.jclouds.location.predicates.RegionIdFilter;
+import org.jclouds.location.predicates.ZoneIdFilter;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.ImplicitRegionIdSupplier;
 import org.jclouds.location.suppliers.LocationIdToIso3166CodesSupplier;
@@ -51,7 +54,10 @@ import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExc
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -107,10 +113,36 @@ public class LocationModule extends AbstractModule {
    @Singleton
    @Region
    protected Supplier<Set<String>> regionIdsSupplier(AtomicReference<AuthorizationException> authException,
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, RegionIdsSupplier uncached) {
-      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, RegionIdFilter filter, RegionIdsSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds,
+            Suppliers.compose(new FilterStrings(filter), uncached));
+   }
+   
+   @Provides
+   @Singleton
+   @Zone
+   protected Supplier<Set<String>> zoneIdsSupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            ZoneIdFilter filter, ZoneIdsSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds,
+            Suppliers.compose(new FilterStrings(filter), uncached));
    }
 
+   static class FilterStrings implements Function<Set<String>, Set<String>>{
+      public final Predicate<String> filter;
+
+      public FilterStrings(Predicate<String> filter) {
+         this.filter = checkNotNull(filter, "filter");
+      }
+
+
+      @Override
+      public Set<String> apply(Set<String> input) {
+         return Sets.filter(input, filter);
+      }
+      
+   }
+   
    @Provides
    @Singleton
    @Region
@@ -128,15 +160,7 @@ public class LocationModule extends AbstractModule {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
    }
 
-   @Provides
-   @Singleton
-   @Zone
-   protected Supplier<Set<String>> regionIdsSupplier(
-            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            ZoneIdsSupplier uncached) {
-      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
-   }
-   
+
    @Provides
    @Singleton
    @Zone

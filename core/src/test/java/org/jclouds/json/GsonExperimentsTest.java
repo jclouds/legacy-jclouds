@@ -18,10 +18,12 @@
  */
 package org.jclouds.json;
 
+import static com.google.common.base.Objects.equal;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,11 +33,17 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -75,6 +83,64 @@ public class GsonExperimentsTest {
       assertEquals(json2, "[\"hello\",5,{\"name\":\"GREETINGS\",\"source\":\"guest\"}]");
    }
 
+   public class OptionalTypeAdapterFactory implements TypeAdapterFactory {
+      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+         Type type = typeToken.getType();
+         if (typeToken.getRawType() != Optional.class || !(type instanceof ParameterizedType)) {
+            return null;
+         }
+
+         Type elementType = ((ParameterizedType) type).getActualTypeArguments()[0];
+         TypeAdapter<?> elementAdapter = gson.getAdapter(TypeToken.get(elementType));
+         return (TypeAdapter<T>) newOptionalAdapter(elementAdapter);
+      }
+
+      private <E> TypeAdapter<Optional<E>> newOptionalAdapter(final TypeAdapter<E> elementAdapter) {
+         return new TypeAdapter<Optional<E>>() {
+            public void write(JsonWriter out, Optional<E> value) throws IOException {
+               if (value == null || !value.isPresent()) {
+                  out.nullValue();
+                  return;
+               }
+               elementAdapter.write(out, value.get());
+            }
+
+            public Optional<E> read(JsonReader in) throws IOException {
+               if (in.peek() == JsonToken.NULL) {
+                  in.nextNull();
+                  return Optional.absent();
+               }
+               return Optional.of(elementAdapter.read(in));
+            }
+         };
+      }
+   }
+
+   static class OptionalType {
+      Optional<String> present = Optional.of("hello");
+      Optional<String> notPresent = Optional.absent();
+
+      @Override
+      public boolean equals(Object object) {
+         if (this == object) {
+            return true;
+         }
+         if (object instanceof OptionalType) {
+            final OptionalType other = OptionalType.class.cast(object);
+            return equal(present, other.present) && equal(notPresent, other.notPresent);
+         } else {
+            return false;
+         }
+      }
+   }
+
+   public void testPersistOptional() {
+      Gson gson = new GsonBuilder().registerTypeAdapterFactory(new OptionalTypeAdapterFactory()).create();
+      String json = gson.toJson(new OptionalType());
+      assertEquals(json, "{\"present\":\"hello\"}");
+      assertEquals(gson.fromJson(json, OptionalType.class), new OptionalType());
+   }
+
    // inspired by
    // http://code.google.com/p/google-gson/source/browse/trunk/extras/src/main/java/com/google/gson/extras/examples/rawcollections/RawCollectionsExample.java
    public void testRawCollectionsWithParser() {
@@ -111,7 +177,7 @@ public class GsonExperimentsTest {
       JsonToken token = reader.peek();
       for (; token != JsonToken.END_DOCUMENT && nnn(toFind, reader, token, name); token = skipAndPeek(token, reader))
          ;
-      T val = gson.<T>fromJson(reader, type);
+      T val = gson.<T> fromJson(reader, type);
       reader.close();
       return val;
    }
