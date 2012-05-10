@@ -49,6 +49,12 @@ import org.jclouds.predicates.Retryables;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * Nova implementation of {@link ImageExtension}
+ * 
+ * @author David Alves
+ *
+ */
 @Singleton
 public class NovaImageExtension implements ImageExtension {
 

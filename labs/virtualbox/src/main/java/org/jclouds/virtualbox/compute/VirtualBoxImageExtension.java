@@ -63,6 +63,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * Virtualbox implementation of {@link ImageExtension}
+ * 
+ * @author David Alves
+ * 
+ */
 @Singleton
 public class VirtualBoxImageExtension implements ImageExtension {
 
