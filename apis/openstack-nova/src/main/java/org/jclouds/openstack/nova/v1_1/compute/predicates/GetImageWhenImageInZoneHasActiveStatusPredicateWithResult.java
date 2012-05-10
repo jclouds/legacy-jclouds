@@ -1,0 +1,89 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.jclouds.openstack.nova.v1_1.compute.predicates;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.compute.NovaImageExtension;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
+import org.jclouds.predicates.PredicateWithResult;
+
+import com.google.common.base.Function;
+
+/**
+ * @author David Alves
+ */
+public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult implements
+         PredicateWithResult<ZoneAndId, Image> {
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
+   private org.jclouds.openstack.nova.v1_1.domain.Image result;
+   private ZoneAndId resultZoneAndId;
+   private RuntimeException lastFailure;
+   private Function<ImageInZone, Image> imageInZoneToImage;
+   private NovaClient client;
+
+   @Inject
+   public GetImageWhenImageInZoneHasActiveStatusPredicateWithResult(Function<ImageInZone, Image> imageInZoneToImage,
+            NovaClient client) {
+      this.imageInZoneToImage = imageInZoneToImage;
+      this.client = client;
+   }
+
+   @Override
+   public boolean apply(ZoneAndId input) {
+      result = checkNotNull(NovaImageExtension.findImage(client,
+               ZoneAndId.fromZoneAndId(input.getZone(), input.getId())));
+      resultZoneAndId = input;
+      switch (result.getStatus()) {
+         case ACTIVE:
+            logger.info("<< Image %s is available for use.", input.getId());
+            return true;
+         case SAVING:
+            logger.debug("<< Image %s is not available yet.", input.getId());
+            return false;
+         default:
+            lastFailure = new IllegalStateException("Image was not created: " + input.getId());
+            throw lastFailure;
+      }
+   }
+
+   @Override
+   public Image getResult() {
+      return imageInZoneToImage.apply(new ImageInZone(result, resultZoneAndId.getZone()));
+   }
+
+   @Override
+   public Throwable getLastFailure() {
+      return lastFailure;
+   }
+}

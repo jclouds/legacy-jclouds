@@ -22,10 +22,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
 
 @Beta
-public interface PredicateWithResult<Input,Result> extends Predicate<Input> {
-   
+public interface PredicateWithResult<Input, Result> extends Predicate<Input> {
+
    Result getResult();
-   
+
    Throwable getLastFailure();
-   
+
 }
