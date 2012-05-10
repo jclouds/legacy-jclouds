@@ -19,12 +19,12 @@
 package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -33,7 +33,6 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
 /**
@@ -46,12 +45,12 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final EC2Client ec2Client;
-   protected final Supplier<String> randomSuffix;
+   protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
-   public CreateUniqueKeyPair(EC2Client ec2Client, Supplier<String> randomSuffix) {
+   public CreateUniqueKeyPair(EC2Client ec2Client, GroupNamingConvention.Factory namingConvention) {
       this.ec2Client = ec2Client;
-      this.randomSuffix = randomSuffix;
+      this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
    @Override
@@ -65,22 +64,18 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
       checkNotNull(group, "group");
       logger.debug(">> creating keyPair region(%s) group(%s)", region, group);
       KeyPair keyPair = null;
+      String prefix = group;
+      
       while (keyPair == null) {
+         String keyName = namingConvention.create().uniqueNameForGroup(prefix);
          try {
-            keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, getNextName(region, group));
-            logger.debug("<< created keyPair(%s)", keyPair);
+            keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, keyName);
          } catch (IllegalStateException e) {
-
+            logger.trace("   invalid keyname (%s in %s); retrying", keyName, region);
          }
       }
+      
+      logger.debug("<< created keyPair(%s)", keyPair);
       return keyPair;
-   }
-   
-   @Inject(optional=true)
-   @Named(RESOURCENAME_DELIMITER) 
-   char delimiter = '#';
-   
-   private String getNextName(String region, String group) {
-      return String.format("jclouds#%s#%s#%s", group, region, randomSuffix.get()).replace('#', delimiter);
    }
 }

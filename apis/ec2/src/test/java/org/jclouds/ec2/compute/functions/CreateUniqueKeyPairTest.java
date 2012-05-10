@@ -26,73 +26,92 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "CreateUniqueKeyPairTest")
 public class CreateUniqueKeyPairTest {
-   @SuppressWarnings( { "unchecked" })
+   
    @Test
    public void testApply() throws UnknownHostException {
-      EC2Client client = createMock(EC2Client.class);
+      final EC2Client client = createMock(EC2Client.class);
       KeyPairClient keyClient = createMock(KeyPairClient.class);
-      Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
-
       KeyPair pair = createMock(KeyPair.class);
 
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
-      expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andReturn(pair);
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#1")).andReturn(pair);
 
       replay(client);
       replay(keyClient);
-      replay(uniqueIdSupplier);
 
-      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
+      CreateUniqueKeyPair parser = Guice.createInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(),new EC2ApiMetadata().getDefaultProperties());
+            bind(new TypeLiteral<Supplier<String>>() {
+            }).toInstance(Suppliers.ofInstance("1"));
+            bind(EC2Client.class).toInstance(client);
+         }
+
+      }).getInstance(CreateUniqueKeyPair.class);
 
       assertEquals(parser.createNewKeyPairInRegion("region", "group"), pair);
 
       verify(client);
       verify(keyClient);
-      verify(uniqueIdSupplier);
    }
 
    @SuppressWarnings( { "unchecked" })
    @Test
    public void testApplyWithIllegalStateException() throws UnknownHostException {
-      EC2Client client = createMock(EC2Client.class);
+      final EC2Client client = createMock(EC2Client.class);
       KeyPairClient keyClient = createMock(KeyPairClient.class);
-      Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
+      final Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
 
       KeyPair pair = createMock(KeyPair.class);
 
       expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#1")).andThrow(new IllegalStateException());
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
-      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#region#2")).andReturn(pair);
+      expect(keyClient.createKeyPairInRegion("region", "jclouds#group#2")).andReturn(pair);
 
       replay(client);
       replay(keyClient);
       replay(uniqueIdSupplier);
 
-      CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
+      CreateUniqueKeyPair parser = Guice.createInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(),new EC2ApiMetadata().getDefaultProperties());
+            bind(new TypeLiteral<Supplier<String>>() {
+            }).toInstance(uniqueIdSupplier);
+            bind(EC2Client.class).toInstance(client);
+         }
+
+      }).getInstance(CreateUniqueKeyPair.class);
 
       assertEquals(parser.createNewKeyPairInRegion("region", "group"), pair);
 
       verify(client);
       verify(keyClient);
       verify(uniqueIdSupplier);
-
    }
-
 }
