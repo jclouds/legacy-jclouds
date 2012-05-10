@@ -1,0 +1,121 @@
+{
+    "images": [{
+        "status": "UNRECOGNIZED",
+        "updated": "2012-02-02T19:11:00Z",
+        "name": "oneiric-server-cloudimg-amd64",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/15",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/images/15",
+            "rel": "bookmark"
+        }],
+        "created": "2012-02-02T19:10:52Z",
+        "progress": 100,
+        "id": "15",
+        "metadata": {
+            "kernel_id": "14",
+            "min_disk": 0,
+            "min_ram": 0,
+            "owner": "1"
+        }
+    }, {
+        "status": "UNKNOWN",
+        "updated": "2012-02-02T19:10:51Z",
+        "name": "oneiric-server-cloudimg-amd64-kernel",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/14",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/images/14",
+            "rel": "bookmark"
+        }],
+        "created": "2012-02-02T19:10:50Z",
+        "progress": 100,
+        "id": "14",
+        "metadata": {
+            "min_disk": 0,
+            "owner": "1",
+            "min_ram": 0
+        }
+    }, {
+        "status": "ACTIVE",
+        "updated": "2012-02-02T19:10:41Z",
+        "name": "natty-server-cloudimg-amd64",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/13",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/images/13",
+            "rel": "bookmark"
+        }],
+        "created": "2012-02-02T19:10:33Z",
+        "progress": 100,
+        "id": "13",
+        "metadata": {
+            "kernel_id": "12",
+            "min_disk": 0,
+            "min_ram": 0,
+            "owner": "1"
+        }
+    }, {
+        "status": "SAVING",
+        "updated": "2012-02-02T19:10:33Z",
+        "name": "natty-server-cloudimg-amd64-kernel",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/12",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/images/12",
+            "rel": "bookmark"
+        }],
+        "created": "2012-02-02T19:10:32Z",
+        "progress": 100,
+        "id": "12",
+        "metadata": {
+            "min_disk": 0,
+            "owner": "1",
+            "min_ram": 0
+        }
+    }, {
+        "status": "ERROR",
+        "updated": "2012-02-02T19:10:41Z",
+        "name": "natty-server-cloudimg-amd64",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/11",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/images/11",
+            "rel": "bookmark"
+        }],
+        "created": "2012-02-02T19:10:33Z",
+        "progress": 100,
+        "id": "11",
+        "metadata": {
+            "kernel_id": "12",
+            "min_disk": 0,
+            "min_ram": 0,
+            "owner": "1"
+        }
+    }, {
+        "status": "ERROR",
+        "updated": "2012-02-02T19:10:41Z",
+        "name": "natty-server-cloudimg-amd64",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/10",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/images/10",
+            "rel": "bookmark"
+        }],
+        "created": "2012-02-02T19:10:33Z",
+        "progress": 100,
+        "id": "10",
+        "metadata": {
+            "kernel_id": "12",
+            "min_disk": 0,
+            "min_ram": 0,
+            "owner": "1"
+        }
+    }]
+}

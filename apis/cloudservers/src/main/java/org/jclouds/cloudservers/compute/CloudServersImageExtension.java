@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.openstack.nova.v1_1.compute;
+package org.jclouds.cloudservers.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -33,6 +33,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
@@ -41,52 +43,48 @@ import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Nova implementation of {@link ImageExtension}
+ * CloudServers implementation of {@link ImageExtension}
  * 
  * @author David Alves
- *
+ * 
  */
 @Singleton
-public class NovaImageExtension implements ImageExtension {
+public class CloudServersImageExtension implements ImageExtension {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final NovaClient novaClient;
+   private final CloudServersClient client;
    private final ExecutorService executor;
+   private final PredicateWithResult<Integer, Image> imageAvailablePredicate;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
    private long maxWait = 3600;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_WAIT_PERIOD")
    private long waitPeriod = 1;
-   private PredicateWithResult<ZoneAndId, Image> imageReadyPredicate;
 
    @Inject
-   public NovaImageExtension(NovaClient novaClient,
+   public CloudServersImageExtension(CloudServersClient client,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            PredicateWithResult<ZoneAndId, Image> imageReadyPredicate) {
-      this.novaClient = checkNotNull(novaClient);
+            PredicateWithResult<Integer, Image> imageAvailablePredicate) {
+      this.client = checkNotNull(client);
       this.executor = userThreads;
-      this.imageReadyPredicate = imageReadyPredicate;
+      this.imageAvailablePredicate = imageAvailablePredicate;
    }
 
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
-      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Server server = novaClient.getServerClientForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      Server server = client.getServer(Integer.parseInt(id));
       if (server == null)
-         throw new NoSuchElementException("Cannot find server with id: " + zoneAndId);
+         throw new NoSuchElementException("Cannot find server with id: " + id);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
       return template;
    }
@@ -96,30 +94,23 @@ public class NovaImageExtension implements ImageExtension {
       checkState(template instanceof CloneImageTemplate,
                " openstack-nova only supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
-      ZoneAndId sourceImageZoneAndId = ZoneAndId.fromSlashEncoded(cloneTemplate.getSourceNodeId());
-
-      String newImageId = novaClient.getServerClientForZone(sourceImageZoneAndId.getZone()).createImageFromServer(
-               cloneTemplate.getName(), sourceImageZoneAndId.getId());
-
-      final ZoneAndId targetImageZoneAndId = ZoneAndId.fromZoneAndId(sourceImageZoneAndId.getZone(), newImageId);
-
-      logger.info(">> Registered new Image %s, waiting for it to become available.", newImageId);
-
+      final org.jclouds.cloudservers.domain.Image image = client.createImageFromServer(cloneTemplate.getName(),
+               Integer.parseInt(cloneTemplate.getSourceNodeId()));
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(imageReadyPredicate, targetImageZoneAndId, maxWait,
-                     waitPeriod, TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: "
-                              + maxWait + " secs.]");
+            return Retryables.retryGettingResultOrFailing(imageAvailablePredicate, image.getId(), maxWait, waitPeriod,
+                     TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
+                              + " secs.]");
          }
       }), executor);
+
    }
 
    @Override
    public boolean deleteImage(String id) {
-      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
       try {
-         this.novaClient.getImageClientForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
+         this.client.deleteImage(Integer.parseInt(id));
       } catch (Exception e) {
          return false;
       }

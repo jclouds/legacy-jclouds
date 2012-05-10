@@ -60,7 +60,15 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * Virtualbox implementation of {@link ImageExtension}
+ * 
+ * @author David Alves
+ * 
+ */
 @Singleton
 public class VirtualBoxImageExtension implements ImageExtension {
 
@@ -104,7 +112,7 @@ public class VirtualBoxImageExtension implements ImageExtension {
    }
 
    @Override
-   public Image createImage(ImageTemplate template) {
+   public ListenableFuture<Image> createImage(ImageTemplate template) {
       checkState(template instanceof CloneImageTemplate, " vbox image extension only supports cloning for the moment.");
       CloneImageTemplate cloneTemplate = CloneImageTemplate.class.cast(template);
 
@@ -133,7 +141,7 @@ public class VirtualBoxImageExtension implements ImageExtension {
       // registering
       manager.get().getVBox().registerMachine(clonedMachine);
 
-      return imachineToImage.apply(clonedMachine);
+      return Futures.immediateFuture(imachineToImage.apply(clonedMachine));
    }
 
    @Override

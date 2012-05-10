@@ -22,6 +22,8 @@ package org.jclouds.compute;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * An extension to compute service to allow for the manipulation of {@link Image}s. Implementation
  * is optional by providers.
@@ -49,7 +51,7 @@ public interface ImageExtension {
     *           template to base the new image on
     * @return the image that was just built *after* it is registered on the provider
     */
-   Image createImage(ImageTemplate template);
+   ListenableFuture<Image> createImage(ImageTemplate template);
 
    /**
     * Delete an {@link Image} on the provider.

@@ -132,13 +132,23 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @Override
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
+      
       // ensure we don't mutate the input template
-      template = templateBuilderProvider.get().fromTemplate(template).build();
+      Template mutableTemplate;
+      // ensure we don't mutate the input template, fromTemplate ignores imageId so
+      // build directly from imageId if we have it
+      if (template.getImage() != null && template.getImage().getId() != null) {
+         mutableTemplate = templateBuilderProvider.get().imageId(template.getImage().getId()).fromTemplate(template)
+                  .build();
+         // otherwise build from generic parameters
+      } else {
+         mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
+      }
 
       Iterable<String> ips = allocateElasticIpsInRegion(count, template);
 
       Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group,
-               count, template);
+               count, mutableTemplate);
 
       Iterable<RegionAndName> ids = transform(started, instanceToRegionAndName);
 
@@ -152,7 +162,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       
       assignElasticIpsToInstances(ips, started);
       
-      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(started,
+      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(mutableTemplate.getOptions(), transform(started,
                runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
    }
 
