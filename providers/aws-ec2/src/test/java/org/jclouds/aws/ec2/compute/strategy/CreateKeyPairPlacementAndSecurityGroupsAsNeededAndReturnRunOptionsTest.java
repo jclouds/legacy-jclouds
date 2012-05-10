@@ -41,6 +41,7 @@ import org.jclouds.aws.ec2.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.EC2TemplateBuilderTest;
@@ -659,7 +660,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -693,7 +694,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] { 22, 80 };
       boolean shouldAuthorizeSelf = true;
@@ -727,7 +728,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -761,7 +762,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of("group1", "group2");
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -797,7 +798,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -938,9 +939,16 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       LoadingCache<RegionAndName, String> placementGroupMap = createMock(LoadingCache.class);
       Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair = createMock(Function.class);
       CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded = createMock(CreatePlacementGroupIfNeeded.class);
+      GroupNamingConvention.Factory namingConventionFactory = createMock(GroupNamingConvention.Factory.class);
+      GroupNamingConvention namingConvention = createMock(GroupNamingConvention.class);
+      expect(namingConventionFactory.create()).andReturn(namingConvention).anyTimes();
+      expect(namingConvention.sharedNameForGroup("group")).andReturn("jclouds#group").anyTimes();
+      replay(namingConventionFactory);
+      replay(namingConvention);
 
       return new CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(makeKeyPair, credentialsMap,
-            securityGroupMap, OPTIONS_PROVIDER, placementGroupMap, createPlacementGroupIfNeeded, importExistingKeyPair);
+            securityGroupMap, OPTIONS_PROVIDER, placementGroupMap, createPlacementGroupIfNeeded, importExistingKeyPair,
+            namingConventionFactory);
    }
 
    private void replayStrategy(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {

@@ -32,11 +32,13 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.InstanceState;
@@ -53,6 +55,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -221,14 +226,14 @@ public class RunningInstanceToNodeMetadataTest {
    public void testGroupNameIsSetWhenCustomKeyNameIsSetAndSecurityGroupIsGenerated() {
       checkGroupName(RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
               .instanceState(InstanceState.RUNNING).region("us-east-1").keyName("custom-key")
-              .groupId("jclouds#groupname#us-east-1").build());
+              .groupId("jclouds#groupname").build());
    }
 
    @Test
    public void testGroupNameIsSetWhenCustomSecurityGroupIsSetAndKeyNameIsGenerated() {
       checkGroupName(RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
               .instanceState(InstanceState.RUNNING).region("us-east-1").groupId("custom-sec")
-              .keyName("jclouds#groupname#us-east-1#23").build());
+              .keyName("jclouds#groupname#23").build());
    }
 
    protected RunningInstance firstInstanceFromResource(String resource) {
@@ -278,9 +283,19 @@ public class RunningInstanceToNodeMetadataTest {
          }
 
       };
+
+      GroupNamingConvention.Factory namingConvention = Guice.createInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(),new EC2ApiMetadata().getDefaultProperties());
+         }
+
+      }).getInstance(GroupNamingConvention.Factory.class);
+
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(instanceToNodeState, credentialStore,
             Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(instanceToImage), locationSupplier,
-            hardwareSupplier);
+            hardwareSupplier, namingConvention);
       return parser;
    }
 

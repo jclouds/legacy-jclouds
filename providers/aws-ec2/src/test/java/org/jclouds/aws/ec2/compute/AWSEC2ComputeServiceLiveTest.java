@@ -180,12 +180,11 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          }
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
-                  + instance.getRegion(), group));
+         assertEquals(newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group, group));
 
          // make sure our dummy group has no rules
          SecurityGroup secgroup = getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
-                  .getRegion(), "jclouds#" + group + "#" + instance.getRegion()));
+                  .getRegion(), "jclouds#" + group));
 
          assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
@@ -258,7 +257,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          // Assert the two instances are in the same groups
          region = instance1.getRegion();
-         String expectedSecurityGroupName = "jclouds#" + group + "#" + region;
+         String expectedSecurityGroupName = "jclouds#" + group;
          
          assertEquals(instance1.getRegion(), region);
          assertNotNull(instance1.getKeyName());

@@ -156,8 +156,17 @@ public interface GroupNamingConvention {
    String groupInSharedNameOrNull(String encoded);
 
    /**
-    * identifies if this name has a group encoded in it.
+    * A predicate that identifies if an input has the given group encoded in it.
     */
    Predicate<String> containsGroup(String group);
 
+   /**
+    * A predicate that identifies if an input has any group encoded in it.
+    */
+   Predicate<String> containsAnyGroup();
+   
+   /**
+    * Extracts the group from a shared/unique name. Or returns null if not in correct format to contain a group.
+    */
+   String extractGroup(String encoded);
 }
