@@ -33,6 +33,14 @@ import java.util.Iterator;
  */
 public class CloudWatch {
 
+   /**
+    * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
+    *
+    * @param metricClient the {@link MetricClient} to use for the request
+    * @param options the {@link ListMetricsOptions} describing the ListMetrics request
+    *
+    * @return iterable of metrics fitting the criteria
+    */
    public static Iterable<Metric> listMetrics(final MetricClient metricClient, final ListMetricsOptions options) {
       return new Iterable<Metric>() {
          public Iterator<Metric> iterator() {
@@ -76,7 +84,7 @@ public class CloudWatch {
    /**
     * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
     *
-    * @param cloudWatchClient the CloudWatch client
+    * @param cloudWatchClient the {@link CloudWatchClient} to use for the request
     * @param region the region to list metrics in
     * @param options the options describing the ListMetrics request
     *
