@@ -66,7 +66,7 @@ public class AdminNetworkClientExpectTest extends VCloudDirectorAdminClientExpec
    public void testUpdateNetwork() {
       VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
+            .apiCommand("PUT", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
             .xmlFilePayload("/network/admin/updateNetworkSource.xml", VCloudDirectorMediaType.ORG_NETWORK)
             .acceptMedia(VCloudDirectorMediaType.TASK)
             .httpRequestBuilder().build(), 

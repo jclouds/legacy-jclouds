@@ -394,7 +394,7 @@ public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpec
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(ANY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/metadata.xml", METADATA).httpResponseBuilder().build(),
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
       ).getVAppTemplateClient();
 
@@ -425,7 +425,7 @@ public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpec
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
       client.getMetadataClient().mergeMetadata(uri, exampleMetadata());
