@@ -35,7 +35,6 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.domain.Server;
-import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
@@ -47,9 +46,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -65,28 +61,28 @@ public class CloudServersImageExtension implements ImageExtension {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final CloudServersClient syncClient;
+   private final CloudServersClient client;
    private final ExecutorService executor;
-   private final Function<org.jclouds.cloudservers.domain.Image, Image> cloudserversImageToImage;
+   private final PredicateWithResult<Integer, Image> imageAvailablePredicate;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
-   long maxWait = 3600;
+   private long maxWait = 3600;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_WAIT_PERIOD")
-   long waitPeriod = 1;
+   private long waitPeriod = 1;
 
    @Inject
-   public CloudServersImageExtension(CloudServersClient novaClient,
+   public CloudServersImageExtension(CloudServersClient client,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            Function<org.jclouds.cloudservers.domain.Image, Image> cloudserversImageToImage) {
-      this.syncClient = checkNotNull(novaClient);
+            PredicateWithResult<Integer, Image> imageAvailablePredicate) {
+      this.client = checkNotNull(client);
       this.executor = userThreads;
-      this.cloudserversImageToImage = cloudserversImageToImage;
+      this.imageAvailablePredicate = imageAvailablePredicate;
    }
 
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
-      Server server = syncClient.getServer(Integer.parseInt(id));
+      Server server = client.getServer(Integer.parseInt(id));
       if (server == null)
          throw new NoSuchElementException("Cannot find server with id: " + id);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
@@ -98,44 +94,14 @@ public class CloudServersImageExtension implements ImageExtension {
       checkState(template instanceof CloneImageTemplate,
                " openstack-nova only supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
-      final org.jclouds.cloudservers.domain.Image image = syncClient.createImageFromServer(cloneTemplate.getName(),
+      final org.jclouds.cloudservers.domain.Image image = client.createImageFromServer(cloneTemplate.getName(),
                Integer.parseInt(cloneTemplate.getSourceNodeId()));
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(new PredicateWithResult<Integer, Image>() {
-
-               org.jclouds.cloudservers.domain.Image result;
-               RuntimeException lastFailure;
-
-               @Override
-               public boolean apply(Integer input) {
-                  result = checkNotNull(findImage(input));
-                  switch (result.getStatus()) {
-                     case ACTIVE:
-                        logger.info("<< Image %s is available for use.", input);
-                        return true;
-                     case UNKNOWN:
-                     case SAVING:
-                        logger.debug("<< Image %s is not available yet.", input);
-                        return false;
-                     default:
-                        lastFailure = new IllegalStateException("Image was not created: " + input);
-                        throw lastFailure;
-                  }
-               }
-
-               @Override
-               public Image getResult() {
-                  return cloudserversImageToImage.apply(image);
-               }
-
-               @Override
-               public Throwable getLastFailure() {
-                  return lastFailure;
-               }
-            }, image.getId(), maxWait, waitPeriod, TimeUnit.SECONDS,
-                     "Image was not created within the time limit, Giving up! [Limit: " + maxWait + " secs.]");
+            return Retryables.retryGettingResultOrFailing(imageAvailablePredicate, image.getId(), maxWait, waitPeriod,
+                     TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
+                              + " secs.]");
          }
       }), executor);
 
@@ -144,22 +110,11 @@ public class CloudServersImageExtension implements ImageExtension {
    @Override
    public boolean deleteImage(String id) {
       try {
-         this.syncClient.deleteImage(Integer.parseInt(id));
+         this.client.deleteImage(Integer.parseInt(id));
       } catch (Exception e) {
          return false;
       }
       return true;
-   }
-
-   private org.jclouds.cloudservers.domain.Image findImage(final int id) {
-      return Iterables.tryFind(syncClient.listImages(ListOptions.NONE),
-               new Predicate<org.jclouds.cloudservers.domain.Image>() {
-                  @Override
-                  public boolean apply(org.jclouds.cloudservers.domain.Image input) {
-                     return input.getId() == id;
-                  }
-               }).orNull();
-
    }
 
 }

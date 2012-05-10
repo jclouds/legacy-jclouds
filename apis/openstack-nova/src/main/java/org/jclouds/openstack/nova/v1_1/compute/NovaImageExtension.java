@@ -47,8 +47,6 @@ import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 @Singleton
@@ -120,17 +118,6 @@ public class NovaImageExtension implements ImageExtension {
          return false;
       }
       return true;
-   }
-
-   public static org.jclouds.openstack.nova.v1_1.domain.Image findImage(NovaClient novaClient, final ZoneAndId zoneAndId) {
-      return Iterables.tryFind(novaClient.getImageClientForZone(zoneAndId.getZone()).listImagesInDetail(),
-               new Predicate<org.jclouds.openstack.nova.v1_1.domain.Image>() {
-                  @Override
-                  public boolean apply(org.jclouds.openstack.nova.v1_1.domain.Image input) {
-                     return input.getId().equals(zoneAndId.getId());
-                  }
-               }).orNull();
-
    }
 
 }

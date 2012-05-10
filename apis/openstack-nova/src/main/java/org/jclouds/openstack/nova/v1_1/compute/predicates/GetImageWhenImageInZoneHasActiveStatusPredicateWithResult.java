@@ -29,12 +29,13 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.NovaImageExtension;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * @author David Alves
@@ -61,8 +62,7 @@ public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult imp
 
    @Override
    public boolean apply(ZoneAndId input) {
-      result = checkNotNull(NovaImageExtension.findImage(client,
-               ZoneAndId.fromZoneAndId(input.getZone(), input.getId())));
+      result = checkNotNull(findImage(ZoneAndId.fromZoneAndId(input.getZone(), input.getId())));
       resultZoneAndId = input;
       switch (result.getStatus()) {
          case ACTIVE:
@@ -85,5 +85,16 @@ public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult imp
    @Override
    public Throwable getLastFailure() {
       return lastFailure;
+   }
+
+   public org.jclouds.openstack.nova.v1_1.domain.Image findImage(final ZoneAndId zoneAndId) {
+      return Iterables.tryFind(client.getImageClientForZone(zoneAndId.getZone()).listImagesInDetail(),
+               new Predicate<org.jclouds.openstack.nova.v1_1.domain.Image>() {
+                  @Override
+                  public boolean apply(org.jclouds.openstack.nova.v1_1.domain.Image input) {
+                     return input.getId().equals(zoneAndId.getId());
+                  }
+               }).orNull();
+
    }
 }

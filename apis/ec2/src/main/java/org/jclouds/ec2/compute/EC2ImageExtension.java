@@ -41,16 +41,13 @@ import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.CreateImageOptions;
-import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -66,23 +63,22 @@ public class EC2ImageExtension implements ImageExtension {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
-   @com.google.inject.Inject(optional = true)
-   @Named("IMAGE_MAX_WAIT")
-   long maxWait = 3600;
-   @com.google.inject.Inject(optional = true)
-   @Named("IMAGE_WAIT_PERIOD")
-   long waitPeriod = 1;
    private final EC2Client ec2Client;
    private final ExecutorService executor;
-   private final Function<org.jclouds.ec2.domain.Image, Image> ecImageToImage;
+   private final PredicateWithResult<String, Image> imageReadyPredicate;
+   @com.google.inject.Inject(optional = true)
+   @Named("IMAGE_MAX_WAIT")
+   private long maxWait = 3600;
+   @com.google.inject.Inject(optional = true)
+   @Named("IMAGE_WAIT_PERIOD")
+   private long waitPeriod = 1;
 
    @Inject
    public EC2ImageExtension(EC2Client ec2Client, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            EC2ImageParser ec2ImageToImage) {
+            PredicateWithResult<String, Image> imageReadyPredicate) {
       this.ec2Client = checkNotNull(ec2Client);
       this.executor = checkNotNull(userThreads);
-      this.ecImageToImage = checkNotNull(ec2ImageToImage);
+      this.imageReadyPredicate = imageReadyPredicate;
    }
 
    @Override
@@ -112,38 +108,9 @@ public class EC2ImageExtension implements ImageExtension {
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(new PredicateWithResult<String, Image>() {
-
-               org.jclouds.ec2.domain.Image result;
-               RuntimeException lastFailure;
-
-               @Override
-               public boolean apply(String input) {
-                  result = checkNotNull(findImage(region, input));
-                  switch (result.getImageState()) {
-                     case AVAILABLE:
-                        logger.info("<< Image %s is available for use.", input);
-                        return true;
-                     case UNRECOGNIZED:
-                        logger.debug("<< Image %s is not available yet.", input);
-                        return false;
-                     default:
-                        lastFailure = new IllegalStateException("Image was not created: " + input);
-                        throw lastFailure;
-                  }
-               }
-
-               @Override
-               public Image getResult() {
-                  return ecImageToImage.apply(result);
-               }
-
-               @Override
-               public Throwable getLastFailure() {
-                  return lastFailure;
-               }
-            }, imageId, maxWait, waitPeriod, TimeUnit.SECONDS,
-                     "Image was not created within the time limit, Giving up! [Limit: " + maxWait + " secs.]");
+            return Retryables.retryGettingResultOrFailing(imageReadyPredicate, imageId, maxWait, waitPeriod,
+                     TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
+                              + " secs.]");
          }
       }), executor);
    }
@@ -161,9 +128,4 @@ public class EC2ImageExtension implements ImageExtension {
       }
    }
 
-   private org.jclouds.ec2.domain.Image findImage(String region, String id) {
-      return Iterables.getOnlyElement(ec2Client.getAMIServices().describeImagesInRegion(region,
-               new DescribeImagesOptions().imageIds(id)));
-
-   }
 }
