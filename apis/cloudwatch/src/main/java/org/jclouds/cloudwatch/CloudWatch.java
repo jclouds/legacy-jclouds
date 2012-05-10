@@ -33,24 +33,13 @@ import java.util.Iterator;
  */
 public class CloudWatch {
 
-   /**
-    * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
-    *
-    * @param cloudWatchClient the CloudWatch client
-    * @param region the region to list metrics in
-    * @param options the options describing the ListMetrics request
-    *
-    * @return iterable of metrics fitting the criteria
-    */
-   public static Iterable<Metric> listMetrics(CloudWatchClient cloudWatchClient, String region,
-            final ListMetricsOptions options) {
-      final MetricClient metricClientForRegion = cloudWatchClient.getMetricClientForRegion(region);
+   public static Iterable<Metric> listMetrics(final MetricClient metricClient, final ListMetricsOptions options) {
       return new Iterable<Metric>() {
          public Iterator<Metric> iterator() {
             return new AbstractIterator<Metric>() {
 
                private ListMetricsOptions lastOptions = options;
-               private ListMetricsResponse response = metricClientForRegion.listMetrics(lastOptions);
+               private ListMetricsResponse response = metricClient.listMetrics(lastOptions);
                private Iterator<Metric> iterator = response.iterator();
 
                /**
@@ -66,7 +55,7 @@ public class CloudWatch {
                                                         .namespace(lastOptions.getNamespace())
                                                         .nextToken(response.getNextToken())
                                                         .build();
-                        response = metricClientForRegion.listMetrics(lastOptions);
+                        response = metricClient.listMetrics(lastOptions);
                         iterator = response.iterator();
                      }
                      if (iterator.hasNext()) {
@@ -82,6 +71,20 @@ public class CloudWatch {
             };
          }
       };
+   }
+
+   /**
+    * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
+    *
+    * @param cloudWatchClient the CloudWatch client
+    * @param region the region to list metrics in
+    * @param options the options describing the ListMetrics request
+    *
+    * @return iterable of metrics fitting the criteria
+    */
+   public static Iterable<Metric> listMetrics(CloudWatchClient cloudWatchClient, String region,
+            final ListMetricsOptions options) {
+      return listMetrics(cloudWatchClient.getMetricClientForRegion(region), options);
    }
 
 }
