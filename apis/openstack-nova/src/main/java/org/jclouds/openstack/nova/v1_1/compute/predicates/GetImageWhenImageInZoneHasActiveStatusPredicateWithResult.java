@@ -66,13 +66,14 @@ public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult imp
       resultZoneAndId = input;
       switch (result.getStatus()) {
          case ACTIVE:
-            logger.info("<< Image %s is available for use.", input.getId());
+            logger.info("<< Image %s is available for use. %s", input.getId(), result);
             return true;
+         case UNRECOGNIZED:
          case SAVING:
-            logger.debug("<< Image %s is not available yet.", input.getId());
+            logger.debug("<< Image %s is not available yet. %s", input.getId(), result);
             return false;
          default:
-            lastFailure = new IllegalStateException("Image was not created: " + input.getId());
+            lastFailure = new IllegalStateException("Image " + input.getId() + " was not created. " + result);
             throw lastFailure;
       }
    }

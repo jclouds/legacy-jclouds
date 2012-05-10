@@ -41,9 +41,4 @@ public class HPCloudComputeImageExtensionLivetest extends BaseImageExtensionLive
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-
-   @Override
-   public long getSpawnNodeMaxWait() {
-      return 2400L;
-   }
 }
