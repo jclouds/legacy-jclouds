@@ -22,15 +22,18 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.cloudservers.compute.CloudServersImageExtension;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToImage;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToOperatingSystem;
 import org.jclouds.cloudservers.compute.functions.FlavorToHardware;
 import org.jclouds.cloudservers.compute.functions.ServerToNodeMetadata;
+import org.jclouds.cloudservers.compute.predicates.GetImageWhenStatusActivePredicateWithResult;
 import org.jclouds.cloudservers.compute.strategy.CloudServersComputeServiceAdapter;
 import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -40,10 +43,13 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.predicates.PredicateWithResult;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -77,6 +83,12 @@ public class CloudServersComputeServiceContextModule extends
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
+      
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(CloudServersImageExtension.class);
+      
+      bind(new TypeLiteral<PredicateWithResult<Integer, Image>>() {
+      }).to(GetImageWhenStatusActivePredicateWithResult.class);
 
    }
    
@@ -112,6 +124,10 @@ public class CloudServersComputeServiceContextModule extends
    Map<ServerStatus, NodeState> provideServerToNodeState() {
       return serverToNodeState;
    }
-
+   
+   @Override
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
+      return Optional.of(i.getInstance(ImageExtension.class));
+   }
 
 }

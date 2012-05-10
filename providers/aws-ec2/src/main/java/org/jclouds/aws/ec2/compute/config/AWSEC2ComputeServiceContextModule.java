@@ -39,6 +39,7 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -62,6 +63,7 @@ import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
@@ -179,5 +181,10 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Override
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
       return options.as(EC2TemplateOptions.class).userData("#cloud-config\nrepo_upgrade: none\n".getBytes());
+   }
+   
+   @Override
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
+      return Optional.of(i.getInstance(ImageExtension.class));
    }
 }
