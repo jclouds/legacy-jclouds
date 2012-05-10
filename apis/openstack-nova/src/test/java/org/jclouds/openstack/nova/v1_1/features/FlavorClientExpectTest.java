@@ -47,7 +47,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listFlavors = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -68,7 +68,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listFlavors = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -87,7 +87,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getFlavor = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors/52415800-8b69-11e0-9b19-734f1195ff37"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/52415800-8b69-11e0-9b19-734f1195ff37"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -107,7 +107,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getFlavor = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors/123"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/123"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();

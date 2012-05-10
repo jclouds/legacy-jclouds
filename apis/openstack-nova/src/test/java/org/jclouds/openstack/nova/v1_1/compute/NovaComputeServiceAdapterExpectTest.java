@@ -58,7 +58,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest createServer = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers"))
+         .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
          .headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                      .put("X-Auth-Token", authToken).build())
@@ -72,7 +72,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest serverDetail = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/71752"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/71752"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -111,7 +111,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest createServer = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers"))
+         .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
          .headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                      .put("X-Auth-Token", authToken).build())
@@ -126,7 +126,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest serverDetail = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/71752"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/71752"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();

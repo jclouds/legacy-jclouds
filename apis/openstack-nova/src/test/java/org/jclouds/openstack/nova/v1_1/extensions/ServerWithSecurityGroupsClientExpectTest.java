@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 public class ServerWithSecurityGroupsClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testGetServerWithSecurityGroups() {
-      URI endpoint = URI.create("https://compute.north.host/v1.1/3456/os-create-server-ext/8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
+      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-create-server-ext/8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
       ServerWithSecurityGroupsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
@@ -52,7 +52,7 @@ public class ServerWithSecurityGroupsClientExpectTest extends BaseNovaClientExpe
    }
 
    public void testGetServerWithSecurityGroupsFailNotFound() {
-      URI endpoint = URI.create("https://compute.north.host/v1.1/3456/os-create-server-ext/8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
+      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-create-server-ext/8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
       ServerWithSecurityGroupsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,

@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 @Test(groups = "unit", testName = "CreateSecurityGroupIfNeededTest")
 public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
    HttpRequest createSecurityGroup = HttpRequest.builder().method("POST").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+            URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build())
             .payload(
@@ -74,7 +74,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
       for (int port : ImmutableList.of(22,8080)){
          
          HttpRequest createCidrRule = HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules")).headers(
+                  URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules")).headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                            authToken).build())
                   .payload(
@@ -91,7 +91,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
          builder.put(createCidrRule, createCidrRuleResponse);
 
          HttpRequest createSelfRule = HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules")).headers(
+                  URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules")).headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                            authToken).build())
                   .payload(
@@ -110,7 +110,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
       }
       
       HttpRequest getSecurityGroup = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/os-security-groups/" + groupId)).headers(
+               URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups/" + groupId)).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
@@ -147,7 +147,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
       builder.put(createSecurityGroup, createSecurityGroupResponse);
           
       HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+               URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 

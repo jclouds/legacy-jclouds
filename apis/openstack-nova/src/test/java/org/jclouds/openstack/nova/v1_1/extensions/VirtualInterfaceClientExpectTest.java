@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
 public class VirtualInterfaceClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testListVirtualInterfaces() {
-      URI endpoint = URI.create("https://compute.north.host/v1.1/3456/servers/1/os-virtual-interfaces");
+      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/os-virtual-interfaces");
       VirtualInterfaceClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
@@ -52,7 +52,7 @@ public class VirtualInterfaceClientExpectTest extends BaseNovaClientExpectTest {
    }
 
    public void testListVirtualInterfacesFailNotFound() {
-      URI endpoint = URI.create("https://compute.north.host/v1.1/3456/servers/1/os-virtual-interfaces");
+      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/os-virtual-interfaces");
       VirtualInterfaceClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,

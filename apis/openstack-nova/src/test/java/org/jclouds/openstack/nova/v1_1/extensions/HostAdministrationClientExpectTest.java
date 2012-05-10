@@ -46,7 +46,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    
    
    public void testList() throws Exception {
-      URI endpoint = URI.create("https://compute.north.host/v1.1/3456/os-hosts");
+      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts");
       HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
@@ -64,7 +64,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    }
 
    public void testGet() throws Exception {
-      URI endpoint = URI.create("https://compute.north.host/v1.1/3456/os-hosts/xyz");
+      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/xyz");
       HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))

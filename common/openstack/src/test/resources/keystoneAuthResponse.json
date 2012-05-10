@@ -77,30 +77,38 @@
                     }
                 ]
             },
-            {
-                "name":"Cloud Servers",
-                "type":"compute",
-                "endpoints":[{
-                        "tenantId":"1",
-                        "publicURL":"https://compute.north.host/v1/1234",
-                        "internalURL":"https://compute.north.host/v1/1234",
-                        "region":"az-1.region-a.geo-1",
-                        "versionId":"1.0",
-                        "versionInfo":"https://compute.north.host/v1.0/",
-                        "versionList":"https://compute.north.host/"
-                    },
-                    {
-                        "tenantId":"2",
-                        "publicURL":"https://compute.north.host/v1.1/3456",
-                        "internalURL":"https://compute.north.host/v1.1/3456",
-                        "region":"az-1.region-a.geo-1",
-                        "versionId":"1.1",
-                        "versionInfo":"https://compute.north.host/v1.1/",
-                        "versionList":"https://compute.north.host/"
-                    }
-                ],
-                "endpoints_links":[]
-            }
-        ]
+    {
+      "name": "Compute",
+      "type": "compute",
+      "endpoints": [
+        {
+          "tenantId": "3456",
+          "publicURL": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/3456",
+          "publicURL2": "https:\/\/az-1.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-1.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "3456",
+          "publicURL": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/3456",
+          "publicURL2": "https:\/\/az-2.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-2.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "3456",
+          "publicURL": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/3456",
+          "publicURL2": "https:\/\/az-3.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-3.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com"
+        }
+      ]
     }
+  ]
 }
