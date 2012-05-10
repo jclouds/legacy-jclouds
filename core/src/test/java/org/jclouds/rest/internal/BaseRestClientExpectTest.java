@@ -367,7 +367,8 @@ public abstract class BaseRestClientExpectTest<S> {
     */
    public boolean httpRequestsAreEqual(HttpRequest a, HttpRequest b) {
       try {
-         if (a == null || b == null) {
+         if (a == null || b == null || !Objects.equal(a.getRequestLine(), b.getRequestLine())
+               || !Objects.equal(a.getHeaders(), b.getHeaders())) {
             return false;
          }
          if (a.getPayload() == null || b.getPayload() == null) {
@@ -405,13 +406,13 @@ public abstract class BaseRestClientExpectTest<S> {
                   }
                });
 
-               return diff.identical() && Objects.equal(a.getHeaders(), b.getHeaders());
+               return diff.identical();
             }
             case JSON: {               
                JsonParser parser = new JsonParser();
                JsonElement payloadA = parser.parse(Strings2.toStringAndClose(a.getPayload().getInput()));
                JsonElement payloadB = parser.parse(Strings2.toStringAndClose(b.getPayload().getInput()));
-               return Objects.equal(payloadA, payloadB) && Objects.equal(a.getHeaders(), b.getHeaders());
+               return Objects.equal(payloadA, payloadB);
             }
             default: {
                return Objects.equal(a, b);
