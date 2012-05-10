@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -55,8 +56,9 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
    @Inject
    protected AWSRunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
          Map<String, Credentials> credentialStore, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap,
-         @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
-      super(instanceToNodeState, credentialStore, imageMap, locations, hardware);
+         @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware,
+         GroupNamingConvention.Factory namingConvention) {
+      super(instanceToNodeState, credentialStore, imageMap, locations, hardware, namingConvention);
    }
 
    @Override

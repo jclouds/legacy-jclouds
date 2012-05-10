@@ -21,16 +21,14 @@ package org.jclouds.ec2.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
@@ -42,6 +40,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -61,10 +60,10 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 
@@ -82,16 +81,19 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    protected final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
    protected final Map<String, Credentials> credentialStore;
    protected final Map<InstanceState, NodeState> instanceToNodeState;
+   protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
    protected RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
             Map<String, Credentials> credentialStore, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap,
-            @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
+            @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware,
+            GroupNamingConvention.Factory namingConvention) {
       this.locations = checkNotNull(locations, "locations");
       this.hardware = checkNotNull(hardware, "hardware");
       this.imageMap = checkNotNull(imageMap, "imageMap");
       this.instanceToNodeState = checkNotNull(instanceToNodeState, "instanceToNodeState");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
    @Override
@@ -197,24 +199,16 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       return group;
    }
 
-   @Inject(optional = true)
-   @Named(RESOURCENAME_DELIMITER)
-   char delimiter = '#';
-
    private String parseGroupFrom(final RunningInstance instance, final Set<String> data) {
       String group = null;
       try {
-         group = Iterables.getOnlyElement(Iterables.filter(data, new Predicate<String>() {
-
-            @Override
-            public boolean apply(String input) {
-               return input.startsWith("jclouds" + delimiter) && input.contains(delimiter + instance.getRegion());
-            }
-         })).split(delimiter + "")[1];
+         Predicate<String> containsAnyGroup = namingConvention.create().containsAnyGroup();
+         String encodedGroup = Iterables.getOnlyElement(Iterables.filter(data, containsAnyGroup));
+         group = namingConvention.create().extractGroup(encodedGroup);
       } catch (NoSuchElementException e) {
          logger.debug("no group parsed from %s's data: %s", instance.getId(), data);
       } catch (IllegalArgumentException e) {
-         logger.debug("too many groups match %s%s; %s's data: %s", "jclouds", delimiter, instance.getId(), data);
+         logger.debug("too many groups match naming convention; %s's data: %s", instance.getId(), data);
       }
       return group;
    }
