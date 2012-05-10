@@ -63,14 +63,15 @@ public final class GetImageWhenStatusActivePredicateWithResult implements Predic
       result = checkNotNull(findImage(input));
       switch (result.getStatus()) {
          case ACTIVE:
-            logger.info("<< Image %s is available for use.", input);
+            logger.info("<< Image %s is available for use. %s", input, result);
             return true;
          case QUEUED:
+         case PREPARING:
          case SAVING:
-            logger.debug("<< Image %s is not available yet.", input);
+            logger.debug("<< Image %s is not available yet. %s", input, result);
             return false;
          default:
-            lastFailure = new IllegalStateException("Image was not created: " + input);
+            lastFailure = new IllegalStateException("Image " + input + " was not created. " + result);
             throw lastFailure;
       }
    }
