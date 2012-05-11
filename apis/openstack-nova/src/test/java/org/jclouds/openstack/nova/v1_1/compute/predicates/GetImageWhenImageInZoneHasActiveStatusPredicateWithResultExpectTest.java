@@ -62,7 +62,7 @@ public class GetImageWhenImageInZoneHasActiveStatusPredicateWithResultExpectTest
       assertTrue(predicate.apply(zoneAdnId0)); // ACTIVE
       assertTrue(!predicate.apply(zoneAdnId1)); // SAVING
       assertTrue(!predicate.apply(zoneAdnId2)); // UNRECOGNIZED
-      assertEquals("natty-server-cloudimg-amd64", predicate.getResult().getName());
+      assertEquals("oneiric-server-cloudimg-amd64", predicate.getResult().getName());
    }
 
    public void testFailsOnOtherStatuses() {
