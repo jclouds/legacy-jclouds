@@ -37,9 +37,7 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
@@ -54,7 +52,6 @@ import org.jclouds.rest.config.RestClientModule;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 
 /**
  * 
@@ -81,7 +78,6 @@ public class HPCloudObjectStorageRestClientModule extends
       super.installLocations();
       // TODO: select this from KeystoneProperties.VERSION;
       install(KeystoneAuthenticationModule.forRegions());
-      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 
    @Override
