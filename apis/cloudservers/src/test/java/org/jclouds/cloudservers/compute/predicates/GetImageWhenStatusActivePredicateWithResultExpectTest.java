@@ -51,7 +51,8 @@ public class GetImageWhenStatusActivePredicateWithResultExpectTest extends
             .method("GET")
             .endpoint(
                      URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/detail?format=json&now=1257695648897"))
-            .headers(ImmutableMultimap.<String, String> builder().put(HttpHeaders.ACCEPT, "application/json")
+            .headers(ImmutableMultimap.<String, String> builder()
+                     .put(HttpHeaders.ACCEPT, "application/json")
                      .put("X-Auth-Token", authToken).build()).build();
 
    private final HttpResponse listImagesResponse = HttpResponse.builder().statusCode(200)
@@ -64,19 +65,19 @@ public class GetImageWhenStatusActivePredicateWithResultExpectTest extends
       Injector injector = requestsSendResponses(requestResponseMap);
       PredicateWithResult<Integer, Image> predicate = injector
                .getInstance(GetImageWhenStatusActivePredicateWithResult.class);
-      assertTrue(predicate.apply(2));
-      assertFalse(predicate.apply(743));
-      assertFalse(predicate.apply(744));
+      assertTrue(predicate.apply(2));// ACTIVE
+      assertFalse(predicate.apply(743));// SAVING
+      assertFalse(predicate.apply(744));// QUEUED
+      assertFalse(predicate.apply(747));// PREPARING
    }
 
    public void testFailsOnOtherStatuses() {
       Injector injector = requestsSendResponses(requestResponseMap);
       PredicateWithResult<Integer, Image> predicate = injector
                .getInstance(GetImageWhenStatusActivePredicateWithResult.class);
-      assertTrue(illegalStateExceptionThrown(predicate, 745));
-      assertTrue(illegalStateExceptionThrown(predicate, 746));
-      assertTrue(illegalStateExceptionThrown(predicate, 747));
-      assertTrue(illegalStateExceptionThrown(predicate, 748));
+      assertTrue(illegalStateExceptionThrown(predicate, 745));// UNRECOGNIZED
+      assertTrue(illegalStateExceptionThrown(predicate, 746));// UNKNOWN
+      assertTrue(illegalStateExceptionThrown(predicate, 748));// FAILED
    }
 
    private boolean illegalStateExceptionThrown(PredicateWithResult<Integer, Image> predicate, Integer id) {
