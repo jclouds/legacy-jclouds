@@ -159,6 +159,16 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
    }
 
    @Override
+   public void setExpires(String expires) {
+      delegate.setExpires(expires);
+   }
+
+   @Override
+   public String getExpires() {
+      return delegate.getExpires();
+   }
+
+   @Override
    public ContentMetadataBuilder toBuilder() {
       return delegate.toBuilder();
    }

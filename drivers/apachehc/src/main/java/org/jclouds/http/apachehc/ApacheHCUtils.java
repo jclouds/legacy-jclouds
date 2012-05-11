@@ -152,6 +152,8 @@ public class ApacheHCUtils {
          apacheRequest.addHeader("Content-Encoding", payload.getContentMetadata().getContentEncoding());
       if (payload.getContentMetadata().getContentLanguage() != null)
          apacheRequest.addHeader("Content-Language", payload.getContentMetadata().getContentLanguage());
+      if (payload.getContentMetadata().getExpires() != null)
+         apacheRequest.addHeader("Expires", payload.getContentMetadata().getExpires());
       assert (apacheRequest.getEntity() != null);
    }
 

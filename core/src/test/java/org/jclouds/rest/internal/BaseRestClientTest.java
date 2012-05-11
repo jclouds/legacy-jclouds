@@ -86,11 +86,22 @@ public abstract class BaseRestClientTest {
    }
 
    protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5) {
-      assertPayloadEquals(request, toMatch, contentType, null, null, null, contentMD5);
+      assertPayloadEquals(request, toMatch, contentType, contentMD5, null);
+   }
+
+   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5, String expires) {
+      assertPayloadEquals(request, toMatch, contentType, null, null, null, contentMD5, expires);
    }
 
    protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType,
          String contentDispositon, String contentEncoding, String contentLanguage, boolean contentMD5) {
+      assertPayloadEquals(request, toMatch, contentType, contentDispositon, contentEncoding, contentLanguage, 
+               contentMD5, null);
+   }
+
+   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType,
+         String contentDispositon, String contentEncoding, String contentLanguage, boolean contentMD5,
+         String expires) {
       if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
@@ -104,7 +115,7 @@ public abstract class BaseRestClientTest {
          Long length = new Long(payload.getBytes().length);
          try {
             assertContentHeadersEqual(request, contentType, contentDispositon, contentEncoding, contentLanguage,
-                  length, contentMD5 ? CryptoStreams.md5(request.getPayload()) : null);
+                  length, contentMD5 ? CryptoStreams.md5(request.getPayload()) : null, expires);
          } catch (IOException e) {
             propagate(e);
          }
@@ -112,7 +123,7 @@ public abstract class BaseRestClientTest {
    }
 
    protected void assertContentHeadersEqual(HttpRequest request, String contentType, String contentDispositon,
-         String contentEncoding, String contentLanguage, Long length, byte[] contentMD5) {
+         String contentEncoding, String contentLanguage, Long length, byte[] contentMD5, String expires) {
       MutableContentMetadata md = request.getPayload().getContentMetadata();
       if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
          assertEquals(md.getContentLength(), length);
@@ -125,6 +136,7 @@ public abstract class BaseRestClientTest {
       assertEquals(md.getContentEncoding(), contentEncoding);
       assertEquals(md.getContentLanguage(), contentLanguage);
       assertEquals(md.getContentMD5(), contentMD5);
+      assertEquals(md.getExpires(), expires);
    }
 
    // FIXME Shouldn't be assertPayloadHeadersEqual?

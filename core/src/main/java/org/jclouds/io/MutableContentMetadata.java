@@ -66,4 +66,5 @@ public interface MutableContentMetadata extends ContentMetadata {
     */
    void setContentEncoding(@Nullable String contentEncoding);
 
+   void setExpires(@Nullable String expires);
 }

@@ -70,6 +70,7 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
    private String currentContentEncoding;
    private String currentContentLanguage;
    private BlobType currentBlobType;
+   private String currentExpires;
    private boolean inBlob;
    private boolean inBlobPrefix;
    private boolean inMetadata;
@@ -131,8 +132,8 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
       } else if (qName.equals("Blob")) {
          BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, containerUrl.getPath().replace("/",
                   ""), currentUrl, currentLastModified, currentETag, currentSize, currentContentType,
-                  currentContentMD5, currentContentEncoding, currentContentLanguage, currentLeaseStatus,
-                  currentMetadata);
+                  currentContentMD5, currentContentEncoding, currentContentLanguage, currentExpires, 
+                  currentLeaseStatus, currentMetadata);
          blobMetadata.add(md);
          currentBlobType = null;
          currentName = null;
@@ -145,6 +146,7 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
          currentContentLanguage = null;
          currentContentMD5 = null;
          currentLeaseStatus = null;
+         currentExpires = null;
          currentMetadata = Maps.newHashMap();
       } else if (qName.equals("Url")) {
          currentUrl = HttpUtils.createUri(currentText.toString().trim());
@@ -172,6 +174,10 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
          currentContentLanguage = currentText.toString().trim();
          if (currentContentLanguage.equals(""))
             currentContentLanguage = null;
+      } else if (qName.equals("Expires")) {
+         currentExpires = currentText.toString().trim();
+         if (currentExpires.equals(""))
+            currentExpires= null;
       }
       currentText = new StringBuilder();
    }

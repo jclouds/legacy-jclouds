@@ -19,6 +19,7 @@
 package org.jclouds.aws.s3.blobstore.integration;
 
 import static org.jclouds.blobstore.options.CreateContainerOptions.Builder.publicRead;
+<<<<<<< HEAD
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -29,11 +30,24 @@ import java.util.Set;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.domain.Location;
+=======
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.jclouds.blobstore.BlobStore;
+>>>>>>> Issue-647: added "Expires" header for ContentMetadata
 import org.jclouds.s3.blobstore.integration.S3ContainerLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
+<<<<<<< HEAD
 import com.google.common.base.Strings;
+=======
+import com.google.common.base.Throwables;
+>>>>>>> Issue-647: added "Expires" header for ContentMetadata
 
 /**
  * @author Adrian Cole
@@ -44,6 +58,34 @@ public class AWSS3ContainerLiveTest extends S3ContainerLiveTest {
       provider = "aws-s3";
    }
 
+   @Test(groups = { "live" })
+   public void testCreateBlobWithExpiry() throws InterruptedException, MalformedURLException, IOException {
+      final String containerName = getScratchContainerName();
+      BlobStore blobStore = view.getBlobStore();
+      try {
+         final String RFC1123_PATTERN = "EEE, dd MMM yyyyy HH:mm:ss z";
+         final String blobName = "hello";
+         final String expires = new SimpleDateFormat(RFC1123_PATTERN).format(new Date(System.currentTimeMillis()+(60*1000)));
+         
+         blobStore.createContainerInLocation(null, containerName, publicRead());
+         blobStore.putBlob(containerName, blobStore.blobBuilder(blobName).payload(TEST_STRING).expires(expires).build());
+
+         assertConsistencyAware(new Runnable() {
+            public void run() {
+               try {
+                  String actualExpires = view.getBlobStore().getBlob(containerName, blobName).getPayload().getContentMetadata().getExpires();
+                  assert expires.equals(actualExpires) : "expires="+actualExpires+"; expected="+expires;
+               } catch (Exception e) {
+                  Throwables.propagate(e);
+               }
+            }
+         });
+
+      } finally {
+         recycleContainer(containerName);
+      }
+   }
+   
    @Test(groups = { "live" })
    public void testCreateBlobInLocation() throws InterruptedException, MalformedURLException, IOException {
       String payload = "my data";
@@ -88,5 +130,4 @@ public class AWSS3ContainerLiveTest extends S3ContainerLiveTest {
       }
       throw new NoSuchElementException("No location found with id '"+id+"'; contenders were "+locs);
    }
-
 }

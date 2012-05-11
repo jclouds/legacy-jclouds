@@ -224,6 +224,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             connection.setRequestProperty("Content-Encoding", md.getContentEncoding());
          if (md.getContentLanguage() != null)
             connection.setRequestProperty("Content-Language", md.getContentLanguage());
+         if (md.getExpires() != null)
+            connection.setRequestProperty("Expires", md.getExpires());
          if (chunked) {
             connection.setChunkedStreamingMode(8196);
          } else {

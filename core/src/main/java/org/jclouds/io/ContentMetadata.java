@@ -86,6 +86,14 @@ public interface ContentMetadata {
    @Nullable
    String getContentLanguage();
 
+   /**
+    * Gives the date/time after which the response is considered stale.
+    * 
+    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21"/>
+    */
+   @Nullable
+   String getExpires();
+
    ContentMetadataBuilder toBuilder();
 
 }

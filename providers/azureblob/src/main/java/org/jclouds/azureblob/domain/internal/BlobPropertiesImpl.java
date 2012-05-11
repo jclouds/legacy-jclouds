@@ -55,7 +55,8 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
 
    public BlobPropertiesImpl(BlobType type, String name, String container, URI url, Date lastModified, String eTag,
             long size, String contentType, @Nullable byte[] contentMD5, @Nullable String contentMetadata,
-            @Nullable String contentLanguage, LeaseStatus leaseStatus, Map<String, String> metadata) {
+            @Nullable String contentLanguage, @Nullable String currentExpires, LeaseStatus leaseStatus, 
+            Map<String, String> metadata) {
       this.type = checkNotNull(type, "type");
       this.leaseStatus = checkNotNull(leaseStatus, "leaseStatus");
       this.name = checkNotNull(name, "name");
@@ -64,7 +65,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       this.lastModified = checkNotNull(lastModified, "lastModified");
       this.eTag = checkNotNull(eTag, "eTag");
       this.contentMetadata = new BaseImmutableContentMetadata(contentType, size, contentMD5, null, contentLanguage,
-               contentMetadata);
+               contentMetadata, currentExpires);
       this.metadata.putAll(checkNotNull(metadata, "metadata"));
    }
 

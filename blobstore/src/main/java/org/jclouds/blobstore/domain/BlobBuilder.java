@@ -117,6 +117,8 @@ public interface BlobBuilder {
 
       PayloadBlobBuilder contentEncoding(String contentEncoding);
 
+      PayloadBlobBuilder expires(String expires);
+
       /**
        * 
        * @see Payloads#calculateMD5

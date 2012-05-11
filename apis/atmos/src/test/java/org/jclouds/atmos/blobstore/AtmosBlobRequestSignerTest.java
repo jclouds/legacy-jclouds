@@ -89,6 +89,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
       blob.getPayload().getContentMetadata().setContentLength(2l);
       blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
       blob.getPayload().getContentMetadata().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setExpires("Thu, 01 Dec 1994 16:00:00 GMT");
       
       HttpRequest request = signer.signPutBlob("container", blob);
 
@@ -98,7 +99,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
                request,
                "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: aLpB1oQaCA27AXT6Nzam7s0f0pI=\nx-emc-uid: identity\n");
 
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, "Thu, 01 Dec 1994 16:00:00 GMT");
 
       assertEquals(request.getFilters().size(), 0);
    }

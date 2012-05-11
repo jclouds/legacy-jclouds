@@ -51,6 +51,7 @@ public class ContentMetadataBuilder implements Serializable {
    protected String contentDisposition;
    protected String contentLanguage;
    protected String contentEncoding;
+   protected String expires;
 
    public ContentMetadataBuilder fromHttpHeaders(Multimap<String, String> headers) {
       boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
@@ -72,6 +73,8 @@ public class ContentMetadataBuilder implements Serializable {
             contentEncoding(header.getValue());
          } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
             contentLanguage(header.getValue());
+         } else if ("Expires".equalsIgnoreCase(header.getKey())) {
+            expires(header.getValue());
          }
       }
       return this;
@@ -113,28 +116,26 @@ public class ContentMetadataBuilder implements Serializable {
       return this;
    }
 
+   public ContentMetadataBuilder expires(@Nullable String expires) {
+      this.expires = expires;
+      return this;
+   }
+
    public ContentMetadata build() {
       return new BaseImmutableContentMetadata(contentType, contentLength, contentMD5, contentDisposition,
-               contentLanguage, contentEncoding);
+               contentLanguage, contentEncoding, expires);
    }
 
    public static ContentMetadataBuilder fromContentMetadata(ContentMetadata in) {
       return new ContentMetadataBuilder().contentType(in.getContentType()).contentLength(in.getContentLength())
                .contentMD5(in.getContentMD5()).contentDisposition(in.getContentDisposition()).contentLanguage(
-                        in.getContentLanguage()).contentEncoding(in.getContentEncoding());
+                        in.getContentLanguage()).contentEncoding(in.getContentEncoding()).expires(in.getExpires());
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((contentDisposition == null) ? 0 : contentDisposition.hashCode());
-      result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
-      result = prime * result + ((contentLanguage == null) ? 0 : contentLanguage.hashCode());
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-      return result;
+      return Objects.hashCode(contentDisposition, contentEncoding, contentLanguage, contentLength, 
+               contentMD5, contentType, expires);
    }
 
    @Override
@@ -151,13 +152,14 @@ public class ContentMetadataBuilder implements Serializable {
              Objects.equal(contentLanguage, other.contentLanguage) &&
              Objects.equal(contentLength, other.contentLength) &&
              Arrays.equals(contentMD5, other.contentMD5) &&
-             Objects.equal(contentType, other.contentType);
+             Objects.equal(contentType, other.contentType) &&
+             Objects.equal(expires, other.expires);
    }
 
    @Override
    public String toString() {
       return "[contentDisposition=" + contentDisposition + ", contentEncoding=" + contentEncoding
                + ", contentLanguage=" + contentLanguage + ", contentLength=" + contentLength + ", contentMD5="
-               + Arrays.toString(contentMD5) + ", contentType=" + contentType + "]";
+               + Arrays.toString(contentMD5) + ", contentType=" + contentType + ", expires=" + expires + "]";
    }
 }

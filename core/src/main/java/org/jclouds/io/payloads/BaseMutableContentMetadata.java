@@ -141,6 +141,22 @@ public class BaseMutableContentMetadata extends ContentMetadataBuilder implement
       return this.contentEncoding;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setExpires(@Nullable String expires) {
+      expires(expires);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getExpires() {
+      return this.expires;
+   }
+
    @Override
    public BaseMutableContentMetadata toBuilder() {
       return BaseMutableContentMetadata.fromContentMetadata(this);
@@ -150,6 +166,6 @@ public class BaseMutableContentMetadata extends ContentMetadataBuilder implement
       return (BaseMutableContentMetadata) new BaseMutableContentMetadata().contentType(in.getContentType())
                .contentLength(in.getContentLength()).contentMD5(in.getContentMD5()).contentDisposition(
                         in.getContentDisposition()).contentLanguage(in.getContentLanguage()).contentEncoding(
-                        in.getContentEncoding());
+                        in.getContentEncoding()).expires(in.getExpires());
    }
 }

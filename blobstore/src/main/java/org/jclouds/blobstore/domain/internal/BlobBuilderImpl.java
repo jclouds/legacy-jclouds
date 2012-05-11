@@ -222,6 +222,12 @@ public class BlobBuilderImpl implements BlobBuilder {
       }
 
       @Override
+      public PayloadBlobBuilder expires(String expires) {
+         payload.getContentMetadata().setExpires(expires);
+         return this;
+      }
+
+      @Override
       public PayloadBlobBuilder forSigning() {
          return builder.forSigning();
       }

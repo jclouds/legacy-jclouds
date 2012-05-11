@@ -72,12 +72,13 @@ public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest {
       blob.getPayload().getContentMetadata().setContentLength(2l);
       blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
       blob.getPayload().getContentMetadata().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setExpires("Thu, 01 Dec 1994 16:00:00 GMT");
 
       HttpRequest request = signer.signPutBlob("container", blob);
 
       assertRequestLineEquals(request, "PUT http://storage/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Auth-Token: testtoken\n");
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, "Thu, 01 Dec 1994 16:00:00 GMT");
 
       assertEquals(request.getFilters().size(), 0);
    }

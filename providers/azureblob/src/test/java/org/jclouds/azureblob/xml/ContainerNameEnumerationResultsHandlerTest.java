@@ -63,17 +63,17 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
             new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob1.txt", "mycontainer", URI
                   .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"), dateService
                   .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55D050B8B", 8,
-                  "text/plain; charset=UTF-8", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
+                  "text/plain; charset=UTF-8", null, null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
                         .<String, String> of()),
             new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob2.txt", "mycontainer", URI
                   .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"), dateService
                   .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 14,
-                  "text/plain; charset=UTF-8", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
+                  "text/plain; charset=UTF-8", null, null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
                         .<String, String> of()),
             new BlobPropertiesImpl(BlobType.PAGE_BLOB, "newblob1.txt", "mycontainer", URI
                   .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"), dateService
                   .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 25,
-                  "text/plain; charset=UTF-8", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
+                  "text/plain; charset=UTF-8", null, null, null, null, LeaseStatus.UNLOCKED, ImmutableMap
                         .<String, String> of()));
 
       ListBlobsResponse list = new HashSetListBlobsResponse(contents,
@@ -91,7 +91,7 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
       Set<BlobProperties> contents = ImmutableSet.<BlobProperties> of(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "a",
             "adriancole-blobstore3", URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore3/a"),
             dateService.rfc822DateParse("Sat, 30 Jan 2010 17:46:15 GMT"), "0x8CC6FEB41736428", 8,
-            "application/octet-stream", null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
+            "application/octet-stream", null, null, null, null, LeaseStatus.UNLOCKED, ImmutableMap.<String, String> of()));
 
       ListBlobsResponse list = new HashSetListBlobsResponse(contents,
             URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore3"),

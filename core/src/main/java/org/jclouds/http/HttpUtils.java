@@ -32,6 +32,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LANGUAGE;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.HttpHeaders.EXPIRES;
 import static org.jclouds.util.Patterns.PATTERN_THAT_BREAKS_URI;
 import static org.jclouds.util.Patterns.URI_PATTERN;
 
@@ -197,6 +198,8 @@ public class HttpUtils {
          builder.put(HttpHeaders.CONTENT_LENGTH, md.getContentLength() + "");
       if (md.getContentMD5() != null)
          builder.put("Content-MD5", CryptoStreams.base64(md.getContentMD5()));
+      if (md.getExpires() != null)
+         builder.put(HttpHeaders.EXPIRES, md.getExpires());
       return builder.build();
    }
 
@@ -238,6 +241,7 @@ public class HttpUtils {
       toMd.setContentDisposition(fromMd.getContentDisposition());
       toMd.setContentEncoding(fromMd.getContentEncoding());
       toMd.setContentLanguage(fromMd.getContentLanguage());
+      toMd.setExpires(fromMd.getExpires());
    }
 
    public static URI parseEndPoint(String hostHeader) {
@@ -342,6 +346,9 @@ public class HttpUtils {
          if (message.getPayload().getContentMetadata().getContentLanguage() != null)
             logger.debug("%s %s: %s", prefix, CONTENT_LANGUAGE, message.getPayload().getContentMetadata()
                   .getContentLanguage());
+         if (message.getPayload().getContentMetadata().getExpires() != null)
+            logger.debug("%s %s: %s", prefix, EXPIRES, message.getPayload().getContentMetadata()
+                  .getExpires());
       }
    }
 
@@ -391,6 +398,10 @@ public class HttpUtils {
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LANGUAGE) == null,
             "configuration error please use request.getPayload().getContentMetadata().setContentLanguage(value) as opposed to adding a content language header: "
+                  + message);
+      checkArgument(
+            message.getPayload() == null || message.getFirstHeaderOrNull(EXPIRES) == null,
+            "configuration error please use request.getPayload().getContentMetadata().setExpires(value) as opposed to adding an expires header: "
                   + message);
    }
 
