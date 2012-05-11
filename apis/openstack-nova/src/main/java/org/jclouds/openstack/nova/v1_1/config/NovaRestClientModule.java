@@ -35,24 +35,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
-import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsClient;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
-import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
-import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VolumeAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VolumeClient;
+import org.jclouds.openstack.nova.v1_1.extensions.*;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
@@ -94,6 +77,7 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(VirtualInterfaceClient.class, VirtualInterfaceAsyncClient.class)
          .put(ServerWithSecurityGroupsClient.class, ServerWithSecurityGroupsAsyncClient.class)
          .put(AdminActionsClient.class, AdminActionsAsyncClient.class)
+         .put(HostAggregateClient.class, HostAggregateAsyncClient.class)
          .build();
 
    public NovaRestClientModule() {

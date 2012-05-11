@@ -23,15 +23,7 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
-import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VolumeAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.*;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
@@ -151,6 +143,13 @@ public interface NovaAsyncClient {
     */
    @Delegate
    Optional<AdminActionsAsyncClient> getAdminActionsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to HostAggregate features.
+    */
+   @Delegate
+   Optional<HostAggregateAsyncClient> getHostAggregateExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }
