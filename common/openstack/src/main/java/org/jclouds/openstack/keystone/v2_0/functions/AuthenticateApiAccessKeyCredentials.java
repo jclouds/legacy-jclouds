@@ -41,7 +41,7 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
    @Override
    public Access apply(Credentials input) {
       if (input.identity.indexOf(':') == -1) {
-         throw new AuthorizationException(String.format("Identity %s does not match format tenantId:accesskey",
+         throw new AuthorizationException(String.format("Identity %s does not match format tenantName:accessKey",
                   input.identity), null);
       }
 
