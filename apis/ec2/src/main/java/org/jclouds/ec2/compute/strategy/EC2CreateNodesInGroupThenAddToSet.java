@@ -133,17 +133,8 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       
-      // ensure we don't mutate the input template
-      Template mutableTemplate;
-      // ensure we don't mutate the input template, fromTemplate ignores imageId so
-      // build directly from imageId if we have it
-      if (template.getImage() != null && template.getImage().getId() != null) {
-         mutableTemplate = templateBuilderProvider.get().imageId(template.getImage().getId()).fromTemplate(template)
+      Template mutableTemplate = templateBuilderProvider.get().imageId(template.getImage().getId()).fromTemplate(template)
                   .build();
-         // otherwise build from generic parameters
-      } else {
-         mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
-      }
 
       Iterable<String> ips = allocateElasticIpsInRegion(count, template);
 
