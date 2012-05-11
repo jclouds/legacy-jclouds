@@ -159,4 +159,18 @@ public interface NovaAsyncClient {
    Optional<FlavorExtraSpecsAsyncClient> getFlavorExtraSpecsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
+   /**
+    * Provides asynchronous access to Quota features.
+    */
+   @Delegate
+   Optional<QuotaAsyncClient> getQuotaExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to Quota Classes features.
+    */
+   @Delegate
+   Optional<QuotaClassAsyncClient> getQuotaClassExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
 }
