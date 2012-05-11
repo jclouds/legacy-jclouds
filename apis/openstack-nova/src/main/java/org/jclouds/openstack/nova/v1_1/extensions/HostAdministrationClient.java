@@ -21,8 +21,6 @@ package org.jclouds.openstack.nova.v1_1.extensions;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.PathParam;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.Host;
 import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
@@ -32,7 +30,6 @@ import org.jclouds.openstack.services.ServiceType;
 /**
  * Provides asynchronous access to Host Administration features via the REST API.
  * <p/>
- * TODO reboot, shutdown, startup, update
  *
  * @author Adam Lowe
  * @see HostAdministrationAsyncClient
@@ -43,14 +40,67 @@ public interface HostAdministrationClient {
 
    /**
     * Returns the list of hosts
+    *
     * @return the usage information
     */
    Set<Host> listHosts();
 
    /**
     * Retrieves the physical/usage resource on a specific host
+    *
     * @return the usage information
     */
-   Set<HostResourceUsage> getHostResourceUsage(@PathParam("id") String hostId);
+   Set<HostResourceUsage> getHostResourceUsage(String hostId);
+
+   /**
+    * Allow the specified host to accept new instances.
+    *
+    * @return true if successful
+    */
+   Boolean enableHost(String hostId);
+
+   /**
+    * Prevent the specified host from accepting new instances.
+    *
+    * @return true if successful
+    */
+   Boolean disableHost(String hostId);
+
+   /**
+    * Start host maintenance window.
+    * <p/>
+    * Note: this triggers guest VMs evacuation.
+    *
+    * @return true if successful
+    */
+   Boolean startHostMaintenance(String hostId);
+
+   /**
+    * Stop host maintenance window.
+    *
+    * @return true if successful
+    */
+   Boolean stopHostMaintenance(String hostId);
+
+   /**
+    * Startup a host.
+    *
+    * @return true if successful
+    */
+   Boolean startupHost(String hostId);
+
+   /**
+    * Shutdown a host.
+    *
+    * @return true if successful
+    */
+   Boolean shutdownHost(String hostId);
+
+   /**
+    * Reboot a host.
+    *
+    * @return true if successful
+    */
+   Boolean rebootHost(String hostId);
 
 }

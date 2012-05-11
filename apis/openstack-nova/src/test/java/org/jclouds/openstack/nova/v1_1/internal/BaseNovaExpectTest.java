@@ -89,4 +89,9 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpResponse.Builder standardResponseBuilder(int status) {
       return HttpResponse.builder().statusCode(status);
    }
+   
+   @Override
+   protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
+      return HttpRequestComparisonType.JSON;
+   }
 }
