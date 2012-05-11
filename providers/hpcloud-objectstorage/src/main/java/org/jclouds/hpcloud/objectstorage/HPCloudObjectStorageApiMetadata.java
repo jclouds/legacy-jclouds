@@ -83,7 +83,7 @@ public class HPCloudObjectStorageApiMetadata extends BaseRestApiMetadata {
          super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
          id("hpcloud-objectstorage")
          .name("HP Cloud Services Object Storage API")
-         .identityName("tenantId:accessKey")
+         .identityName("tenantName:accessKey")
          .credentialName("secretKey")
          .version("1.0")
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
