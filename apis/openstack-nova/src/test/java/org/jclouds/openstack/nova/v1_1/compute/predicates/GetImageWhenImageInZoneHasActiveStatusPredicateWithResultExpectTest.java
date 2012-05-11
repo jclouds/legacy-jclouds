@@ -58,8 +58,10 @@ public class GetImageWhenImageInZoneHasActiveStatusPredicateWithResultExpectTest
                .getInstance(GetImageWhenImageInZoneHasActiveStatusPredicateWithResult.class);
       ZoneAndId zoneAdnId0 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "13");
       ZoneAndId zoneAdnId1 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "12");
-      assertTrue(!predicate.apply(zoneAdnId1));
-      assertTrue(predicate.apply(zoneAdnId0));
+      ZoneAndId zoneAdnId2 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "15");
+      assertTrue(predicate.apply(zoneAdnId0)); // ACTIVE
+      assertTrue(!predicate.apply(zoneAdnId1)); // SAVING
+      assertTrue(!predicate.apply(zoneAdnId2)); // UNRECOGNIZED
       assertEquals("natty-server-cloudimg-amd64", predicate.getResult().getName());
    }
 
@@ -67,14 +69,12 @@ public class GetImageWhenImageInZoneHasActiveStatusPredicateWithResultExpectTest
       Injector injector = requestsSendResponses(requestResponseMap);
       PredicateWithResult<ZoneAndId, Image> predicate = injector
                .getInstance(GetImageWhenImageInZoneHasActiveStatusPredicateWithResult.class);
-      ZoneAndId zoneAdnId0 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "15");
       ZoneAndId zoneAdnId1 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "14");
       ZoneAndId zoneAdnId2 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "11");
       ZoneAndId zoneAdnId3 = ZoneAndId.fromZoneAndId("az-1.region-a.geo-1", "10");
-      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId0));
-      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId1));
-      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId2));
-      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId3));
+      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId1)); // UNKNOWN
+      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId2)); // ERROR
+      assertTrue(illegalStateExceptionThrown(predicate, zoneAdnId3)); // ERROR
    }
 
    private boolean illegalStateExceptionThrown(PredicateWithResult<ZoneAndId, Image> predicate, ZoneAndId zoneAndId) {
