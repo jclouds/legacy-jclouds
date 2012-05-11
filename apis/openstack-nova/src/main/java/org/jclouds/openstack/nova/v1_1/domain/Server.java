@@ -466,9 +466,9 @@ public class Server extends Resource {
     * Retrieves the extended server status fields (alias "OS-EXT-STS")
     * <p/>
     * NOTE: This field is only present if the Extended Status extension is installed.
-    * 
+    *
     * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
-    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
+    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS
     */
    public Optional<ServerExtendedStatus> getExtendedStatus() {
       return this.extendedStatus;
@@ -480,16 +480,19 @@ public class Server extends Resource {
     * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
     *
     * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
-    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
+    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS
     */
    public Optional<ServerExtendedAttributes> getExtendedAttributes() {
       return this.extendedAttributes;
    }
 
    /**
-    * State of task running against this instance (e.g. "suspending")
+    * Disk config attribute from the Disk Config Extension (alias "OS-DCF")
     * <p/>
-    * NOTE: This field is only present if the Disk Config extension is installed.
+    * NOTE: This field is only present if the Disk Config extension is installed
+    *
+    * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#DISK_CONFIG
     */
    public Optional<String> getDiskConfig() {
       return this.diskConfig;
@@ -501,10 +504,10 @@ public class Server extends Resource {
    @Override
    protected ToStringHelper string() {
       return super.string().add("uuid", uuid).add("tenantId", tenantId).add(
-               "userId", userId).add("hostId", getHostId()).add("updated", updated).add("created", created).add(
-               "accessIPv4", getAccessIPv4()).add("accessIPv6", getAccessIPv6()).add("status", status).add(
-               "configDrive", getConfigDrive()).add("image", image).add("flavor", flavor).add("metadata", metadata)
-               .add("addresses", getAddresses()).add("diskConfig", diskConfig)
-               .add("extendedStatus", extendedStatus).add("extendedAttributes", extendedAttributes);
+            "userId", userId).add("hostId", getHostId()).add("updated", updated).add("created", created).add(
+            "accessIPv4", getAccessIPv4()).add("accessIPv6", getAccessIPv6()).add("status", status).add(
+            "configDrive", getConfigDrive()).add("image", image).add("flavor", flavor).add("metadata", metadata)
+            .add("addresses", getAddresses()).add("diskConfig", diskConfig)
+            .add("extendedStatus", extendedStatus).add("extendedAttributes", extendedAttributes);
    }
 }

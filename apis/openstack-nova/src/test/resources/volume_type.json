@@ -1,0 +1,9 @@
+{"volume_type": {
+    "name": "jclouds-test-1",
+    "deleted": false,
+    "created_at": "2012-05-10 12:33:06",
+    "updated_at": null,
+    "extra_specs": {"test": "value1", "test1": "wibble"},
+    "deleted_at": null,
+    "id": 8
+}}

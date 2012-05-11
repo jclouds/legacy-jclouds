@@ -81,6 +81,7 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(FlavorExtraSpecsClient.class, FlavorExtraSpecsAsyncClient.class)
          .put(QuotaClient.class, QuotaAsyncClient.class)
          .put(QuotaClassClient.class, QuotaClassAsyncClient.class)
+         .put(VolumeTypeClient.class, VolumeTypeAsyncClient.class)
          .build();
 
    public NovaRestClientModule() {

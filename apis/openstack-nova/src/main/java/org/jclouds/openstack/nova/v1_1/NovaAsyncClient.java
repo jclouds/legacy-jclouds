@@ -173,4 +173,11 @@ public interface NovaAsyncClient {
    Optional<QuotaClassAsyncClient> getQuotaClassExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
+   /**
+    * Provides asynchronous access to Volume Type features.
+    */
+   @Delegate
+   Optional<VolumeTypeAsyncClient> getVolumeTypeExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
 }
