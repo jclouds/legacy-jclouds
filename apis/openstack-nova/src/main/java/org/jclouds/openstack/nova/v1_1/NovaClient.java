@@ -152,5 +152,12 @@ public interface NovaClient {
    @Delegate
    Optional<HostAggregateClient> getHostAggregateExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
-   
+
+   /**
+    * Provides synchronous access to Flavor extra specs features.
+    */
+   @Delegate
+   Optional<FlavorExtraSpecsClient> getFlavorExtraSpecsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
 }

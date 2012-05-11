@@ -152,4 +152,11 @@ public interface NovaAsyncClient {
    Optional<HostAggregateAsyncClient> getHostAggregateExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
+   /**
+    * Provides asynchronous access to Flavor extra specs features.
+    */
+   @Delegate
+   Optional<FlavorExtraSpecsAsyncClient> getFlavorExtraSpecsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
 }
