@@ -30,6 +30,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Multimap;
 
@@ -145,34 +146,12 @@ public class ContentMetadataBuilder implements Serializable {
       if (getClass() != obj.getClass())
          return false;
       ContentMetadataBuilder other = (ContentMetadataBuilder) obj;
-      if (contentDisposition == null) {
-         if (other.contentDisposition != null)
-            return false;
-      } else if (!contentDisposition.equals(other.contentDisposition))
-         return false;
-      if (contentEncoding == null) {
-         if (other.contentEncoding != null)
-            return false;
-      } else if (!contentEncoding.equals(other.contentEncoding))
-         return false;
-      if (contentLanguage == null) {
-         if (other.contentLanguage != null)
-            return false;
-      } else if (!contentLanguage.equals(other.contentLanguage))
-         return false;
-      if (contentLength == null) {
-         if (other.contentLength != null)
-            return false;
-      } else if (!contentLength.equals(other.contentLength))
-         return false;
-      if (!Arrays.equals(contentMD5, other.contentMD5))
-         return false;
-      if (contentType == null) {
-         if (other.contentType != null)
-            return false;
-      } else if (!contentType.equals(other.contentType))
-         return false;
-      return true;
+      return Objects.equal(contentDisposition, other.contentDisposition) &&
+             Objects.equal(contentEncoding, other.contentEncoding) &&
+             Objects.equal(contentLanguage, other.contentLanguage) &&
+             Objects.equal(contentLength, other.contentLength) &&
+             Arrays.equals(contentMD5, other.contentMD5) &&
+             Objects.equal(contentType, other.contentType);
    }
 
    @Override
