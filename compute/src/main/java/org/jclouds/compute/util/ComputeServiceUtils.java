@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getStackTraceAsString;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash;
@@ -32,7 +31,11 @@ import java.util.Formatter;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -41,8 +44,10 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 
@@ -165,24 +170,65 @@ public class ComputeServiceUtils {
       return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(ComputeServiceContext.class));
    }
 
-   public static HostAndPort findReachableSocketOnNode(RetryIfSocketNotYetOpen socketTester, final NodeMetadata node,
-            final int port) {
+   public static HostAndPort findReachableSocketOnNode(final SocketOpen socketTester, final NodeMetadata node,
+            final int port, long timeoutValue, TimeUnit timeUnits, Logger logger) {
+      return findReachableSocketOnNode(socketTester, null, node, port, timeoutValue, timeUnits, logger);
+   }
+   
+   public static HostAndPort findReachableSocketOnNode(final SocketOpen socketTester, 
+            @Nullable final Predicate<AtomicReference<NodeMetadata>> nodeRunning, final NodeMetadata node,
+            final int port, long timeoutValue, TimeUnit timeUnits, Logger logger) {
       checkNodeHasIps(node);
-      HostAndPort socket = null;
-      try {
-         socket = find(transform(concat(node.getPublicAddresses(), node.getPrivateAddresses()),
-                  new Function<String, HostAndPort>() {
 
-                     @Override
-                     public HostAndPort apply(String from) {
-                        return HostAndPort.fromParts(from, port);
-                     }
-                  }), socketTester);
-      } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("could not connect to any ip address port %d on node %s", port,
-                  node));
+      Iterable<HostAndPort> sockets = transform(concat(node.getPublicAddresses(), node.getPrivateAddresses()),
+               new Function<String, HostAndPort>() {
+
+                  @Override
+                  public HostAndPort apply(String from) {
+                     return HostAndPort.fromParts(from, port);
+                  }
+               });
+
+      // Specify a retry period of 1s, expressed in the same time units.
+      long period = timeUnits.convert(1, TimeUnit.SECONDS);
+
+      // For storing the result, as predicate will just tell us true/false
+      final AtomicReference<HostAndPort> result = new AtomicReference<HostAndPort>();
+
+      Predicate<Iterable<HostAndPort>> multiIpSocketTester = new Predicate<Iterable<HostAndPort>>() {
+
+         @Override
+         public boolean apply(Iterable<HostAndPort> sockets) {
+            for (HostAndPort socket : sockets) {
+               if (socketTester.apply(socket)) {
+                  result.set(socket);
+                  return true;
+               }
+            }
+            if (nodeRunning != null && !nodeRunning.apply(new AtomicReference<NodeMetadata>(node))) {
+               throw new IllegalStateException(String.format("Node %s is no longer running; aborting waiting for ip:port connection", node.getId()));
+            }
+            return false;
+         }
+         
+      };
+      
+      RetryablePredicate<Iterable<HostAndPort>> tester = new RetryablePredicate<Iterable<HostAndPort>>(
+               multiIpSocketTester, timeoutValue, period, timeUnits);
+      
+      logger.debug(">> blocking on sockets %s for %d %s", sockets, timeoutValue, timeUnits);
+
+      boolean passed = tester.apply(sockets);
+      
+      if (passed) {
+         logger.debug("<< socket %s opened", result);
+         assert result.get() != null;
+         return result.get();
+      } else {
+         logger.warn("<< sockets %s didn't open after %d %s", sockets, timeoutValue, timeUnits);
+         throw new NoSuchElementException(String.format("could not connect to any ip address port %d on node %s", 
+                  port, node));
       }
-      return socket;
    }
 
    public static void checkNodeHasIps(NodeMetadata node) {

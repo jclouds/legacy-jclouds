@@ -34,8 +34,8 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -55,7 +55,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
 
    public void testBreakWhenNodeStillPending() {
       InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
-      RetryIfSocketNotYetOpen socketTester = createMock(RetryIfSocketNotYetOpen.class);
+      SocketOpen socketTester = createMock(SocketOpen.class);
       Timeouts timeouts = new Timeouts();
       Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
       @SuppressWarnings("unused")
@@ -98,7 +98,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
 
    public void testBreakGraceFullyWhenNodeDied() {
       InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
-      RetryIfSocketNotYetOpen socketTester = createMock(RetryIfSocketNotYetOpen.class);
+      SocketOpen socketTester = createMock(SocketOpen.class);
       Timeouts timeouts = new Timeouts();
       Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
       @SuppressWarnings("unused")

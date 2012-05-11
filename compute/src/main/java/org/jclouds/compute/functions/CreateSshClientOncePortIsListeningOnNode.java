@@ -21,11 +21,18 @@ package org.jclouds.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.util.ComputeServiceUtils;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -39,13 +46,20 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class CreateSshClientOncePortIsListeningOnNode implements Function<NodeMetadata, SshClient> {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    @Inject(optional = true)
    SshClient.Factory sshFactory;
-   private final RetryIfSocketNotYetOpen socketTester;
-
+   private final SocketOpen socketTester;
+   
+   private final long timeoutMs;
+   
    @Inject
-   public CreateSshClientOncePortIsListeningOnNode(RetryIfSocketNotYetOpen socketTester) {
+   public CreateSshClientOncePortIsListeningOnNode(SocketOpen socketTester, Timeouts timeouts) {
       this.socketTester = socketTester;
+      this.timeoutMs = timeouts.portOpen;
    }
 
    @Override
@@ -55,7 +69,8 @@ public class CreateSshClientOncePortIsListeningOnNode implements Function<NodeMe
       checkNotNull(node.getCredentials().identity, "no login identity found for node %s", node.getId());
       checkNotNull(node.getCredentials().credential, "no credential found for %s on node %s", node
                .getCredentials().identity, node.getId());
-      HostAndPort socket = ComputeServiceUtils.findReachableSocketOnNode(socketTester, node, node.getLoginPort());
+      HostAndPort socket = ComputeServiceUtils.findReachableSocketOnNode(socketTester, node, node.getLoginPort(), 
+               timeoutMs, TimeUnit.MILLISECONDS, logger);
       return sshFactory.create(socket, node.getCredentials());
    }
 }

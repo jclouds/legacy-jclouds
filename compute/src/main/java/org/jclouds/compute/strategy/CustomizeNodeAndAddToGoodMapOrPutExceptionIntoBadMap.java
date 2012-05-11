@@ -27,6 +27,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOn
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
@@ -38,11 +39,11 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Function;
@@ -71,7 +72,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
    private final InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory;
-   private final RetryIfSocketNotYetOpen socketTester;
+   private final SocketOpen socketTester;
    private final Timeouts timeouts;
 
    @Nullable
@@ -87,7 +88,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
          @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
+         SocketOpen socketTester, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
          @Assisted AtomicReference<NodeMetadata> node, @Assisted Set<NodeMetadata> goodNodes,
@@ -109,7 +110,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
          @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
-         RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
+         SocketOpen socketTester, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
          @Assisted Set<NodeMetadata> goodNodes, @Assisted Map<NodeMetadata, Exception> badNodes,
@@ -153,7 +154,8 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
                }
             }
             if (options.getPort() > 0) {
-               findReachableSocketOnNode(socketTester.seconds(options.getSeconds()), node.get(), options.getPort());
+               findReachableSocketOnNode(socketTester, nodeRunning, node.get(), options.getPort(), 
+                         options.getSeconds(), TimeUnit.SECONDS, logger);
             }
          }
          logger.debug("<< customized node(%s)", originalId);
