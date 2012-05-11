@@ -46,11 +46,13 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code PlacementGroupClient}
@@ -167,5 +169,10 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
          client.getPlacementGroupServices().deletePlacementGroupInRegion(group.getRegion(), group.getName());
          assert deletedTester.apply(group) : group;
       }
+   }
+   
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 }

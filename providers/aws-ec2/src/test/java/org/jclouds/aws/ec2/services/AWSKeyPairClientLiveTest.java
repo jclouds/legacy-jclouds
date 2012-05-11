@@ -48,6 +48,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -202,4 +203,8 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest 
       return getOnlyElement(getOnlyElement(instanceClient.describeInstancesInRegion(null, id)));
    }
    
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
+   }
 }
