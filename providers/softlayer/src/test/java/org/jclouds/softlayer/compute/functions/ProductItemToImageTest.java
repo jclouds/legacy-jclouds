@@ -25,6 +25,7 @@ import static org.jclouds.softlayer.compute.functions.ProductItemToImage.osVersi
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Arrays;
@@ -132,6 +133,62 @@ public class ProductItemToImageTest {
    }
 
    @Test
+   public void testUbuntuNoBitCount() {
+      ProductItem item = ProductItem.builder()
+            .description("Ubuntu Linux 10.04 LTS Lucid Lynx - Minimal Install")
+            .price(ProductItemPrice.builder().id(1234).build())
+            .build();
+      Image i = new ProductItemToImage().apply(item);
+      OperatingSystem os = i.getOperatingSystem();
+      assertNotNull(os);
+      assertEquals(OsFamily.UBUNTU, os.getFamily());
+      assertEquals("10.04",os.getVersion());
+      assertFalse(os.is64Bit());
+   }
+
+
+   @Test
+   public void testCompletelyUnknown() {
+      ProductItem item = ProductItem.builder()
+            .description("This fails to match anything!!!")
+            .price(ProductItemPrice.builder().id(1234).build())
+            .build();
+      Image i = new ProductItemToImage().apply(item);
+      OperatingSystem os = i.getOperatingSystem();
+      assertNotNull(os);
+      assertEquals(OsFamily.UNRECOGNIZED, os.getFamily());
+      assertNull(os.getVersion());
+      assertFalse(os.is64Bit());
+   }
+   
+   @Test
+   public void test64BitUnknown() {
+      ProductItem item = ProductItem.builder()
+            .description("This only has the bit-count (64 bit)")
+            .price(ProductItemPrice.builder().id(1234).build())
+            .build();
+      Image i = new ProductItemToImage().apply(item);
+      OperatingSystem os = i.getOperatingSystem();
+      assertNotNull(os);
+      assertEquals(OsFamily.UNRECOGNIZED, os.getFamily());
+      assertNull(os.getVersion());
+      assertTrue(os.is64Bit());
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNull() {
+      new ProductItemToImage().apply(null);
+   }
+   
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNoDescription() {
+      ProductItem item = ProductItem.builder()
+            .price(ProductItemPrice.builder().id(1234).build())
+            .build();
+      new ProductItemToImage().apply(item);
+   }
+   
+   @Test
    public void testId() {
       ProductItemPrice price = ProductItemPrice.builder().id(1234).build();
       ProductItem item = ProductItem.builder().price(price).build();
@@ -151,46 +208,59 @@ public class ProductItemToImageTest {
       ProductItem item = ProductItem.builder().build();
       imageId().apply(item);
    }
+   
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testIdNull() {
+      imageId().apply(null);
+   }
 
    @Test
    public void testOsFamily() {
-      ProductItem item = ProductItem.builder().description("Ubuntu Linux os").build();
-      assertEquals(OsFamily.UBUNTU,osFamily().apply(item));
+      assertEquals(OsFamily.UBUNTU,osFamily().apply("Ubuntu Linux os"));
    }
 
    @Test
    public void testOsFamilyUnrecognized() {
-      ProductItem item = ProductItem.builder().description("not a known operating system").build();
-      assertEquals(OsFamily.UNRECOGNIZED,osFamily().apply(item));
+      assertEquals(OsFamily.UNRECOGNIZED,osFamily().apply("not a known operating system"));
+   }
+   
+   @Test
+   public void testOsFamilyNull() {
+      assertEquals(OsFamily.UNRECOGNIZED,osFamily().apply(null));
    }
 
    @Test
-   public void testBitsWithSpace() {
-      ProductItem item = ProductItem.builder().description("a (32 bit) os").build();
-      assertEquals(osBits().apply(item),new Integer(32));
+   public void testOsBitsWithSpace() {
+      assertEquals(osBits().apply("a (32 bit) os"),new Integer(32));
    }
 
    @Test
-   public void testBitsNoSpace() {
-      ProductItem item = ProductItem.builder().description("a (64bit) os").build();
-      assertEquals(osBits().apply(item),new Integer(64));
+   public void testOsBitsNoSpace() {
+      assertEquals(osBits().apply("a (64bit) os"),new Integer(64));
    }
 
-   @Test(expectedExceptions = NoSuchElementException.class)
-   public void testBitsMissing() {
-      ProductItem item = ProductItem.builder().description("an os").build();
-      osBits().apply(item);
+   @Test
+   public void testOsBitsMissing() {
+      assertNull(osBits().apply("an os"));
+   }
+
+   @Test
+   public void testOsBitsNull() {
+      assertNull(osBits().apply(null));
    }
 
    @Test
    public void testOsVersion() {
-      ProductItem item = ProductItem.builder().description("Windows Server 2099 (256 bit)").build();
-      assertEquals("2099",osVersion().apply(item));
+      assertEquals("2099",osVersion().apply("Windows Server 2099 (256 bit)"));
    }
 
-   @Test(expectedExceptions = NoSuchElementException.class)
+   @Test
    public void testOsVersionMissing() {
-      ProductItem item = ProductItem.builder().description("asd Server").build();
-      osVersion().apply(item);
+      assertNull(osVersion().apply("asd Server"));
+   }
+
+   @Test
+   public void testOsVersionNull() {
+      assertNull(osVersion().apply(null));
    }
 }
