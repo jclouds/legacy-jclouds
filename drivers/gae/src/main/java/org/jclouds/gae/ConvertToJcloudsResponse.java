@@ -21,6 +21,7 @@ package org.jclouds.gae;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -30,6 +31,7 @@ import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.common.base.Function;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
 
 /**
  * 
@@ -38,6 +40,13 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class ConvertToJcloudsResponse implements Function<HTTPResponse, HttpResponse> {
 
+   private final ContentMetadataCodec contentMetadataCodec;
+   
+   @Inject
+   public ConvertToJcloudsResponse(ContentMetadataCodec contentMetadataCodec) {
+      this.contentMetadataCodec = contentMetadataCodec;
+   }
+   
    @Override
    public HttpResponse apply(HTTPResponse gaeResponse) {
       Payload payload = gaeResponse.getContent() != null ? Payloads.newByteArrayPayload(gaeResponse.getContent())
@@ -51,8 +60,9 @@ public class ConvertToJcloudsResponse implements Function<HTTPResponse, HttpResp
             headers.put(header.getName(), header.getValue());
       }
 
-      if (payload != null)
-         payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+      if (payload != null) {
+         contentMetadataCodec.fromHeaders(payload.getContentMetadata(), headers);
+      }
       return new HttpResponse(gaeResponse.getResponseCode(), message, payload,
             RestAnnotationProcessor.filterOutContentHeaders(headers));
    }

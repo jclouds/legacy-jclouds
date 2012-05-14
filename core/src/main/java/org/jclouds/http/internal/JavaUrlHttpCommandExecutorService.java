@@ -54,7 +54,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.JcloudsVersion;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -62,6 +61,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
@@ -90,13 +90,13 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    private final Field methodField;
 
    @Inject
-   public JavaUrlHttpCommandExecutorService(HttpUtils utils,
+   public JavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
             @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
             NoSuchFieldException {
-      super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+      super(utils, contentMetadataCodec, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
       this.untrustedSSLContextProvider = checkNotNull(untrustedSSLContextProvider, "untrustedSSLContextProvider");
@@ -136,7 +136,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       ImmutableMultimap<String, String> headers = headerBuilder.build();
       if (in != null) {
          Payload payload = newInputStreamPayload(in);
-         payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+         contentMetadataCodec.fromHeaders(payload.getContentMetadata(), headers);
          builder.payload(payload);
       }
       builder.headers(RestAnnotationProcessor.filterOutContentHeaders(headers));
@@ -214,18 +214,9 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
       if (request.getPayload() != null) {
          MutableContentMetadata md = request.getPayload().getContentMetadata();
-         if (md.getContentMD5() != null)
-            connection.setRequestProperty("Content-MD5", CryptoStreams.base64(md.getContentMD5()));
-         if (md.getContentType() != null)
-            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, md.getContentType());
-         if (md.getContentDisposition() != null)
-            connection.setRequestProperty("Content-Disposition", md.getContentDisposition());
-         if (md.getContentEncoding() != null)
-            connection.setRequestProperty("Content-Encoding", md.getContentEncoding());
-         if (md.getContentLanguage() != null)
-            connection.setRequestProperty("Content-Language", md.getContentLanguage());
-         if (md.getExpires() != null)
-            connection.setRequestProperty("Expires", md.getExpires());
+         for (Map.Entry<String,String> entry : contentMetadataCodec.toHeaders(md).entries()) {
+            connection.setRequestProperty(entry.getKey(), entry.getValue());
+         }
          if (chunked) {
             connection.setChunkedStreamingMode(8196);
          } else {

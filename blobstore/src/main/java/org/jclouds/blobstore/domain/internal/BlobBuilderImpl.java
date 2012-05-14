@@ -24,6 +24,7 @@ import static org.jclouds.io.Payloads.newPayload;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -222,7 +223,7 @@ public class BlobBuilderImpl implements BlobBuilder {
       }
 
       @Override
-      public PayloadBlobBuilder expires(String expires) {
+      public PayloadBlobBuilder expires(Date expires) {
          payload.getContentMetadata().setExpires(expires);
          return this;
       }

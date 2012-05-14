@@ -28,6 +28,7 @@ import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.Constants;
@@ -42,7 +43,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -89,7 +89,7 @@ public abstract class BaseRestClientTest {
       assertPayloadEquals(request, toMatch, contentType, contentMD5, null);
    }
 
-   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5, String expires) {
+   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5, Date expires) {
       assertPayloadEquals(request, toMatch, contentType, null, null, null, contentMD5, expires);
    }
 
@@ -101,7 +101,7 @@ public abstract class BaseRestClientTest {
 
    protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType,
          String contentDispositon, String contentEncoding, String contentLanguage, boolean contentMD5,
-         String expires) {
+         Date expires) {
       if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
@@ -123,7 +123,7 @@ public abstract class BaseRestClientTest {
    }
 
    protected void assertContentHeadersEqual(HttpRequest request, String contentType, String contentDispositon,
-         String contentEncoding, String contentLanguage, Long length, byte[] contentMD5, String expires) {
+         String contentEncoding, String contentLanguage, Long length, byte[] contentMD5, Date expires) {
       MutableContentMetadata md = request.getPayload().getContentMetadata();
       if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
          assertEquals(md.getContentLength(), length);

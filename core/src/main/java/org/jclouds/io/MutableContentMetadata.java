@@ -18,6 +18,8 @@
  */
 package org.jclouds.io;
 
+import java.util.Date;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
@@ -26,12 +28,6 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public interface MutableContentMetadata extends ContentMetadata {
-   /**
-    * sets properties related to the http headers listed in
-    * {@link ContentMetadata#HTTP_HEADERS}
-    * 
-    */
-   void setPropertiesFromHttpHeaders(Multimap<String, String> headers);
 
    void setContentLength(@Nullable Long contentLength);
 
@@ -66,5 +62,5 @@ public interface MutableContentMetadata extends ContentMetadata {
     */
    void setContentEncoding(@Nullable String contentEncoding);
 
-   void setExpires(@Nullable String expires);
+   void setExpires(@Nullable Date expires);
 }

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
@@ -45,6 +47,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.params.CoreProtocolPNames;
 import org.jclouds.JcloudsVersion;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.ContentMetadataCodec;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.BasePayload;
 import org.jclouds.io.payloads.ByteArrayPayload;
@@ -53,6 +57,7 @@ import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.StringPayload;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -62,8 +67,14 @@ import com.google.common.base.Throwables;
 public class ApacheHCUtils {
    //TODO: look up httpclient version
    public static final String USER_AGENT = String.format("jclouds/%s httpclient/%s", JcloudsVersion.get(), "4.1.1");
+   
+   private final ContentMetadataCodec contentMetadataCodec;
 
-   public static HttpUriRequest convertToApacheRequest(HttpRequest request) {
+   public ApacheHCUtils(ContentMetadataCodec contentMetadataCodec) {
+      this.contentMetadataCodec = contentMetadataCodec;
+   }
+   
+   public HttpUriRequest convertToApacheRequest(HttpRequest request) {
       HttpUriRequest apacheRequest;
       if (request.getMethod().equals(HttpMethod.HEAD)) {
          apacheRequest = new HttpHead(request.getEndpoint());
@@ -120,7 +131,7 @@ public class ApacheHCUtils {
       return apacheRequest;
    }
 
-   public static void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Payload payload) {
+   public void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Payload payload) {
       payload = payload instanceof DelegatingPayload ? DelegatingPayload.class.cast(payload).getDelegate() : payload;
       if (payload instanceof StringPayload) {
          StringEntity nStringEntity = null;
@@ -142,18 +153,20 @@ public class ApacheHCUtils {
          InputStream inputStream = payload.getInput();
          if (payload.getContentMetadata().getContentLength() == null)
             throw new IllegalArgumentException("you must specify size when content is an InputStream");
-         InputStreamEntity Entity = new InputStreamEntity(inputStream, payload.getContentMetadata().getContentLength());
-         Entity.setContentType(payload.getContentMetadata().getContentType());
-         apacheRequest.setEntity(Entity);
+         InputStreamEntity entity = new InputStreamEntity(inputStream, payload.getContentMetadata().getContentLength());
+         entity.setContentType(payload.getContentMetadata().getContentType());
+         apacheRequest.setEntity(entity);
       }
-      if (payload.getContentMetadata().getContentDisposition() != null)
-         apacheRequest.addHeader("Content-Disposition", payload.getContentMetadata().getContentDisposition());
-      if (payload.getContentMetadata().getContentEncoding() != null)
-         apacheRequest.addHeader("Content-Encoding", payload.getContentMetadata().getContentEncoding());
-      if (payload.getContentMetadata().getContentLanguage() != null)
-         apacheRequest.addHeader("Content-Language", payload.getContentMetadata().getContentLanguage());
-      if (payload.getContentMetadata().getExpires() != null)
-         apacheRequest.addHeader("Expires", payload.getContentMetadata().getExpires());
+      
+      // TODO Reproducing old behaviour exactly; ignoring Content-Type, Content-Length and Content-MD5
+      Set<String> desiredHeaders = ImmutableSet.of("Content-Disposition", "Content-Encoding", "Content-Language", "Expires");
+      MutableContentMetadata md = payload.getContentMetadata();
+      for (Map.Entry<String,String> entry : contentMetadataCodec.toHeaders(md).entries()) {
+         if (desiredHeaders.contains(entry.getKey())) {
+            apacheRequest.addHeader(entry.getKey(), entry.getValue());
+         }
+      }
+      
       assert (apacheRequest.getEntity() != null);
    }
 

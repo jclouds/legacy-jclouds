@@ -46,7 +46,6 @@ import java.util.regex.Matcher;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
@@ -63,8 +62,6 @@ import org.jclouds.util.Strings2;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
@@ -182,25 +179,6 @@ public class HttpUtils {
       } else {
          return URI.create(String.format("%s://%s:%d", endpoint.getScheme(), endpoint.getHost(), endpoint.getPort()));
       }
-   }
-
-   public static Multimap<String, String> getContentHeadersFromMetadata(ContentMetadata md) {
-       Builder<String, String> builder = ImmutableMultimap.builder();
-      if (md.getContentType() != null)
-         builder.put(HttpHeaders.CONTENT_TYPE, md.getContentType());
-      if (md.getContentDisposition() != null)
-         builder.put("Content-Disposition", md.getContentDisposition());
-      if (md.getContentEncoding() != null)
-         builder.put(HttpHeaders.CONTENT_ENCODING, md.getContentEncoding());
-      if (md.getContentLanguage() != null)
-         builder.put(HttpHeaders.CONTENT_LANGUAGE, md.getContentLanguage());
-      if (md.getContentLength() != null)
-         builder.put(HttpHeaders.CONTENT_LENGTH, md.getContentLength() + "");
-      if (md.getContentMD5() != null)
-         builder.put("Content-MD5", CryptoStreams.base64(md.getContentMD5()));
-      if (md.getExpires() != null)
-         builder.put(HttpHeaders.EXPIRES, md.getExpires());
-      return builder.build();
    }
 
    public static byte[] toByteArrayOrNull(PayloadEnclosing response) {

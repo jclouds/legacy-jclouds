@@ -35,6 +35,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.io.ContentMetadataCodec;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -63,6 +64,7 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
    private StringBuilder currentText = new StringBuilder();
 
    private final DateService dateParser;
+   private final ContentMetadataCodec contentMetadataCodec;
    private String delimiter;
    private String currentName;
    private long currentSize;
@@ -70,7 +72,7 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
    private String currentContentEncoding;
    private String currentContentLanguage;
    private BlobType currentBlobType;
-   private String currentExpires;
+   private Date currentExpires;
    private boolean inBlob;
    private boolean inBlobPrefix;
    private boolean inMetadata;
@@ -80,8 +82,9 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
    private LeaseStatus currentLeaseStatus;
 
    @Inject
-   public ContainerNameEnumerationResultsHandler(DateService dateParser) {
+   public ContainerNameEnumerationResultsHandler(DateService dateParser, ContentMetadataCodec contentMetadataCodec) {
       this.dateParser = dateParser;
+      this.contentMetadataCodec = contentMetadataCodec;
    }
 
    public ListBlobsResponse getResult() {
@@ -175,9 +178,12 @@ public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWith
          if (currentContentLanguage.equals(""))
             currentContentLanguage = null;
       } else if (qName.equals("Expires")) {
-         currentExpires = currentText.toString().trim();
-         if (currentExpires.equals(""))
-            currentExpires= null;
+         String trimmedCurrentText = currentText.toString().trim();
+         if (trimmedCurrentText.equals("")) {
+            currentExpires = null;
+         } else {
+            currentExpires = contentMetadataCodec.parseExpires(trimmedCurrentText);
+         }
       }
       currentText = new StringBuilder();
    }

@@ -19,6 +19,7 @@
 package org.jclouds.io.payloads;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
@@ -33,11 +34,6 @@ import com.google.common.collect.Multimap;
 public class BaseMutableContentMetadata extends ContentMetadataBuilder implements MutableContentMetadata, Serializable {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8364286391963469370L;
-
-   @Override
-   public void setPropertiesFromHttpHeaders(Multimap<String, String> headers) {
-      fromHttpHeaders(headers);
-   }
 
    /**
     * {@inheritDoc}
@@ -145,7 +141,7 @@ public class BaseMutableContentMetadata extends ContentMetadataBuilder implement
     * {@inheritDoc}
     */
    @Override
-   public void setExpires(@Nullable String expires) {
+   public void setExpires(@Nullable Date expires) {
       expires(expires);
    }
 
@@ -153,8 +149,8 @@ public class BaseMutableContentMetadata extends ContentMetadataBuilder implement
     * {@inheritDoc}
     */
    @Override
-   public String getExpires() {
-      return this.expires;
+   public Date getExpires() {
+      return expires;
    }
 
    @Override

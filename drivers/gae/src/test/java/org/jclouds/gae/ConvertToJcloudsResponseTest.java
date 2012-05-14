@@ -36,6 +36,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -67,7 +68,7 @@ public class ConvertToJcloudsResponseTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToJcloudsResponse();
+      req = new ConvertToJcloudsResponse(new DefaultContentMetadataCodec());
    }
 
    @Test

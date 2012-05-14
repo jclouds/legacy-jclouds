@@ -18,21 +18,14 @@
  */
 package org.jclouds.io;
 
-import static com.google.common.collect.Iterables.any;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Map.Entry;
+import java.util.Date;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -51,34 +44,7 @@ public class ContentMetadataBuilder implements Serializable {
    protected String contentDisposition;
    protected String contentLanguage;
    protected String contentEncoding;
-   protected String expires;
-
-   public ContentMetadataBuilder fromHttpHeaders(Multimap<String, String> headers) {
-      boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
-         @Override
-         public boolean apply(Entry<String, String> input) {
-            return "Transfer-Encoding".equalsIgnoreCase(input.getKey()) && "chunked".equalsIgnoreCase(input.getValue());
-         }
-      });
-      for (Entry<String, String> header : headers.entries()) {
-         if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
-            contentLength(new Long(header.getValue()));
-         } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
-            contentMD5(CryptoStreams.base64(header.getValue()));
-         } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
-            contentType(header.getValue());
-         } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
-            contentDisposition(header.getValue());
-         } else if ("Content-Encoding".equalsIgnoreCase(header.getKey())) {
-            contentEncoding(header.getValue());
-         } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
-            contentLanguage(header.getValue());
-         } else if ("Expires".equalsIgnoreCase(header.getKey())) {
-            expires(header.getValue());
-         }
-      }
-      return this;
-   }
+   protected Date expires;
 
    public ContentMetadataBuilder contentLength(@Nullable Long contentLength) {
       this.contentLength = contentLength;
@@ -116,7 +82,7 @@ public class ContentMetadataBuilder implements Serializable {
       return this;
    }
 
-   public ContentMetadataBuilder expires(@Nullable String expires) {
+   public ContentMetadataBuilder expires(@Nullable Date expires) {
       this.expires = expires;
       return this;
    }

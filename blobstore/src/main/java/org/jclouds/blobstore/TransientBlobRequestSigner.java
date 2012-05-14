@@ -31,6 +31,7 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.location.Provider;
 
 import com.google.common.base.Supplier;
@@ -45,12 +46,15 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
    private final BasicAuthentication basicAuth;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
    private final Supplier<URI> endpoint;
-
+   private final ContentMetadataCodec contentMetadataCodec;
+   
    @Inject
-   public TransientBlobRequestSigner(BasicAuthentication basicAuth, BlobToHttpGetOptions blob2HttpGetOptions, @Provider Supplier<URI> endpoint) {
+   public TransientBlobRequestSigner(BasicAuthentication basicAuth, BlobToHttpGetOptions blob2HttpGetOptions, @Provider Supplier<URI> endpoint,
+             ContentMetadataCodec contentMetadataCodec) {
       this.basicAuth = checkNotNull(basicAuth, "basicAuth");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
       this.endpoint = endpoint;
+      this.contentMetadataCodec = contentMetadataCodec;
    }
 
    @Override
@@ -64,7 +68,7 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(
                URI.create(String.format("%s/%s/%s", endpoint.get(), container, blob.getMetadata().getName()))).payload(
                blob.getPayload()).headers(
-               HttpUtils.getContentHeadersFromMetadata(blob.getMetadata().getContentMetadata())).build();
+               contentMetadataCodec.toHeaders(blob.getMetadata().getContentMetadata())).build();
       return basicAuth.filter(request);
    }
 

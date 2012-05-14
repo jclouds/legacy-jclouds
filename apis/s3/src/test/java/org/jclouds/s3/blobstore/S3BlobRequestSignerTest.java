@@ -21,6 +21,7 @@ package org.jclouds.s3.blobstore;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.inject.Provider;
 
@@ -89,7 +90,7 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
    public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
       Blob blob = blobFactory.get().name("name").forSigning().contentLength(2l).contentMD5(new byte[] { 0, 2, 4, 8 }).contentType(
-               "text/plain").expires("Thu, 01 Dec 1994 16:00:00 GMT").build();
+               "text/plain").expires(new Date(1000)).build();
 
       HttpRequest request = signer.signPutBlob("container", blob);
 
@@ -98,7 +99,7 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
                request,
                "Authorization: AWS identity:j9Dy/lmmvlCKjA4lkqZenLxMkR4=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
 
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, "Thu, 01 Dec 1994 16:00:00 GMT");
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
 
       assertEquals(request.getFilters().size(), 0);
    }

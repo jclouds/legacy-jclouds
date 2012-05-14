@@ -19,7 +19,10 @@
 package org.jclouds.io.payloads;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
@@ -39,10 +42,10 @@ public class BaseImmutableContentMetadata implements ContentMetadata, Serializab
    protected String contentDisposition;
    protected String contentLanguage;
    protected String contentEncoding;
-   protected String expires;
+   protected Date expires;
 
    public BaseImmutableContentMetadata(String contentType, Long contentLength, byte[] contentMD5,
-            String contentDisposition, String contentLanguage, String contentEncoding, String expires) {
+            String contentDisposition, String contentLanguage, String contentEncoding, Date expires) {
       this.contentType = contentType;
       this.contentLength = contentLength;
       this.contentMD5 = contentMD5;
@@ -110,8 +113,8 @@ public class BaseImmutableContentMetadata implements ContentMetadata, Serializab
     * {@inheritDoc}
     */
    @Override
-   public String getExpires() {
-      return this.expires;
+   public Date getExpires() {
+      return expires;
    }
 
    @Override

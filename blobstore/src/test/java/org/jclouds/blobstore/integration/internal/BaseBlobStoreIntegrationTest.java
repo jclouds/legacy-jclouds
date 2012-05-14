@@ -23,6 +23,7 @@ import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNull
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -337,6 +338,21 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
          }
       });
    }
+
+   protected void assertConsistencyAwareBlobExpiryMetadata(final String containerName, final String blobName, final Date expectedExpires)
+                           throws InterruptedException {
+                        assertConsistencyAware(new Runnable() {
+                           public void run() {
+                              try {
+                                 Blob blob = view.getBlobStore().getBlob(containerName, blobName);
+                                 Date actualExpires = blob.getPayload().getContentMetadata().getExpires();
+                                 assert expectedExpires.equals(actualExpires) : "expires="+actualExpires+"; expected="+expectedExpires;
+                              } catch (Exception e) {
+                                 Throwables.propagateIfPossible(e);
+                              }
+                           }
+                        });
+                     }
 
    protected void assertConsistencyAwareBlobInLocation(final String containerName, final String blobName, final Location loc)
             throws InterruptedException {

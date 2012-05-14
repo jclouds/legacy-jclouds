@@ -35,6 +35,7 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
@@ -71,7 +72,7 @@ public class ConvertToGaeRequestTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToGaeRequest(new HttpUtils(0, 0, 0, 0));
+      req = new ConvertToGaeRequest(new HttpUtils(0, 0, 0, 0), new DefaultContentMetadataCodec());
    }
 
    @Test

@@ -92,6 +92,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -127,6 +128,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
    protected final TransientStorageStrategy storageStrategy;
+   protected final ContentMetadataCodec contentMetadataCodec;
 
    @Inject
    protected TransientAsyncBlobStore(BlobStoreContext context,
@@ -137,7 +139,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         Factory blobFactory, Provider<UriBuilder> uriBuilders) {
+         Factory blobFactory, Provider<UriBuilder> uriBuilders,
+         ContentMetadataCodec contentMetadataCodec) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
@@ -146,6 +149,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.storageStrategy = new TransientStorageStrategy(defaultLocation);
+      this.contentMetadataCodec = contentMetadataCodec;
    }
 
    /**
@@ -521,7 +525,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    private void copyPayloadHeadersToBlob(Payload payload, Blob blob) {
-      blob.getAllHeaders().putAll(HttpUtils.getContentHeadersFromMetadata(payload.getContentMetadata()));
+      blob.getAllHeaders().putAll(contentMetadataCodec.toHeaders(payload.getContentMetadata()));
    }
 
    /**

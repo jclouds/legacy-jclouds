@@ -19,7 +19,6 @@
 package org.jclouds.aws.s3.blobstore.integration;
 
 import static org.jclouds.blobstore.options.CreateContainerOptions.Builder.publicRead;
-<<<<<<< HEAD
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,24 +29,35 @@ import java.util.Set;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.domain.Location;
-=======
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Date;
 
 import org.jclouds.blobstore.BlobStore;
->>>>>>> Issue-647: added "Expires" header for ContentMetadata
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecs;
+import org.jclouds.http.HttpCommandExecutorService;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
+import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
+import org.jclouds.http.config.SSLModule;
+import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.jclouds.io.ContentMetadataCodec;
+import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.s3.blobstore.integration.S3ContainerLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-<<<<<<< HEAD
 import com.google.common.base.Strings;
-=======
 import com.google.common.base.Throwables;
->>>>>>> Issue-647: added "Expires" header for ContentMetadata
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.Scopes;
 
 /**
  * @author Adrian Cole
@@ -63,23 +73,57 @@ public class AWSS3ContainerLiveTest extends S3ContainerLiveTest {
       final String containerName = getScratchContainerName();
       BlobStore blobStore = view.getBlobStore();
       try {
-         final String RFC1123_PATTERN = "EEE, dd MMM yyyyy HH:mm:ss z";
          final String blobName = "hello";
-         final String expires = new SimpleDateFormat(RFC1123_PATTERN).format(new Date(System.currentTimeMillis()+(60*1000)));
+         final Date expires = new Date( (System.currentTimeMillis() / 1000) * 1000 + 60*1000);
          
          blobStore.createContainerInLocation(null, containerName, publicRead());
          blobStore.putBlob(containerName, blobStore.blobBuilder(blobName).payload(TEST_STRING).expires(expires).build());
 
-         assertConsistencyAware(new Runnable() {
-            public void run() {
-               try {
-                  String actualExpires = view.getBlobStore().getBlob(containerName, blobName).getPayload().getContentMetadata().getExpires();
-                  assert expires.equals(actualExpires) : "expires="+actualExpires+"; expected="+expires;
-               } catch (Exception e) {
-                  Throwables.propagate(e);
+         assertConsistencyAwareBlobExpiryMetadata(containerName, blobName, expires);
+
+      } finally {
+         recycleContainer(containerName);
+      }
+   }
+   
+   @Test(groups = { "live" })
+   public void testCreateBlobWithMalformedExpiry() throws InterruptedException, MalformedURLException, IOException {
+      // Create a blob that has a malformed Expires value; requires overriding the ContentMetadataCodec in Guice...
+      final ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec() {
+         @Override
+         protected DateCodec getExpiresDateCodec() {
+            return new DateCodec() {
+               @Override public Date toDate(String date) throws ParseException {
+                  return DateCodecs.rfc1123().toDate(date);
                }
-            }
-         });
+               @Override public String toString(Date date) {
+                  return "wrong";
+               }
+            };
+         }
+      };
+      
+      Module customModule = new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(ContentMetadataCodec.class).toInstance(contentMetadataCodec);
+         }
+      };
+      
+      Iterable<Module> modules = Iterables.concat(setupModules(), ImmutableList.of(customModule));
+      BlobStoreContext naughtyBlobStoreContext = createView(setupProperties(), modules);
+      BlobStore naughtyBlobStore = naughtyBlobStoreContext.getBlobStore();
+      
+      final String containerName = getScratchContainerName();
+      
+      try {
+         final String blobName = "hello";
+         
+         naughtyBlobStore.createContainerInLocation(null, containerName, publicRead());
+         naughtyBlobStore.putBlob(containerName, naughtyBlobStore.blobBuilder(blobName)
+                  .payload(TEST_STRING).expires(new Date(System.currentTimeMillis() + 60*1000)).build());
+
+         assertConsistencyAwareBlobExpiryMetadata(containerName, blobName, new Date(0));
 
       } finally {
          recycleContainer(containerName);

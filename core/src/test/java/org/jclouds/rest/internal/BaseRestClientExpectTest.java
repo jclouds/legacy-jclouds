@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,9 +59,11 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestApiMetadata;
@@ -118,6 +120,8 @@ public abstract class BaseRestClientExpectTest<S> {
 
    protected String provider = "mock";
 
+   protected ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec();
+   
    /**
     * Override this to supply alternative bindings for use in the test. This is commonly used to
     * override suppliers of dates so that the test results are predicatable.
@@ -188,10 +192,11 @@ public abstract class BaseRestClientExpectTest<S> {
 
       @Inject
       public ExpectHttpCommandExecutorService(Function<HttpRequest, HttpResponse> fn, HttpUtils utils,
+               ContentMetadataCodec contentMetadataCodec,
                @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
                IOExceptionRetryHandler ioRetryHandler, DelegatingRetryHandler retryHandler,
                DelegatingErrorHandler errorHandler, HttpWire wire) {
-         super(utils, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+         super(utils, contentMetadataCodec, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
          this.fn = checkNotNull(fn, "fn");
       }
 
@@ -471,7 +476,7 @@ public abstract class BaseRestClientExpectTest<S> {
          builder.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
       }
       if (request.getPayload() != null) {
-         for (Entry<String, String> header : HttpUtils.getContentHeadersFromMetadata(
+         for (Entry<String, String> header : contentMetadataCodec.toHeaders(
                   request.getPayload().getContentMetadata()).entries()) {
             builder.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
          }

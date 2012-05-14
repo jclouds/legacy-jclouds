@@ -44,7 +44,9 @@ import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -105,15 +107,16 @@ public class BackoffLimitedRetryHandlerTest {
       }
 
    };
-   private HttpUtils utils;
 
    @BeforeTest
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
       BackoffLimitedRetryHandler backoff = new BackoffLimitedRetryHandler();
-      utils = new HttpUtils(0, 500, 1, 1);
+      HttpUtils utils = new HttpUtils(0, 500, 1, 1);
+      ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec();
       RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
-      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, execService,
+      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, 
+               contentMetadataCodec, execService,
                new DelegatingRetryHandler(backoff, retry), new BackoffLimitedRetryHandler(),
                new DelegatingErrorHandler(), new HttpWire(), new HostnameVerifier() {
 
