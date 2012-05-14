@@ -38,6 +38,7 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.filesystem.reference.FilesystemConstants;
@@ -89,6 +90,23 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       filesystemContainerNameValidator.validate(container);
       filesystemBlobKeyValidator.validate(key);
       return buildPathAndChecksIfFileExists(container, key);
+   }
+
+   @Override
+   public Blob getBlob(final String container, final String key) {
+      BlobBuilder builder = blobBuilders.get();
+      builder.name(key);
+      File file = getFileForBlobKey(container, key);
+      try {
+         builder.payload(file).calculateMD5();
+      } catch (IOException e) {
+         logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
+         Throwables.propagateIfPossible(e);
+      }
+      Blob blob = builder.build();
+      if (blob.getPayload().getContentMetadata().getContentMD5() != null)
+         blob.getMetadata().setETag(CryptoStreams.hex(blob.getPayload().getContentMetadata().getContentMD5()));
+      return blob;
    }
 
    @Override

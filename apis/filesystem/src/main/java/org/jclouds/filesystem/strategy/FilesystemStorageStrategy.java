@@ -123,6 +123,20 @@ public interface FilesystemStorageStrategy {
      */
     boolean blobExists(String container, String key);
 
+   /**
+    * Load the blob with the given key belonging to the container with the given
+    * name. There must exist a resource on the file system whose complete name
+    * is given concatenating the container name and the key
+    *
+    * @param container
+    *           it's the name of the container the blob belongs to
+    * @param key
+    *           it's the key of the blob
+    *
+    * @return the blob belonging to the given container with the given key
+    */
+    Blob getBlob(final String containerName, final String blobName);
+
     /**
      * Returns all the blobs key inside a container
      * @param container
