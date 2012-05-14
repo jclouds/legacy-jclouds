@@ -65,14 +65,14 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       request = super.bindToRequest(request,
-            generateXml(findVAppURIInArgsOrNull(gRequest), postParams.get("name"), postParams.get("networkTierName")));
+            generateXml(findVAppURIInArgsOrNull(gRequest), (String) postParams.get("name"), (String) postParams.get("networkTierName")));
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);
       return request;
    }

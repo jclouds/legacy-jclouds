@@ -72,7 +72,7 @@ public class BindAddNodeServiceToXmlPayloadTest {
       BindAddNodeServiceToXmlPayload binder = injector
                .getInstance(BindAddNodeServiceToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "Node for Jim");
       map.put("ipAddress", "172.16.20.3");
       map.put("port", "80");

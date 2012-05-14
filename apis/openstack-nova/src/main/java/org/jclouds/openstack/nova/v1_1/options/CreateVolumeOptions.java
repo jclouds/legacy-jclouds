@@ -54,7 +54,7 @@ public class CreateVolumeOptions implements MapBinder {
    private Map<String, String> metadata = ImmutableMap.of();
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Map<String, Object> image = Maps.newHashMap();
       image.putAll(postParams);
       if (name != null)

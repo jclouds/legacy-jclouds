@@ -294,7 +294,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).method("POST")
-                  .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":\"3\",\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
+                  .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
             standardResponseBuilder(202).headers(ImmutableMultimap.of("Location", "http://172.16.89.149:8774/v2/images/1976b3b3-409a-468d-b16c-a9172c341b46")).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
@@ -309,7 +309,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).method("POST")
-                  .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":\"3\",\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
+                  .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
             standardResponseBuilder(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
@@ -322,7 +322,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
-                  .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":\"true\",\"disk_over_commit\":\"false\"}}", MediaType.APPLICATION_JSON)).build(),
+                  .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
             standardResponseBuilder(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
@@ -335,7 +335,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
-                  .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":\"true\",\"disk_over_commit\":\"false\"}}", MediaType.APPLICATION_JSON)).build(),
+                  .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
             standardResponseBuilder(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 

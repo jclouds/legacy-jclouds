@@ -166,10 +166,10 @@ public class CreateServerOptions implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present"),
-            checkNotNull(postParams.get("imageRef"), "imageRef parameter not present"), checkNotNull(
-                  postParams.get("flavorRef"), "flavorRef parameter not present"));
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present").toString(),
+            checkNotNull(postParams.get("imageRef"), "imageRef parameter not present").toString(),
+            checkNotNull(postParams.get("flavorRef"), "flavorRef parameter not present").toString());
       if (metadata.size() > 0)
          server.metadata = metadata;
       if (personality.size() > 0)

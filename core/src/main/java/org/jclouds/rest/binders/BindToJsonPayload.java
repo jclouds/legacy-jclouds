@@ -44,7 +44,7 @@ public class BindToJsonPayload implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       return bindToRequest(request, (Object) postParams);
    }
 

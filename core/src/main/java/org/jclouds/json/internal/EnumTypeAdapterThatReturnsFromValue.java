@@ -39,7 +39,7 @@ import com.google.gson.JsonSerializer;
 @SuppressWarnings("unchecked")
 public class EnumTypeAdapterThatReturnsFromValue<T extends Enum<T>> implements JsonSerializer<T>, JsonDeserializer<T> {
    public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
-      return new JsonPrimitive(src.name());
+      return new JsonPrimitive(src.toString());
    }
 
    @SuppressWarnings("cast")

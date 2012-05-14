@@ -50,7 +50,7 @@ public class BindMapToStringPayload implements MapBinder {
 
    @SuppressWarnings("unchecked")
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkNotNull(postParams, "postParams");
       GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
       checkArgument(r.getJavaMethod().isAnnotationPresent(Payload.class),

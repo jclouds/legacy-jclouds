@@ -67,7 +67,7 @@ public class BindCatalogItemToXmlPayloadTest {
 
       BindCatalogItemToXmlPayload binder = injector.getInstance(BindCatalogItemToXmlPayload.class);
 
-      Map<String, String> map = ImmutableMap.of("name", "myname", "Entity", "http://fooentity");
+      Map<String, Object> map = ImmutableMap.<String, Object>of("name", "myname", "Entity", "http://fooentity");
 
       binder.bindToRequest(request, map);
       verify(request);

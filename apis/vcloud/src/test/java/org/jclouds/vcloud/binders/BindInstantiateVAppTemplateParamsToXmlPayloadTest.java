@@ -126,7 +126,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", templateUri.toASCIIString());
       binder.bindToRequest(request, map);
@@ -151,7 +151,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", templateUri.toASCIIString());
       binder.bindToRequest(request, map);
@@ -174,7 +174,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", templateUri.toASCIIString());
       binder.bindToRequest(request, map);
@@ -200,7 +200,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
 
@@ -227,7 +227,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
 

@@ -64,27 +64,27 @@ public class BindNodeConfigurationToXmlPayloadTest {
 
    public void testChangeDescription() throws IOException {
       String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>true</Enabled><Description>description</Description></NodeService>";
-      assertConfigMakesPayload(ImmutableMap.<String, String> of("name", "willie", "enabled", "true", "description",
+      assertConfigMakesPayload(ImmutableMap.<String, Object> of("name", "willie", "enabled", "true", "description",
             "description"), expectedPayload);
    }
 
    public void testDisableTraffic() throws IOException {
       String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
-      assertConfigMakesPayload(ImmutableMap.<String, String> of("name", "willie", "enabled", "false"), expectedPayload);
+      assertConfigMakesPayload(ImmutableMap.<String, Object> of("name", "willie", "enabled", "false"), expectedPayload);
    }
 
    public void testTwoOptions() throws IOException {
       String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>true</Enabled></NodeService>";
-      assertConfigMakesPayload(ImmutableMap.<String, String> of("name", "willie", "enabled", "true"), expectedPayload);
+      assertConfigMakesPayload(ImmutableMap.<String, Object> of("name", "willie", "enabled", "true"), expectedPayload);
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testNoOptions() throws IOException {
       String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
-      assertConfigMakesPayload(ImmutableMap.<String, String> of(), expectedPayload);
+      assertConfigMakesPayload(ImmutableMap.<String, Object> of(), expectedPayload);
    }
 
-   private void assertConfigMakesPayload(Map<String, String> config, String expectedPayload) {
+   private void assertConfigMakesPayload(Map<String, Object> config, String expectedPayload) {
       BindNodeConfigurationToXmlPayload binder = injector.getInstance(BindNodeConfigurationToXmlPayload.class);
       HttpRequest request = createMock(HttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();

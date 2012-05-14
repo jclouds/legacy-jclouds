@@ -59,7 +59,7 @@ public class BindMapToStringPayloadTest {
             .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
 
       GeneratedHttpRequest<TestPayload> newRequest = binder()
-            .bindToRequest(request, ImmutableMap.of("fooble", "robot"));
+            .bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));
 
       assertEquals(newRequest.getRequestLine(), request.getRequestLine());
       assertEquals(newRequest.getPayload().getRawContent(), "name robot");
@@ -71,7 +71,7 @@ public class BindMapToStringPayloadTest {
       GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.<TestPayload>requestBuilder()
             .declaring(TestPayload.class).javaMethod(noPayload).args(ImmutableList.<Object> of("robot"))
             .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
-      binder().bindToRequest(request, ImmutableMap.of("fooble", "robot"));
+      binder().bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

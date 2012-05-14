@@ -38,8 +38,8 @@ public class AddNodeOptions extends BindAddNodeServiceToXmlPayload {
    @VisibleForTesting
    String enabled = "true";
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      Map<String, String> copy = Maps.newHashMap();
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Map<String, Object> copy = Maps.newHashMap();
       copy.putAll(postParams);
       copy.put("description", description);
       copy.put("enabled", enabled);

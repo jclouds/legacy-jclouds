@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 
@@ -114,7 +115,7 @@ public interface AdminActionsAsyncClient {
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"createBackup\":%7B\"name\":\"{name}\",\"backup_type\":\"{backup_type}\",\"rotation\":{rotation}%7D%7D")
+   @WrapWith("createBackup")
    @ExceptionParser(MapHttp4xxCodesToExceptions.class)
    @ResponseParser(ParseImageIdFromLocationHeader.class)
    ListenableFuture<String> createBackupOfServer(@PathParam("id") String id,
@@ -156,9 +157,9 @@ public interface AdminActionsAsyncClient {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Payload("%7B\"os-migrateLive\":%7B\"host\":\"{host}\",\"block_migration\":\"{bm}\",\"disk_over_commit\":\"{doc}\"%7D%7D")
+   @WrapWith("os-migrateLive")
    ListenableFuture<Boolean> liveMigrateServer(@PathParam("id") String id,
                                                @PayloadParam("host") String host,
-                                               @PayloadParam("bm") boolean blockMigration,
-                                               @PayloadParam("doc") boolean diskOverCommit);
+                                               @PayloadParam("block_migration") boolean blockMigration,
+                                               @PayloadParam("disk_over_commit") boolean diskOverCommit);
 }

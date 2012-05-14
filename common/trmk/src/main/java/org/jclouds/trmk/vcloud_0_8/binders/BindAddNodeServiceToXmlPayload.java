@@ -55,12 +55,12 @@ public class BindAddNodeServiceToXmlPayload implements MapBinder {
    private String ns;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      String ipAddress = checkNotNull(postParams.get("ipAddress"), "ipAddress parameter not present");
-      String name = checkNotNull(postParams.get("name"), "name parameter not present");
-      String port = checkNotNull(postParams.get("port"), "port parameter not present");
-      String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present");
-      String description = postParams.get("description");
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      String ipAddress = checkNotNull(postParams.get("ipAddress"), "ipAddress parameter not present").toString();
+      String name = checkNotNull(postParams.get("name"), "name parameter not present").toString();
+      String port = checkNotNull(postParams.get("port"), "port parameter not present").toString();
+      String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present").toString();
+      String description = (String) postParams.get("description");
 
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "ipAddress", ipAddress, "port", port, "enabled", enabled, "ns", ns));

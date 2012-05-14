@@ -20,7 +20,7 @@ package org.jclouds.openstack.nova.v1_1.extensions;
 
 /**
  * Extension namespaces
- * 
+ *
  * @author Adrian Cole
  * @see <a href= "http://nova.openstack.org/api_ext/" />
  */
@@ -93,6 +93,20 @@ public interface ExtensionNamespaces {
    /**
     * Extended Server Status extension
     */
-   public static final String EXTENDED_STATUS = "http://docs.openstack.org/ext/extended_status/api/v1.1";
+   public static final String EXTENDED_STATUS = "http://docs.openstack.org/compute/ext/extended_status/api/v1.1";
 
+   /**
+    * Quota Classes extension
+    */
+   public static final String QUOTA_CLASSES = "http://docs.openstack.org/ext/quota-classes-sets/api/v1.1";
+
+   /**
+    * Disk Config extension
+    */
+   public static final String DISK_CONFIG = "http://docs.openstack.org/compute/ext/disk_config/api/v1.1";
+
+   /**
+    * Aggregates extension
+    */
+   public static final String AGGREGATES = "http://docs.openstack.org/ext/aggregates/api/v1.1";
 }

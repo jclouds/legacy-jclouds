@@ -74,8 +74,16 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
            URI.create("http://docs.openstack.org/compute/ext/createserverext/api/v1.1"))
       .put(URI.create(ExtensionNamespaces.ADMIN_ACTIONS),
            URI.create("http://docs.openstack.org/compute/ext/admin-actions/api/v1.1"))
-      .put(URI.create(ExtensionNamespaces.EXTENDED_STATUS),
-           URI.create("http://docs.openstack.org/compute/ext/extended_status/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.AGGREGATES),
+           URI.create("http://docs.openstack.org/compute/ext/aggregates/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.FLAVOR_EXTRA_SPECS),
+           URI.create("http://docs.openstack.org/compute/ext/flavor_extra_specs/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.QUOTAS),
+           URI.create("http://docs.openstack.org/compute/ext/quotas-sets/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.QUOTA_CLASSES),
+           URI.create("http://docs.openstack.org/compute/ext/quota-classes-sets/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.VOLUME_TYPES),
+           URI.create("http://docs.openstack.org/compute/ext/volume_types/api/v1.1"))
       .build();
    
    @Inject

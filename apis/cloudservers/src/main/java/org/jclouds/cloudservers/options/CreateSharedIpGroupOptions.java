@@ -57,8 +57,8 @@ public class CreateSharedIpGroupOptions implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      SharedIpGroupRequest createRequest = new SharedIpGroupRequest(checkNotNull(postParams.get("name")), serverId);
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      SharedIpGroupRequest createRequest = new SharedIpGroupRequest(checkNotNull(postParams.get("name")).toString(), serverId);
       return jsonBinder.bindToRequest(request, ImmutableMap.of("sharedIpGroup", createRequest));
    }
 

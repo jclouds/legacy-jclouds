@@ -100,10 +100,10 @@ public class CreateServerOptions implements MapBinder {
    private String adminPass;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present"),
-               checkNotNull(postParams.get("imageRef"), "imageRef parameter not present"), checkNotNull(postParams
-                        .get("flavorRef"), "flavorRef parameter not present"));
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present").toString(),
+               checkNotNull(postParams.get("imageRef"), "imageRef parameter not present").toString(), 
+               checkNotNull(postParams.get("flavorRef"), "flavorRef parameter not present").toString());
       if (metadata.size() > 0)
          server.metadata = metadata;
       if (files.size() > 0)
@@ -202,7 +202,7 @@ public class CreateServerOptions implements MapBinder {
    public static class Builder {
 
       /**
-       * @see CreateServerOptions#withFile(String,byte [])
+       * @see CreateServerOptions#withFile(String,byte[])
        */
       public static CreateServerOptions withFile(String path, byte[] contents) {
          CreateServerOptions options = new CreateServerOptions();
@@ -231,7 +231,7 @@ public class CreateServerOptions implements MapBinder {
        }
       
       /**
-       * @see CreateServerOptions#withGroupName(String)
+       * @see CreateServerOptions#withSecurityGroup(String)
        */
       public static CreateServerOptions withSecurityGroup(String name) {
           CreateServerOptions options = new CreateServerOptions();

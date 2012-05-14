@@ -44,6 +44,7 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -156,8 +157,8 @@ public interface VolumeAsyncClient {
    @SelectJson("volumeAttachment")
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"volumeAttachment\":%7B\"volumeId\":\"{id}\",\"device\":\"{device}\"%7D%7D")
-   ListenableFuture<VolumeAttachment> attachVolumeToServerAsDevice(@PayloadParam("id") String volumeId,
+   @WrapWith("volumeAttachment")
+   ListenableFuture<VolumeAttachment> attachVolumeToServerAsDevice(@PayloadParam("volumeId") String volumeId,
                                              @PathParam("server_id") String serverId, @PayloadParam("device") String device);
 
    /**

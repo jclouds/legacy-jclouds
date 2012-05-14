@@ -25,15 +25,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
-import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsClient;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
-import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
-import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceClient;
-import org.jclouds.openstack.nova.v1_1.extensions.VolumeClient;
+import org.jclouds.openstack.nova.v1_1.extensions.*;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
@@ -153,5 +145,40 @@ public interface NovaClient {
    @Delegate
    Optional<AdminActionsClient> getAdminActionsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
-   
+ 
+   /**
+    * Provides synchronous access to Aggregate features.
+    */
+   @Delegate
+   Optional<HostAggregateClient> getHostAggregateExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Flavor extra specs features.
+    */
+   @Delegate
+   Optional<FlavorExtraSpecsClient> getFlavorExtraSpecsExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Quota features.
+    */
+   @Delegate
+   Optional<QuotaClient> getQuotaExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Quota Classes features.
+    */
+   @Delegate
+   Optional<QuotaClassClient> getQuotaClassExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Volume Type features.
+    */
+   @Delegate
+   Optional<VolumeTypeClient> getVolumeTypeExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
 }

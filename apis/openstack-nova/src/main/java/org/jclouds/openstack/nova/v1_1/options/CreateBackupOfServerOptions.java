@@ -46,7 +46,7 @@ public class CreateBackupOfServerOptions implements MapBinder {
    private Map<String, String> metadata = ImmutableMap.of();
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Map<String, Object> data = Maps.newHashMap();
       data.putAll(postParams);
       data.put("metadata", metadata);

@@ -35,5 +35,5 @@ public interface MapBinder extends Binder {
     * 
     * @see org.jclouds.rest.annotations.PayloadParam
     */
-   <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams);
+   <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams);
 }

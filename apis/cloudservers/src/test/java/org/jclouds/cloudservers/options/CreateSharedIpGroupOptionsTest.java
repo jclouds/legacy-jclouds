@@ -53,7 +53,7 @@ public class CreateSharedIpGroupOptionsTest {
    private HttpRequest buildRequest(CreateSharedIpGroupOptions options) {
       injector.injectMembers(options);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      options.bindToRequest(request, ImmutableMap.of("name", "foo"));
+      options.bindToRequest(request, ImmutableMap.<String,Object>of("name", "foo"));
       return request;
    }
 
