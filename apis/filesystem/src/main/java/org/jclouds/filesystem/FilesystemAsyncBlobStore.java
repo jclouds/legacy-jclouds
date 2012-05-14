@@ -63,6 +63,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -94,6 +95,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
@@ -123,6 +125,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    protected final Crypto crypto;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
+   protected final Factory blobFactory;
    protected final FilesystemStorageStrategy storageStrategy;
 
    @Inject
@@ -134,8 +137,9 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         FilesystemStorageStrategy storageStrategy) {
+         Factory blobFactory, FilesystemStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
+      this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.crypto = crypto;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -470,6 +474,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(eTag);
    }
 
+   private void copyPayloadHeadersToBlob(Payload payload, Blob blob) {
+      blob.getAllHeaders().putAll(HttpUtils.getContentHeadersFromMetadata(payload.getContentMetadata()));
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -525,6 +533,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
                      .getMetadata().getLastModified(), unmodifiedSince), null, response));
             }
          }
+         blob = copyBlob(blob);
 
          if (options.getRanges() != null && options.getRanges().size() > 0) {
             byte[] data;
@@ -574,12 +583,19 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
          Blob blob = getBlob(container, key).get();
-         return immediateFuture(blob != null ? (BlobMetadata) blob.getMetadata() : null);
+         return immediateFuture(blob != null ? (BlobMetadata) copy(blob.getMetadata()) : null);
       } catch (Exception e) {
          if (size(filter(getCausalChain(e), KeyNotFoundException.class)) >= 1)
             return immediateFuture(null);
          return immediateFailedFuture(e);
       }
+   }
+
+   private Blob copyBlob(Blob blob) {
+      Blob returnVal = blobFactory.create(copy(blob.getMetadata()));
+      returnVal.setPayload(blob.getPayload());
+      copyPayloadHeadersToBlob(blob.getPayload(), returnVal);
+      return returnVal;
    }
 
    /**
