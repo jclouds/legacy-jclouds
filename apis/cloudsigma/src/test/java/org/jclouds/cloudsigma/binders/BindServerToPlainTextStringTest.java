@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
@@ -50,13 +51,13 @@ import com.google.inject.TypeLiteral;
 @Test(groups = { "unit" })
 public class BindServerToPlainTextStringTest {
 
-   public static String CREATED_SERVER;
+   public static final String CREATED_SERVER;
    static {
       try {
          CREATED_SERVER = Strings2.toStringAndClose(BindServerToPlainTextStringTest.class
                .getResourceAsStream("/create_server.txt"));
       } catch (IOException e) {
-         CREATED_SERVER = null;
+         throw Throwables.propagate(e);
       }
    }
    public static final Server SERVER = new Server.Builder()
