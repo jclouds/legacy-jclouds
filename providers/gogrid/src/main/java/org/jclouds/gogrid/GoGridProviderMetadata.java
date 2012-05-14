@@ -75,7 +75,7 @@ public class GoGridProviderMetadata extends BaseProviderMetadata {
          .apiMetadata(new GoGridApiMetadata())
          .homepage(URI.create("http://www.gogrid.com"))
          .console(URI.create("https://my.gogrid.com/gogrid"))
-         .iso3166Codes("US-CA", "US-VA", "BR-SP")
+         .iso3166Codes("US-CA", "US-VA", "NL-NH")
          .endpoint("https://api.gogrid.com/api")
          .defaultProperties(GoGridProviderMetadata.defaultProperties());
       }
