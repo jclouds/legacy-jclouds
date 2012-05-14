@@ -590,27 +590,32 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             for (String s : options.getRanges()) {
+               // HTTP uses a closed interval while Java array indexing uses a
+               // half-open interval.
+               int offset = 0;
+               int last = data.length - 1;
                if (s.startsWith("-")) {
-                  int length = Integer.parseInt(s.substring(1));
-                  out.write(data, data.length - length, length);
+                  offset = last - Integer.parseInt(s.substring(1)) + 1;
                } else if (s.endsWith("-")) {
-                  int offset = Integer.parseInt(s.substring(0, s.length() - 1));
-                  out.write(data, offset, data.length - offset);
+                  offset = Integer.parseInt(s.substring(0, s.length() - 1));
                } else if (s.contains("-")) {
                   String[] firstLast = s.split("\\-");
-                  int offset = Integer.parseInt(firstLast[0]);
-                  int last = Integer.parseInt(firstLast[1]);
-                  int length = (last < data.length) ? last + 1 : data.length - offset;
-                  out.write(data, offset, length);
+                  offset = Integer.parseInt(firstLast[0]);
+                  last = Integer.parseInt(firstLast[1]);
                } else {
-                  return immediateFailedFuture(new IllegalArgumentException("first and last were null!"));
+                  return immediateFailedFuture(new IllegalArgumentException("illegal range: " + s));
                }
 
+               if (offset > last || last + 1 > data.length) {
+                  return immediateFailedFuture(new IllegalArgumentException("illegal range: " + s));
+               }
+               out.write(data, offset, last - offset + 1);
             }
             ContentMetadata cmd = blob.getPayload().getContentMetadata();
-            blob.setPayload(out.toByteArray());
+            byte[] byteArray = out.toByteArray();
+            blob.setPayload(byteArray);
             HttpUtils.copy(cmd, blob.getPayload().getContentMetadata());
-            blob.getPayload().getContentMetadata().setContentLength(new Long(out.toByteArray().length));
+            blob.getPayload().getContentMetadata().setContentLength(new Long(byteArray.length));
          }
       }
       checkNotNull(blob.getPayload(), "payload " + blob);
