@@ -30,9 +30,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-import org.jclouds.compute.util.ComputeServiceUtils;
+import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -52,13 +51,14 @@ public class CreateSshClientOncePortIsListeningOnNode implements Function<NodeMe
 
    @Inject(optional = true)
    SshClient.Factory sshFactory;
-   private final SocketOpen socketTester;
    
+   private final OpenSocketFinder openSocketFinder;
+
    private final long timeoutMs;
    
    @Inject
-   public CreateSshClientOncePortIsListeningOnNode(SocketOpen socketTester, Timeouts timeouts) {
-      this.socketTester = socketTester;
+   public CreateSshClientOncePortIsListeningOnNode(OpenSocketFinder openSocketFinder, Timeouts timeouts) {
+      this.openSocketFinder = openSocketFinder;
       this.timeoutMs = timeouts.portOpen;
    }
 
@@ -69,8 +69,8 @@ public class CreateSshClientOncePortIsListeningOnNode implements Function<NodeMe
       checkNotNull(node.getCredentials().identity, "no login identity found for node %s", node.getId());
       checkNotNull(node.getCredentials().credential, "no credential found for %s on node %s", node
                .getCredentials().identity, node.getId());
-      HostAndPort socket = ComputeServiceUtils.findReachableSocketOnNode(socketTester, node, node.getLoginPort(), 
-               timeoutMs, TimeUnit.MILLISECONDS, logger);
+      HostAndPort socket = openSocketFinder.findOpenSocketOnNode(node, node.getLoginPort(), 
+               timeoutMs, TimeUnit.MILLISECONDS);
       return sshFactory.create(socket, node.getCredentials());
    }
 }
