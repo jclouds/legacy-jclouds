@@ -343,33 +343,9 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(result);
    }
 
-   /**
-    * Load the blob with the given key belonging to the container with the given
-    * name. There must exist a resource on the file system whose complete name
-    * is given concatenating the container name and the key
-    * 
-    * @param container
-    *           it's the name of the container the blob belongs to
-    * @param key
-    *           it's the key of the blob
-    * 
-    * @return the blob belonging to the given container with the given key
-    */
    private Blob loadBlob(final String container, final String key) {
       logger.debug("Opening blob in container: %s - %s", container, key);
-      BlobBuilder builder = blobUtils.blobBuilder();
-      builder.name(key);
-      File file = storageStrategy.getFileForBlobKey(container, key);
-      try {
-         builder.payload(file).calculateMD5();
-      } catch (IOException e) {
-         logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
-         Throwables.propagateIfPossible(e);
-      }
-      Blob blob = builder.build();
-      if (blob.getPayload().getContentMetadata().getContentMD5() != null)
-         blob.getMetadata().setETag(CryptoStreams.hex(blob.getPayload().getContentMetadata().getContentMD5()));
-      return blob;
+      return storageStrategy.getBlob(container, key);
    }
 
    protected static class DelimiterFilter implements Predicate<StorageMetadata> {
