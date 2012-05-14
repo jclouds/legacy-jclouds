@@ -73,7 +73,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
       BindCloneVAppTemplateParamsToXmlPayload binder = injector
                .getInstance(BindCloneVAppTemplateParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.builder();
+      Builder<String, Object> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/201");
       binder.bindToRequest(request, map.build());
@@ -94,7 +94,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
       BindCloneVAppTemplateParamsToXmlPayload binder = injector
                .getInstance(BindCloneVAppTemplateParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.builder();
+      Builder<String, Object> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/201");
       map.put("IsSourceDelete", "true");
@@ -114,7 +114,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
       BindCloneVAppTemplateParamsToXmlPayload binder = injector
                .getInstance(BindCloneVAppTemplateParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.builder();
+      Builder<String, Object> map = ImmutableMap.builder();
       map.put("name", "my-vapptemplate");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/4181");
       binder.bindToRequest(request, map.build());

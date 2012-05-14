@@ -78,7 +78,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;

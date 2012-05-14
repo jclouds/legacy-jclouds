@@ -45,10 +45,10 @@ public class CreateServerOptions extends RimuHostingJsonBinder {
    private List<MetaData> metaData = new ArrayList<MetaData>();
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      String name = checkNotNull(postParams.get("name"));
-      String imageId = checkNotNull(postParams.get("imageId"));
-      String planId = checkNotNull(postParams.get("planId"));
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      String name = checkNotNull(postParams.get("name")).toString();
+      String imageId = checkNotNull(postParams.get("imageId")).toString();
+      String planId = checkNotNull(postParams.get("planId")).toString();
       // There will be cases when the password is null.
       String password = this.password;
       NewServerData newServerData = new NewServerData(new CreateOptions(name, password, imageId), planId);

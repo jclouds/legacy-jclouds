@@ -33,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.binders.BindExtraSpecsToJsonPayload;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -43,6 +42,7 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -79,8 +79,8 @@ public interface FlavorExtraSpecsAsyncClient {
    @Path("/flavors/{flavor_id}/os-extra_specs")
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @MapBinder(BindExtraSpecsToJsonPayload.class)
-   ListenableFuture<Boolean> setAllExtraSpecs(@PathParam("flavor_id") String flavorId, Map<String, String> specs);
+   @MapBinder(BindToJsonPayload.class)
+   ListenableFuture<Boolean> setAllExtraSpecs(@PathParam("flavor_id") String flavorId, @PayloadParam("extra_specs") Map<String, String> specs);
 
    /**
     * @see FlavorExtraSpecsClient#getExtraSpec(String, String)

@@ -535,7 +535,7 @@ public class RestAnnotationProcessor<T> {
 
          org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(method, args);
          if (mapBinder != null) {
-            Map<String, String> mapParams = buildPostParams(method, args);
+            Map<String, Object> mapParams = buildPostParams(method, args);
             if (method.isAnnotationPresent(PayloadParams.class)) {
                PayloadParams params = method.getAnnotation(PayloadParams.class);
                addMapPayload(mapParams, params, headers.entries());
@@ -681,7 +681,7 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   private void addMapPayload(Map<String, String> postParams, PayloadParams mapDefaults,
+   private void addMapPayload(Map<String, Object> postParams, PayloadParams mapDefaults,
          Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < mapDefaults.keys().length; i++) {
          if (mapDefaults.values()[i].equals(PayloadParams.NULL)) {
@@ -1313,22 +1313,22 @@ public class RestAnnotationProcessor<T> {
       return queryParamValues;
    }
 
-   //TODO: change to LoadingCache<ClassMethodArgs, Map<String,String> and move this logic to the CacheLoader.
+   //TODO: change to LoadingCache<ClassMethodArgs, Map<String,Object> and move this logic to the CacheLoader.
    //take care to manage size of this cache
-   private Map<String, String> buildPostParams(Method method, Object... args) throws ExecutionException {
-      Map<String, String> postParams = newHashMap();
+   private Map<String, Object> buildPostParams(Method method, Object... args) throws ExecutionException {
+      Map<String, Object> postParams = newHashMap();
       LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations.get(method);
       LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((PayloadParam) key).value();
-            String paramValue;
+            Object paramValue;
             if (extractors != null && extractors.size() > 0) {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
                paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
             } else {
-               paramValue = args[entry.getKey()] != null ? args[entry.getKey()].toString() : null;
+               paramValue = args[entry.getKey()] != null ? args[entry.getKey()] : null;
             }
             postParams.put(paramKey, paramValue);
 

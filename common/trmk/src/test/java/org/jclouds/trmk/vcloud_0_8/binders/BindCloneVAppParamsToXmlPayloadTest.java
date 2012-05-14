@@ -72,7 +72,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("newName", "new-linux-server");
       map.put("vApp", "https://vcloud.safesecureweb.com/api/v0.8/vapp/201");
       binder.bindToRequest(request, map);
@@ -90,7 +90,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("newName", "my-vapp");
       map.put("vApp", "https://vcloud.safesecureweb.com/api/v0.8/vapp/4181");
       binder.bindToRequest(request, map);

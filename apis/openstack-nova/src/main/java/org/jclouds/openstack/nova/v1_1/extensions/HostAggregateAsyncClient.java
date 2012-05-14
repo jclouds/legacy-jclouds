@@ -33,16 +33,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.binders.BindAggregateMetadataToJsonPayload;
 import org.jclouds.openstack.nova.v1_1.domain.HostAggregate;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -87,8 +85,9 @@ public interface HostAggregateAsyncClient {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"aggregate\":%7B\"name\":\"{name}\",\"availability_zone\":\"{zone}\"%7D%7D")
-   ListenableFuture<HostAggregate> createAggregate(@PayloadParam("name") String name, @PayloadParam("zone") String availablityZone);
+   @WrapWith("aggregate")
+   ListenableFuture<HostAggregate> createAggregate(@PayloadParam("name") String name,
+                                                   @PayloadParam("availability_zone") String availablityZone);
 
    /**
     * @see HostAggregateClient#updateName
@@ -97,7 +96,7 @@ public interface HostAggregateAsyncClient {
    @Path("/{id}")
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"aggregate\":%7B\"name\":\"{name}\"%7D%7D")
+   @WrapWith("aggregate")
    ListenableFuture<HostAggregate> updateName(@PathParam("id") String id, @PayloadParam("name") String name);
 
    /**
@@ -107,8 +106,8 @@ public interface HostAggregateAsyncClient {
    @Path("/{id}")
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"aggregate\":%7B\"availability_zone\":\"{zone}\"%7D%7D")
-   ListenableFuture<HostAggregate> updateAvailabilityZone(@PathParam("id") String id, @PayloadParam("zone") String availabilityZone);
+   @WrapWith("aggregate")
+   ListenableFuture<HostAggregate> updateAvailabilityZone(@PathParam("id") String id, @PayloadParam("availability_zone") String availabilityZone);
    
    /**
     * @see HostAggregateClient#deleteAggregate(String)
@@ -127,7 +126,7 @@ public interface HostAggregateAsyncClient {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"add_host\":%7B\"host\":\"{host}\"%7D%7D")
+   @WrapWith("add_host")
    ListenableFuture<HostAggregate> addHost(@PathParam("id") String id, @PayloadParam("host") String host);
 
 
@@ -139,7 +138,7 @@ public interface HostAggregateAsyncClient {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"remove_host\":%7B\"host\":\"{host}\"%7D%7D")
+   @WrapWith("remove_host")
    ListenableFuture<HostAggregate> removeHost(@PathParam("id") String id, @PayloadParam("host") String host);
 
    /**
@@ -150,6 +149,6 @@ public interface HostAggregateAsyncClient {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @MapBinder(BindAggregateMetadataToJsonPayload.class)
-   ListenableFuture<HostAggregate> setMetadata(@PathParam("id") String id, Map<String, String> metadata);
+   @WrapWith("set_metadata")
+   ListenableFuture<HostAggregate> setMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
 }

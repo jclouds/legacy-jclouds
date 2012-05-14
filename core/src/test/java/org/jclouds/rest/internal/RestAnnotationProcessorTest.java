@@ -741,8 +741,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestPost.class.getMethod("postWithPath", String.class, MapBinder.class);
       HttpRequest request = factory(TestPost.class).createRequest(method, "data", new org.jclouds.rest.MapBinder() {
          @Override
-         public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-            request.setPayload(postParams.get("fooble"));
+         public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+            request.setPayload((String) postParams.get("fooble"));
             return request;
          }
 

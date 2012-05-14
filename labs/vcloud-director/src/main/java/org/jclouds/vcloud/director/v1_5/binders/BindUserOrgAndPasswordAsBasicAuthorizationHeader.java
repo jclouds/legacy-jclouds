@@ -44,7 +44,7 @@ import com.google.common.base.Throwables;
 public class BindUserOrgAndPasswordAsBasicAuthorizationHeader implements MapBinder {
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       try {
          String header = "Basic "
                   + CryptoStreams.base64(String.format("%s@%s:%s", checkNotNull(postParams.get("user"), "user"),

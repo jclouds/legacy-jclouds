@@ -56,8 +56,8 @@ public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implem
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      Builder<String, String> payload = ImmutableMap.builder();
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Builder<String, Object> payload = ImmutableMap.builder();
       payload.putAll(postParams);
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
                "this binder is only valid for GeneratedHttpRequests!");

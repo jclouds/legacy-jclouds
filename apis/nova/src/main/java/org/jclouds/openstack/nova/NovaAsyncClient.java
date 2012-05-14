@@ -310,7 +310,7 @@ public interface NovaAsyncClient {
                                                  @PayloadParam("serverId") int serverId);
 
    /**
-    * @see NovaClient#listAddresses
+    * @see NovaClient#getAddresses
     */
    @GET
    @Unwrap

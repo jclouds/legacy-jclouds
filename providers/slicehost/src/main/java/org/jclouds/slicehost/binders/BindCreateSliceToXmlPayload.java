@@ -44,10 +44,10 @@ public class BindCreateSliceToXmlPayload implements MapBinder {
       this.binder = binder;
    }
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      String flavorId = checkNotNull(postParams.get("flavor_id"), "flavor_id");
-      String imageId = checkNotNull(postParams.get("image_id"), "image_id");
-      String name = checkNotNull(postParams.get("name"), "name");
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      String flavorId = checkNotNull(postParams.get("flavor_id"), "flavor_id").toString();
+      String imageId = checkNotNull(postParams.get("image_id"), "image_id").toString();
+      String name = checkNotNull(postParams.get("name"), "name").toString();
       StringBuilder builder = new StringBuilder();
       builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><slice>");
       builder.append("<flavor-id type=\"integer\">").append(flavorId).append("</flavor-id>");

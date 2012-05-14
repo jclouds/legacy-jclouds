@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.v1_1.extensions;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -32,9 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.binders.BindExtraSpecsToJsonPayload;
 import org.jclouds.openstack.nova.v1_1.domain.VolumeType;
 import org.jclouds.openstack.nova.v1_1.options.CreateVolumeTypeOptions;
 import org.jclouds.openstack.services.Extension;
@@ -47,6 +44,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.WrapWith;
+import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -91,7 +90,7 @@ public interface VolumeTypeAsyncClient {
    @POST
    @SelectJson("volume_type")
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"volume_type\":%7B\"name\":\"{name}\"%7D%7D")
+   @WrapWith("volume_type")
    ListenableFuture<VolumeType> createVolumeType(@PayloadParam("name") String name, CreateVolumeTypeOptions... options);
 
    /**
@@ -118,8 +117,8 @@ public interface VolumeTypeAsyncClient {
    @Path("/{id}/extra_specs")
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @MapBinder(BindExtraSpecsToJsonPayload.class)
-   ListenableFuture<Boolean> setAllExtraSpecs(@PathParam("id") String id, Map<String, String> specs);
+   @MapBinder(BindToJsonPayload.class)
+   ListenableFuture<Boolean> setAllExtraSpecs(@PathParam("id") String id, @PayloadParam("extra_specs") Map<String, String> specs);
 
    /**
     * @see VolumeTypeClient#getExtraSpec(String, String)

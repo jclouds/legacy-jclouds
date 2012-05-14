@@ -30,15 +30,16 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.binders.BindQuotaClassToJsonPayload;
 import org.jclouds.openstack.nova.v1_1.domain.QuotaClass;
-import org.jclouds.openstack.nova.v1_1.domain.Quotas;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.WrapWith;
+import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -73,7 +74,7 @@ public interface QuotaClassAsyncClient {
    @PUT
    @Path("/{id}")
    @Produces(MediaType.APPLICATION_JSON)
-   @MapBinder(BindQuotaClassToJsonPayload.class)
-   ListenableFuture<Boolean> updateQuotaClass(@PathParam("id") String id, QuotaClass quotas);
+   @MapBinder(BindToJsonPayload.class)
+   ListenableFuture<Boolean> updateQuotaClass(@PathParam("id") String id, @PayloadParam("quota_class_set") QuotaClass quotas);
 
 }

@@ -48,8 +48,8 @@ public class CreateVolumeSnapshotOptions implements MapBinder {
    private boolean force = false;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      Map<String, String> data = Maps.newHashMap(postParams);
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Map<String, Object> data = Maps.newHashMap(postParams);
       if (name != null)
          data.put("display_name", name);
       if (description != null)

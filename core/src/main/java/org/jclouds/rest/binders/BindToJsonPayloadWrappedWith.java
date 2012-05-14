@@ -25,10 +25,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
 import org.jclouds.rest.MapBinder;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.assistedinject.Assisted;
 
@@ -58,7 +56,7 @@ public class BindToJsonPayloadWrappedWith implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       return this.bindToRequest(request, (Object) postParams);
    }
 }

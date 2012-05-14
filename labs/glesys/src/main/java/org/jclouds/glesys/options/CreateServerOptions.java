@@ -47,14 +47,14 @@ public class CreateServerOptions implements MapBinder {
    private String description;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       ImmutableMultimap.Builder<String, String> formParams = ImmutableMultimap.builder();
-      formParams.putAll(forMap(postParams));
+      for(String key : postParams.keySet()) formParams.put(key, (String) postParams.get(key));
       ServerSpec serverSpec = ServerSpec.class.cast(find(gRequest.getArgs(), instanceOf(ServerSpec.class)));
       formParams.put("datacenter", serverSpec.getDatacenter());
       formParams.put("platform", serverSpec.getPlatform());

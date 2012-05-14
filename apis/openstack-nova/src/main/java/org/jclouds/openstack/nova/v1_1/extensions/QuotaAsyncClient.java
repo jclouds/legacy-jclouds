@@ -30,14 +30,15 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.binders.BindQuotasToJsonPayload;
 import org.jclouds.openstack.nova.v1_1.domain.Quotas;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -71,8 +72,8 @@ public interface QuotaAsyncClient {
    @PUT
    @Path("/{tenant_id}")
    @Produces(MediaType.APPLICATION_JSON)
-   @MapBinder(BindQuotasToJsonPayload.class)
-   ListenableFuture<Boolean> updateQuotasForTenant(@PathParam("tenant_id") String tenantId, Quotas quotas);
+   @MapBinder(BindToJsonPayload.class)
+   ListenableFuture<Boolean> updateQuotasForTenant(@PathParam("tenant_id") String tenantId, @PayloadParam("quota_set") Quotas quotas);
 
    /**
     * @see QuotaClient#getDefaultQuotasForTenant(String)

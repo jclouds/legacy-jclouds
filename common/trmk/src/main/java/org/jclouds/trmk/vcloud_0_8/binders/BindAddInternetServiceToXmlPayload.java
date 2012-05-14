@@ -54,13 +54,13 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
    private String ns;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
 
-      String name = checkNotNull(postParams.get("name"), "name parameter not present");
-      String protocol = checkNotNull(postParams.get("protocol"), "protocol parameter not present");
-      String port = checkNotNull(postParams.get("port"), "port parameter not present");
-      String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present");
-      String description = postParams.get("description");
+      String name = checkNotNull(postParams.get("name"), "name parameter not present").toString();
+      String protocol = checkNotNull(postParams.get("protocol"), "protocol parameter not present").toString();
+      String port = checkNotNull(postParams.get("port"), "port parameter not present").toString();
+      String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present").toString();
+      String description = (String) postParams.get("description");
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "protocol", protocol, "port", port, "enabled", enabled, "ns", ns));
       try {
@@ -73,10 +73,10 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
       return stringBinder.bindToRequest(request, payload);
    }
    
-   private String getMonitorString(Map<String, String> postParams)
+   private String getMonitorString(Map<String, Object> postParams)
    {
       // Sending no <Monitor> element to Terremark will result in default behavior, which is to create a monitor.
-      String monitor = postParams.get("monitor");
+      String monitor = (String) postParams.get("monitor");
       if (monitor == null || "true".equalsIgnoreCase(monitor)) {
           return "";
       }

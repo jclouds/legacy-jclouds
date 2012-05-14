@@ -57,7 +57,7 @@ public class BindParamsToXmlPayload implements MapBinder {
       this.stringBinder = stringBinder;
    }
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       try {
          return stringBinder.bindToRequest(request, generateXml(postParams));
       } catch (Exception e) {
@@ -65,11 +65,11 @@ public class BindParamsToXmlPayload implements MapBinder {
       }
    }
 
-   private String generateXml(Map<String, String> postParams) throws ParserConfigurationException,
+   private String generateXml(Map<String, Object> postParams) throws ParserConfigurationException,
             FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = XMLBuilder.create(element);
-      for (Entry<String, String> entry : postParams.entrySet())
-         rootBuilder.a(entry.getKey(), entry.getValue());
+      for (Entry<String, Object> entry : postParams.entrySet())
+         rootBuilder.a(entry.getKey(), (String) entry.getValue());
       rootBuilder.a("xmlns", ns);
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");

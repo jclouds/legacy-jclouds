@@ -46,7 +46,7 @@ public class CreateVolumeTypeOptions implements MapBinder {
    protected Map<String, String> specs = ImmutableMap.of();
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Map<String, Object> data = Maps.newHashMap();
       data.putAll(postParams);
       data.put("extra_specs", specs);

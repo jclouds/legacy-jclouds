@@ -55,9 +55,9 @@ public class BindCreateKeyToXmlPayload implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      String name = checkNotNull(postParams.get("name"), "name parameter not present");
-      String isDefault = checkNotNull(postParams.get("isDefault"), "isDefault parameter not present");
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      String name = checkNotNull(postParams.get("name"), "name parameter not present").toString();
+      String isDefault = checkNotNull(postParams.get("isDefault"), "isDefault parameter not present").toString();
 
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "isDefault", isDefault, "ns", ns));
