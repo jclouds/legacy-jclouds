@@ -916,6 +916,9 @@ public class RestAnnotationProcessor<T> {
          return injector.getInstance(method.getAnnotation(MapBinder.class).value());
       } else if (method.isAnnotationPresent(org.jclouds.rest.annotations.Payload.class)) {
          return injector.getInstance(BindMapToStringPayload.class);
+      } else if (method.isAnnotationPresent(WrapWith.class)) {
+         return injector.getInstance(BindToJsonPayloadWrappedWith.Factory.class).create(
+            method.getAnnotation(WrapWith.class).value());
       }
       return null;
    }

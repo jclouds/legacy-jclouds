@@ -20,20 +20,24 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
+import org.jclouds.rest.MapBinder;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.assistedinject.Assisted;
 
 /**
  * Sometimes, cloud apis wrap requests inside an envelope. This addresses this.
- * 
+ *
  * @author Adrian Cole
  */
-public class BindToJsonPayloadWrappedWith implements Binder {
+public class BindToJsonPayloadWrappedWith implements MapBinder {
 
    public static interface Factory {
       BindToJsonPayloadWrappedWith create(String envelope);
@@ -53,4 +57,8 @@ public class BindToJsonPayloadWrappedWith implements Binder {
       return jsonBinder.bindToRequest(request, (Object) ImmutableMap.of(envelope, checkNotNull(payload, "payload")));
    }
 
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+      return this.bindToRequest(request, (Object) postParams);
+   }
 }
