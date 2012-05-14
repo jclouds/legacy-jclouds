@@ -35,8 +35,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.VirtualBoxManager;
 
