@@ -560,8 +560,11 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
                   return immediateFailedFuture(new IllegalArgumentException("illegal range: " + s));
                }
 
-               if (offset > last || last + 1 > data.length) {
+               if (offset > last) {
                   return immediateFailedFuture(new IllegalArgumentException("illegal range: " + s));
+               }
+               if (last + 1 > data.length) {
+                  last = data.length - 1;
                }
                out.write(data, offset, last - offset + 1);
             }
