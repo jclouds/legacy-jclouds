@@ -31,7 +31,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@Test(groups = "unit", testName = "BackoffExponentiallyAndRetryOnThrowableCallableTest")
+@Test(groups = "unit", testName = "BackoffExponentiallyAndRetryOnThrowableCallableTest", singleThreaded = true)
 public class BackoffExponentiallyAndRetryOnThrowableCallableTest {
    private Callable<String> mock;
 
