@@ -42,8 +42,8 @@ import org.jclouds.util.Throwables2;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ProvisionException;
 
@@ -82,16 +82,17 @@ public class SyncProxy implements InvocationHandler {
       this.delegateMap = delegateMap;
       this.delegate = async;
       this.declaring = declaring;
-      this.sync2Async = sync2Async;
+      this.sync2Async = ImmutableMap.copyOf(sync2Async);
       if (!declaring.isAnnotationPresent(Timeout.class)) {
          throw new IllegalArgumentException(String.format("type %s does not specify a default @Timeout", declaring));
       }
       Timeout typeTimeout = declaring.getAnnotation(Timeout.class);
       long typeNanos = convertToNanos(typeTimeout);
 
-      methodMap = Maps.newHashMap();
-      syncMethodMap = Maps.newHashMap();
-      timeoutMap = Maps.newHashMap();
+      ImmutableMap.Builder<Method, Method> methodMapBuilder = ImmutableMap.builder();
+      ImmutableMap.Builder<Method, Method> syncMethodMapBuilder = ImmutableMap.builder();
+      ImmutableMap.Builder<Method, Long> timeoutMapBuilder = ImmutableMap.builder();
+
       for (Method method : declaring.getMethods()) {
          if (!objectMethods.contains(method)) {
             Method delegatedMethod = delegate.getClass().getMethod(method.getName(), method.getParameterTypes());
@@ -99,13 +100,17 @@ public class SyncProxy implements InvocationHandler {
                throw new IllegalArgumentException(String.format(
                      "method %s has different typed exceptions than delegated method %s", method, delegatedMethod));
             if (delegatedMethod.getReturnType().isAssignableFrom(ListenableFuture.class)) {
-               timeoutMap.put(method, getTimeout(method, typeNanos, timeouts));
-               methodMap.put(method, delegatedMethod);
+               timeoutMapBuilder.put(method, getTimeout(method, typeNanos, timeouts));
+               methodMapBuilder.put(method, delegatedMethod);
             } else {
-               syncMethodMap.put(method, delegatedMethod);
+               syncMethodMapBuilder.put(method, delegatedMethod);
             }
          }
       }
+
+      methodMap = methodMapBuilder.build();
+      syncMethodMap = syncMethodMapBuilder.build();
+      timeoutMap = timeoutMapBuilder.build();
    }
 
    public Class<?> getDeclaring() {
