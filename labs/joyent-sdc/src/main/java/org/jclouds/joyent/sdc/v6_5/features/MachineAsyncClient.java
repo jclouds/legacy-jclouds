@@ -22,14 +22,12 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.joyent.sdc.v6_5.domain.Server;
+import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -40,34 +38,34 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Server via their REST API.
+ * Provides asynchronous access to Machine via their REST API.
  * <p/>
  * 
- * @author Gérald Pereira
- * @see ServerClient
- * @see <a href="http://sdc.joyent.org/sdcapi.html">api doc</a>
+ * @author Gerald Pereira
+ * @see MachineClient
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi">api doc</a>
  */
 @SkipEncoding( { '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
-public interface ServerAsyncClient {
+public interface MachineAsyncClient {
 
 	/**
-	 * @see ServerClient#listServers
+	 * @see MachineClient#listServers
 	 */
 	@GET
 	@Path("/my/machines")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-	ListenableFuture<Set<Server>> listServers();
+	ListenableFuture<Set<Machine>> listMachines();
 
 	/**
-	 * @see ServerClient#getServerDetails
+	 * @see MachineClient#getServerDetails
 	 */
 	@GET
 	@Path("/my/machines/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	ListenableFuture<Server> getServer(@PathParam("id") String id);
+	ListenableFuture<Machine> getMachine(@PathParam("id") String id);
 
 }

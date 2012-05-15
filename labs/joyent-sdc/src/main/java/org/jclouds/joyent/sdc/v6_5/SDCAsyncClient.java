@@ -19,7 +19,8 @@
 package org.jclouds.joyent.sdc.v6_5;
 
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterAsyncClient;
-import org.jclouds.joyent.sdc.v6_5.features.ServerAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.DatasetAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.MachineAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -39,9 +40,14 @@ public interface SDCAsyncClient {
    DatacenterAsyncClient getDatacenterClient();
    
    /**
-    * Provides asynchronous access to Server features.
+    * Provides asynchronous access to Machine features.
     */
    @Delegate
-   ServerAsyncClient getServerClient();
+   MachineAsyncClient getMachineClient();
 
+   /**
+    * Provides asynchronous access to Dataset features.
+    */
+   @Delegate
+   DatasetAsyncClient getDatasetClient();
 }

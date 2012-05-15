@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.joyent.sdc.v6_5.domain.Server;
+import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 import org.jclouds.joyent.sdc.v6_5.functions.internal.SDCTypeAdapters;
 
 import com.google.common.collect.ImmutableMap;
@@ -38,8 +38,8 @@ public class SDCParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Server.State.class, new SDCTypeAdapters.ServerStateAdapter(),
-    		  Server.Type.class, new SDCTypeAdapters.ServerTypeAdapter());
+      return ImmutableMap.<Type, Object> of(Machine.State.class, new SDCTypeAdapters.ServerStateAdapter(),
+    		  Type.class, new SDCTypeAdapters.SDCTypeAdapter());
    }
 
    @Override

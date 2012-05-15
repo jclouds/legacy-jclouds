@@ -20,7 +20,8 @@ package org.jclouds.joyent.sdc.v6_5.functions.internal;
 
 import java.io.IOException;
 
-import org.jclouds.joyent.sdc.v6_5.domain.Server;
+import org.jclouds.joyent.sdc.v6_5.domain.Machine;
+import org.jclouds.joyent.sdc.v6_5.domain.Type;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -31,29 +32,29 @@ import com.google.gson.stream.JsonWriter;
  */
 public class SDCTypeAdapters {
 
-	public static class ServerStateAdapter extends TypeAdapter<Server.State> {
+	public static class ServerStateAdapter extends TypeAdapter<Machine.State> {
 		@Override
-		public void write(JsonWriter writer, Server.State value)
+		public void write(JsonWriter writer, Machine.State value)
 				throws IOException {
 			writer.value(value.value());
 		}
 
 		@Override
-		public Server.State read(JsonReader reader) throws IOException {
-			return Server.State.fromValue(reader.nextString());
+		public Machine.State read(JsonReader reader) throws IOException {
+			return Machine.State.fromValue(reader.nextString());
 		}
 	}
 
-	public static class ServerTypeAdapter extends TypeAdapter<Server.Type> {
+	public static class SDCTypeAdapter extends TypeAdapter<Type> {
 		@Override
-		public void write(JsonWriter writer, Server.Type value)
+		public void write(JsonWriter writer, Type value)
 				throws IOException {
 			writer.value(value.value());
 		}
 
 		@Override
-		public Server.Type read(JsonReader reader) throws IOException {
-			return Server.Type.fromValue(reader.nextString());
+		public Type read(JsonReader reader) throws IOException {
+			return Type.fromValue(reader.nextString());
 		}
 	}
 

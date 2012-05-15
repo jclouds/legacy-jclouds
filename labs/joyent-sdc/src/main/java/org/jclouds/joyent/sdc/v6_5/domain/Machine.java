@@ -21,44 +21,22 @@ package org.jclouds.joyent.sdc.v6_5.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Listing of a server.
+ * Listing of a machine.
  * 
- * @author Gérald Pereira
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_list" />
+ * @author Gerald Pereira
+ * @see <a href= "http://apidocs.joyent.com/sdcapidoc/cloudapi/#machines" />
  */
-public class Server implements Comparable<Server> {
-
-	public static enum Type {
-		VIRTUALMACHINE, SMARTMACHINE, UNRECOGNIZED;
-
-		public static Type fromValue(String type) {
-			try {
-				return valueOf(CaseFormat.UPPER_CAMEL
-						.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type,
-								"type")));
-			} catch (IllegalArgumentException e) {
-				return UNRECOGNIZED;
-			}
-		}
-
-		public String value() {
-			return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,
-					name()));
-		}
-
-		@Override
-		public String toString() {
-			return value();
-		}
-	}
+public class Machine implements Comparable<Machine> {
 
 	public static enum State {
 		PUBLISHING, RUNNING, STOPPED, UNRECOGNIZED;
@@ -99,6 +77,7 @@ public class Server implements Comparable<Server> {
 		private Set<String> ips;
 		private Date created;
 		private Date updated;
+		private Map<String, String> metadata = ImmutableMap.of();
 
 		public Builder id(String id) {
 			this.id = id;
@@ -150,19 +129,27 @@ public class Server implements Comparable<Server> {
 			return this;
 		}
 
-		public Server build() {
-			return new Server(id, name, type, state, dataset, memorySizeMb,
-					diskSizeGb, ips, created, updated);
+		/**
+		 * @see Machine#getMetadata()
+		 */
+		public Builder metadata(Map<String, String> metadata) {
+			this.metadata = metadata;
+			return this;
 		}
 
-		public Builder fromServer(Server in) {
-			throw new UnsupportedOperationException("TODO");
+		public Machine build() {
+			return new Machine(id, name, type, state, dataset, memorySizeMb,
+					diskSizeGb, ips, created, updated, metadata);
+		}
+
+		public Builder fromMachine(Machine in) {
+			return id(in.getId()).name(in.getName()).type(in.getType()).state(
+					in.getState()).dataset(in.getDataset()).memorySizeMb(
+					in.getMemorySizeMb()).diskSizeGb(in.getDiskSizeGb()).ips(
+					in.getIps()).metadata(in.getMetadata()).created(
+					in.getCreated()).updated(in.getUpdated());
 		}
 	}
-
-	// {"id":"94eba336-ecb7-49f5-8a27-52f5e4dd57a1","name":"testJClouds","type":"virtualmachine","state":"running","dataset":"sdc:sdc:centos-5.7:1.2.1","ips":["37.153.96.62","10.224.0.63"],"memory":1024,"disk":61440,"metadata":{"root_authorized_keys":"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq5iOv6RKLLTkBSMFjv3yinF+SPWLwCUqqqs0uJUcC2rqI3SQ5JsZLg+YsjYJAhrl6EDgb8hJppBo212X0J5DQICDEpc6NosE3rnml+U89xO/n02Y6qd2/RiK5e7sE2tW2geK8mJxo/I1onddssh6UloHh4TyNTljbhgJJ0BmTtrNPMoVVu4/YFZbHPaned/r4SHmrW9bpaTLSbqujN+QTuL+WsB0vMNh2A/eBO4aXJ2YtrzuhcDBUDo3CoQLxKdLy+2jBilFbZkXnc40FE3DAYxl2kVEGhLbhfz+7HJ/D5y73UyNd8+DI865O1xnt82/oANb7S6gXWG86EPgkV6HLQ== prodcloud@ns35814.ovh.net\n"},"created":"2012-05-09T13:32:46+00:00","updated":"2012-05-09T13:32:54+00:00"}"
-	// Server [id=94eba336-ecb7-49f5-8a27-52f5e4dd57a1, name=testJClouds,
-	// state=running, type=virtualmachine]
 
 	// The globally unique id for this machine
 	protected final String id;
@@ -188,15 +175,16 @@ public class Server implements Comparable<Server> {
 	protected final Date updated;
 
 	// metadata Object[String => String] Any "extra" metadata this machine has
+	private final Map<String, String> metadata;
 
 	@Override
-	public int compareTo(Server other) {
+	public int compareTo(Machine other) {
 		return id.compareTo(other.getId());
 	}
 
-	public Server(String id, String name, Type type, State state,
+	public Machine(String id, String name, Type type, State state,
 			String dataset, int memorySizeMb, int diskSizeGb, Set<String> ips,
-			Date created, Date updated) {
+			Date created, Date updated, final Map<String, String> metadata) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -208,6 +196,7 @@ public class Server implements Comparable<Server> {
 		this.ips = ImmutableSet.<String> copyOf(ips);
 		this.created = created;
 		this.updated = updated;
+		this.metadata = metadata;
 	}
 
 	public String getId() {
@@ -250,13 +239,17 @@ public class Server implements Comparable<Server> {
 		return updated;
 	}
 
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
 		}
-		if (object instanceof Server) {
-			return Objects.equal(id, ((Server) object).id);
+		if (object instanceof Machine) {
+			return Objects.equal(id, ((Machine) object).id);
 		} else {
 			return false;
 		}
@@ -269,8 +262,10 @@ public class Server implements Comparable<Server> {
 
 	@Override
 	public String toString() {
-		return String.format(
-				"[id=%s, name=%s, type=%s, state=%s, memory=%s, disk=%s, ips=%s, created=%s, updated=%s]", id,
-				name, type.name(), state.name(),memorySizeMb,diskSizeGb,ips,created,updated);
+		return String
+				.format(
+						"[id=%s, name=%s, type=%s, state=%s, memory=%s, disk=%s, ips=%s, created=%s, updated=%s]",
+						id, name, type.name(), state.name(), memorySizeMb,
+						diskSizeGb, ips, created, updated);
 	}
 }

@@ -22,28 +22,34 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.joyent.sdc.v6_5.domain.Server;
+import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 
 
 /**
- * Provides synchronous access to Server.
+ * Provides synchronous access to Machine.
  * <p/>
  * 
- * @author Gérald Pereira
- * @see ServerAsyncClient
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @author Gerald Pereira
+ * @see MachineAsyncClient
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi">api doc</a>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ServerClient {
+public interface MachineClient {
 
    /**
-    * Get a list of all servers on this account.
+    * Lists all machines we have on record for your account.
     * 
     * @return an account's associated server objects.
     */
-   Set<Server> listServers();
+   Set<Machine> listMachines();
    
 
-   Server getServer(String id);
+   /**
+    * Gets the details for an individual machine.
+    * 
+    * @param id the id of the machine
+    * @return
+    */
+   Machine getMachine(String id);
 
 }
