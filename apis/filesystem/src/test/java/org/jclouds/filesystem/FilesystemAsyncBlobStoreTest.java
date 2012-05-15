@@ -57,6 +57,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.testng.annotations.AfterMethod;
@@ -64,7 +65,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 import com.google.inject.CreationException;
 
 /**
@@ -620,9 +624,13 @@ public class FilesystemAsyncBlobStoreTest {
 
         assertNotNull(resultBlob, "Blob exists");
         // checks file content
-        InputStream expectedFile = new FileInputStream(TARGET_CONTAINER_NAME + File.separator + blobKey);
-        InputStream currentFile = resultBlob.getPayload().getInput();
-        assertTrue(TestUtils.isSame(expectedFile, currentFile), "Blob payload differs from file content");
+        InputSupplier<FileInputStream> expectedFile =
+                Files.newInputStreamSupplier(new File(
+                TARGET_CONTAINER_NAME, blobKey));
+        InputSupplier<? extends InputStream> actualFile =
+                InputSuppliers.of(resultBlob.getPayload().getInput());
+        assertTrue(ByteStreams.equal(expectedFile, actualFile),
+                "Blob payload differs from file content");
         // metadata are verified in the test for blobMetadata, so no need to
         // perform a complete test here
         assertNotNull(resultBlob.getMetadata(), "Metadata null");
