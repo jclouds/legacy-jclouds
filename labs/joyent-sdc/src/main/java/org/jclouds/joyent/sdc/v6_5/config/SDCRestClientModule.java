@@ -32,6 +32,8 @@ import org.jclouds.joyent.sdc.v6_5.features.DatasetAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatasetClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineClient;
+import org.jclouds.joyent.sdc.v6_5.features.PackageAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.PackageClient;
 import org.jclouds.joyent.sdc.v6_5.handlers.SDCErrorHandler;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
@@ -51,6 +53,7 @@ public class SDCRestClientModule extends RestClientModule<SDCClient, SDCAsyncCli
       .put(DatacenterClient.class, DatacenterAsyncClient.class)
       .put(MachineClient.class, MachineAsyncClient.class)
       .put(DatasetClient.class, DatasetAsyncClient.class)
+      .put(PackageClient.class, PackageAsyncClient.class)
       .build();
 
    public SDCRestClientModule() {

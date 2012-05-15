@@ -11,7 +11,7 @@ import org.jclouds.joyent.sdc.v6_5.domain.Dataset;
  * <p/>
  * 
  * @author Gerald Pereira
- * @see MachineAsyncClient
+ * @see DatasetAsyncClient
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi">api doc</a>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)

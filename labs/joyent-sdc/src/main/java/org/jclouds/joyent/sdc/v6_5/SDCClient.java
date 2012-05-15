@@ -24,6 +24,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatasetClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineClient;
+import org.jclouds.joyent.sdc.v6_5.features.PackageClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -54,4 +55,10 @@ public interface SDCClient {
     */
    @Delegate
    DatasetClient getDatasetClient();
+   
+   /**
+    * Provides synchronous access to Package features.
+    */
+   @Delegate
+   PackageClient getPackageClient();
 }
