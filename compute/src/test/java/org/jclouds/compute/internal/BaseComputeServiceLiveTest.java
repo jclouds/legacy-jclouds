@@ -48,7 +48,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -105,7 +107,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Module;
 
 /**
@@ -323,7 +328,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       ComputeTestUtils.checkHttpGet(view.utils().http(), node, 8080);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = true, dependsOnMethods = "testConcurrentUseOfComputeServiceToCreateNodes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesMatching(inGroup(group));
@@ -412,6 +417,39 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       this.nodes.add(node);
    }
 
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   public void testConcurrentUseOfComputeServiceToCreateNodes() throws Exception {
+      final long timeoutMs = 20*60*1000;
+      List<String> groups = new ArrayList<String>();
+      List<ListenableFuture<NodeMetadata>> futures = new ArrayList<ListenableFuture<NodeMetadata>>();
+      ListeningExecutorService executor = MoreExecutors.listeningDecorator(context.utils().userExecutor());
+      
+      try {
+         for (int i = 0; i < 2; i++) {
+            final int groupNum = i;
+            final String group = "groupconcurrent"+groupNum;
+            groups.add(group);
+            
+            ListenableFuture<NodeMetadata> future = executor.submit(new Callable<NodeMetadata>() {
+               public NodeMetadata call() throws Exception {
+                  NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
+                           inboundPorts(22, 8080).blockOnPort(22, 300+groupNum)));
+                  getAnonymousLogger().info("Started node "+node.getId());
+                  return node;
+               }});
+            futures.add(future);
+         }
+         
+         ListenableFuture<List<NodeMetadata>> compoundFuture = Futures.allAsList(futures);
+         compoundFuture.get(timeoutMs, TimeUnit.MILLISECONDS);
+         
+      } finally {
+         for (String group : groups) {
+            client.destroyNodesMatching(inGroup(group));
+         }
+      }
+   }
+   
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testCredentialsCache() throws Exception {
       initializeContext();
