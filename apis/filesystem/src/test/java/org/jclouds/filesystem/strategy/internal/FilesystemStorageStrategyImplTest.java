@@ -51,6 +51,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
+
 /**
  * Test class for {@link FilesystemStorageStrategyImpl } class
  * 
@@ -371,10 +375,13 @@ public class FilesystemStorageStrategyImplTest {
       // write files
       storageStrategy.writePayloadOnFile(CONTAINER_NAME, blobKey, filePayload);
       // verify that the files is equal
-      String blobFullPath = TARGET_CONTAINER_NAME + FS + blobKey;
-      InputStream expectedInput = new FileInputStream(sourceFile);
-      InputStream currentInput = new FileInputStream(blobFullPath);
-      assertTrue(TestUtils.isSame(expectedInput, currentInput), "Files aren't equals");
+      File blobFullPath = new File(TARGET_CONTAINER_NAME, blobKey);
+      InputSupplier<FileInputStream> expectedInput =
+            Files.newInputStreamSupplier(sourceFile);
+      InputSupplier<FileInputStream> actualInput =
+            Files.newInputStreamSupplier(blobFullPath);
+      assertTrue(ByteStreams.equal(expectedInput, actualInput),
+            "Files are not equal");
    }
 
    public void testWritePayloadOnFile_SourceFileDoesntExist() {
