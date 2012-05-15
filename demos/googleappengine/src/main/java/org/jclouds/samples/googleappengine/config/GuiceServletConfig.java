@@ -18,10 +18,10 @@
  */
 package org.jclouds.samples.googleappengine.config;
 
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_RUNNING;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_TERMINATED;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_PORT_OPEN;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_SCRIPT_COMPLETE;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_OPEN;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +29,9 @@ import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule;
 import org.jclouds.samples.googleappengine.GetAllStatusController;
 
@@ -57,19 +56,25 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
-      Properties props = loadJCloudsProperties(servletContextEvent);
-      props.setProperty(PROPERTY_TIMEOUT_NODE_TERMINATED, "25000");
-      props.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, "25000");
-      props.setProperty(PROPERTY_TIMEOUT_SCRIPT_COMPLETE, "25000");
-      props.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, "25000");
+      Properties overrides = loadJCloudsProperties(servletContextEvent);
+      overrides.setProperty(TIMEOUT_NODE_TERMINATED, "25000");
+      overrides.setProperty(TIMEOUT_NODE_RUNNING, "25000");
+      overrides.setProperty(TIMEOUT_SCRIPT_COMPLETE, "25000");
+      overrides.setProperty(TIMEOUT_PORT_OPEN, "25000");
 
       // note that this module hooks into the async urlfetchservice
       ImmutableSet<Module> modules = ImmutableSet.<Module> of(new AsyncGoogleAppEngineConfigurationModule());
 
-      blobsStoreContexts = ImmutableSet.<BlobStoreContext> of(new BlobStoreContextFactory().createContext("aws-s3",
-            modules, props));
-      computeServiceContexts = ImmutableSet.<ComputeServiceContext> of(new ComputeServiceContextFactory()
-            .createContext("aws-ec2", modules, props));
+      blobsStoreContexts = ImmutableSet.of(
+            ContextBuilder.newBuilder("hpcloud-objectstorage")
+                          .modules(modules)
+                          .overrides(overrides)
+                          .buildView(BlobStoreContext.class));
+      computeServiceContexts = ImmutableSet.of(
+            ContextBuilder.newBuilder("hpcloud-compute")
+                          .modules(modules)
+                          .overrides(overrides)
+                          .buildView(ComputeServiceContext.class));
 
       super.contextInitialized(servletContextEvent);
    }

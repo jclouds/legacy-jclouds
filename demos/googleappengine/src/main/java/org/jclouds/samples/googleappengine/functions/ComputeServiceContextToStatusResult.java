@@ -18,6 +18,8 @@
  */
 package org.jclouds.samples.googleappengine.functions;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -38,7 +40,7 @@ public class ComputeServiceContextToStatusResult implements Function<ComputeServ
    protected Logger logger = Logger.NULL;
 
    public StatusResult apply(ComputeServiceContext in) {
-      String host = in.getProviderSpecificContext().getEndpoint().getHost();
+      String host = URI.create(in.unwrap().getProviderMetadata().getEndpoint()).getHost();
       String status;
       String name = "not found";
       try {
@@ -51,6 +53,6 @@ public class ComputeServiceContextToStatusResult implements Function<ComputeServ
          logger.error(e, "Error listing context %s", in);
          status = (e.getMessage());
       }
-      return new StatusResult(in.getProviderSpecificContext().getId(), host, name, status);
+      return new StatusResult(in.unwrap().getId(), host, name, status);
    }
 }

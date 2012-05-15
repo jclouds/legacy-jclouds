@@ -18,6 +18,8 @@
  */
 package org.jclouds.samples.googleappengine.functions;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -38,7 +40,7 @@ public class BlobStoreContextToStatusResult implements Function<BlobStoreContext
    protected Logger logger = Logger.NULL;
 
    public StatusResult apply(BlobStoreContext in) {
-      String host = in.getProviderSpecificContext().getEndpoint().getHost();
+      String host = URI.create(in.unwrap().getProviderMetadata().getEndpoint()).getHost();
       String status;
       String name = "not found";
       try {
@@ -51,6 +53,6 @@ public class BlobStoreContextToStatusResult implements Function<BlobStoreContext
          logger.error(e, "Error listing context %s", in);
          status = (e.getMessage());
       }
-      return new StatusResult(in.getProviderSpecificContext().getId(), host, name, status);
+      return new StatusResult(in.unwrap().getId(), host, name, status);
    }
 }

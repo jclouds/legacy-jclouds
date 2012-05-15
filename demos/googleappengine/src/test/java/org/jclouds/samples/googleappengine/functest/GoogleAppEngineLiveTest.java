@@ -48,14 +48,14 @@ public class GoogleAppEngineLiveTest {
             throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
-      String identity = checkNotNull(System.getProperty("test.aws.identity"),
-               "test.aws.identity");
-      String credential = checkNotNull(System.getProperty("test.aws.credential"),
-               "test.aws.credential");
+      String identity = checkNotNull(System.getProperty("test.hpcloud.identity"),
+               "test.hpcloud.identity");
+      String credential = checkNotNull(System.getProperty("test.hpcloud.credential"),
+               "test.hpcloud.credential");
 
       /**
-       * Since both s3 and ec2 use the same credentials, we can take a shortcut and specify both
-       * here:
+       * Since both objectstorage and compute use the same credentials, we can
+       * take a shortcut and specify both here:
        */
       props.setProperty("jclouds.identity", identity);
       props.setProperty("jclouds.credential", credential);
