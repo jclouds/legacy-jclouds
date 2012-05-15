@@ -40,29 +40,22 @@ public class ParsePackageTest extends BaseItemParserTest<org.jclouds.joyent.sdc.
       return "/package.json";
    }
 
-   
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
    public org.jclouds.joyent.sdc.v6_5.domain.Package expected() {
-      return org.jclouds.joyent.sdc.v6_5.domain.Package
-            .builder()
-            .name("Small 1GB")
-            .memorySizeMb(1024)
-            .diskSizeGb(30720)
-            .swapSizeMb(2048)
-            .isDefault(true)
-            .build();
+      return org.jclouds.joyent.sdc.v6_5.domain.Package.builder().name("Small 1GB").memorySizeMb(1024)
+            .diskSizeGb(30720).swapSizeMb(2048).isDefault(true).build();
    }
 
    protected Injector injector() {
       return Guice.createInjector(new SDCParserModule(), new GsonModule() {
 
-          @Override
-          protected void configure() {
-             bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-             super.configure();
-          }
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
 
-       });
+      });
    }
 }

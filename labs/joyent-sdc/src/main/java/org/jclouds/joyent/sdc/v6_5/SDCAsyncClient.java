@@ -33,13 +33,13 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface SDCAsyncClient {
-  
+
    /**
     * Provides asynchronous access to Datacenter features.
     */
    @Delegate
    DatacenterAsyncClient getDatacenterClient();
-   
+
    /**
     * Provides asynchronous access to Machine features.
     */
@@ -51,7 +51,7 @@ public interface SDCAsyncClient {
     */
    @Delegate
    DatasetAsyncClient getDatasetClient();
-   
+
    /**
     * Provides asynchronous access to Package features.
     */

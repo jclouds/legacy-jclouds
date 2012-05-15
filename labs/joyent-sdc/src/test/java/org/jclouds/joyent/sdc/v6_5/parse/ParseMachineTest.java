@@ -55,24 +55,25 @@ public class ParseMachineTest extends BaseItemParserTest<Machine> {
             .type(Type.VIRTUALMACHINE)
             .state(Machine.State.STOPPED)
             .dataset("sdc:sdc:centos-5.7:1.2.1")
-            .ips(ImmutableSet. <String>builder().add("37.153.96.62").add("10.224.0.63").build())
+            .ips(ImmutableSet.<String> builder().add("37.153.96.62").add("10.224.0.63").build())
             .memorySizeMb(1024)
             .diskSizeGb(61440)
-            .metadata(ImmutableMap. <String,String>builder().put("root_authorized_keys","ssh-rsa XXXXXX== test@xxxx.ovh.net\n").build())
+            .metadata(
+                  ImmutableMap.<String, String> builder()
+                        .put("root_authorized_keys", "ssh-rsa XXXXXX== test@xxxx.ovh.net\n").build())
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-05-09T13:32:46+00:00"))
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-05-11T08:44:53+00:00"))
-            .build();
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-05-11T08:44:53+00:00")).build();
    }
 
    protected Injector injector() {
       return Guice.createInjector(new SDCParserModule(), new GsonModule() {
 
-          @Override
-          protected void configure() {
-             bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-             super.configure();
-          }
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
 
-       });
+      });
    }
 }

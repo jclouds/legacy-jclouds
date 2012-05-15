@@ -42,11 +42,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * @see <a href="http://sdc.joyent.org/sdcapi.html">api doc</a>
  */
-@SkipEncoding( { '/', '=' })
-@Headers(keys="X-Api-Version", values="{jclouds.api-version}")
+@SkipEncoding({ '/', '=' })
+@Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
 public interface DatacenterAsyncClient {
-   
+
    /**
     * @see DatacenterClient#getDatacenters
     */

@@ -41,50 +41,37 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "ParseDatasetListTest")
 public class ParseDatasetListTest extends BaseSetParserTest<Dataset> {
 
-	@Override
-	public String resource() {
-		return "/dataset_list.json";
-	}
+   @Override
+   public String resource() {
+      return "/dataset_list.json";
+   }
 
-	@Override
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Set<Dataset> expected() {
-		return ImmutableSet
-				.of(
-						Dataset
-			            .builder()
-			            .id("e4cd7b9e-4330-11e1-81cf-3bb50a972bda")
-			            .name("centos-6")
-			            .urn("sdc:sdc:centos-6:1.0.1")
-			            .type(Type.VIRTUALMACHINE)
-			            .version("1.0.1")
-			            .defaultDataset(false)
-			            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-02-13T06:30:33+00:00"))
-			            .build(),
-								
-			            Dataset
-			            .builder()
-			            .id("e62c30b4-cdda-11e0-9dd4-af4d032032e3")
-			            .name("nodejs")
-			            .urn("sdc:sdc:nodejs:1.2.3")
-			            .type(Type.SMARTMACHINE)
-			            .version("1.2.3")
-			            .defaultDataset(false)
-			            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-09-15T08:15:29+00:00"))
-			            .build()
+   @Override
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Set<Dataset> expected() {
+      return ImmutableSet.of(
+            Dataset.builder().id("e4cd7b9e-4330-11e1-81cf-3bb50a972bda").name("centos-6").urn("sdc:sdc:centos-6:1.0.1")
+                  .type(Type.VIRTUALMACHINE).version("1.0.1").isDefault(false)
+                  .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-02-13T06:30:33+00:00"))
+                  .build(),
 
-				);
-	}
+            Dataset.builder().id("e62c30b4-cdda-11e0-9dd4-af4d032032e3").name("nodejs").urn("sdc:sdc:nodejs:1.2.3")
+                  .type(Type.SMARTMACHINE).version("1.2.3").isDefault(false)
+                  .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-09-15T08:15:29+00:00"))
+                  .build()
 
-	protected Injector injector() {
-		return Guice.createInjector(new SDCParserModule(), new GsonModule() {
+      );
+   }
 
-			@Override
-			protected void configure() {
-				bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-				super.configure();
-			}
+   protected Injector injector() {
+      return Guice.createInjector(new SDCParserModule(), new GsonModule() {
 
-		});
-	}
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
+
+      });
+   }
 }

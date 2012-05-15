@@ -41,21 +41,20 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "SDCErrorHandlerTest")
 public class SDCErrorHandlerTest {
 
-
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-            Class<? extends Exception> expected) {
+         Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/plain", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-            String content, Class<? extends Exception> expected) {
+         String content, Class<? extends Exception> expected) {
 
       SDCErrorHandler function = new SDCErrorHandler();
 
       HttpCommand command = createMockBuilder(HttpCommand.class).createMock();
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-               .toInputStream(content)));
+            .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
@@ -86,6 +85,5 @@ public class SDCErrorHandlerTest {
       });
       return null;
    }
-
 
 }

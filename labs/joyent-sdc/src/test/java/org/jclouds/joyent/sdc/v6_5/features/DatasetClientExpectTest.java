@@ -37,34 +37,30 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "DatasetClientExpectTest")
 public class DatasetClientExpectTest extends BaseSDCClientExpectTest {
-	HttpRequest listDatasets = HttpRequest.builder().method("GET").endpoint(
-			URI.create("https://api.joyentcloud.com/my/datasets")).headers(
-			ImmutableMultimap.<String, String> builder().put("X-Api-Version",
-					"~6.5").put("Accept", "application/json").put(
-					"Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-					.build()).build();
+   HttpRequest listDatasets = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://api.joyentcloud.com/my/datasets"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
+                     .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                     .build()).build();
 
-	public void testListDatasetsWhenResponseIs2xx() {
-		HttpResponse listDatasetsResponse = HttpResponse.builder()
-				.statusCode(200).payload(
-						payloadFromResource("/dataset_list.json")).build();
+   public void testListDatasetsWhenResponseIs2xx() {
+      HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/dataset_list.json")).build();
 
-		SDCClient clientWhenDatasetsExists = requestSendsResponse(listDatasets,
-				listDatasetsResponse);
+      SDCClient clientWhenDatasetsExists = requestSendsResponse(listDatasets, listDatasetsResponse);
 
-		assertEquals(
-				clientWhenDatasetsExists.getDatasetClient().listDatasets().toString(),
-				new ParseDatasetListTest().expected().toString());
-	}
+      assertEquals(clientWhenDatasetsExists.getDatasetClient().listDatasets().toString(), new ParseDatasetListTest()
+            .expected().toString());
+   }
 
-	public void testListDatasetsWhenResponseIs404() {
-		HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(
-				404).build();
+   public void testListDatasetsWhenResponseIs404() {
+      HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(404).build();
 
-		SDCClient listDatasetsWhenNone = requestSendsResponse(listDatasets,
-				listDatasetsResponse);
+      SDCClient listDatasetsWhenNone = requestSendsResponse(listDatasets, listDatasetsResponse);
 
-		assertEquals(listDatasetsWhenNone.getDatasetClient().listDatasets(),
-				ImmutableSet.of());
-	}
+      assertEquals(listDatasetsWhenNone.getDatasetClient().listDatasets(), ImmutableSet.of());
+   }
 }

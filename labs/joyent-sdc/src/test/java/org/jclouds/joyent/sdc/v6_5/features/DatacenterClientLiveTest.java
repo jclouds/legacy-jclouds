@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "DatacenterClientLiveTest")
 public class DatacenterClientLiveTest extends BaseSDCClientLiveTest {
 
-   public void testGetDatacenters(){
+   public void testGetDatacenters() {
       Map<String, URI> dcs = sdcContext.getApi().getDatacenterClient().getDatacenters();
       assertNotNull(dcs);
       assertTrue(dcs.size() > 0);

@@ -43,31 +43,23 @@ public class ParseDatasetTest extends BaseItemParserTest<Dataset> {
       return "/dataset.json";
    }
 
-   
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
    public Dataset expected() {
-      return Dataset
-            .builder()
-            .id("e4cd7b9e-4330-11e1-81cf-3bb50a972bda")
-            .name("centos-6")
-            .urn("sdc:sdc:centos-6:1.0.1")
-            .type(Type.VIRTUALMACHINE)
-            .version("1.0.1")
-            .defaultDataset(false)
-            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-02-13T06:30:33+00:00"))
-            .build();
+      return Dataset.builder().id("e4cd7b9e-4330-11e1-81cf-3bb50a972bda").name("centos-6")
+            .urn("sdc:sdc:centos-6:1.0.1").type(Type.VIRTUALMACHINE).version("1.0.1").isDefault(false)
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-02-13T06:30:33+00:00")).build();
    }
 
    protected Injector injector() {
       return Guice.createInjector(new SDCParserModule(), new GsonModule() {
 
-          @Override
-          protected void configure() {
-             bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-             super.configure();
-          }
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
 
-       });
+      });
    }
 }

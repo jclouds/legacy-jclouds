@@ -17,18 +17,19 @@ import org.jclouds.joyent.sdc.v6_5.domain.Dataset;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface DatasetClient {
 
-	/**
-	 * Provides a list of datasets available in this datacenter.
-	 * @return 
-	 */
-	Set<Dataset> listDatasets();
+   /**
+    * Provides a list of datasets available in this datacenter.
+    * 
+    * @return
+    */
+   Set<Dataset> listDatasets();
 
-	/**
-	 * Gets an individual dataset by id.
-	 * 
-	 * @param id
-	 *            the id of the dataset
-	 * @return
-	 */
-	Dataset getDataset(String id);
+   /**
+    * Gets an individual dataset by id.
+    * 
+    * @param id
+    *           the id of the dataset
+    * @return
+    */
+   Dataset getDataset(String id);
 }

@@ -16,18 +16,19 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface PackageClient {
 
-	/**
-	 * Provides a list of packages available in this datacenter.
-	 * @return 
-	 */
-	Set<org.jclouds.joyent.sdc.v6_5.domain.Package> listPackages();
+   /**
+    * Provides a list of packages available in this datacenter.
+    * 
+    * @return
+    */
+   Set<org.jclouds.joyent.sdc.v6_5.domain.Package> listPackages();
 
-	/**
-	 * Gets an individual package by id.
-	 * 
-	 * @param name
-	 *            the name of the package
-	 * @return
-	 */
-	org.jclouds.joyent.sdc.v6_5.domain.Package getPackage(String name);
+   /**
+    * Gets an individual package by id.
+    * 
+    * @param name
+    *           the name of the package
+    * @return
+    */
+   org.jclouds.joyent.sdc.v6_5.domain.Package getPackage(String name);
 }

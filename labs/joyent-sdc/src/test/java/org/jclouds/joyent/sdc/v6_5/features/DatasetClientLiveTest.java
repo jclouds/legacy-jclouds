@@ -18,9 +18,9 @@
  */
 package org.jclouds.joyent.sdc.v6_5.features;
 
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.Set;
 
@@ -34,17 +34,16 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "DatasetClientLiveTest")
 public class DatasetClientLiveTest extends BaseSDCClientLiveTest {
 
-	public void testListDatasets() {
-		Set<Dataset> datasets = sdcContext.getApi().getDatasetClient()
-				.listDatasets();
-		assertNotNull(datasets);
-		assertTrue(datasets.size() > 0);
-	}
+   public void testListDatasets() {
+      Set<Dataset> datasets = sdcContext.getApi().getDatasetClient().listDatasets();
+      assertNotNull(datasets);
+      assertTrue(datasets.size() > 0);
+   }
 
-	public void testGetDataset() {
-		final String id = "e4cd7b9e-4330-11e1-81cf-3bb50a972bda";
-		Dataset dataset = sdcContext.getApi().getDatasetClient().getDataset(id);
-		assertNotNull(dataset);
-		assertEquals(dataset.getId(), id);
-	}
+   public void testGetDataset() {
+      final String id = "e4cd7b9e-4330-11e1-81cf-3bb50a972bda";
+      Dataset dataset = sdcContext.getApi().getDatasetClient().getDataset(id);
+      assertNotNull(dataset);
+      assertEquals(dataset.getId(), id);
+   }
 }

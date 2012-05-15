@@ -26,7 +26,7 @@ import org.jclouds.rest.internal.BaseRestClientExpectTest;
  * @author Adrian Cole
  */
 public class BaseSDCExpectTest<T> extends BaseRestClientExpectTest<T> {
-  
+
    public BaseSDCExpectTest() {
       provider = "joyent-sdc";
    }

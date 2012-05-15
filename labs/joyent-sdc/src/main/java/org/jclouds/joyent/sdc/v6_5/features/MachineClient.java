@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 
-
 /**
  * Provides synchronous access to Machine.
  * <p/>
@@ -42,12 +41,12 @@ public interface MachineClient {
     * @return an account's associated machine objects.
     */
    Set<Machine> listMachines();
-   
 
    /**
     * Gets the details for an individual machine.
     * 
-    * @param id the id of the machine
+    * @param id
+    *           the id of the machine
     * @return
     */
    Machine getMachine(String id);

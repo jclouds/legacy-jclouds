@@ -45,27 +45,27 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see MachineClient
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi">api doc</a>
  */
-@SkipEncoding( { '/', '=' })
+@SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
 public interface MachineAsyncClient {
 
-	/**
-	 * @see MachineClient#listMachines
-	 */
-	@GET
-	@Path("/my/machines")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-	ListenableFuture<Set<Machine>> listMachines();
+   /**
+    * @see MachineClient#listMachines
+    */
+   @GET
+   @Path("/my/machines")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<Machine>> listMachines();
 
-	/**
-	 * @see MachineClient#getMachineDetails
-	 */
-	@GET
-	@Path("/my/machines/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	ListenableFuture<Machine> getMachine(@PathParam("id") String id);
+   /**
+    * @see MachineClient#getMachineDetails
+    */
+   @GET
+   @Path("/my/machines/{id}")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Machine> getMachine(@PathParam("id") String id);
 
 }

@@ -29,128 +29,121 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Package implements Comparable<Package> {
 
+   public static Builder builder() {
+      return new Builder();
+   }
 
-	public static Builder builder() {
-		return new Builder();
-	}
+   public static class Builder {
+      private String name;
+      private int memorySizeMb;
+      private int diskSizeGb;
+      private int swapSizeMb;
+      private boolean isDefault;
 
-	public static class Builder {
-		private String name;
-		private int memorySizeMb;
-		private int diskSizeGb;
-		private int swapSizeMb;
-		private boolean defaultPackage;
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
 
-		public Builder name(String name) {
-			this.name = name;
-			return this;
-		}
+      public Builder memorySizeMb(int memorySizeMb) {
+         this.memorySizeMb = memorySizeMb;
+         return this;
+      }
 
-		public Builder memorySizeMb(int memorySizeMb) {
-			this.memorySizeMb = memorySizeMb;
-			return this;
-		}
+      public Builder diskSizeGb(int diskSizeGb) {
+         this.diskSizeGb = diskSizeGb;
+         return this;
+      }
 
-		public Builder diskSizeGb(int diskSizeGb) {
-			this.diskSizeGb = diskSizeGb;
-			return this;
-		}
+      public Builder swapSizeMb(int swapSizeMb) {
+         this.swapSizeMb = swapSizeMb;
+         return this;
+      }
 
-		public Builder swapSizeMb(int swapSizeMb) {
-			this.swapSizeMb = swapSizeMb;
-			return this;
-		}
+      public Builder isDefault(boolean isDefault) {
+         this.isDefault = isDefault;
+         return this;
+      }
 
-		public Builder isDefault(boolean defaultPackage) {
-			this.defaultPackage = defaultPackage;
-			return this;
-		}
+      public Package build() {
+         return new Package(name, memorySizeMb, diskSizeGb, swapSizeMb, isDefault);
+      }
 
+      public Builder fromPackage(Package in) {
+         return name(in.getName()).memorySizeMb(in.getMemorySizeMb()).diskSizeGb(in.getDiskSizeGb())
+               .swapSizeMb(in.getSwapSizeMb()).isDefault(in.isDefault());
+      }
+   }
 
-		public Package build() {
-			return new Package(name, memorySizeMb,
-					diskSizeGb, swapSizeMb, defaultPackage);
-		}
+   // The "friendly" name for this machine
+   protected final String name;
+   // The amount of memory this package has (Mb)
+   @SerializedName("memory")
+   protected final int memorySizeMb;
+   // The amount of disk this package has (Gb)
+   @SerializedName("disk")
+   protected final int diskSizeGb;
+   // The amount of swap this package has (Gb)
+   @SerializedName("swap")
+   protected final int swapSizeMb;
+   // Whether this is the default package in this datacenter
+   @SerializedName("default")
+   protected final boolean isDefault;
 
-		public Builder fromPackage(Package in) {
-			return name(in.getName()).memorySizeMb(
-					in.getMemorySizeMb()).diskSizeGb(in.getDiskSizeGb()).swapSizeMb(in.getSwapSizeMb()).isDefault(in.isDefault());
-		}
-	}
+   @Override
+   public int compareTo(Package other) {
+      return name.compareTo(other.getName());
+   }
 
-	// The "friendly" name for this machine
-	protected final String name;
-	// The amount of memory this package has (Mb)
-	@SerializedName("memory")
-	protected final int memorySizeMb;
-	// The amount of disk this package has (Gb)
-	@SerializedName("disk")
-	protected final int diskSizeGb;
-	// The amount of swap this package has (Gb)
-	@SerializedName("swap")
-	protected final int swapSizeMb;
-	// Whether this is the default package in this datacenter
-	@SerializedName("default")
-	protected final boolean defaultPackage;
+   public Package(String name, int memorySizeMb, int diskSizeGb, int swapSizeMb, boolean isDefault) {
+      super();
+      this.name = name;
+      this.memorySizeMb = memorySizeMb;
+      this.diskSizeGb = diskSizeGb;
+      this.swapSizeMb = swapSizeMb;
+      this.isDefault = isDefault;
+   }
 
-	@Override
-	public int compareTo(Package other) {
-		return name.compareTo(other.getName());
-	}
+   public String getName() {
+      return name;
+   }
 
-	public Package(String name, int memorySizeMb, int diskSizeGb,
-			int swapSizeMb, boolean defaultPackage) {
-		super();
-		this.name = name;
-		this.memorySizeMb = memorySizeMb;
-		this.diskSizeGb = diskSizeGb;
-		this.swapSizeMb = swapSizeMb;
-		this.defaultPackage = defaultPackage;
-	}
+   public int getMemorySizeMb() {
+      return memorySizeMb;
+   }
 
-	public String getName() {
-		return name;
-	}
+   public int getDiskSizeGb() {
+      return diskSizeGb;
+   }
 
-	public int getMemorySizeMb() {
-		return memorySizeMb;
-	}
+   public int getSwapSizeMb() {
+      return swapSizeMb;
+   }
 
-	public int getDiskSizeGb() {
-		return diskSizeGb;
-	}
+   public boolean isDefault() {
+      return isDefault;
+   }
 
-	public int getSwapSizeMb() {
-		return swapSizeMb;
-	}
+   @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Package) {
+         return Objects.equal(name, ((Package) object).name);
+      } else {
+         return false;
+      }
+   }
 
-	public boolean isDefault() {
-		return defaultPackage;
-	}
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(name);
+   }
 
-	@Override
-	public boolean equals(Object object) {
-		if (this == object) {
-			return true;
-		}
-		if (object instanceof Package) {
-			return Objects.equal(name, ((Package) object).name);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(name);
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format(
-						"[name=%s, memory=%s, disk=%s, swap=%s, default=%s]",
-						name, memorySizeMb,
-						diskSizeGb, swapSizeMb, defaultPackage);
-	}
+   @Override
+   public String toString() {
+      return String.format("[name=%s, memory=%s, disk=%s, swap=%s, default=%s]", name, memorySizeMb, diskSizeGb,
+            swapSizeMb, isDefault);
+   }
 }

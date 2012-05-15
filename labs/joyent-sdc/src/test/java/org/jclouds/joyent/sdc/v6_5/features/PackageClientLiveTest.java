@@ -18,9 +18,9 @@
  */
 package org.jclouds.joyent.sdc.v6_5.features;
 
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.Set;
 
@@ -33,17 +33,16 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "PackageClientLiveTest")
 public class PackageClientLiveTest extends BaseSDCClientLiveTest {
 
-	public void testListPackages() {
-		Set<org.jclouds.joyent.sdc.v6_5.domain.Package> packages = sdcContext.getApi().getPackageClient()
-				.listPackages();
-		assertNotNull(packages);
-		assertTrue(packages.size() > 0);
-	}
+   public void testListPackages() {
+      Set<org.jclouds.joyent.sdc.v6_5.domain.Package> packages = sdcContext.getApi().getPackageClient().listPackages();
+      assertNotNull(packages);
+      assertTrue(packages.size() > 0);
+   }
 
-	public void testGetPackage() {
-		final String name = "Small 1GB";
-		org.jclouds.joyent.sdc.v6_5.domain.Package packageSDC = sdcContext.getApi().getPackageClient().getPackage(name);
-		assertNotNull(packageSDC);
-		assertEquals(packageSDC.getName(), name);
-	}
+   public void testGetPackage() {
+      final String name = "Small 1GB";
+      org.jclouds.joyent.sdc.v6_5.domain.Package packageSDC = sdcContext.getApi().getPackageClient().getPackage(name);
+      assertNotNull(packageSDC);
+      assertEquals(packageSDC.getName(), name);
+   }
 }

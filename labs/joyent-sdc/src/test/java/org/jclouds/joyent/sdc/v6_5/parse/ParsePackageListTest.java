@@ -39,46 +39,32 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "ParsePackageListTest")
 public class ParsePackageListTest extends BaseSetParserTest<Package> {
 
-	@Override
-	public String resource() {
-		return "/package_list.json";
-	}
+   @Override
+   public String resource() {
+      return "/package_list.json";
+   }
 
-	@Override
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Set<Package> expected() {
-		return ImmutableSet
-				.of(
-						 org.jclouds.joyent.sdc.v6_5.domain.Package
-				            .builder()
-				            .name("Small 1GB")
-				            .memorySizeMb(1024)
-				            .diskSizeGb(30720)
-				            .swapSizeMb(2048)
-				            .isDefault(true)
-				            .build(),
-								
-				            org.jclouds.joyent.sdc.v6_5.domain.Package
-				            .builder()
-				            .name("Medium 2GB")
-				            .memorySizeMb(2048)
-				            .diskSizeGb(61440)
-				            .swapSizeMb(4096)
-				            .isDefault(false)
-				            .build()
+   @Override
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Set<Package> expected() {
+      return ImmutableSet.of(org.jclouds.joyent.sdc.v6_5.domain.Package.builder().name("Small 1GB").memorySizeMb(1024)
+            .diskSizeGb(30720).swapSizeMb(2048).isDefault(true).build(),
 
-				);
-	}
+      org.jclouds.joyent.sdc.v6_5.domain.Package.builder().name("Medium 2GB").memorySizeMb(2048).diskSizeGb(61440)
+            .swapSizeMb(4096).isDefault(false).build()
 
-	protected Injector injector() {
-		return Guice.createInjector(new SDCParserModule(), new GsonModule() {
+      );
+   }
 
-			@Override
-			protected void configure() {
-				bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-				super.configure();
-			}
+   protected Injector injector() {
+      return Guice.createInjector(new SDCParserModule(), new GsonModule() {
 
-		});
-	}
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
+
+      });
+   }
 }

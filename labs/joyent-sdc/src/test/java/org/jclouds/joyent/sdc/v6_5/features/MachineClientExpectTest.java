@@ -37,34 +37,29 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "MachineClientExpectTest")
 public class MachineClientExpectTest extends BaseSDCClientExpectTest {
-	HttpRequest listMachines = HttpRequest.builder().method("GET").endpoint(
-			URI.create("https://api.joyentcloud.com/my/machines")).headers(
-			ImmutableMultimap.<String, String> builder().put("X-Api-Version",
-					"~6.5").put("Accept", "application/json").put(
-					"Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-					.build()).build();
+   HttpRequest listMachines = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://api.joyentcloud.com/my/machines"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
+                     .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                     .build()).build();
 
-	public void testListMachinesWhenResponseIs2xx() {
-		HttpResponse listMachinesResponse = HttpResponse.builder()
-				.statusCode(200).payload(
-						payloadFromResource("/machine_list.json")).build();
+   public void testListMachinesWhenResponseIs2xx() {
+      HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/machine_list.json")).build();
 
-		SDCClient clientWhenMachinesExists = requestSendsResponse(listMachines,
-				listMachinesResponse);
+      SDCClient clientWhenMachinesExists = requestSendsResponse(listMachines, listMachinesResponse);
 
-		assertEquals(
-				clientWhenMachinesExists.getMachineClient().listMachines(),
-				new ParseMachineListTest().expected());
-	}
+      assertEquals(clientWhenMachinesExists.getMachineClient().listMachines(), new ParseMachineListTest().expected());
+   }
 
-	public void testListMachinesWhenResponseIs404() {
-		HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(
-				404).build();
+   public void testListMachinesWhenResponseIs404() {
+      HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(404).build();
 
-		SDCClient listMachinesWhenNone = requestSendsResponse(listMachines,
-				listMachinesResponse);
+      SDCClient listMachinesWhenNone = requestSendsResponse(listMachines, listMachinesResponse);
 
-		assertEquals(listMachinesWhenNone.getMachineClient().listMachines(),
-				ImmutableSet.of());
-	}
+      assertEquals(listMachinesWhenNone.getMachineClient().listMachines(), ImmutableSet.of());
+   }
 }

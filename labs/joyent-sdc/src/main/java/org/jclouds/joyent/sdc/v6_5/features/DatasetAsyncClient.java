@@ -27,25 +27,25 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see DatasetClient
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi">api doc</a>
  */
-@SkipEncoding( { '/', '=' })
+@SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
 public interface DatasetAsyncClient {
-	/**
-	 * @see DatasetClient#listMachines
-	 */
-	@GET
-	@Path("/my/datasets")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-	ListenableFuture<Set<Dataset>> listDatasets();
+   /**
+    * @see DatasetClient#listMachines
+    */
+   @GET
+   @Path("/my/datasets")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<Dataset>> listDatasets();
 
-	/**
-	 * @see DatasetClient#getMachineDetails
-	 */
-	@GET
-	@Path("/my/datasets/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	ListenableFuture<Dataset> getDataset(@PathParam("id") String id);
+   /**
+    * @see DatasetClient#getMachineDetails
+    */
+   @GET
+   @Path("/my/datasets/{id}")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Dataset> getDataset(@PathParam("id") String id);
 }

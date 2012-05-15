@@ -43,7 +43,7 @@ public interface SDCClient {
     */
    @Delegate
    DatacenterClient getDatacenterClient();
-   
+
    /**
     * Provides synchronous access to Machine features.
     */
@@ -55,7 +55,7 @@ public interface SDCClient {
     */
    @Delegate
    DatasetClient getDatasetClient();
-   
+
    /**
     * Provides synchronous access to Package features.
     */
