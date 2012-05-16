@@ -26,6 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.sdc.v6_5.SDCClient;
 import org.jclouds.joyent.sdc.v6_5.internal.BaseSDCClientExpectTest;
+import org.jclouds.joyent.sdc.v6_5.parse.ParseCreatedMachineTest;
 import org.jclouds.joyent.sdc.v6_5.parse.ParseMachineListTest;
 import org.testng.annotations.Test;
 
@@ -67,4 +68,22 @@ public class MachineClientExpectTest extends BaseSDCClientExpectTest {
 		assertEquals(listMachinesWhenNone.getMachineClient().listMachines(),
 				ImmutableSet.of());
 	}
+	
+	  public void testCreateMachineWhenResponseIs202() throws Exception {
+		  HttpRequest createMachine = HttpRequest.builder().method("POST").endpoint(
+					URI.create("https://api.joyentcloud.com/my/machines")).headers(
+					ImmutableMultimap.<String, String> builder().put("X-Api-Version",
+							"~6.5").put("Accept", "application/json").put(
+							"Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+							.build()).payload(payloadFromStringWithContentType(
+				                     "{\"name\":\"testJClouds\",\"package\":\"Small 1GB\",\"dataset\":\"sdc:sdc:centos-5.7:1.2.1\"}","application/json")).build();
+
+	      HttpResponse createMachineResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+	            .payload(payloadFromResourceWithContentType("/new_machine.json","application/json; charset=UTF-8")).build();
+
+	      SDCClient clientWithNewMachine = requestSendsResponse(createMachine, createMachineResponse);
+
+	      assertEquals(clientWithNewMachine.getMachineClient().createMachine("testJClouds", "Small 1GB", "sdc:sdc:centos-5.7:1.2.1").toString(),
+	              new ParseCreatedMachineTest().expected().toString());
+	   }
 }

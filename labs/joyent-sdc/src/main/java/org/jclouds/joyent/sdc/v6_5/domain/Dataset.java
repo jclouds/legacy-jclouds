@@ -139,8 +139,8 @@ public class Dataset implements Comparable<Dataset> {
 		if (this == object) {
 			return true;
 		}
-		if (object instanceof Machine) {
-			return Objects.equal(id, ((Machine) object).id);
+		if (object instanceof Dataset) {
+			return Objects.equal(id, ((Dataset) object).id);
 		} else {
 			return false;
 		}
@@ -156,7 +156,7 @@ public class Dataset implements Comparable<Dataset> {
 		return String
 				.format(
 						"[id=%s, name=%s, type=%s, version=%s, urn=%s, default=%s, created=%s]",
-						id, name, type.name(), type.name(), version, urn,
+						id, name, type.name(), version, urn,
 						defaultDataset, created);
 	}
 }

@@ -67,4 +67,11 @@ public class DatasetClientExpectTest extends BaseSDCClientExpectTest {
 		assertEquals(listDatasetsWhenNone.getDatasetClient().listDatasets(),
 				ImmutableSet.of());
 	}
+	
+//	[id=e4cd7b9e-4330-11e1-81cf-3bb50a972bda, name=centos-6, type=VIRTUALMACHINE, version=1.0.1, urn=sdc:sdc:centos-6:1.0.1, default=false, created=Mon Feb 13 07:30:33 CET 2012], 
+//	[id=e4cd7b9e-4330-11e1-81cf-3bb50a972bda, name=centos-6, type=VIRTUALMACHINE, version=1.0.1, urn=sdc:sdc:centos-6:1.0.1, default=false, created=Mon Feb 13 07:30:33 CET 2012], 
+//	 
+//	 [id=e62c30b4-cdda-11e0-9dd4-af4d032032e3, name=nodejs, type=SMARTMACHINE, version=1.2.3, urn=sdc:sdc:nodejs:1.2.3, default=false, created=Thu Sep 15 10:15:29 CEST 2011]]
+//	 
+//	 [id=e62c30b4-cdda-11e0-9dd4-af4d032032e3, name=nodejs, type=SMARTMACHINE, version=1.2.3, urn=sdc:sdc:nodejs:1.2.3, default=false, created=Thu Sep 15 10:15:29 CEST 2011]] but got
 }
