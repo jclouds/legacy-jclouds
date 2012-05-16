@@ -24,8 +24,6 @@ import org.jclouds.gae.AsyncGaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
-import com.google.inject.Injector;
-
 /**
  * Configures {@link AsyncGaeHttpCommandExecutorService}.
  * 
@@ -35,13 +33,9 @@ import com.google.inject.Injector;
 @ConfiguresExecutorService
 @SingleThreaded
 public class AsyncGoogleAppEngineConfigurationModule extends GoogleAppEngineConfigurationModule {
-
-   public AsyncGoogleAppEngineConfigurationModule() {
-      super();
-   }
-
-   protected HttpCommandExecutorService providerHttpCommandExecutorService(Injector injector) {
-      return injector.getInstance(AsyncGaeHttpCommandExecutorService.class);
+   
+   protected void bindHttpCommandExecutorService() {
+      bind(HttpCommandExecutorService.class).to(AsyncGaeHttpCommandExecutorService.class);
    }
 
 }

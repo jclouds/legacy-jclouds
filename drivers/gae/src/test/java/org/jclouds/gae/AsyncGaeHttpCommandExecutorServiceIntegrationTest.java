@@ -22,7 +22,6 @@ import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
@@ -232,9 +231,9 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
       super.testGetStringSynch(path);
    }
 
-   // local env does not support snakeoil certs
+   // TODO: determine how to get redirects to operate
    @Override
-   @Test(enabled = true, expectedExceptions = UndeclaredThrowableException.class)
+   @Test(enabled = false)
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
          TimeoutException {
       setupApiProxy();
@@ -284,8 +283,9 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
       super.testGetStringViaRequest();
    }
 
+   // TODO: determine how to get redirects to operate
    @Override
-   @Test(enabled = true, expectedExceptions = UndeclaredThrowableException.class)
+   @Test(enabled = false)
    public void testPutRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
          TimeoutException {
       setupApiProxy();

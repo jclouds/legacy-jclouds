@@ -18,8 +18,6 @@
  */
 package org.jclouds.gae.config;
 
-import javax.inject.Singleton;
-
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
@@ -32,7 +30,6 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 /**
@@ -53,12 +50,11 @@ public class GoogleAppEngineConfigurationModule extends ExecutorServiceModule {
    protected void configure() {
       super.configure();
       bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class);
+      bindHttpCommandExecutorService();
    }
 
-   @Singleton
-   @Provides
-   protected HttpCommandExecutorService providerHttpCommandExecutorService(Injector injector) {
-      return injector.getInstance(GaeHttpCommandExecutorService.class);
+   protected void bindHttpCommandExecutorService() {
+      bind(HttpCommandExecutorService.class).to(GaeHttpCommandExecutorService.class);
    }
 
    @Provides
