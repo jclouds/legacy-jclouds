@@ -191,19 +191,25 @@ public class Image extends Resource {
          return this;
       }
    }
-
-   private final Date updated;
-   private final Date created;
+   
+   protected Image() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private Date updated;
+   private Date created;
    @SerializedName("tenant_id")
-   private final String tenantId;
+   private String tenantId;
    @SerializedName("user_id")
-   private final String userId;
-   private final Status status;
-   private final int progress;
-   private final int minDisk;
-   private final int minRam;
-   private final Resource server;
-   private final Map<String, String> metadata;
+   private String userId;
+   private Status status;
+   private int progress;
+   private int minDisk;
+   private int minRam;
+   private Resource server;
+   private Map<String, String> metadata = ImmutableMap.of();
 
    protected Image(Builder<?> builder) {
       super(builder);

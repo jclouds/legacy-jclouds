@@ -99,10 +99,16 @@ public class Endpoint implements Comparable<Endpoint> {
       }
    }
 
-   protected final boolean v1Default;
-   protected final String region;
-   protected final URI publicURL;
-   protected final URI internalURL;
+   protected Endpoint() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   protected boolean v1Default;
+   protected String region;
+   protected URI publicURL;
+   protected URI internalURL;
 
    protected Endpoint(boolean v1Default, @Nullable String region, @Nullable  URI publicURL, @Nullable URI internalURL) {
       this.v1Default = v1Default;

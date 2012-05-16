@@ -34,7 +34,6 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
@@ -302,38 +301,41 @@ public class Server extends Resource {
       }
    }
    
-   private final String uuid;
+   protected Server() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String uuid;
    @SerializedName("tenant_id")
-   private final String tenantId;
+   private String tenantId;
    @SerializedName("user_id")
-   private final String userId;
-   private final Date updated;
-   private final Date created;
-   private final String hostId;
-   private final String accessIPv4;
-   private final String accessIPv6;
-   private final Status status;
-   private final Resource image;
-   private final Resource flavor;
+   private String userId;
+   private Date updated;
+   private Date created;
+   private String hostId;
+   private String accessIPv4;
+   private String accessIPv6;
+   private Status status;
+   private Resource image;
+   private Resource flavor;
    @SerializedName("key_name")
-   private final String keyName;
+   private String keyName;
    @SerializedName("config_drive")
-   private final String configDrive;
+   private String configDrive;
    // TODO: get gson multimap adapter!
-   private final Map<String, Set<Address>> addresses;
-   private final Map<String, String> metadata;
-
+   private Map<String, Set<Address>> addresses = ImmutableMap.of();
+   private Map<String, String> metadata = ImmutableMap.of();
    // Extended status extension
    // @Prefixed("OS-EXT-STS:")
-   private final Optional<ServerExtendedStatus> extendedStatus;
-
+   private Optional<ServerExtendedStatus> extendedStatus = Optional.absent();
    // Extended server attributes extension
    // @Prefixed("OS-EXT-SRV-ATTR:")
-   private final Optional<ServerExtendedAttributes> extendedAttributes;
-
+   private Optional<ServerExtendedAttributes> extendedAttributes = Optional.absent();
    // Disk Config extension
    @SerializedName("OS-DCF:diskConfig")
-   private final Optional<String> diskConfig;
+   private Optional<String> diskConfig = Optional.absent();
 
    protected Server(Builder<?> builder) {
       super(builder);
@@ -356,28 +358,6 @@ public class Server extends Resource {
       this.extendedAttributes = Optional.fromNullable(builder.extendedAttributes);
       this.diskConfig = builder.diskConfig == null ? Optional.<String>absent() : Optional.of(builder.diskConfig);
    }
-
-   protected Server() {
-      // for GSON
-      this.uuid = null;
-      this.tenantId = null;
-      this.userId = null;
-      this.updated = null;
-      this.created = null;
-      this.hostId = null;
-      this.accessIPv4 = null;
-      this.accessIPv6 = null;
-      this.status = null;
-      this.configDrive = null;
-      this.image = null;
-      this.flavor = null;
-      this.metadata = ImmutableMap.of();
-      this.addresses = ImmutableMap.of();
-      this.keyName = null;
-      this.extendedStatus = Optional.absent();
-      this.extendedAttributes = Optional.absent();
-      this.diskConfig = Optional.absent();
-  }
 
    /**
     * only present until the id is in uuid form

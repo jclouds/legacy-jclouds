@@ -73,13 +73,19 @@ public class Ingress {
          return new Ingress(ipProtocol, fromPort, toPort);
       }
    }
-
+   
+   protected Ingress() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName(value = "ip_protocol")
-   protected final IpProtocol ipProtocol;
+   protected IpProtocol ipProtocol;
    @SerializedName(value = "from_port")
-   protected final int fromPort;
+   protected int fromPort;
    @SerializedName(value = "to_port")
-   protected final int toPort;
+   protected int toPort;
 
    protected Ingress(IpProtocol ipProtocol, int fromPort, int toPort) {
       this.fromPort = fromPort;

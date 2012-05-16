@@ -159,27 +159,33 @@ public class SimpleServerUsage {
          return this;
       }
    }
-
+   
+   protected SimpleServerUsage() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName("name")
-   private final String instanceName;
-   private final double hours;
+   private String instanceName;
+   private double hours;
    @SerializedName("memory_mb")
-   private final double flavorMemoryMb;
+   private double flavorMemoryMb;
    @SerializedName("local_gb")
-   private final double flavorLocalGb;
+   private double flavorLocalGb;
    @SerializedName("vcpus")
-   private final double flavorVcpus;
+   private double flavorVcpus;
    @SerializedName("tenant_id")
-   private final String tenantId;
+   private String tenantId;
    @SerializedName("flavor")
-   private final String flavorName;
+   private String flavorName;
    @SerializedName("started_at")
-   private final Date instanceCreated;
+   private Date instanceCreated;
    @SerializedName("ended_at")
-   private final Date instanceTerminiated;
+   private Date instanceTerminiated;
    @SerializedName("state")
-   private final Status instanceStatus;
-   private final long uptime;
+   private Status instanceStatus;
+   private long uptime;
 
    private SimpleServerUsage(Builder<?> builder) {
       this.instanceName = checkNotNull(builder.instanceName, "instanceName");

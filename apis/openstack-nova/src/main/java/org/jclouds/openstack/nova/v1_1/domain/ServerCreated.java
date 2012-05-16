@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.domain.Resource;
 
 import com.google.common.base.Objects.ToStringHelper;
@@ -68,16 +67,18 @@ public class ServerCreated extends Resource {
       }
    }
    
-   private final String adminPass;
+   protected ServerCreated() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String adminPass;
 
    protected ServerCreated(Builder<?> builder) {
       super(builder);
       this.adminPass = builder.adminPass;
    }
-
-   protected ServerCreated() {
-      this.adminPass =null;
-  }
 
    /**
     * @return the administrative password for this server. Note: this is not available in Server responses.

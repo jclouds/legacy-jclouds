@@ -95,14 +95,20 @@ public class HostResourceUsage {
          return this;
       }
    }
-
-   private final String host;
-   private final String project;
+   
+   protected HostResourceUsage() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String host;
+   private String project;
    @SerializedName(value="memory_mb")
-   private final int memoryMb;
-   private final int cpu;
+   private int memoryMb;
+   private int cpu;
    @SerializedName(value="disk_gb")
-   private final int diskGb;
+   private int diskGb;
 
    protected HostResourceUsage(Builder<?> builder) {
       this.host = checkNotNull(builder.host, "host");

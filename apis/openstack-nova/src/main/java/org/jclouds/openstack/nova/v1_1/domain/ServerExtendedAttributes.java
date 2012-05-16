@@ -93,12 +93,18 @@ public class ServerExtendedAttributes {
       }
    }
    
+   protected ServerExtendedAttributes() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName(value=PREFIX + "instance_name")
-   private final String instanceName;
+   private String instanceName;
    @SerializedName(value=PREFIX + "host")
-   private final String hostName;
+   private String hostName;
    @SerializedName(value=PREFIX + "hypervisor_hostname")
-   private final String hypervisorHostName;
+   private String hypervisorHostName;
 
    protected ServerExtendedAttributes(Builder<?> builder) {
       this.instanceName = builder.instanceName;

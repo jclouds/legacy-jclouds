@@ -122,15 +122,21 @@ public class Flavor extends Resource {
          return this;
       }
    }
-
+   
+   protected Flavor() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
    private int ram;
    private int disk;
    private int vcpus;
-   private final Optional<String> swap;
+   private Optional<String> swap = Optional.absent();
    @SerializedName("rxtx_factor")
-   private final Optional<Double> rxtxFactor;
+   private Optional<Double> rxtxFactor = Optional.absent();
    @SerializedName("OS-FLV-EXT-DATA:ephemeral")
-   private final Optional<Integer> ephemeral;
+   private Optional<Integer> ephemeral = Optional.absent();
 
    protected Flavor(Builder<?> builder) {
       super(builder);
@@ -140,12 +146,6 @@ public class Flavor extends Resource {
       this.swap = Optional.fromNullable(builder.swap);
       this.rxtxFactor = Optional.fromNullable(builder.rxtxFactor);
       this.ephemeral = Optional.fromNullable(builder.ephemeral);
-   }
-
-   protected Flavor() {
-      this.swap = Optional.absent();
-      this.rxtxFactor = Optional.absent();
-      this.ephemeral = Optional.absent();
    }
 
    public int getRam() {

@@ -73,9 +73,15 @@ public class ServerWithSecurityGroups extends Server {
          return this;
       }
    }
-
+   
+   protected ServerWithSecurityGroups() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName(value="security_groups")
-   private final Set<String> securityGroupNames;
+   private Set<String> securityGroupNames = ImmutableSet.of();
 
    protected ServerWithSecurityGroups(Builder<?> builder) {
       super(builder);

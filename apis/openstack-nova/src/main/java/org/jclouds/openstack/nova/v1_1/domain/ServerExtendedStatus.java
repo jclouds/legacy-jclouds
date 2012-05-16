@@ -94,24 +94,24 @@ public class ServerExtendedStatus {
          return this;
       }
    }
-
+   
+   protected ServerExtendedStatus() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName(value=PREFIX + "task_state")
-   private final String taskState;
+   private String taskState;
    @SerializedName(value=PREFIX + "vm_state")
-   private final String vmState;
+   private String vmState;
    @SerializedName(value=PREFIX + "power_state")
-   private final int powerState;
+   private int powerState = Integer.MIN_VALUE;
 
    protected ServerExtendedStatus(Builder<?> builder) {
       this.taskState = builder.taskState;
       this.vmState = builder.vmState;
       this.powerState = builder.powerState;
-   }
-
-   protected ServerExtendedStatus() {
-      this.taskState = null;
-      this.vmState = null;
-      this.powerState = Integer.MIN_VALUE;
    }
    
    @Nullable

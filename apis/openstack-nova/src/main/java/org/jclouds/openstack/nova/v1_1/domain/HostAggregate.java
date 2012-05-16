@@ -154,19 +154,25 @@ public class HostAggregate {
          return this;
       }
    }
-
-   private final String id;
-   private final String name;
+   
+   protected HostAggregate() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String id;
+   private String name;
    @SerializedName(value = "availability_zone")
-   private final String availabilityZone;
-   private final Set<String> hosts;
+   private String availabilityZone;
+   private Set<String> hosts = ImmutableSet.of();
    @SerializedName(value = "operational_state")
-   private final String state;
+   private String state;
    @SerializedName(value = "created_at")
-   private final Date created;
+   private Date created;
    @SerializedName(value = "updated_at")
-   private final Optional<Date> updated;
-   private final Map<String, String> metadata;
+   private Optional<Date> updated = Optional.absent();
+   private Map<String, String> metadata = ImmutableMap.of();
 
    protected HostAggregate(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");
@@ -177,18 +183,6 @@ public class HostAggregate {
       this.created = checkNotNull(builder.created, "created");
       this.updated = Optional.fromNullable(builder.updated);
       this.metadata = ImmutableMap.copyOf(checkNotNull(builder.metadata, "metadata"));
-   }
-
-   // Ensure GSON parsed objects don't have null collections or optionals
-   protected HostAggregate() {
-      this.id = null;
-      this.name = null;
-      this.availabilityZone = null;
-      this.hosts = ImmutableSet.of();
-      this.state = null;
-      this.created = null;
-      this.updated = Optional.absent();
-      this.metadata = ImmutableMap.of();
    }
 
    public String getId() {

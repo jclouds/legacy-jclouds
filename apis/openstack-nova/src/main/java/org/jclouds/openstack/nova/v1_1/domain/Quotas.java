@@ -187,28 +187,34 @@ public class Quotas {
          return this;
       }
    }
-
+   
+   protected Quotas() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName("id")
-   private final String id;
+   private String id;
    @SerializedName("metadata_items")
-   private final int metadataItems;
+   private int metadataItems;
    @SerializedName("injected_file_content_bytes")
-   private final int injectedFileContentBytes;
-   private final int volumes;
-   private final int gigabytes;
-   private final int ram;
+   private int injectedFileContentBytes;
+   private int volumes;
+   private int gigabytes;
+   private int ram;
    @SerializedName("floating_ips")
-   private final int floatingIps;
-   private final int instances;
+   private int floatingIps;
+   private int instances;
    @SerializedName("injected_files")
-   private final int injectedFiles;
-   private final int cores;
+   private int injectedFiles;
+   private int cores;
    @SerializedName("security_groups")
-   private final int securityGroups;
+   private int securityGroups;
    @SerializedName("security_group_rules")
-   private final int securityGroupRules;
+   private int securityGroupRules;
    @SerializedName("key_pairs")
-   private final int keyPairs;
+   private int keyPairs;
 
    protected Quotas(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");

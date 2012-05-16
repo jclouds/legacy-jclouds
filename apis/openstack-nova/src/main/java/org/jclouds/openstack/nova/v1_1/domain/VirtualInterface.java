@@ -82,9 +82,15 @@ public class VirtualInterface {
       }
    }
 
-   private final String id;
+   protected VirtualInterface() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String id;
    @SerializedName(value="mac_address")
-   private final String macAddress;
+   private String macAddress;
 
    protected VirtualInterface(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");

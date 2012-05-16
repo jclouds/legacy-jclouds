@@ -65,9 +65,15 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
       }
    }
 
-   protected final String name;
-   protected final int count;
-   protected final int bytes;
+   protected ContainerMetadata() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   protected String name;
+   protected int count;
+   protected int bytes;
 
    public ContainerMetadata(String name, int count, int bytes) {
       this.name = checkNotNull(name, "name");

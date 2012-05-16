@@ -177,21 +177,27 @@ public class Volume {
       }
    }
 
-   private final String id;
-   private final Status status;
-   private final int size;
+   protected Volume() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String id;
+   private Status status;
+   private int size;
    @SerializedName(value="availabilityZone")
-   private final String zone;
+   private String zone;
    @SerializedName(value="createdAt")
-   private final Date created;
-   private final Set<VolumeAttachment> attachments;
-   private final String volumeType;   
-   private final String snapshotId;
+   private Date created;
+   private Set<VolumeAttachment> attachments = ImmutableSet.of();
+   private String volumeType;   
+   private String snapshotId;
    @SerializedName(value="displayName")
-   private final String name;
+   private String name;
    @SerializedName(value="displayDescription")
-   private final String description;
-   private final Map<String, String> metadata;
+   private String description;
+   private Map<String, String> metadata = ImmutableMap.of();
 
    protected Volume(Builder<?> builder) {
       this.id = builder.id;

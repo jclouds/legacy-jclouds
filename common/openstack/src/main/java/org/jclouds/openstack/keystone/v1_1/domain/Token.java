@@ -80,8 +80,14 @@ public class Token implements Comparable<Token> {
       }
    }
 
-   protected final String id;
-   protected final Date expires;
+   protected Token() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   protected String id;
+   protected Date expires;
 
    public Token(String id, Date expires) {
       this.id = checkNotNull(id, "id");

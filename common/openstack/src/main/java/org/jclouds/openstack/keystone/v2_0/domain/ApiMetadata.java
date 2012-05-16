@@ -94,14 +94,20 @@ public class ApiMetadata extends Resource {
          return this;
       }
    }
+   
+   protected ApiMetadata() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
 
    @Nullable
-   private final String status;
+   private String status;
    @Nullable
-   private final Date updated;
+   private Date updated;
    @SerializedName(value="media-types")
    @Nullable
-   private final Set<MediaType> mediaTypes;
+   private Set<MediaType> mediaTypes = ImmutableSet.of();
 
    protected ApiMetadata(Builder<?> builder) {
       super(builder);

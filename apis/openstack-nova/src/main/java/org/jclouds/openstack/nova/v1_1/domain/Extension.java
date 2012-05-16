@@ -105,11 +105,17 @@ public class Extension extends Resource {
          return this;
       }
    }
-
-   private final URI namespace;
-   private final String alias;
-   private final Date updated;
-   private final String description;
+   
+   protected Extension() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
+   private URI namespace;
+   private String alias;
+   private Date updated;
+   private String description;
 
    protected Extension(Builder<?> builder) {
       super(builder);

@@ -116,14 +116,20 @@ public class VolumeType {
       }
    }
 
+   protected VolumeType() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    private String id;
    private String name;
    @SerializedName("created_at")
    private Date created;
    @SerializedName("updated_at")
-   private final Optional<Date> updated;
+   private Optional<Date> updated = Optional.absent();
    @SerializedName(value = "extra_specs")
-   private final Map<String, String> extraSpecs;
+   private Map<String, String> extraSpecs = ImmutableMap.of();
 
    protected VolumeType(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");
@@ -131,11 +137,6 @@ public class VolumeType {
       this.extraSpecs = checkNotNull(builder.extraSpecs, "extraSpecs");
       this.created = checkNotNull(builder.created, "created");
       this.updated = Optional.fromNullable(builder.updated);
-   }
-
-   protected VolumeType() {
-      this.updated = Optional.absent();
-      this.extraSpecs = ImmutableMap.of();
    }
 
    public String getId() {

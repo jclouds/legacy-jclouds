@@ -96,14 +96,20 @@ public class Role implements Comparable<Role> {
          return id(from.getId()).name(from.getName()).serviceId(from.getServiceId()).tenantId(from.getTenantId());
       }
    }
-
-   protected final String id;
-   protected final String name;
-   protected final String serviceId;
+   
+   protected Role() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
+   protected String id;
+   protected String name;
+   protected String serviceId;
    // renamed half-way through
    @Deprecated
    protected String tenantName;
-   protected final String tenantId;
+   protected String tenantId;
 
    protected Role(String id, String name, @Nullable String serviceId, @Nullable String tenantId) {
       this.id = checkNotNull(id, "id");

@@ -105,23 +105,23 @@ public class Resource implements Comparable<Resource> {
          return this;
       }
    }
+   
+   protected Resource() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
 
-   private final String id;
-   private final String name;
-   private final Set<Link> links;
+   private String id;
+   private String name;
+   private Set<Link> links = ImmutableSet.of();
 
    protected Resource(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");
       this.name = builder.name;
       this.links = ImmutableSet.copyOf(checkNotNull(builder.links, "links"));
    }
-
-   protected Resource() {
-      this.id = null;
-      this.name = null;
-      this.links = ImmutableSet.of();
-   }
-
+   
    /**
     * When providing an ID, it is assumed that the resource exists in the current OpenStack
     * deployment

@@ -93,21 +93,21 @@ public class User implements Comparable<User> {
          return id(from.getId()).name(from.getName()).roles(from.getRoles());
       }
    }
-
-   protected final String id;
-   protected final String name;
-   protected final Set<Role> roles;
+   
+   protected User() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
+   protected String id;
+   protected String name;
+   protected Set<Role> roles = ImmutableSet.of();
 
    protected User(String id, String name, Set<Role> roles) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.roles = ImmutableSet.copyOf(checkNotNull(roles, "roles"));
-   }
-   
-   protected User() {
-      id = null;
-      name = null;
-      roles = ImmutableSet.of();
    }
 
    /**
