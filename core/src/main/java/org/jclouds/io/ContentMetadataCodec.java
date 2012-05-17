@@ -14,7 +14,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateCodec;
-import org.jclouds.date.DateCodecs;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.logging.Logger;
 
@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.Multimap;
 import com.google.inject.ImplementedBy;
+import com.google.inject.Inject;
 
 @ImplementedBy(DefaultContentMetadataCodec.class)
 public interface ContentMetadataCodec {
@@ -53,8 +54,13 @@ public interface ContentMetadataCodec {
       @Resource
       protected Logger logger = Logger.NULL;
 
-      private final DateCodec httpExpiresDateCodec = DateCodecs.rfc1123();
+      private final DateCodec httpExpiresDateCodec;
 
+      @Inject
+      public DefaultContentMetadataCodec(DateCodecFactory dateCodecs) {
+         httpExpiresDateCodec = dateCodecs.rfc1123();
+      }
+      
       protected DateCodec getExpiresDateCodec() {
          return httpExpiresDateCodec;
       }

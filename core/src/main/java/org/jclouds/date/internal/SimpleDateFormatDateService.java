@@ -51,6 +51,11 @@ public class SimpleDateFormatDateService implements DateService {
    // @GuardedBy("this")
    private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
 
+   // See http://stackoverflow.com/questions/10584647/simpledateformat-parse-is-one-hour-out-using-rfc-1123-gmt-in-summer
+   // for why not using "zzz"
+   // @GuardedBy("this")
+   private static final SimpleDateFormat rfc1123SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyyy HH:mm:ss Z", Locale.US);
+
    // @GuardedBy("this")
    private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.US);
 
@@ -180,4 +185,26 @@ public class SimpleDateFormatDateService implements DateService {
       }
    }
 
+   @Override
+   public final String rfc1123DateFormat(Date date) {
+      synchronized (rfc1123SimpleDateFormat) {
+         return rfc1123SimpleDateFormat.format(date);
+      }
+   }
+
+   @Override
+   public final String rfc1123DateFormat() {
+      return rfc1123DateFormat(new Date());
+   }
+
+   @Override
+   public final Date rfc1123DateParse(String toParse) {
+      synchronized (rfc1123SimpleDateFormat) {
+         try {
+            return rfc1123SimpleDateFormat.parse(toParse);
+         } catch (ParseException pe) {
+            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
+         }
+      }
+   }
 }

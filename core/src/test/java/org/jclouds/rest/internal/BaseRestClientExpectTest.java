@@ -49,6 +49,8 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
+import org.jclouds.date.internal.SimpleDateCodecFactory;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -60,10 +62,10 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.io.ContentMetadataCodec;
+import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
-import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestApiMetadata;
@@ -120,7 +122,8 @@ public abstract class BaseRestClientExpectTest<S> {
 
    protected String provider = "mock";
 
-   protected ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec();
+   protected ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(
+            new SimpleDateCodecFactory(new SimpleDateFormatDateService()));
    
    /**
     * Override this to supply alternative bindings for use in the test. This is commonly used to

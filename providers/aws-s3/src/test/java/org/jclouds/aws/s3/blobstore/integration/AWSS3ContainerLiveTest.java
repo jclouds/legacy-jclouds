@@ -23,27 +23,18 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.domain.Location;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.util.Date;
-
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.date.DateCodec;
-import org.jclouds.date.DateCodecs;
-import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
-import org.jclouds.http.config.SSLModule;
-import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.jclouds.date.internal.SimpleDateCodecFactory;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.domain.Location;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.s3.blobstore.integration.S3ContainerLiveTest;
@@ -51,13 +42,10 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
 
 /**
  * @author Adrian Cole
@@ -89,12 +77,12 @@ public class AWSS3ContainerLiveTest extends S3ContainerLiveTest {
    @Test(groups = { "live" })
    public void testCreateBlobWithMalformedExpiry() throws InterruptedException, MalformedURLException, IOException {
       // Create a blob that has a malformed Expires value; requires overriding the ContentMetadataCodec in Guice...
-      final ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec() {
+      final ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(new SimpleDateCodecFactory(new SimpleDateFormatDateService())) {
          @Override
          protected DateCodec getExpiresDateCodec() {
             return new DateCodec() {
                @Override public Date toDate(String date) throws ParseException {
-                  return DateCodecs.rfc1123().toDate(date);
+                  return new Date();
                }
                @Override public String toString(Date date) {
                   return "wrong";

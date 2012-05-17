@@ -34,6 +34,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.UriBuilder;
 
+import org.jclouds.date.internal.SimpleDateCodecFactory;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -113,7 +115,8 @@ public class BackoffLimitedRetryHandlerTest {
       ExecutorService execService = Executors.newCachedThreadPool();
       BackoffLimitedRetryHandler backoff = new BackoffLimitedRetryHandler();
       HttpUtils utils = new HttpUtils(0, 500, 1, 1);
-      ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec();
+      ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(
+               new SimpleDateCodecFactory(new SimpleDateFormatDateService()));
       RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, 
                contentMetadataCodec, execService,
