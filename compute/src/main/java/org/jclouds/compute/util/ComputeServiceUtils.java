@@ -18,13 +18,8 @@
  */
 package org.jclouds.compute.util;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getStackTraceAsString;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash;
 
 import java.net.URI;
@@ -41,15 +36,12 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.net.HostAndPort;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -163,31 +155,6 @@ public class ComputeServiceUtils {
    @Deprecated
    public static Iterable<String> getSupportedProviders() {
       return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(ComputeServiceContext.class));
-   }
-
-   public static HostAndPort findReachableSocketOnNode(RetryIfSocketNotYetOpen socketTester, final NodeMetadata node,
-            final int port) {
-      checkNodeHasIps(node);
-      HostAndPort socket = null;
-      try {
-         socket = find(transform(concat(node.getPublicAddresses(), node.getPrivateAddresses()),
-                  new Function<String, HostAndPort>() {
-
-                     @Override
-                     public HostAndPort apply(String from) {
-                        return HostAndPort.fromParts(from, port);
-                     }
-                  }), socketTester);
-      } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("could not connect to any ip address port %d on node %s", port,
-                  node));
-      }
-      return socket;
-   }
-
-   public static void checkNodeHasIps(NodeMetadata node) {
-      checkState(size(concat(node.getPublicAddresses(), node.getPrivateAddresses())) > 0,
-               "node does not have IP addresses configured: " + node);
    }
 
    public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, String in,
