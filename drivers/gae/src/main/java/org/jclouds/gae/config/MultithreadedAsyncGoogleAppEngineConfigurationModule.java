@@ -18,39 +18,46 @@
  */
 package org.jclouds.gae.config;
 
-import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.gae.AsyncGaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.inject.Module;
 
 /**
  * Configures {@link AsyncGaeHttpCommandExecutorService}.
  * 
  * @author Adrian Cole
  */
+@Beta
 @ConfiguresHttpCommandExecutorService
 @ConfiguresExecutorService
-@SingleThreaded
-public class AsyncGoogleAppEngineConfigurationModule extends GoogleAppEngineConfigurationModule {
-   public AsyncGoogleAppEngineConfigurationModule() {
-      super();
-   }
-
-   public AsyncGoogleAppEngineConfigurationModule(Module executorServiceModule) {
-      super(executorServiceModule);
+public class MultithreadedAsyncGoogleAppEngineConfigurationModule extends GoogleAppEngineConfigurationModule {
+   public MultithreadedAsyncGoogleAppEngineConfigurationModule() {
+      super(new CurrentRequestExecutorServiceModule());
    }
 
    /**
     * Used when you are creating multiple contexts in the same app.
+    * 
+    * @param currentRequestThreadFactory
+    * @see CurrentRequestExecutorServiceModule#currentRequestThreadFactory
+    */
+   public MultithreadedAsyncGoogleAppEngineConfigurationModule(ListeningExecutorService currentRequestThreadFactory) {
+      super(new CurrentRequestExecutorServiceModule(currentRequestThreadFactory));
+   }
+
+   /**
+    * Used when you are creating multiple contexts in the same app.
+    * 
     * @param memoizedCurrentRequestExecutorService
     * @see CurrentRequestExecutorServiceModule#memoizedCurrentRequestExecutorService
     */
-   public AsyncGoogleAppEngineConfigurationModule(Supplier<ListeningExecutorService> memoizedCurrentRequestExecutorService) {
+   public MultithreadedAsyncGoogleAppEngineConfigurationModule(
+         Supplier<ListeningExecutorService> memoizedCurrentRequestExecutorService) {
       super(memoizedCurrentRequestExecutorService);
    }
 

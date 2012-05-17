@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.cache.CacheLoader;
 
-@Test(groups = "unit", testName = "BackoffExponentiallyAndRetryOnThrowableCacheLoaderTest")
+@Test(groups = "unit", singleThreaded = true, testName = "BackoffExponentiallyAndRetryOnThrowableCacheLoaderTest")
 public class BackoffExponentiallyAndRetryOnThrowableCacheLoaderTest {
    private CacheLoader<String, Boolean> mock;
 

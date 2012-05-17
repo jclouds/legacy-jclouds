@@ -15,8 +15,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.config.ExecutorServiceModule.DescribedFuture;
-import org.jclouds.concurrent.config.ExecutorServiceModule.DescribingExecutorService;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.common.annotations.VisibleForTesting;

@@ -205,7 +205,8 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
 
    @BeforeMethod
    void setupApiProxy() {
-      new LocalServiceTestHelper(new LocalURLFetchServiceTestConfig()).setUp();
+      LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalURLFetchServiceTestConfig());
+      helper.setUp();
    }
 
    @Override
@@ -316,6 +317,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    protected Module createConnectionModule() {
+      setupApiProxy();
       return new AsyncGoogleAppEngineConfigurationModule();
    }
 
