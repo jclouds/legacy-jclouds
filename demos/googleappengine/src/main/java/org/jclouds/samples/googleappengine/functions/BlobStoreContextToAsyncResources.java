@@ -18,41 +18,28 @@
  */
 package org.jclouds.samples.googleappengine.functions;
 
-import java.net.URI;
-
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.domain.ResourceMetadata;
 import org.jclouds.logging.Logger;
-import org.jclouds.samples.googleappengine.domain.StatusResult;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BlobStoreContextToStatusResult implements Function<BlobStoreContext, StatusResult> {
-
+public class BlobStoreContextToAsyncResources implements
+      Function<BlobStoreContext, ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>>> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public StatusResult apply(BlobStoreContext in) {
-      String host = URI.create(in.unwrap().getProviderMetadata().getEndpoint()).getHost();
-      String status;
-      String name = "not found";
-      try {
-         long start = System.currentTimeMillis();
-
-         name = String.format("%d containers", in.getBlobStore().list().size());
-
-         status = ((System.currentTimeMillis() - start) + "ms");
-      } catch (Exception e) {
-         logger.error(e, "Error listing context %s", in);
-         status = (e.getMessage());
-      }
-      return new StatusResult(in.unwrap().getId(), host, name, status);
+   public ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>> apply(BlobStoreContext in) {
+      logger.info("listing containers on %s: ", in.unwrap().getId());
+      return in.getAsyncBlobStore().list();
    }
 }

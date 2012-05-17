@@ -25,6 +25,6 @@
 <body>
 <h2>Welcome!</h2>
 Click
-<a href="/guice/status.check">here</a> to get status of cloud services.
+<a href="/guice/resources.check">here</a> to list all your cloud resources!
 </body>
 </html>

@@ -40,8 +40,6 @@
         <appengine.sdk.version>1.6.5</appengine.sdk.version>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
-        <test.hpcloud.identity>FIXME_IDENTITY</test.hpcloud.identity>
-        <test.hpcloud.credential>FIXME_CREDENTIAL</test.hpcloud.credential>
     </properties>
 
     <dependencies>
@@ -57,13 +55,13 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>hpcloud-objectstorage</artifactId>
+            <artifactId>aws-s3</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>hpcloud-compute</artifactId>
+            <artifactId>hpcloud-objectstorage</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
@@ -369,8 +367,12 @@
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <test.hpcloud.identity>${test.hpcloud.identity}</test.hpcloud.identity>
-                                        <test.hpcloud.credential>${test.hpcloud.credential}</test.hpcloud.credential>
+                                        <!-- note you can add support for new clouds by adding more entries here
+                                             after adding maven dependency  -->
+                                        <test.aws-s3.identity>${test.aws-s3.identity}</test.aws-s3.identity>
+                                        <test.aws-s3.credential>${test.aws-s3.credential}</test.aws-s3.credential>
+                                        <test.hpcloud-objectstorage.identity>${test.hpcloud-objectstorage.identity}</test.hpcloud-objectstorage.identity>
+                                        <test.hpcloud-objectstorage.credential>${test.hpcloud-objectstorage.credential}</test.hpcloud-objectstorage.credential>
                                         <appengine.sdk.root>${appengine.sdk.root}</appengine.sdk.root>
                                         <devappserver.address>${devappserver.address}</devappserver.address>
                                         <devappserver.port>${devappserver.port}</devappserver.port>

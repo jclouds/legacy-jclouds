@@ -18,14 +18,14 @@
  */
 package org.jclouds.samples.googleappengine.functions;
 
-import java.net.URI;
-
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.ResourceMetadata;
 import org.jclouds.logging.Logger;
-import org.jclouds.samples.googleappengine.domain.StatusResult;
+import org.jclouds.samples.googleappengine.domain.ResourceResult;
+import org.jclouds.samples.googleappengine.domain.ResourceResult.Builder;
 
 import com.google.common.base.Function;
 
@@ -34,25 +34,21 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ComputeServiceContextToStatusResult implements Function<ComputeServiceContext, StatusResult> {
+public class ResourceMetadataToResourceResult implements Function<ResourceMetadata<?>, ResourceResult> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public StatusResult apply(ComputeServiceContext in) {
-      String host = URI.create(in.unwrap().getProviderMetadata().getEndpoint()).getHost();
-      String status;
-      String name = "not found";
-      try {
-         long start = System.currentTimeMillis();
-
-         name = String.format("%d nodes", in.getComputeService().listNodes().size());
-
-         status = ((System.currentTimeMillis() - start) + "ms");
-      } catch (Exception e) {
-         logger.error(e, "Error listing context %s", in);
-         status = (e.getMessage());
-      }
-      return new StatusResult(in.unwrap().getId(), host, name, status);
+   public ResourceResult apply(ResourceMetadata<?> in) {
+      Builder builder = ResourceResult.builder();
+      Location provider = in.getLocation();
+      while (provider.getParent() != null)
+         provider = provider.getParent();
+      builder.provider(provider.getId());
+      builder.location(in.getLocation().getId());
+      builder.type(in.getType().toString().toLowerCase());
+      builder.id(in.getProviderId());
+      builder.name(in.getName());
+      return builder.build();
    }
 }

@@ -18,21 +18,27 @@
  */
 package org.jclouds.samples.googleappengine.functest;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.util.Maps2;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
+
 /**
  * Starts up the Google App Engine for Java Development environment and deploys an application which
- * tests Amazon EC2 and S3.
+ * tests {@link ComputeService} and {@link BlobStore}.
  * 
  * @author Adrian Cole
  */
@@ -47,21 +53,35 @@ public class GoogleAppEngineLiveTest {
    public void startDevAppServer(final String warfile, final String address, final String port)
             throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
+      
       Properties props = new Properties();
-      String identity = checkNotNull(System.getProperty("test.hpcloud.identity"),
-               "test.hpcloud.identity");
-      String credential = checkNotNull(System.getProperty("test.hpcloud.credential"),
-               "test.hpcloud.credential");
-
-      /**
-       * Since both objectstorage and compute use the same credentials, we can
-       * take a shortcut and specify both here:
-       */
-      props.setProperty("jclouds.identity", identity);
-      props.setProperty("jclouds.credential", credential);
-
+      props.putAll(stripTestPrefix(selectPropertiesForIdentityAndCredential()));
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
+   }
+
+   Map<String, String> stripTestPrefix(Map<String, String> identityCrendential) {
+      return Maps2.transformKeys(identityCrendential, new Function<String, String>() {
+
+         @Override
+         public String apply(String arg0) {
+            return arg0.replace("test.", "");
+         }
+
+      });
+   }
+
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   Map<String, String> selectPropertiesForIdentityAndCredential() {
+      return Maps.filterKeys((Map) System.getProperties(), new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            // TODO Auto-generated method stub
+            return input.matches("^test\\.[a-z0-9-]+\\.(identity|credential)$");
+         }
+
+      });
    }
 
    @Test
@@ -73,15 +93,15 @@ public class GoogleAppEngineLiveTest {
 
    @Test(invocationCount = 5, enabled = true)
    public void testGuiceJCloudsSerial() throws InterruptedException, IOException {
-      URL gurl = new URL(url, "/guice/status.check");
+      URL gurl = new URL(url, "/guice/resources.check");
       InputStream i = gurl.openStream();
       String string = Strings2.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
    }
 
-   @Test(invocationCount = 10, enabled = true, threadPoolSize = 3)
+   @Test(invocationCount = 10, enabled = false, threadPoolSize = 3)
    public void testGuiceJCloudsParallel() throws InterruptedException, IOException {
-      URL gurl = new URL(url, "/guice/status.check");
+      URL gurl = new URL(url, "/guice/resources.check");
       InputStream i = gurl.openStream();
       String string = Strings2.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
