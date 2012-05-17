@@ -37,6 +37,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Supplier;
@@ -86,13 +87,13 @@ public class TrackingJavaUrlHttpCommandExecutorService extends JavaUrlHttpComman
    }
 
    @Inject
-   public TrackingJavaUrlHttpCommandExecutorService(HttpUtils utils,
+   public TrackingJavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
             @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider, List<HttpCommand> commandsInvoked)
             throws SecurityException, NoSuchFieldException {
-      super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire, verifier,
+      super(utils, contentMetadataCodec, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire, verifier,
                untrustedSSLContextProvider);
       this.commandsInvoked = commandsInvoked;
    }

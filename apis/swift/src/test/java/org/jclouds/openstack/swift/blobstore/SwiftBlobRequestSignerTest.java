@@ -21,6 +21,7 @@ package org.jclouds.openstack.swift.blobstore;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
@@ -72,12 +73,13 @@ public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest {
       blob.getPayload().getContentMetadata().setContentLength(2l);
       blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
       blob.getPayload().getContentMetadata().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setExpires(new Date(1000));
 
       HttpRequest request = signer.signPutBlob("container", blob);
 
       assertRequestLineEquals(request, "PUT http://storage/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Auth-Token: testtoken\n");
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
 
       assertEquals(request.getFilters().size(), 0);
    }
