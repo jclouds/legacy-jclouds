@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.predicates;
+package org.jclouds.virtualbox.predicates;
 
 import java.util.concurrent.TimeUnit;
 
