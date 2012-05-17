@@ -138,6 +138,8 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client3 = createMock(SshClient.class);
             SshClient client4 = createMock(SshClient.class);
             SshClient client5 = createMock(SshClient.class);
+            SshClient client6 = createMock(SshClient.class);
+            SshClient client7 = createMock(SshClient.class);
 
             expect(
                   factory.create(HostAndPort.fromParts("144.175.1.1", 22),
@@ -211,10 +213,20 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                   factory.create(HostAndPort.fromParts("144.175.1.5", 22),
                         LoginCredentials.builder().user("root").password("password5").build())).andReturn(client5)
                   .times(2);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.6", 22),
+                        LoginCredentials.builder().user("root").password("password6").build())).andReturn(client6)
+                  .times(2);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.7", 22),
+                        LoginCredentials.builder().user("root").password("password7").build())).andReturn(client7)
+                  .times(2);
 
             runScriptAndInstallSsh(client3, "bootstrap", 3);
             runScriptAndInstallSsh(client4, "bootstrap", 4);
             runScriptAndInstallSsh(client5, "bootstrap", 5);
+            runScriptAndInstallSsh(client6, "bootstrap", 6);
+            runScriptAndInstallSsh(client7, "bootstrap", 7);
 
             expect(
                   factory.create(eq(HostAndPort.fromParts("144.175.1.1", 22)),
@@ -236,11 +248,21 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                   factory.create(eq(HostAndPort.fromParts("144.175.1.5", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client5);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.6", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client6);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.7", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client7);
 
             helloAndJava(client2);
             helloAndJava(client3);
             helloAndJava(client4);
             helloAndJava(client5);
+            helloAndJava(client6);
+            helloAndJava(client7);
 
             replay(factory);
             replay(client1);
@@ -251,6 +273,8 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             replay(client3);
             replay(client4);
             replay(client5);
+            replay(client6);
+            replay(client7);
 
             bind(SshClient.Factory.class).toInstance(factory);
          }
@@ -472,6 +496,11 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    }
 
    @Test(enabled = true, dependsOnMethods = "testTemplateMatch")
+   public void testConcurrentUseOfComputeServiceToCreateNodes() throws Exception {
+      super.testConcurrentUseOfComputeServiceToCreateNodes();
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testConcurrentUseOfComputeServiceToCreateNodes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       super.testCreateTwoNodesWithRunScript();
    }
