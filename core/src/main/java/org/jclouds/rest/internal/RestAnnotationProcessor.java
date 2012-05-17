@@ -89,6 +89,7 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -255,6 +256,7 @@ public class RestAnnotationProcessor<T> {
 
    private final ParseSax.Factory parserFactory;
    private final HttpUtils utils;
+   private final ContentMetadataCodec contentMetadataCodec;
    private final Provider<UriBuilder> uriBuilderProvider;
    private final LoadingCache<Class<?>, Boolean> seedAnnotationCache;
    private final String apiVersion;
@@ -321,11 +323,12 @@ public class RestAnnotationProcessor<T> {
    @Inject
    public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache,
             @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
-            HttpUtils utils, TypeLiteral<T> typeLiteral) throws ExecutionException {
+            HttpUtils utils, ContentMetadataCodec contentMetadataCodec, TypeLiteral<T> typeLiteral) throws ExecutionException {
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
       this.utils = utils;
+      this.contentMetadataCodec = contentMetadataCodec;
       this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       this.seedAnnotationCache = seedAnnotationCache;
       seedAnnotationCache.get(declaring);
@@ -545,8 +548,9 @@ public class RestAnnotationProcessor<T> {
             request = decorateRequest(request);
          }
 
-         if (request.getPayload() != null)
-            request.getPayload().getContentMetadata().setPropertiesFromHttpHeaders(headers);
+         if (request.getPayload() != null) {
+            contentMetadataCodec.fromHeaders(request.getPayload().getContentMetadata(), headers);
+         }
          utils.checkRequestHasRequiredProperties(request);
          return request;
       } catch (ExecutionException e) {

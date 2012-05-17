@@ -21,6 +21,7 @@ package org.jclouds.blobstore.domain;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.blobstore.domain.internal.BlobBuilderImpl;
@@ -116,6 +117,8 @@ public interface BlobBuilder {
       PayloadBlobBuilder contentLanguage(String contentLanguage);
 
       PayloadBlobBuilder contentEncoding(String contentEncoding);
+
+      PayloadBlobBuilder expires(Date expires);
 
       /**
        * 

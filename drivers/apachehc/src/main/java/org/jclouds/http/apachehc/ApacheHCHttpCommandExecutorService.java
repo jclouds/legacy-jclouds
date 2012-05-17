@@ -39,6 +39,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -55,19 +56,21 @@ import com.google.inject.Inject;
  */
 public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorService<HttpUriRequest> {
    private final HttpClient client;
+   private final ApacheHCUtils apacheHCUtils;
 
    @Inject
-   ApacheHCHttpCommandExecutorService(HttpUtils utils,
+   ApacheHCHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
          @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
          DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
          DelegatingErrorHandler errorHandler, HttpWire wire, HttpClient client) {
-      super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+      super(utils, contentMetadataCodec, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.client = client;
+      this.apacheHCUtils = new ApacheHCUtils(contentMetadataCodec);
    }
 
    @Override
    protected HttpUriRequest convert(HttpRequest request) throws IOException {
-      HttpUriRequest returnVal = ApacheHCUtils.convertToApacheRequest(request);
+      HttpUriRequest returnVal = apacheHCUtils.convertToApacheRequest(request);
       if (request.getPayload() != null && request.getPayload().getContentMetadata().getContentMD5() != null)
          returnVal.addHeader("Content-MD5", CryptoStreams.md5Base64(request.getPayload()));
       return returnVal;
@@ -93,8 +96,9 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
       for (Header header : apacheResponse.getAllHeaders()) {
          headers.put(header.getName(), header.getValue());
       }
-      if (payload != null)
-         payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+      if (payload != null) {
+         contentMetadataCodec.fromHeaders(payload.getContentMetadata(), headers);
+      }
       return new HttpResponse(apacheResponse.getStatusLine().getStatusCode(), apacheResponse.getStatusLine()
             .getReasonPhrase(), payload, RestAnnotationProcessor.filterOutContentHeaders(headers));
    }

@@ -45,6 +45,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Throwables2;
 
@@ -56,7 +57,8 @@ import com.google.common.io.NullOutputStream;
  */
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
    protected final HttpUtils utils;
-
+   protected final ContentMetadataCodec contentMetadataCodec;
+   
    private final DelegatingRetryHandler retryHandler;
    private final IOExceptionRetryHandler ioRetryHandler;
    private final DelegatingErrorHandler errorHandler;
@@ -71,11 +73,12 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    protected final HttpWire wire;
 
    @Inject
-   protected BaseHttpCommandExecutorService(HttpUtils utils,
+   protected BaseHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.utils = checkNotNull(utils, "utils");
+      this.contentMetadataCodec = checkNotNull(contentMetadataCodec, "contentMetadataCodec");
       this.retryHandler = checkNotNull(retryHandler, "retryHandler");
       this.ioRetryHandler = checkNotNull(ioRetryHandler, "ioRetryHandler");
       this.errorHandler = checkNotNull(errorHandler, "errorHandler");

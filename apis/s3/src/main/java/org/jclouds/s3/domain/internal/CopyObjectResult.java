@@ -47,7 +47,7 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    public CopyObjectResult(Date lastModified, String eTag) {
       this.lastModified = lastModified;
       this.eTag = eTag;
-      this.contentMetadata = new BaseImmutableContentMetadata(null, null, null, null, null, null);
+      this.contentMetadata = new BaseImmutableContentMetadata(null, null, null, null, null, null, null);
    }
 
    /**

@@ -53,6 +53,9 @@ public class JodaDateService implements DateService {
    private static final DateTimeFormatter iso8601DateFormatter = DateTimeFormat.forPattern(
             "yyyy-MM-dd'T'HH:mm:ss.SSSZ").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
+   private static final DateTimeFormatter rfc1123DateFormat = DateTimeFormat.forPattern(
+            "EEE, dd MMM yyyyy HH:mm:ss Z").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
+
    public final Date fromSeconds(long seconds) {
       return new Date(seconds * 1000);
    }
@@ -123,5 +126,20 @@ public class JodaDateService implements DateService {
       toParse = trimTZ(toParse);
       toParse += tz;
       return iso8601SecondsDateFormatter.parseDateTime(toParse).toDate();
+   }
+   
+   @Override
+   public final String rfc1123DateFormat(Date dateTime) {
+      return rfc1123DateFormat.print(new DateTime(dateTime));
+   }
+
+   @Override
+   public final String rfc1123DateFormat() {
+      return rfc1123DateFormat(new Date());
+   }
+
+   @Override
+   public final Date rfc1123DateParse(String toParse) {
+      return rfc1123DateFormat.parseDateTime(toParse).toDate();
    }
 }

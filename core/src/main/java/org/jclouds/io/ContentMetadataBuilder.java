@@ -18,21 +18,14 @@
  */
 package org.jclouds.io;
 
-import static com.google.common.collect.Iterables.any;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Map.Entry;
+import java.util.Date;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -51,31 +44,7 @@ public class ContentMetadataBuilder implements Serializable {
    protected String contentDisposition;
    protected String contentLanguage;
    protected String contentEncoding;
-
-   public ContentMetadataBuilder fromHttpHeaders(Multimap<String, String> headers) {
-      boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
-         @Override
-         public boolean apply(Entry<String, String> input) {
-            return "Transfer-Encoding".equalsIgnoreCase(input.getKey()) && "chunked".equalsIgnoreCase(input.getValue());
-         }
-      });
-      for (Entry<String, String> header : headers.entries()) {
-         if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
-            contentLength(new Long(header.getValue()));
-         } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
-            contentMD5(CryptoStreams.base64(header.getValue()));
-         } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
-            contentType(header.getValue());
-         } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
-            contentDisposition(header.getValue());
-         } else if ("Content-Encoding".equalsIgnoreCase(header.getKey())) {
-            contentEncoding(header.getValue());
-         } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
-            contentLanguage(header.getValue());
-         }
-      }
-      return this;
-   }
+   protected Date expires;
 
    public ContentMetadataBuilder contentLength(@Nullable Long contentLength) {
       this.contentLength = contentLength;
@@ -113,28 +82,26 @@ public class ContentMetadataBuilder implements Serializable {
       return this;
    }
 
+   public ContentMetadataBuilder expires(@Nullable Date expires) {
+      this.expires = expires;
+      return this;
+   }
+
    public ContentMetadata build() {
       return new BaseImmutableContentMetadata(contentType, contentLength, contentMD5, contentDisposition,
-               contentLanguage, contentEncoding);
+               contentLanguage, contentEncoding, expires);
    }
 
    public static ContentMetadataBuilder fromContentMetadata(ContentMetadata in) {
       return new ContentMetadataBuilder().contentType(in.getContentType()).contentLength(in.getContentLength())
                .contentMD5(in.getContentMD5()).contentDisposition(in.getContentDisposition()).contentLanguage(
-                        in.getContentLanguage()).contentEncoding(in.getContentEncoding());
+                        in.getContentLanguage()).contentEncoding(in.getContentEncoding()).expires(in.getExpires());
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((contentDisposition == null) ? 0 : contentDisposition.hashCode());
-      result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
-      result = prime * result + ((contentLanguage == null) ? 0 : contentLanguage.hashCode());
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-      return result;
+      return Objects.hashCode(contentDisposition, contentEncoding, contentLanguage, contentLength, 
+               contentMD5, contentType, expires);
    }
 
    @Override
@@ -151,13 +118,14 @@ public class ContentMetadataBuilder implements Serializable {
              Objects.equal(contentLanguage, other.contentLanguage) &&
              Objects.equal(contentLength, other.contentLength) &&
              Arrays.equals(contentMD5, other.contentMD5) &&
-             Objects.equal(contentType, other.contentType);
+             Objects.equal(contentType, other.contentType) &&
+             Objects.equal(expires, other.expires);
    }
 
    @Override
    public String toString() {
       return "[contentDisposition=" + contentDisposition + ", contentEncoding=" + contentEncoding
                + ", contentLanguage=" + contentLanguage + ", contentLength=" + contentLength + ", contentMD5="
-               + Arrays.toString(contentMD5) + ", contentType=" + contentType + "]";
+               + Arrays.toString(contentMD5) + ", contentType=" + contentType + ", expires=" + expires + "]";
    }
 }

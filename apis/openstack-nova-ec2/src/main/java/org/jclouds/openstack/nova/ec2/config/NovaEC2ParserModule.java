@@ -114,6 +114,21 @@ public class NovaEC2ParserModule extends AbstractModule {
          if (Objects.equal("-", toParse)) return null;
          return delegate.iso8601SecondsDateParse(toParse);
       }
+      
+      @Override
+      public String rfc1123DateFormat(Date date) {
+         return delegate.rfc1123DateFormat(date);
+      }
+
+      @Override
+      public String rfc1123DateFormat() {
+         return delegate.rfc1123DateFormat();
+      }
+
+      @Override
+      public Date rfc1123DateParse(String toParse) {
+         return delegate.rfc1123DateParse(toParse);
+      }
    }
    
 }

@@ -59,7 +59,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
       this.lastModified = lastModified;
       this.eTag = eTag;
       this.owner = owner;
-      this.contentMetadata = new BaseImmutableContentMetadata(null, contentLength, md5, null, null, null);
+      this.contentMetadata = new BaseImmutableContentMetadata(null, contentLength, md5, null, null, null, null);
       this.storageClass = storageClass;
    }
 

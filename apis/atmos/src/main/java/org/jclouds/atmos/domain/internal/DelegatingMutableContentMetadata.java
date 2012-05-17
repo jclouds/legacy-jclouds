@@ -19,6 +19,7 @@
 package org.jclouds.atmos.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.atmos.domain.MutableContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
@@ -154,8 +155,13 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
    }
 
    @Override
-   public void setPropertiesFromHttpHeaders(Multimap<String, String> headers) {
-      delegate.setPropertiesFromHttpHeaders(headers);
+   public void setExpires(Date expires) {
+      delegate.setExpires(expires);
+   }
+
+   @Override
+   public Date getExpires() {
+      return delegate.getExpires();
    }
 
    @Override

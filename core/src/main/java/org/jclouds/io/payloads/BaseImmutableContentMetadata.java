@@ -19,10 +19,15 @@
 package org.jclouds.io.payloads;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
+
+import com.google.common.base.Objects;
 
 /**
  * @author Adrian Cole
@@ -37,15 +42,17 @@ public class BaseImmutableContentMetadata implements ContentMetadata, Serializab
    protected String contentDisposition;
    protected String contentLanguage;
    protected String contentEncoding;
+   protected Date expires;
 
    public BaseImmutableContentMetadata(String contentType, Long contentLength, byte[] contentMD5,
-            String contentDisposition, String contentLanguage, String contentEncoding) {
+            String contentDisposition, String contentLanguage, String contentEncoding, Date expires) {
       this.contentType = contentType;
       this.contentLength = contentLength;
       this.contentMD5 = contentMD5;
       this.contentDisposition = contentDisposition;
       this.contentLanguage = contentLanguage;
       this.contentEncoding = contentEncoding;
+      this.expires = expires;
    }
 
    /**
@@ -102,24 +109,25 @@ public class BaseImmutableContentMetadata implements ContentMetadata, Serializab
       return this.contentEncoding;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Date getExpires() {
+      return expires;
+   }
+
    @Override
    public String toString() {
       return "[contentType=" + contentType + ", contentLength=" + contentLength + ", contentDisposition="
                + contentDisposition + ", contentEncoding=" + contentEncoding + ", contentLanguage=" + contentLanguage
-               + ", contentMD5=" + Arrays.toString(contentMD5) + "]";
+               + ", contentMD5=" + Arrays.toString(contentMD5) + ", expires = " + expires + "]";
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((contentDisposition == null) ? 0 : contentDisposition.hashCode());
-      result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
-      result = prime * result + ((contentLanguage == null) ? 0 : contentLanguage.hashCode());
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-      return result;
+      return Objects.hashCode(contentDisposition, contentEncoding, contentLanguage, contentLength, 
+               contentMD5, contentType, expires);
    }
 
    @Override
@@ -158,6 +166,9 @@ public class BaseImmutableContentMetadata implements ContentMetadata, Serializab
             return false;
       } else if (!contentType.equals(other.contentType))
          return false;
+      if (!Objects.equal(expires, other.expires)) {
+         return false;
+      }
       return true;
    }
 
