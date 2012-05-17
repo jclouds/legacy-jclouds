@@ -55,12 +55,6 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>aws-s3</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
             <artifactId>hpcloud-objectstorage</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
@@ -369,8 +363,6 @@
                                     <systemPropertyVariables>
                                         <!-- note you can add support for new clouds by adding more entries here
                                              after adding maven dependency  -->
-                                        <test.aws-s3.identity>${test.aws-s3.identity}</test.aws-s3.identity>
-                                        <test.aws-s3.credential>${test.aws-s3.credential}</test.aws-s3.credential>
                                         <test.hpcloud-objectstorage.identity>${test.hpcloud-objectstorage.identity}</test.hpcloud-objectstorage.identity>
                                         <test.hpcloud-objectstorage.credential>${test.hpcloud-objectstorage.credential}</test.hpcloud-objectstorage.credential>
                                         <appengine.sdk.root>${appengine.sdk.root}</appengine.sdk.root>

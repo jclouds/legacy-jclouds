@@ -23,7 +23,6 @@ import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +49,6 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -116,9 +114,8 @@ public class GetAllResourcesController extends HttpServlet {
       request.setAttribute("resources", results);
    }
 
-   private Set<Iterable<? extends ResourceMetadata<?>>> allResourcesWithinDeadline(
-         Iterable<ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>>> asyncResources) {
-      Builder<Iterable<? extends ResourceMetadata<?>>> resourcesWeCanList = addToBuilderOnComplete(asyncResources);
+   private <T> Set<T> allResourcesWithinDeadline(Iterable<ListenableFuture<? extends T>> asyncResources) {
+      Builder<T> resourcesWeCanList = addToBuilderOnComplete(asyncResources);
 
       // only serve resources that made it by the timeout
       blockUntilAllDoneOrCancelOnTimeout(asyncResources);
@@ -126,22 +123,20 @@ public class GetAllResourcesController extends HttpServlet {
       return resourcesWeCanList.build();
    }
 
-   private Builder<Iterable<? extends ResourceMetadata<?>>> addToBuilderOnComplete(
-         Iterable<ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>>> asyncResources) {
-      
-      final Builder<Iterable<? extends ResourceMetadata<?>>> resourcesWeCanList = ImmutableSet
-            .<Iterable<? extends ResourceMetadata<?>>> builder();
+   private <T> Builder<T> addToBuilderOnComplete(Iterable<ListenableFuture<? extends T>> asyncResources) {
 
-      for (final ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>> asyncResource : asyncResources) {
-         Futures.addCallback(asyncResource, new FutureCallback<Iterable<? extends ResourceMetadata<?>>>() {
-            public void onSuccess(Iterable<? extends ResourceMetadata<?>> result) {
+      final Builder<T> resourcesWeCanList = ImmutableSet.<T> builder();
+
+      for (final ListenableFuture<? extends T> asyncResource : asyncResources) {
+         Futures.addCallback(asyncResource, new FutureCallback<T>() {
+            public void onSuccess(T result) {
                if (result != null)
                   resourcesWeCanList.add(result);
             }
 
             public void onFailure(Throwable t) {
                if (!(t instanceof CancellationException))
-                  logger.info("exception getting resource %s: %s", asyncResource, t.getMessage());
+                  logger.error(t, "exception getting resource %s: %s", asyncResource, t.getMessage());
             }
          }, currentRequestExecutorService);
 
@@ -149,27 +144,27 @@ public class GetAllResourcesController extends HttpServlet {
       return resourcesWeCanList;
    }
 
-   private void blockUntilAllDoneOrCancelOnTimeout(
-         Iterable<ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>>> asyncResources) {
-      List<ListenableFuture<? extends Iterable<? extends ResourceMetadata<?>>>> remaining = Lists
-            .newArrayList(asyncResources);
-
-      while (remaining.size() > 0) {
-         ListenableFuture<?> resource = remaining.remove(0);
-         if (remainingMillis.get() <= 0) {
-            if (!resource.isDone())
-               resource.cancel(true);
-            continue;
+   // ensure we don't violate our request timeouts.
+   private void blockUntilAllDoneOrCancelOnTimeout(Iterable<? extends ListenableFuture<?>> asyncResources) {
+      try {
+         for (ListenableFuture<?> asyncResource : asyncResources) {
+            if (remainingMillis.get() > 0) {
+               try {
+                  asyncResource.get(remainingMillis.get(), TimeUnit.MILLISECONDS);
+               } catch (Exception e) {
+                  logger.info("exception getting resource %s: %s", asyncResource, e.getMessage());
+               }
+            }
          }
-
-         try {
-            resource.get(remainingMillis.get(), TimeUnit.MILLISECONDS);
-         } catch (Exception e) {
-            logger.info("exception getting resource %s: %s", resource, e.getMessage());
-            if (!resource.isDone())
-               resource.cancel(true);
+      } finally {
+         if (remainingMillis.get() < 0) {
+            for (ListenableFuture<?> asyncResource : asyncResources) {
+               if (!asyncResource.isDone())
+                  asyncResource.cancel(true);
+            }
          }
       }
+
    }
 
 }
