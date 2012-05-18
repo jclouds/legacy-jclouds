@@ -43,7 +43,7 @@ import com.google.common.primitives.Ints;
  * operation. <h2>
  * Usage</h2> The recommended way to instantiate a TemplateOptions object is to
  * statically import TemplateOptions.* and invoke a static creation method
- * followed by an instance mutator (if needed):
+ * followed by any/all desired instance mutators.
  * <p/>
  * <code>
  * import static org.jclouds.compute.options.TemplateOptions.Builder.*;
@@ -52,6 +52,11 @@ import com.google.common.primitives.Ints;
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
  * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
+ * <p/>
+ * Note that options can only be assigned to a builder once, so if assigning e.g. inboundPorts and tags,
+ * that must be done in with mutators in a single call to options --
+ * <code>templateBuilder.options(inboundPorts(22, 80, 8080, 443).tags("I love it!"))</code>
+ * -- not as repeated calls to <code>options</code>.
  * 
  * @author Adrian Cole
  */

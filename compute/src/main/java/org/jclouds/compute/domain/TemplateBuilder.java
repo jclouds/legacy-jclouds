@@ -162,7 +162,9 @@ public interface TemplateBuilder {
    Template build();
 
    /**
-    * options such as inbound ports and run scripts.
+    * Sets options on the template (i.e. items which adorn a created node rather than restricting selection of the node).
+    * Note that this method typically replaces any options previously specified in the builder.
+    * Normal usage is to build up all options and pass them to the builder with a single call to this method.
     */
    TemplateBuilder options(TemplateOptions options);
 
