@@ -18,9 +18,14 @@
  */
 package org.jclouds.openstack.glance.v1_0.features;
 
+import java.io.InputStream;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.glance.v1_0.domain.Image;
+import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 
 /**
  * Image Services
@@ -31,5 +36,31 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ImageClient {
-  
+   /**
+    * Returns a set of brief metadata about images
+    */
+   Set<Image> list();
+   
+   /**
+    * Returns a set of detailed metadata about images
+    */
+   Set<ImageDetails> listInDetail();
+   
+   /**
+    * Return metadata about an image with id
+    */
+   @Nullable
+   ImageDetails show(String id);
+
+   /**
+    * Return image data for image with id 
+    */
+   @Nullable
+   InputStream getAsStream(String id);
+   
+// POST /images -- Store image data and return metadata about the
+// newly-stored image
+// PUT /images/<ID> -- Update image metadata and/or upload image
+// data for a previously-reserved image
+// DELETE /images/<ID> -- Delete the image with id <ID>
 }
