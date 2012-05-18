@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -60,11 +61,7 @@ public class AsyncCreateResponse {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (int) (jobId ^ (jobId >>> 32));
-      return result;
+       return Objects.hashCode(id, jobId);
    }
 
    @Override
@@ -75,11 +72,11 @@ public class AsyncCreateResponse {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AsyncCreateResponse other = (AsyncCreateResponse) obj;
-      if (id != other.id)
-         return false;
-      if (jobId != other.jobId)
-         return false;
+      AsyncCreateResponse that = (AsyncCreateResponse) obj;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+
       return true;
    }
 

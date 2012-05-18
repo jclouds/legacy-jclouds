@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -165,25 +166,19 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
       SnapshotPolicy that = (SnapshotPolicy) o;
 
-      if (id != that.id) return false;
-      if (numberToRetain != that.numberToRetain) return false;
-      if (volumeId != that.volumeId) return false;
-      if (interval != that.interval) return false;
-      if (schedule != null ? !schedule.equals(that.schedule) : that.schedule != null) return false;
-      if (timezone != null ? !timezone.equals(that.timezone) : that.timezone != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(numberToRetain, that.numberToRetain)) return false;
+      if (!Objects.equal(volumeId, that.volumeId)) return false;
+      if (!Objects.equal(interval, that.interval)) return false;
+      if (!Objects.equal(schedule, that.schedule)) return false;
+      if (!Objects.equal(timezone, that.timezone)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (interval != null ? interval.hashCode() : 0);
-      result = 31 * result + (int) (numberToRetain ^ (numberToRetain >>> 32));
-      result = 31 * result + (schedule != null ? schedule.hashCode() : 0);
-      result = 31 * result + (timezone != null ? timezone.hashCode() : 0);
-      result = 31 * result + (int) (volumeId ^ (volumeId >>> 32));
-      return result;
+       return Objects.hashCode(id, numberToRetain, volumeId, interval, schedule, timezone);
    }
 
    @Override

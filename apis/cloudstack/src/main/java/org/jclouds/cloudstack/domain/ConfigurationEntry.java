@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * Representation of the API configuration entry response
  *
@@ -106,25 +108,17 @@ public class ConfigurationEntry implements Comparable<ConfigurationEntry> {
 
       ConfigurationEntry that = (ConfigurationEntry) o;
 
-      if (category != null ? !category.equals(that.category) : that.category != null)
-         return false;
-      if (description != null ? !description.equals(that.description) : that.description != null)
-         return false;
-      if (name != null ? !name.equals(that.name) : that.name != null)
-         return false;
-      if (value != null ? !value.equals(that.value) : that.value != null)
-         return false;
+      if (!Objects.equal(category, that.category)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(value, that.value)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = category != null ? category.hashCode() : 0;
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (value != null ? value.hashCode() : 0);
-      return result;
+       return Objects.hashCode(category, description, name, value);
    }
 
    @Override

@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
+
 import java.util.Date;
 
 /**
@@ -99,23 +101,19 @@ public class Alert implements Comparable<Alert> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Alert alert = (Alert) o;
+      Alert that = (Alert) o;
 
-      if (id != alert.id) return false;
-      if (description != null ? !description.equals(alert.description) : alert.description != null) return false;
-      if (sent != null ? !sent.equals(alert.sent) : alert.sent != null) return false;
-      if (type != null ? !type.equals(alert.type) : alert.type != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(sent, that.sent)) return false;
+      if (!Objects.equal(type, that.type)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + (sent != null ? sent.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, description, sent, type);
    }
 
 

@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -751,209 +752,67 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (HAEnabled ? 1231 : 1237);
-      result = prime * result + ((IPAddress == null) ? 0 : IPAddress.hashCode());
-      result = prime * result + ((ISODisplayText == null) ? 0 : ISODisplayText.hashCode());
-      result = prime * result + (int) (ISOId ^ (ISOId >>> 32));
-      result = prime * result + ((ISOName == null) ? 0 : ISOName.hashCode());
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + (int) (cpuCount ^ (cpuCount >>> 32));
-      result = prime * result + (int) (cpuSpeed ^ (cpuSpeed >>> 32));
-      result = prime * result + ((cpuUsed == null) ? 0 : cpuUsed.hashCode());
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + ((group == null) ? 0 : group.hashCode());
-      result = prime * result + (int) (groupId ^ (groupId >>> 32));
-      result = prime * result + (int) (guestOSId ^ (guestOSId >>> 32));
-      result = prime * result + (int) (hostId ^ (hostId >>> 32));
-      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
-      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
-      result = prime * result + (int) (memory ^ (memory >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((networkKbsRead == null) ? 0 : networkKbsRead.hashCode());
-      result = prime * result + ((networkKbsWrite == null) ? 0 : networkKbsWrite.hashCode());
-      result = prime * result + ((nics == null) ? 0 : nics.hashCode());
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + (passwordEnabled ? 1231 : 1237);
-      result = prime * result + (int) (rootDeviceId ^ (rootDeviceId >>> 32));
-      result = prime * result + ((securityGroups == null) ? 0 : securityGroups.hashCode());
-      result = prime * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
-      result = prime * result + ((serviceOfferingName == null) ? 0 : serviceOfferingName.hashCode());
-      result = prime * result + ((templateDisplayText == null) ? 0 : templateDisplayText.hashCode());
-      result = prime * result + (int) (templateId ^ (templateId >>> 32));
-      result = prime * result + ((templateName == null) ? 0 : templateName.hashCode());
-      result = prime * result + (usesVirtualNetwork ? 1231 : 1237);
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = prime * result + ((zoneName == null) ? 0 : zoneName.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      VirtualMachine that = (VirtualMachine) o;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(cpuCount, that.cpuCount)) return false;
+      if (!Objects.equal(cpuSpeed, that.cpuSpeed)) return false;
+      if (!Objects.equal(cpuUsed, that.cpuUsed)) return false;
+      if (!Objects.equal(displayName, that.displayName)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(usesVirtualNetwork, that.usesVirtualNetwork)) return false;
+      if (!Objects.equal(group, that.group)) return false;
+      if (!Objects.equal(groupId, that.groupId)) return false;
+      if (!Objects.equal(guestOSId, that.guestOSId)) return false;
+      if (!Objects.equal(HAEnabled, that.HAEnabled)) return false;
+      if (!Objects.equal(hostId, that.hostId)) return false;
+      if (!Objects.equal(hostname, that.hostname)) return false;
+      if (!Objects.equal(IPAddress, that.IPAddress)) return false;
+      if (!Objects.equal(ISODisplayText, that.ISODisplayText)) return false;
+      if (!Objects.equal(ISOId, that.ISOId)) return false;
+      if (!Objects.equal(ISOName, that.ISOName)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(memory, that.memory)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(networkKbsRead, that.networkKbsRead)) return false;
+      if (!Objects.equal(networkKbsWrite, that.networkKbsWrite)) return false;
+      if (!Objects.equal(password, that.password)) return false;
+      if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
+      if (!Objects.equal(rootDeviceId, that.rootDeviceId)) return false;
+      if (!Objects.equal(rootDeviceType, that.rootDeviceType)) return false;
+      if (!Objects.equal(securityGroups, that.securityGroups)) return false;
+      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
+      if (!Objects.equal(serviceOfferingName, that.serviceOfferingName)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(templateDisplayText, that.templateDisplayText)) return false;
+      if (!Objects.equal(templateId, that.templateId)) return false;
+      if (!Objects.equal(templateName, that.templateName)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
+      if (!Objects.equal(nics, that.nics)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VirtualMachine other = (VirtualMachine) obj;
-      if (HAEnabled != other.HAEnabled)
-         return false;
-      if (IPAddress == null) {
-         if (other.IPAddress != null)
-            return false;
-      } else if (!IPAddress.equals(other.IPAddress))
-         return false;
-      if (ISODisplayText == null) {
-         if (other.ISODisplayText != null)
-            return false;
-      } else if (!ISODisplayText.equals(other.ISODisplayText))
-         return false;
-      if (ISOId != other.ISOId)
-         return false;
-      if (ISOName == null) {
-         if (other.ISOName != null)
-            return false;
-      } else if (!ISOName.equals(other.ISOName))
-         return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (cpuCount != other.cpuCount)
-         return false;
-      if (cpuSpeed != other.cpuSpeed)
-         return false;
-      if (cpuUsed == null) {
-         if (other.cpuUsed != null)
-            return false;
-      } else if (!cpuUsed.equals(other.cpuUsed))
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (displayName == null) {
-         if (other.displayName != null)
-            return false;
-      } else if (!displayName.equals(other.displayName))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (group == null) {
-         if (other.group != null)
-            return false;
-      } else if (!group.equals(other.group))
-         return false;
-      if (groupId != other.groupId)
-         return false;
-      if (guestOSId != other.guestOSId)
-         return false;
-      if (hostId != other.hostId)
-         return false;
-      if (hostname == null) {
-         if (other.hostname != null)
-            return false;
-      } else if (!hostname.equals(other.hostname))
-         return false;
-      if (hypervisor == null) {
-         if (other.hypervisor != null)
-            return false;
-      } else if (!hypervisor.equals(other.hypervisor))
-         return false;
-      if (id != other.id)
-         return false;
-      if (jobId == null) {
-         if (other.jobId != null)
-            return false;
-      } else if (!jobId.equals(other.jobId))
-         return false;
-      if (jobStatus == null) {
-         if (other.jobStatus != null)
-            return false;
-      } else if (!jobStatus.equals(other.jobStatus))
-         return false;
-      if (memory != other.memory)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (networkKbsRead == null) {
-         if (other.networkKbsRead != null)
-            return false;
-      } else if (!networkKbsRead.equals(other.networkKbsRead))
-         return false;
-      if (networkKbsWrite == null) {
-         if (other.networkKbsWrite != null)
-            return false;
-      } else if (!networkKbsWrite.equals(other.networkKbsWrite))
-         return false;
-      if (nics == null) {
-         if (other.nics != null)
-            return false;
-      } else if (!nics.equals(other.nics))
-         return false;
-      if (password == null) {
-         if (other.password != null)
-            return false;
-      } else if (!password.equals(other.password))
-         return false;
-      if (passwordEnabled != other.passwordEnabled)
-         return false;
-      if (rootDeviceId != other.rootDeviceId)
-         return false;
-      // rootDeviceType and state are volatile
-      if (securityGroups == null) {
-         if (other.securityGroups != null)
-            return false;
-      } else if (!securityGroups.equals(other.securityGroups))
-         return false;
-      if (serviceOfferingId != other.serviceOfferingId)
-         return false;
-      if (serviceOfferingName == null) {
-         if (other.serviceOfferingName != null)
-            return false;
-      } else if (!serviceOfferingName.equals(other.serviceOfferingName))
-         return false;
-      if (templateDisplayText == null) {
-         if (other.templateDisplayText != null)
-            return false;
-      } else if (!templateDisplayText.equals(other.templateDisplayText))
-         return false;
-      if (templateId != other.templateId)
-         return false;
-      if (templateName == null) {
-         if (other.templateName != null)
-            return false;
-      } else if (!templateName.equals(other.templateName))
-         return false;
-      if (usesVirtualNetwork != other.usesVirtualNetwork)
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      if (zoneName == null) {
-         if (other.zoneName != null)
-            return false;
-      } else if (!zoneName.equals(other.zoneName))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(id, account, cpuCount, cpuSpeed, cpuUsed, displayName, created,
+                               domain, domainId, usesVirtualNetwork, group, groupId, guestOSId,
+                               HAEnabled, hostId, hostname, IPAddress, ISODisplayText, ISOId,
+                               ISOName, jobId, jobStatus, memory, name, networkKbsRead,
+                               networkKbsWrite, password, passwordEnabled, rootDeviceId,
+                               rootDeviceType, securityGroups, serviceOfferingId,
+                               serviceOfferingName, state, templateDisplayText, templateId,
+                               templateName, zoneId, zoneName, nics, hypervisor);
    }
 
    @Override

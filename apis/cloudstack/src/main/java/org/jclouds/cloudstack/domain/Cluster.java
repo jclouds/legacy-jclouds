@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.domain;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -194,35 +195,26 @@ public class Cluster implements Comparable<Cluster> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Cluster cluster = (Cluster) o;
+      Cluster that = (Cluster) o;
 
-      if (id != cluster.id) return false;
-      if (podId != cluster.podId) return false;
-      if (zoneId != cluster.zoneId) return false;
-      if (allocationState != cluster.allocationState) return false;
-      if (clusterType != cluster.clusterType) return false;
-      if (hypervisor != null ? !hypervisor.equals(cluster.hypervisor) : cluster.hypervisor != null) return false;
-      if (managedState != cluster.managedState) return false;
-      if (name != null ? !name.equals(cluster.name) : cluster.name != null) return false;
-      if (podName != null ? !podName.equals(cluster.podName) : cluster.podName != null) return false;
-      if (zoneName != null ? !zoneName.equals(cluster.zoneName) : cluster.zoneName != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(allocationState, that.allocationState)) return false;
+      if (!Objects.equal(clusterType, that.clusterType)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+      if (!Objects.equal(managedState, that.managedState)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (allocationState != null ? allocationState.hashCode() : 0);
-      result = 31 * result + (clusterType != null ? clusterType.hashCode() : 0);
-      result = 31 * result + (hypervisor != null ? hypervisor.hashCode() : 0);
-      result = 31 * result + (managedState != null ? managedState.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, allocationState, clusterType, hypervisor, managedState, name, podId, podName,
+                               zoneId, zoneName);
    }
 
    @Override

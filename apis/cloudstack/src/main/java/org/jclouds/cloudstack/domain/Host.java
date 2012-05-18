@@ -23,6 +23,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -693,101 +694,64 @@ public class Host implements Comparable<Host> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Host host = (Host) o;
+      Host that = (Host) o;
 
-      if (averageLoad != host.averageLoad) return false;
-      if (clusterId != host.clusterId) return false;
-      if (cpuNumber != host.cpuNumber) return false;
-      if (cpuSpeed != host.cpuSpeed) return false;
-      if (Float.compare(host.cpuWithOverProvisioning, cpuWithOverProvisioning) != 0) return false;
-      if (diskSizeAllocated != host.diskSizeAllocated) return false;
-      if (diskSizeTotal != host.diskSizeTotal) return false;
-      if (hasEnoughCapacity != host.hasEnoughCapacity) return false;
-      if (id != host.id) return false;
-      if (jobId != host.jobId) return false;
-      if (localStorageActive != host.localStorageActive) return false;
-      if (managementServerId != host.managementServerId) return false;
-      if (memoryAllocated != host.memoryAllocated) return false;
-      if (memoryTotal != host.memoryTotal) return false;
-      if (memoryUsed != host.memoryUsed) return false;
-      if (networkKbsRead != host.networkKbsRead) return false;
-      if (networkKbsWrite != host.networkKbsWrite) return false;
-      if (osCategoryId != host.osCategoryId) return false;
-      if (osCategoryName != host.osCategoryName) return false;
-      if (podId != host.podId) return false;
-      if (zoneId != host.zoneId) return false;
-      if (allocationState != host.allocationState) return false;
-      if (capabilities != null ? !capabilities.equals(host.capabilities) : host.capabilities != null) return false;
-      if (clusterName != null ? !clusterName.equals(host.clusterName) : host.clusterName != null) return false;
-      if (clusterType != host.clusterType) return false;
-      if (cpuAllocated != null ? !cpuAllocated.equals(host.cpuAllocated) : host.cpuAllocated != null) return false;
-      if (cpuUsed != null ? !cpuUsed.equals(host.cpuUsed) : host.cpuUsed != null) return false;
-      if (created != null ? !created.equals(host.created) : host.created != null) return false;
-      if (disconnected != null ? !disconnected.equals(host.disconnected) : host.disconnected != null) return false;
-      if (events != null ? !events.equals(host.events) : host.events != null) return false;
-      if (hostTags != null ? !hostTags.equals(host.hostTags) : host.hostTags != null) return false;
-      if (hypervisor != null ? !hypervisor.equals(host.hypervisor) : host.hypervisor != null) return false;
-      if (ipAddress != null ? !ipAddress.equals(host.ipAddress) : host.ipAddress != null) return false;
-      if (jobStatus != host.jobStatus) return false;
-      if (lastPinged != null ? !lastPinged.equals(host.lastPinged) : host.lastPinged != null) return false;
-      if (name != null ? !name.equals(host.name) : host.name != null) return false;
-      if (podName != null ? !podName.equals(host.podName) : host.podName != null) return false;
-      if (removed != null ? !removed.equals(host.removed) : host.removed != null) return false;
-      if (state != host.state) return false;
-      if (type != host.type) return false;
-      if (version != null ? !version.equals(host.version) : host.version != null) return false;
-      if (zoneName != null ? !zoneName.equals(host.zoneName) : host.zoneName != null) return false;
+      if (!Objects.equal(averageLoad, that.averageLoad)) return false;
+      if (!Objects.equal(clusterId, that.clusterId)) return false;
+      if (!Objects.equal(cpuNumber, that.cpuNumber)) return false;
+      if (!Objects.equal(cpuSpeed, that.cpuSpeed)) return false;
+      if (!Objects.equal(cpuWithOverProvisioning, that.cpuWithOverProvisioning)) return false;
+      if (!Objects.equal(diskSizeAllocated, that.diskSizeAllocated)) return false;
+      if (!Objects.equal(diskSizeTotal, that.diskSizeTotal)) return false;
+      if (!Objects.equal(hasEnoughCapacity, that.hasEnoughCapacity)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(localStorageActive, that.localStorageActive)) return false;
+      if (!Objects.equal(managementServerId, that.managementServerId)) return false;
+      if (!Objects.equal(memoryAllocated, that.memoryAllocated)) return false;
+      if (!Objects.equal(memoryTotal, that.memoryTotal)) return false;
+      if (!Objects.equal(memoryUsed, that.memoryUsed)) return false;
+      if (!Objects.equal(networkKbsRead, that.networkKbsRead)) return false;
+      if (!Objects.equal(networkKbsWrite, that.networkKbsWrite)) return false;
+      if (!Objects.equal(osCategoryId, that.osCategoryId)) return false;
+      if (!Objects.equal(osCategoryName, that.osCategoryName)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(allocationState, that.allocationState)) return false;
+      if (!Objects.equal(capabilities, that.capabilities)) return false;
+      if (!Objects.equal(clusterName, that.clusterName)) return false;
+      if (!Objects.equal(clusterType, that.clusterType)) return false;
+      if (!Objects.equal(cpuAllocated, that.cpuAllocated)) return false;
+      if (!Objects.equal(cpuUsed, that.cpuUsed)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(disconnected, that.disconnected)) return false;
+      if (!Objects.equal(events, that.events)) return false;
+      if (!Objects.equal(hostTags, that.hostTags)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(lastPinged, that.lastPinged)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(removed, that.removed)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(version, that.version)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (allocationState != null ? allocationState.hashCode() : 0);
-      result = 31 * result + averageLoad;
-      result = 31 * result + (capabilities != null ? capabilities.hashCode() : 0);
-      result = 31 * result + (int) (clusterId ^ (clusterId >>> 32));
-      result = 31 * result + (clusterName != null ? clusterName.hashCode() : 0);
-      result = 31 * result + (clusterType != null ? clusterType.hashCode() : 0);
-      result = 31 * result + (cpuAllocated != null ? cpuAllocated.hashCode() : 0);
-      result = 31 * result + cpuNumber;
-      result = 31 * result + cpuSpeed;
-      result = 31 * result + (cpuUsed != null ? cpuUsed.hashCode() : 0);
-      result = 31 * result + (cpuWithOverProvisioning != +0.0f ? Float.floatToIntBits(cpuWithOverProvisioning) : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (disconnected != null ? disconnected.hashCode() : 0);
-      result = 31 * result + (int) (diskSizeAllocated ^ (diskSizeAllocated >>> 32));
-      result = 31 * result + (int) (diskSizeTotal ^ (diskSizeTotal >>> 32));
-      result = 31 * result + (events != null ? events.hashCode() : 0);
-      result = 31 * result + (hasEnoughCapacity ? 1 : 0);
-      result = 31 * result + (hostTags != null ? hostTags.hashCode() : 0);
-      result = 31 * result + (hypervisor != null ? hypervisor.hashCode() : 0);
-      result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (localStorageActive ? 1 : 0);
-      result = 31 * result + (int) (jobId ^ (jobId >>> 32));
-      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
-      result = 31 * result + (lastPinged != null ? lastPinged.hashCode() : 0);
-      result = 31 * result + (int) (managementServerId ^ (managementServerId >>> 32));
-      result = 31 * result + (int) (memoryAllocated ^ (memoryAllocated >>> 32));
-      result = 31 * result + (int) (memoryTotal ^ (memoryTotal >>> 32));
-      result = 31 * result + (int) (memoryUsed ^ (memoryUsed >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (int) (networkKbsRead ^ (networkKbsRead >>> 32));
-      result = 31 * result + (int) (networkKbsWrite ^ (networkKbsWrite >>> 32));
-      result = 31 * result + (int) (osCategoryId ^ (osCategoryId >>> 32));
-      result = 31 * result + (int) (osCategoryName ^ (osCategoryName >>> 32));
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (removed != null ? removed.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (version != null ? version.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(averageLoad, clusterId, cpuNumber, cpuSpeed, cpuWithOverProvisioning, diskSizeAllocated,
+                               diskSizeTotal, hasEnoughCapacity, id, jobId, localStorageActive, managementServerId,
+                               memoryAllocated, memoryTotal, memoryUsed, networkKbsRead, networkKbsWrite, osCategoryId,
+                               osCategoryName, podId, zoneId, allocationState, capabilities, clusterName, clusterType,
+                               cpuAllocated, cpuUsed, created, disconnected, events, hostTags, hypervisor, ipAddress,
+                               jobStatus, lastPinged, name, podName, removed, state, type, version, zoneName);
    }
-
+   
    @Override
    public String toString() {
       return "Host{" +

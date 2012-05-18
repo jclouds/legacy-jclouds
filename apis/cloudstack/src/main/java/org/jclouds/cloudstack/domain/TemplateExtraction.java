@@ -300,34 +300,32 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
-      TemplateExtraction other = (TemplateExtraction) obj;
-      return id == other.id
-         && accountId == other.accountId
-         && Objects.equal(created, other.created)
-         && extractId == other.extractId
-         && Objects.equal(extractMode, other.extractMode)
-         && Objects.equal(name, other.name)
-         && Objects.equal(state, other.state)
-         && Objects.equal(status, other.status)
-         && Objects.equal(storageType, other.storageType)
-         && uploadPercentage == other.uploadPercentage
-         && Objects.equal(url, other.url)
-         && zoneId == other.zoneId
-         && Objects.equal(zoneName, other.zoneName);
+      TemplateExtraction that = (TemplateExtraction) o;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(extractId, that.extractId)) return false;
+      if (!Objects.equal(extractMode, that.extractMode)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(status, that.status)) return false;
+      if (!Objects.equal(storageType, that.storageType)) return false;
+      if (!Objects.equal(uploadPercentage, that.uploadPercentage)) return false;
+      if (!Objects.equal(url, that.url)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
+
+      return true;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, accountId, created, extractId, extractMode,
-         name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
+       return Objects.hashCode(id, accountId, created, extractId, extractMode, name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
    }
 
    @Override

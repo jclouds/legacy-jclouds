@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.domain;
 import java.util.Set;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -233,40 +234,23 @@ public class FirewallRule implements Comparable<FirewallRule> {
 
       FirewallRule that = (FirewallRule) o;
 
-      if (endPort != that.endPort) return false;
-      if (id != that.id) return false;
-      if (startPort != that.startPort) return false;
-      if (CIDRs != null ? !CIDRs.equals(that.CIDRs) : that.CIDRs != null)
-         return false;
-      if (icmpCode != null ? !icmpCode.equals(that.icmpCode) : that.icmpCode != null)
-         return false;
-      if (icmpType != null ? !icmpType.equals(that.icmpType) : that.icmpType != null)
-         return false;
-      if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null)
-         return false;
-      if (ipAddressId != that.ipAddressId)
-         return false;
-      if (protocol != null ? !protocol.equals(that.protocol) : that.protocol != null)
-         return false;
-      if (state != null ? !state.equals(that.state) : that.state != null)
-         return false;
+      if (!Objects.equal(endPort, that.endPort)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(startPort, that.startPort)) return false;
+      if (!Objects.equal(CIDRs, that.CIDRs)) return false;
+      if (!Objects.equal(icmpCode, that.icmpCode)) return false;
+      if (!Objects.equal(icmpType, that.icmpType)) return false;
+      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
+      if (!Objects.equal(ipAddressId, that.ipAddressId)) return false;
+      if (!Objects.equal(protocol, that.protocol)) return false;
+      if (!Objects.equal(state, that.state)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (CIDRs != null ? CIDRs.hashCode() : 0);
-      result = 31 * result + startPort;
-      result = 31 * result + endPort;
-      result = 31 * result + (icmpCode != null ? icmpCode.hashCode() : 0);
-      result = 31 * result + (icmpType != null ? icmpType.hashCode() : 0);
-      result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (int) (ipAddressId ^ (ipAddressId >>> 32));
-      result = 31 * result + (protocol != null ? protocol.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      return result;
+       return Objects.hashCode(endPort, id, startPort, CIDRs, icmpCode, icmpType, ipAddress, ipAddressId, protocol, state);
    }
 
    @Override

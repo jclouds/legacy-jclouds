@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
@@ -51,34 +52,21 @@ public class NetworkService implements Comparable<NetworkService> {
       }
 
       @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         result = prime * result + ((value == null) ? 0 : value.hashCode());
-         return result;
+      public boolean equals(Object o) {
+          if (this == o) return true;
+          if (o == null || getClass() != o.getClass()) return false;
+          
+          NetworkService.Capability that = (NetworkService.Capability) o;
+          
+          if (!Objects.equal(name, that.name)) return false;
+          if (!Objects.equal(value, that.value)) return false;
+          
+          return true;
       }
-
+      
       @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         NetworkService.Capability other = (NetworkService.Capability) obj;
-         if (name == null) {
-            if (other.name != null)
-               return false;
-         } else if (!name.equals(other.name))
-            return false;
-         if (value == null) {
-            if (other.value != null)
-               return false;
-         } else if (!value.equals(other.value))
-            return false;
-         return true;
+      public int hashCode() {
+          return Objects.hashCode(name, value);
       }
 
       @Override
@@ -128,34 +116,21 @@ public class NetworkService implements Comparable<NetworkService> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      NetworkService that = (NetworkService) o;
+
+      if (!Objects.equal(capabilities, that.capabilities)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NetworkService other = (NetworkService) obj;
-      if (capabilities == null) {
-         if (other.capabilities != null)
-            return false;
-      } else if (!capabilities.equals(other.capabilities))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(capabilities, name);
    }
 
    @Override

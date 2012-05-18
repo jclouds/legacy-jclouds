@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -330,49 +331,33 @@ public class StoragePool implements Comparable<StoragePool> {
 
       StoragePool that = (StoragePool) o;
 
-      if (clusterId != that.clusterId) return false;
-      if (diskSizeAllocated != that.diskSizeAllocated) return false;
-      if (diskSizeTotal != that.diskSizeTotal) return false;
-      if (id != that.id) return false;
-      if (podId != that.podId) return false;
-      if (zoneId != that.zoneId) return false;
-      if (clusterName != null ? !clusterName.equals(that.clusterName) : that.clusterName != null) return false;
-      if (created != null ? !created.equals(that.created) : that.created != null) return false;
-      if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null) return false;
-      if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
-      if (jobStatus != null ? !jobStatus.equals(that.jobStatus) : that.jobStatus != null) return false;
-      if (name != null ? !name.equals(that.name) : that.name != null) return false;
-      if (path != null ? !path.equals(that.path) : that.path != null) return false;
-      if (podName != null ? !podName.equals(that.podName) : that.podName != null) return false;
-      if (state != that.state) return false;
-      if (tags != null ? !tags.equals(that.tags) : that.tags != null) return false;
-      if (type != that.type) return false;
-      if (zoneName != null ? !zoneName.equals(that.zoneName) : that.zoneName != null) return false;
+      if (!Objects.equal(clusterId, that.clusterId)) return false;
+      if (!Objects.equal(diskSizeAllocated, that.diskSizeAllocated)) return false;
+      if (!Objects.equal(diskSizeTotal, that.diskSizeTotal)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(clusterName, that.clusterName)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(path, that.path)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(tags, that.tags)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (path != null ? path.hashCode() : 0);
-      result = 31 * result + (tags != null ? tags.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (int) (clusterId ^ (clusterId >>> 32));
-      result = 31 * result + (clusterName != null ? clusterName.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (int) (diskSizeAllocated ^ (diskSizeAllocated >>> 32));
-      result = 31 * result + (int) (diskSizeTotal ^ (diskSizeTotal >>> 32));
-      result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (jobId != null ? jobId.hashCode() : 0);
-      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
-      return result;
+       return Objects.hashCode(clusterId, diskSizeAllocated, diskSizeTotal, id, podId, zoneId,
+                               clusterName, created, ipAddress, jobId, jobStatus, name, path,
+                               podName, state, tags, type, zoneName);
    }
 
    @Override

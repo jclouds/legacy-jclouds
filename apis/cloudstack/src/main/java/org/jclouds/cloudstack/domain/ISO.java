@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -613,79 +614,50 @@ public class ISO implements Comparable<ISO> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      ISO iso = (ISO) o;
+      ISO that = (ISO) o;
 
-      if (accountId != iso.accountId) return false;
-      if (bootable != iso.bootable) return false;
-      if (crossZones != iso.crossZones) return false;
-      if (domainid != iso.domainid) return false;
-      if (hostId != iso.hostId) return false;
-      if (id != iso.id) return false;
-      if (isExtractable != iso.isExtractable) return false;
-      if (isFeatured != iso.isFeatured) return false;
-      if (isPublic != iso.isPublic) return false;
-      if (isReady != iso.isReady) return false;
-      if (jobId != iso.jobId) return false;
-      if (osTypeId != iso.osTypeId) return false;
-      if (passwordEnabled != iso.passwordEnabled) return false;
-      if (size != iso.size) return false;
-      if (sourceTemplateId != iso.sourceTemplateId) return false;
-      if (zoneId != iso.zoneId) return false;
-      if (account != null ? !account.equals(iso.account) : iso.account != null) return false;
-      if (checksum != null ? !checksum.equals(iso.checksum) : iso.checksum != null) return false;
-      if (created != null ? !created.equals(iso.created) : iso.created != null) return false;
-      if (displayText != null ? !displayText.equals(iso.displayText) : iso.displayText != null) return false;
-      if (domain != null ? !domain.equals(iso.domain) : iso.domain != null) return false;
-      if (format != null ? !format.equals(iso.format) : iso.format != null) return false;
-      if (hostName != null ? !hostName.equals(iso.hostName) : iso.hostName != null) return false;
-      if (hypervisor != null ? !hypervisor.equals(iso.hypervisor) : iso.hypervisor != null) return false;
-      if (jobStatus != null ? !jobStatus.equals(iso.jobStatus) : iso.jobStatus != null) return false;
-      if (name != null ? !name.equals(iso.name) : iso.name != null) return false;
-      if (osTypeName != null ? !osTypeName.equals(iso.osTypeName) : iso.osTypeName != null) return false;
-      if (removed != null ? !removed.equals(iso.removed) : iso.removed != null) return false;
-      if (status != null ? !status.equals(iso.status) : iso.status != null) return false;
-      if (templateTag != null ? !templateTag.equals(iso.templateTag) : iso.templateTag != null) return false;
-      if (templateType != null ? !templateType.equals(iso.templateType) : iso.templateType != null) return false;
-      if (zoneName != null ? !zoneName.equals(iso.zoneName) : iso.zoneName != null) return false;
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(bootable, that.bootable)) return false;
+      if (!Objects.equal(crossZones, that.crossZones)) return false;
+      if (!Objects.equal(domainid, that.domainid)) return false;
+      if (!Objects.equal(hostId, that.hostId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isExtractable, that.isExtractable)) return false;
+      if (!Objects.equal(isPublic, that.isPublic)) return false;
+      if (!Objects.equal(isReady, that.isReady)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(osTypeId, that.osTypeId)) return false;
+      if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
+      if (!Objects.equal(size, that.size)) return false;
+      if (!Objects.equal(sourceTemplateId, that.sourceTemplateId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(checksum, that.checksum)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(format, that.format)) return false;
+      if (!Objects.equal(hostName, that.hostName)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(osTypeName, that.osTypeName)) return false;
+      if (!Objects.equal(removed, that.removed)) return false;
+      if (!Objects.equal(status, that.status)) return false;
+      if (!Objects.equal(templateTag, that.templateTag)) return false;
+      if (!Objects.equal(templateType, that.templateType)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (int) (accountId ^ (accountId >>> 32));
-      result = 31 * result + (bootable ? 1 : 0);
-      result = 31 * result + (checksum != null ? checksum.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (crossZones ? 1 : 0);
-      result = 31 * result + (displayText != null ? displayText.hashCode() : 0);
-      result = 31 * result + (domain != null ? domain.hashCode() : 0);
-      result = 31 * result + (int) (domainid ^ (domainid >>> 32));
-      result = 31 * result + (format != null ? format.hashCode() : 0);
-      result = 31 * result + (int) (hostId ^ (hostId >>> 32));
-      result = 31 * result + (hostName != null ? hostName.hashCode() : 0);
-      result = 31 * result + (hypervisor != null ? hypervisor.hashCode() : 0);
-      result = 31 * result + (isExtractable ? 1 : 0);
-      result = 31 * result + (isFeatured ? 1 : 0);
-      result = 31 * result + (isPublic ? 1 : 0);
-      result = 31 * result + (isReady ? 1 : 0);
-      result = 31 * result + (int) (jobId ^ (jobId >>> 32));
-      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (int) (osTypeId ^ (osTypeId >>> 32));
-      result = 31 * result + (osTypeName != null ? osTypeName.hashCode() : 0);
-      result = 31 * result + (passwordEnabled ? 1 : 0);
-      result = 31 * result + (removed != null ? removed.hashCode() : 0);
-      result = 31 * result + (int) (size ^ (size >>> 32));
-      result = 31 * result + (int) (sourceTemplateId ^ (sourceTemplateId >>> 32));
-      result = 31 * result + (status != null ? status.hashCode() : 0);
-      result = 31 * result + (templateTag != null ? templateTag.hashCode() : 0);
-      result = 31 * result + (templateType != null ? templateType.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(accountId, bootable, crossZones, domainid, hostId, id, isExtractable,
+                               isPublic, isReady, jobId, osTypeId, passwordEnabled, size, sourceTemplateId,
+                               zoneId, account, checksum, created, displayText, domain, format, hostName,
+                               hypervisor, jobStatus, name, osTypeName, removed, status, templateTag,
+                               templateType, zoneName);
    }
 
    @Override

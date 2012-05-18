@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -123,22 +124,18 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
 
       ResourceLimit that = (ResourceLimit) o;
 
-      if (domainId != that.domainId) return false;
-      if (max != that.max) return false;
-      if (resourceType != that.resourceType) return false;
-      if (!account.equals(that.account)) return false;
-      if (!domain.equals(that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(max, that.max)) return false;
+      if (!Objects.equal(resourceType, that.resourceType)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = account.hashCode();
-      result = 31 * result + domain.hashCode();
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + max;
-      return result;
+       return Objects.hashCode(domainId, max, resourceType, account, domain);
    }
 
    @Override

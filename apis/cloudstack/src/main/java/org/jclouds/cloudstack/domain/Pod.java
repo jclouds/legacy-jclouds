@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -219,33 +220,24 @@ public class Pod implements Comparable<Pod> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Pod pod = (Pod) o;
+      Pod that = (Pod) o;
 
-      if (id != pod.id) return false;
-      if (zoneId != pod.zoneId) return false;
-      if (allocationState != pod.allocationState) return false;
-      if (endIp != null ? !endIp.equals(pod.endIp) : pod.endIp != null) return false;
-      if (gateway != null ? !gateway.equals(pod.gateway) : pod.gateway != null) return false;
-      if (name != null ? !name.equals(pod.name) : pod.name != null) return false;
-      if (netmask != null ? !netmask.equals(pod.netmask) : pod.netmask != null) return false;
-      if (startIp != null ? !startIp.equals(pod.startIp) : pod.startIp != null) return false;
-      if (zoneName != null ? !zoneName.equals(pod.zoneName) : pod.zoneName != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(allocationState, that.allocationState)) return false;
+      if (!Objects.equal(endIp, that.endIp)) return false;
+      if (!Objects.equal(gateway, that.gateway)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(netmask, that.netmask)) return false;
+      if (!Objects.equal(startIp, that.startIp)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      result = 31 * result + (gateway != null ? gateway.hashCode() : 0);
-      result = 31 * result + (netmask != null ? netmask.hashCode() : 0);
-      result = 31 * result + (startIp != null ? startIp.hashCode() : 0);
-      result = 31 * result + (endIp != null ? endIp.hashCode() : 0);
-      result = 31 * result + (allocationState != null ? allocationState.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, zoneId, allocationState, endIp, gateway, name, netmask, startIp, zoneName);
    }
 
    @Override

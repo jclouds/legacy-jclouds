@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -124,21 +125,17 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
 
       TemplatePermission that = (TemplatePermission) o;
 
-      if (domainId != that.domainId) return false;
-      if (id != that.id) return false;
-      if (isPublic != that.isPublic) return false;
-      if (account != null ? !account.equals(that.account) : that.account != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isPublic, that.isPublic)) return false;
+      if (!Objects.equal(account, that.account)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (isPublic ? 1 : 0);
-      return result;
+       return Objects.hashCode(domainId, id, isPublic, account);
    }
 
    @Override

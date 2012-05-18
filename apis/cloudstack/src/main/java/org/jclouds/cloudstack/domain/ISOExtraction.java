@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -276,39 +277,26 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
 
       ISOExtraction that = (ISOExtraction) o;
 
-      if (accountId != that.accountId) return false;
-      if (extractId != that.extractId) return false;
-      if (id != that.id) return false;
-      if (uploadPercentage != that.uploadPercentage) return false;
-      if (zoneId != that.zoneId) return false;
-      if (created != null ? !created.equals(that.created) : that.created != null) return false;
-      if (extractMode != that.extractMode) return false;
-      if (name != null ? !name.equals(that.name) : that.name != null) return false;
-      if (state != null ? !state.equals(that.state) : that.state != null) return false;
-      if (status != null ? !status.equals(that.status) : that.status != null) return false;
-      if (storageType != null ? !storageType.equals(that.storageType) : that.storageType != null) return false;
-      if (url != null ? !url.equals(that.url) : that.url != null) return false;
-      if (zoneName != null ? !zoneName.equals(that.zoneName) : that.zoneName != null) return false;
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(extractId, that.extractId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(uploadPercentage, that.uploadPercentage)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(extractMode, that.extractMode)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(status, that.status)) return false;
+      if (!Objects.equal(storageType, that.storageType)) return false;
+      if (!Objects.equal(url, that.url)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (int) (accountId ^ (accountId >>> 32));
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (int) (extractId ^ (extractId >>> 32));
-      result = 31 * result + (extractMode != null ? extractMode.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (status != null ? status.hashCode() : 0);
-      result = 31 * result + (storageType != null ? storageType.hashCode() : 0);
-      result = 31 * result + uploadPercentage;
-      result = 31 * result + (url != null ? url.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(accountId, extractId, id, uploadPercentage, zoneId, created, extractMode, name, state, status, storageType, url, zoneName);
    }
 
    @Override
