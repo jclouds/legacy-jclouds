@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -350,57 +351,36 @@ public class UsageRecord implements Comparable<UsageRecord> {
 
       UsageRecord that = (UsageRecord) o;
 
-      if (accountId != that.accountId) return false;
-      if (domainId != that.domainId) return false;
-      if (id != that.id) return false;
-      if (isSourceNAT != that.isSourceNAT) return false;
-      if (Double.compare(that.rawUsageHours, rawUsageHours) != 0) return false;
-      if (releaseDate != that.releaseDate) return false;
-      if (serviceOfferingId != that.serviceOfferingId) return false;
-      if (templateId != that.templateId) return false;
-      if (virtualMachineId != that.virtualMachineId) return false;
-      if (zoneId != that.zoneId) return false;
-      if (accountName != null ? !accountName.equals(that.accountName) : that.accountName != null) return false;
-      if (assignDate != null ? !assignDate.equals(that.assignDate) : that.assignDate != null) return false;
-      if (description != null ? !description.equals(that.description) : that.description != null) return false;
-      if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) return false;
-      if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null) return false;
-      if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null) return false;
-      if (type != null ? !type.equals(that.type) : that.type != null) return false;
-      if (usage != null ? !usage.equals(that.usage) : that.usage != null) return false;
-      if (usageType != that.usageType) return false;
-      if (virtualMachineName != null ? !virtualMachineName.equals(that.virtualMachineName) : that.virtualMachineName != null)
-         return false;
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isSourceNAT, that.isSourceNAT)) return false;
+      if (!Objects.equal(rawUsageHours, that.rawUsageHours)) return false;
+      if (!Objects.equal(releaseDate, that.releaseDate)) return false;
+      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
+      if (!Objects.equal(templateId, that.templateId)) return false;
+      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(accountName, that.accountName)) return false;
+      if (!Objects.equal(assignDate, that.assignDate)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(endDate, that.endDate)) return false;
+      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
+      if (!Objects.equal(startDate, that.startDate)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(usage, that.usage)) return false;
+      if (!Objects.equal(usageType, that.usageType)) return false;
+      if (!Objects.equal(virtualMachineName, that.virtualMachineName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result;
-      long temp;
-      result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + (int) (accountId ^ (accountId >>> 32));
-      result = 31 * result + (accountName != null ? accountName.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-      result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-      result = 31 * result + (assignDate != null ? assignDate.hashCode() : 0);
-      result = 31 * result + (int) (releaseDate ^ (releaseDate >>> 32));
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
-      result = 31 * result + (virtualMachineName != null ? virtualMachineName.hashCode() : 0);
-      result = 31 * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
-      result = 31 * result + (int) (templateId ^ (templateId >>> 32));
-      result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (isSourceNAT ? 1 : 0);
-      temp = rawUsageHours != +0.0d ? Double.doubleToLongBits(rawUsageHours) : 0L;
-      result = 31 * result + (int) (temp ^ (temp >>> 32));
-      result = 31 * result + (usage != null ? usage.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (usageType != null ? usageType.hashCode() : 0);
-      return result;
+       return Objects.hashCode(accountId, domainId, id, isSourceNAT, rawUsageHours, releaseDate,
+                               serviceOfferingId, templateId, virtualMachineId, zoneId, accountName,
+                               assignDate, description, endDate, ipAddress, startDate, type, usage,
+                               usageType, virtualMachineName);
    }
 
    @Override

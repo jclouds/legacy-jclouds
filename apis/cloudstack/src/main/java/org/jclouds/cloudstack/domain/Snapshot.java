@@ -387,21 +387,9 @@ public class Snapshot implements Comparable<Snapshot> {
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (domain != null ? domain.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (interval != null ? interval.hashCode() : 0);
-      result = 31 * result + (int) (jobId ^ (jobId >>> 32));
-      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (snapshotType != null ? snapshotType.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (int) (volumeId ^ (volumeId >>> 32));
-      result = 31 * result + (volumeName != null ? volumeName.hashCode() : 0);
-      result = 31 * result + (volumeType != null ? volumeType.hashCode() : 0);
-      return result;
+       return Objects.hashCode(domainId, id, jobId, volumeId, account, created, domain,
+                               interval, jobStatus, name, snapshotType, state, volumeName,
+                               volumeType);
    }
 
    @Override

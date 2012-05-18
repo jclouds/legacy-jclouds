@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -93,34 +94,22 @@ public class OSType implements Comparable<OSType> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (OSCategoryId ^ (OSCategoryId >>> 32));
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      OSType that = (OSType) o;
+
+      if (!Objects.equal(OSCategoryId, that.OSCategoryId)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      OSType other = (OSType) obj;
-      if (OSCategoryId != other.OSCategoryId)
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (id != other.id)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(OSCategoryId, description, id);
    }
 
    @Override

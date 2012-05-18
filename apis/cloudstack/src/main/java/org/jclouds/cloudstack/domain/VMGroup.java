@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -145,27 +146,21 @@ public class VMGroup implements Comparable<VMGroup> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      VMGroup vmGroup = (VMGroup) o;
+      VMGroup that = (VMGroup) o;
 
-      if (domainId != vmGroup.domainId) return false;
-      if (id != vmGroup.id) return false;
-      if (account != null ? !account.equals(vmGroup.account) : vmGroup.account != null) return false;
-      if (created != null ? !created.equals(vmGroup.created) : vmGroup.created != null) return false;
-      if (domain != null ? !domain.equals(vmGroup.domain) : vmGroup.domain != null) return false;
-      if (name != null ? !name.equals(vmGroup.name) : vmGroup.name != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(name, that.name)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (domain != null ? domain.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      return result;
+       return Objects.hashCode(domainId, id, account, created, domain, name);
    }
 
    @Override

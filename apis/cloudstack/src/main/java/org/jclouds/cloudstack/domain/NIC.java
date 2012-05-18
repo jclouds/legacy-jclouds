@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.net.URI;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -226,73 +227,30 @@ public class NIC {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((IPAddress == null) ? 0 : IPAddress.hashCode());
-      result = prime * result + ((broadcastURI == null) ? 0 : broadcastURI.hashCode());
-      result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-      result = prime * result + ((guestIPType == null) ? 0 : guestIPType.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (isDefault ? 1231 : 1237);
-      result = prime * result + ((isolationURI == null) ? 0 : isolationURI.hashCode());
-      result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
-      result = prime * result + ((macAddress == null) ? 0 : macAddress.hashCode());
-      result = prime * result + (int) (networkId ^ (networkId >>> 32));
-      result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      NIC that = (NIC) o;
+
+      if (!Objects.equal(IPAddress, that.IPAddress)) return false;
+      if (!Objects.equal(broadcastURI, that.broadcastURI)) return false;
+      if (!Objects.equal(gateway, that.gateway)) return false;
+      if (!Objects.equal(guestIPType, that.guestIPType)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isDefault, that.isDefault)) return false;
+      if (!Objects.equal(isolationURI, that.isolationURI)) return false;
+      if (!Objects.equal(netmask, that.netmask)) return false;
+      if (!Objects.equal(macAddress, that.macAddress)) return false;
+      if (!Objects.equal(networkId, that.networkId)) return false;
+      if (!Objects.equal(trafficType, that.trafficType)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NIC other = (NIC) obj;
-      if (IPAddress == null) {
-         if (other.IPAddress != null)
-            return false;
-      } else if (!IPAddress.equals(other.IPAddress))
-         return false;
-      if (broadcastURI == null) {
-         if (other.broadcastURI != null)
-            return false;
-      } else if (!broadcastURI.equals(other.broadcastURI))
-         return false;
-      if (gateway == null) {
-         if (other.gateway != null)
-            return false;
-      } else if (!gateway.equals(other.gateway))
-         return false;
-      if (guestIPType != other.guestIPType)
-         return false;
-      if (id != other.id)
-         return false;
-      if (isDefault != other.isDefault)
-         return false;
-      if (isolationURI == null) {
-         if (other.isolationURI != null)
-            return false;
-      } else if (!isolationURI.equals(other.isolationURI))
-         return false;
-      if (netmask == null) {
-         if (other.netmask != null)
-            return false;
-      } else if (!netmask.equals(other.netmask))
-         return false;
-      if (macAddress == null) {
-         if (other.macAddress != null)
-            return false;
-      } else if (!macAddress.equals(other.macAddress))
-         return false;
-      if (networkId != other.networkId)
-         return false;
-      if (trafficType != other.trafficType)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(IPAddress, broadcastURI, gateway, guestIPType, id, isDefault, isolationURI, netmask, macAddress, networkId, trafficType);
    }
 
    @Override

@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.jclouds.cloudstack.domain.Account.Type;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -309,38 +310,26 @@ public class User implements Comparable<User> {
 
    @Override
    public int compareTo(User arg0) {
-      return new Long(id).compareTo(arg0.getId());
+       return new Long(id).compareTo(arg0.getId());
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      User that = (User) o;
+
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+
+      return true;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      User other = (User) obj;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      return true;
+       return Objects.hashCode(account, domainId, id);
    }
 
    @Override

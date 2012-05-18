@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -143,32 +144,22 @@ public class Domain implements Comparable<Domain> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Domain domain = (Domain) o;
+      Domain that = (Domain) o;
 
-      if (hasChild != domain.hasChild) return false;
-      if (id != domain.id) return false;
-      if (level != domain.level) return false;
-      if (parentDomainId != domain.parentDomainId) return false;
-      if (name != null ? !name.equals(domain.name) : domain.name != null)
-         return false;
-      if (networkDomain != null ? !networkDomain.equals(domain.networkDomain) : domain.networkDomain != null)
-         return false;
-      if (parentDomainName != null ? !parentDomainName.equals(domain.parentDomainName) : domain.parentDomainName != null)
-         return false;
+      if (!Objects.equal(hasChild, that.hasChild)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(level, that.level)) return false;
+      if (!Objects.equal(parentDomainId, that.parentDomainId)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(networkDomain, that.networkDomain)) return false;
+      if (!Objects.equal(parentDomainName, that.parentDomainName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (hasChild ? 1 : 0);
-      result = 31 * result + (int) (level ^ (level >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (networkDomain != null ? networkDomain.hashCode() : 0);
-      result = 31 * result + (int) (parentDomainId ^ (parentDomainId >>> 32));
-      result = 31 * result + (parentDomainName != null ? parentDomainName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, hasChild, level, name, networkDomain, parentDomainId, parentDomainName);
    }
 
    @Override

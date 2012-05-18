@@ -28,6 +28,7 @@ import java.util.SortedSet;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -552,166 +553,52 @@ public class Network implements Comparable<Network> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((DNS1 == null) ? 0 : DNS1.hashCode());
-      result = prime * result + ((DNS2 == null) ? 0 : DNS2.hashCode());
-      result = prime * result + ((VLAN == null) ? 0 : VLAN.hashCode());
-      result = prime * result + ((broadcastDomainType == null) ? 0 : broadcastDomainType.hashCode());
-      result = prime * result + ((broadcastURI == null) ? 0 : broadcastURI.hashCode());
-      result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + ((endIP == null) ? 0 : endIP.hashCode());
-      result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-      result = prime * result + ((guestIPType == null) ? 0 : guestIPType.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (isDefault ? 1231 : 1237);
-      result = prime * result + (isShared ? 1231 : 1237);
-      result = prime * result + (isSystem ? 1231 : 1237);
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
-      result = prime * result + ((networkDomain == null) ? 0 : networkDomain.hashCode());
-      result = prime * result + ((networkOfferingAvailability == null) ? 0 : networkOfferingAvailability.hashCode());
-      result = prime * result + ((networkOfferingDisplayText == null) ? 0 : networkOfferingDisplayText.hashCode());
-      result = prime * result + (int) (networkOfferingId ^ (networkOfferingId >>> 32));
-      result = prime * result + ((networkOfferingName == null) ? 0 : networkOfferingName.hashCode());
-      result = prime * result + (int) (related ^ (related >>> 32));
-      result = prime * result + ((services == null) ? 0 : services.hashCode());
-      result = prime * result + ((startIP == null) ? 0 : startIP.hashCode());
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
-      result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Network that = (Network) o;
+
+      if (!Objects.equal(DNS1, that.DNS1)) return false;
+      if (!Objects.equal(DNS2, that.DNS2)) return false;
+      if (!Objects.equal(VLAN, that.VLAN)) return false;
+      if (!Objects.equal(broadcastDomainType, that.broadcastDomainType)) return false;
+      if (!Objects.equal(broadcastURI, that.broadcastURI)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(endIP, that.endIP)) return false;
+      if (!Objects.equal(gateway, that.gateway)) return false;
+      if (!Objects.equal(guestIPType, that.guestIPType)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isDefault, that.isDefault)) return false;
+      if (!Objects.equal(isShared, that.isShared)) return false;
+      if (!Objects.equal(isSystem, that.isSystem)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(netmask, that.netmask)) return false;
+      if (!Objects.equal(networkDomain, that.networkDomain)) return false;
+      if (!Objects.equal(networkOfferingAvailability, that.networkOfferingAvailability)) return false;
+      if (!Objects.equal(networkOfferingDisplayText, that.networkOfferingDisplayText)) return false;
+      if (!Objects.equal(networkOfferingId, that.networkOfferingId)) return false;
+      if (!Objects.equal(networkOfferingName, that.networkOfferingName)) return false;
+      if (!Objects.equal(related, that.related)) return false;
+      if (!Objects.equal(services, that.services)) return false;
+      if (!Objects.equal(startIP, that.startIP)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(trafficType, that.trafficType)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(tags, that.tags)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Network other = (Network) obj;
-      if (DNS1 == null) {
-         if (other.DNS1 != null)
-            return false;
-      } else if (!DNS1.equals(other.DNS1))
-         return false;
-      if (DNS2 == null) {
-         if (other.DNS2 != null)
-            return false;
-      } else if (!DNS2.equals(other.DNS2))
-         return false;
-      if (VLAN == null) {
-         if (other.VLAN != null)
-            return false;
-      } else if (!VLAN.equals(other.VLAN))
-         return false;
-      if (broadcastDomainType == null) {
-         if (other.broadcastDomainType != null)
-            return false;
-      } else if (!broadcastDomainType.equals(other.broadcastDomainType))
-         return false;
-      if (broadcastURI == null) {
-         if (other.broadcastURI != null)
-            return false;
-      } else if (!broadcastURI.equals(other.broadcastURI))
-         return false;
-      if (displayText == null) {
-         if (other.displayText != null)
-            return false;
-      } else if (!displayText.equals(other.displayText))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (endIP == null) {
-         if (other.endIP != null)
-            return false;
-      } else if (!endIP.equals(other.endIP))
-         return false;
-      if (gateway == null) {
-         if (other.gateway != null)
-            return false;
-      } else if (!gateway.equals(other.gateway))
-         return false;
-      if (guestIPType != other.guestIPType)
-         return false;
-      if (id != other.id)
-         return false;
-      if (isDefault != other.isDefault)
-         return false;
-      if (isShared != other.isShared)
-         return false;
-      if (isSystem != other.isSystem)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (netmask == null) {
-         if (other.netmask != null)
-            return false;
-      } else if (!netmask.equals(other.netmask))
-         return false;
-      if (networkDomain == null) {
-         if (other.networkDomain != null)
-            return false;
-      } else if (!networkDomain.equals(other.networkDomain))
-         return false;
-      if (networkOfferingAvailability == null) {
-         if (other.networkOfferingAvailability != null)
-            return false;
-      } else if (!networkOfferingAvailability.equals(other.networkOfferingAvailability))
-         return false;
-      if (networkOfferingDisplayText == null) {
-         if (other.networkOfferingDisplayText != null)
-            return false;
-      } else if (!networkOfferingDisplayText.equals(other.networkOfferingDisplayText))
-         return false;
-      if (networkOfferingId != other.networkOfferingId)
-         return false;
-      if (networkOfferingName == null) {
-         if (other.networkOfferingName != null)
-            return false;
-      } else if (!networkOfferingName.equals(other.networkOfferingName))
-         return false;
-      if (related != other.related)
-         return false;
-      if (services == null) {
-         if (other.services != null)
-            return false;
-      } else if (!services.equals(other.services))
-         return false;
-      if (startIP == null) {
-         if (other.startIP != null)
-            return false;
-      } else if (!startIP.equals(other.startIP))
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
-         return false;
-      if (trafficType != other.trafficType)
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      if (tags == null) {
-         if (other.tags != null)
-            return false;
-      } else if (!tags.equals(other.tags))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(DNS1, DNS2, VLAN, broadcastDomainType, broadcastURI, displayText, domain,
+                               endIP, gateway, guestIPType, id, isDefault, isShared, isSystem, name,
+                               netmask, networkDomain, networkOfferingAvailability, networkOfferingDisplayText,
+                               networkOfferingId, networkOfferingName, related, services, startIP, state,
+                               trafficType, zoneId, tags, domainId);
    }
 
    @Override
