@@ -26,6 +26,7 @@ import java.util.Map;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -468,86 +469,51 @@ public class Volume implements Comparable<Volume> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Volume volume = (Volume) o;
+      Volume that = (Volume) o;
 
-      if (deviceId != volume.deviceId) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(attached, that.attached)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(destroyed, that.destroyed)) return false;
+      if (!Objects.equal(deviceId, that.deviceId)) return false;
+      if (!Objects.equal(diskOfferingDisplayText, that.diskOfferingDisplayText)) return false;
+      if (!Objects.equal(diskOfferingId, that.diskOfferingId)) return false;
+      if (!Objects.equal(diskOfferingName, that.diskOfferingName)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+      if (!Objects.equal(isExtractable, that.isExtractable)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(serviceOfferingDisplayText, that.serviceOfferingDisplayText)) return false;
+      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
+      if (!Objects.equal(serviceOfferingName, that.serviceOfferingName)) return false;
+      if (!Objects.equal(size, that.size)) return false;
+      if (!Objects.equal(snapshotId, that.snapshotId)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(storage, that.storage)) return false;
+      if (!Objects.equal(storageType, that.storageType)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
+      if (!Objects.equal(vmDisplayName, that.vmDisplayName)) return false;
+      if (!Objects.equal(vmName, that.vmName)) return false;
+      if (!Objects.equal(vmState, that.vmState)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
-      if (diskOfferingId != volume.diskOfferingId) return false;
-      if (domainId != volume.domainId) return false;
-      if (id != volume.id) return false;
-      if (isExtractable != volume.isExtractable) return false;
-      if (jobId != volume.jobId) return false;
-      if (serviceOfferingId != volume.serviceOfferingId) return false;
-      if (size != volume.size) return false;
-      if (snapshotId != volume.snapshotId) return false;
-      if (virtualMachineId != volume.virtualMachineId) return false;
-      if (zoneId != volume.zoneId) return false;
-      if (attached != null ? !attached.equals(volume.attached) : volume.attached != null) return false;
-      if (!created.equals(volume.created)) return false;
-      if (diskOfferingDisplayText != null ? !diskOfferingDisplayText.equals(volume.diskOfferingDisplayText) :
-            volume.diskOfferingDisplayText != null)
-         return false;
-      if (diskOfferingName != null ? !diskOfferingName.equals(volume.diskOfferingName) : volume.diskOfferingName != null)
-         return false;
-      if (!domain.equals(volume.domain)) return false;
-      if (hypervisor != null ? !hypervisor.equals(volume.hypervisor) : volume.hypervisor != null) return false;
-      if (jobStatus != null ? !jobStatus.equals(volume.jobStatus) : volume.jobStatus != null) return false;
-      if (name != null ? !name.equals(volume.name) : volume.name != null) return false;
-      if (serviceOfferingDisplayText != null ? !serviceOfferingDisplayText.equals(volume.serviceOfferingDisplayText) :
-            volume.serviceOfferingDisplayText != null)
-         return false;
-      if (serviceOfferingName != null ? !serviceOfferingName.equals(volume.serviceOfferingName) :
-            volume.serviceOfferingName != null)
-         return false;
-      if (state != null ? !state.equals(volume.state) : volume.state != null) return false;
-      if (storage != null ? !storage.equals(volume.storage) : volume.storage != null) return false;
-      if (storageType != null ? !storageType.equals(volume.storageType) : volume.storageType != null) return false;
-      if (type != null ? !type.equals(volume.type) : volume.type != null) return false;
-      if (vmDisplayName != null ? !vmDisplayName.equals(volume.vmDisplayName) : volume.vmDisplayName != null)
-         return false;
-      if (vmName != null ? !vmName.equals(volume.vmName) : volume.vmName != null) return false;
-      if (vmState != volume.vmState) return false;
-      if (zoneName != null ? !zoneName.equals(volume.zoneName) : volume.zoneName != null) return false;
-      if (account == null) {
-         if (volume.account != null)
-            return false;
-      } else if (!account.equals(volume.account))
-         return false;
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (attached != null ? attached.hashCode() : 0);
-      result = 31 * result + created.hashCode();
-      result = 31 * result + (int) (deviceId ^ (deviceId >>> 32));
-      result = 31 * result + (diskOfferingDisplayText != null ? diskOfferingDisplayText.hashCode() : 0);
-      result = 31 * result + (int) (diskOfferingId ^ (diskOfferingId >>> 32));
-      result = 31 * result + (diskOfferingName != null ? diskOfferingName.hashCode() : 0);
-      result = 31 * result + domain.hashCode();
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (hypervisor != null ? hypervisor.hashCode() : 0);
-      result = 31 * result + (isExtractable ? 1 : 0);
-      result = 31 * result + (int) (jobId ^ (jobId >>> 32));
-      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (serviceOfferingDisplayText != null ? serviceOfferingDisplayText.hashCode() : 0);
-      result = 31 * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
-      result = 31 * result + (serviceOfferingName != null ? serviceOfferingName.hashCode() : 0);
-      result = 31 * result + (int) (size ^ (size >>> 32));
-      result = 31 * result + (int) (snapshotId ^ (snapshotId >>> 32));
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (storage != null ? storage.hashCode() : 0);
-      result = 31 * result + (storageType != null ? storageType.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
-      result = 31 * result + (vmDisplayName != null ? vmDisplayName.hashCode() : 0);
-      result = 31 * result + (vmName != null ? vmName.hashCode() : 0);
-      result = 31 * result + (vmState != null ? vmState.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, account, attached, created, destroyed, deviceId, diskOfferingDisplayText,
+                               diskOfferingId, diskOfferingName, domain, domainId, hypervisor,
+                               isExtractable, jobId, jobStatus, name, serviceOfferingDisplayText,
+                               serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage,
+                               storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId,
+                               zoneName);
    }
 
    @Override

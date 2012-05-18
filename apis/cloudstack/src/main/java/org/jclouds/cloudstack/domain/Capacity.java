@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -202,34 +203,24 @@ public class Capacity implements Comparable<Capacity> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Capacity capacity = (Capacity) o;
+      Capacity that = (Capacity) o;
 
-      if (capacityTotal != capacity.capacityTotal) return false;
-      if (capacityUsed != capacity.capacityUsed) return false;
-      if (Double.compare(capacity.percentUsed, percentUsed) != 0) return false;
-      if (podId != capacity.podId) return false;
-      if (zoneId != capacity.zoneId) return false;
-      if (podName != null ? !podName.equals(capacity.podName) : capacity.podName != null) return false;
-      if (type != capacity.type) return false;
-      if (zoneName != null ? !zoneName.equals(capacity.zoneName) : capacity.zoneName != null) return false;
+      if (!Objects.equal(capacityTotal, that.capacityTotal)) return false;
+      if (!Objects.equal(capacityUsed, that.capacityUsed)) return false;
+      if (!Objects.equal(percentUsed, that.percentUsed)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result;
-      long temp;
-      result = (int) (capacityTotal ^ (capacityTotal >>> 32));
-      result = 31 * result + (int) (capacityUsed ^ (capacityUsed >>> 32));
-      temp = percentUsed != +0.0d ? Double.doubleToLongBits(percentUsed) : 0L;
-      result = 31 * result + (int) (temp ^ (temp >>> 32));
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(capacityTotal, capacityUsed, percentUsed, podId, podName,
+                               type, zoneId, zoneName);
    }
 
    @Override

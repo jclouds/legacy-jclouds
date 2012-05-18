@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -346,22 +347,8 @@ public class AsyncJob<T> {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (accountId ^ (accountId >>> 32));
-      result = prime * result + ((cmd == null) ? 0 : cmd.hashCode());
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (int) (instanceId ^ (instanceId >>> 32));
-      result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
-      result = prime * result + ((error == null) ? 0 : error.hashCode());
-      result = prime * result + progress;
-      result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
-      result = prime * result + resultCode.code();
-      result = prime * result + ((resultType == null) ? 0 : resultType.hashCode());
-      result = prime * result + status.code();
-      result = prime * result + userId;
-      return result;
+       return Objects.hashCode(accountId, cmd, created, id, instanceId, instanceType, error, progress,
+                               result, resultCode, resultType, status, userId);
    }
 
    @Override
@@ -372,51 +359,23 @@ public class AsyncJob<T> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AsyncJob<?> other = (AsyncJob<?>) obj;
-      if (accountId != other.accountId)
-         return false;
-      if (cmd == null) {
-         if (other.cmd != null)
-            return false;
-      } else if (!cmd.equals(other.cmd))
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (id != other.id)
-         return false;
-      if (instanceId != other.instanceId)
-         return false;
-      if (instanceType == null) {
-         if (other.instanceType != null)
-            return false;
-      } else if (!instanceType.equals(other.instanceType))
-         return false;
-      if (error == null) {
-         if (other.error != null)
-            return false;
-      } else if (!error.equals(other.error))
-         return false;
-      if (progress != other.progress)
-         return false;
-      if (result == null) {
-         if (other.result != null)
-            return false;
-      } else if (!result.equals(other.result))
-         return false;
-      if (resultCode != other.resultCode)
-         return false;
-      if (resultType == null) {
-         if (other.resultType != null)
-            return false;
-      } else if (!resultType.equals(other.resultType))
-         return false;
-      if (status != other.status)
-         return false;
-      if (userId != other.userId)
-         return false;
+
+      AsyncJob<?> that = (AsyncJob<?>) obj;
+
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(cmd, that.cmd)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(instanceId, that.instanceId)) return false;
+      if (!Objects.equal(instanceType, that.instanceType)) return false;
+      if (!Objects.equal(error, that.error)) return false;
+      if (!Objects.equal(progress, that.progress)) return false;
+      if (!Objects.equal(result, that.result)) return false;
+      if (!Objects.equal(resultCode, that.resultCode)) return false;
+      if (!Objects.equal(resultType, that.resultType)) return false;
+      if (!Objects.equal(status, that.status)) return false;
+      if (!Objects.equal(userId, that.userId)) return false;
+
       return true;
    }
 

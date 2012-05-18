@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -81,19 +82,15 @@ public class ApiKeyPair implements Comparable<ApiKeyPair> {
 
       ApiKeyPair that = (ApiKeyPair) o;
 
-      if (apiKey != null ? !apiKey.equals(that.apiKey) : that.apiKey != null)
-         return false;
-      if (secretKey != null ? !secretKey.equals(that.secretKey) : that.secretKey != null)
-         return false;
+      if (!Objects.equal(apiKey, that.apiKey)) return false;
+      if (!Objects.equal(secretKey, that.secretKey)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = apiKey != null ? apiKey.hashCode() : 0;
-      result = 31 * result + (secretKey != null ? secretKey.hashCode() : 0);
-      return result;
+       return Objects.hashCode(apiKey, secretKey);
    }
 
    @Override

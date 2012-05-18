@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -197,61 +198,28 @@ public class IngressRule implements Comparable<IngressRule> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((CIDR == null) ? 0 : CIDR.hashCode());
-      result = prime * result + ICMPCode;
-      result = prime * result + ICMPType;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + endPort;
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      result = prime * result + ((securityGroupName == null) ? 0 : securityGroupName.hashCode());
-      result = prime * result + startPort;
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      IngressRule that = (IngressRule) o;
+
+      if (!Objects.equal(CIDR, that.CIDR)) return false;
+      if (!Objects.equal(ICMPCode, that.ICMPCode)) return false;
+      if (!Objects.equal(ICMPType, that.ICMPType)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(endPort, that.endPort)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(protocol, that.protocol)) return false;
+      if (!Objects.equal(securityGroupName, that.securityGroupName)) return false;
+      if (!Objects.equal(startPort, that.startPort)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      IngressRule other = (IngressRule) obj;
-      if (CIDR == null) {
-         if (other.CIDR != null)
-            return false;
-      } else if (!CIDR.equals(other.CIDR))
-         return false;
-      if (ICMPCode != other.ICMPCode)
-         return false;
-      if (ICMPType != other.ICMPType)
-         return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (endPort != other.endPort)
-         return false;
-      if (id != other.id)
-         return false;
-      if (protocol == null) {
-         if (other.protocol != null)
-            return false;
-      } else if (!protocol.equals(other.protocol))
-         return false;
-      if (securityGroupName == null) {
-         if (other.securityGroupName != null)
-            return false;
-      } else if (!securityGroupName.equals(other.securityGroupName))
-         return false;
-      if (startPort != other.startPort)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(CIDR, ICMPCode, ICMPType, account, endPort, id, protocol, securityGroupName, startPort);
    }
 
    @Override

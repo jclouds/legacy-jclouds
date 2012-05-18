@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
@@ -341,73 +342,31 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + cpuNumber;
-      result = prime * result + cpuSpeed;
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (haSupport ? 1231 : 1237);
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + memory;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
-      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ServiceOffering that = (ServiceOffering) o;
+
+      if (!Objects.equal(cpuNumber, that.cpuNumber)) return false;
+      if (!Objects.equal(cpuSpeed, that.cpuSpeed)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(haSupport, that.haSupport)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(memory, that.memory)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(storageType, that.storageType)) return false;
+      if (!Objects.equal(tags, that.tags)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ServiceOffering other = (ServiceOffering) obj;
-      if (cpuNumber != other.cpuNumber)
-         return false;
-      if (cpuSpeed != other.cpuSpeed)
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (displayText == null) {
-         if (other.displayText != null)
-            return false;
-      } else if (!displayText.equals(other.displayText))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (haSupport != other.haSupport)
-         return false;
-      if (id != other.id)
-         return false;
-      if (memory != other.memory)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (storageType != other.storageType)
-         return false;
-      if (tags == null) {
-         if (other.tags != null)
-            return false;
-      } else if (!tags.equals(other.tags))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(cpuNumber, cpuSpeed, created, displayText, domain, domainId, haSupport, id, memory, name, storageType, tags);
    }
 
    @Override

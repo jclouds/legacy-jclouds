@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -301,7 +302,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    /**
-    * @return the id of the zone the rule belongs to
+    * @return the id of the zone the rule beStrings to
     */
    public long getZoneId() {
       return zoneId;
@@ -314,82 +315,32 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
 
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((algorithm == null) ? 0 : algorithm.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + privatePort;
-      result = prime * result + ((publicIP == null) ? 0 : publicIP.hashCode());
-      result = prime * result + (int) (publicIPId ^ (publicIPId >>> 32));
-      result = prime * result + publicPort;
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      LoadBalancerRule that = (LoadBalancerRule) o;
+
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(algorithm, that.algorithm)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(privatePort, that.privatePort)) return false;
+      if (!Objects.equal(publicIP, that.publicIP)) return false;
+      if (!Objects.equal(publicIPId, that.publicIPId)) return false;
+      if (!Objects.equal(publicPort, that.publicPort)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LoadBalancerRule other = (LoadBalancerRule) obj;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (algorithm == null) {
-         if (other.algorithm != null)
-            return false;
-      } else if (!algorithm.equals(other.algorithm))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (privatePort != other.privatePort)
-         return false;
-      if (publicIP == null) {
-         if (other.publicIP != null)
-            return false;
-      } else if (!publicIP.equals(other.publicIP))
-         return false;
-      if (publicIPId != other.publicIPId)
-         return false;
-      if (publicPort != other.publicPort)
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(account, algorithm, description, domain, domainId, id, name, privatePort, publicIP, publicIPId, publicPort, zoneId, state);
    }
 
    @Override

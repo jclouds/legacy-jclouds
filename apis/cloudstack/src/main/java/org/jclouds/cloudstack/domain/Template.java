@@ -24,6 +24,7 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -599,142 +600,56 @@ public class Template implements Comparable<Template> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((OSType == null) ? 0 : OSType.hashCode());
-      result = prime * result + (int) (OSTypeId ^ (OSTypeId >>> 32));
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + (int) (accountId ^ (accountId >>> 32));
-      result = prime * result + (bootable ? 1231 : 1237);
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + (crossZones ? 1231 : 1237);
-      result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (extractable ? 1231 : 1237);
-      result = prime * result + (featured ? 1231 : 1237);
-      result = prime * result + ((format == null) ? 0 : format.hashCode());
-      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (ispublic ? 1231 : 1237);
-      result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
-      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + (passwordEnabled ? 1231 : 1237);
-      result = prime * result + (ready ? 1231 : 1237);
-      result = prime * result + ((removed == null) ? 0 : removed.hashCode());
-      result = prime * result + ((size == null) ? 0 : size.hashCode());
-      result = prime * result + ((status == null) ? 0 : status.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      result = prime * result + ((zone == null) ? 0 : zone.hashCode());
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Template that = (Template) o;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(zone, that.zone)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(OSType, that.OSType)) return false;
+      if (!Objects.equal(OSTypeId, that.OSTypeId)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(status, that.status)) return false;
+      if (!Objects.equal(format, that.format)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+      if (!Objects.equal(size, that.size)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(removed, that.removed)) return false;
+      if (!Objects.equal(crossZones, that.crossZones)) return false;
+      if (!Objects.equal(bootable, that.bootable)) return false;
+      if (!Objects.equal(extractable, that.extractable)) return false;
+      if (!Objects.equal(featured, that.featured)) return false;
+      if (!Objects.equal(ispublic, that.ispublic)) return false;
+      if (!Objects.equal(ready, that.ready)) return false;
+      if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(checksum, that.checksum)) return false;
+      if (!Objects.equal(hostId, that.hostId)) return false;
+      if (!Objects.equal(hostName, that.hostName)) return false;
+      if (!Objects.equal(sourceTemplateId, that.sourceTemplateId)) return false;
+      if (!Objects.equal(templateTag, that.templateTag)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Template other = (Template) obj;
-      if (OSType == null) {
-         if (other.OSType != null)
-            return false;
-      } else if (!OSType.equals(other.OSType))
-         return false;
-      if (OSTypeId != other.OSTypeId)
-         return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (accountId != other.accountId)
-         return false;
-      if (bootable != other.bootable)
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (crossZones != other.crossZones)
-         return false;
-      if (displayText == null) {
-         if (other.displayText != null)
-            return false;
-      } else if (!displayText.equals(other.displayText))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (extractable != other.extractable)
-         return false;
-      if (featured != other.featured)
-         return false;
-      if (format != other.format)
-         return false;
-      if (hypervisor == null) {
-         if (other.hypervisor != null)
-            return false;
-      } else if (!hypervisor.equals(other.hypervisor))
-         return false;
-      if (id != other.id)
-         return false;
-      if (ispublic != other.ispublic)
-         return false;
-      if (jobId == null) {
-         if (other.jobId != null)
-            return false;
-      } else if (!jobId.equals(other.jobId))
-         return false;
-      if (jobStatus == null) {
-         if (other.jobStatus != null)
-            return false;
-      } else if (!jobStatus.equals(other.jobStatus))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (passwordEnabled != other.passwordEnabled)
-         return false;
-      if (ready != other.ready)
-         return false;
-      if (removed == null) {
-         if (other.removed != null)
-            return false;
-      } else if (!removed.equals(other.removed))
-         return false;
-      if (size == null) {
-         if (other.size != null)
-            return false;
-      } else if (!size.equals(other.size))
-         return false;
-      if (status == null) {
-         if (other.status != null)
-            return false;
-      } else if (!status.equals(other.status))
-         return false;
-      if (type != other.type)
-         return false;
-      if (zone == null) {
-         if (other.zone != null)
-            return false;
-      } else if (!zone.equals(other.zone))
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(id, displayText, domain, domainId, account, accountId,
+                               zone, zoneId, OSType, OSTypeId, name, type, status, format,
+                               hypervisor, size, created, removed, crossZones, bootable,
+                               extractable, featured, ispublic, ready, passwordEnabled,
+                               jobId, jobStatus, checksum, hostId, hostName,
+                               sourceTemplateId, templateTag);
    }
 
    @Override

@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -129,14 +130,7 @@ public class Capabilities {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (canShareTemplates ? 1231 : 1237);
-      result = prime * result + ((cloudStackVersion == null) ? 0 : cloudStackVersion.hashCode());
-      result = prime * result + (securityGroupsEnabled ? 1231 : 1237);
-      result = prime * result + (firewallRuleUiEnabled ? 1231 : 1237);
-      result = prime * result + (supportELB ? 1231 : 1237);
-      return result;
+       return Objects.hashCode(canShareTemplates, cloudStackVersion, securityGroupsEnabled, firewallRuleUiEnabled, supportELB);
    }
 
    @Override
@@ -147,20 +141,14 @@ public class Capabilities {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Capabilities other = (Capabilities) obj;
-      if (canShareTemplates != other.canShareTemplates)
-         return false;
-      if (cloudStackVersion == null) {
-         if (other.cloudStackVersion != null)
-            return false;
-      } else if (!cloudStackVersion.equals(other.cloudStackVersion))
-         return false;
-      if (securityGroupsEnabled != other.securityGroupsEnabled)
-         return false;
-      if (firewallRuleUiEnabled != other.firewallRuleUiEnabled)
-         return false;
-      if (supportELB != other.supportELB)
-         return false;
+      Capabilities that = (Capabilities) obj;
+
+      if (!Objects.equal(canShareTemplates, that.canShareTemplates)) return false;
+      if (!Objects.equal(cloudStackVersion, that.cloudStackVersion)) return false;
+      if (!Objects.equal(securityGroupsEnabled, that.securityGroupsEnabled)) return false;
+      if (!Objects.equal(firewallRuleUiEnabled, that.firewallRuleUiEnabled)) return false;
+      if (!Objects.equal(supportELB, that.supportELB)) return false;
+
       return true;
    }
 

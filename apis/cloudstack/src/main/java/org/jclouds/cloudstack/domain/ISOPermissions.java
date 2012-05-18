@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -115,37 +116,23 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ISOPermissions other = (ISOPermissions) obj;
-      if (accounts == null) {
-         if (other.accounts != null)
-            return false;
-      } else if (!accounts.equals(other.accounts))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (isPublic != other.isPublic)
-         return false;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ISOPermissions that = (ISOPermissions) o;
+
+      if (!Objects.equal(accounts, that.accounts)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isPublic, that.isPublic)) return false;
+
       return true;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((accounts == null) ? 0 : accounts.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (isPublic ? 1231 : 1237);
-      return result;
+       return Objects.hashCode(accounts, domainId, id, isPublic);
    }
 
    @Override

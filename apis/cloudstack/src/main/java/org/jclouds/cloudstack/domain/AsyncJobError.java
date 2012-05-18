@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -92,11 +93,7 @@ public class AsyncJobError {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + errorCode.code();
-      result = prime * result + ((errorText == null) ? 0 : errorText.hashCode());
-      return result;
+       return Objects.hashCode(errorCode, errorText);
    }
 
    @Override
@@ -107,14 +104,11 @@ public class AsyncJobError {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AsyncJobError other = (AsyncJobError) obj;
-      if (errorCode != other.errorCode)
-         return false;
-      if (errorText == null) {
-         if (other.errorText != null)
-            return false;
-      } else if (!errorText.equals(other.errorText))
-         return false;
+      AsyncJobError that = (AsyncJobError) obj;
+
+      if (!Objects.equal(errorCode, that.errorCode)) return false;
+      if (!Objects.equal(errorText, that.errorText)) return false;
+
       return true;
    }
 

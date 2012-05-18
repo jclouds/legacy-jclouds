@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * @author Andrei Savu
  */
@@ -52,18 +54,15 @@ public class EncryptedPasswordAndPrivateKey {
 
       EncryptedPasswordAndPrivateKey that = (EncryptedPasswordAndPrivateKey) o;
 
-      if (encryptedPassword != null ? !encryptedPassword.equals(that.encryptedPassword) : that.encryptedPassword != null)
-         return false;
-      if (privateKey != null ? !privateKey.equals(that.privateKey) : that.privateKey != null) return false;
+      if (!Objects.equal(encryptedPassword, that.encryptedPassword)) return false;
+      if (!Objects.equal(privateKey, that.privateKey)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = encryptedPassword != null ? encryptedPassword.hashCode() : 0;
-      result = 31 * result + (privateKey != null ? privateKey.hashCode() : 0);
-      return result;
+       return Objects.hashCode(encryptedPassword, privateKey);
    }
 
    @Override

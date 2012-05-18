@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -637,12 +638,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+       return Objects.hashCode(domainId, id, name);
    }
 
    @Override
@@ -653,16 +649,11 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Account other = (Account) obj;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
+      Account that = (Account) obj;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+
       return true;
    }
 
