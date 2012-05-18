@@ -90,20 +90,20 @@ public class UsageRecord implements Comparable<UsageRecord> {
       private Builder() {
       }
 
-      private long id;
+      private String id;
       private String description;
-      private long accountId;
+      private String accountId;
       private String accountName;
-      private long domainId;
+      private String domainId;
       private Date startDate;
       private Date endDate;
       private Date assignDate;
-      private long releaseDate;
-      private long zoneId;
-      private long virtualMachineId;
+      private String releaseDate;
+      private String zoneId;
+      private String virtualMachineId;
       private String virtualMachineName;
-      private long serviceOfferingId;
-      private long templateId;
+      private String serviceOfferingId;
+      private String templateId;
       private String ipAddress;
       private boolean isSourceNAT;
       private double rawUsageHours;
@@ -111,7 +111,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       private String type;
       private UsageType usageType;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -121,7 +121,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder accountId(long accountId) {
+      public Builder accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -131,7 +131,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -151,17 +151,17 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder releaseDate(long releaseDate) {
+      public Builder releaseDate(String releaseDate) {
          this.releaseDate = releaseDate;
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -171,12 +171,12 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder serviceOfferingId(long serviceOfferingId) {
+      public Builder serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
          return this;
       }
 
-      public Builder templateId(long templateId) {
+      public Builder templateId(String templateId) {
          this.templateId = templateId;
          return this;
       }
@@ -216,20 +216,20 @@ public class UsageRecord implements Comparable<UsageRecord> {
       }
    }
 
-   @SerializedName("usageid") private long id;
+   @SerializedName("usageid") private String id;
    private String description;
-   @SerializedName("accountid") private long accountId;
+   @SerializedName("accountid") private String accountId;
    @SerializedName("account") private String accountName;
-   @SerializedName("domainid") private long domainId;
+   @SerializedName("domainid") private String domainId;
    @SerializedName("startdate") private Date startDate;
    @SerializedName("enddate") private Date endDate;
    @SerializedName("assigndate") private Date assignDate;
-   @SerializedName("releasedate") private long releaseDate;
-   @SerializedName("zoneid") private long zoneId;
-   @SerializedName("virtualmachineid") private long virtualMachineId;
+   @SerializedName("releasedate") private String releaseDate;
+   @SerializedName("zoneid") private String zoneId;
+   @SerializedName("virtualmachineid") private String virtualMachineId;
    @SerializedName("name") private String virtualMachineName;
-   @SerializedName("offeringid") private long serviceOfferingId;
-   @SerializedName("templateid") private long templateId;
+   @SerializedName("offeringid") private String serviceOfferingId;
+   @SerializedName("templateid") private String templateId;
    @SerializedName("ipaddress") private String ipAddress;
    @SerializedName("issourcenat") private boolean isSourceNAT;
    @SerializedName("rawusage") private double rawUsageHours;
@@ -241,7 +241,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
    UsageRecord(){
    }
 
-   public UsageRecord(long id, String description, long accountId, String accountName, long domainId, Date startDate, Date endDate, Date assignDate, long releaseDate, long zoneId, long virtualMachineId, String virtualMachineName, long serviceOfferingId, long templateId, String ipAddress, boolean sourceNAT, double rawUsageHours, String usage, String type, UsageType usageType) {
+   public UsageRecord(String id, String description, String accountId, String accountName, String domainId, Date startDate, Date endDate, Date assignDate, String releaseDate, String zoneId, String virtualMachineId, String virtualMachineName, String serviceOfferingId, String templateId, String ipAddress, boolean sourceNAT, double rawUsageHours, String usage, String type, UsageType usageType) {
       this.id = id;
       this.description = description;
       this.accountId = accountId;
@@ -264,7 +264,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       this.usageType = usageType;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -272,7 +272,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return description;
    }
 
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -280,7 +280,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return accountName;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -296,15 +296,15 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return assignDate;
    }
 
-   public long getReleaseDate() {
+   public String getReleaseDate() {
       return releaseDate;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 
@@ -312,11 +312,11 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return virtualMachineName;
    }
 
-   public long getServiceOfferingId() {
+   public String getServiceOfferingId() {
       return serviceOfferingId;
    }
 
-   public long getTemplateId() {
+   public String getTemplateId() {
       return templateId;
    }
 
@@ -411,6 +411,6 @@ public class UsageRecord implements Comparable<UsageRecord> {
 
    @Override
    public int compareTo(UsageRecord other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

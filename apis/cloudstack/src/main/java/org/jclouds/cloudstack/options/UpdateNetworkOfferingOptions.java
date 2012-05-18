@@ -91,7 +91,7 @@ public class UpdateNetworkOfferingOptions extends AccountInDomainOptions {
       /**
        * @see UpdateNetworkOfferingOptions#accountInDomain
        */
-      public static UpdateNetworkOfferingOptions accountInDomain(String account, long domain) {
+      public static UpdateNetworkOfferingOptions accountInDomain(String account, String domain) {
          UpdateNetworkOfferingOptions options = new UpdateNetworkOfferingOptions();
          return options.accountInDomain(account, domain);
       }
@@ -99,7 +99,7 @@ public class UpdateNetworkOfferingOptions extends AccountInDomainOptions {
       /**
        * @see UpdateNetworkOfferingOptions#domainId
        */
-      public static UpdateNetworkOfferingOptions domainId(long domainId) {
+      public static UpdateNetworkOfferingOptions domainId(String domainId) {
          UpdateNetworkOfferingOptions options = new UpdateNetworkOfferingOptions();
          return options.domainId(domainId);
       }
@@ -109,7 +109,7 @@ public class UpdateNetworkOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public UpdateNetworkOfferingOptions accountInDomain(String account, long domain) {
+   public UpdateNetworkOfferingOptions accountInDomain(String account, String domain) {
       return UpdateNetworkOfferingOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -117,7 +117,7 @@ public class UpdateNetworkOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public UpdateNetworkOfferingOptions domainId(long domainId) {
+   public UpdateNetworkOfferingOptions domainId(String domainId) {
       return UpdateNetworkOfferingOptions.class.cast(super.domainId(domainId));
    }
 }

@@ -68,7 +68,7 @@ public class UpdateTemplateOptions extends BaseHttpRequestOptions {
    /**
     * the ID of the OS type that best represents the OS of this image.
     */
-   public UpdateTemplateOptions osTypeId(long osTypeId) {
+   public UpdateTemplateOptions osTypeId(String osTypeId) {
       this.queryParameters.replaceValues("ostypeid", ImmutableSet.of(osTypeId + ""));
       return this;
    }
@@ -103,7 +103,7 @@ public class UpdateTemplateOptions extends BaseHttpRequestOptions {
          return options.name(name);
       }
 
-      public static UpdateTemplateOptions osTypeId(long osTypeId) {
+      public static UpdateTemplateOptions osTypeId(String osTypeId) {
          UpdateTemplateOptions options = new UpdateTemplateOptions();
          return options.osTypeId(osTypeId);
       }

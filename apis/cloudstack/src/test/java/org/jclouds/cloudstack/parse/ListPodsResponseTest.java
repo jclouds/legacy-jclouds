@@ -44,9 +44,9 @@ public class ListPodsResponseTest extends BaseSetParserTest<Pod> {
    @SelectJson("pod")
    public Set<Pod> expected() {
       Pod pod1 = Pod.builder()
-         .id(1)
+         .id("1")
          .name("Dev Pod 1")
-         .zoneId(1)
+         .zoneId("1")
          .zoneName("Dev Zone 1")
          .gateway("10.26.26.254")
          .netmask("255.255.255.0")
@@ -55,9 +55,9 @@ public class ListPodsResponseTest extends BaseSetParserTest<Pod> {
          .allocationState(AllocationState.ENABLED)
          .build();
       Pod pod2 = Pod.builder()
-         .id(2)
+         .id("2")
          .name("Dev Pod 2")
-         .zoneId(2)
+         .zoneId("2")
          .zoneName("Dev Zone 2")
          .gateway("10.22.22.254")
          .netmask("255.255.255.0")

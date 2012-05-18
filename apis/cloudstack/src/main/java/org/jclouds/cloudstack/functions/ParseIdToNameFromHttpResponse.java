@@ -30,6 +30,7 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Inject;
@@ -40,41 +41,30 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map<Long, String>> {
+public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map<String, String>> {
    private final ParseFirstJsonValueNamed<Set<IdName>> parser;
 
    private static class IdName {
-      private long id;
+      private String id;
       private String name;
 
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + (int) (id ^ (id >>> 32));
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         IdName other = (IdName) obj;
-         if (id != other.id)
-            return false;
-         if (name == null) {
-            if (other.name != null)
-               return false;
-         } else if (!name.equals(other.name))
-            return false;
-         return true;
-      }
-
+       @Override
+       public boolean equals(Object o) {
+           if (this == o) return true;
+           if (o == null || getClass() != o.getClass()) return false;
+           
+           IdName that = (IdName) o;
+           
+           if (!Objects.equal(id, that.id)) return false;
+           if (!Objects.equal(name, that.name)) return false;
+           
+           return true;
+       }
+       
+       @Override
+       public int hashCode() {
+           return Objects.hashCode(id, name);
+       }
    }
 
    @Inject
@@ -84,11 +74,11 @@ public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map
             }, "oscategory");
    }
 
-   public Map<Long, String> apply(HttpResponse response) {
+   public Map<String, String> apply(HttpResponse response) {
       checkNotNull(response, "response");
       Set<IdName> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<Long, String> builder = ImmutableSortedMap.naturalOrder();
+      Builder<String, String> builder = ImmutableSortedMap.naturalOrder();
       for (IdName entry : toParse)
          builder.put(entry.id, entry.name);
       return builder.build();

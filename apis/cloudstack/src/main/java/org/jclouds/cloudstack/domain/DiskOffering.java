@@ -40,17 +40,17 @@ public class DiskOffering implements Comparable<DiskOffering> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String name;
       private String displayText;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private int diskSize;
       private boolean customized;
       private Set<String> tags = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -75,7 +75,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -100,21 +100,21 @@ public class DiskOffering implements Comparable<DiskOffering> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("disksize")
    private int diskSize;
    @SerializedName("iscustomized")
    private boolean customized;
    private String tags;
 
-   public DiskOffering(long id, String name, String displayText, Date created, String domain, long domainId,
+   public DiskOffering(String id, String name, String displayText, Date created, String domain, String domainId,
          int diskSize, boolean customized, Set<String> tags) {
       this.id = id;
       this.name = name;
@@ -139,7 +139,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
     * 
     * @return the id of the disk offering
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -180,7 +180,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
     * 
     * @return the domain id of the disk offering
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -253,7 +253,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
 
    @Override
    public int compareTo(DiskOffering arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

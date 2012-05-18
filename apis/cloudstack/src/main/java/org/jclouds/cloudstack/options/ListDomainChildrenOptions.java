@@ -38,7 +38,7 @@ public class ListDomainChildrenOptions extends BaseHttpRequestOptions {
     * @param parentDomainId
     *    firewall rule ID
     */
-   public ListDomainChildrenOptions parentDomainId(long parentDomainId) {
+   public ListDomainChildrenOptions parentDomainId(String parentDomainId) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(parentDomainId + ""));
       return this;
    }
@@ -86,7 +86,7 @@ public class ListDomainChildrenOptions extends BaseHttpRequestOptions {
       /**
        * @see ListDomainChildrenOptions#parentDomainId
        */
-      public static ListDomainChildrenOptions parentDomainId(long parentDomainId) {
+      public static ListDomainChildrenOptions parentDomainId(String parentDomainId) {
          ListDomainChildrenOptions options = new ListDomainChildrenOptions();
          return options.parentDomainId(parentDomainId);
       }

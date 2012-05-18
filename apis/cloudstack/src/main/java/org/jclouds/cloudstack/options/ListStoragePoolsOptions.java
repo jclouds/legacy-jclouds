@@ -35,12 +35,12 @@ public class ListStoragePoolsOptions extends BaseHttpRequestOptions {
 
       private Builder() {}
       
-      public static ListStoragePoolsOptions clusterId(long clusterId) {
+      public static ListStoragePoolsOptions clusterId(String clusterId) {
          ListStoragePoolsOptions options = new ListStoragePoolsOptions();
          return options.clusterId(clusterId);
       }
 
-      public static ListStoragePoolsOptions id(long id) {
+      public static ListStoragePoolsOptions id(String id) {
          ListStoragePoolsOptions options = new ListStoragePoolsOptions();
          return options.id(id);
       }
@@ -65,12 +65,12 @@ public class ListStoragePoolsOptions extends BaseHttpRequestOptions {
          return options.path(path);
       }
 
-      public static ListStoragePoolsOptions podId(long podId) {
+      public static ListStoragePoolsOptions podId(String podId) {
          ListStoragePoolsOptions options = new ListStoragePoolsOptions();
          return options.podId(podId);
       }
 
-      public static ListStoragePoolsOptions zoneId(long zoneId) {
+      public static ListStoragePoolsOptions zoneId(String zoneId) {
          ListStoragePoolsOptions options = new ListStoragePoolsOptions();
          return options.zoneId(zoneId);
       }
@@ -78,12 +78,12 @@ public class ListStoragePoolsOptions extends BaseHttpRequestOptions {
 
    ListStoragePoolsOptions() {}
    
-   public ListStoragePoolsOptions clusterId(long clusterId) {
+   public ListStoragePoolsOptions clusterId(String clusterId) {
       this.queryParameters.replaceValues("clusterid", ImmutableSet.of(clusterId + ""));
       return this;
    }
 
-   public ListStoragePoolsOptions id(long id) {
+   public ListStoragePoolsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -107,12 +107,12 @@ public class ListStoragePoolsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListStoragePoolsOptions podId(long podId) {
+   public ListStoragePoolsOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
 
-   public ListStoragePoolsOptions zoneId(long zoneId) {
+   public ListStoragePoolsOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }

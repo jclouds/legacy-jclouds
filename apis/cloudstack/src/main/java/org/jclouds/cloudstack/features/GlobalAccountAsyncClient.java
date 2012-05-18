@@ -70,7 +70,7 @@ public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Account> updateAccount(@QueryParam("account") String accountName,
-      @QueryParam("domainid") long domainId, @QueryParam("newname") String newName, UpdateAccountOptions... options);
+      @QueryParam("domainid") String domainId, @QueryParam("newname") String newName, UpdateAccountOptions... options);
 
    /**
     * @see GlobalAccountClient#deleteAccount
@@ -79,5 +79,5 @@ public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
    @QueryParams(keys = "command", values = "deleteAccount")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteAccount(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteAccount(@QueryParam("id") String id);
 }

@@ -59,12 +59,12 @@ public class AddClusterOptionsTest {
    }
 
    public void testPodId() {
-      AddClusterOptions options = new AddClusterOptions().podId(42L);
+      AddClusterOptions options = new AddClusterOptions().podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      AddClusterOptions options = podId(42L);
+      AddClusterOptions options = podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 

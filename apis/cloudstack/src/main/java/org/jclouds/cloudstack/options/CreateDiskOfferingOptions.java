@@ -90,7 +90,7 @@ public class CreateDiskOfferingOptions extends AccountInDomainOptions {
       /**
        * @see CreateDiskOfferingOptions#accountInDomain
        */
-      public static CreateDiskOfferingOptions accountInDomain(String account, long domain) {
+      public static CreateDiskOfferingOptions accountInDomain(String account, String domain) {
          CreateDiskOfferingOptions options = new CreateDiskOfferingOptions();
          return options.accountInDomain(account, domain);
       }
@@ -98,7 +98,7 @@ public class CreateDiskOfferingOptions extends AccountInDomainOptions {
       /**
        * @see CreateDiskOfferingOptions#domainId
        */
-      public static CreateDiskOfferingOptions domainId(long domainId) {
+      public static CreateDiskOfferingOptions domainId(String domainId) {
          CreateDiskOfferingOptions options = new CreateDiskOfferingOptions();
          return options.domainId(domainId);
       }
@@ -108,7 +108,7 @@ public class CreateDiskOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public CreateDiskOfferingOptions accountInDomain(String account, long domain) {
+   public CreateDiskOfferingOptions accountInDomain(String account, String domain) {
       return CreateDiskOfferingOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -116,7 +116,7 @@ public class CreateDiskOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public CreateDiskOfferingOptions domainId(long domainId) {
+   public CreateDiskOfferingOptions domainId(String domainId) {
       return CreateDiskOfferingOptions.class.cast(super.domainId(domainId));
    }
 }

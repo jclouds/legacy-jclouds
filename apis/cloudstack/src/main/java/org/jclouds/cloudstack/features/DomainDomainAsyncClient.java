@@ -56,7 +56,7 @@ public interface DomainDomainAsyncClient {
     * @see DomainDomainClient#listDomains
     */
    @GET
-   @QueryParams(keys = "command", values = "listDomains")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listDomains", "true" })
    @SelectJson("domain")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -66,18 +66,18 @@ public interface DomainDomainAsyncClient {
     * @see DomainDomainClient#getDomainById
     */
    @GET
-   @QueryParams(keys = "command", values = "listDomains")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listDomains", "true" })
    @SelectJson("domain")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Domain> getDomainById(@QueryParam("id") long domainId);
+   ListenableFuture<Domain> getDomainById(@QueryParam("id") String domainId);
 
    /**
     * @see DomainDomainClient#listDomainChildren
     */
    @GET
-   @QueryParams(keys = "command", values = "listDomainChildren")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listDomainChildren", "true" })
    @SelectJson("domain")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)

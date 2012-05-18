@@ -36,43 +36,43 @@ public class ISO implements Comparable<ISO> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String account;
-      private long accountId;
+      private String accountId;
       private boolean bootable;
       private String checksum;
       private Date created;
       private boolean crossZones;
       private String displayText;
       private String domain;
-      private long domainid;
+      private String domainid;
       private String format;
-      private long hostId;
+      private String hostId;
       private String hostName;
       private String hypervisor;
       private boolean isExtractable;
       private boolean isFeatured;
       private boolean isPublic;
       private boolean isReady;
-      private long jobId;
+      private String jobId;
       private String jobStatus;
       private String name;
-      private long osTypeId;
+      private String osTypeId;
       private String osTypeName;
       private boolean passwordEnabled;
       private Date removed;
       private long size;
-      private long sourceTemplateId;
+      private String sourceTemplateId;
       private String status;
       private String templateTag;
       private String templateType;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
       /**
        * @param id the template ID
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -88,7 +88,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param accountId the account id to which the template belongs
        */
-      public Builder accountId(long accountId) {
+      public Builder accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -144,7 +144,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param domainid the ID of the domain to which the template belongs
        */
-      public Builder domainid(long domainid) {
+      public Builder domainid(String domainid) {
          this.domainid = domainid;
          return this;
       }
@@ -160,7 +160,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param hostId the ID of the secondary storage host for the template
        */
-      public Builder hostId(long hostId) {
+      public Builder hostId(String hostId) {
          this.hostId = hostId;
          return this;
       }
@@ -216,7 +216,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param jobId shows the current pending asynchronous job ID. This tag is not returned if no current pending jobs are acting on the template
        */
-      public Builder jobId(long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -240,7 +240,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param osTypeId the ID of the OS type for this template.
        */
-      public Builder osTypeId(long osTypeId) {
+      public Builder osTypeId(String osTypeId) {
          this.osTypeId = osTypeId;
          return this;
       }
@@ -280,7 +280,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param sourceTemplateId the template ID of the parent template if present
        */
-      public Builder sourceTemplateId(long sourceTemplateId) {
+      public Builder sourceTemplateId(String sourceTemplateId) {
          this.sourceTemplateId = sourceTemplateId;
          return this;
       }
@@ -312,7 +312,7 @@ public class ISO implements Comparable<ISO> {
       /**
        * @param zoneId the ID of the zone for this template
        */
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -327,10 +327,10 @@ public class ISO implements Comparable<ISO> {
 
    }
 
-   private long id;
+   private String id;
    private String account;
    @SerializedName("accountid")
-   private long accountId;
+   private String accountId;
    private boolean bootable;
    private String checksum;
    private Date created;
@@ -339,10 +339,10 @@ public class ISO implements Comparable<ISO> {
    private String displayText;
    private String domain;
    @SerializedName("domainId")
-   private long domainid;
+   private String domainid;
    private String format;
    @SerializedName("hostid")
-   private long hostId;
+   private String hostId;
    @SerializedName("hostname")
    private String hostName;
    private String hypervisor;
@@ -355,12 +355,12 @@ public class ISO implements Comparable<ISO> {
    @SerializedName("isready")
    private boolean isReady;
    @SerializedName("jobid")
-   private long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    private String jobStatus;
    private String name;
    @SerializedName("ostypeid")
-   private long osTypeId;
+   private String osTypeId;
    @SerializedName("ostypename")
    private String osTypeName;
    @SerializedName("passwordenabled")
@@ -368,14 +368,14 @@ public class ISO implements Comparable<ISO> {
    private Date removed;
    private long size;
    @SerializedName("sourcetemplateid")
-   private long sourceTemplateId;
+   private String sourceTemplateId;
    private String status;
    @SerializedName("templatetag")
    private String templateTag;
    @SerializedName("templatetype")
    private String templateType;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
 
@@ -388,7 +388,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the template ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -402,7 +402,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the account id to which the template belongs
     */
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -451,7 +451,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the ID of the domain to which the template belongs
     */
-   public long getDomainid() {
+   public String getDomainid() {
       return domainid;
    }
 
@@ -465,7 +465,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the ID of the secondary storage host for the template
     */
-   public long getHostId() {
+   public String getHostId() {
       return hostId;
    }
 
@@ -514,7 +514,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return shows the current pending asynchronous job ID. This tag is not returned if no current pending jobs are acting on the template
     */
-   public long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -535,7 +535,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the ID of the OS type for this template.
     */
-   public long getOsTypeId() {
+   public String getOsTypeId() {
       return osTypeId;
    }
 
@@ -570,7 +570,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the template ID of the parent template if present
     */
-   public long getSourceTemplateId() {
+   public String getSourceTemplateId() {
       return sourceTemplateId;
    }
 
@@ -598,7 +598,7 @@ public class ISO implements Comparable<ISO> {
    /**
     * @return the ID of the zone for this template
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -700,7 +700,7 @@ public class ISO implements Comparable<ISO> {
 
    @Override
    public int compareTo(ISO other) {
-      return new Long(id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 
    public enum ISOFilter {

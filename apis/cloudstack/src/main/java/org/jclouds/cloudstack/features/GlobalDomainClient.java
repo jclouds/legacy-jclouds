@@ -59,7 +59,7 @@ public interface GlobalDomainClient extends DomainDomainClient {
     * @return
     *       domain instance
     */
-   Domain updateDomain(long domainId, UpdateDomainOptions... options);
+   Domain updateDomain(String domainId, UpdateDomainOptions... options);
 
    /**
     * Delete domain (without deleting attached resources)
@@ -67,7 +67,7 @@ public interface GlobalDomainClient extends DomainDomainClient {
     * @param id
     *    the domain ID
     */
-   Void deleteOnlyDomain(long id);
+   Void deleteOnlyDomain(String id);
 
    /**
     * Delete domain and cleanup all attached resources
@@ -75,5 +75,5 @@ public interface GlobalDomainClient extends DomainDomainClient {
     * @param id
     *    the domain ID
     */
-   Void deleteDomainAndAttachedResources(long id);
+   Void deleteDomainAndAttachedResources(String id);
 }

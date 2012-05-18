@@ -30,17 +30,17 @@ public class ListUsageRecordsOptions extends AccountInDomainOptions {
    public static final ListUsageRecordsOptions NONE = new ListUsageRecordsOptions();
 
    public static class Builder {
-      public static ListUsageRecordsOptions accountInDomain(String account, long domainId) {
+      public static ListUsageRecordsOptions accountInDomain(String account, String domainId) {
          ListUsageRecordsOptions options = new ListUsageRecordsOptions();
          return options.accountInDomain(account, domainId);
       }
 
-      public static ListUsageRecordsOptions domainId(long domainId) {
+      public static ListUsageRecordsOptions domainId(String domainId) {
          ListUsageRecordsOptions options = new ListUsageRecordsOptions();
          return options.domainId(domainId);
       }
 
-      public static ListUsageRecordsOptions accountId(long accountId) {
+      public static ListUsageRecordsOptions accountId(String accountId) {
          ListUsageRecordsOptions options = new ListUsageRecordsOptions();
          return options.accountId(accountId);
       }
@@ -52,16 +52,16 @@ public class ListUsageRecordsOptions extends AccountInDomainOptions {
    }
 
    @Override
-   public ListUsageRecordsOptions accountInDomain(String account, long domain) {
+   public ListUsageRecordsOptions accountInDomain(String account, String domain) {
       return (ListUsageRecordsOptions) super.accountInDomain(account, domain);
    }
 
    @Override
-   public ListUsageRecordsOptions domainId(long domainId) {
+   public ListUsageRecordsOptions domainId(String domainId) {
       return (ListUsageRecordsOptions) super.domainId(domainId);
    }
 
-   public ListUsageRecordsOptions accountId(long accountId) {
+   public ListUsageRecordsOptions accountId(String accountId) {
       this.queryParameters.replaceValues("accountid", ImmutableSet.of(accountId + ""));
       return this;
    }

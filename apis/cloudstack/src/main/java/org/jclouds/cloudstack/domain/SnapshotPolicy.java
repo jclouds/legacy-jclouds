@@ -32,17 +32,17 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private Snapshot.Interval interval;
       private long numberToRetain;
       private String schedule;
       private String timezone;
-      private long volumeId;
+      private String volumeId;
 
       /**
        * @param id the ID of the snapshot policy
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -82,7 +82,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
       /**
        * @param volumeId ID of the disk volume
        */
-      public Builder volumeId(long volumeId) {
+      public Builder volumeId(String volumeId) {
          this.volumeId = volumeId;
          return this;
       }
@@ -92,7 +92,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("intervaltype")
    private Snapshot.Interval interval;
    @SerializedName("maxsnaps")
@@ -100,9 +100,9 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    private String schedule;
    private String timezone;
    @SerializedName("volumeid")
-   private long volumeId;
+   private String volumeId;
 
-   public SnapshotPolicy(long id, Snapshot.Interval interval, long numberToRetain, String schedule, String timezone, long volumeId) {
+   public SnapshotPolicy(String id, Snapshot.Interval interval, long numberToRetain, String schedule, String timezone, String volumeId) {
       this.id = id;
       this.interval = interval;
       this.numberToRetain = numberToRetain;
@@ -120,7 +120,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    /**
     * @return the ID of the snapshot policy
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -155,7 +155,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    /**
     * @return ID of the disk volume
     */
-   public long getVolumeId() {
+   public String getVolumeId() {
       return volumeId;
    }
 
@@ -195,7 +195,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
    @Override
    public int compareTo(SnapshotPolicy other) {
-      return new Long(id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 
 }

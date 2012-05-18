@@ -40,7 +40,7 @@ public class GlobalAlertClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testListAlerts() throws Exception {
       assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
 
-      final Set<Alert> response = globalAdminClient.getAlertClient().listAlerts(ListAlertsOptions.Builder.id(20));
+      final Set<Alert> response = globalAdminClient.getAlertClient().listAlerts(ListAlertsOptions.Builder.id("20"));
       assert null != response;
       assertTrue(response.size() >= 0);
       int count = 0;

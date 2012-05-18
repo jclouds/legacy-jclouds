@@ -36,8 +36,8 @@ import com.google.common.collect.ImmutableSet;
 @Test(singleThreaded = true, testName="OptionsConverterTest")
 public class OptionsConverterTest {
 
-   private static final Map<Long,Network> EMPTY_NETWORKS_MAP = Collections.<Long, Network>emptyMap();
-   private static final int ZONE_ID = 2;
+   private static final Map<String,Network> EMPTY_NETWORKS_MAP = Collections.<String, Network>emptyMap();
+   private static final String ZONE_ID = "2";
    private final NetworkService firewallServiceWithStaticNat
       = new NetworkService("Firewall", ImmutableMap.of("StaticNat", "true"));
 
@@ -45,13 +45,13 @@ public class OptionsConverterTest {
    public void testBasicNetworkOptionsConverter() {
       BasicNetworkOptionsConverter converter = new BasicNetworkOptionsConverter();
 
-      CloudStackTemplateOptions optionsIn = CloudStackTemplateOptions.Builder.securityGroupId(42).networkId(46);
+      CloudStackTemplateOptions optionsIn = CloudStackTemplateOptions.Builder.securityGroupId("42").networkId("46");
       DeployVirtualMachineOptions optionsOut = new DeployVirtualMachineOptions();
 
       DeployVirtualMachineOptions optionsOut2 = converter.apply(optionsIn, EMPTY_NETWORKS_MAP, ZONE_ID, optionsOut);
       assertTrue(optionsOut == optionsOut2);
 
-      DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.securityGroupId(42).networkId(46);
+      DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.securityGroupId("42").networkId("46");
       assertEquals(optionsOut, optionsExpected);
    }
 
@@ -59,7 +59,7 @@ public class OptionsConverterTest {
    public void testAdvancedSecurityGroupsNotAllowed() {
       boolean exceptionThrown = false;
       AdvancedNetworkOptionsConverter converter = new AdvancedNetworkOptionsConverter();
-      CloudStackTemplateOptions optionsIn = CloudStackTemplateOptions.Builder.securityGroupId(42);
+      CloudStackTemplateOptions optionsIn = CloudStackTemplateOptions.Builder.securityGroupId("42");
 
       try {
          converter.apply(optionsIn, EMPTY_NETWORKS_MAP, ZONE_ID, DeployVirtualMachineOptions.NONE);
@@ -73,9 +73,9 @@ public class OptionsConverterTest {
    @Test
    public void testAdvancedExplicitNetworkSelection() {
       AdvancedNetworkOptionsConverter converter = new AdvancedNetworkOptionsConverter();
-      DeployVirtualMachineOptions optionsActual = converter.apply(CloudStackTemplateOptions.Builder.networkId(42),
+      DeployVirtualMachineOptions optionsActual = converter.apply(CloudStackTemplateOptions.Builder.networkId("42"),
          EMPTY_NETWORKS_MAP, ZONE_ID, DeployVirtualMachineOptions.NONE);
-      DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.networkId(42);
+      DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.networkId("42");
       assertEquals(optionsActual, optionsExpected);
    }
 
@@ -84,11 +84,11 @@ public class OptionsConverterTest {
       AdvancedNetworkOptionsConverter converter = new AdvancedNetworkOptionsConverter();
 
       Network eligibleNetwork = Network.builder()
-         .id(25).zoneId(ZONE_ID).isDefault(true).services(ImmutableSet.of(firewallServiceWithStaticNat))
+         .id("25").zoneId(ZONE_ID).isDefault(true).services(ImmutableSet.of(firewallServiceWithStaticNat))
          .build();
       DeployVirtualMachineOptions optionsActual = converter.apply(CloudStackTemplateOptions.NONE,
          ImmutableMap.of(eligibleNetwork.getId(), eligibleNetwork), ZONE_ID, DeployVirtualMachineOptions.NONE);
-      DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.networkId(25);
+      DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.networkId("25");
       assertEquals(optionsActual, optionsExpected);
    }
 
@@ -108,7 +108,7 @@ public class OptionsConverterTest {
    public void testAdvancedWhenNoNetworkEligible() {
       AdvancedNetworkOptionsConverter converter = new AdvancedNetworkOptionsConverter();
       Network unsuitableNetwork = Network.builder()
-         .id(25).zoneId(ZONE_ID)
+         .id("25").zoneId(ZONE_ID)
          .build();
 
       boolean exceptionThrown = false;

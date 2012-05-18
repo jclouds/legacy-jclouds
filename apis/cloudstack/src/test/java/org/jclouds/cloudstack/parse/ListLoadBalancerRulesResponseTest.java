@@ -61,10 +61,10 @@ public class ListLoadBalancerRulesResponseTest extends BaseSetParserTest<LoadBal
    @SelectJson("loadbalancerrule")
    public Set<LoadBalancerRule> expected() {
       return ImmutableSet.<LoadBalancerRule> of(LoadBalancerRule.builder()
-         .id(93).account("admin").algorithm(LoadBalancerRule.Algorithm.ROUNDROBIN)
-         .description("null").domain("ROOT").domainId(1).name("Ranny").privatePort(80)
-         .publicIP("10.27.27.59").publicIPId(10).publicPort(80).state(LoadBalancerRule.State.ADD)
-         .CIDRs(Sets.<String>newHashSet()).zoneId(0)
+         .id("93").account("admin").algorithm(LoadBalancerRule.Algorithm.ROUNDROBIN)
+         .description("null").domain("ROOT").domainId("1").name("Ranny").privatePort(80)
+         .publicIP("10.27.27.59").publicIPId("10").publicPort(80).state(LoadBalancerRule.State.ADD)
+         .CIDRs(Sets.<String>newHashSet()).zoneId(null)
          .build());
    }
 

@@ -39,12 +39,12 @@ import com.google.common.collect.ImmutableList;
 public class ListCapacityOptionsTest {
 
    public void testHostId() {
-      ListCapacityOptions options = new ListCapacityOptions().hostId(6);
+      ListCapacityOptions options = new ListCapacityOptions().hostId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("hostid"));
    }
 
    public void testHostIdStatic() {
-      ListCapacityOptions options = hostId(6);
+      ListCapacityOptions options = hostId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("hostid"));
    }
 
@@ -59,12 +59,12 @@ public class ListCapacityOptionsTest {
    }
 
    public void testPodId() {
-      ListCapacityOptions options = new ListCapacityOptions().podId(5);
+      ListCapacityOptions options = new ListCapacityOptions().podId("5");
       assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      ListCapacityOptions options = podId(5);
+      ListCapacityOptions options = podId("5");
       assertEquals(ImmutableList.of("5"), options.buildQueryParameters().get("podid"));
    }
 
@@ -79,12 +79,12 @@ public class ListCapacityOptionsTest {
    }
 
    public void testZoneId() {
-      ListCapacityOptions options = new ListCapacityOptions().zoneId(4);
+      ListCapacityOptions options = new ListCapacityOptions().zoneId("4");
       assertEquals(ImmutableList.of("4"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListCapacityOptions options = zoneId(4);
+      ListCapacityOptions options = zoneId("4");
       assertEquals(ImmutableList.of("4"), options.buildQueryParameters().get("zoneid"));
    }
 }

@@ -34,10 +34,10 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
 
    public static class Builder {
 
-      private long id;
-      private long accountId;
+      private String id;
+      private String accountId;
       private Date created;
-      private long extractId;
+      private String extractId;
       private ExtractMode extractMode;
       private String name;
       private String state;
@@ -45,13 +45,13 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       private String storageType;
       private int uploadPercentage;
       private String url;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
       /**
        * @param id the id of extracted object
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -59,7 +59,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       /**
        * @param accountId the account id to which the extracted object belongs
        */
-      public Builder accountId(long accountId) {
+      public Builder accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -75,7 +75,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       /**
        * @param extractId the upload id of extracted object
        */
-      public Builder extractId(long extractId) {
+      public Builder extractId(String extractId) {
          this.extractId = extractId;
          return this;
       }
@@ -139,7 +139,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       /**
        * @param zoneId zone ID the object was extracted from
        */
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -159,11 +159,11 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("accountid")
-   private long accountId;
+   private String accountId;
    private Date created;
-   private long extractId;
+   private String extractId;
    private ExtractMode extractMode;
    private String name;
    private String state;
@@ -174,15 +174,15 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    private int uploadPercentage;
    private String url;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
 
    /**
     *  Construct a new TemplateExtraction instance
     */
-   public TemplateExtraction(long id, long accountId, Date created, long extractId,
+   public TemplateExtraction(String id, String accountId, Date created, String extractId,
                              ExtractMode extractMode, String name, String state, String status,
                              String storageType, int uploadPercentage, String url,
-                             long zoneId, String zoneName) {
+                             String zoneId, String zoneName) {
       this.id = id;
       this.accountId = accountId;
       this.created = created;
@@ -211,14 +211,14 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    /**
     * @return the id of extracted object
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return the account id to which the extracted object belongs
     */
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -232,7 +232,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    /**
     * @return the upload id of extracted object
     */
-   public long getExtractId() {
+   public String getExtractId() {
       return extractId;
    }
 
@@ -288,7 +288,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    /**
     * @return zone ID the object was extracted from
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -349,7 +349,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
 
    @Override
    public int compareTo(TemplateExtraction other) {
-      return new Long(id).compareTo(other.id);
+      return id.compareTo(other.id);
    }
 
 }

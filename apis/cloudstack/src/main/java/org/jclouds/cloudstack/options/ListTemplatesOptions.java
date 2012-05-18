@@ -50,7 +50,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
     * @param id
     *           the template ID
     */
-   public ListTemplatesOptions id(long id) {
+   public ListTemplatesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -68,7 +68,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
     * @param zoneId
     *           list templates by zoneId.
     */
-   public ListTemplatesOptions zoneId(long zoneId) {
+   public ListTemplatesOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
@@ -96,7 +96,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
       /**
        * @see ListTemplatesOptions#domainId
        */
-      public static ListTemplatesOptions domainId(long id) {
+      public static ListTemplatesOptions domainId(String id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.domainId(id);
       }
@@ -104,7 +104,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
       /**
        * @see ListTemplatesOptions#accountInDomain
        */
-      public static ListTemplatesOptions accountInDomain(String account, long domain) {
+      public static ListTemplatesOptions accountInDomain(String account, String domain) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -112,7 +112,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
       /**
        * @see ListTemplatesOptions#id
        */
-      public static ListTemplatesOptions id(long id) {
+      public static ListTemplatesOptions id(String id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.id(id);
       }
@@ -128,7 +128,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
       /**
        * @see ListTemplatesOptions#zoneId
        */
-      public static ListTemplatesOptions zoneId(long id) {
+      public static ListTemplatesOptions zoneId(String id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.zoneId(id);
       }
@@ -146,7 +146,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListTemplatesOptions accountInDomain(String account, long domain) {
+   public ListTemplatesOptions accountInDomain(String account, String domain) {
       return ListTemplatesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -154,7 +154,7 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListTemplatesOptions domainId(long domainId) {
+   public ListTemplatesOptions domainId(String domainId) {
       return ListTemplatesOptions.class.cast(super.domainId(domainId));
    }
 }

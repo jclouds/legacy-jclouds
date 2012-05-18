@@ -128,7 +128,7 @@ public class RegisterTemplateOptions extends AccountInDomainOptions {
       /**
        * @see AccountInDomainOptions#accountInDomain
        */
-      public static RegisterTemplateOptions accountInDomain(String account, long domain) {
+      public static RegisterTemplateOptions accountInDomain(String account, String domain) {
          RegisterTemplateOptions options = new RegisterTemplateOptions();
          return (RegisterTemplateOptions)options.accountInDomain(account, domain);
       }
@@ -136,7 +136,7 @@ public class RegisterTemplateOptions extends AccountInDomainOptions {
       /**
        * @see AccountInDomainOptions#domainId
        */
-      public static RegisterTemplateOptions domainId(long domainId) {
+      public static RegisterTemplateOptions domainId(String domainId) {
          RegisterTemplateOptions options = new RegisterTemplateOptions();
          return (RegisterTemplateOptions)options.domainId(domainId);
       }

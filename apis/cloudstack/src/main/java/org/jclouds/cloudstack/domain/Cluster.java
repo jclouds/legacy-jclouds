@@ -57,18 +57,18 @@ public class Cluster implements Comparable<Cluster> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private AllocationState allocationState;
       private Host.ClusterType clusterType;
       private String hypervisor;
       private ManagedState managedState;
       private String name;
-      private long podId;
+      private String podId;
       private String podName;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -98,7 +98,7 @@ public class Cluster implements Comparable<Cluster> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -108,7 +108,7 @@ public class Cluster implements Comparable<Cluster> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -123,21 +123,21 @@ public class Cluster implements Comparable<Cluster> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("allocationstate") private AllocationState allocationState;
    @SerializedName("clustertype") private Host.ClusterType clusterType;
    @SerializedName("hypervisortype") private String hypervisor;
    @SerializedName("managedstate") private ManagedState managedState;
    private String name;
-   @SerializedName("podid") private long podId;
+   @SerializedName("podid") private String podId;
    @SerializedName("podname") private String podName;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    @SerializedName("zonename") private String zoneName;
 
    // Just for the serializer
    Cluster() {}
 
-   public Cluster(long id, AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, long podId, String podName, long zoneId, String zoneName) {
+   public Cluster(String id, AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, String podId, String podName, String zoneId, String zoneName) {
       this.id = id;
       this.allocationState = allocationState;
       this.clusterType = clusterType;
@@ -150,7 +150,7 @@ public class Cluster implements Comparable<Cluster> {
       this.zoneName = zoneName;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -174,7 +174,7 @@ public class Cluster implements Comparable<Cluster> {
       return name;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -182,7 +182,7 @@ public class Cluster implements Comparable<Cluster> {
       return podName;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -235,6 +235,6 @@ public class Cluster implements Comparable<Cluster> {
 
    @Override
    public int compareTo(Cluster other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

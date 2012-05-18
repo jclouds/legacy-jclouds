@@ -64,26 +64,26 @@ public class CloudStackTemplateOptionsTest {
 
    @Test
    public void testSecurityGroupId() {
-      TemplateOptions options = new CloudStackTemplateOptions().securityGroupId(3l);
-      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of(3l));
+      TemplateOptions options = new CloudStackTemplateOptions().securityGroupId("3");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of("3"));
    }
 
    @Test
    public void testSecurityGroupIdStatic() {
-      TemplateOptions options = securityGroupId(3l);
-      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of(3l));
+      TemplateOptions options = securityGroupId("3");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of("3"));
    }
 
    @Test
    public void testSecurityGroupIds() {
-      TemplateOptions options = new CloudStackTemplateOptions().securityGroupIds(ImmutableSet.of(3l));
-      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of(3l));
+      TemplateOptions options = new CloudStackTemplateOptions().securityGroupIds(ImmutableSet.of("3"));
+      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of("3"));
    }
 
    @Test
    public void testSecurityGroupIdsStatic() {
-      TemplateOptions options = securityGroupIds(ImmutableSet.of(3l));
-      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of(3l));
+      TemplateOptions options = securityGroupIds(ImmutableSet.of("3"));
+      assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of("3"));
    }
 
    @Test
@@ -94,26 +94,26 @@ public class CloudStackTemplateOptionsTest {
 
    @Test
    public void testNetworkId() {
-      TemplateOptions options = new CloudStackTemplateOptions().networkId(3l);
-      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of(3l));
+      TemplateOptions options = new CloudStackTemplateOptions().networkId("3");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of("3"));
    }
 
    @Test
    public void testNetworkIdStatic() {
-      TemplateOptions options = networkId(3l);
-      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of(3l));
+      TemplateOptions options = networkId("3");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of("3"));
    }
 
    @Test
    public void testNetworkIds() {
-      TemplateOptions options = new CloudStackTemplateOptions().networkIds(ImmutableSet.of(3l));
-      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of(3l));
+      TemplateOptions options = new CloudStackTemplateOptions().networkIds(ImmutableSet.of("3"));
+      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of("3"));
    }
 
    @Test
    public void testNetworkIdsStatic() {
-      TemplateOptions options = networkIds(ImmutableSet.of(3l));
-      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of(3l));
+      TemplateOptions options = networkIds(ImmutableSet.of("3"));
+      assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of("3"));
    }
 
    @Test
@@ -130,22 +130,22 @@ public class CloudStackTemplateOptionsTest {
 
    @Test
    public void testIpsToNetwork() {
-      Map<String, Long> ipsToNetworks = Maps.newHashMap();
-      ipsToNetworks.put("10.0.0.1", 5L);
+      Map<String, String> ipsToNetworks = Maps.newHashMap();
+      ipsToNetworks.put("10.0.0.1", "5");
 
       TemplateOptions options = new CloudStackTemplateOptions().ipsToNetworks(ipsToNetworks);
       assertEquals(options.as(CloudStackTemplateOptions.class)
-         .getIpsToNetworks().get("10.0.0.1").longValue(), 5L);
+         .getIpsToNetworks().get("10.0.0.1"), "5");
    }
 
    @Test
    public void testIpsToNetworkStatic() {
-      Map<String, Long> ipsToNetworks = Maps.newHashMap();
-      ipsToNetworks.put("10.0.0.1", 5L);
+      Map<String, String> ipsToNetworks = Maps.newHashMap();
+      ipsToNetworks.put("10.0.0.1", "5");
 
       TemplateOptions options = ipsToNetworks(ipsToNetworks);
       assertEquals(options.as(CloudStackTemplateOptions.class)
-         .getIpsToNetworks().get("10.0.0.1").longValue(), 5L);
+         .getIpsToNetworks().get("10.0.0.1"), "5");
    }
 
    @Test

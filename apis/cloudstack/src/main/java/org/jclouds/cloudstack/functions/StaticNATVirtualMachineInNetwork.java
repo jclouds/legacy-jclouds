@@ -66,13 +66,13 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
       for (ip = reuseOrAssociate.apply(network); (!ip.isStaticNAT() || ip.getVirtualMachineId() != vm.getId()); ip = reuseOrAssociate
             .apply(network)) {
          // check to see if someone already grabbed this ip
-         if (ip.getVirtualMachineId() > 0 && ip.getVirtualMachineId() != vm.getId())
+         if (ip.getVirtualMachineId() != null && ip.getVirtualMachineId() != vm.getId())
             continue;
          try {
             logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s)", ip.getId(), vm.getId());
             client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
             ip = client.getAddressClient().getPublicIPAddress(ip.getId());
-            if (ip.isStaticNAT() && ip.getVirtualMachineId() == vm.getId())
+            if (ip.isStaticNAT() && ip.getVirtualMachineId().equals(vm.getId()))
                break;
          } catch (IllegalStateException e) {
             // very likely an ip conflict, so retry;

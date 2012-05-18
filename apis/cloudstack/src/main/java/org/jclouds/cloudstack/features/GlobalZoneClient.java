@@ -66,7 +66,7 @@ public interface GlobalZoneClient extends ZoneClient {
     *          optional arguments
     * @return
     */
-   Zone updateZone(long id, UpdateZoneOptions... options);
+   Zone updateZone(String id, UpdateZoneOptions... options);
 
    /**
     * Delete a zone with a specific ID
@@ -74,6 +74,6 @@ public interface GlobalZoneClient extends ZoneClient {
     * @param zoneId
     *          the ID of the Zone
     */
-   Void deleteZone(long zoneId);
+   Void deleteZone(String zoneId);
 
 }

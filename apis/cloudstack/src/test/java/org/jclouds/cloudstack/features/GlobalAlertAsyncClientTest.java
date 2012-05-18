@@ -45,7 +45,7 @@ public class GlobalAlertAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listAlerts HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAlerts&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -59,10 +59,10 @@ public class GlobalAlertAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
 
    public void testListAlertsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = GlobalAlertAsyncClient.class.getMethod("listAlerts", ListAlertsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListAlertsOptions.Builder.id(42).keyword("jclouds").type("TEMPLATE"));
+      HttpRequest httpRequest = processor.createRequest(method, ListAlertsOptions.Builder.id("42").keyword("jclouds").type("TEMPLATE"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listAlerts&id=42&keyword=jclouds&type=TEMPLATE HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAlerts&listAll=true&id=42&keyword=jclouds&type=TEMPLATE HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

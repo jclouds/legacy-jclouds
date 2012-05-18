@@ -43,10 +43,10 @@ public class ListCapacityResponseTest extends BaseSetParserTest<Capacity> {
    @SelectJson("capacity")
    public Set<Capacity> expected() {
       Capacity a = Capacity.builder().type(Capacity.Type.PRIMARY_STORAGE_ALLOCATED_BYTES)
-         .zoneId(1).zoneName("Dev Zone 1").podId(-1).podName("All")
+         .zoneId("1").zoneName("Dev Zone 1").podId("null").podName("All")
          .capacityUsed(34057748480L).capacityTotal(1796712955904L).percentUsed(1.9).build();
       Capacity b = Capacity.builder().type(Capacity.Type.PRIMARY_STORAGE_ALLOCATED_BYTES)
-         .zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1")
+         .zoneId("1").zoneName("Dev Zone 1").podId("1").podName("Dev Pod 1")
          .capacityUsed(34057748480L).capacityTotal(1796712955904L).percentUsed(1.9).build();
       return ImmutableSet.of(a, b);
    }

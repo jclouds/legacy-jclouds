@@ -52,7 +52,7 @@ public interface GlobalCapacityAsyncClient {
     * @see GlobalCapacityClient#listCapacity(org.jclouds.cloudstack.options.ListCapacityOptions...)
     */
    @GET
-   @QueryParams(keys = "command", values = "listCapacity")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listCapacity", "true" })
    @SelectJson("capacity")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)

@@ -56,7 +56,7 @@ public interface NATClient {
     *           IPForwardingRule to get
     * @return IPForwardingRule or null if not found
     */
-   IPForwardingRule getIPForwardingRule(long id);
+   IPForwardingRule getIPForwardingRule(String id);
 
    /**
     * get a set of IPForwardingRules by ipaddress id
@@ -65,7 +65,7 @@ public interface NATClient {
     *           IPAddress of rule to get
     * @return IPForwardingRule matching query or empty if not found
     */
-   Set<IPForwardingRule> getIPForwardingRulesForIPAddress(long id);
+   Set<IPForwardingRule> getIPForwardingRulesForIPAddress(String id);
 
    /**
     * get a set of IPForwardingRules by virtual machine id
@@ -74,7 +74,7 @@ public interface NATClient {
     *           virtual machine of rule to get
     * @return IPForwardingRule matching query or empty set if not found
     */
-   Set<IPForwardingRule> getIPForwardingRulesForVirtualMachine(long id);
+   Set<IPForwardingRule> getIPForwardingRulesForVirtualMachine(String id);
 
    /**
     * Creates an ip forwarding rule
@@ -88,7 +88,7 @@ public interface NATClient {
     *           the start port for the rule
     * @return response used to track creation
     */
-   AsyncCreateResponse createIPForwardingRule(long IPAddressId, String protocol, int startPort,
+   AsyncCreateResponse createIPForwardingRule(String IPAddressId, String protocol, int startPort,
          CreateIPForwardingRuleOptions... options);
 
    /**
@@ -97,10 +97,10 @@ public interface NATClient {
     * @param id
     *           the id of the forwarding rule
     */
-   Long deleteIPForwardingRule(long id);
+   String deleteIPForwardingRule(String id);
 
    @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   void enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
+   void enableStaticNATForVirtualMachine(String virtualMachineId, String IPAddressId);
 
    /**
     * Disables static rule for given ip address
@@ -109,5 +109,5 @@ public interface NATClient {
     *           the public IP address id for which static nat feature is being
     *           disabled
     */
-   Long disableStaticNATOnPublicIP(long IPAddressId);
+   String disableStaticNATOnPublicIP(String IPAddressId);
 }

@@ -37,16 +37,16 @@ import com.google.inject.Inject;
  *
  * @author Richard Downer
  */
-public class ZoneIdToZoneSupplier implements Supplier<LoadingCache<Long, Zone>> {
-   private final LoadingCache<Long, Zone> cache;
+public class ZoneIdToZoneSupplier implements Supplier<LoadingCache<String, Zone>> {
+   private final LoadingCache<String, Zone> cache;
 
    @Inject
-   public ZoneIdToZoneSupplier(CacheLoader<Long, Zone> zoneIdToZone, @Named(PROPERTY_SESSION_INTERVAL) long expirationSecs) {
+   public ZoneIdToZoneSupplier(CacheLoader<String, Zone> zoneIdToZone, @Named(PROPERTY_SESSION_INTERVAL) long expirationSecs) {
       cache = CacheBuilder.newBuilder().expireAfterWrite(expirationSecs, TimeUnit.SECONDS).build(zoneIdToZone);
    }
 
    @Override
-   public LoadingCache<Long, Zone> get() {
+   public LoadingCache<String, Zone> get() {
       return cache;
    }
 }

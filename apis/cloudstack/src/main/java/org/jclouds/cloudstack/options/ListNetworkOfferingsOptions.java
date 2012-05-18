@@ -40,7 +40,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
     * @param zoneId
     *           list network offerings available for network creation in specific zone
     */
-   public ListNetworkOfferingsOptions zoneId(long zoneId) {
+   public ListNetworkOfferingsOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -49,7 +49,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
     * @param id
     *           the ID of the network offering
     */
-   public ListNetworkOfferingsOptions id(long id) {
+   public ListNetworkOfferingsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -170,7 +170,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworkOfferingsOptions#id
        */
-      public static ListNetworkOfferingsOptions id(long id) {
+      public static ListNetworkOfferingsOptions id(String id) {
          ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions();
          return options.id(id);
       }
@@ -178,7 +178,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworkOfferingsOptions#zoneId
        */
-      public static ListNetworkOfferingsOptions zoneId(long zoneId) {
+      public static ListNetworkOfferingsOptions zoneId(String zoneId) {
          ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions();
          return options.zoneId(zoneId);
       }

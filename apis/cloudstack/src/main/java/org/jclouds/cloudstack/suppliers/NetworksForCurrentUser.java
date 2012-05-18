@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class NetworksForCurrentUser implements Supplier<Map<Long, Network>> {
+public class NetworksForCurrentUser implements Supplier<Map<String, Network>> {
    private final CloudStackClient client;
    private final Supplier<User> currentUserSupplier;
 
@@ -50,15 +50,15 @@ public class NetworksForCurrentUser implements Supplier<Map<Long, Network>> {
    }
 
    @Override
-   public Map<Long, Network> get() {
+   public Map<String, Network> get() {
       User currentUser = currentUserSupplier.get();
       NetworkClient networkClient = client.getNetworkClient();
       return Maps.uniqueIndex(
             networkClient.listNetworks(accountInDomain(currentUser.getAccount(), currentUser.getDomainId())),
-            new Function<Network, Long>() {
+            new Function<Network, String>() {
 
                @Override
-               public Long apply(Network arg0) {
+               public String apply(Network arg0) {
                   return arg0.getId();
                }
             });

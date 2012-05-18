@@ -59,7 +59,7 @@ public interface VMGroupAsyncClient {
     * @return VM groups matching query, or empty set, if no zones are found
     */
    @GET
-   @QueryParams(keys = "command", values = "listInstanceGroups")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listInstanceGroups", "true" })
    @SelectJson("instancegroup")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -69,12 +69,12 @@ public interface VMGroupAsyncClient {
     * @see VMGroupClient#getInstanceGroup
     */
    @GET
-   @QueryParams(keys = "command", values = "listInstanceGroups")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listInstanceGroups", "true" })
    @SelectJson("instancegroup")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VMGroup> getInstanceGroup(@QueryParam("id") long id);
+   ListenableFuture<VMGroup> getInstanceGroup(@QueryParam("id") String id);
 
    /**
     * Creates a VM group
@@ -99,7 +99,7 @@ public interface VMGroupAsyncClient {
    @QueryParams(keys = "command", values = "updateInstanceGroup")
    @SelectJson("instancegroup")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<VMGroup> updateInstanceGroup(@QueryParam("id") long id, UpdateVMGroupOptions... options);
+   ListenableFuture<VMGroup> updateInstanceGroup(@QueryParam("id") String id, UpdateVMGroupOptions... options);
 
    /**
     * Delete a VM group
@@ -110,5 +110,5 @@ public interface VMGroupAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "deleteInstanceGroup")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteInstanceGroup(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteInstanceGroup(@QueryParam("id") String id);
 }

@@ -38,22 +38,22 @@ import com.google.common.collect.ImmutableList;
 public class ListSecurityGroupsOptionsTest {
 
    public void testId() {
-      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().id(6);
+      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListSecurityGroupsOptions options = id(6);
+      ListSecurityGroupsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testAccount() {
-      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().accountInDomain("account", 1);
+      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().accountInDomain("account", "1");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
    }
 
    public void testAccountStatic() {
-      ListSecurityGroupsOptions options = accountInDomain("account", 1);
+      ListSecurityGroupsOptions options = accountInDomain("account", "1");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
    }
 
@@ -68,22 +68,22 @@ public class ListSecurityGroupsOptionsTest {
    }
 
    public void testDomainId() {
-      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().domainId(6);
+      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListSecurityGroupsOptions options = domainId(6);
+      ListSecurityGroupsOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testVirtualMachineId() {
-      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().virtualMachineId(6);
+      ListSecurityGroupsOptions options = new ListSecurityGroupsOptions().virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testVirtualMachineIdStatic() {
-      ListSecurityGroupsOptions options = virtualMachineId(6);
+      ListSecurityGroupsOptions options = virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 }

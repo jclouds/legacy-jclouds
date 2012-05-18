@@ -56,7 +56,7 @@ public interface LoadBalancerClient {
     *           LoadBalancerRule to get
     * @return LoadBalancerRule or null if not found
     */
-   LoadBalancerRule getLoadBalancerRule(long id);
+   LoadBalancerRule getLoadBalancerRule(String id);
 
    /**
     * Creates a load balancer rule.
@@ -77,7 +77,7 @@ public interface LoadBalancerClient {
     * @param options optional call arguments
     * @return newly created rule
     */
-   Long createLoadBalancerRuleForPublicIP(long publicIPId, Algorithm algorithm, String name,
+   String createLoadBalancerRuleForPublicIP(String publicIPId, Algorithm algorithm, String name,
          int privatePort, int publicPort, CreateLoadBalancerRuleOptions... options);
 
    /**
@@ -89,7 +89,7 @@ public interface LoadBalancerClient {
     *       optional arguments
     * @return updated rule
     */
-   LoadBalancerRule updateLoadBalancerRule(long id, UpdateLoadBalancerRuleOptions... options);
+   LoadBalancerRule updateLoadBalancerRule(String id, UpdateLoadBalancerRuleOptions... options);
 
    /**
     * 
@@ -100,7 +100,7 @@ public interface LoadBalancerClient {
     * @return async job id of the job completing or null, if the load balancer
     *         rule was not found.
     */
-   Long deleteLoadBalancerRule(long id);
+   String deleteLoadBalancerRule(String id);
 
    /**
     * List all virtual machine instances that are assigned to a load balancer
@@ -111,7 +111,7 @@ public interface LoadBalancerClient {
     * @return VirtualMachines matching query, or empty set, if no
     *         VirtualMachines are assigned
     */
-   Set<VirtualMachine> listVirtualMachinesAssignedToLoadBalancerRule(long id);
+   Set<VirtualMachine> listVirtualMachinesAssignedToLoadBalancerRule(String id);
 
    /**
     * Assigns virtual machine or a list of virtual machines to a load balancer
@@ -124,7 +124,7 @@ public interface LoadBalancerClient {
     *           to the load balancer rule
     * @return job id related to the operation
     */
-   long assignVirtualMachinesToLoadBalancerRule(long id, Iterable<Long> virtualMachineIds);
+   String assignVirtualMachinesToLoadBalancerRule(String id, Iterable<String> virtualMachineIds);
 
    /**
     * Assigns virtual machine or a list of virtual machines to a load balancer
@@ -137,7 +137,7 @@ public interface LoadBalancerClient {
     *           to the load balancer rule
     * @return job id related to the operation
     */
-   long assignVirtualMachinesToLoadBalancerRule(long id, long... virtualMachineIds);
+   String assignVirtualMachinesToLoadBalancerRule(String id, String... virtualMachineIds);
 
    /**
     * Removes a virtual machine or a list of virtual machines from a load
@@ -150,7 +150,7 @@ public interface LoadBalancerClient {
     *           from the load balancer rule
     * @return job id related to the operation
     */
-   long removeVirtualMachinesFromLoadBalancerRule(long id, Iterable<Long> virtualMachineIds);
+   String removeVirtualMachinesFromLoadBalancerRule(String id, Iterable<String> virtualMachineIds);
 
    /**
     * Removes a virtual machine or a list of virtual machines from a load
@@ -163,5 +163,5 @@ public interface LoadBalancerClient {
     *           from the load balancer rule
     * @return job id related to the operation
     */
-   long removeVirtualMachinesFromLoadBalancerRule(long id, long... virtualMachineIds);
+   String removeVirtualMachinesFromLoadBalancerRule(String id, String... virtualMachineIds);
 }

@@ -50,7 +50,7 @@ public class VirtualMachineExpungedTest {
 
    @Test
    public void testWaitForVirtualMachineToBeExpunged() {
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
+      VirtualMachine virtualMachine = VirtualMachine.builder().id("229").build();
       expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(null);
 
       replay(client, virtualMachineClient);
@@ -60,7 +60,7 @@ public class VirtualMachineExpungedTest {
 
    @Test
    public void testNoRemovedYet() {
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
+      VirtualMachine virtualMachine = VirtualMachine.builder().id("229").build();
       expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
 
       replay(client, virtualMachineClient);

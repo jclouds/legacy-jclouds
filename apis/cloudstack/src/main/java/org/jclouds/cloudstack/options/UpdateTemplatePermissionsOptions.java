@@ -36,7 +36,7 @@ public class UpdateTemplatePermissionsOptions extends BaseHttpRequestOptions {
    /**
     * a list of accounts. If specified, "op" parameter has to be passed in.
     */
-   public UpdateTemplatePermissionsOptions accounts(Iterable<Long> accounts) {
+   public UpdateTemplatePermissionsOptions accounts(Iterable<String> accounts) {
       this.queryParameters.replaceValues("accounts", ImmutableSet.of(Joiner.on(',').join(accounts)));
       return this;
    }
@@ -79,7 +79,7 @@ public class UpdateTemplatePermissionsOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
 
-      public static UpdateTemplatePermissionsOptions accounts(Iterable<Long> accounts) {
+      public static UpdateTemplatePermissionsOptions accounts(Iterable<String> accounts) {
          UpdateTemplatePermissionsOptions options = new UpdateTemplatePermissionsOptions();
          return options.accounts(accounts);
       }

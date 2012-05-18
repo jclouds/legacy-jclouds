@@ -51,24 +51,24 @@ public class GuestOSClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListOSCategories() throws Exception {
-      Map<Long, String> response = client.getGuestOSClient().listOSCategories();
+      Map<String, String> response = client.getGuestOSClient().listOSCategories();
       assert null != response;
       assertTrue(response.size() >= 0);
-      for (Entry<Long, String> category : response.entrySet()) {
+      for (Entry<String, String> category : response.entrySet()) {
          checkOSCategory(category);
       }
    }
 
-   protected void checkOSCategory(Entry<Long, String> category) {
+   protected void checkOSCategory(Entry<String, String> category) {
       assertEquals(category, client.getGuestOSClient().getOSCategory(category.getKey()));
-      assert category.getKey() > 0 : category;
+      assert category.getKey() != null : category;
       assert category.getValue() != null : category;
    }
 
    protected void checkOSType(OSType type) {
       assertEquals(type.getId(), client.getGuestOSClient().getOSType(type.getId()).getId());
-      assert type.getId() > 0 : type;
-      assert type.getOSCategoryId() > 0 : type;
+      assert type.getId() != null : type;
+      assert type.getOSCategoryId() != null : type;
       assert type.getDescription() != null : type;
 
    }

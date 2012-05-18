@@ -58,7 +58,7 @@ public interface GlobalUsageAsyncClient {
    ListenableFuture<JobResult> generateUsageRecords(@QueryParam("startdate") @ParamParser(DateToYyyyMmDd.class) Date start, @QueryParam("enddate") @ParamParser(DateToYyyyMmDd.class) Date end, GenerateUsageRecordsOptions... options);
 
    @GET
-   @QueryParams(keys = "command", values = "listUsageRecords")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listUsageRecords", "true" })
    @SelectJson("usagerecord")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Set<UsageRecord>> listUsageRecords(@QueryParam("startdate") @ParamParser(DateToYyyyMmDd.class) Date start, @QueryParam("enddate") @ParamParser(DateToYyyyMmDd.class) Date end, ListUsageRecordsOptions... options);

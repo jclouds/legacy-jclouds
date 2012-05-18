@@ -58,7 +58,7 @@ public interface FirewallClient {
     * @return
     *          firewall rule instance or null
     */
-   FirewallRule getFirewallRule(long id);
+   FirewallRule getFirewallRule(String id);
 
    /**
     * Create new firewall rule for a specific IP address
@@ -71,7 +71,7 @@ public interface FirewallClient {
     *          optional arguments for firewall rule creation
     * @return
     */
-   AsyncCreateResponse createFirewallRuleForIpAndProtocol(long ipAddressId,
+   AsyncCreateResponse createFirewallRuleForIpAndProtocol(String ipAddressId,
          FirewallRule.Protocol protocol, CreateFirewallRuleOptions... options);
 
    /**
@@ -80,7 +80,7 @@ public interface FirewallClient {
     * @param id
     *       the ID of the firewall rule
     */
-   Void deleteFirewallRule(long id);
+   Void deleteFirewallRule(String id);
 
    /**
     * List the port forwarding rules
@@ -100,7 +100,7 @@ public interface FirewallClient {
     * @return
     *       rule instance or null
     */
-   PortForwardingRule getPortForwardingRule(long id);
+   PortForwardingRule getPortForwardingRule(String id);
 
    /**
     * Creates an port forwarding rule
@@ -117,8 +117,8 @@ public interface FirewallClient {
     *           the private port of the port forwarding rule
     * @return response used to track creation
     */
-   AsyncCreateResponse createPortForwardingRuleForVirtualMachine(long ipAddressId,
-      PortForwardingRule.Protocol protocol, int publicPort, long virtualMachineId, int privatePort);
+   AsyncCreateResponse createPortForwardingRuleForVirtualMachine(String ipAddressId,
+      PortForwardingRule.Protocol protocol, int publicPort, String virtualMachineId, int privatePort);
 
    /**
     * Deletes an port forwarding rule
@@ -126,5 +126,5 @@ public interface FirewallClient {
     * @param id
     *           the id of the forwarding rule
     */
-   Void deletePortForwardingRule(long id);
+   Void deletePortForwardingRule(String id);
 }

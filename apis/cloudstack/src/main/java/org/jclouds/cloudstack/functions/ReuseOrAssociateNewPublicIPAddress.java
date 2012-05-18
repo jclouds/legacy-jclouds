@@ -76,7 +76,7 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
     * @throws NoSuchElementException
     *            if there's no existing ip address that is free for use
     */
-   public static PublicIPAddress findAvailableAndAssociatedWithNetwork(long networkId, AddressClient client) {
+   public static PublicIPAddress findAvailableAndAssociatedWithNetwork(String networkId, AddressClient client) {
       return find(client.listPublicIPAddresses(allocatedOnly(true).networkId(networkId)),
             and(associatedWithNetwork(networkId), available()));
    }
@@ -86,21 +86,21 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
       AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(network.getZoneId(),
             networkId(network.getId()));
       PublicIPAddress ip = blockUntilJobCompletesAndReturnResult.<PublicIPAddress> apply(job);
-      assert ip.getZoneId() == network.getZoneId();
+      assert ip.getZoneId().equals(network.getZoneId());
       return ip;
    }
 
    @Override
    public PublicIPAddress apply(Network input) {
       try {
-         logger.debug(">> looking for existing address in network(%d)", input.getId());
+         logger.debug(">> looking for existing address in network(%s)", input.getId());
          PublicIPAddress returnVal = findAvailableAndAssociatedWithNetwork(input.getId(), client.getAddressClient());
-         logger.debug("<< reused address(%d)", returnVal.getId());
+         logger.debug("<< reused address(%s)", returnVal.getId());
          return returnVal;
       } catch (NoSuchElementException e) {
-         logger.debug(">> associating new address in network(%d)", input.getId());
+         logger.debug(">> associating new address in network(%s)", input.getId());
          PublicIPAddress returnVal = associateIPAddressInNetwork(input, client, blockUntilJobCompletesAndReturnResult);
-         logger.debug("<< associated address(%d)", returnVal.getId());
+         logger.debug("<< associated address(%s)", returnVal.getId());
          return returnVal;
       }
    }

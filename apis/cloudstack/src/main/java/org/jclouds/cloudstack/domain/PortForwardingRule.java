@@ -78,21 +78,21 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String IPAddress;
-      private long IPAddressId;
+      private String IPAddressId;
       private int privatePort;
       private Protocol protocol;
       public int publicPort;
       private State state;
       private String virtualMachineDisplayName;
-      public long virtualMachineId;
+      public String virtualMachineId;
       private String virtualMachineName;
       private Set<String> CIDRs = ImmutableSet.of();
       private int privateEndPort;
       private int publicEndPort;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -102,7 +102,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
          return this;
       }
 
-      public Builder IPAddressId(long IPAddressId) {
+      public Builder IPAddressId(String IPAddressId) {
          this.IPAddressId = IPAddressId;
          return this;
       }
@@ -132,7 +132,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -163,11 +163,11 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("ipaddress")
    private String IPAddress;
    @SerializedName("ipaddressid")
-   private long IPAddressId;
+   private String IPAddressId;
    @SerializedName("privateport")
    private int privatePort;
    private Protocol protocol;
@@ -177,7 +177,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
-   public long virtualMachineId;
+   public String virtualMachineId;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("cidrlist")
@@ -187,8 +187,8 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @SerializedName("publicendport")
    private int publicEndPort;
 
-   public PortForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, Protocol protocol,
-                             int publicPort, State state, String virtualMachineDisplayName, long virtualMachineId,
+   public PortForwardingRule(String id, String iPAddress, String iPAddressId, int privatePort, Protocol protocol,
+                             int publicPort, State state, String virtualMachineDisplayName, String virtualMachineId,
                              String virtualMachineName, Set<String> CIDRs, int privateEndPort, int publicEndPort) {
       this.id = id;
       this.IPAddress = iPAddress;
@@ -207,13 +207,13 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
 
    @Override
    public int compareTo(PortForwardingRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    /**
     * @return the ID of the port forwarding rule
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -227,7 +227,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    /**
     * @return the public ip address id for the port forwarding rule
     */
-   public long getIPAddressId() {
+   public String getIPAddressId() {
       return IPAddressId;
    }
 
@@ -269,7 +269,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    /**
     * @return the VM ID for the port forwarding rule
     */
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 

@@ -76,7 +76,7 @@ public class CreateZoneOptions extends BaseHttpRequestOptions {
     * @param domainId
     *    the ID of the containing domain; null for public zones
     */
-   public CreateZoneOptions domainId(@Nullable long domainId) {
+   public CreateZoneOptions domainId(@Nullable String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
    }
@@ -145,7 +145,7 @@ public class CreateZoneOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateZoneOptions#domainId
        */
-      public static CreateZoneOptions domainId(@Nullable long domainId) {
+      public static CreateZoneOptions domainId(@Nullable String domainId) {
          CreateZoneOptions options = new CreateZoneOptions();
          return options.domainId(domainId);
       }

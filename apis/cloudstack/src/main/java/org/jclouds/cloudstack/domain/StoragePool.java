@@ -94,26 +94,26 @@ public class StoragePool implements Comparable<StoragePool> {
       private Builder() {
       }
 
-      private long id;
+      private String id;
       private String name;
       private String path;
       private String tags;
       private State state;
       private Type type;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
-      private long podId;
+      private String podId;
       private String podName;
-      private long clusterId;
+      private String clusterId;
       private String clusterName;
       private Date created;
       private long diskSizeAllocated;
       private long diskSizeTotal;
       private String ipAddress;
-      private Long jobId;
+      private String jobId;
       private String jobStatus;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -143,7 +143,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -153,7 +153,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -163,7 +163,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder clusterId(long clusterId) {
+      public Builder clusterId(String clusterId) {
          this.clusterId = clusterId;
          return this;
       }
@@ -193,7 +193,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -208,30 +208,30 @@ public class StoragePool implements Comparable<StoragePool> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    private String path;
    private String tags;
    private State state;
    private Type type;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    @SerializedName("zonename") private String zoneName;
-   @SerializedName("podid") private long podId;
+   @SerializedName("podid") private String podId;
    @SerializedName("podname") private String podName;
-   @SerializedName("clusterid") private long clusterId;
+   @SerializedName("clusterid") private String clusterId;
    @SerializedName("clustername") private String clusterName;
    private Date created;
    @SerializedName("disksizeallocated") private long diskSizeAllocated;
    @SerializedName("disksizetotal") private long diskSizeTotal;
    @SerializedName("ipaddress") private String ipAddress;
-   @SerializedName("jobid") private Long jobId;
+   @SerializedName("jobid") private String jobId;
    @SerializedName("jobstatus") private String jobStatus;
 
    /* Exists only for the serializer */
    StoragePool() {
    }
 
-   public StoragePool(long id, String name, String path, String tags, State state, Type type, long zoneId, String zoneName, long podId, String podName, long clusterId, String clusterName, Date created, long diskSizeAllocated, long diskSizeTotal, String ipAddress, Long jobId, String jobStatus) {
+   public StoragePool(String id, String name, String path, String tags, State state, Type type, String zoneId, String zoneName, String podId, String podName, String clusterId, String clusterName, Date created, long diskSizeAllocated, long diskSizeTotal, String ipAddress, String jobId, String jobStatus) {
       this.id = id;
       this.name = name;
       this.path = path;
@@ -252,7 +252,7 @@ public class StoragePool implements Comparable<StoragePool> {
       this.jobStatus = jobStatus;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -276,7 +276,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return type;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -284,7 +284,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return zoneName;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -292,7 +292,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return podName;
    }
 
-   public long getClusterId() {
+   public String getClusterId() {
       return clusterId;
    }
 
@@ -316,7 +316,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return ipAddress;
    }
 
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -386,6 +386,6 @@ public class StoragePool implements Comparable<StoragePool> {
 
    @Override
    public int compareTo(StoragePool other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

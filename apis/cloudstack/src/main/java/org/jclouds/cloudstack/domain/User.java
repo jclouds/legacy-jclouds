@@ -55,7 +55,7 @@ public class User implements Comparable<User> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String name;
       private String firstName;
       private String lastName;
@@ -65,12 +65,12 @@ public class User implements Comparable<User> {
       private String account;
       private Account.Type accountType;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String timeZone;
       private String apiKey;
       private String secretKey;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -120,7 +120,7 @@ public class User implements Comparable<User> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -154,7 +154,7 @@ public class User implements Comparable<User> {
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("username")
    private String name;
    @SerializedName("firstname")
@@ -169,7 +169,7 @@ public class User implements Comparable<User> {
    private Account.Type accountType;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("timezone")
    private String timeZone;
    @SerializedName("apikey")
@@ -177,8 +177,8 @@ public class User implements Comparable<User> {
    @SerializedName("secretkey")
    private String secretKey;
 
-   public User(long id, String name, String firstname, String lastname, String email, Date created, State state,
-         String account, Type accountType, String domain, long domainId, String timeZone, String apiKey,
+   public User(String id, String name, String firstname, String lastname, String email, Date created, State state,
+         String account, Type accountType, String domain, String domainId, String timeZone, String apiKey,
          String secretKey) {
       this.id = id;
       this.name = name;
@@ -200,7 +200,7 @@ public class User implements Comparable<User> {
     * 
     * @return the user ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -280,7 +280,7 @@ public class User implements Comparable<User> {
     * 
     * @return the domain ID of the user
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -310,7 +310,7 @@ public class User implements Comparable<User> {
 
    @Override
    public int compareTo(User arg0) {
-       return new Long(id).compareTo(arg0.getId());
+       return id.compareTo(arg0.getId());
    }
 
    @Override

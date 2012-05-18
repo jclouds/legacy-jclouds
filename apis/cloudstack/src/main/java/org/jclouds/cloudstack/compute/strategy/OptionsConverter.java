@@ -42,6 +42,6 @@ public interface OptionsConverter {
     * @param options where the resulting set of options will be applied
     * @return same as "options" parameter
     */
-   DeployVirtualMachineOptions apply(CloudStackTemplateOptions templateOptions, Map<Long, Network> networks, long zoneId, DeployVirtualMachineOptions options);
+   DeployVirtualMachineOptions apply(CloudStackTemplateOptions templateOptions, Map<String, Network> networks, String zoneId, DeployVirtualMachineOptions options);
 
 }

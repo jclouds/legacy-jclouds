@@ -55,7 +55,7 @@ public interface AsyncJobAsyncClient {
     * @see AsyncJobClient#listAsyncJobs
     */
    @GET
-   @QueryParams(keys = "command", values = "listAsyncJobs")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listAsyncJobs", "true" })
    @ResponseParser(ParseAsyncJobsFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<AsyncJob<?>>> listAsyncJobs(ListAsyncJobsOptions... options);
@@ -68,6 +68,6 @@ public interface AsyncJobAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseAsyncJobFromHttpResponse.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   <T> ListenableFuture<AsyncJob<T>> getAsyncJob(@QueryParam("jobid") long id);
+   <T> ListenableFuture<AsyncJob<T>> getAsyncJob(@QueryParam("jobid") String id);
 
 }

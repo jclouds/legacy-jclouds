@@ -81,24 +81,24 @@ public class CloudStackComputeServiceAdapter implements
    protected Logger logger = Logger.NULL;
 
    private final CloudStackClient client;
-   private final Predicate<Long> jobComplete;
-   private final Supplier<Map<Long, Network>> networkSupplier;
+   private final Predicate<String> jobComplete;
+   private final Supplier<Map<String, Network>> networkSupplier;
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final Factory staticNATVMInNetwork;
    private final CreatePortForwardingRulesForIP setupPortForwardingRulesForIP;
-   private final LoadingCache<Long, Set<IPForwardingRule>> vmToRules;
+   private final LoadingCache<String, Set<IPForwardingRule>> vmToRules;
    private final Map<String, Credentials> credentialStore;
    private final Map<NetworkType, ? extends OptionsConverter> optionsConverters;
-   private final Supplier<LoadingCache<Long, Zone>> zoneIdToZone;
+   private final Supplier<LoadingCache<String, Zone>> zoneIdToZone;
 
    @Inject
-   public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<Long> jobComplete,
-         @Memoized Supplier<Map<Long, Network>> networkSupplier,
+   public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<String> jobComplete,
+         @Memoized Supplier<Map<String, Network>> networkSupplier,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
-         CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<Long, Set<IPForwardingRule>> vmToRules,
+         CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<String, Set<IPForwardingRule>> vmToRules,
          Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters,
-         Supplier<LoadingCache<Long, Zone>> zoneIdToZone) {
+         Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
@@ -120,9 +120,9 @@ public class CloudStackComputeServiceAdapter implements
       checkArgument(template.getOptions().getClass().isAssignableFrom(CloudStackTemplateOptions.class),
             "options class %s should have been assignable from CloudStackTemplateOptions", template.getOptions()
                   .getClass());
-      Map<Long, Network> networks = networkSupplier.get();
+      Map<String, Network> networks = networkSupplier.get();
 
-      final long zoneId = Long.parseLong(template.getLocation().getId());
+      final String zoneId = template.getLocation().getId();
       Zone zone = null;
       try {
          zone = zoneIdToZone.get().get(zoneId);
@@ -155,10 +155,10 @@ public class CloudStackComputeServiceAdapter implements
          }
       }
 
-      long templateId = Long.parseLong(template.getImage().getId());
-      long serviceOfferingId = Long.parseLong(template.getHardware().getId());
+      String templateId = template.getImage().getId();
+      String serviceOfferingId = template.getHardware().getId();
 
-      logger.info("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
+      logger.info("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,
             zoneId, options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
             templateId, options);
@@ -172,7 +172,7 @@ public class CloudStackComputeServiceAdapter implements
       }
       if (templateOptions.shouldSetupStaticNat()) {
          // TODO: possibly not all network ids, do we want to do this
-         for (long networkId : options.getNetworkIds()) {
+         for (String networkId : options.getNetworkIds()) {
             logger.debug(">> creating static NAT for virtualMachine(%s) in network(%s)", vm.getId(), networkId);
             PublicIPAddress ip = staticNATVMInNetwork.create(networks.get(networkId)).apply(vm);
             logger.trace("<< static NATed IPAddress(%s) to virtualMachine(%s)", ip.getId(), vm.getId());
@@ -211,13 +211,13 @@ public class CloudStackComputeServiceAdapter implements
 
    @Override
    public VirtualMachine getNode(String id) {
-      long virtualMachineId = Long.parseLong(id);
+      String virtualMachineId = id;
       return client.getVirtualMachineClient().getVirtualMachine(virtualMachineId);
    }
 
    @Override
    public void destroyNode(String id) {
-      long virtualMachineId = Long.parseLong(id);
+      String virtualMachineId = id;
       // There was a bug in 2.2.12 release happening when static nat IP address
       // was being released, and corresponding firewall rules were left behind.
       // So next time the same IP is allocated, it might be not be static nat
@@ -231,7 +231,7 @@ public class CloudStackComputeServiceAdapter implements
       // the following:
 
       // 1) Delete IP forwarding rules associated with IP.
-      Set<Long> ipAddresses = deleteIPForwardingRulesForVMAndReturnDistinctIPs(virtualMachineId);
+      Set<String> ipAddresses = deleteIPForwardingRulesForVMAndReturnDistinctIPs(virtualMachineId);
 
       // 2) Disable static nat rule for the IP.
       disableStaticNATOnIPAddresses(ipAddresses);
@@ -244,16 +244,16 @@ public class CloudStackComputeServiceAdapter implements
       vmToRules.invalidate(virtualMachineId);
    }
 
-   public void disassociateIPAddresses(Set<Long> ipAddresses) {
-      for (long ipAddress : ipAddresses) {
+   public void disassociateIPAddresses(Set<String> ipAddresses) {
+      for (String ipAddress : ipAddresses) {
          logger.debug(">> disassociating IPAddress(%s)", ipAddress);
          client.getAddressClient().disassociateIPAddress(ipAddress);
       }
    }
 
-   public void destroyVirtualMachine(long virtualMachineId) {
+   public void destroyVirtualMachine(String virtualMachineId) {
 
-      Long destroyVirtualMachine = client.getVirtualMachineClient().destroyVirtualMachine(virtualMachineId);
+      String destroyVirtualMachine = client.getVirtualMachineClient().destroyVirtualMachine(virtualMachineId);
       if (destroyVirtualMachine != null) {
          logger.debug(">> destroying virtualMachine(%s) job(%s)", virtualMachineId, destroyVirtualMachine);
          awaitCompletion(destroyVirtualMachine);
@@ -263,10 +263,10 @@ public class CloudStackComputeServiceAdapter implements
 
    }
 
-   public void disableStaticNATOnIPAddresses(Set<Long> ipAddresses) {
-      Builder<Long> jobsToTrack = ImmutableSet.builder();
-      for (Long ipAddress : ipAddresses) {
-         Long disableStaticNAT = client.getNATClient().disableStaticNATOnPublicIP(ipAddress);
+   public void disableStaticNATOnIPAddresses(Set<String> ipAddresses) {
+      Builder<String> jobsToTrack = ImmutableSet.builder();
+      for (String ipAddress : ipAddresses) {
+         String disableStaticNAT = client.getNATClient().disableStaticNATOnPublicIP(ipAddress);
          if (disableStaticNAT != null) {
             logger.debug(">> disabling static NAT IPAddress(%s) job(%s)", ipAddress, disableStaticNAT);
             jobsToTrack.add(disableStaticNAT);
@@ -275,18 +275,18 @@ public class CloudStackComputeServiceAdapter implements
       awaitCompletion(jobsToTrack.build());
    }
 
-   public Set<Long> deleteIPForwardingRulesForVMAndReturnDistinctIPs(long virtualMachineId) {
-      Builder<Long> jobsToTrack = ImmutableSet.builder();
+   public Set<String> deleteIPForwardingRulesForVMAndReturnDistinctIPs(String virtualMachineId) {
+      Builder<String> jobsToTrack = ImmutableSet.builder();
 
       // immutable doesn't permit duplicates
-      Set<Long> ipAddresses = Sets.newLinkedHashSet();
+      Set<String> ipAddresses = Sets.newLinkedHashSet();
 
       Set<IPForwardingRule> forwardingRules = client.getNATClient().getIPForwardingRulesForVirtualMachine(
             virtualMachineId);
       for (IPForwardingRule rule : forwardingRules) {
          if (!"Deleting".equals(rule.getState())) {
             ipAddresses.add(rule.getIPAddressId());
-            Long deleteForwardingRule = client.getNATClient().deleteIPForwardingRule(rule.getId());
+            String deleteForwardingRule = client.getNATClient().deleteIPForwardingRule(rule.getId());
             if (deleteForwardingRule != null) {
                logger.debug(">> deleting IPForwardingRule(%s) job(%s)", rule.getId(), deleteForwardingRule);
                jobsToTrack.add(deleteForwardingRule);
@@ -297,22 +297,22 @@ public class CloudStackComputeServiceAdapter implements
       return ipAddresses;
    }
 
-   public void awaitCompletion(Iterable<Long> jobs) {
+   public void awaitCompletion(Iterable<String> jobs) {
       logger.debug(">> awaiting completion of jobs(%s)", jobs);
-      for (long job : jobs)
+      for (String job : jobs)
          awaitCompletion(job);
       logger.trace("<< completed jobs(%s)", jobs);
    }
 
-   public void awaitCompletion(long job) {
+   public void awaitCompletion(String job) {
       boolean completed = jobComplete.apply(job);
       logger.trace("<< job(%s) complete(%s)", job, completed);
    }
 
    @Override
    public void rebootNode(String id) {
-      long virtualMachineId = Long.parseLong(id);
-      Long job = client.getVirtualMachineClient().rebootVirtualMachine(virtualMachineId);
+      String virtualMachineId = id;
+      String job = client.getVirtualMachineClient().rebootVirtualMachine(virtualMachineId);
       if (job != null) {
          logger.debug(">> rebooting virtualMachine(%s) job(%s)", virtualMachineId, job);
          awaitCompletion(job);
@@ -321,8 +321,8 @@ public class CloudStackComputeServiceAdapter implements
 
    @Override
    public void resumeNode(String id) {
-      long virtualMachineId = Long.parseLong(id);
-      Long job = client.getVirtualMachineClient().startVirtualMachine(Long.parseLong(id));
+      String virtualMachineId = id;
+      String job = client.getVirtualMachineClient().startVirtualMachine(id);
       if (job != null) {
          logger.debug(">> starting virtualMachine(%s) job(%s)", virtualMachineId, job);
          awaitCompletion(job);
@@ -331,8 +331,8 @@ public class CloudStackComputeServiceAdapter implements
 
    @Override
    public void suspendNode(String id) {
-      long virtualMachineId = Long.parseLong(id);
-      Long job = client.getVirtualMachineClient().stopVirtualMachine(Long.parseLong(id));
+      String virtualMachineId = id;
+      String job = client.getVirtualMachineClient().stopVirtualMachine(id);
       if (job != null) {
          logger.debug(">> stopping virtualMachine(%s) job(%s)", virtualMachineId, job);
          awaitCompletion(job);

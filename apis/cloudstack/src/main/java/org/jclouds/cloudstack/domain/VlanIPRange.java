@@ -34,23 +34,23 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String description;
       private boolean forVirtualNetwork;
-      private long zoneId;
+      private String zoneId;
       private String vlan;
       private String account;
-      private long domainId;
+      private String domainId;
       private String domain;
-      private long podId;
+      private String podId;
       private String podName;
       private String gateway;
       private String netmask;
       private String startIP;
       private String endIP;
-      private long networkId;
+      private String networkId;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -65,13 +65,8 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
-      }
-
-      public Builder vlan(long vlan) {
-         this.vlan = vlan+"";
          return this;
       }
 
@@ -85,7 +80,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -95,7 +90,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -125,7 +120,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder networkId(long networkId) {
+      public Builder networkId(String networkId) {
          this.networkId = networkId;
          return this;
       }
@@ -135,26 +130,26 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       }
    }
    
-   private long id;
+   private String id;
    private String description;
    @SerializedName("forvirtualnetwork") private boolean forVirtualNetwork;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    private String vlan;
    private String account;
-   @SerializedName("domainid") private long domainId;
+   @SerializedName("domainid") private String domainId;
    private String domain;
-   @SerializedName("podid") private long podId;
+   @SerializedName("podid") private String podId;
    @SerializedName("podname") private String podName;
    private String gateway;
    private String netmask;
    @SerializedName("startip") private String startIP;
    @SerializedName("endip") private String endIP;
-   @SerializedName("networkid") private long networkId;
+   @SerializedName("networkid") private String networkId;
 
    /* just for the deserializer */
    VlanIPRange() {}
    
-   public VlanIPRange(long id, String description, boolean forVirtualNetwork, long zoneId, String vlan, String account, long domainId, String domain, long podId, String podName, String gateway, String netmask, String startIP, String endIP, long networkId) {
+   public VlanIPRange(String id, String description, boolean forVirtualNetwork, String zoneId, String vlan, String account, String domainId, String domain, String podId, String podName, String gateway, String netmask, String startIP, String endIP, String networkId) {
       this.id = id;
       this.description = description;
       this.forVirtualNetwork = forVirtualNetwork;
@@ -172,7 +167,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       this.networkId = networkId;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -184,7 +179,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return forVirtualNetwork;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -196,7 +191,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return account;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -204,7 +199,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return domain;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -228,7 +223,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return endIP;
    }
 
-   public long getNetworkId() {
+   public String getNetworkId() {
       return networkId;
    }
 
@@ -288,6 +283,6 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
 
    @Override
    public int compareTo(VlanIPRange other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

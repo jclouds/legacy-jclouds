@@ -36,12 +36,12 @@ import com.google.common.collect.ImmutableList;
 public class ListAlertsOptionsTest {
 
    public void testId() {
-      ListAlertsOptions options = new ListAlertsOptions().id(6);
+      ListAlertsOptions options = new ListAlertsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListAlertsOptions options = id(6);
+      ListAlertsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 

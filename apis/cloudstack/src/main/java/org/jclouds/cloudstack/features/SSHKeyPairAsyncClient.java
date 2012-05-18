@@ -55,7 +55,7 @@ public interface SSHKeyPairAsyncClient {
     * @see SSHKeyPairClient#listSSHKeyPairs
     */
    @GET
-   @QueryParams(keys = "command", values = "listSSHKeyPairs")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSSHKeyPairs", "true" })
    @SelectJson("sshkeypair")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -84,7 +84,7 @@ public interface SSHKeyPairAsyncClient {
     * @see SSHKeyPairClient#getSSHKeyPair
     */
    @GET
-   @QueryParams(keys = "command", values = "listSSHKeyPairs")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSSHKeyPairs", "true" })
    @SelectJson("sshkeypair")
    @OnlyElement()
    @Consumes(MediaType.APPLICATION_JSON)

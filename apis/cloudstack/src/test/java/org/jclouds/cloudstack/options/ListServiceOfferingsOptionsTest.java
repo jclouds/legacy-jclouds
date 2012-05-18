@@ -37,12 +37,12 @@ import com.google.common.collect.ImmutableList;
 public class ListServiceOfferingsOptionsTest {
 
    public void testId() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().id(6);
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListServiceOfferingsOptions options = id(6);
+      ListServiceOfferingsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -57,22 +57,22 @@ public class ListServiceOfferingsOptionsTest {
    }
 
    public void testDomainId() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().domainId(6);
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListServiceOfferingsOptions options = domainId(6);
+      ListServiceOfferingsOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testVirtualMachineId() {
-      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().virtualMachineId(6);
+      ListServiceOfferingsOptions options = new ListServiceOfferingsOptions().virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testVirtualMachineIdStatic() {
-      ListServiceOfferingsOptions options = virtualMachineId(6);
+      ListServiceOfferingsOptions options = virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 }

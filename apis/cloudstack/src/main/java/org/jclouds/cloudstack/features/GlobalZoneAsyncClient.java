@@ -69,7 +69,7 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    @SelectJson("zone")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Zone> updateZone(@QueryParam("id") long id, UpdateZoneOptions... options);
+   ListenableFuture<Zone> updateZone(@QueryParam("id") String id, UpdateZoneOptions... options);
 
    /**
     * @see GlobalZoneClient#deleteZone
@@ -78,5 +78,5 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    @QueryParams(keys = "command", values = "deleteZone")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteZone(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteZone(@QueryParam("id") String id);
 }

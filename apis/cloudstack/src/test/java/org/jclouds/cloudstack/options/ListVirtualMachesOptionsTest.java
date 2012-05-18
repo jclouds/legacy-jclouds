@@ -43,74 +43,74 @@ import com.google.common.collect.ImmutableList;
 public class ListVirtualMachesOptionsTest {
 
    public void testHostId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().hostId(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().hostId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("hostid"));
    }
 
    public void testHostIdStatic() {
-      ListVirtualMachinesOptions options = hostId(6);
+      ListVirtualMachinesOptions options = hostId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("hostid"));
    }
 
    public void testPodId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().podId(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().podId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      ListVirtualMachinesOptions options = podId(6);
+      ListVirtualMachinesOptions options = podId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("podid"));
    }
 
    public void testNetworkId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().networkId(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().networkId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testNetworkIdStatic() {
-      ListVirtualMachinesOptions options = networkId(6);
+      ListVirtualMachinesOptions options = networkId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testGroupId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().groupId(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().groupId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("groupid"));
    }
 
    public void testGroupIdStatic() {
-      ListVirtualMachinesOptions options = groupId(6);
+      ListVirtualMachinesOptions options = groupId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("groupid"));
    }
 
    public void testAccountInDomainId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().accountInDomain("adrian", 6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListVirtualMachinesOptions options = accountInDomain("adrian", 6);
+      ListVirtualMachinesOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testName() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().id(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testNameStatic() {
-      ListVirtualMachinesOptions options = id(6);
+      ListVirtualMachinesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testZoneId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().zoneId(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListVirtualMachinesOptions options = zoneId(6);
+      ListVirtualMachinesOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
@@ -135,22 +135,22 @@ public class ListVirtualMachesOptionsTest {
    }
 
    public void testId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().id(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainId() {
-      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().domainId(6);
+      ListVirtualMachinesOptions options = new ListVirtualMachinesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testIdStatic() {
-      ListVirtualMachinesOptions options = id(6);
+      ListVirtualMachinesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainIdStatic() {
-      ListVirtualMachinesOptions options = domainId(6);
+      ListVirtualMachinesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

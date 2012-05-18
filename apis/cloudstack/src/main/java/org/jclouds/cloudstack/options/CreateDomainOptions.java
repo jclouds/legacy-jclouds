@@ -47,7 +47,7 @@ public class CreateDomainOptions extends BaseHttpRequestOptions {
     * @param parentDomainId
     *       the ID of the parent domain
     */
-   public CreateDomainOptions parentDomainId(long parentDomainId) {
+   public CreateDomainOptions parentDomainId(String parentDomainId) {
       this.queryParameters.replaceValues("parentdomainid", ImmutableSet.of(parentDomainId + ""));
       return this;
    }
@@ -65,7 +65,7 @@ public class CreateDomainOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateDomainOptions#parentDomainId
        */
-      public static CreateDomainOptions parentDomainId(long parentDomainId) {
+      public static CreateDomainOptions parentDomainId(String parentDomainId) {
          CreateDomainOptions options = new CreateDomainOptions();
          return options.parentDomainId(parentDomainId);
       }

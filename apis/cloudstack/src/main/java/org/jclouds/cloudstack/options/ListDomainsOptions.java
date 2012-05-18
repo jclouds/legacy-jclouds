@@ -38,7 +38,7 @@ public class ListDomainsOptions extends BaseHttpRequestOptions {
     * @param id
     *    firewall rule ID
     */
-   public ListDomainsOptions id(long id) {
+   public ListDomainsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -85,7 +85,7 @@ public class ListDomainsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListDomainsOptions#id
        */
-      public static ListDomainsOptions id(long id) {
+      public static ListDomainsOptions id(String id) {
          ListDomainsOptions options = new ListDomainsOptions();
          return options.id(id);
       }

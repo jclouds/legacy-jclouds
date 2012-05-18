@@ -71,7 +71,7 @@ public class UpdateServiceOfferingOptions extends AccountInDomainOptions {
       /**
        * @see UpdateServiceOfferingOptions#accountInDomain
        */
-      public static UpdateServiceOfferingOptions accountInDomain(String account, long domain) {
+      public static UpdateServiceOfferingOptions accountInDomain(String account, String domain) {
          UpdateServiceOfferingOptions options = new UpdateServiceOfferingOptions();
          return options.accountInDomain(account, domain);
       }
@@ -79,7 +79,7 @@ public class UpdateServiceOfferingOptions extends AccountInDomainOptions {
       /**
        * @see UpdateServiceOfferingOptions#domainId
        */
-      public static UpdateServiceOfferingOptions domainId(long domainId) {
+      public static UpdateServiceOfferingOptions domainId(String domainId) {
          UpdateServiceOfferingOptions options = new UpdateServiceOfferingOptions();
          return options.domainId(domainId);
       }
@@ -89,7 +89,7 @@ public class UpdateServiceOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public UpdateServiceOfferingOptions accountInDomain(String account, long domain) {
+   public UpdateServiceOfferingOptions accountInDomain(String account, String domain) {
       return UpdateServiceOfferingOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -97,7 +97,7 @@ public class UpdateServiceOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public UpdateServiceOfferingOptions domainId(long domainId) {
+   public UpdateServiceOfferingOptions domainId(String domainId) {
       return UpdateServiceOfferingOptions.class.cast(super.domainId(domainId));
    }
 }

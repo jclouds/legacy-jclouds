@@ -37,13 +37,13 @@ import com.google.common.collect.ImmutableList;
 @Test(groups = "unit")
 public class ListAsyncJobsOptionsTest {
    public void testAccountInDomainId() {
-      ListAsyncJobsOptions options = new ListAsyncJobsOptions().accountInDomain("adrian", 6);
+      ListAsyncJobsOptions options = new ListAsyncJobsOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListAsyncJobsOptions options = accountInDomain("adrian", 6);
+      ListAsyncJobsOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
@@ -54,7 +54,7 @@ public class ListAsyncJobsOptionsTest {
    }
 
    public void testDomainId() {
-      ListAsyncJobsOptions options = new ListAsyncJobsOptions().domainId(6);
+      ListAsyncJobsOptions options = new ListAsyncJobsOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
@@ -64,7 +64,7 @@ public class ListAsyncJobsOptionsTest {
    }
 
    public void testDomainIdStatic() {
-      ListAsyncJobsOptions options = domainId(6);
+      ListAsyncJobsOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

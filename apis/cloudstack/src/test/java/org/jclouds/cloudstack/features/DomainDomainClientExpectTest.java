@@ -47,7 +47,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listDomains&apiKey=identity&signature=MmzRB%2FpKlYyWy7kE3IMXrg4BUtk%3D"))
+                          "command=listDomains&listAll=true&apiKey=identity&signature=sVFaGTu0DNSTVtWy3wtRt7KTx0w%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -60,8 +60,8 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
 
       assertEquals(client.listDomains(),
          ImmutableSet.of(
-            Domain.builder().id(1L).name("ROOT").level(0).hasChild(true).build(),
-            Domain.builder().id(2L).name("jclouds1").level(1).parentDomainId(1)
+            Domain.builder().id("1").name("ROOT").level(0).hasChild(true).build(),
+            Domain.builder().id("2").name("jclouds1").level(1).parentDomainId("1")
                .parentDomainName("ROOT").hasChild(false).build()
          ));
    }
@@ -72,7 +72,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listDomains&apiKey=identity&signature=MmzRB%2FpKlYyWy7kE3IMXrg4BUtk%3D"))
+                          "command=listDomains&listAll=true&apiKey=identity&signature=sVFaGTu0DNSTVtWy3wtRt7KTx0w%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -91,7 +91,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listDomains&id=1&apiKey=identity&signature=emQKWkVhospRkaUzjKljME2rW0k%3D"))
+                          "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST%2FcIRUHvWhfWovJugU%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -102,8 +102,8 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .payload(payloadFromResource("/getdomainresponse.json"))
             .build());
 
-      assertEquals(client.getDomainById(1),
-         Domain.builder().id(1L).name("ROOT").level(0).hasChild(true).build());
+      assertEquals(client.getDomainById("1"),
+         Domain.builder().id("1").name("ROOT").level(0).hasChild(true).build());
    }
 
    public void testGetDomainWhenResponseIs404() {
@@ -112,7 +112,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listDomains&id=1&apiKey=identity&signature=emQKWkVhospRkaUzjKljME2rW0k%3D"))
+                          "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST%2FcIRUHvWhfWovJugU%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -122,7 +122,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .statusCode(404)
             .build());
 
-      assertNull(client.getDomainById(1));
+      assertNull(client.getDomainById("1"));
    }
 
    public void testListDomainChildrenWhenResponseIs2xx() {
@@ -131,7 +131,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listDomainChildren&id=1&isrecursive=true&apiKey=identity&signature=bDMSkjme8k0ANUPm4YiTYKe2N88%3D"))
+                          "command=listDomainChildren&listAll=true&id=1&isrecursive=true&apiKey=identity&signature=Jn6kFkloRvfaaivlJiHd0F5J3Jk%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -142,11 +142,11 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .payload(payloadFromResource("/listdomainchildrenresponse.json"))
             .build());
 
-      assertEquals(client.listDomainChildren(parentDomainId(1).isRecursive(true)),
+      assertEquals(client.listDomainChildren(parentDomainId("1").isRecursive(true)),
          ImmutableSet.of(
-            Domain.builder().id(2L).name("jclouds1").level(1).parentDomainId(1)
+            Domain.builder().id("2").name("jclouds1").level(1).parentDomainId("1")
                .parentDomainName("ROOT").hasChild(false).build(),
-            Domain.builder().id(3L).name("jclouds2").level(1).parentDomainId(1)
+            Domain.builder().id("3").name("jclouds2").level(1).parentDomainId("1")
                .parentDomainName("ROOT").hasChild(false).build()
          ));
    }
@@ -157,8 +157,8 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listDomainChildren&id=1&isrecursive=true&apiKey=identity&" +
-                  "signature=bDMSkjme8k0ANUPm4YiTYKe2N88%3D"))
+                  "command=listDomainChildren&listAll=true&id=1&isrecursive=true&apiKey=identity&" +
+                          "signature=Jn6kFkloRvfaaivlJiHd0F5J3Jk%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -168,7 +168,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .statusCode(404)
             .build());
 
-      assertEquals(client.listDomainChildren(parentDomainId(1).isRecursive(true)), ImmutableSet.of());
+      assertEquals(client.listDomainChildren(parentDomainId("1").isRecursive(true)), ImmutableSet.of());
    }
 
    @Override

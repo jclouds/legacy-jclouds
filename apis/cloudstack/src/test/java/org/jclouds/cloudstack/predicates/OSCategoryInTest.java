@@ -56,17 +56,17 @@ public class OSCategoryInTest {
 
       expect(client.getGuestOSClient()).andReturn(guestOSClient).times(2);
 
-      Map<Long, String> osCategories = Maps.newHashMap();
-      osCategories.put(1L, "Ubuntu");
-      osCategories.put(2L, "CentOS");
-      osCategories.put(3L, "RHEL");
+      Map<String, String> osCategories = Maps.newHashMap();
+      osCategories.put("1", "Ubuntu");
+      osCategories.put("2", "CentOS");
+      osCategories.put("3", "RHEL");
 
       expect(guestOSClient.listOSCategories()).andReturn(osCategories);
 
       Set<OSType> osTypes = ImmutableSet.of(
-         OSType.builder().id(10L).OSCategoryId(1).description("Ubuntu 10.04 LTS").build(),
-         OSType.builder().id(20L).OSCategoryId(2).description("CentOS 5.4").build(),
-         OSType.builder().id(30L).OSCategoryId(3).description("RHEL 6").build()
+         OSType.builder().id("10").OSCategoryId("1").description("Ubuntu 10.04 LTS").build(),
+         OSType.builder().id("20").OSCategoryId("2").description("CentOS 5.4").build(),
+         OSType.builder().id("30").OSCategoryId("3").description("RHEL 6").build()
       );
 
       expect(guestOSClient.listOSTypes()).andReturn(osTypes);
@@ -76,7 +76,7 @@ public class OSCategoryInTest {
    @Test
    public void testTemplateInAcceptableCategory() {
       assertTrue(new OSCategoryIn(client).apply(acceptableCategories).apply(
-         Template.builder().OSTypeId(10L).build()
+         Template.builder().OSTypeId("10").build()
       ));
       verify(client, guestOSClient);
    }
@@ -84,7 +84,7 @@ public class OSCategoryInTest {
    @Test
    public void testTemplateNotInAcceptableCategory() {
       assertFalse(new OSCategoryIn(client).apply(acceptableCategories).apply(
-         Template.builder().OSTypeId(30L).build()
+         Template.builder().OSTypeId("30").build()
       ));
       verify(client, guestOSClient);
    }

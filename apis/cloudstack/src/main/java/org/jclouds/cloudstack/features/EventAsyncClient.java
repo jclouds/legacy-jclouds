@@ -46,7 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
 @RequestFilters(AuthenticationFilter.class)
-@QueryParams(keys = "response", values = "json")
+@QueryParams(keys = { "response", "listAll" }, values = { "json", "true" })
 public interface EventAsyncClient {
    /**
     * @see EventClient#listEventTypes()

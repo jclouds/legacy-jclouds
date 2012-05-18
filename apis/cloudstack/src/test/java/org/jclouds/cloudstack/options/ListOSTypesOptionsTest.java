@@ -35,22 +35,22 @@ import com.google.common.collect.ImmutableList;
 public class ListOSTypesOptionsTest {
 
    public void testId() {
-      ListOSTypesOptions options = new ListOSTypesOptions().id(6);
+      ListOSTypesOptions options = new ListOSTypesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListOSTypesOptions options = id(6);
+      ListOSTypesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testOSCategoryId() {
-      ListOSTypesOptions options = new ListOSTypesOptions().OSCategoryId(6);
+      ListOSTypesOptions options = new ListOSTypesOptions().OSCategoryId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("oscategoryid"));
    }
 
    public void testOSCategoryIdStatic() {
-      ListOSTypesOptions options = OSCategoryId(6);
+      ListOSTypesOptions options = OSCategoryId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("oscategoryid"));
    }
 }

@@ -72,7 +72,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @SelectJson("serviceoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServiceOffering> updateServiceOffering(@QueryParam("id") long id, UpdateServiceOfferingOptions... options);
+   ListenableFuture<ServiceOffering> updateServiceOffering(@QueryParam("id") String id, UpdateServiceOfferingOptions... options);
 
    /**
     * @see GlobalOfferingClient#deleteServiceOffering
@@ -81,7 +81,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @QueryParams(keys = "command", values = "deleteServiceOffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteServiceOffering(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteServiceOffering(@QueryParam("id") String id);
 
    /**
     * @see GlobalOfferingClient#createDiskOffering
@@ -102,7 +102,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @SelectJson("diskoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<DiskOffering> updateDiskOffering(@QueryParam("id") long id, UpdateDiskOfferingOptions... options);
+   ListenableFuture<DiskOffering> updateDiskOffering(@QueryParam("id") String id, UpdateDiskOfferingOptions... options);
 
    /**
     * @see GlobalOfferingClient#deleteDiskOffering
@@ -111,7 +111,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @QueryParams(keys = "command", values = "deleteDiskOffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteDiskOffering(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteDiskOffering(@QueryParam("id") String id);
 
    /**
     * @see GlobalOfferingClient#updateNetworkOffering
@@ -121,5 +121,5 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @SelectJson("networkoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<NetworkOffering> updateNetworkOffering(@QueryParam("id") long id, UpdateNetworkOfferingOptions... options);
+   ListenableFuture<NetworkOffering> updateNetworkOffering(@QueryParam("id") String id, UpdateNetworkOfferingOptions... options);
 }

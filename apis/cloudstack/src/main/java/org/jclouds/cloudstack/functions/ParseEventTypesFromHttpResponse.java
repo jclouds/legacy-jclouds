@@ -29,6 +29,7 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Inject;
@@ -44,13 +45,22 @@ public class ParseEventTypesFromHttpResponse implements Function<HttpResponse, S
    private static class EventType {
       private String name;
 
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         return result;
-      }
+       @Override
+       public boolean equals(Object o) {
+           if (this == o) return true;
+           if (o == null || getClass() != o.getClass()) return false;
+           
+           EventType that = (EventType) o;
+           
+           if (!Objects.equal(name, that.name)) return false;
+           
+           return true;
+       }
+       
+       @Override
+       public int hashCode() {
+           return Objects.hashCode(name);
+       }
    }
 
    @Inject

@@ -48,7 +48,7 @@ public interface SnapshotClient {
     * @param options optional arguments
     * @return an asynchronous job structure
     */
-   AsyncCreateResponse createSnapshot(long volumeId, CreateSnapshotOptions... options);
+   AsyncCreateResponse createSnapshot(String volumeId, CreateSnapshotOptions... options);
 
    /**
     * Lists all available snapshots for the account, matching the query described by the options.
@@ -64,7 +64,7 @@ public interface SnapshotClient {
     * @param id the snapshot ID
     * @return the snapshot with the requested ID
     */
-   Snapshot getSnapshot(long id);
+   Snapshot getSnapshot(String id);
 
    /**
     * Deletes a snapshot of a disk volume.
@@ -72,7 +72,7 @@ public interface SnapshotClient {
     * @param id The ID of the snapshot
     * @return an asynchronous job structure
     */
-   void deleteSnapshot(long id);
+   void deleteSnapshot(String id);
 
    /**
     * Creates a snapshot policy for the account.
@@ -83,7 +83,7 @@ public interface SnapshotClient {
     * @param volumeId the ID of the disk volume
     * @return the newly-created snapshot policy
     */
-   SnapshotPolicy createSnapshotPolicy(SnapshotPolicySchedule schedule, long numberToRetain, String timezone, long volumeId);
+   SnapshotPolicy createSnapshotPolicy(SnapshotPolicySchedule schedule, String numberToRetain, String timezone, String volumeId);
 
    /**
     * Deletes a snapshot policy for the account.
@@ -91,7 +91,7 @@ public interface SnapshotClient {
     * @param id The ID of the snapshot policy
     * @return
     */
-   void deleteSnapshotPolicy(long id);
+   void deleteSnapshotPolicy(String id);
 
    /**
     * Deletes snapshot policies for the account.
@@ -99,7 +99,7 @@ public interface SnapshotClient {
     * @param id IDs of snapshot policies
     * @return
     */
-   void deleteSnapshotPolicies(Iterable<Long> id);
+   void deleteSnapshotPolicies(Iterable<String> id);
 
    /**
     * Lists snapshot policies.
@@ -108,6 +108,6 @@ public interface SnapshotClient {
     * @param options optional arguments
     * @return the snapshot policies matching the query
     */
-   Set<SnapshotPolicy> listSnapshotPolicies(long volumeId, ListSnapshotPoliciesOptions... options);
+   Set<SnapshotPolicy> listSnapshotPolicies(String volumeId, ListSnapshotPoliciesOptions... options);
 
 }

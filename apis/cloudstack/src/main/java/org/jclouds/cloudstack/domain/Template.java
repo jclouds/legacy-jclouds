@@ -36,16 +36,16 @@ public class Template implements Comparable<Template> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String displayText;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String account;
-      private long accountId;
+      private String accountId;
       private String zone;
-      private long zoneId;
+      private String zoneId;
       private String OSType;
-      private long OSTypeId;
+      private String OSTypeId;
       private String name;
       private Type type;
       private String status;
@@ -61,15 +61,15 @@ public class Template implements Comparable<Template> {
       private boolean isPublic;
       private boolean ready;
       private boolean passwordEnabled;
-      private Long jobId;
+      private String jobId;
       private String jobStatus;
       private String checksum;
-      private Long hostId;
+      private String hostId;
       private String hostName;
-      private Long sourceTemplateId;
+      private String sourceTemplateId;
       private String templateTag;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -84,7 +84,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -94,7 +94,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder accountId(long accountId) {
+      public Builder accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -104,7 +104,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -114,7 +114,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder OSTypeId(long OSTypeId) {
+      public Builder OSTypeId(String OSTypeId) {
          this.OSTypeId = OSTypeId;
          return this;
       }
@@ -194,7 +194,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -209,7 +209,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder hostid(Long hostid) {
+      public Builder hostid(String hostid) {
          this.hostId = hostid;
          return this;
       }
@@ -219,7 +219,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder sourceTemplateId(Long sourceTemplateId) {
+      public Builder sourceTemplateId(String sourceTemplateId) {
          this.sourceTemplateId = sourceTemplateId;
          return this;
       }
@@ -266,23 +266,23 @@ public class Template implements Comparable<Template> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("displaytext")
    private String displayText;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private String account;
    @SerializedName("accountid")
-   private long accountId;
+   private String accountId;
    @SerializedName("zonename")
    private String zone;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("ostypename")
    private String OSType;
    @SerializedName("ostypeid")
-   private long OSTypeId;
+   private String OSTypeId;
    private String name;
    @SerializedName("templatetype")
    private Type type;
@@ -309,27 +309,27 @@ public class Template implements Comparable<Template> {
    private boolean passwordEnabled;
    @Nullable
    @SerializedName("jobid")
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    //TODO: this should be a type
    private String jobStatus;
    private String checksum;
    @SerializedName("hostId")
-   private Long hostId;
+   private String hostId;
    @SerializedName("hostname")
    private String hostName;
    @SerializedName("sourcetemplateid")
    @Nullable
-   private Long sourceTemplateId;
+   private String sourceTemplateId;
    @SerializedName("templatetag")
    private String templateTag;
 
 
-   public Template(long id, String displayText, String domain, long domainId, String account, long accountId,
-                   String zone, long zoneId, String oSType, long oSTypeId, String name, Type type, String status, Format format,
+   public Template(String id, String displayText, String domain, String domainId, String account, String accountId,
+                   String zone, String zoneId, String oSType, String oSTypeId, String name, Type type, String status, Format format,
                    String hypervisor, Long size, Date created, Date removed, boolean crossZones, boolean bootable,
-                   boolean extractable, boolean featured, boolean ispublic, boolean ready, boolean passwordEnabled, Long jobId,
-                   String jobStatus, String checksum, Long hostId, String hostName, Long sourceTemplateId,
+                   boolean extractable, boolean featured, boolean ispublic, boolean ready, boolean passwordEnabled, String jobId,
+                   String jobStatus, String checksum, String hostId, String hostName, String sourceTemplateId,
                    String templateTag) {
       this.id = id;
       this.displayText = displayText;
@@ -376,7 +376,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return Template id
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -397,7 +397,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return the ID of the domain to which the template beLongs
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -411,7 +411,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return the ID of the account to which the template beLongs
     */
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -425,7 +425,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return the ID of the zone to which the template beLongs
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -439,7 +439,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return the ID of the OS type to which the template beLongs
     */
-   public long getOSTypeId() {
+   public String getOSTypeId() {
       return OSTypeId;
    }
 
@@ -553,7 +553,7 @@ public class Template implements Comparable<Template> {
     *         pending jobs are acting on the template
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -574,7 +574,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return the ID of the secondary storage host for the template
     */
-   public Long getHostId() {
+   public String getHostId() {
       return hostId;
    }
 
@@ -588,7 +588,7 @@ public class Template implements Comparable<Template> {
    /**
     * @return the template ID of the parent template if present
     */
-   public Long getSourceTemplateId() {
+   public String getSourceTemplateId() {
       return sourceTemplateId;
    }
 
@@ -692,6 +692,6 @@ public class Template implements Comparable<Template> {
 
    @Override
    public int compareTo(Template arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

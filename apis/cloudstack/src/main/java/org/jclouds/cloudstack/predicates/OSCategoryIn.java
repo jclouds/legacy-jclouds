@@ -44,7 +44,7 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class OSCategoryIn implements Function<Set<String>, Predicate<Template>> {
-   private final Supplier<Map<Long, String>> categoriesSupplier;
+   private final Supplier<Map<String, String>> categoriesSupplier;
    private final Supplier<Set<OSType>> osTypesSupplier;
 
    @Inject
@@ -53,19 +53,19 @@ public class OSCategoryIn implements Function<Set<String>, Predicate<Template>> 
             .ofInstance(client.getGuestOSClient().listOSTypes()));
    }
 
-   public OSCategoryIn(Supplier<Map<Long, String>> categoriesSupplier, Supplier<Set<OSType>> osTypesSupplier) {
+   public OSCategoryIn(Supplier<Map<String, String>> categoriesSupplier, Supplier<Set<OSType>> osTypesSupplier) {
       this.categoriesSupplier = checkNotNull(categoriesSupplier, "categoriesSupplier");
       this.osTypesSupplier = checkNotNull(osTypesSupplier, "osTypesSupplier");
    }
 
    @Override
    public Predicate<Template> apply(final Set<String> acceptableCategories) {
-      final Map<Long, String> categories = categoriesSupplier.get();
-      final Set<Long> acceptableOSTypeIds = Maps.filterValues(
-            Maps.transformValues(Maps.uniqueIndex(osTypesSupplier.get(), new Function<OSType, Long>() {
+      final Map<String, String> categories = categoriesSupplier.get();
+      final Set<String> acceptableOSTypeIds = Maps.filterValues(
+            Maps.transformValues(Maps.uniqueIndex(osTypesSupplier.get(), new Function<OSType, String>() {
 
                @Override
-               public Long apply(OSType input) {
+               public String apply(OSType input) {
                   return input.getId();
                }
 

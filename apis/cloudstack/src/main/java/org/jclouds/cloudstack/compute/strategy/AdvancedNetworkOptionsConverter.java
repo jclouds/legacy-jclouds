@@ -39,7 +39,7 @@ import com.google.common.collect.Iterables;
  */
 public class AdvancedNetworkOptionsConverter implements OptionsConverter {
    @Override
-   public DeployVirtualMachineOptions apply(CloudStackTemplateOptions templateOptions, Map<Long, Network> networks, long zoneId, DeployVirtualMachineOptions options) {
+   public DeployVirtualMachineOptions apply(CloudStackTemplateOptions templateOptions, Map<String, Network> networks, String zoneId, DeployVirtualMachineOptions options) {
       // security groups not allowed.
       // at least one network must be given to CloudStack,
       // but jclouds will try to autodetect an appropriate network if none given.

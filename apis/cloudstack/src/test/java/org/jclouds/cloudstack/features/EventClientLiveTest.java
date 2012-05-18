@@ -56,7 +56,7 @@ public class EventClientLiveTest extends BaseCloudStackClientLiveTest {
       assert event.getCreated() != null : event;
       assert event.getDescription() != null : event;
       assert event.getDomain() != null : event;
-      assert event.getId() != 0 : event;
+      assert event.getId() != null : event;
       assert event.getLevel() != null : event;
       assert event.getState() != null : event;
       assert event.getType() != null : event;

@@ -84,12 +84,12 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkIP(PublicIPAddress ip) {
       assertEquals(ip.getId(), client.getAddressClient().getPublicIPAddress(ip.getId()).getId());
-      assert ip.getId() > 0 : ip;
+      assert ip.getId() != null : ip;
       assert ip.getAccount() != null : ip;
       assert ip.getDomain() != null : ip;
-      assert ip.getDomainId() > 0 : ip;
+      assert ip.getDomainId() != null : ip;
       assert ip.getState() != null : ip;
-      assert ip.getZoneId() > 0 : ip;
+      assert ip.getZoneId() != null : ip;
       assert ip.getZoneName() != null : ip;
 
    }

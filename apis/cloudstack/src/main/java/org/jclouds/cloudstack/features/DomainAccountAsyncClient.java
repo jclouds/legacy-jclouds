@@ -56,7 +56,7 @@ public interface DomainAccountAsyncClient extends AccountAsyncClient {
    @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> enableAccount(@QueryParam("account") String accountName, @QueryParam("domainid") long domainId);
+   ListenableFuture<Account> enableAccount(@QueryParam("account") String accountName, @QueryParam("domainid") String domainId);
 
 
    /**
@@ -68,6 +68,6 @@ public interface DomainAccountAsyncClient extends AccountAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<AsyncCreateResponse> disableAccount(@QueryParam("account") String accountName,
-      @QueryParam("domainid") long domainId, @QueryParam("lock") boolean onlyLock);
+      @QueryParam("domainid") String domainId, @QueryParam("lock") boolean onlyLock);
 
 }

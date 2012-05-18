@@ -78,7 +78,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private Set<String> CIDRs;
 
       private int startPort;
@@ -88,12 +88,12 @@ public class FirewallRule implements Comparable<FirewallRule> {
       private String icmpType;
 
       private String ipAddress;
-      private long ipAddressId;
+      private String ipAddressId;
 
       private Protocol protocol;
       private State state;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -128,7 +128,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
          return this;
       }
 
-      public Builder ipAddressId(long ipAddressId) {
+      public Builder ipAddressId(String ipAddressId) {
          this.ipAddressId = ipAddressId;
          return this;
       }
@@ -149,7 +149,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("cidrlist")
    private Set<String> CIDRs;
    @SerializedName("startport")
@@ -163,12 +163,12 @@ public class FirewallRule implements Comparable<FirewallRule> {
    @SerializedName("ipaddress")
    private String ipAddress;
    @SerializedName("ipaddressid")
-   private long ipAddressId;
+   private String ipAddressId;
    private Protocol protocol;
    private State state;
 
-   public FirewallRule(long id, Set<String> CIDRs, int startPort, int endPort,
-         String icmpCode, String icmpType, String ipAddress, long ipAddressId,
+   public FirewallRule(String id, Set<String> CIDRs, int startPort, int endPort,
+         String icmpCode, String icmpType, String ipAddress, String ipAddressId,
          Protocol protocol, State state) {
       this.id = id;
       this.CIDRs = ImmutableSet.copyOf(CIDRs);
@@ -184,10 +184,10 @@ public class FirewallRule implements Comparable<FirewallRule> {
 
    @Override
    public int compareTo(FirewallRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -215,7 +215,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       return ipAddress;
    }
 
-   public long getIpAddressId() {
+   public String getIpAddressId() {
       return ipAddressId;
    }
 

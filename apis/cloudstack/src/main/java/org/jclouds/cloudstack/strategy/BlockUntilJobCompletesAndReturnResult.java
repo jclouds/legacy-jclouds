@@ -47,10 +47,10 @@ public class BlockUntilJobCompletesAndReturnResult {
    protected Logger logger = Logger.NULL;
    
    private final CloudStackClient client;
-   private final Predicate<Long> jobComplete;
+   private final Predicate<String> jobComplete;
 
    @Inject
-   public BlockUntilJobCompletesAndReturnResult(CloudStackClient client, Predicate<Long> jobComplete) {
+   public BlockUntilJobCompletesAndReturnResult(CloudStackClient client, Predicate<String> jobComplete) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
    }

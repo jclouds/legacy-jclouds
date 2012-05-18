@@ -47,7 +47,7 @@ public class ZoneToLocation implements Function<Zone, Location> {
    @Override
    public Location apply(Zone zone) {
       return new LocationBuilder().scope(LocationScope.ZONE).metadata(ImmutableMap.<String, Object> of())
-            .description(zone.getName()).id(Long.toString(zone.getId()))
+          .description(zone.getName()).id(zone.getId())
             .parent(Iterables.getOnlyElement(provider.get())).build();
    }
 

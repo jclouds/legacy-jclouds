@@ -69,7 +69,7 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    @SelectJson("userkeys")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ApiKeyPair> registerUserKeys(@QueryParam("id") long userId);
+   ListenableFuture<ApiKeyPair> registerUserKeys(@QueryParam("id") String userId);
 
    /**
     * @see GlobalUserClient#updateUser
@@ -79,7 +79,7 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> updateUser(@QueryParam("id") long id, UpdateUserOptions... options);
+   ListenableFuture<User> updateUser(@QueryParam("id") String id, UpdateUserOptions... options);
 
    /**
     * @see GlobalUserClient#deleteUser
@@ -88,5 +88,5 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    @QueryParams(keys = "command", values = "deleteUser")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteUser(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteUser(@QueryParam("id") String id);
 }

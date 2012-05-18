@@ -103,21 +103,21 @@ public class AsyncJob<T> {
    }
 
    public static class Builder<T> {
-      private long accountId = -1;
+      private String accountId;
       private String cmd;
       private Date created;
-      private long id = -1;
-      private long instanceId = -1;
+      private String id;
+      private String instanceId;
       private String instanceType;
-      private int progress = -1;
+      private int progress;
       private T result;
       private ResultCode resultCode = ResultCode.UNKNOWN;
       private String resultType;
       private AsyncJobError error;
       private Status status = Status.UNKNOWN;
-      private int userId = -1;
+      private String userId;
 
-      public Builder<T> accountId(long accountId) {
+      public Builder<T> accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -132,12 +132,12 @@ public class AsyncJob<T> {
          return this;
       }
 
-      public Builder<T> id(long id) {
+      public Builder<T> id(String id) {
          this.id = id;
          return this;
       }
 
-      public Builder<T> instanceId(long instanceId) {
+      public Builder<T> instanceId(String instanceId) {
          this.instanceId = instanceId;
          return this;
       }
@@ -177,7 +177,7 @@ public class AsyncJob<T> {
          return this;
       }
 
-      public Builder<T> userId(int userId) {
+      public Builder<T> userId(String userId) {
          this.userId = userId;
          return this;
       }
@@ -195,17 +195,17 @@ public class AsyncJob<T> {
    }
 
    @SerializedName("accountid")
-   private long accountId = -1;
+   private String accountId;
    private String cmd;
    private Date created;
    @SerializedName("jobid")
-   private long id = -1;
+   private String id;
    @SerializedName("jobinstanceid")
-   private long instanceId = -1;
+   private String instanceId;
    @SerializedName("jobinstancetype")
    private String instanceType;
    @SerializedName("jobprocstatus")
-   private int progress = -1;
+   private int progress;
    @SerializedName("jobresult")
    private T result;
    @SerializedName("jobresultcode")
@@ -215,11 +215,11 @@ public class AsyncJob<T> {
    @SerializedName("jobstatus")
    private Status status = Status.UNKNOWN;
    @SerializedName("userid")
-   private int userId = -1;
+   private String userId;
    private AsyncJobError error;
 
-   public AsyncJob(long accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-         int progress, T result, ResultCode resultCode, String resultType, Status status, int userId, AsyncJobError error) {
+   public AsyncJob(String accountId, String cmd, Date created, String id, String instanceId, String instanceType,
+         int progress, T result, ResultCode resultCode, String resultType, Status status, String userId, AsyncJobError error) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -246,7 +246,7 @@ public class AsyncJob<T> {
    /**
     * @return the account that executed the async command
     */
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -267,14 +267,14 @@ public class AsyncJob<T> {
    /**
     * @return async job ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return the unique ID of the instance/entity object related to the job
     */
-   public long getInstanceId() {
+   public String getInstanceId() {
       return instanceId;
    }
 
@@ -323,7 +323,7 @@ public class AsyncJob<T> {
    /**
     * @return the user that executed the async command
     */
-   public int getUserId() {
+   public String getUserId() {
       return userId;
    }
 

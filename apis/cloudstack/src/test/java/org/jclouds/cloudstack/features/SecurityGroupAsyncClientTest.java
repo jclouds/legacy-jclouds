@@ -55,7 +55,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -69,12 +69,12 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
    public void testListSecurityGroupsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("listSecurityGroups", ListSecurityGroupsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListSecurityGroupsOptions.Builder.virtualMachineId(4)
-            .domainId(5).id(6));
+      HttpRequest httpRequest = processor.createRequest(method, ListSecurityGroupsOptions.Builder.virtualMachineId("4")
+            .domainId("5").id("6"));
 
       assertRequestLineEquals(
             httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups&virtualmachineid=4&domainid=5&id=6 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups&listAll=true&virtualmachineid=4&domainid=5&id=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -87,11 +87,11 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testGetSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("getSecurityGroup", long.class);
+      Method method = SecurityGroupAsyncClient.class.getMethod("getSecurityGroup", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups&listAll=true&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -122,7 +122,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testAuthorizeIngressPortsToCIDRs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressPortsToCIDRs", long.class,
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressPortsToCIDRs", String.class,
             String.class, int.class, int.class, Iterable.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, "tcp", 22, 22,
             ImmutableSet.of("1.1.1.1/24", "1.2.2.2/16"));
@@ -142,7 +142,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testAuthorizeIngressPortsToSecurityGroups() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressPortsToSecurityGroups", long.class,
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressPortsToSecurityGroups", String.class,
             String.class, int.class, int.class, Multimap.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, "tcp", 22, 22,
             ImmutableMultimap.of("adrian", "group1", "adrian", "group2", "bob", "group1"));
@@ -162,7 +162,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testAuthorizeIngressICMPToCIDRs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToCIDRs", long.class, int.class,
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToCIDRs", String.class, int.class,
             int.class, Iterable.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, 22, 22, ImmutableSet.of("1.1.1.1/24", "1.2.2.2/16"));
 
@@ -181,7 +181,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testAuthorizeIngressICMPToSecurityGroups() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToSecurityGroups", long.class,
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToSecurityGroups", String.class,
             int.class, int.class, Multimap.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, 22, 22,
             ImmutableMultimap.of("adrian", "group1", "adrian", "group2", "bob", "group1"));
@@ -201,10 +201,10 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testRevokeIngressRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("revokeIngressRule", long.class,
+      Method method = SecurityGroupAsyncClient.class.getMethod("revokeIngressRule", String.class,
             AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 5,
-            AccountInDomainOptions.Builder.accountInDomain("adrian", 1));
+            AccountInDomainOptions.Builder.accountInDomain("adrian", "1"));
 
       assertRequestLineEquals(
             httpRequest,
@@ -221,7 +221,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testDeleteSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("deleteSecurityGroup", long.class);
+      Method method = SecurityGroupAsyncClient.class.getMethod("deleteSecurityGroup", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,

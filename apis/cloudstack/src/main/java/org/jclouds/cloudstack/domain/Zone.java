@@ -38,12 +38,12 @@ public class Zone implements Comparable<Zone> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String description;
       private String displayText;
       private List<String> DNS = ImmutableList.of();
       private String domain;
-      private long domainId;
+      private String domainId;
       private String guestCIDRAddress;
       private List<String> internalDNS = ImmutableList.of();
       private String name;
@@ -54,7 +54,7 @@ public class Zone implements Comparable<Zone> {
       private String dhcpProvider;
       private String zoneToken;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -79,7 +79,7 @@ public class Zone implements Comparable<Zone> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -136,7 +136,7 @@ public class Zone implements Comparable<Zone> {
       }
    }
 
-   private long id;
+   private String id;
    private String description;
    @SerializedName("displaytext")
    private String displayText;
@@ -147,7 +147,7 @@ public class Zone implements Comparable<Zone> {
    private String domain;
    @Nullable
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("guestcidraddress")
    private String guestCIDRAddress;
    @SerializedName("internaldns1")
@@ -175,7 +175,7 @@ public class Zone implements Comparable<Zone> {
 
    }
 
-   public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
+   public Zone(String id, String description, String displayText, List<String> DNS, String domain, String domainId,
                String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType,
                String vLAN, boolean securityGroupsEnabled, AllocationState allocationState, String dhcpProvider, String zoneToken) {
       this.id = id;
@@ -200,7 +200,7 @@ public class Zone implements Comparable<Zone> {
    /**
     * @return Zone id
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -241,7 +241,7 @@ public class Zone implements Comparable<Zone> {
     * @return the ID of the containing domain, null for public zones
     */
    @Nullable
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -374,6 +374,6 @@ public class Zone implements Comparable<Zone> {
 
    @Override
    public int compareTo(Zone arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

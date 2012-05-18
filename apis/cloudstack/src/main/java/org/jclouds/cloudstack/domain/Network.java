@@ -44,7 +44,7 @@ public class Network implements Comparable<Network> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String broadcastDomainType;
       private URI broadcastURI;
       private String displayText;
@@ -59,24 +59,24 @@ public class Network implements Comparable<Network> {
       private String networkDomain;
       private String networkOfferingAvailability;
       private String networkOfferingDisplayText;
-      private long networkOfferingId;
+      private String networkOfferingId;
       private String networkOfferingName;
-      private long related;
+      private String related;
       private String startIP;
       private String name;
       private String state;
       private GuestIPType guestIPType;
       private String VLAN;
       private TrafficType trafficType;
-      private long zoneId;
+      private String zoneId;
       private Set<? extends NetworkService> services = ImmutableSet.<NetworkService>of();
       private String account;
-      private long domainId;
+      private String domainId;
       private boolean securityGroupEnabled;
       private Set<String> tags = ImmutableSet.of();
 
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -86,7 +86,7 @@ public class Network implements Comparable<Network> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -161,7 +161,7 @@ public class Network implements Comparable<Network> {
          return this;
       }
 
-      public Builder networkOfferingId(long networkOfferingId) {
+      public Builder networkOfferingId(String networkOfferingId) {
          this.networkOfferingId = networkOfferingId;
          return this;
       }
@@ -171,7 +171,7 @@ public class Network implements Comparable<Network> {
          return this;
       }
 
-      public Builder related(long related) {
+      public Builder related(String related) {
          this.related = related;
          return this;
       }
@@ -206,7 +206,7 @@ public class Network implements Comparable<Network> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -234,7 +234,7 @@ public class Network implements Comparable<Network> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    @SerializedName("broadcastdomaintype")
    private String broadcastDomainType;
@@ -248,7 +248,7 @@ public class Network implements Comparable<Network> {
    private String DNS2;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("endip")
    private String endIP;
    private String gateway;
@@ -267,10 +267,10 @@ public class Network implements Comparable<Network> {
    @SerializedName("networkofferingdisplaytext")
    private String networkOfferingDisplayText;
    @SerializedName("networkofferingid")
-   private long networkOfferingId;
+   private String networkOfferingId;
    @SerializedName("networkofferingname")
    private String networkOfferingName;
-   private long related;
+   private String related;
    @SerializedName("startip")
    private String startIP;
    private String name;
@@ -282,7 +282,7 @@ public class Network implements Comparable<Network> {
    @SerializedName("traffictype")
    private TrafficType trafficType;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    private String tags;
    @SerializedName("securitygroupenabled")
    private boolean securityGroupEnabled;
@@ -297,12 +297,12 @@ public class Network implements Comparable<Network> {
 
    }
 
-   public Network(long id, String broadcastDomainType, URI broadcastURI, String displayText,
-                  List<String> DNS, String domain, long domainId, String endIP, String gateway, boolean isDefault,
+   public Network(String id, String broadcastDomainType, URI broadcastURI, String displayText,
+                  List<String> DNS, String domain, String domainId, String endIP, String gateway, boolean isDefault,
                   boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
-                  String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, long related,
+                  String networkOfferingDisplayText, String networkOfferingId, String networkOfferingName, String related,
                   String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
-                  long zoneId, Set<? extends NetworkService> services, Set<String> tags, boolean securityGroupEnabled,
+                  String zoneId, Set<? extends NetworkService> services, Set<String> tags, boolean securityGroupEnabled,
                   String account) {
       this.id = id;
       this.broadcastDomainType = broadcastDomainType;
@@ -340,7 +340,7 @@ public class Network implements Comparable<Network> {
    /**
     * @return network id
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -387,7 +387,7 @@ public class Network implements Comparable<Network> {
    /**
     * @return the domain id of the Network
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -499,7 +499,7 @@ public class Network implements Comparable<Network> {
    /**
     * @return network offering id the network is created from
     */
-   public long getNetworkOfferingId() {
+   public String getNetworkOfferingId() {
       return networkOfferingId;
    }
 
@@ -513,7 +513,7 @@ public class Network implements Comparable<Network> {
    /**
     * @return related to what other network configuration
     */
-   public long getRelated() {
+   public String getRelated() {
       return related;
    }
 
@@ -527,7 +527,7 @@ public class Network implements Comparable<Network> {
    /**
     * @return zone id of the network
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -640,6 +640,6 @@ public class Network implements Comparable<Network> {
 
    @Override
    public int compareTo(Network arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

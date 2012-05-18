@@ -45,7 +45,7 @@ public class CreateVMGroupOptions extends BaseHttpRequestOptions {
    /**
     * @param domainId domain ID of the account owning the VMGroup
     */
-   public CreateVMGroupOptions domainId(long domainId) {
+   public CreateVMGroupOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
    }
@@ -62,7 +62,7 @@ public class CreateVMGroupOptions extends BaseHttpRequestOptions {
       /**
        * @see org.jclouds.cloudstack.options.CreateVMGroupOptions#domainId
        */
-      public static CreateVMGroupOptions domainId(long id) {
+      public static CreateVMGroupOptions domainId(String id) {
          CreateVMGroupOptions options = new CreateVMGroupOptions();
          return options.domainId(id);
       }

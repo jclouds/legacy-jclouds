@@ -32,7 +32,7 @@ import com.google.inject.Inject;
  *
  * @author Richard Downer
  */
-public class ZoneIdToZone extends CacheLoader<Long, Zone> {
+public class ZoneIdToZone extends CacheLoader<String, Zone> {
 
    private final ZoneClient zoneClient;
 
@@ -43,7 +43,7 @@ public class ZoneIdToZone extends CacheLoader<Long, Zone> {
    }
 
    @Override
-   public Zone load(Long zoneId) throws Exception {
+   public Zone load(String zoneId) throws Exception {
       checkNotNull(zoneId, "zoneId");
       return zoneClient.getZone(zoneId);
    }

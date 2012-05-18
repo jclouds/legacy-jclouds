@@ -59,7 +59,7 @@ public interface NATAsyncClient {
     * @see NATClient#listIPForwardingRules
     */
    @GET
-   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -69,32 +69,32 @@ public interface NATAsyncClient {
     * @see NATClient#getIPForwardingRule
     */
    @GET
-   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
+   ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") String id);
 
    /**
     * @see NATClient#getIPForwardingRulesForIPAddress
     */
    @GET
-   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForIPAddress(@QueryParam("ipaddressid") long id);
+   ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForIPAddress(@QueryParam("ipaddressid") String id);
 
    /**
     * @see NATClient#getIPForwardingRulesForVirtualMachine
     */
    @GET
-   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForVirtualMachine(@QueryParam("virtualmachineid") long id);
+   ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForVirtualMachine(@QueryParam("virtualmachineid") String id);
 
    /**
     * @see NATClient#createIPForwardingRule
@@ -103,7 +103,7 @@ public interface NATAsyncClient {
    @QueryParams(keys = "command", values = "createIpForwardingRule")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createIPForwardingRule(@QueryParam("ipaddressid") long IPAddressId,
+   ListenableFuture<AsyncCreateResponse> createIPForwardingRule(@QueryParam("ipaddressid") String IPAddressId,
          @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
          CreateIPForwardingRuleOptions... options);
 
@@ -114,7 +114,7 @@ public interface NATAsyncClient {
    @QueryParams(keys = "command", values = "enableStaticNat")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> enableStaticNATForVirtualMachine(
-         @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId);
+         @QueryParam("virtualmachineid") String virtualMachineId, @QueryParam("ipaddressid") String IPAddressId);
 
    /**
     * @see NATClient#deleteIPForwardingRule
@@ -124,7 +124,7 @@ public interface NATAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Long> deleteIPForwardingRule(@QueryParam("id") long id);
+   ListenableFuture<String> deleteIPForwardingRule(@QueryParam("id") String id);
 
    /**
     * @see NATClient#disableStaticNATOnPublicIP
@@ -134,6 +134,6 @@ public interface NATAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Long> disableStaticNATOnPublicIP(@QueryParam("ipaddressid") long IPAddressId);
+   ListenableFuture<String> disableStaticNATOnPublicIP(@QueryParam("ipaddressid") String IPAddressId);
 
 }

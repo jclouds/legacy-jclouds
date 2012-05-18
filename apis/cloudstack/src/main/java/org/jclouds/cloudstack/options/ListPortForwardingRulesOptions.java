@@ -36,7 +36,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
     * @param id
     *       lists rule with the specified ID
     */
-   public ListPortForwardingRulesOptions id(long id) {
+   public ListPortForwardingRulesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -45,7 +45,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
     * @param IPAddressId
     *       list the rule belonging to this public ip address
     */
-   public ListPortForwardingRulesOptions ipAddressId(long IPAddressId) {
+   public ListPortForwardingRulesOptions ipAddressId(String IPAddressId) {
       this.queryParameters.replaceValues("ipaddressid", ImmutableSet.of(IPAddressId + ""));
       return this;
 
@@ -56,7 +56,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListPortForwardingRulesOptions#id
        */
-      public static ListPortForwardingRulesOptions id(long id) {
+      public static ListPortForwardingRulesOptions id(String id) {
          ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
          return options.id(id);
       }
@@ -64,7 +64,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListPortForwardingRulesOptions#ipAddressId
        */
-      public static ListPortForwardingRulesOptions ipAddressId(long ipAddressId) {
+      public static ListPortForwardingRulesOptions ipAddressId(String ipAddressId) {
          ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
          return options.ipAddressId(ipAddressId);
       }
@@ -72,7 +72,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListPortForwardingRulesOptions#accountInDomain
        */
-      public static ListPortForwardingRulesOptions accountInDomain(String account, long domain) {
+      public static ListPortForwardingRulesOptions accountInDomain(String account, String domain) {
          ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -80,7 +80,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListPortForwardingRulesOptions#domainId
        */
-      public static ListPortForwardingRulesOptions domainId(long id) {
+      public static ListPortForwardingRulesOptions domainId(String id) {
          ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
          return options.domainId(id);
       }
@@ -90,7 +90,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListPortForwardingRulesOptions accountInDomain(String account, long domain) {
+   public ListPortForwardingRulesOptions accountInDomain(String account, String domain) {
       return ListPortForwardingRulesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -98,7 +98,7 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListPortForwardingRulesOptions domainId(long domainId) {
+   public ListPortForwardingRulesOptions domainId(String domainId) {
       return ListPortForwardingRulesOptions.class.cast(super.domainId(domainId));
    }
 }

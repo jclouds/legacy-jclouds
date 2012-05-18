@@ -67,7 +67,7 @@ public interface GlobalDomainAsyncClient extends DomainDomainAsyncClient {
    @SelectJson("domain")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Domain> updateDomain(@QueryParam("id") long domainId, UpdateDomainOptions... options);
+   ListenableFuture<Domain> updateDomain(@QueryParam("id") String domainId, UpdateDomainOptions... options);
 
    /**
     * @see GlobalDomainClient#deleteOnlyDomain
@@ -75,7 +75,7 @@ public interface GlobalDomainAsyncClient extends DomainDomainAsyncClient {
    @GET
    @QueryParams(keys = {"command", "cleanup"}, values = {"deleteDomain", "false"})
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteOnlyDomain(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteOnlyDomain(@QueryParam("id") String id);
 
    /**
     * @see GlobalDomainClient#deleteDomainAndAttachedResources
@@ -83,6 +83,6 @@ public interface GlobalDomainAsyncClient extends DomainDomainAsyncClient {
    @GET
    @QueryParams(keys = {"command", "cleanup"}, values = {"deleteDomain", "true"})
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteDomainAndAttachedResources(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteDomainAndAttachedResources(@QueryParam("id") String id);
 }
 

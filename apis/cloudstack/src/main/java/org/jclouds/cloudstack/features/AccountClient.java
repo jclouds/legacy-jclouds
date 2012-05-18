@@ -50,5 +50,5 @@ public interface AccountClient {
     *           Account to get
     * @return Account or null if not found
     */
-   Account getAccount(long id);
+   Account getAccount(String id);
 }

@@ -57,8 +57,8 @@ public class ListDomainsResponseTest extends BaseSetParserTest<Domain> {
    @SelectJson("domain")
    public Set<Domain> expected() {
       return ImmutableSet.of(
-         Domain.builder().id(1L).name("ROOT").level(0).hasChild(true).build(),
-         Domain.builder().id(2L).name("jclouds1").level(1).parentDomainId(1)
+         Domain.builder().id("1").name("ROOT").level(0).hasChild(true).build(),
+         Domain.builder().id("2").name("jclouds1").level(1).parentDomainId("1")
             .parentDomainName("ROOT").hasChild(false).build()
       );
    }

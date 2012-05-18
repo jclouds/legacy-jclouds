@@ -121,11 +121,11 @@ public class Host implements Comparable<Host> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private AllocationState allocationState;
       private int averageLoad;
       private String capabilities;
-      private long clusterId;
+      private String clusterId;
       private String clusterName;
       private ClusterType clusterType;
       private String cpuAllocated;
@@ -143,28 +143,28 @@ public class Host implements Comparable<Host> {
       private String hypervisor;
       private String ipAddress;
       private boolean localStorageActive;
-      private long jobId;
+      private String jobId;
       private AsyncJob.Status jobStatus;
       private Date lastPinged;
-      private long managementServerId;
+      private String managementServerId;
       private long memoryAllocated;
       private long memoryTotal;
       private long memoryUsed;
       private String name;
       private long networkKbsRead;
       private long networkKbsWrite;
-      private long osCategoryId;
-      private long osCategoryName;
-      private long podId;
+      private String osCategoryId;
+      private String osCategoryName;
+      private String podId;
       private String podName;
       private Date removed;
       private State state;
       private Type type;
       private String version;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -184,7 +184,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder clusterId(long clusterId) {
+      public Builder clusterId(String clusterId) {
          this.clusterId = clusterId;
          return this;
       }
@@ -274,7 +274,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder jobId(long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -289,7 +289,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder managementServerId(long managementServerId) {
+      public Builder managementServerId(String managementServerId) {
          this.managementServerId = managementServerId;
          return this;
       }
@@ -324,17 +324,17 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder osCategoryId(long osCategoryId) {
+      public Builder osCategoryId(String osCategoryId) {
          this.osCategoryId = osCategoryId;
          return this;
       }
 
-      public Builder osCategoryName(long osCategoryName) {
+      public Builder osCategoryName(String osCategoryName) {
          this.osCategoryName = osCategoryName;
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -364,7 +364,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -388,7 +388,7 @@ public class Host implements Comparable<Host> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("allocationstate")
    private AllocationState allocationState;
    @SerializedName("averageload")
@@ -396,7 +396,7 @@ public class Host implements Comparable<Host> {
    @SerializedName("capabilities")
    private String capabilities;
    @SerializedName("clusterid")
-   private long clusterId;
+   private String clusterId;
    @SerializedName("clustername")
    private String clusterName;
    @SerializedName("clustertype")
@@ -428,13 +428,13 @@ public class Host implements Comparable<Host> {
    @SerializedName("islocalstorageactive")
    private boolean localStorageActive;
    @SerializedName("jobid")
-   private long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    private AsyncJob.Status jobStatus;
    @SerializedName("lastpinged")
    private Date lastPinged;
    @SerializedName("managementserverid")
-   private long managementServerId;
+   private String managementServerId;
    @SerializedName("memoryallocated")
    private long memoryAllocated;
    @SerializedName("memorytotal")
@@ -447,11 +447,11 @@ public class Host implements Comparable<Host> {
    @SerializedName("networkkbswrite")
    private long networkKbsWrite;
    @SerializedName("oscategoryid")
-   private long osCategoryId;
+   private String osCategoryId;
    @SerializedName("oscategoryname")
-   private long osCategoryName;
+   private String osCategoryName;
    @SerializedName("podid")
-   private long podId;
+   private String podId;
    @SerializedName("podname")
    private String podName;
    private Date removed;
@@ -459,7 +459,7 @@ public class Host implements Comparable<Host> {
    private Type type;
    private String version;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
 
@@ -467,16 +467,16 @@ public class Host implements Comparable<Host> {
    Host() {
    }
 
-   public Host(long id, AllocationState allocationState, int averageLoad, String capabilities,
-               long clusterId, String clusterName, ClusterType clusterType, String cpuAllocated,
+   public Host(String id, AllocationState allocationState, int averageLoad, String capabilities,
+               String clusterId, String clusterName, ClusterType clusterType, String cpuAllocated,
                int cpuNumber, int cpuSpeed, String cpuUsed, float cpuWithOverProvisioning,
                Date created, Date disconnected, long diskSizeAllocated, long diskSizeTotal,
                String events, boolean hasEnoughCapacity, String hostTags, String hypervisor,
-               String ipAddress, boolean localStorageActive, long jobId, AsyncJob.Status jobStatus,
-               Date lastPinged, long managementServerId, long memoryAllocated, long memoryTotal,
+               String ipAddress, boolean localStorageActive, String jobId, AsyncJob.Status jobStatus,
+               Date lastPinged, String managementServerId, long memoryAllocated, long memoryTotal,
                long memoryUsed, String name, long networkKbsRead, long networkKbsWrite,
-               long osCategoryId, long osCategoryName, long podId, String podName, Date removed,
-               State state, Type type, String version, long zoneId, String zoneName) {
+               String osCategoryId, String osCategoryName, String podId, String podName, Date removed,
+               State state, Type type, String version, String zoneId, String zoneName) {
       this.id = id;
       this.allocationState = allocationState;
       this.averageLoad = averageLoad;
@@ -521,7 +521,7 @@ public class Host implements Comparable<Host> {
       this.zoneName = zoneName;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -537,7 +537,7 @@ public class Host implements Comparable<Host> {
       return capabilities;
    }
 
-   public long getClusterId() {
+   public String getClusterId() {
       return clusterId;
    }
 
@@ -609,7 +609,7 @@ public class Host implements Comparable<Host> {
       return localStorageActive;
    }
 
-   public long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -621,7 +621,7 @@ public class Host implements Comparable<Host> {
       return lastPinged;
    }
 
-   public long getManagementServerId() {
+   public String getManagementServerId() {
       return managementServerId;
    }
 
@@ -649,15 +649,15 @@ public class Host implements Comparable<Host> {
       return networkKbsWrite;
    }
 
-   public long getOsCategoryId() {
+   public String getOsCategoryId() {
       return osCategoryId;
    }
 
-   public long getOsCategoryName() {
+   public String getOsCategoryName() {
       return osCategoryName;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -681,7 +681,7 @@ public class Host implements Comparable<Host> {
       return version;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -802,6 +802,6 @@ public class Host implements Comparable<Host> {
 
    @Override
    public int compareTo(Host other) {
-      return Long.valueOf(this.getId()).compareTo(other.getId());
+      return this.getId().compareTo(other.getId());
    }
 }

@@ -56,71 +56,71 @@ public interface VolumeAsyncClient {
     * @see VolumeClient#listVolumes(org.jclouds.cloudstack.options.ListVolumesOptions...)
     */
    @GET
-   @QueryParams(keys = "command", values = "listVolumes")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listVolumes", "true" })
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Volume>> listVolumes(ListVolumesOptions... options);
 
    /**
-    * @see VolumeClient#getVolume(long)
+    * @see VolumeClient#getVolume(String)
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listVolumes")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listVolumes", "true" })
    @SelectJson("volume")
    @OnlyElement
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Volume> getVolume(@QueryParam("id") long id);
+   ListenableFuture<Volume> getVolume(@QueryParam("id") String id);
 
 
    /**
-    * @see VolumeClient#createVolumeFromDiskOfferingInZone(String, long, long)
+    * @see VolumeClient#createVolumeFromDiskOfferingInZone(String, String, String)
     */
    @GET
    @QueryParams(keys = "command", values = "createVolume")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> createVolumeFromDiskOfferingInZone(@QueryParam("name") String name,
-                                                                            @QueryParam("diskofferingid") long diskOfferingId,
-                                                                            @QueryParam("zoneid") long zoneId);
+                                                                            @QueryParam("diskofferingid") String diskOfferingId,
+                                                                            @QueryParam("zoneid") String zoneId);
 
    /**
-    * @see VolumeClient#createVolumeFromSnapshotInZone(String, long, long)
+    * @see VolumeClient#createVolumeFromSnapshotInZone(String, String, String)
     */
    @GET
    @QueryParams(keys = "command", values = "createVolume")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> createVolumeFromSnapshotInZone(@QueryParam("name") String name,
-                                                                        @QueryParam("snapshotid") long snapshotId,
-                                                                        @QueryParam("zoneid") long zoneId);
+                                                                        @QueryParam("snapshotid") String snapshotId,
+                                                                        @QueryParam("zoneid") String zoneId);
 
    /**
-    * @see VolumeClient#attachVolume(long, long)
+    * @see VolumeClient#attachVolume(String, String)
     */
    @GET
    @QueryParams(keys = "command", values = "attachVolume")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> attachVolume(@QueryParam("id") long volumeId,
-                                                      @QueryParam("virtualmachineid") long virtualMachineId);
+   ListenableFuture<AsyncCreateResponse> attachVolume(@QueryParam("id") String volumeId,
+                                                      @QueryParam("virtualmachineid") String virtualMachineId);
 
    /**
-    * @see VolumeClient#detachVolume(long)
+    * @see VolumeClient#detachVolume(String)
     */
    @GET
    @QueryParams(keys = "command", values = "detachVolume")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> detachVolume(@QueryParam("id") long volumeId);
+   ListenableFuture<AsyncCreateResponse> detachVolume(@QueryParam("id") String volumeId);
 
    /**
-    * @see VolumeClient#deleteVolume(long)
+    * @see VolumeClient#deleteVolume(String)
     */
    @GET
    @QueryParams(keys = "command", values = "deleteVolume")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteVolume(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteVolume(@QueryParam("id") String id);
 
 }

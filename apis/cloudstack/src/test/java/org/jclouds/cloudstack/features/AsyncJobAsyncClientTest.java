@@ -43,7 +43,7 @@ import com.google.inject.TypeLiteral;
 public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<AsyncJobAsyncClient> {
 
    public void testGetAsyncJob() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AsyncJobAsyncClient.class.getMethod("getAsyncJob", long.class);
+      Method method = AsyncJobAsyncClient.class.getMethod("getAsyncJob", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 11l);
 
       assertRequestLineEquals(httpRequest,
@@ -64,7 +64,7 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listAsyncJobs HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAsyncJobs&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -79,10 +79,10 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
    public void testListAsyncJobsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AsyncJobAsyncClient.class.getMethod("listAsyncJobs", ListAsyncJobsOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method,
-            ListAsyncJobsOptions.Builder.accountInDomain("adrian", 5));
+            ListAsyncJobsOptions.Builder.accountInDomain("adrian", "5"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listAsyncJobs&account=adrian&domainid=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listAsyncJobs&listAll=true&account=adrian&domainid=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 

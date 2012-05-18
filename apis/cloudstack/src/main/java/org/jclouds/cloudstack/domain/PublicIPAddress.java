@@ -38,29 +38,29 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private Date allocated;
-      private long associatedNetworkId;
+      private String associatedNetworkId;
       private String domain;
-      private long domainId;
+      private String domainId;
       private boolean usesVirtualNetwork;
       private String IPAddress;
       private boolean isSourceNAT;
       private boolean isStaticNAT;
-      private long networkId;
+      private String networkId;
       private State state;
       private String virtualMachineDisplayName;
-      private long virtualMachineId = -1;
+      private String virtualMachineId;
       private String virtualMachineName;
-      private long VLANId;
+      private String VLANId;
       private String VLANName;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
-      private Long jobId;
+      private String jobId;
       private Integer jobStatus;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -75,7 +75,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder associatedNetworkId(long associatedNetworkId) {
+      public Builder associatedNetworkId(String associatedNetworkId) {
          this.associatedNetworkId = associatedNetworkId;
          return this;
       }
@@ -85,7 +85,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -110,7 +110,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder networkId(long networkId) {
+      public Builder networkId(String networkId) {
          this.networkId = networkId;
          return this;
       }
@@ -125,7 +125,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -135,7 +135,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder VLANId(long VLANId) {
+      public Builder VLANId(String VLANId) {
          this.VLANId = VLANId;
          return this;
       }
@@ -145,7 +145,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -155,7 +155,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -172,14 +172,14 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Date allocated;
    @SerializedName("associatednetworkid")
-   private long associatedNetworkId;
+   private String associatedNetworkId;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("forvirtualnetwork")
    private boolean usesVirtualNetwork;
    @SerializedName("ipaddress")
@@ -189,25 +189,25 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    @SerializedName("isstaticnat")
    private boolean isStaticNAT;
    @SerializedName("networkid")
-   private long networkId;
+   private String networkId;
    private State state;
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
-   private long virtualMachineId = -1;
+   private String virtualMachineId;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("VLANid")
-   private long VLANId;
+   private String VLANId;
    @SerializedName("VLANname")
    private String VLANName;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
    @SerializedName("jobid")
    @Nullable
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    @Nullable
    private Integer jobStatus;
@@ -235,10 +235,10 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    }
 
-   public PublicIPAddress(long id, String account, Date allocated, long associatedNetworkId, String domain,
-                          long domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
-                          long networkId, State state, String virtualMachineDisplayName, long virtualMachineId,
-                          String virtualMachineName, long VLANId, String VLANName, long zoneId, String zoneName, Long jobId, 
+   public PublicIPAddress(String id, String account, Date allocated, String associatedNetworkId, String domain,
+                          String domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
+                          String networkId, State state, String virtualMachineDisplayName, String virtualMachineId,
+                          String virtualMachineName, String VLANId, String VLANName, String zoneId, String zoneName, String jobId, 
                           Integer jobStatus) {
       this.id = id;
       this.account = account;
@@ -266,13 +266,13 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    @Override
    public int compareTo(PublicIPAddress arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    /**
     * @return public IP address id
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -296,7 +296,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
     *         machine
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -312,7 +312,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the Network associated with the IP address
     */
-   public long getAssociatedNetworkId() {
+   public String getAssociatedNetworkId() {
       return associatedNetworkId;
    }
 
@@ -326,7 +326,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the domain ID the public IP address is associated with
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -361,7 +361,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the Network where ip belongs to
     */
-   public long getNetworkId() {
+   public String getNetworkId() {
       return networkId;
    }
 
@@ -385,7 +385,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
     * @return virtual machine id the ip address is assigned to (not null only
     *         for static nat Ip)
     */
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 
@@ -400,7 +400,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the VLAN associated with the IP address
     */
-   public long getVLANId() {
+   public String getVLANId() {
       return VLANId;
    }
 
@@ -414,7 +414,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the zone the public IP address belongs to
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 

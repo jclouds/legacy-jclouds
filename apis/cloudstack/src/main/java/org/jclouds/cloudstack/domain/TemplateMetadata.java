@@ -31,11 +31,11 @@ public class TemplateMetadata {
 
     public static class Builder {
         private String name;
-        private long osTypeId;
+        private String osTypeId;
         private String displayText;
-        private Long snapshotId;
-        private Long volumeId;
-        private Long virtualMachineId;
+        private String snapshotId;
+        private String volumeId;
+        private String virtualMachineId;
         private Boolean passwordEnabled;
 
         /**
@@ -51,7 +51,7 @@ public class TemplateMetadata {
          * @param osTypeId
          *            the ID of the OS Type that best represents the OS of this template.
          */
-        public Builder osTypeId(long osTypeId) {
+        public Builder osTypeId(String osTypeId) {
             this.osTypeId = osTypeId;
             return this;
         }
@@ -70,7 +70,7 @@ public class TemplateMetadata {
          *      the ID of the snapshot the template is being created from.
          *          Either this parameter, or volumeId has to be passed in
          */
-        public Builder snapshotId(Long snapshotId) {
+        public Builder snapshotId(String snapshotId) {
             this.snapshotId = snapshotId;
             return this;
         }
@@ -80,7 +80,7 @@ public class TemplateMetadata {
          *          the ID of the disk volume the template is being created from.
          *          Either this parameter, or snapshotId has to be passed in
          */
-        public Builder volumeId(Long volumeId) {
+        public Builder volumeId(String volumeId) {
             this.volumeId = volumeId;
             return this;
         }
@@ -89,7 +89,7 @@ public class TemplateMetadata {
          * @param virtualMachineId
          *          the ID of the disk volume the template is being created from
          */
-        public Builder virtualMachineId(Long virtualMachineId) {
+        public Builder virtualMachineId(String virtualMachineId) {
             this.virtualMachineId = virtualMachineId;
             return this;
         }
@@ -113,15 +113,15 @@ public class TemplateMetadata {
     }
 
     private String name;
-    private long osTypeId;
+    private String osTypeId;
     private String displayText;
 
-    private Long snapshotId;
-    private Long volumeId;
-    private Long virtualMachineId;;
+    private String snapshotId;
+    private String volumeId;
+    private String virtualMachineId;;
     private Boolean passwordEnabled;
 
-    public TemplateMetadata(String name, long osTypeId, String displayText) {
+    public TemplateMetadata(String name, String osTypeId, String displayText) {
         this.name = name;
         this.osTypeId = osTypeId;
         this.displayText = displayText;
@@ -136,33 +136,33 @@ public class TemplateMetadata {
     /**
      * @return the ID of the snapshot the template is being created from
      */
-    public Long getSnapshotId() {
+    public String getSnapshotId() {
         return snapshotId;
     }
 
-    public void setSnapshotId(Long snapshotId) {
+    public void setSnapshotId(String snapshotId) {
         this.snapshotId = snapshotId;
     }
 
     /**
      * @return the ID of the disk volume the template is being created from
      */
-    public Long getVolumeId() {
+    public String getVolumeId() {
         return volumeId;
     }
 
-    public void setVolumeId(Long volumeId) {
+    public void setVolumeId(String volumeId) {
         this.volumeId = volumeId;
     }
 
     /**
      * @return Optional, VM ID
      */
-    public Long getVirtualMachineId() {
+    public String getVirtualMachineId() {
         return virtualMachineId;
     }
 
-    public void setVirtualMachineId(Long virtualMachineId) {
+    public void setVirtualMachineId(String virtualMachineId) {
         this.virtualMachineId = virtualMachineId;
     }
 
@@ -187,7 +187,7 @@ public class TemplateMetadata {
     /**
      * @return the ID of the OS Type that best represents the OS of this template.
      */
-    public long getOsTypeId() {
+    public String getOsTypeId() {
         return osTypeId;
     }
 
