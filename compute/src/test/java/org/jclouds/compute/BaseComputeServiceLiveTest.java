@@ -642,14 +642,16 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
       try {
          ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+         ImmutableSet<String> tags = ImmutableSet. of(group);
          Stopwatch watch = new Stopwatch().start();
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
-               inboundPorts(22, 8080).blockOnPort(22, 300).userMetadata(userMetadata)));
+               inboundPorts(22, 8080).blockOnPort(22, 300).userMetadata(userMetadata).tags(tags)));
          long createSeconds = watch.elapsedTime(TimeUnit.SECONDS);
 
          final String nodeId = node.getId();
 
          checkUserMetadataInNodeEquals(node, userMetadata);
+         checkTagsInNodeEquals(node, tags);
 
          getAnonymousLogger().info(
                format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
@@ -756,6 +758,10 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
             userMetadata, node);
+   }
+
+   protected void checkTagsInNodeEquals(NodeMetadata node, ImmutableSet<String> tags) {
+      assert node.getTags().equals(tags) : String.format("node tags did not match %s %s", tags, node);
    }
 
    public void testListImages() throws Exception {
