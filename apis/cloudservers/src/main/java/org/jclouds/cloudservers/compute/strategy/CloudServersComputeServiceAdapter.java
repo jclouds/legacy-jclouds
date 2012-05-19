@@ -21,6 +21,7 @@ package org.jclouds.cloudservers.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.cloudservers.options.ListOptions.Builder.withDetails;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -59,11 +60,13 @@ public class CloudServersComputeServiceAdapter implements ComputeServiceAdapter<
             Template template) {
       Server server = client
                .createServer(name, Integer.parseInt(template.getImage().getProviderId()), Integer.parseInt(template
-                        .getHardware().getProviderId()), withMetadata(template.getOptions().getUserMetadata()));
+                        .getHardware().getProviderId()), withMetadata(metadataAndTagsAsCommaDelimitedValue(template.getOptions())));
 
       return new NodeAndInitialCredentials<Server>(server, server.getId() + "", LoginCredentials.builder().password(
                server.getAdminPass()).build());
    }
+   
+
 
    @Override
    public Iterable<Flavor> listHardwareProfiles() {
