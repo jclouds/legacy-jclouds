@@ -158,7 +158,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          context.close();
       Properties props = setupProperties();
       context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
+            ImmutableSet.of(new Log4JLoggingModule(), credentialStoreModule, getSshModule()), props);
       client = context.getComputeService();
    }
 

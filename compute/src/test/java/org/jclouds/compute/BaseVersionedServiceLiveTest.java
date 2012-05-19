@@ -18,15 +18,21 @@
  */
 package org.jclouds.compute;
 
+import java.io.InputStream;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
+import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.BaseRestClientLiveTest;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.io.InputSupplier;
+import com.google.inject.Module;
 
 /**
  * 
@@ -38,6 +44,10 @@ public abstract class BaseVersionedServiceLiveTest extends BaseRestClientLiveTes
    protected String loginUser;
    protected String authenticateSudo;
    protected LoginCredentials loginCredentials = LoginCredentials.builder().user("root").build();
+
+   // isolate tests from eachother, as default credentialStore is static
+   protected Module credentialStoreModule = new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
+         new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
 
    @Override
    protected Properties setupProperties() {
