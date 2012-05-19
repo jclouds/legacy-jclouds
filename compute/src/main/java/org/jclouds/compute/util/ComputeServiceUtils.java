@@ -18,30 +18,39 @@
  */
 package org.jclouds.compute.util;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Throwables.getStackTraceAsString;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Maps.*;
 import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash;
 
 import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -155,6 +164,49 @@ public class ComputeServiceUtils {
    @Deprecated
    public static Iterable<String> getSupportedProviders() {
       return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(ComputeServiceContext.class));
+   }
+   
+   /**
+    * For cloud apis that have a pattern of using empty strings as tags, return a map that contains
+    * that.
+    */
+   public static Map<String, String> metadataAndTagsAsValuesOfEmptyString(TemplateOptions options) {
+      Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      builder.putAll(options.getUserMetadata());
+      for (String tag : options.getTags())
+         builder.put(tag, "");
+      return builder.build();
+   }
+
+   /**
+    * @see #metadataAndTagsAsValuesOfEmptyString
+    */
+   public static NodeMetadataBuilder addMetadataAndParseTagsFromValuesOfEmptyString(NodeMetadataBuilder builder,
+            Map<String, String> map) {
+      return builder.tags(filterValues(map, equalTo("")).keySet()).userMetadata(filterValues(map, not(equalTo(""))));
+   }
+
+   /**
+    * For cloud apis that need to namespace tags as the value of the key {@code jclouds.tags}
+    */
+   public static Map<String, String> metadataAndTagsAsCommaDelimitedValue(TemplateOptions options) {
+      Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      builder.putAll(options.getUserMetadata());
+      if (options.getTags().size() > 0)
+         builder.put("jclouds.tags", Joiner.on(',').join(options.getTags()));
+      return builder.build();
+   }
+
+   /**
+    * @see #metadataAndTagsAsCommaDelimitedValue
+    */
+   public static NodeMetadataBuilder addMetadataAndParseTagsFromCommaDelimitedValue(NodeMetadataBuilder builder,
+            Map<String, String> map) {
+      String tagString = map.get("jclouds.tags");
+      if (tagString != null)
+         builder.tags(Splitter.on(',').split(tagString));
+      builder.userMetadata(filterKeys(map, not(equalTo("jclouds.tags"))));
+      return builder;
    }
 
    public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, String in,

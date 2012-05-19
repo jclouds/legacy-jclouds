@@ -19,6 +19,7 @@
 package org.jclouds.compute.util;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
+import static org.jclouds.compute.util.ComputeServiceUtils.*;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -26,13 +27,16 @@ import java.util.Map;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 
 /**
@@ -47,6 +51,30 @@ public class ComputeServiceUtilsTest {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
          .getInstance(Json.class));
 
+   @Test
+   public void testMetadataAndTagsAsValuesOfEmptyString() {
+      TemplateOptions options = TemplateOptions.Builder.tags(ImmutableSet.of("tag")).userMetadata(ImmutableMap.<String, String>of("foo", "bar"));
+      assertEquals(metadataAndTagsAsValuesOfEmptyString(options), ImmutableMap.<String, String>of("foo", "bar", "tag", ""));
+   }
+   
+   @Test
+   public void testMetadataAndTagsAsCommaDelimitedValue() {
+      TemplateOptions options = TemplateOptions.Builder.tags(ImmutableSet.of("tag")).userMetadata(ImmutableMap.<String, String>of("foo", "bar"));
+      assertEquals(metadataAndTagsAsCommaDelimitedValue(options), ImmutableMap.<String, String>of("foo", "bar", "jclouds.tags", "tag"));
+   }
+
+   @Test
+   public void testMetadataAndTagsAsValuesOfEmptyStringNoTags() {
+      TemplateOptions options = TemplateOptions.Builder.userMetadata(ImmutableMap.<String, String>of("foo", "bar"));
+      assertEquals(metadataAndTagsAsValuesOfEmptyString(options), ImmutableMap.<String, String>of("foo", "bar"));
+   }
+   
+   @Test
+   public void testMetadataAndTagsAsCommaDelimitedValueNoTags() {
+      TemplateOptions options = TemplateOptions.Builder.userMetadata(ImmutableMap.<String, String>of("foo", "bar"));
+      assertEquals(metadataAndTagsAsCommaDelimitedValue(options), ImmutableMap.<String, String>of("foo", "bar"));
+   }
+   
    @Test
    public void testParseVersionOrReturnEmptyStringUbuntu1004() {
       assertEquals(parseVersionOrReturnEmptyString(OsFamily.UBUNTU, "Ubuntu 10.04", map), "10.04");
