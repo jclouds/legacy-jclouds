@@ -106,6 +106,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       Date before = new Date();
 
       ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+      ImmutableSet<String> tags = ImmutableSet. of(group);
 
       // note that if you change the location, you must also specify image parameters
       Template template = client.templateBuilder().locationId(region).osFamily(AMZN_LINUX).os64Bit(true).build();
@@ -142,6 +143,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          assertEquals(first.getName(), group);
 
          checkUserMetadataInNodeEquals(first, userMetadata);
+         checkTagsInNodeEquals(first, tags);
 
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;

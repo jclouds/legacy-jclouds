@@ -20,6 +20,7 @@ package org.jclouds.cloudservers.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromCommaDelimitedValue;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -108,7 +109,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.hostname(from.getName());
       builder.location(new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId()).description(
                from.getHostId()).parent(location.get()).build());
-      builder.userMetadata(from.getMetadata());
+      addMetadataAndParseTagsFromCommaDelimitedValue(builder, from.getMetadata());
       builder.group(parseGroupFromName(from.getName()));
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from));
