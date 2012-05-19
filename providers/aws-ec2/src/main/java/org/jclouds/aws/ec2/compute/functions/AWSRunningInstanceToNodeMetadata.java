@@ -18,9 +18,7 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Maps.filterValues;
+import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromValuesOfEmptyString;
 
 import java.util.Map;
 import java.util.Set;
@@ -87,8 +85,8 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
    @Override
    protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
       AWSRunningInstance awsInstance = AWSRunningInstance.class.cast(instance);
-      Map<String, String> tags = awsInstance.getTags();
-      return super.buildInstance(instance, builder).name(tags.get("Name")).tags(
-               filterValues(tags, equalTo("")).keySet()).userMetadata(filterValues(tags, not(equalTo(""))));
+      builder.name(awsInstance.getTags().get("Name"));
+      addMetadataAndParseTagsFromValuesOfEmptyString(builder, awsInstance.getTags());
+      return super.buildInstance(instance, builder);
    }
 }

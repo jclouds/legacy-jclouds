@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -100,6 +101,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    @Override
    protected Iterable<? extends RunningInstance> createNodesInRegionAndZone(String region, String zone, String group,
             int count, Template template, RunInstancesOptions instanceOptions) {
+      Map<String, String> tags = metadataAndTagsAsValuesOfEmptyString(template.getOptions());
       Float spotPrice = getSpotPriceOrNull(template.getOptions());
       if (spotPrice != null) {
          LaunchSpecification spec = AWSRunInstancesOptions.class.cast(instanceOptions).getLaunchSpecificationBuilder()
@@ -108,12 +110,11 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
          if (logger.isDebugEnabled())
             logger.debug(">> requesting %d spot instances region(%s) price(%f) spec(%s) options(%s)", count, region,
                      spotPrice, spec, options);
-
-         return addTagsToInstancesInRegion(template.getOptions().getUserMetadata(), transform(client
+         return addTagsToInstancesInRegion(tags, transform(client
                   .getSpotInstanceServices().requestSpotInstancesInRegion(region, spotPrice, count, spec, options),
                   spotConverter), region, group);
       } else {
-         return addTagsToInstancesInRegion(template.getOptions().getUserMetadata(), super.createNodesInRegionAndZone(
+         return addTagsToInstancesInRegion(tags, super.createNodesInRegionAndZone(
                   region, zone, group, count, template, instanceOptions), region, group);
       }
 
