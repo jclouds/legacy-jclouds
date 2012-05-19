@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 
 import java.util.Set;
 
@@ -42,9 +43,9 @@ import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptions
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
-import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
@@ -102,7 +103,7 @@ public class NovaComputeServiceAdapter implements
       NovaTemplateOptions templateOptions = template.getOptions().as(NovaTemplateOptions.class);
 
       CreateServerOptions options = new CreateServerOptions();
-      options.metadata(templateOptions.getUserMetadata());
+      options.metadata(metadataAndTagsAsCommaDelimitedValue(template.getOptions()));
       options.securityGroupNames(templateOptions.getSecurityGroupNames());
       options.userData(templateOptions.getUserData());
 
