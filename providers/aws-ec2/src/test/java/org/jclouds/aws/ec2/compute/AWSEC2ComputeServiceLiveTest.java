@@ -24,9 +24,7 @@ import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.ec2.util.IpPermissions.permit;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -60,12 +58,8 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -204,112 +198,4 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    }
 
-   @Test
-   public void testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode() throws Exception {
-      Function<String,Void> destroyer = new Function<String,Void>() {
-         @Override
-         public Void apply(String instanceId) {
-            client.destroyNode(instanceId);
-            return null;
-         }
-      };
-      runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(destroyer);
-   }
-   
-   @Test
-   public void testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching() throws Exception {
-      Function<String,Void> destroyer = new Function<String,Void>() {
-         @Override
-         public Void apply(String instanceId) {
-            client.destroyNodesMatching(NodePredicates.<NodeMetadata>withIds(instanceId));
-            return null;
-         }
-      };
-      runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(destroyer);
-   }
-   
-   private void runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(Function<String,Void> destroyer) throws Exception {
-      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getSecurityGroupServices();
-
-      KeyPairClient keyPairClient = EC2Client.class.cast(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getKeyPairServices();
-
-      InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getInstanceServices();
-
-      String group = this.group + "incidental";
-      String region = null;
-      
-      try {
-         // Create two instances
-         // TODO set spotPrice(0.3f) ?
-         Template template = client.templateBuilder().build();
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 2, template);
-         NodeMetadata first = Iterables.get(nodes, 0);
-         NodeMetadata second = Iterables.get(nodes, 1);
-
-         String instanceId1 = Iterables.get(nodes, 0).getProviderId();
-         String instanceId2 = Iterables.get(nodes, 1).getProviderId();
-
-         AWSRunningInstance instance1 = AWSRunningInstance.class.cast(getInstance(instanceClient, instanceId1));
-         AWSRunningInstance instance2 = AWSRunningInstance.class.cast(getInstance(instanceClient, instanceId2));
-
-         // Assert the two instances are in the same groups
-         region = instance1.getRegion();
-         String expectedSecurityGroupName = "jclouds#" + group;
-         
-         assertEquals(instance1.getRegion(), region);
-         assertNotNull(instance1.getKeyName());
-         assertEquals(instance1.getRegion(), instance2.getRegion(), "Nodes are not in the same region");
-         assertEquals(instance1.getKeyName(), instance2.getKeyName(), "Nodes do not have same key-pair name");
-         assertEquals(instance1.getGroupIds(), instance2.getGroupIds(), "Nodes are not in the same group");
-         assertEquals(instance1.getGroupIds(), ImmutableSet.of(expectedSecurityGroupName), "Nodes are not in the expected security group");
-
-         // Assert a single key-pair and security group has been created
-         String expectedKeyPairName = instance1.getKeyName();
-         Set<SecurityGroup> securityGroups = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
-         Set<KeyPair> keyPairs = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
-         assertEquals(securityGroups.size(), 1);
-         assertEquals(Iterables.get(securityGroups, 0).getName(), expectedSecurityGroupName);
-         assertEquals(keyPairs.size(), 1);
-         assertEquals(Iterables.get(keyPairs, 0).getKeyName(), expectedKeyPairName);
-
-         // Destroy the first node; the key-pair and security-group should still remain
-         destroyer.apply(first.getId());
-
-         Set<SecurityGroup> securityGroupsAfterDestroyFirst = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
-         Set<KeyPair> keyPairsAfterDestroyFirst = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
-         assertEquals(securityGroupsAfterDestroyFirst, securityGroups);
-         assertEquals(keyPairsAfterDestroyFirst, keyPairs);
-
-         // Destroy the second node; the key-pair and security-group should be automatically deleted
-         // It can take some time after destroyNode returns for the securityGroup and keyPair to be completely removed.
-         // Therefore try repeatedly.
-         destroyer.apply(second.getId());
-
-         final int TIMEOUT_MS = 30*1000;
-         boolean firstAttempt = true;
-         boolean done;
-         Set<SecurityGroup> securityGroupsAfterDestroyAll;
-         Set<KeyPair> keyPairsAfterDestroyAll;
-         Stopwatch stopwatch = new Stopwatch();
-         stopwatch.start();
-         do {
-            if (!firstAttempt) Thread.sleep(1000);
-            firstAttempt = false;
-            securityGroupsAfterDestroyAll = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
-            keyPairsAfterDestroyAll = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
-            done = securityGroupsAfterDestroyAll.isEmpty() && keyPairsAfterDestroyAll.isEmpty();
-         } while (!done && stopwatch.elapsedMillis() < TIMEOUT_MS);
-
-         assertEquals(securityGroupsAfterDestroyAll, Collections.emptySet());
-         assertEquals(keyPairsAfterDestroyAll, Collections.emptySet());
-         
-      } finally {
-         client.destroyNodesMatching(NodePredicates.inGroup(group));
-         
-         if (region != null) cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
-      }
-   }
 }

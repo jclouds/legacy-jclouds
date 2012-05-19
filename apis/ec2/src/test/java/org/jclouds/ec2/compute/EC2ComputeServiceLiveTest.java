@@ -305,13 +305,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
     * 
     * @throws NoSuchElementException If no instance with that id exists, or the instance is in a different region
     */
-   protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
+   public static RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
                .describeInstancesInRegion(null, id)));
       return instance;
    }
 
-   protected void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
+   public static void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
             KeyPairClient keyPairClient, String group) throws InterruptedException {
       try {
          for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(region))
