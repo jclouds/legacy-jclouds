@@ -40,9 +40,13 @@ import com.google.common.net.HttpHeaders;
 public enum KeystoneFixture {
    INSTANCE;
 
-   public String getTenantName(){
+   public String getTenantId(){
       return "12346637803162";
    }
+   
+   public String getTenantName(){
+	      return "adrian@jclouds.org";
+	   }
 
    public HttpRequest initialAuthWithUsernameAndPassword(String username, String password){
       return HttpRequest
@@ -69,6 +73,19 @@ public enum KeystoneFixture {
                                        "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantName\":\"%s\"}}",
                                        accessKey, secretKey, getTenantName()), "application/json")).build();
    }
+   
+   public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantId(String accessKey, String secretKey){
+	      return HttpRequest
+	            .builder()
+	            .method("POST")
+	            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
+	            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+	            .payload(
+	                     payloadFromStringWithContentType(
+	                              format(
+	                                       "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantId\":\"%s\"}}",
+	                                       accessKey, secretKey, getTenantId()), "application/json")).build();
+	   }
 
    public String getAuthToken(){
       return  "Auth_4f173437e4b013bee56d1007";

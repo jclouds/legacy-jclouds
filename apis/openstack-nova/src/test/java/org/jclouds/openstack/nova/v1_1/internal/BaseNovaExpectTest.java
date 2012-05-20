@@ -43,6 +43,8 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpRequest extensionsOfNovaRequest;
    protected HttpResponse extensionsOfNovaResponse;
    protected HttpResponse unmatchedExtensionsOfNovaResponse;
+   protected HttpRequest keystoneAuthWithAccessKeyAndSecretKeyAndTenantId;
+   protected String identityWithTenantId;
 
    public BaseNovaExpectTest() {
       provider = "openstack-nova";
@@ -50,10 +52,13 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
             credential);
       keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
             credential);
+      keystoneAuthWithAccessKeyAndSecretKeyAndTenantId = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantId(identity,
+              credential);
       
       authToken = KeystoneFixture.INSTANCE.getAuthToken();
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
       // now, createContext arg will need tenant prefix
+      identityWithTenantId = KeystoneFixture.INSTANCE.getTenantId() + ":" + identity;
       identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
       
       extensionsOfNovaRequest = HttpRequest

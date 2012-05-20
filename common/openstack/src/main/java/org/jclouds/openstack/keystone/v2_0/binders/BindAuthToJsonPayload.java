@@ -79,6 +79,8 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       // still use tenantName
       if (!Strings.isNullOrEmpty((String) postParams.get("tenantName")))
          builder.put("tenantName", postParams.get("tenantName"));
+      else if (!Strings.isNullOrEmpty((String) postParams.get("tenantId")))
+          builder.put("tenantId", postParams.get("tenantId"));
       return super.bindToRequest(request, ImmutableMap.of("auth", builder.build()));
    }
 

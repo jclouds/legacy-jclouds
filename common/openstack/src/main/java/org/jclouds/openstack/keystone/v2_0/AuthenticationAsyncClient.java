@@ -68,4 +68,15 @@ public interface AuthenticationAsyncClient {
    // still use tenantName
    ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantName") String tenantId,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
+   
+   /**
+    * @see AuthenticationClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
+    */
+   @POST
+   @SelectJson("access")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tokens")
+   @MapBinder(BindAuthToJsonPayload.class)
+   ListenableFuture<Access> authenticateTenantWithTenantIdAndCredentials(@PayloadParam("tenantId") String tenantId,
+            ApiAccessKeyCredentials apiAccessKeyCredentials);
 }

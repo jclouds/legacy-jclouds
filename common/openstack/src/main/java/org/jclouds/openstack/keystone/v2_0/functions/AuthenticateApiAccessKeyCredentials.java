@@ -51,7 +51,13 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
 
       ApiAccessKeyCredentials apiAccessKeyCredentials = ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(
                usernameOrAccessKey, passwordOrSecretKey);
-      return client.authenticateTenantWithCredentials(tenantId, apiAccessKeyCredentials);
+      Access access;
+      if(tenantId.matches("[0-9]*")) {
+    	  access = client.authenticateTenantWithTenantIdAndCredentials(tenantId, apiAccessKeyCredentials);
+      } else {
+    	  access = client.authenticateTenantWithCredentials(tenantId, apiAccessKeyCredentials);
+      }
+      return access;
    }
 
    @Override
