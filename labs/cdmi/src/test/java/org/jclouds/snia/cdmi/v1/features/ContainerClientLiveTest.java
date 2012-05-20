@@ -28,19 +28,22 @@ import org.testng.annotations.Test;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 @Test(groups = "live", testName = "ContainerClientLiveTest")
 public class ContainerClientLiveTest extends BaseCDMIClientLiveTest {
 
    @Test
    public void testGetContainer() throws Exception {
+//	  String pContainerName = "NaginContainer1335695552671"; 
+	  String pContainerName = System.getProperty("test.cdmi.containerName","myContainer"); 
       ContainerClient client = cdmiContext.getApi().getContainerClient();
-      Container container = client.getContainer("TODO: figure out how to list containers");
+      Container container = client.getContainer(pContainerName);
       assertNotNull(container);
       assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
       assertNotNull(container.getObjectID());
       assertNotNull(container.getObjectName());
+      assertEquals(container.getObjectName(),pContainerName+"/");
       assertNotNull(container.getChildren());
       assertNotNull(container.getMetadata());
    }

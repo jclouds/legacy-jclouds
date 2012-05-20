@@ -58,6 +58,7 @@ public class ContainerClientExpectTest extends BaseCDMIClientExpectTest {
             .build();
 
       CDMIClient clientWhenContainersExist = requestSendsResponse(getContainer, getContainerResponse);
+      System.out.println(clientWhenContainersExist.getContainerClient().getContainer("MyContainer"));
 
       assertEquals(
             clientWhenContainersExist.getContainerClient().getContainer("MyContainer"),
