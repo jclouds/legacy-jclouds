@@ -27,6 +27,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+
+
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -36,6 +38,7 @@ import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
+import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -68,13 +71,13 @@ public interface ContainerAsyncClient {
    @Produces( { ObjectTypes.CONTAINER})
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)   
    @Path("/{containerName}/")
-   ListenableFuture<Container> createContainer(@PathParam("containerName") String containerName);
+   ListenableFuture<Container> createContainer(@PathParam("containerName") String containerName,
+   					CreateContainerOptions... options);
 
    /**
     * @see ContainerClient#createContainer()
     */
    @DELETE
-//   @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
    @Consumes( MediaType.APPLICATION_JSON )
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/{containerName}/")

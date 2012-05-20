@@ -48,6 +48,7 @@ public class ParseContainerTest extends BaseItemParserTest<Container> {
                       .objectType("application/cdmi-container")
                       .objectID("00007E7F00102E230ED82694DAA975D2")
                       .objectName("MyContainer/")
+                      .parentURI("/")
                       .metadata(ImmutableMap.<String, JsonBall>builder()
                           .put("cdmi_size", new JsonBall("\"83\""))
                           .build())

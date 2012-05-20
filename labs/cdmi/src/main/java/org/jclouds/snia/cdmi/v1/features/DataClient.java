@@ -19,17 +19,29 @@
 package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
-
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.snia.cdmi.v1.domain.DataObject;
+import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
+import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
 
 /**
  * Data Object Resource Operations
  * 
  * @see DataAsyncClient
- * @author Adrian Cole
+ * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface DataClient {
+	DataObject createDataObject(String containerName, String dataObjectName,
+			CreateDataObjectOptions... options);
+	 
+	void createDataObjectNonCDMI(String containerName, String dataObjectName, 
+			CreateDataObjectNonCDMIOptions... options );
+
+	DataObject getDataObject(String containerName, String dataObjectName);
+
+	void deleteDataObject(String containerName, String dataObjectName);
+
 
 }

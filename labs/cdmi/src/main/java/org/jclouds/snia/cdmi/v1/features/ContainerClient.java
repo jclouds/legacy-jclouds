@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.snia.cdmi.v1.domain.Container;
+import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 
 /**
  * Container Object Resource Operations
@@ -32,7 +33,8 @@ import org.jclouds.snia.cdmi.v1.domain.Container;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerClient {
-	Container createContainer(String containerName);
+	Container createContainer(String containerName,
+			CreateContainerOptions... options);
 
 	Container getContainer(String containerName);
 
