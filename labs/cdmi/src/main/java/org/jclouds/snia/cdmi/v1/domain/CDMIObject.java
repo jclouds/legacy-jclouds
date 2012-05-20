@@ -105,7 +105,9 @@ public class CDMIObject {
     * is able to produce these identifiers without conflicting with other offerings.
     */
    public String getObjectID() {
-      return objectID;
+      //return objectID;
+	   System.out.println("CDMIObject getObjectID()");
+      return (objectID == null)? "": objectID;
    }
 
    /**
