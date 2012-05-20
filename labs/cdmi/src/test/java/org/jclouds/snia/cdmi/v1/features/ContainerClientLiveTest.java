@@ -21,6 +21,10 @@ package org.jclouds.snia.cdmi.v1.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.internal.BaseCDMIClientLiveTest;
@@ -28,21 +32,49 @@ import org.testng.annotations.Test;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 @Test(groups = "live", testName = "ContainerClientLiveTest")
 public class ContainerClientLiveTest extends BaseCDMIClientLiveTest {
-
    @Test
-   public void testGetContainer() throws Exception {
+   public void testCreateContainer() throws Exception {
+      String pContainerName = "MyContainer" + System.currentTimeMillis();
       ContainerClient client = cdmiContext.getApi().getContainerClient();
-      Container container = client.getContainer("TODO: figure out how to list containers");
+      Logger.getAnonymousLogger().info("createContainer: " + pContainerName);
+      Container container = client.createContainer(pContainerName);
       assertNotNull(container);
+      System.out.println(container);
+      Logger.getAnonymousLogger().info("getContainer: " + pContainerName);
+      container = client.getContainer(pContainerName);
+      assertNotNull(container);
+      System.out.println(container);
       assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
       assertNotNull(container.getObjectID());
       assertNotNull(container.getObjectName());
+      assertEquals(container.getObjectName(), pContainerName + "/");
       assertNotNull(container.getChildren());
+      assertEquals(container.getChildren().isEmpty(), true);
+      System.out.println("Children: " + container.getChildren());
       assertNotNull(container.getMetadata());
+      assertNotNull(container.getUserMetadata());
+      System.out.println("UserMetaData: " + container.getUserMetadata());
+      assertNotNull(container.getSystemMetadata());
+      System.out.println("SystemMetaData: " + container.getSystemMetadata());
+      assertNotNull(container.getACLMetadata());
+      List<Map<String, String>> aclMetadataOut = container.getACLMetadata();
+      System.out.println("ACLMetaData: ");
+      for (Map<String, String> aclMap : aclMetadataOut) {
+         System.out.println(aclMap);
+      }
+      container = client.getContainer("/");
+      System.out.println("root container: " + container);
+      assertEquals(container.getChildren().contains(pContainerName + "/"), true);
+      Logger.getAnonymousLogger().info("deleteContainer: " + pContainerName);
+      client.deleteContainer(pContainerName);
+      container = client.getContainer("/");
+      System.out.println("root container: " + container);
+      assertEquals(container.getChildren().contains(pContainerName + "/"), false);
+
    }
 
 }
