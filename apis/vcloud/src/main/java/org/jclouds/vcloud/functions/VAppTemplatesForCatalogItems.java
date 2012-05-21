@@ -43,6 +43,7 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 
 /**
@@ -79,7 +80,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
 
    @Override
    public Iterable<VAppTemplate> apply(Iterable<CatalogItem> from) {
-      return Iterables2.concreteCopy(transformParallel(filter(from, new Predicate<CatalogItem>() {
+      return Iterables2.concreteCopy(filter(transformParallel(filter(from, new Predicate<CatalogItem>() {
 
          @Override
          public boolean apply(CatalogItem input) {
@@ -95,7 +96,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
                      returnNullOnAuthorizationException);
          }
 
-      }, executor, null, logger, "vappTemplates in"));
+      }, executor, null, logger, "vappTemplates in"), Predicates.notNull()));
    }
 
 }
