@@ -30,12 +30,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.EC2ComputeService;
-import org.jclouds.ec2.compute.EC2ImageExtension;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;

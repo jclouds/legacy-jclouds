@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.ec2.compute;
+package org.jclouds.cloudservers.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -30,42 +30,40 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.compute.ImageExtension;
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.Reservation;
-import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.options.CreateImageOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * EC2 implementation of {@link ImageExtension} please note that {@link #createImage(ImageTemplate)}
- * only works by cloning EBS backed instances for the moment.
+ * CloudServers implementation of {@link ImageExtension}
  * 
  * @author David Alves
  * 
  */
-public class EC2ImageExtension implements ImageExtension {
+@Singleton
+public class CloudServersImageExtension implements ImageExtension {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private final EC2Client ec2Client;
+
+   private final CloudServersClient client;
    private final ExecutorService executor;
-   private final PredicateWithResult<String, Image> imageReadyPredicate;
+   private final PredicateWithResult<Integer, Image> imageAvailablePredicate;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
    private long maxWait = 3600;
@@ -74,21 +72,18 @@ public class EC2ImageExtension implements ImageExtension {
    private long waitPeriod = 1;
 
    @Inject
-   public EC2ImageExtension(EC2Client ec2Client, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            PredicateWithResult<String, Image> imageReadyPredicate) {
-      this.ec2Client = checkNotNull(ec2Client);
-      this.executor = checkNotNull(userThreads);
-      this.imageReadyPredicate = imageReadyPredicate;
+   public CloudServersImageExtension(CloudServersClient client,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            PredicateWithResult<Integer, Image> imageAvailablePredicate) {
+      this.client = checkNotNull(client);
+      this.executor = userThreads;
+      this.imageAvailablePredicate = imageAvailablePredicate;
    }
 
    @Override
-   public ImageTemplate buildImageTemplateFromNode(String name, String id) {
-      String[] parts = AWSUtils.parseHandle(id);
-      String region = parts[0];
-      String instanceId = parts[1];
-      Reservation<? extends RunningInstance> instance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
-               .describeInstancesInRegion(region, instanceId));
-      if (instance == null)
+   public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
+      Server server = client.getServer(Integer.parseInt(id));
+      if (server == null)
          throw new NoSuchElementException("Cannot find server with id: " + id);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
       return template;
@@ -96,36 +91,30 @@ public class EC2ImageExtension implements ImageExtension {
 
    @Override
    public ListenableFuture<Image> createImage(ImageTemplate template) {
-      checkState(template instanceof CloneImageTemplate, " ec2 only supports creating images through cloning.");
+      checkState(template instanceof CloneImageTemplate,
+               " openstack-nova only supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
-      String[] parts = AWSUtils.parseHandle(cloneTemplate.getSourceNodeId());
-      final String region = parts[0];
-      String instanceId = parts[1];
-
-      final String imageId = ec2Client.getAMIServices().createImageInRegion(region, cloneTemplate.getName(),
-               instanceId, CreateImageOptions.NONE);
-
+      final org.jclouds.cloudservers.domain.Image image = client.createImageFromServer(cloneTemplate.getName(),
+               Integer.parseInt(cloneTemplate.getSourceNodeId()));
       return Futures.makeListenable(executor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(imageReadyPredicate, region + "/" + imageId, maxWait,
-                     waitPeriod, TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: "
-                              + maxWait + " secs.]");
+            return Retryables.retryGettingResultOrFailing(imageAvailablePredicate, image.getId(), maxWait, waitPeriod,
+                     TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
+                              + " secs.]");
          }
       }), executor);
+
    }
 
    @Override
    public boolean deleteImage(String id) {
-      String[] parts = AWSUtils.parseHandle(id);
-      String region = parts[0];
-      String instanceId = parts[1];
       try {
-         ec2Client.getAMIServices().deregisterImageInRegion(region, instanceId);
-         return true;
+         this.client.deleteImage(Integer.parseInt(id));
       } catch (Exception e) {
          return false;
       }
+      return true;
    }
 
 }

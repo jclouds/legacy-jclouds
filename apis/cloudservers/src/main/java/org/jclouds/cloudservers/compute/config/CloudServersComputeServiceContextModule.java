@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.cloudservers.compute.CloudServersImageExtension;
+import org.jclouds.cloudservers.compute.extensions.CloudServersImageExtension;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToImage;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToOperatingSystem;
 import org.jclouds.cloudservers.compute.functions.FlavorToHardware;
@@ -33,13 +33,13 @@ import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;

@@ -32,7 +32,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
@@ -45,6 +44,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;

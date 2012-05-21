@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.virtualbox.compute;
+package org.jclouds.virtualbox.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -34,13 +34,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;

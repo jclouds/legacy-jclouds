@@ -17,19 +17,26 @@
  * under the License.
  */
 
-package org.jclouds.virtualbox.compute;
+package org.jclouds.openstack.nova.v1_1.compute.extensions;
 
-import org.jclouds.compute.internal.BaseImageExtensionLiveTest;
+import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.internal.BaseImageExtensionLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
-@Test(groups = "live", singleThreaded = true, testName = "VirtualBoxImageExtensionLiveTest")
-public class VirtualBoxImageExtensionLiveTest extends BaseImageExtensionLiveTest {
+/**
+ * Live test for openstack-nova {@link ImageExtension} implementation.
+ * 
+ * @author David Alves
+ * 
+ */
+@Test(groups = "live", singleThreaded = true, testName = "NovaImageExtensionLiveTest")
+public class NovaImageExtensionLiveTest extends BaseImageExtensionLiveTest {
 
-   public VirtualBoxImageExtensionLiveTest() {
-      provider = "virtualbox";
+   public NovaImageExtensionLiveTest() {
+      provider = "openstack-nova";
    }
 
    @Override

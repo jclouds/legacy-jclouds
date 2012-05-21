@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package org.jclouds.aws.ec2.compute;
+package org.jclouds.aws.ec2.compute.extensions;
 
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.internal.BaseImageExtensionLiveTest;
+import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.internal.BaseImageExtensionLiveTest;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.rest.RestContext;

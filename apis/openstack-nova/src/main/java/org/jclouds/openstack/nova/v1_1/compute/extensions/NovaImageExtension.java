@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.openstack.nova.v1_1.compute;
+package org.jclouds.openstack.nova.v1_1.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -33,11 +33,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;

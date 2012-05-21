@@ -17,10 +17,10 @@
  * under the License.
  */
 
-package org.jclouds.ec2.compute;
+package org.jclouds.ec2.compute.extensions;
 
-import org.jclouds.compute.ImageExtension;
-import org.jclouds.compute.internal.BaseImageExtensionLiveTest;
+import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.internal.BaseImageExtensionLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 

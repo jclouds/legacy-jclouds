@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.compute;
+package org.jclouds.compute.extensions;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;

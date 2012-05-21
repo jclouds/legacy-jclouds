@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.compute.internal;
+package org.jclouds.compute.extensions.internal;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -29,12 +29,13 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
