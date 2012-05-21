@@ -38,12 +38,12 @@ public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    protected void checkAccount(Account account) {
-      assert account.getId() > 0 : account;
+      assert account.getId() != null : account;
       assertEquals(account.toString(), client.getAccountClient().getAccount(account.getId()).toString());
       assert account.getName() != null : account;
       assert account.getType() != null && account.getType() != Account.Type.UNRECOGNIZED : account;
       assert account.getDomain() != null : account;
-      assert account.getDomainId() >= 0 : account;
+      assert account.getDomainId() != null : account;
       assert account.getUsers() != null : account;
       for (User user : account.getUsers()) {
          assert user.getName() != null : user;
@@ -55,7 +55,7 @@ public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
          assert user.getEmail() != null : user;
          assert user.getLastName() != null : user;
          assert user.getFirstName() != null : user;
-         assert user.getId() > 0 : user;
+         assert user.getId() != null : user;
          assert user.getSecretKey() != null : user;
          assert user.getState() != null : user;
       }

@@ -75,12 +75,12 @@ public class ListClustersOptionsTest {
    }
 
    public void testId() {
-      ListClustersOptions options = new ListClustersOptions().id(42L);
+      ListClustersOptions options = new ListClustersOptions().id("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListClustersOptions options = id(42L);
+      ListClustersOptions options = id("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("id"));
    }
 
@@ -115,22 +115,22 @@ public class ListClustersOptionsTest {
    }
 
    public void testPodId() {
-      ListClustersOptions options = new ListClustersOptions().podId(42L);
+      ListClustersOptions options = new ListClustersOptions().podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      ListClustersOptions options = podId(42L);
+      ListClustersOptions options = podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 
    public void testZoneId() {
-      ListClustersOptions options = new ListClustersOptions().zoneId(42L);
+      ListClustersOptions options = new ListClustersOptions().zoneId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListClustersOptions options = zoneId(42L);
+      ListClustersOptions options = zoneId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("zoneid"));
    }
 }

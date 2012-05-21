@@ -39,7 +39,7 @@ public class IngressRule implements Comparable<IngressRule> {
       private int ICMPCode = -1;
       private int ICMPType = -1;
       private String protocol;
-      private long id = -1;
+       private String id;
       private String securityGroupName;
       private int startPort = -1;
 
@@ -73,7 +73,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return this;
       }
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -104,7 +104,7 @@ public class IngressRule implements Comparable<IngressRule> {
    private int ICMPType = -1;
    private String protocol;
    @SerializedName("ruleid")
-   private long id = -1;
+   private String id;
    @SerializedName("securitygroupname")
    private String securityGroupName;
    @SerializedName("startport")
@@ -115,7 +115,7 @@ public class IngressRule implements Comparable<IngressRule> {
 
    }
 
-   public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, long id,
+   public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, String id,
          String securityGroupName, int startPort) {
       if (account == null)
          checkArgument(securityGroupName == null && CIDR != null,
@@ -179,7 +179,7 @@ public class IngressRule implements Comparable<IngressRule> {
    /**
     * @return the id of the ingress rule
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -239,6 +239,6 @@ public class IngressRule implements Comparable<IngressRule> {
 
    @Override
    public int compareTo(IngressRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

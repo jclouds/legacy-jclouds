@@ -58,7 +58,7 @@ public interface OfferingAsyncClient {
     * @see OfferingClient#listServiceOfferings
     */
    @GET
-   @QueryParams(keys = "command", values = "listServiceOfferings")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listServiceOfferings", "true" })
    @SelectJson("serviceoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -68,18 +68,18 @@ public interface OfferingAsyncClient {
     * @see OfferingClient#getServiceOffering
     */
    @GET
-   @QueryParams(keys = "command", values = "listServiceOfferings")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listServiceOfferings", "true" })
    @SelectJson("serviceoffering")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServiceOffering> getServiceOffering(@QueryParam("id") long id);
+   ListenableFuture<ServiceOffering> getServiceOffering(@QueryParam("id") String id);
 
    /**
     * @see OfferingClient#listDiskOfferings
     */
    @GET
-   @QueryParams(keys = "command", values = "listDiskOfferings")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listDiskOfferings", "true" })
    @SelectJson("diskoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -89,18 +89,18 @@ public interface OfferingAsyncClient {
     * @see OfferingClient#getDiskOffering
     */
    @GET
-   @QueryParams(keys = "command", values = "listDiskOfferings")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listDiskOfferings", "true" })
    @SelectJson("diskoffering")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<DiskOffering> getDiskOffering(@QueryParam("id") long id);
+   ListenableFuture<DiskOffering> getDiskOffering(@QueryParam("id") String id);
 
    /**
     * @see NetworkOfferingClient#listNetworkOfferings
     */
    @GET
-   @QueryParams(keys = "command", values = "listNetworkOfferings")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listNetworkOfferings", "true" })
    @SelectJson("networkoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -110,11 +110,11 @@ public interface OfferingAsyncClient {
     * @see NetworkOfferingClient#getNetworkOffering
     */
    @GET
-   @QueryParams(keys = "command", values = "listNetworkOfferings")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listNetworkOfferings", "true" })
    @SelectJson("networkoffering")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<NetworkOffering> getNetworkOffering(@QueryParam("id") long id);
+   ListenableFuture<NetworkOffering> getNetworkOffering(@QueryParam("id") String id);
 
 }

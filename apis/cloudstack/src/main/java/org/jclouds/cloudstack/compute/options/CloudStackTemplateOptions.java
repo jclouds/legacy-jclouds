@@ -54,9 +54,9 @@ import com.google.common.collect.Sets;
  */
 public class CloudStackTemplateOptions extends TemplateOptions implements Cloneable {
 
-   protected Set<Long> securityGroupIds = Sets.<Long> newLinkedHashSet();
-   protected Set<Long> networkIds = Sets.<Long> newLinkedHashSet();
-   protected Map<String, Long> ipsToNetworks = Maps.<String, Long>newLinkedHashMap();
+   protected Set<String> securityGroupIds = Sets.<String> newLinkedHashSet();
+   protected Set<String> networkIds = Sets.<String> newLinkedHashSet();
+   protected Map<String, String> ipsToNetworks = Maps.<String, String>newLinkedHashMap();
    protected String ipOnDefaultNetwork;
    protected String keyPair;
    protected boolean setupStaticNat = true;
@@ -85,7 +85,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    /**
     * @see DeployVirtualMachineOptions#securityGroupId
     */
-   public CloudStackTemplateOptions securityGroupId(long securityGroupId) {
+   public CloudStackTemplateOptions securityGroupId(String securityGroupId) {
       this.securityGroupIds.add(securityGroupId);
       return this;
    }
@@ -93,19 +93,19 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    /**
     * @see DeployVirtualMachineOptions#securityGroupIds
     */
-   public CloudStackTemplateOptions securityGroupIds(Iterable<Long> securityGroupIds) {
+   public CloudStackTemplateOptions securityGroupIds(Iterable<String> securityGroupIds) {
       Iterables.addAll(this.securityGroupIds, checkNotNull(securityGroupIds, "securityGroupIds was null"));
       return this;
    }
 
-   public Set<Long> getSecurityGroupIds() {
+   public Set<String> getSecurityGroupIds() {
       return securityGroupIds;
    }
 
    /**
     * @see DeployVirtualMachineOptions#networkId
     */
-   public CloudStackTemplateOptions networkId(long networkId) {
+   public CloudStackTemplateOptions networkId(String networkId) {
       this.networkIds.add(networkId);
       return this;
    }
@@ -113,12 +113,12 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    /**
     * @see DeployVirtualMachineOptions#networkIds
     */
-   public CloudStackTemplateOptions networkIds(Iterable<Long> networkIds) {
+   public CloudStackTemplateOptions networkIds(Iterable<String> networkIds) {
       Iterables.addAll(this.networkIds, checkNotNull(networkIds, "networkIds was null"));
       return this;
    }
 
-   public Set<Long> getNetworkIds() {
+   public Set<String> getNetworkIds() {
       return networkIds;
    }
 
@@ -146,12 +146,12 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    /**
     * @see DeployVirtualMachineOptions#ipOnDefaultNetwork(String)
     */
-   public CloudStackTemplateOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
+   public CloudStackTemplateOptions ipsToNetworks(Map<String, String> ipsToNetworks) {
       this.ipsToNetworks.putAll(ipsToNetworks);
       return this;
    }
 
-   public Map<String, Long> getIpsToNetworks() {
+   public Map<String, String> getIpsToNetworks() {
       return ipsToNetworks;
    }
 
@@ -174,7 +174,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       /**
        * @see CloudStackTemplateOptions#securityGroupId
        */
-      public static CloudStackTemplateOptions securityGroupId(long id) {
+      public static CloudStackTemplateOptions securityGroupId(String id) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.securityGroupId(id);
       }
@@ -182,7 +182,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       /**
        * @see CloudStackTemplateOptions#securityGroupIds
        */
-      public static CloudStackTemplateOptions securityGroupIds(Iterable<Long> securityGroupIds) {
+      public static CloudStackTemplateOptions securityGroupIds(Iterable<String> securityGroupIds) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.securityGroupIds(securityGroupIds);
       }
@@ -190,7 +190,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       /**
        * @see CloudStackTemplateOptions#networkId
        */
-      public static CloudStackTemplateOptions networkId(long id) {
+      public static CloudStackTemplateOptions networkId(String id) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.networkId(id);
       }
@@ -198,7 +198,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       /**
        * @see CloudStackTemplateOptions#networkIds
        */
-      public static CloudStackTemplateOptions networkIds(Iterable<Long> networkIds) {
+      public static CloudStackTemplateOptions networkIds(Iterable<String> networkIds) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.networkIds(networkIds);
       }
@@ -214,7 +214,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       /**
        * @see CloudStackTemplateOptions#ipsToNetworks
        */
-      public static CloudStackTemplateOptions ipsToNetworks(Map<String, Long> ipToNetworkMap) {
+      public static CloudStackTemplateOptions ipsToNetworks(Map<String, String> ipToNetworkMap) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.ipsToNetworks(ipToNetworkMap);
       }

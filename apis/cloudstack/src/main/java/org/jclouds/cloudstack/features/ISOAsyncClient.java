@@ -70,7 +70,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "attachIso")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> attachISO(@QueryParam("id") long isoId, @QueryParam("virtualmachineid") long vmId);
+   ListenableFuture<AsyncCreateResponse> attachISO(@QueryParam("id") String isoId, @QueryParam("virtualmachineid") String vmId);
 
    /**
     * Detaches any ISO file (if any) currently attached to a virtual machine.
@@ -82,7 +82,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "detachIso")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> detachISO(@QueryParam("virtualmachineid") long vmId);
+   ListenableFuture<AsyncCreateResponse> detachISO(@QueryParam("virtualmachineid") String vmId);
 
    /**
     * Gets information about an ISO by its ID.
@@ -92,10 +92,10 @@ public interface ISOAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listIsos")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIsos", "true" })
    @SelectJson("iso")
    @OnlyElement
-   ListenableFuture<ISO> getISO(@QueryParam("id") long id);
+   ListenableFuture<ISO> getISO(@QueryParam("id") String id);
 
    /**
     * Lists all available ISO files.
@@ -105,7 +105,7 @@ public interface ISOAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listIsos")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIsos", "true" })
    @SelectJson("iso")
    ListenableFuture<Set<ISO>> listISOs(ListISOsOptions... options);
 
@@ -123,7 +123,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "registerIso")
    @Unwrap
-   ListenableFuture<ISO> registerISO(@QueryParam("name") String name, @QueryParam("displaytext") String displayText, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterISOOptions... options);
+   ListenableFuture<ISO> registerISO(@QueryParam("name") String name, @QueryParam("displaytext") String displayText, @QueryParam("url") String url, @QueryParam("zoneid") String zoneId, RegisterISOOptions... options);
 
    /**
     * 
@@ -136,7 +136,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "updateIso")
    @Unwrap
-   ListenableFuture<ISO> updateISO(@QueryParam("id") long id, UpdateISOOptions... options);
+   ListenableFuture<ISO> updateISO(@QueryParam("id") String id, UpdateISOOptions... options);
 
    /**
     * Deletes an ISO file.
@@ -149,7 +149,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteIso")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> deleteISO(@QueryParam("id") long id, DeleteISOOptions... options);
+   ListenableFuture<AsyncCreateResponse> deleteISO(@QueryParam("id") String id, DeleteISOOptions... options);
 
    /**
     * Copies a template from one zone to another.
@@ -163,7 +163,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "copyIso")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> copyISO(@QueryParam("id") long isoId, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
+   ListenableFuture<AsyncCreateResponse> copyISO(@QueryParam("id") String isoId, @QueryParam("sourcezoneid") String sourceZoneId, @QueryParam("destzoneid") String destZoneId);
 
    /**
     * Updates iso permissions
@@ -176,7 +176,7 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "updateIsoPermissions")
    @Unwrap
-   ListenableFuture<Void> updateISOPermissions(@QueryParam("id") long id, UpdateISOPermissionsOptions... options);
+   ListenableFuture<Void> updateISOPermissions(@QueryParam("id") String id, UpdateISOPermissionsOptions... options);
 
    /**
     * List template visibility and all accounts that have permissions to view this template.
@@ -187,9 +187,9 @@ public interface ISOAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listIsoPermissions")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listIsoPermissions", "true" })
    @SelectJson("templatepermission")
-   ListenableFuture<ISOPermissions> listISOPermissions(@QueryParam("id") long id, AccountInDomainOptions... options);
+   ListenableFuture<ISOPermissions> listISOPermissions(@QueryParam("id") String id, AccountInDomainOptions... options);
 
    /**
     * Extracts an ISO
@@ -204,6 +204,6 @@ public interface ISOAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "extractIso")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> extractISO(@QueryParam("id") long id, @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractISOOptions... options);
+   ListenableFuture<AsyncCreateResponse> extractISO(@QueryParam("id") String id, @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") String zoneId, ExtractISOOptions... options);
 
 }

@@ -38,7 +38,7 @@ public class ListPodsOptions extends BaseHttpRequestOptions {
          return new ListPodsOptions().allocationState(allocationState);
       }
 
-      public static ListPodsOptions id(long id) {
+      public static ListPodsOptions id(String id) {
          return new ListPodsOptions().id(id);
       }
 
@@ -50,7 +50,7 @@ public class ListPodsOptions extends BaseHttpRequestOptions {
          return new ListPodsOptions().name(name);
       }
 
-      public static ListPodsOptions zoneId(long zoneId) {
+      public static ListPodsOptions zoneId(String zoneId) {
          return new ListPodsOptions().zoneId(zoneId);
       }
 
@@ -61,7 +61,7 @@ public class ListPodsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListPodsOptions id(long id) {
+   public ListPodsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -76,7 +76,7 @@ public class ListPodsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListPodsOptions zoneId(long zoneId) {
+   public ListPodsOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }

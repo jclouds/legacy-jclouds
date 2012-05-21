@@ -34,14 +34,14 @@ public class VMGroup implements Comparable<VMGroup> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String account;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String name;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -61,7 +61,7 @@ public class VMGroup implements Comparable<VMGroup> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -76,15 +76,15 @@ public class VMGroup implements Comparable<VMGroup> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private String name;
 
-   public VMGroup(long id, String account, Date created, String domain, long domainId, String name) {
+   public VMGroup(String id, String account, Date created, String domain, String domainId, String name) {
       this.id = id;
       this.account = account;
       this.created = created;
@@ -102,7 +102,7 @@ public class VMGroup implements Comparable<VMGroup> {
    /**
     * @return the VMGroup's ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -130,7 +130,7 @@ public class VMGroup implements Comparable<VMGroup> {
    /**
     * @return the ID of the domain that contains the VMGroup
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -177,6 +177,6 @@ public class VMGroup implements Comparable<VMGroup> {
 
    @Override
    public int compareTo(VMGroup vmGroup) {
-      return new Long(id).compareTo(vmGroup.getId());
+      return id.compareTo(vmGroup.getId());
    }
 }

@@ -94,15 +94,15 @@ public class NetworkPredicates {
    }
 
    private static class DefaultNetworkInZone implements Predicate<Network> {
-      private final long zoneId;
+      private final String zoneId;
 
-      public DefaultNetworkInZone(long zoneId) {
+      public DefaultNetworkInZone(String zoneId) {
          this.zoneId = zoneId;
       }
 
       @Override
       public boolean apply(Network network) {
-         return network.getZoneId() == zoneId && network.isDefault();
+         return network.getZoneId().equals(zoneId) && network.isDefault();
       }
    }
 
@@ -208,7 +208,7 @@ public class NetworkPredicates {
     * @param zoneId the ID of the required zone.
     * @return networks in the zone that have the default flag set.
     */
-   public static Predicate<Network> defaultNetworkInZone(final long zoneId) {
+   public static Predicate<Network> defaultNetworkInZone(final String zoneId) {
       return new DefaultNetworkInZone(zoneId);
    }
 

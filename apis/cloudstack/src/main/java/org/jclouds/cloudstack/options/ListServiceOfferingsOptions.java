@@ -38,7 +38,7 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
     * @param id
     *           the ID of the service offering
     */
-   public ListServiceOfferingsOptions id(long id) {
+   public ListServiceOfferingsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -47,7 +47,7 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
     * @param domainId
     *           the ID of the domain associated with the service offering
     */
-   public ListServiceOfferingsOptions domainId(long domainId) {
+   public ListServiceOfferingsOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
@@ -68,7 +68,7 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
     *           the available service offering that a virtual machine can be
     *           changed to.
     */
-   public ListServiceOfferingsOptions virtualMachineId(long virtualMachineId) {
+   public ListServiceOfferingsOptions virtualMachineId(String virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
 
@@ -87,7 +87,7 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListServiceOfferingsOptions#domainId
        */
-      public static ListServiceOfferingsOptions domainId(long id) {
+      public static ListServiceOfferingsOptions domainId(String id) {
          ListServiceOfferingsOptions options = new ListServiceOfferingsOptions();
          return options.domainId(id);
       }
@@ -95,7 +95,7 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListServiceOfferingsOptions#id
        */
-      public static ListServiceOfferingsOptions id(long id) {
+      public static ListServiceOfferingsOptions id(String id) {
          ListServiceOfferingsOptions options = new ListServiceOfferingsOptions();
          return options.id(id);
       }
@@ -103,7 +103,7 @@ public class ListServiceOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListServiceOfferingsOptions#virtualMachineId
        */
-      public static ListServiceOfferingsOptions virtualMachineId(long virtualMachineId) {
+      public static ListServiceOfferingsOptions virtualMachineId(String virtualMachineId) {
          ListServiceOfferingsOptions options = new ListServiceOfferingsOptions();
          return options.virtualMachineId(virtualMachineId);
       }

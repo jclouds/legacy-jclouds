@@ -51,5 +51,5 @@ public interface ZoneClient {
     *           zone to get
     * @return zone or null if not found
     */
-   Zone getZone(long id);
+   Zone getZone(String id);
 }

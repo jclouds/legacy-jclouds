@@ -28,9 +28,9 @@ import com.google.gson.annotations.SerializedName;
 public class AsyncCreateResponse {
    public static final AsyncCreateResponse UNINITIALIZED = new AsyncCreateResponse();
    
-   private long id = -1;
+   private String id;
    @SerializedName("jobid")
-   private long jobId = -1;
+   private String jobId;
 
    /**
     * present only for serializer
@@ -40,7 +40,7 @@ public class AsyncCreateResponse {
 
    }
 
-   public AsyncCreateResponse(long id, long jobId) {
+   public AsyncCreateResponse(String id, String jobId) {
       this.id = id;
       this.jobId = jobId;
    }
@@ -48,14 +48,14 @@ public class AsyncCreateResponse {
    /**
     * @return id of the resource being created
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return id of the job in progress
     */
-   public long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 

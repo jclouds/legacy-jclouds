@@ -43,7 +43,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private long cpuCount;
       private long cpuSpeed;
@@ -51,19 +51,19 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       private String displayName;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private boolean usesVirtualNetwork;
       private String group;
-      private long groupId;
-      private long guestOSId;
+      private String groupId;
+      private String guestOSId;
       private boolean HAEnabled;
-      private long hostId;
+      private String hostId;
       private String hostname;
       private String IPAddress;
       private String ISODisplayText;
-      private long ISOId;
+      private String ISOId;
       private String ISOName;
-      private Long jobId;
+      private String jobId;
       private Integer jobStatus;
       private long memory;
       private String name;
@@ -71,21 +71,21 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       private Long networkKbsWrite;
       private String password;
       private boolean passwordEnabled;
-      private long rootDeviceId;
+      private String rootDeviceId;
       private String rootDeviceType;
-      private long serviceOfferingId;
+      private String serviceOfferingId;
       private String serviceOfferingName;
       private State state;
       private String templateDisplayText;
-      private long templateId;
+      private String templateId;
       private String templateName;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
       private Set<NIC> nics = ImmutableSet.<NIC> of();
       private String hypervisor;
       private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -125,7 +125,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -140,12 +140,12 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder groupId(long groupId) {
+      public Builder groupId(String groupId) {
          this.groupId = groupId;
          return this;
       }
 
-      public Builder guestOSId(long guestOSId) {
+      public Builder guestOSId(String guestOSId) {
          this.guestOSId = guestOSId;
          return this;
       }
@@ -155,7 +155,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder hostId(long hostId) {
+      public Builder hostId(String hostId) {
          this.hostId = hostId;
          return this;
       }
@@ -175,7 +175,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder ISOId(long ISOId) {
+      public Builder ISOId(String ISOId) {
          this.ISOId = ISOId;
          return this;
       }
@@ -185,7 +185,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -225,7 +225,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder rootDeviceId(long rootDeviceId) {
+      public Builder rootDeviceId(String rootDeviceId) {
          this.rootDeviceId = rootDeviceId;
          return this;
       }
@@ -235,7 +235,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder serviceOfferingId(long serviceOfferingId) {
+      public Builder serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
          return this;
       }
@@ -255,7 +255,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder templateId(long templateId) {
+      public Builder templateId(String templateId) {
          this.templateId = templateId;
          return this;
       }
@@ -265,7 +265,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -316,7 +316,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
 
    }
 
-   private long id;
+   private String id;
    private String account;
    @SerializedName("cpunumber")
    private long cpuCount;
@@ -329,30 +329,30 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("forvirtualnetwork")
    private boolean usesVirtualNetwork;
    private String group;
    @SerializedName("groupid")
-   private long groupId;
+   private String groupId;
    @SerializedName("guestosid")
-   private long guestOSId;
+   private String guestOSId;
    @SerializedName("haenable")
    private boolean HAEnabled;
    @SerializedName("hostid")
-   private long hostId;
+   private String hostId;
    private String hostname;
    @SerializedName("ipaddress")
    private String IPAddress;
    @SerializedName("isodisplaytext")
    private String ISODisplayText;
    @SerializedName("isoid")
-   private long ISOId;
+   private String ISOId;
    @SerializedName("isoname")
    private String ISOName;
    @SerializedName("jobid")
    @Nullable
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    @Nullable
    private Integer jobStatus;
@@ -367,22 +367,22 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    @SerializedName("passwordenabled")
    private boolean passwordEnabled;
    @SerializedName("rootdeviceid")
-   private long rootDeviceId;
+   private String rootDeviceId;
    @SerializedName("rootdevicetype")
    private String rootDeviceType;
    @SerializedName("serviceofferingid")
-   private long serviceOfferingId;
+   private String serviceOfferingId;
    @SerializedName("serviceofferingname")
    private String serviceOfferingName;
    private State state;
    @SerializedName("templatedisplaytext")
    private String templateDisplayText;
    @SerializedName("templateid")
-   private long templateId;
+   private String templateId;
    @SerializedName("templatename")
    private String templateName;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
    @SerializedName("nic")
@@ -391,13 +391,13 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    @SerializedName("securitygroup")
    private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
-   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, String cpuUsed, String displayName,
-         Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
-         long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
-         long iSOId, String iSOName, Long jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
-         Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
-         Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
-         String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName, Set<NIC> nics,
+   public VirtualMachine(String id, String account, long cpuCount, long cpuSpeed, String cpuUsed, String displayName,
+         Date created, String domain, String domainId, boolean usesVirtualNetwork, String group, String groupId,
+         String guestOSId, boolean hAEnabled, String hostId, String hostname, String iPAddress, String iSODisplayText,
+         String iSOId, String iSOName, String jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
+         Long networkKbsWrite, String password, boolean passwordEnabled, String rootDeviceId, String rootDeviceType,
+         Set<SecurityGroup> securityGroups, String serviceOfferingId, String serviceOfferingName, State state,
+         String templateDisplayText, String templateId, String templateName, String zoneId, String zoneName, Set<NIC> nics,
          String hypervisor) {
       Preconditions.checkArgument(Strings.isNullOrEmpty(cpuUsed) || cpuUsed.matches("^[0-9\\.]+%$"), "cpuUsed value should be a decimal number followed by %");
       this.id = id;
@@ -453,7 +453,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the virtual machine
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -510,7 +510,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the domain in which the virtual machine exists
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -531,14 +531,14 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the group ID of the virtual machine
     */
-   public long getGroupId() {
+   public String getGroupId() {
       return groupId;
    }
 
    /**
     * @return Os type ID of the virtual machine
     */
-   public long getGuestOSId() {
+   public String getGuestOSId() {
       return guestOSId;
    }
 
@@ -552,7 +552,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the host for the virtual machine
     */
-   public long getHostId() {
+   public String getHostId() {
       return hostId;
    }
 
@@ -587,7 +587,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the ISO attached to the virtual machine
     */
-   public long getISOId() {
+   public String getISOId() {
       return ISOId;
    }
 
@@ -604,7 +604,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
     *         machine
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -662,7 +662,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return device ID of the root volume
     */
-   public long getRootDeviceId() {
+   public String getRootDeviceId() {
       return rootDeviceId;
    }
 
@@ -683,7 +683,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the service offering of the virtual machine
     */
-   public long getServiceOfferingId() {
+   public String getServiceOfferingId() {
       return serviceOfferingId;
    }
 
@@ -712,7 +712,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
     * @return the ID of the template for the virtual machine. A -1 is returned
     *         if the virtual machine was created from an ISO file.
     */
-   public long getTemplateId() {
+   public String getTemplateId() {
       return templateId;
    }
 
@@ -726,7 +726,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the availablility zone for the virtual machine
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -864,6 +864,6 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
 
    @Override
    public int compareTo(VirtualMachine arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

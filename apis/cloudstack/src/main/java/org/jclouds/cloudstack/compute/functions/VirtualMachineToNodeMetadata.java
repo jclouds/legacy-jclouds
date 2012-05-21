@@ -78,13 +78,13 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
-   private final LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
+   private final LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
    private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
          FindImageForVirtualMachine findImageForVirtualMachine,
-         LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine,
+         LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
@@ -178,7 +178,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
       @Override
       public boolean matches(VirtualMachine from, Location input) {
-         return input.getId().equals(Long.toString(from.getZoneId()));
+         return input.getId().equals(from.getZoneId());
       }
    }
 
@@ -192,7 +192,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
       @Override
       public boolean matches(VirtualMachine from, Hardware input) {
-         return input.getProviderId().equals(Long.toString(from.getServiceOfferingId()));
+         return input.getProviderId().equals(from.getServiceOfferingId());
       }
    }
 

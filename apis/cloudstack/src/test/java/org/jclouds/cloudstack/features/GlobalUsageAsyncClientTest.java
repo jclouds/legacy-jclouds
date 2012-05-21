@@ -76,7 +76,7 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
 
       Method method = GlobalUsageAsyncClient.class.getMethod("generateUsageRecords",
          Date.class, Date.class, GenerateUsageRecordsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, start, end, GenerateUsageRecordsOptions.Builder.domainId(42));
+      HttpRequest httpRequest = processor.createRequest(method, start, end, GenerateUsageRecordsOptions.Builder.domainId("42"));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=generateUsageRecords&startdate=2012-01-01&enddate=2012-01-31&domainid=42 HTTP/1.1");
@@ -104,7 +104,7 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
       HttpRequest httpRequest = processor.createRequest(method, start, end);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listUsageRecords&startdate=2012-01-01&enddate=2012-01-31 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listUsageRecords&listAll=true&startdate=2012-01-01&enddate=2012-01-31 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -126,10 +126,10 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
 
       Method method = GlobalUsageAsyncClient.class.getMethod("listUsageRecords",
          Date.class, Date.class, ListUsageRecordsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, start, end, ListUsageRecordsOptions.Builder.accountInDomain("fred", 42).accountId(41).keyword("bob"));
+      HttpRequest httpRequest = processor.createRequest(method, start, end, ListUsageRecordsOptions.Builder.accountInDomain("fred", "42").accountId("41").keyword("bob"));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listUsageRecords&startdate=2012-01-01&enddate=2012-01-31&account=fred&domainid=42&accountid=41&keyword=bob HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listUsageRecords&listAll=true&startdate=2012-01-01&enddate=2012-01-31&account=fred&domainid=42&accountid=41&keyword=bob HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

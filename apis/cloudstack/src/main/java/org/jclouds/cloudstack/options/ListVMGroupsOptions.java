@@ -37,7 +37,7 @@ public class ListVMGroupsOptions extends BaseHttpRequestOptions {
    /**
     * @param id list VMGroups by id
     */
-   public ListVMGroupsOptions id(long id) {
+   public ListVMGroupsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -53,7 +53,7 @@ public class ListVMGroupsOptions extends BaseHttpRequestOptions {
    /**
     * @param domainId domain ID of the account owning the VMGroups
     */
-   public ListVMGroupsOptions domainId(long domainId) {
+   public ListVMGroupsOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
    }
@@ -78,7 +78,7 @@ public class ListVMGroupsOptions extends BaseHttpRequestOptions {
       /**
        * @see org.jclouds.cloudstack.options.ListVMGroupsOptions#id
        */
-      public static ListVMGroupsOptions id(long id) {
+      public static ListVMGroupsOptions id(String id) {
          ListVMGroupsOptions options = new ListVMGroupsOptions();
          return options.id(id);
       }
@@ -94,7 +94,7 @@ public class ListVMGroupsOptions extends BaseHttpRequestOptions {
       /**
        * @see org.jclouds.cloudstack.options.ListVMGroupsOptions#domainId
        */
-      public static ListVMGroupsOptions domainId(long id) {
+      public static ListVMGroupsOptions domainId(String id) {
          ListVMGroupsOptions options = new ListVMGroupsOptions();
          return options.domainId(id);
       }

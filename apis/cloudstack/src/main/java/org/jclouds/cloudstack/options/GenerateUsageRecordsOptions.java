@@ -32,13 +32,13 @@ public class GenerateUsageRecordsOptions extends BaseHttpRequestOptions {
    public static final GenerateUsageRecordsOptions NONE = new GenerateUsageRecordsOptions();
 
    public static class Builder {
-      public static GenerateUsageRecordsOptions domainId(long domainId) {
+      public static GenerateUsageRecordsOptions domainId(String domainId) {
          GenerateUsageRecordsOptions options = new GenerateUsageRecordsOptions();
          return options.domainId(domainId);
       }
    }
 
-   public GenerateUsageRecordsOptions domainId(long domainId) {
+   public GenerateUsageRecordsOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
    }

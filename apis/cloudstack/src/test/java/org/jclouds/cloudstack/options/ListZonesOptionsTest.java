@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 public class ListZonesOptionsTest {
 
    public void testId() {
-      ListZonesOptions options = new ListZonesOptions().id(6);
+      ListZonesOptions options = new ListZonesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -46,12 +46,12 @@ public class ListZonesOptionsTest {
    }
 
    public void testDomainId() {
-      ListZonesOptions options = new ListZonesOptions().domainId(6);
+      ListZonesOptions options = new ListZonesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testIdStatic() {
-      ListZonesOptions options = id(6);
+      ListZonesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -61,7 +61,7 @@ public class ListZonesOptionsTest {
    }
 
    public void testDomainIdStatic() {
-      ListZonesOptions options = domainId(6);
+      ListZonesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

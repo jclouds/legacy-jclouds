@@ -57,7 +57,7 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
    }
 
    public void testUpdateUser() throws Exception {
-      Method method = GlobalUserAsyncClient.class.getMethod("updateUser", long.class, UpdateUserOptions[].class);
+      Method method = GlobalUserAsyncClient.class.getMethod("updateUser", String.class, UpdateUserOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 42L);
 
       assertRequestLineEquals(httpRequest,
@@ -73,7 +73,7 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
    }
 
    public void testDeleteUser() throws Exception {
-      Method method = GlobalUserAsyncClient.class.getMethod("deleteUser", long.class);
+      Method method = GlobalUserAsyncClient.class.getMethod("deleteUser", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 42L);
 
       assertRequestLineEquals(httpRequest,

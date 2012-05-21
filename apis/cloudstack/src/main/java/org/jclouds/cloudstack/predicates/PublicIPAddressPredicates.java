@@ -32,15 +32,15 @@ import com.google.common.base.Predicates;
 public class PublicIPAddressPredicates {
 
    public static final class AssociatedWithNetwork implements Predicate<PublicIPAddress> {
-      private final long networkId;
+      private final String networkId;
 
-      public AssociatedWithNetwork(long networkId) {
+      public AssociatedWithNetwork(String networkId) {
          this.networkId = networkId;
       }
 
       @Override
       public boolean apply(PublicIPAddress input) {
-         return checkNotNull(input, "ipaddress").getAssociatedNetworkId() == networkId;
+         return checkNotNull(input, "ipaddress").getAssociatedNetworkId().equals(networkId);
       }
 
       @Override
@@ -55,7 +55,7 @@ public class PublicIPAddressPredicates {
       @Override
       public boolean apply(PublicIPAddress arg0) {
          return !checkNotNull(arg0, "ipaddress").isSourceNAT() && !arg0.isStaticNAT()
-               && arg0.getVirtualMachineId() <= 0 && arg0.getState() == PublicIPAddress.State.ALLOCATED;
+               && arg0.getVirtualMachineId() == null && arg0.getState() == PublicIPAddress.State.ALLOCATED;
       }
 
       @Override
@@ -77,7 +77,7 @@ public class PublicIPAddressPredicates {
     * @return true, if the public ip address is associated with the specified
     *         network
     */
-   public static Predicate<PublicIPAddress> associatedWithNetwork(final long networkId) {
+   public static Predicate<PublicIPAddress> associatedWithNetwork(final String networkId) {
       return new AssociatedWithNetwork(networkId);
    }
 

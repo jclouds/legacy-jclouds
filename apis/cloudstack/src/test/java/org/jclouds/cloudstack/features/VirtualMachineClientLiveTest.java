@@ -87,8 +87,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    };
 
-   public static VirtualMachine createVirtualMachine(CloudStackClient client, Long defaultTemplate,
-         RetryablePredicate<Long> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+   public static VirtualMachine createVirtualMachine(CloudStackClient client, String defaultTemplate,
+         RetryablePredicate<String> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       Set<Network> networks = client.getNetworkClient().listNetworks(isDefault(true));
       if (networks.size() > 0) {
          Network network = get(networks, 0);
@@ -96,7 +96,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
       } else {
-         long zoneId = find(client.getZoneClient().listZones(), new Predicate<Zone>() {
+         String zoneId = find(client.getZoneClient().listZones(), new Predicate<Zone>() {
 
             @Override
             public boolean apply(Zone arg0) {
@@ -111,33 +111,33 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
-   public static VirtualMachine createVirtualMachineWithSecurityGroupInZone(long zoneId, long templateId, long groupId,
-         CloudStackClient client, RetryablePredicate<Long> jobComplete,
+   public static VirtualMachine createVirtualMachineWithSecurityGroupInZone(String zoneId, String templateId, String groupId,
+         CloudStackClient client, RetryablePredicate<String> jobComplete,
          RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       return createVirtualMachineWithOptionsInZone(new DeployVirtualMachineOptions().securityGroupId(groupId), zoneId,
             templateId, client, jobComplete, virtualMachineRunning);
    }
 
-   public static VirtualMachine createVirtualMachineInNetwork(Network network, long templateId,
-         CloudStackClient client, RetryablePredicate<Long> jobComplete,
+   public static VirtualMachine createVirtualMachineInNetwork(Network network, String templateId,
+         CloudStackClient client, RetryablePredicate<String> jobComplete,
          RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
-      long zoneId = network.getZoneId();
+      String zoneId = network.getZoneId();
       options.networkId(network.getId());
       return createVirtualMachineWithOptionsInZone(options, zoneId, templateId, client, jobComplete,
             virtualMachineRunning);
    }
 
    public static VirtualMachine createVirtualMachineInNetworkWithIp(
-         CloudStackClient client, long templateId, Set<Network> networks, Map<String, Long> ipToNetwork,
-         RetryablePredicate<Long> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         CloudStackClient client, String templateId, Set<Network> networks, Map<String, String> ipToNetwork,
+         RetryablePredicate<String> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
 
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
 
-      long zoneId = getFirst(networks, null).getZoneId();
-      options.networkIds(Iterables.transform(networks, new Function<Network, Long>() {
+      String zoneId = getFirst(networks, null).getZoneId();
+      options.networkIds(Iterables.transform(networks, new Function<Network, String>() {
          @Override
-         public Long apply(@Nullable Network network) {
+         public String apply(@Nullable Network network) {
             return network.getId();
          }
       }));
@@ -147,10 +147,10 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          client, jobComplete, virtualMachineRunning);
    }
 
-   public static VirtualMachine createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions options, long zoneId,
-         long templateId, CloudStackClient client, RetryablePredicate<Long> jobComplete,
+   public static VirtualMachine createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions options, String zoneId,
+         String templateId, CloudStackClient client, RetryablePredicate<String> jobComplete,
          RetryablePredicate<VirtualMachine> virtualMachineRunning) {
-      long serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
+      String serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
 
       System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
             zoneId, options);
@@ -175,7 +175,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testCreateVirtualMachine() throws Exception {
-      Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
       vm = createVirtualMachine(client, templateId, jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null) {
          conditionallyCheckSSH();
@@ -186,7 +186,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testCreateVirtualMachineWithSpecificIp() throws Exception {
-      Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
       Network network = null;
 
       try {
@@ -239,7 +239,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
          String ipAddress = "192.168.0.4";
 
-         Map<String, Long> ipsToNetworks = Maps.newHashMap();
+         Map<String, String> ipsToNetworks = Maps.newHashMap();
          ipsToNetworks.put(ipAddress, network.getId());
 
          vm = createVirtualMachineInNetworkWithIp(
@@ -263,7 +263,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
             vm = null;
          }
          if (network != null) {
-            long jobId = adminClient.getNetworkClient().deleteNetwork(network.getId());
+            String jobId = adminClient.getNetworkClient().deleteNetwork(network.getId());
             adminJobComplete.apply(jobId);
             network = null;
          }
@@ -293,7 +293,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateVirtualMachine")
    public void testLifeCycle() throws Exception {
-      Long job = client.getVirtualMachineClient().stopVirtualMachine(vm.getId());
+      String job = client.getVirtualMachineClient().stopVirtualMachine(vm.getId());
       assertTrue(jobComplete.apply(job));
       vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
       assertEquals(vm.getState(), VirtualMachine.State.STOPPED);
@@ -341,32 +341,32 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkVm(VirtualMachine vm) {
       assertEquals(vm.getId(), client.getVirtualMachineClient().getVirtualMachine(vm.getId()).getId());
-      assert vm.getId() > 0 : vm;
+      assert vm.getId() != null : vm;
       assert vm.getName() != null : vm;
       assert vm.getDisplayName() != null : vm;
       assert vm.getAccount() != null : vm;
       assert vm.getDomain() != null : vm;
-      assert vm.getDomainId() > 0 : vm;
+      assert vm.getDomainId() != null : vm;
       assert vm.getCreated() != null : vm;
       assert vm.getState() != null : vm;
-      assert vm.getZoneId() > 0 : vm;
+      assert vm.getZoneId() != null : vm;
       assert vm.getZoneName() != null : vm;
-      assert vm.getTemplateId() > 0 : vm;
+      assert vm.getTemplateId() != null : vm;
       assert vm.getTemplateName() != null : vm;
-      assert vm.getServiceOfferingId() > 0 : vm;
+      assert vm.getServiceOfferingId() != null : vm;
       assert vm.getServiceOfferingName() != null : vm;
       assert vm.getCpuCount() > 0 : vm;
       assert vm.getCpuSpeed() > 0 : vm;
       assert vm.getMemory() > 0 : vm;
-      assert vm.getGuestOSId() > 0 : vm;
-      assert vm.getRootDeviceId() >= 0 : vm;
+      assert vm.getGuestOSId() != null : vm;
+      assert vm.getRootDeviceId() != null : vm;
       // assert vm.getRootDeviceType() != null : vm;
       if (vm.getJobId() != null)
          assert vm.getJobStatus() != null : vm;
       assert vm.getNICs() != null && vm.getNICs().size() > 0 : vm;
       for (NIC nic : vm.getNICs()) {
-         assert nic.getId() > 0 : vm;
-         assert nic.getNetworkId() > 0 : vm;
+         assert nic.getId() != null : vm;
+         assert nic.getNetworkId() != null : vm;
          assert nic.getTrafficType() != null : vm;
          assert nic.getGuestIPType() != null : vm;
          switch (vm.getState()) {

@@ -65,7 +65,7 @@ public interface GlobalHostClient {
     * @param options optional arguments
     * @return the new host.
     */
-   Host addHost(long zoneId, String url, String hypervisor, String username, String password, AddHostOptions... options);
+   Host addHost(String zoneId, String url, String hypervisor, String username, String password, AddHostOptions... options);
 
    /**
     * Updates a host.
@@ -74,7 +74,7 @@ public interface GlobalHostClient {
     * @param options optional arguments
     * @return the modified host.
     */
-   Host updateHost(long hostId, UpdateHostOptions... options);
+   Host updateHost(String hostId, UpdateHostOptions... options);
 
    /**
     * Update password of a host on management server.
@@ -83,7 +83,7 @@ public interface GlobalHostClient {
     * @param username the username for the host
     * @param password the password for the host
     */
-   void updateHostPassword(long hostId, String username, String password);
+   void updateHostPassword(String hostId, String username, String password);
 
    /**
     * Deletes a host.
@@ -91,7 +91,7 @@ public interface GlobalHostClient {
     * @param hostId the host ID
     * @param options optional arguments
     */
-   void deleteHost(long hostId, DeleteHostOptions... options);
+   void deleteHost(String hostId, DeleteHostOptions... options);
 
    /**
     * Prepares a host for maintenance.
@@ -99,7 +99,7 @@ public interface GlobalHostClient {
     * @param hostId the host ID
     * @return a job reference number for tracking this asynchronous job.
     */
-   Long prepareHostForMaintenance(long hostId);
+   String prepareHostForMaintenance(String hostId);
 
    /**
     * Cancels host maintenance.
@@ -107,7 +107,7 @@ public interface GlobalHostClient {
     * @param hostId the host ID
     * @return a job reference number for tracking this asynchronous job.
     */
-   Long cancelHostMaintenance(long hostId);
+   String cancelHostMaintenance(String hostId);
 
    /**
     * Reconnects a host.
@@ -115,7 +115,7 @@ public interface GlobalHostClient {
     * @param hostId
     * @return a job reference number for tracking this asynchronous job.
     */
-   Long reconnectHost(long hostId);
+   String reconnectHost(String hostId);
 
    /**
     * Adds secondary storage.
@@ -144,7 +144,7 @@ public interface GlobalHostClient {
     * @param options optional arguments
     * @return the new cluster.
     */
-   Cluster addCluster(long zoneId, String clusterName, Host.ClusterType clusterType, String hypervisor, AddClusterOptions... options);
+   Cluster addCluster(String zoneId, String clusterName, Host.ClusterType clusterType, String hypervisor, AddClusterOptions... options);
 
    /**
     * Updates an existing cluster.
@@ -153,7 +153,7 @@ public interface GlobalHostClient {
     * @param options optional arguments
     * @return the modified cluster
     */
-   Cluster updateCluster(long clusterId, UpdateClusterOptions... options);
+   Cluster updateCluster(String clusterId, UpdateClusterOptions... options);
 
    /**
     * Update password of a cluster on management server.
@@ -162,13 +162,13 @@ public interface GlobalHostClient {
     * @param username the username for the cluster
     * @param password the password for the cluster
     */
-   void updateClusterPassword(long clusterId, String username, String password);
+   void updateClusterPassword(String clusterId, String username, String password);
 
    /**
     * Deletes a cluster.
     *
     * @param clusterId the cluster ID
     */
-   void deleteCluster(long clusterId);
+   void deleteCluster(String clusterId);
 
 }

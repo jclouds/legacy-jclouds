@@ -48,8 +48,8 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&" +
-                  "apiKey=identity&signature=MktZKKH3USVKiC9SlYTSHMCaCcg%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
+                  "apiKey=identity&signature=9%2BtdTXe2uYLzAexPNgrMy5Tq8hE%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -63,14 +63,14 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
       Set<String> CIDRs  = ImmutableSet.of("0.0.0.0/0");
       assertEquals(client.listFirewallRules(),
          ImmutableSet.of(
-            FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
-               .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+            FirewallRule.builder().id("2017").protocol(FirewallRule.Protocol.TCP).startPort(30)
+               .endPort(35).ipAddressId("2").ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
                .CIDRs(CIDRs).build(),
-            FirewallRule.builder().id(2016).protocol(FirewallRule.Protocol.TCP).startPort(22)
-               .endPort(22).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+            FirewallRule.builder().id("2016").protocol(FirewallRule.Protocol.TCP).startPort(22)
+               .endPort(22).ipAddressId("2").ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
                .CIDRs(CIDRs).build(),
-            FirewallRule.builder().id(10).protocol(FirewallRule.Protocol.TCP).startPort(22)
-               .endPort(22).ipAddressId(8).ipAddress("10.27.27.57").state(FirewallRule.State.ACTIVE)
+            FirewallRule.builder().id("10").protocol(FirewallRule.Protocol.TCP).startPort(22)
+            .endPort(22).ipAddressId("8").ipAddress("10.27.27.57").state(FirewallRule.State.ACTIVE)
                .CIDRs(CIDRs).build()
          ));
    }
@@ -80,8 +80,8 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&" +
-                  "apiKey=identity&signature=MktZKKH3USVKiC9SlYTSHMCaCcg%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
+                  "apiKey=identity&signature=9%2BtdTXe2uYLzAexPNgrMy5Tq8hE%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -99,8 +99,8 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&" +
-                  "id=2017&apiKey=identity&signature=0r5iL%2Bzix9rmD07lJIOhY68mYY0%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
+                  "id=2017&apiKey=identity&signature=6coh9Qdwla94TN1Dl008WlhzZUY%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -111,9 +111,9 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .payload(payloadFromResource("/getfirewallrulesresponse.json"))
             .build());
 
-      assertEquals(client.getFirewallRule(2017),
-         FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
-            .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+      assertEquals(client.getFirewallRule("2017"),
+         FirewallRule.builder().id("2017").protocol(FirewallRule.Protocol.TCP).startPort(30)
+            .endPort(35).ipAddressId("2").ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
             .CIDRs(ImmutableSet.of("0.0.0.0/0")).build()
       );
    }
@@ -123,8 +123,8 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&" +
-                  "id=4&apiKey=identity&signature=PPX5U9kmaS116SgG4Ihf8xK%2BcSE%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
+                  "id=4&apiKey=identity&signature=rYd8gr7ptdSZlIehBEMQEKsm07Q%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -134,7 +134,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .statusCode(404)
             .build());
 
-      assertNull(client.getFirewallRule(4));
+      assertNull(client.getFirewallRule("4"));
    }
 
    public void testCreateFirewallRuleForIpAndProtocol() {
@@ -154,9 +154,9 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .payload(payloadFromResource("/createfirewallrulesresponse.json"))
             .build());
 
-      AsyncCreateResponse response = client.createFirewallRuleForIpAndProtocol(2, FirewallRule.Protocol.TCP);
-      assertEquals(response.getJobId(), 2036);
-      assertEquals(response.getId(), 2017);
+      AsyncCreateResponse response = client.createFirewallRuleForIpAndProtocol("2", FirewallRule.Protocol.TCP);
+      assertEquals(response.getJobId(), "2036");
+      assertEquals(response.getId(), "2017");
    }
 
    public void testDeleteFirewallRule() {
@@ -172,7 +172,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .payload(payloadFromResource("/deletefirewallrulesresponse.json"))
             .build());
 
-      client.deleteFirewallRule(2015);
+      client.deleteFirewallRule("2015");
    }
 
    public void testListPortForwardingRulesWhenResponseIs2xx() {
@@ -181,7 +181,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listPortForwardingRules&apiKey=identity&signature=YFBu1VOSkiDKxm0K42sIXJWy%2BBo%3D"))
+                  "command=listPortForwardingRules&listAll=true&apiKey=identity&signature=8SXGJZWdcJfVz4V90Pyod12x9dM%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -196,11 +196,11 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
 
       assertEquals(client.listPortForwardingRules(),
          ImmutableSet.<PortForwardingRule>of(
-            PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
-               .publicPort(2022).virtualMachineId(3).virtualMachineName("i-3-3-VM").IPAddressId(3)
+            PortForwardingRule.builder().id("15").privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
+               .publicPort(2022).virtualMachineId("3").virtualMachineName("i-3-3-VM").IPAddressId("3")
                .IPAddress("72.52.126.32").state(PortForwardingRule.State.ACTIVE).CIDRs(cidrs).build(),
-            PortForwardingRule.builder().id(18).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
-               .publicPort(22).virtualMachineId(89).virtualMachineName("i-3-89-VM").IPAddressId(34)
+            PortForwardingRule.builder().id("18").privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
+               .publicPort(22).virtualMachineId("89").virtualMachineName("i-3-89-VM").IPAddressId("34")
                .IPAddress("72.52.126.63").state(PortForwardingRule.State.ACTIVE).build())
       );
    }
@@ -211,7 +211,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listPortForwardingRules&apiKey=identity&signature=YFBu1VOSkiDKxm0K42sIXJWy%2BBo%3D"))
+                  "command=listPortForwardingRules&listAll=true&apiKey=identity&signature=8SXGJZWdcJfVz4V90Pyod12x9dM%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -230,7 +230,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listPortForwardingRules&id=15&apiKey=identity&signature=ABJsciF4n2tXaiyUmEvc3oYh9MA%3D"))
+                  "command=listPortForwardingRules&listAll=true&id=15&apiKey=identity&signature=JL63p6cJzbb9vaffeV4u60IGlWE%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -243,9 +243,9 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
 
       Set<String> cidrs = ImmutableSet.of("0.0.0.0/1", "128.0.0.0/1");
 
-      assertEquals(client.getPortForwardingRule(15),
-         PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
-            .publicPort(2022).virtualMachineId(3).virtualMachineName("i-3-3-VM").IPAddressId(3)
+      assertEquals(client.getPortForwardingRule("15"),
+         PortForwardingRule.builder().id("15").privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
+            .publicPort(2022).virtualMachineId("3").virtualMachineName("i-3-3-VM").IPAddressId("3")
             .IPAddress("72.52.126.32").state(PortForwardingRule.State.ACTIVE).CIDRs(cidrs).build());
    }
 
@@ -255,7 +255,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listPortForwardingRules&id=4&apiKey=identity&signature=CTOmmIOGIiZx0YATqh%2FFk0zIplw%3D"))
+                  "command=listPortForwardingRules&listAll=true&id=4&apiKey=identity&signature=4blbBVn2%2BZfF8HwoglbmtYoDAjs%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -265,7 +265,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .statusCode(404)
             .build());
 
-      assertNull(client.getPortForwardingRule(4));
+      assertNull(client.getPortForwardingRule("4"));
    }
 
    public void testCreatePortForwardingRuleForVirtualMachine() {
@@ -287,9 +287,9 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .build());
 
       AsyncCreateResponse response = client.createPortForwardingRuleForVirtualMachine(
-         2, PortForwardingRule.Protocol.TCP, 22, 1234, 22);
-      assertEquals(response.getJobId(), 2035);
-      assertEquals(response.getId(), 2015);
+         "2", PortForwardingRule.Protocol.TCP, 22, "1234", 22);
+      assertEquals(response.getJobId(), "2035");
+      assertEquals(response.getId(), "2015");
    }
 
    public void testDeletePortForwardingRule() {
@@ -305,7 +305,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .payload(payloadFromResource("/deleteportforwardingrulesresponse.json"))
             .build());
 
-      client.deletePortForwardingRule(2015);
+      client.deletePortForwardingRule("2015");
    }
    
    @Override

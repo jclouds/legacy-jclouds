@@ -44,15 +44,15 @@ public class ListDiskOfferingsResponseTest extends BaseSetParserTest<DiskOfferin
    @SelectJson("diskoffering")
    public Set<DiskOffering> expected() {
       return ImmutableSet.<DiskOffering> of(
-            DiskOffering.builder().id(3).domainId(1).domain("ROOT").name("Small").displayText("Small Disk, 5 GB")
+            DiskOffering.builder().id("3").domainId("1").domain("ROOT").name("Small").displayText("Small Disk, 5 GB")
                   .diskSize(5)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))
                   .customized(false).build(),
-            DiskOffering.builder().id(4).domainId(1).domain("ROOT").name("Medium").displayText("Medium Disk, 20 GB")
+            DiskOffering.builder().id("4").domainId("1").domain("ROOT").name("Medium").displayText("Medium Disk, 20 GB")
                   .diskSize(20)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))
                   .customized(false).build(),
-            DiskOffering.builder().id(5).domainId(1).domain("ROOT").name("Large").displayText("Large Disk, 100 GB")
+            DiskOffering.builder().id("5").domainId("1").domain("ROOT").name("Large").displayText("Large Disk, 100 GB")
                   .diskSize(100)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))
                   .customized(false).build());

@@ -76,7 +76,7 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpe
             .payload(payloadFromResource("/getvmpasswordresponse.json"))
             .build());
 
-      String actual = client.getEncryptedPasswordForVirtualMachine(1L);
+      String actual = client.getEncryptedPasswordForVirtualMachine("1");
       String expected = "EFOwm8icZ4sEib4y6ntVHUKHZJQrGBdyPkL1L9lpFHYhs3JfAtL5E5bxBP5Er27bJyOZPjKFcInX\r\n" +
          "pQ0LZlQBZDd5/ac0NSoM6tAX3H30pYxNw4t2f9u8aJ48oOEvufgGxTTHnM9qHXD04lt+Ouql6i2q\r\n" +
          "HxBqCxFkMZEla3LFieE=\r\n";

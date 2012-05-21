@@ -65,7 +65,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       prefix += "nat";
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
-         Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+         String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
@@ -82,7 +82,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       BlockUntilJobCompletesAndReturnResult blocker = new BlockUntilJobCompletesAndReturnResult(client, jobComplete);
       StaticNATVirtualMachineInNetwork fn = new StaticNATVirtualMachineInNetwork(client, reuseOrAssociate, network);
       CreatePortForwardingRulesForIP createPortForwardingRulesForIP = new CreatePortForwardingRulesForIP(client,
-            blocker, CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
+            blocker, CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
                   new GetIPForwardingRulesByVirtualMachine(client)));
 
       // logger

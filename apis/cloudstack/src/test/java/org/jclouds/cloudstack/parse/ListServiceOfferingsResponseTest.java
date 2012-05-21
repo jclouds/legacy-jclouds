@@ -45,12 +45,12 @@ public class ListServiceOfferingsResponseTest extends BaseSetParserTest<ServiceO
    @SelectJson("serviceoffering")
    public Set<ServiceOffering> expected() {
       return ImmutableSet.<ServiceOffering> of(
-            ServiceOffering.builder().id(1).name("Small Instance")
+            ServiceOffering.builder().id("1").name("Small Instance")
                   .displayText("Small Instance - 500 MhZ CPU, 512 MB RAM - $0.05 per hour").cpuNumber(1).cpuSpeed(500)
                   .memory(512)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))
                   .storageType(StorageType.SHARED).haSupport(false).build(),
-            ServiceOffering.builder().id(2).name("Medium Instance")
+            ServiceOffering.builder().id("2").name("Medium Instance")
                   .displayText("Medium Instance, 1 GhZ CPU,  1 GB RAM - $0.10 per hour").cpuNumber(1).cpuSpeed(1000)
                   .memory(1024)
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-11T15:22:32-0800"))

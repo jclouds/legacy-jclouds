@@ -77,7 +77,7 @@ public class CreateTemplateOptions extends BaseHttpRequestOptions {
    /**
     * the ID of the snapshot the template is being created from. Either this parameter, or volumeId has to be passed in
     */
-   public CreateTemplateOptions snapshotId(long snapshotId) {
+   public CreateTemplateOptions snapshotId(String snapshotId) {
       this.queryParameters.replaceValues("snapshotid", ImmutableSet.of(snapshotId + ""));
       return this;
    }
@@ -85,7 +85,7 @@ public class CreateTemplateOptions extends BaseHttpRequestOptions {
    /**
     * the ID of the disk volume the template is being created from. Either this parameter, or snapshotId has to be passed in
     */
-   public CreateTemplateOptions volumeId(long volumeId) {
+   public CreateTemplateOptions volumeId(String volumeId) {
       this.queryParameters.replaceValues("volumeid", ImmutableSet.of(volumeId + ""));
       return this;
    }
@@ -117,12 +117,12 @@ public class CreateTemplateOptions extends BaseHttpRequestOptions {
          return options.requiresHVM(requiresHVM);
       }
 
-      public static CreateTemplateOptions snapshotId(long snapshotId) {
+      public static CreateTemplateOptions snapshotId(String snapshotId) {
          CreateTemplateOptions options = new CreateTemplateOptions();
          return options.snapshotId(snapshotId);
       }
 
-      public static CreateTemplateOptions volumeId(long volumeId) {
+      public static CreateTemplateOptions volumeId(String volumeId) {
          CreateTemplateOptions options = new CreateTemplateOptions();
          return options.volumeId(volumeId);
       }

@@ -32,16 +32,16 @@ public class OSType implements Comparable<OSType> {
    }
 
    public static class Builder {
-      private long id;
-      private long OSCategoryId;
+      private String id;
+      private String OSCategoryId;
       private String description;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
 
-      public Builder OSCategoryId(long OSCategoryId) {
+      public Builder OSCategoryId(String OSCategoryId) {
          this.OSCategoryId = OSCategoryId;
          return this;
       }
@@ -61,12 +61,12 @@ public class OSType implements Comparable<OSType> {
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("oscategoryid")
-   private long OSCategoryId;
+   private String OSCategoryId;
    private String description;
 
-   public OSType(long id, long OSCategoryId, String description) {
+   public OSType(String id, String OSCategoryId, String description) {
       this.id = id;
       this.OSCategoryId = OSCategoryId;
       this.description = description;
@@ -75,14 +75,14 @@ public class OSType implements Comparable<OSType> {
    /**
     * @return the ID of the OS type
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return the ID of the OS category
     */
-   public long getOSCategoryId() {
+   public String getOSCategoryId() {
       return OSCategoryId;
    }
 
@@ -123,7 +123,7 @@ public class OSType implements Comparable<OSType> {
 
    @Override
    public int compareTo(OSType arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

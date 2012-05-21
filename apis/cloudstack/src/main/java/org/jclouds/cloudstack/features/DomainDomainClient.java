@@ -56,7 +56,7 @@ public interface DomainDomainClient {
     * @return
     *          domain instance or null
     */
-   Domain getDomainById(long domainId);
+   Domain getDomainById(String domainId);
 
    /**
     * Lists all children domains belonging to a specified domain

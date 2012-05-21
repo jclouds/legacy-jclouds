@@ -73,7 +73,7 @@ public class SessionClientExpectTest extends BaseCloudStackRestClientExpectTest<
 
       assertEquals(client.loginUserInDomainWithHashOfPassword(user, domain, md5password).toString(),
          LoginResponse.builder().timeout(1800).lastName("Kiran").registered(false).username("jcloud").firstName("Vijay")
-            .domainId(11).accountType(Account.Type.DOMAIN_ADMIN).userId(19).sessionKey(
+            .domainId("11").accountType(Account.Type.DOMAIN_ADMIN).userId("19").sessionKey(
             "uYT4/MNiglgAKiZRQkvV8QP8gn0=").jSessionId(jSessionId).accountName("jcloud").build().toString());
    }
 

@@ -50,12 +50,12 @@ public class AddHostOptionsTest {
    }
 
    public void testClusterId() {
-      AddHostOptions options = new AddHostOptions().clusterId(42L);
+      AddHostOptions options = new AddHostOptions().clusterId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("clusterid"));
    }
 
    public void testClusterIdStatic() {
-      AddHostOptions options = clusterId(42L);
+      AddHostOptions options = clusterId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("clusterid"));
    }
 
@@ -80,12 +80,12 @@ public class AddHostOptionsTest {
    }
 
    public void testPodId() {
-      AddHostOptions options = new AddHostOptions().podId(42L);
+      AddHostOptions options = new AddHostOptions().podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      AddHostOptions options = podId(42L);
+      AddHostOptions options = podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 

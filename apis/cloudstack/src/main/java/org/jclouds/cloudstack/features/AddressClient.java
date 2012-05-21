@@ -54,7 +54,7 @@ public interface AddressClient {
     *           IPAddress to get
     * @return IPAddress or null if not found
     */
-   PublicIPAddress getPublicIPAddress(long id);
+   PublicIPAddress getPublicIPAddress(String id);
 
    /**
     * Acquires and associates a public IP to an account.
@@ -64,7 +64,7 @@ public interface AddressClient {
     *           address from
     * @return IPAddress
     */
-   AsyncCreateResponse associateIPAddressInZone(long zoneId, AssociateIPAddressOptions... options);
+   AsyncCreateResponse associateIPAddressInZone(String zoneId, AssociateIPAddressOptions... options);
 
    /**
     * Disassociates an ip address from the account.
@@ -73,5 +73,5 @@ public interface AddressClient {
     *           the id of the public ip address to disassociate
     */
    @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   void disassociateIPAddress(long id);
+   void disassociateIPAddress(String id);
 }

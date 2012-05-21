@@ -46,7 +46,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listVolumes HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listVolumes&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -58,11 +58,11 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testGetVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("getVolume", long.class);
+      Method method = VolumeAsyncClient.class.getMethod("getVolume", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 111L);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listVolumes&id=111 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listVolumes&listAll=true&id=111 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -74,8 +74,8 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testCreateVolumeWithSnapshot() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromSnapshotInZone", String.class, long.class,
-            long.class);
+      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromSnapshotInZone", String.class, String.class,
+            String.class);
       HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume", 999L, 111l);
 
       assertRequestLineEquals(
@@ -90,8 +90,8 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testCreateVolumeFromDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone", String.class, long.class,
-            long.class);
+      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone", String.class, String.class,
+            String.class);
 
       HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume", 999L, 111L);
 
@@ -106,7 +106,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("attachVolume", long.class, long.class);
+      Method method = VolumeAsyncClient.class.getMethod("attachVolume", String.class, String.class);
 
       HttpRequest httpRequest = processor.createRequest(method, 111L, 999L);
 
@@ -121,7 +121,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("detachVolume", long.class);
+      Method method = VolumeAsyncClient.class.getMethod("detachVolume", String.class);
 
       HttpRequest httpRequest = processor.createRequest(method, 111L);
 
@@ -136,7 +136,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("deleteVolume", long.class);
+      Method method = VolumeAsyncClient.class.getMethod("deleteVolume", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 111L);
 
       assertRequestLineEquals(httpRequest,

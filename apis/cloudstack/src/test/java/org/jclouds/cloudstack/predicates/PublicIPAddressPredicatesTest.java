@@ -31,22 +31,22 @@ import org.testng.annotations.Test;
 public class PublicIPAddressPredicatesTest {
 
    public void testIsAvailableWhenAllocated() {
-      PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATED).id(204).build();
+      PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATED).id("204").build();
 
       assert available().apply(address);
 
    }
 
    public void testIsNotAvailableWhenNotAllocated() {
-      PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATING).id(204).build();
+      PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATING).id("204").build();
 
       assert !available().apply(address);
 
    }
 
    public void testIsNotAvailableWhenAssignedToVM() {
-      PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATED).virtualMachineId(1)
-            .id(204).build();
+      PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATED).virtualMachineId("1")
+            .id("204").build();
 
       assert !available().apply(address);
 
@@ -54,7 +54,7 @@ public class PublicIPAddressPredicatesTest {
 
    public void testIsNotAvailableWhenSourceNAT() {
       PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATED).isSourceNAT(true)
-            .id(204).build();
+            .id("204").build();
 
       assert !available().apply(address);
 
@@ -62,7 +62,7 @@ public class PublicIPAddressPredicatesTest {
 
    public void testIsNotAvailableWhenStaticNAT() {
       PublicIPAddress address = PublicIPAddress.builder().state(PublicIPAddress.State.ALLOCATED).isStaticNAT(true)
-            .id(204).build();
+            .id("204").build();
 
       assert !available().apply(address);
 

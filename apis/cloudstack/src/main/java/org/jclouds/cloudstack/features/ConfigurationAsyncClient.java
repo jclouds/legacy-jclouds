@@ -39,7 +39,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(AuthenticationFilter.class)
-@QueryParams(keys = "response", values = "json")
+@QueryParams(keys = { "response", "listAll" }, values = { "json", "true" })
 public interface ConfigurationAsyncClient {
 
    /**

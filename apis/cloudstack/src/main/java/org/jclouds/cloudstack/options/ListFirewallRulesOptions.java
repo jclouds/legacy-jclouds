@@ -36,7 +36,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
     * @param id
     *    firewall rule ID
     */
-   public ListFirewallRulesOptions id(long id) {
+   public ListFirewallRulesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -45,7 +45,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
     * @param ipAddressId
     *    the id of IP address of the firwall services
     */
-   public ListFirewallRulesOptions ipAddressId(long ipAddressId) {
+   public ListFirewallRulesOptions ipAddressId(String ipAddressId) {
       this.queryParameters.replaceValues("ipaddressid", ImmutableSet.of(ipAddressId + ""));
       return this;
    }
@@ -74,7 +74,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListFirewallRulesOptions#id
        */
-      public static ListFirewallRulesOptions id(long id) {
+      public static ListFirewallRulesOptions id(String id) {
          ListFirewallRulesOptions options = new ListFirewallRulesOptions();
          return options.id(id);
       }
@@ -82,7 +82,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListFirewallRulesOptions#ipAddressId
        */
-      public static ListFirewallRulesOptions ipAddressId(long ipAddressId) {
+      public static ListFirewallRulesOptions ipAddressId(String ipAddressId) {
          ListFirewallRulesOptions options = new ListFirewallRulesOptions();
          return options.ipAddressId(ipAddressId);
       }
@@ -114,7 +114,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListFirewallRulesOptions#accountInDomain
        */
-      public static ListFirewallRulesOptions accountInDomain(String account, long domain) {
+      public static ListFirewallRulesOptions accountInDomain(String account, String domain) {
          ListFirewallRulesOptions options = new ListFirewallRulesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -122,7 +122,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListFirewallRulesOptions#domainId
        */
-      public static ListFirewallRulesOptions domainId(long id) {
+      public static ListFirewallRulesOptions domainId(String id) {
          ListFirewallRulesOptions options = new ListFirewallRulesOptions();
          return options.domainId(id);
       }
@@ -133,7 +133,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListFirewallRulesOptions accountInDomain(String account, long domain) {
+   public ListFirewallRulesOptions accountInDomain(String account, String domain) {
       return ListFirewallRulesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -141,7 +141,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListFirewallRulesOptions domainId(long domainId) {
+   public ListFirewallRulesOptions domainId(String domainId) {
       return ListFirewallRulesOptions.class.cast(super.domainId(domainId));
    }
 }

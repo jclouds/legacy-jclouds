@@ -42,13 +42,13 @@ import com.google.common.collect.ImmutableList;
 public class CreateNetworkOptionsTest {
 
    public void testAccountInDomainId() {
-      CreateNetworkOptions options = new CreateNetworkOptions().accountInDomain("adrian", 6);
+      CreateNetworkOptions options = new CreateNetworkOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      CreateNetworkOptions options = accountInDomain("adrian", 6);
+      CreateNetworkOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }

@@ -36,7 +36,7 @@ public class ListAccountsOptions extends AccountInDomainOptions {
     * @param id
     *           list account by account ID
     */
-   public ListAccountsOptions id(long id) {
+   public ListAccountsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -84,7 +84,7 @@ public class ListAccountsOptions extends AccountInDomainOptions {
       /**
        * @see ListAccountsOptions#accountInDomain
        */
-      public static ListAccountsOptions accountInDomain(String account, long domain) {
+      public static ListAccountsOptions accountInDomain(String account, String domain) {
          ListAccountsOptions options = new ListAccountsOptions();
          return options.accountInDomain(account, domain);
       }
@@ -92,7 +92,7 @@ public class ListAccountsOptions extends AccountInDomainOptions {
       /**
        * @see ListAccountsOptions#domainId
        */
-      public static ListAccountsOptions domainId(long id) {
+      public static ListAccountsOptions domainId(String id) {
          ListAccountsOptions options = new ListAccountsOptions();
          return options.domainId(id);
       }
@@ -100,7 +100,7 @@ public class ListAccountsOptions extends AccountInDomainOptions {
       /**
        * @see ListAccountsOptions#id
        */
-      public static ListAccountsOptions id(long id) {
+      public static ListAccountsOptions id(String id) {
          ListAccountsOptions options = new ListAccountsOptions();
          return options.id(id);
       }
@@ -142,7 +142,7 @@ public class ListAccountsOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListAccountsOptions accountInDomain(String account, long domain) {
+   public ListAccountsOptions accountInDomain(String account, String domain) {
       return ListAccountsOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -150,7 +150,7 @@ public class ListAccountsOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListAccountsOptions domainId(long domainId) {
+   public ListAccountsOptions domainId(String domainId) {
       return ListAccountsOptions.class.cast(super.domainId(domainId));
    }
 }

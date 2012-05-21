@@ -35,22 +35,22 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String IPAddress;
-      private long IPAddressId;
+      private String IPAddressId;
       private int startPort;
       private String protocol;
       public int endPort;
       private String state;
       private String virtualMachineDisplayName;
-      public long virtualMachineId;
+      public String virtualMachineId;
       private String virtualMachineName;
       private Set<String> CIDRs = ImmutableSet.of();
       private int privateEndPort;
       private int publicEndPort;
       public int publicPort;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -60,7 +60,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return this;
       }
 
-      public Builder IPAddressId(long IPAddressId) {
+      public Builder IPAddressId(String IPAddressId) {
          this.IPAddressId = IPAddressId;
          return this;
       }
@@ -90,7 +90,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -126,11 +126,11 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("ipaddress")
    private String IPAddress;
    @SerializedName("ipaddressid")
-   private long IPAddressId;
+   private String IPAddressId;
    @SerializedName("startport")
    private int startPort;
    private String protocol;
@@ -140,7 +140,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
-   public long virtualMachineId;
+   public String virtualMachineId;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("publicport")
@@ -157,8 +157,8 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
 
    }
 
-   public IPForwardingRule(long id, String iPAddress, long iPAddressId, int startPort, String protocol, int endPort,
-                           String state, String virtualMachineDisplayName, long virtualMachineId, String virtualMachineName,
+   public IPForwardingRule(String id, String iPAddress, String iPAddressId, int startPort, String protocol, int endPort,
+                           String state, String virtualMachineDisplayName, String virtualMachineId, String virtualMachineName,
                            int publicEndPort, int publicPort, Set<String> CIDRs, int privateEndPort) {
       this.id = id;
       this.IPAddress = iPAddress;
@@ -179,13 +179,13 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
 
    @Override
    public int compareTo(IPForwardingRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    /**
     * @return the ID of the ip forwarding rule
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -199,7 +199,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    /**
     * @return the public ip address id for the ip forwarding rule
     */
-   public long getIPAddressId() {
+   public String getIPAddressId() {
       return IPAddressId;
    }
 
@@ -241,7 +241,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    /**
     * @return the VM ID for the ip forwarding rule
     */
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 

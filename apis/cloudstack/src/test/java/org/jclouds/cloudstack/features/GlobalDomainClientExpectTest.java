@@ -58,7 +58,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .build());
 
       assertEquals(client.createDomain("test"),
-         Domain.builder().id(10L).name("test").level(1).parentDomainId(1L)
+         Domain.builder().id("10").name("test").level(1).parentDomainId("1")
             .parentDomainName("ROOT").hasChild(false).build());
    }
 
@@ -98,8 +98,8 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .payload(payloadFromResource("/updatedomainresponse.json"))
             .build());
 
-      assertEquals(client.updateDomain(10, name("test-2")),
-         Domain.builder().id(10L).name("test-2").level(1).parentDomainId(1L)
+      assertEquals(client.updateDomain("10", name("test-2")),
+         Domain.builder().id("10").name("test-2").level(1).parentDomainId("1")
             .parentDomainName("ROOT").hasChild(false).build());
    }
 
@@ -119,7 +119,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .statusCode(404)
             .build());
 
-      assertNull(client.updateDomain(10, name("test-2")));
+      assertNull(client.updateDomain("10", name("test-2")));
    }
 
    public void testDeleteOnlyDomain() {
@@ -135,7 +135,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .payload(payloadFromResource("/deletedomainresponse.json"))
             .build());
 
-      client.deleteOnlyDomain(1);
+      client.deleteOnlyDomain("1");
    }
 
    public void testDeleteDomainAndAttachedResources() {
@@ -151,7 +151,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .payload(payloadFromResource("/deletedomainresponse.json"))
             .build());
 
-      client.deleteDomainAndAttachedResources(1);
+      client.deleteDomainAndAttachedResources("1");
    }
 
    @Override

@@ -61,7 +61,7 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testUpdateServiceOffering() throws Exception {
       Method method = GlobalOfferingAsyncClient.class.getMethod("updateServiceOffering",
-         long.class, UpdateServiceOfferingOptions[].class);
+         String.class, UpdateServiceOfferingOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 1L);
 
       assertRequestLineEquals(httpRequest,
@@ -77,7 +77,7 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testDeleteServiceOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("deleteServiceOffering", long.class);
+      Method method = GlobalOfferingAsyncClient.class.getMethod("deleteServiceOffering", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 1L);
 
       assertRequestLineEquals(httpRequest,
@@ -111,7 +111,7 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testUpdateDiskOffering() throws Exception {
       Method method = GlobalOfferingAsyncClient.class.getMethod("updateDiskOffering",
-         long.class, UpdateDiskOfferingOptions[].class);
+         String.class, UpdateDiskOfferingOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 1L);
 
       assertRequestLineEquals(httpRequest,
@@ -127,7 +127,7 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testDeleteDiskOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("deleteDiskOffering", long.class);
+      Method method = GlobalOfferingAsyncClient.class.getMethod("deleteDiskOffering", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 1L);
 
       assertRequestLineEquals(httpRequest,
@@ -144,7 +144,7 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testUpdateNetworkOffering() throws Exception {
       Method method = GlobalOfferingAsyncClient.class.getMethod("updateNetworkOffering",
-         long.class, UpdateNetworkOfferingOptions[].class);
+         String.class, UpdateNetworkOfferingOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 1L);
 
       assertRequestLineEquals(httpRequest,

@@ -40,7 +40,7 @@ public class ListEventsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListEventsOptions domainId(long domainId) {
+   public ListEventsOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
    }
@@ -87,7 +87,7 @@ public class ListEventsOptions extends BaseHttpRequestOptions {
          return options.account(account);
       }
 
-      public static ListEventsOptions domainId(long domainId) {
+      public static ListEventsOptions domainId(String domainId) {
          final ListEventsOptions options = new ListEventsOptions();
          return options.domainId(domainId);
       }

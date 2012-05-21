@@ -38,7 +38,7 @@ public class ListOSTypesOptions extends BaseHttpRequestOptions {
     * @param id
     *           list by Os type Id
     */
-   public ListOSTypesOptions id(long id) {
+   public ListOSTypesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -47,7 +47,7 @@ public class ListOSTypesOptions extends BaseHttpRequestOptions {
     * @param OSCategoryId
     *           list by Os Category id
     */
-   public ListOSTypesOptions OSCategoryId(long OSCategoryId) {
+   public ListOSTypesOptions OSCategoryId(String OSCategoryId) {
       this.queryParameters.replaceValues("oscategoryid", ImmutableSet.of(OSCategoryId + ""));
       return this;
    }
@@ -56,7 +56,7 @@ public class ListOSTypesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListOSTypesOptions#id
        */
-      public static ListOSTypesOptions id(long id) {
+      public static ListOSTypesOptions id(String id) {
          ListOSTypesOptions options = new ListOSTypesOptions();
          return options.id(id);
       }
@@ -64,7 +64,7 @@ public class ListOSTypesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListOSTypesOptions#OSCategoryId
        */
-      public static ListOSTypesOptions OSCategoryId(long id) {
+      public static ListOSTypesOptions OSCategoryId(String id) {
          ListOSTypesOptions options = new ListOSTypesOptions();
          return options.OSCategoryId(id);
       }

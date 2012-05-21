@@ -36,7 +36,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
     * @param id
     *           Lists rule with the specified ID.
     */
-   public ListLoadBalancerRulesOptions id(long id) {
+   public ListLoadBalancerRulesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -54,7 +54,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
     * @param publicIPId
     *           the public IP address id of the load balancer rule
     */
-   public ListLoadBalancerRulesOptions publicIPId(long publicIPId) {
+   public ListLoadBalancerRulesOptions publicIPId(String publicIPId) {
       this.queryParameters.replaceValues("publicipid", ImmutableSet.of(publicIPId + ""));
       return this;
    }
@@ -63,7 +63,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
     * @param virtualMachineId
     *           the ID of the virtual machine of the load balancer rule
     */
-   public ListLoadBalancerRulesOptions virtualMachineId(long virtualMachineId) {
+   public ListLoadBalancerRulesOptions virtualMachineId(String virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
    }
@@ -71,7 +71,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
    /**
     * @param zoneId the availability zone ID
     */
-   public ListLoadBalancerRulesOptions zoneId(long zoneId) {
+   public ListLoadBalancerRulesOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -97,7 +97,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListLoadBalancerRulesOptions#accountInDomain
        */
-      public static ListLoadBalancerRulesOptions accountInDomain(String account, long domain) {
+      public static ListLoadBalancerRulesOptions accountInDomain(String account, String domain) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -105,7 +105,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListLoadBalancerRulesOptions#publicIPId
        */
-      public static ListLoadBalancerRulesOptions publicIPId(long publicIPId) {
+      public static ListLoadBalancerRulesOptions publicIPId(String publicIPId) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.publicIPId(publicIPId);
       }
@@ -113,7 +113,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListLoadBalancerRulesOptions#domainId
        */
-      public static ListLoadBalancerRulesOptions domainId(long id) {
+      public static ListLoadBalancerRulesOptions domainId(String id) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.domainId(id);
       }
@@ -129,7 +129,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListLoadBalancerRulesOptions#id
        */
-      public static ListLoadBalancerRulesOptions id(long id) {
+      public static ListLoadBalancerRulesOptions id(String id) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.id(id);
       }
@@ -137,7 +137,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListLoadBalancerRulesOptions#virtualMachineId
        */
-      public static ListLoadBalancerRulesOptions virtualMachineId(long virtualMachineId) {
+      public static ListLoadBalancerRulesOptions virtualMachineId(String virtualMachineId) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.virtualMachineId(virtualMachineId);
       }
@@ -145,7 +145,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListLoadBalancerRulesOptions#zoneId
        */
-      public static ListLoadBalancerRulesOptions zoneId(long zoneId) {
+      public static ListLoadBalancerRulesOptions zoneId(String zoneId) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.zoneId(zoneId);
       }
@@ -171,7 +171,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListLoadBalancerRulesOptions accountInDomain(String account, long domain) {
+   public ListLoadBalancerRulesOptions accountInDomain(String account, String domain) {
       return ListLoadBalancerRulesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -179,7 +179,7 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListLoadBalancerRulesOptions domainId(long domainId) {
+   public ListLoadBalancerRulesOptions domainId(String domainId) {
       return ListLoadBalancerRulesOptions.class.cast(super.domainId(domainId));
    }
 }

@@ -37,34 +37,34 @@ import com.google.common.collect.ImmutableSet;
 public class ListUsageRecordsOptionsTest {
 
    public void testAccountInDomain() {
-      ListUsageRecordsOptions options = new ListUsageRecordsOptions().accountInDomain("fred", 42);
+      ListUsageRecordsOptions options = new ListUsageRecordsOptions().accountInDomain("fred", "42");
       assertEquals(ImmutableSet.of("fred"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableSet.of("42"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainStatic() {
-      ListUsageRecordsOptions options = accountInDomain("fred", 42);
+      ListUsageRecordsOptions options = accountInDomain("fred", "42");
       assertEquals(ImmutableSet.of("fred"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableSet.of("42"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainId() {
-      ListUsageRecordsOptions options = new ListUsageRecordsOptions().domainId(42);
+      ListUsageRecordsOptions options = new ListUsageRecordsOptions().domainId("42");
       assertEquals(ImmutableSet.of("42"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListUsageRecordsOptions options = domainId(42);
+      ListUsageRecordsOptions options = domainId("42");
       assertEquals(ImmutableSet.of("42"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountId() {
-      ListUsageRecordsOptions options = new ListUsageRecordsOptions().accountId(41);
+      ListUsageRecordsOptions options = new ListUsageRecordsOptions().accountId("41");
       assertEquals(ImmutableSet.of("41"), options.buildQueryParameters().get("accountid"));
    }
 
    public void testAccountIdStatic() {
-      ListUsageRecordsOptions options = accountId(41);
+      ListUsageRecordsOptions options = accountId("41");
       assertEquals(ImmutableSet.of("41"), options.buildQueryParameters().get("accountid"));
    }
 

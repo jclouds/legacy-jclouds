@@ -34,7 +34,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListOSCategoriesResponseTest extends BaseItemParserTest<Map<Long, String>> {
+public class ListOSCategoriesResponseTest extends BaseItemParserTest<Map<String, String>> {
 
    @Override
    public String resource() {
@@ -42,14 +42,14 @@ public class ListOSCategoriesResponseTest extends BaseItemParserTest<Map<Long, S
    }
 
    @Override
-   public Map<Long, String> expected() {
-      return ImmutableMap.<Long, String> builder().put(1l, "CentOS").put(2l, "Debian").put(3l, "Oracle")
-            .put(4l, "RedHat").put(5l, "SUSE").put(6l, "Windows").put(7l, "Other").put(8l, "Novel").put(9l, "Unix")
-            .put(10l, "Ubuntu").build();
+   public Map<String, String> expected() {
+       return ImmutableMap.<String, String> builder().put("1", "CentOS").put("10", "Ubuntu").put("2", "Debian").put("3", "Oracle")
+            .put("4", "RedHat").put("5", "SUSE").put("6", "Windows").put("7", "Other").put("8", "Novel").put("9", "Unix")
+            .build();
    }
 
    @Override
-   protected Function<HttpResponse, Map<Long, String>> parser(Injector injector) {
+   protected Function<HttpResponse, Map<String, String>> parser(Injector injector) {
       return injector.getInstance(ParseIdToNameFromHttpResponse.class);
    }
 }

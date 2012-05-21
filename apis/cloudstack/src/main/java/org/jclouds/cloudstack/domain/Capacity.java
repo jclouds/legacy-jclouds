@@ -44,10 +44,10 @@ public class Capacity implements Comparable<Capacity> {
       private long capacityTotal;
       private long capacityUsed;
       private double percentUsed;
-      private long podId;
+      private String podId;
       private String podName;
       private Type type;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
       public Builder capacityTotal(long capacityTotal) {
@@ -65,7 +65,7 @@ public class Capacity implements Comparable<Capacity> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -80,7 +80,7 @@ public class Capacity implements Comparable<Capacity> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -142,12 +142,12 @@ public class Capacity implements Comparable<Capacity> {
    @SerializedName("percentused")
    private double percentUsed;
    @SerializedName("podid")
-   private long podId = -1;
+   private String podId;
    @SerializedName("podname")
    private String podName;
    private Capacity.Type type;
    @SerializedName("zoneid")
-   private long zoneId = -1;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
    
@@ -155,7 +155,7 @@ public class Capacity implements Comparable<Capacity> {
    Capacity() {
    }
 
-   public Capacity(long capacityTotal, long capacityUsed, double percentUsed, long podId, String podName, Type type, long zoneId, String zoneName) {
+   public Capacity(long capacityTotal, long capacityUsed, double percentUsed, String podId, String podName, Type type, String zoneId, String zoneName) {
       this.capacityTotal = capacityTotal;
       this.capacityUsed = capacityUsed;
       this.percentUsed = percentUsed;
@@ -178,7 +178,7 @@ public class Capacity implements Comparable<Capacity> {
       return percentUsed;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -190,7 +190,7 @@ public class Capacity implements Comparable<Capacity> {
       return type;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -239,9 +239,9 @@ public class Capacity implements Comparable<Capacity> {
 
    @Override
    public int compareTo(Capacity other) {
-      int comparison = Long.valueOf(this.zoneId).compareTo(other.zoneId);
+      int comparison = this.zoneId.compareTo(other.zoneId);
       if (comparison != 0) return comparison;
-      comparison = Long.valueOf(this.podId).compareTo(other.podId);
+      comparison = this.podId.compareTo(other.podId);
       if (comparison != 0) return comparison;
       return Integer.valueOf(this.type.code).compareTo(other.type.code);
    }

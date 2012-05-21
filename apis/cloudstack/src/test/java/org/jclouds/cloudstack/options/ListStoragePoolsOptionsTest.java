@@ -41,22 +41,22 @@ import com.google.common.collect.ImmutableList;
 public class ListStoragePoolsOptionsTest {
 
    public void testClusterId() {
-      ListStoragePoolsOptions options = new ListStoragePoolsOptions().clusterId(14);
+      ListStoragePoolsOptions options = new ListStoragePoolsOptions().clusterId("14");
       assertEquals(ImmutableList.of(14 + ""), options.buildQueryParameters().get("clusterid"));
    }
 
    public void testClusterIdStatic() {
-      ListStoragePoolsOptions options = clusterId(14);
+      ListStoragePoolsOptions options = clusterId("14");
       assertEquals(ImmutableList.of(14 + ""), options.buildQueryParameters().get("clusterid"));
    }
 
    public void testId() {
-      ListStoragePoolsOptions options = new ListStoragePoolsOptions().id(15);
+      ListStoragePoolsOptions options = new ListStoragePoolsOptions().id("15");
       assertEquals(ImmutableList.of(15 + ""), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListStoragePoolsOptions options = id(15);
+      ListStoragePoolsOptions options = id("15");
       assertEquals(ImmutableList.of(15 + ""), options.buildQueryParameters().get("id"));
    }
 
@@ -101,22 +101,22 @@ public class ListStoragePoolsOptionsTest {
    }
 
    public void testPodId() {
-      ListStoragePoolsOptions options = new ListStoragePoolsOptions().podId(16);
+      ListStoragePoolsOptions options = new ListStoragePoolsOptions().podId("16");
       assertEquals(ImmutableList.of(16 + ""), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      ListStoragePoolsOptions options = podId(16);
+      ListStoragePoolsOptions options = podId("16");
       assertEquals(ImmutableList.of(16 + ""), options.buildQueryParameters().get("podid"));
    }
 
    public void testZoneId() {
-      ListStoragePoolsOptions options = new ListStoragePoolsOptions().zoneId(17);
+      ListStoragePoolsOptions options = new ListStoragePoolsOptions().zoneId("17");
       assertEquals(ImmutableList.of(17 + ""), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListStoragePoolsOptions options = zoneId(17);
+      ListStoragePoolsOptions options = zoneId("17");
       assertEquals(ImmutableList.of(17 + ""), options.buildQueryParameters().get("zoneid"));
    }
 

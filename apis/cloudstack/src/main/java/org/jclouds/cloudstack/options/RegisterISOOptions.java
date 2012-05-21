@@ -84,7 +84,7 @@ public class RegisterISOOptions extends AccountInDomainOptions {
    /**
     * @param osTypeId the ID of the OS Type that best represents the OS of this ISO
     */
-   public RegisterISOOptions osTypeId(long osTypeId) {
+   public RegisterISOOptions osTypeId(String osTypeId) {
       this.queryParameters.replaceValues("ostypeid", ImmutableSet.of(osTypeId + ""));
       return this;
    }
@@ -94,7 +94,7 @@ public class RegisterISOOptions extends AccountInDomainOptions {
       /**
        * @param account an optional account name. Must be used with domainId.
        */
-      public static RegisterISOOptions accountInDomain(String account, long domainId) {
+      public static RegisterISOOptions accountInDomain(String account, String domainId) {
          return (RegisterISOOptions) new RegisterISOOptions().accountInDomain(account, domainId);
       }
 
@@ -108,7 +108,7 @@ public class RegisterISOOptions extends AccountInDomainOptions {
       /**
        * @param domainId an optional domainId. If the account parameter is used, domainId must also be used.
        */
-      public static RegisterISOOptions domainId(long domainId) {
+      public static RegisterISOOptions domainId(String domainId) {
          return (RegisterISOOptions) new RegisterISOOptions().domainId(domainId);
       }
 
@@ -136,7 +136,7 @@ public class RegisterISOOptions extends AccountInDomainOptions {
       /**
        * @param osTypeId the ID of the OS Type that best represents the OS of this ISO
        */
-      public static RegisterISOOptions osTypeId(long osTypeId) {
+      public static RegisterISOOptions osTypeId(String osTypeId) {
          return new RegisterISOOptions().osTypeId(osTypeId);
       }
    }

@@ -31,12 +31,12 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
-      private long domainId;
+      private String domainId;
       private boolean isPublic;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -46,7 +46,7 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -61,9 +61,9 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
-   @SerializedName("domainid") private long domainId;
+   @SerializedName("domainid") private String domainId;
    @SerializedName("ispublic") private boolean isPublic;
 
    /**
@@ -73,7 +73,7 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
     * @param domainId the ID of the domain to which the template belongs
     * @param isPublic true if this template is a public template, false otherwise
     */
-   public TemplatePermission(long id, String account, long domainId, boolean isPublic) {
+   public TemplatePermission(String id, String account, String domainId, boolean isPublic) {
       this.id = id;
       this.account = account;
       this.domainId = domainId;
@@ -90,7 +90,7 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
     * Gets the template ID
     * @return the template ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -106,7 +106,7 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
     * Gets the ID of the domain to which the template belongs
     * @return the ID of the domain to which the template belongs
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -150,7 +150,7 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
 
    @Override
    public int compareTo(TemplatePermission other) {
-      return new Long(id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 
 }

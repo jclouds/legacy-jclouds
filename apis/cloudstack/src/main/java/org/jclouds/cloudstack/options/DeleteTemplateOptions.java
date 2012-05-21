@@ -37,7 +37,7 @@ public class DeleteTemplateOptions extends BaseHttpRequestOptions {
    /**
     * @param zoneId selects the template's zoneId.
     */
-   public DeleteTemplateOptions zoneId(long zoneId) {
+   public DeleteTemplateOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -47,7 +47,7 @@ public class DeleteTemplateOptions extends BaseHttpRequestOptions {
       /**
        * @see DeleteTemplateOptions#zoneId
        */
-      public static DeleteTemplateOptions zoneId(long id) {
+      public static DeleteTemplateOptions zoneId(String id) {
          DeleteTemplateOptions options = new DeleteTemplateOptions();
          return options.zoneId(id);
       }

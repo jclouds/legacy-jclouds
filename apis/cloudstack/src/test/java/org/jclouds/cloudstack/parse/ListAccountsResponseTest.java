@@ -66,10 +66,10 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
    public Set<Account> expected() {
       return ImmutableSet.<Account> of(Account
             .builder()
-            .id(505)
+            .id("505")
             .name("jclouds")
             .type(Type.USER)
-            .domainId(457)
+            .domainId("457")
             .domain("AA000062-jclouds-dev")
             .receivedBytes(318900216)
             .sentBytes(23189677)
@@ -93,10 +93,10 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
             .VMsRunning(1)
             .state(State.ENABLED)
             .users(
-                  ImmutableSet.of(User.builder().id(505).name("jclouds").firstName("Adrian").lastName("Cole")
+                  ImmutableSet.of(User.builder().id("505").name("jclouds").firstName("Adrian").lastName("Cole")
                         .email("adrian@jclouds.org")
                         .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-04-19T01:57:24+0000"))
-                        .state(User.State.ENABLED).account("jclouds").accountType(Type.USER).domainId(457)
+                        .state(User.State.ENABLED).account("jclouds").accountType(Type.USER).domainId("457")
                         .domain("AA000062-jclouds-dev").apiKey("APIKEY").secretKey("SECRETKEY").build())).build());
    }
 

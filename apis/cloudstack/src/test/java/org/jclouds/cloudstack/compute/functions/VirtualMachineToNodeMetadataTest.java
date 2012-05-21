@@ -69,12 +69,12 @@ public class VirtualMachineToNodeMetadataTest {
          .<Image>of(TemplateToImageTest.one, TemplateToImageTest.two));
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
             locationSupplier), new FindImageForVirtualMachine(
-            imageSupplier), CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
-         new CacheLoader<Long, Set<IPForwardingRule>>() {
+            imageSupplier), CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
+         new CacheLoader<String, Set<IPForwardingRule>>() {
 
             @Override
-            public Set<IPForwardingRule> load(Long arg0) throws Exception {
-               return ImmutableSet.of(IPForwardingRule.builder().id(1234l).IPAddress("1.1.1.1").build());
+            public Set<IPForwardingRule> load(String arg0) throws Exception {
+               return ImmutableSet.of(IPForwardingRule.builder().id("1234l").IPAddress("1.1.1.1").build());
             }
 
          }), namingConvention);
@@ -106,42 +106,42 @@ public class VirtualMachineToNodeMetadataTest {
 
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
          locationSupplier), new FindImageForVirtualMachine(
-         imageSupplier),  CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
-         new CacheLoader<Long, Set<IPForwardingRule>>() {
+         imageSupplier),  CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
+         new CacheLoader<String, Set<IPForwardingRule>>() {
             @Override
-            public Set<IPForwardingRule> load(Long arg0) throws Exception {
+            public Set<IPForwardingRule> load(String arg0) throws Exception {
                return ImmutableSet.of();
             }
 
          }), namingConvention);
 
       VirtualMachine guest =VirtualMachine.builder()
-         .id(54)
+         .id("54")
          .name("i-3-54-VM")
          .displayName("i-3-54-VM")
          .account("adrian")
-         .domainId(1)
+         .domainId("1")
          .domain("ROOT")
          .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-16T14:28:37-0800"))
          .state(VirtualMachine.State.STARTING)
          .isHAEnabled(false)
-         .zoneId(1)
+         .zoneId("1")
          .zoneName("San Jose 1")
-         .templateId(2)
+         .templateId("2")
          .templateName("CentOS 5.3(64-bit) no GUI (XenServer)")
          .templateDisplayText("CentOS 5.3(64-bit) no GUI (XenServer)")
          .passwordEnabled(false)
-         .serviceOfferingId(1)
+         .serviceOfferingId("1")
          .serviceOfferingName("Small Instance")
          .cpuCount(1)
          .cpuSpeed(500)
          .memory(512)
-         .guestOSId(11)
-         .rootDeviceId(0)
+         .guestOSId("11")
+         .rootDeviceId("0")
          .rootDeviceType("NetworkFilesystem")
-         .jobId(63l)
+         .jobId("63l")
          .jobStatus(0)
-         .nics(ImmutableSet.of(NIC.builder().id(72).networkId(204).netmask("255.255.255.0").gateway("1.1.1.1")
+         .nics(ImmutableSet.of(NIC.builder().id("72").networkId("204").netmask("255.255.255.0").gateway("1.1.1.1")
             .IPAddress("1.1.1.5").trafficType(TrafficType.GUEST).guestIPType(GuestIPType.VIRTUAL)
             .isDefault(true).build())).hypervisor("XenServer").build();
 
@@ -168,11 +168,11 @@ public class VirtualMachineToNodeMetadataTest {
          .<Image>of(TemplateToImageTest.one, TemplateToImageTest.two));
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
             locationSupplier), new FindImageForVirtualMachine(
-            imageSupplier), CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
-         new CacheLoader<Long, Set<IPForwardingRule>>() {
+            imageSupplier), CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
+         new CacheLoader<String, Set<IPForwardingRule>>() {
 
             @Override
-            public Set<IPForwardingRule> load(Long arg0) throws Exception {
+            public Set<IPForwardingRule> load(String arg0) throws Exception {
                throw new ResourceNotFoundException("no ip forwarding rule for: " + arg0);
             }
 

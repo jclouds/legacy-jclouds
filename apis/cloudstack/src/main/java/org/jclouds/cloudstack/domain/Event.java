@@ -32,12 +32,12 @@ public class Event implements Comparable<Event> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private String description;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       //TODO Change to enum : the event level (INFO, WARN, ERROR)
       private String level;
       private String parentId;
@@ -46,7 +46,7 @@ public class Event implements Comparable<Event> {
       private String type;
       private String username;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -71,7 +71,7 @@ public class Event implements Comparable<Event> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -107,12 +107,12 @@ public class Event implements Comparable<Event> {
 
    }
 
-   private long id;
+   private String id;
    private String account;
    private String description;
    private Date created;
    private String domain;
-   private long domainId;
+   private String domainId;
    //TODO Change to enum : the event level (INFO, WARN, ERROR)
    private String level;
    private String parentId;
@@ -121,7 +121,7 @@ public class Event implements Comparable<Event> {
    private String type;
    private String username;
 
-   public Event(long id, String account, String description, Date created, String domain, long domainId, String level,
+   public Event(String id, String account, String description, Date created, String domain, String domainId, String level,
                 String parentId, String state, String type, String username) {
       this.id = id;
       this.account = account;
@@ -146,7 +146,7 @@ public class Event implements Comparable<Event> {
    /**
     * @return the ID of the event
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -182,7 +182,7 @@ public class Event implements Comparable<Event> {
    /**
     * @return the id of the account's domain
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -224,7 +224,7 @@ public class Event implements Comparable<Event> {
 
    @Override
    public int compareTo(Event arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    @Override

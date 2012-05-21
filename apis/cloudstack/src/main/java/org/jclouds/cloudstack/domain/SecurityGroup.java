@@ -39,18 +39,18 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private String name;
       private String description;
       private String domain;
-      private long domainId;
-      private Long jobId;
+      private String domainId;
+      private String jobId;
       private Integer jobStatus;
 
       private Set<IngressRule> ingressRules = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -75,12 +75,12 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -100,16 +100,16 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private String name;
    private String description;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("jobid")
    @Nullable
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    @Nullable
    private Integer jobStatus;
@@ -117,8 +117,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    // so that tests and serialization come out expected
    private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule>of();
 
-   public SecurityGroup(long id, String account, String name, String description, String domain, long domainId,
-                        Long jobId, Integer jobStatus, Set<IngressRule> ingressRules) {
+   public SecurityGroup(String id, String account, String name, String description, String domain, String domainId,
+                        String jobId, Integer jobStatus, Set<IngressRule> ingressRules) {
       this.id = id;
       this.account = account;
       this.name = name;
@@ -140,7 +140,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    /**
     * @return the id of the security group
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -169,7 +169,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    /**
     * @return the domain id of the security group
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -179,7 +179,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
     *         machine
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -241,6 +241,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
 
    @Override
    public int compareTo(SecurityGroup arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

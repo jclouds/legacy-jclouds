@@ -35,15 +35,15 @@ public class Domain implements Comparable<Domain> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private boolean hasChild;
       private long level;
       private String name;
       private String networkDomain;
-      private long parentDomainId;
+      private String parentDomainId;
       private String parentDomainName;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -68,7 +68,7 @@ public class Domain implements Comparable<Domain> {
          return this;
       }
 
-      public Builder parentDomainId(long parentDomainId) {
+      public Builder parentDomainId(String parentDomainId) {
          this.parentDomainId = parentDomainId;
          return this;
       }
@@ -88,7 +88,7 @@ public class Domain implements Comparable<Domain> {
    Domain() {
    }
 
-   private long id;
+   private String id;
    @SerializedName("haschild")
    private boolean hasChild;
    private long level;
@@ -96,12 +96,12 @@ public class Domain implements Comparable<Domain> {
    @SerializedName("networkdomain")
    private String networkDomain;
    @SerializedName("parentdomainid")
-   private long parentDomainId;
+   private String parentDomainId;
    @SerializedName("parentdomainname")
    private String parentDomainName;
 
-   public Domain(long id, boolean hasChild, long level, String name, String networkDomain,
-         long parentDomainId, String parentDomainName) {
+   public Domain(String id, boolean hasChild, long level, String name, String networkDomain,
+         String parentDomainId, String parentDomainName) {
       this.id = id;
       this.hasChild = hasChild;
       this.level = level;
@@ -111,7 +111,7 @@ public class Domain implements Comparable<Domain> {
       this.parentDomainName = parentDomainName;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -131,7 +131,7 @@ public class Domain implements Comparable<Domain> {
       return networkDomain;
    }
 
-   public long getParentDomainId() {
+   public String getParentDomainId() {
       return parentDomainId;
    }
 
@@ -165,19 +165,19 @@ public class Domain implements Comparable<Domain> {
    @Override
    public String toString() {
       return "Domain{" +
-         "id=" + id +
+         "id='" + id + '\'' +
          ", hasChild=" + hasChild +
          ", level=" + level +
          ", name='" + name + '\'' +
          ", networkDomain='" + networkDomain + '\'' +
-         ", parentDomainId=" + parentDomainId +
+         ", parentDomainId='" + parentDomainId + '\'' +
          ", parentDomainName='" + parentDomainName + '\'' +
          '}';
    }
 
    @Override
    public int compareTo(Domain arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

@@ -29,6 +29,7 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Inject;
@@ -45,31 +46,22 @@ public class ParseNamesFromHttpResponse implements Function<HttpResponse, Set<St
    private static class Name {
       private String name;
 
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         Name other = (Name) obj;
-         if (name == null) {
-            if (other.name != null)
-               return false;
-         } else if (!name.equals(other.name))
-            return false;
-         return true;
-      }
-
+       @Override
+       public boolean equals(Object o) {
+           if (this == o) return true;
+           if (o == null || getClass() != o.getClass()) return false;
+           
+           Name that = (Name) o;
+           
+           if (!Objects.equal(name, that.name)) return false;
+           
+           return true;
+       }
+       
+       @Override
+       public int hashCode() {
+           return Objects.hashCode(name);
+       }
    }
 
    @Inject

@@ -57,7 +57,7 @@ public interface VirtualMachineAsyncClient {
     * @see VirtualMachineClient#listVirtualMachines
     */
    @GET
-   @QueryParams(keys = "command", values = "listVirtualMachines")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listVirtualMachines", "true" })
    @SelectJson("virtualmachine")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -67,12 +67,12 @@ public interface VirtualMachineAsyncClient {
     * @see VirtualMachineClient#getVirtualMachine
     */
    @GET
-   @QueryParams(keys = "command", values = "listVirtualMachines")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listVirtualMachines", "true" })
    @SelectJson("virtualmachine")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<VirtualMachine> getVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#deployVirtualMachineInZone
@@ -81,8 +81,8 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "deployVirtualMachine")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone(@QueryParam("zoneid") long zoneId,
-         @QueryParam("serviceofferingid") long serviceOfferingId, @QueryParam("templateid") long templateId,
+   ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone(@QueryParam("zoneid") String zoneId,
+         @QueryParam("serviceofferingid") String serviceOfferingId, @QueryParam("templateid") String templateId,
          DeployVirtualMachineOptions... options);
 
    /**
@@ -92,7 +92,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "rebootVirtualMachine")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> rebootVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> rebootVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#startVirtualMachine
@@ -101,7 +101,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "startVirtualMachine")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> startVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> startVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#stopVirtualMachine
@@ -110,7 +110,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "stopVirtualMachine")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> stopVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> stopVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#resetPasswordForVirtualMachine
@@ -119,7 +119,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "resetPasswordForVirtualMachine")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> resetPasswordForVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> resetPasswordForVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#getEncryptedPasswordForVirtualMachine
@@ -128,7 +128,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "getVMPassword")
    @SelectJson("encryptedpassword")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<String> getEncryptedPasswordForVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> getEncryptedPasswordForVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#changeServiceForVirtualMachine
@@ -137,7 +137,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "changeServiceForVirtualMachine")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> changeServiceForVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> changeServiceForVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#updateVirtualMachine
@@ -146,7 +146,7 @@ public interface VirtualMachineAsyncClient {
    @QueryParams(keys = "command", values = "updateVirtualMachine")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> updateVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> updateVirtualMachine(@QueryParam("id") String id);
 
    /**
     * @see VirtualMachineClient#destroyVirtualMachine
@@ -156,6 +156,6 @@ public interface VirtualMachineAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Long> destroyVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> destroyVirtualMachine(@QueryParam("id") String id);
 
 }

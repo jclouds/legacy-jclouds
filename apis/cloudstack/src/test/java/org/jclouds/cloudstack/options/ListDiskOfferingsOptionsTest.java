@@ -36,12 +36,12 @@ import com.google.common.collect.ImmutableList;
 public class ListDiskOfferingsOptionsTest {
 
    public void testId() {
-      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().id(6);
+      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListDiskOfferingsOptions options = id(6);
+      ListDiskOfferingsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -56,12 +56,12 @@ public class ListDiskOfferingsOptionsTest {
    }
 
    public void testDomainId() {
-      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().domainId(6);
+      ListDiskOfferingsOptions options = new ListDiskOfferingsOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListDiskOfferingsOptions options = domainId(6);
+      ListDiskOfferingsOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 

@@ -52,14 +52,14 @@ public class NATClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkRule(IPForwardingRule rule) {
       assertEquals(rule.getId(), client.getNATClient().getIPForwardingRule(rule.getId()).getId());
-      assert rule.getId() > 0 : rule;
+      assert rule.getId() != null : rule;
       assert rule.getIPAddress() != null : rule;
-      assert rule.getIPAddressId() > 0 : rule;
+      assert rule.getIPAddressId() != null : rule;
       assert rule.getStartPort() > 0 : rule;
       assert rule.getProtocol() != null : rule;
       assert rule.getEndPort() > 0 : rule;
       assert rule.getState() != null : rule;
-      assert rule.getVirtualMachineId() > 0 : rule;
+      assert rule.getVirtualMachineId() != null : rule;
       assert rule.getVirtualMachineName() != null : rule;
 
    }

@@ -87,7 +87,7 @@ public class DomainDomainClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkDomain(Domain domain, Set<Domain> allDomains) {
-      assert domain.getId() > 0 : domain;
+      assert domain.getId() != null : domain;
       if (domain.getParentDomainName() != null) {
          Domain parent = find(allDomains, withName(domain.getParentDomainName()));
          assertEquals(parent.getId(), domain.getParentDomainId());

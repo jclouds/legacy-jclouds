@@ -42,7 +42,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
 
       private String account;
       private String domain;
-      private long domainId;
+      private String domainId;
       private int max;
       private ResourceType resourceType;
 
@@ -56,7 +56,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -84,12 +84,12 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
    private String account;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private int max;
    @SerializedName("resourcetype")
    private ResourceType resourceType;
 
-   public ResourceLimit(String account, String domain, long domainId, int max, ResourceType resourceType) {
+   public ResourceLimit(String account, String domain, String domainId, int max, ResourceType resourceType) {
       this.account = account;
       this.domain = domain;
       this.domainId = domainId;
@@ -105,7 +105,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
       return domain;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 

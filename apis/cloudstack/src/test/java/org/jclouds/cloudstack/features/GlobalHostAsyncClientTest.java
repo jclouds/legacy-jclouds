@@ -42,7 +42,7 @@ public class GlobalHostAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listHosts HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listHosts&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

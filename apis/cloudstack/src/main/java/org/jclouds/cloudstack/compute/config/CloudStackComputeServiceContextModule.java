@@ -106,11 +106,11 @@ public class CloudStackComputeServiceContextModule extends
       bind(new TypeLiteral<Function<Template, OperatingSystem>>() {
       }).to(TemplateToOperatingSystem.class);
       install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
-      bind(new TypeLiteral<CacheLoader<Long, Set<IPForwardingRule>>>() {
+      bind(new TypeLiteral<CacheLoader<String, Set<IPForwardingRule>>>() {
       }).to(GetIPForwardingRulesByVirtualMachine.class);
-      bind(new TypeLiteral<CacheLoader<Long, Zone>>() {
+      bind(new TypeLiteral<CacheLoader<String, Zone>>() {
       }).to(ZoneIdToZone.class);
-      bind(new TypeLiteral<Supplier<LoadingCache<Long, Zone>>>() {
+      bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {
       }).to(ZoneIdToZoneSupplier.class);
       // to have the compute service adapter override default locations
       install(new LocationsFromComputeServiceAdapterModule<VirtualMachine, ServiceOffering, Template, Zone>(){});
@@ -119,12 +119,12 @@ public class CloudStackComputeServiceContextModule extends
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<Long, String>> listOSCategories(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<Map<String, String>> listOSCategories(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final CloudStackClient client) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, String>>(authException,
-            seconds, new Supplier<Map<Long, String>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException,
+            seconds, new Supplier<Map<String, String>>() {
                @Override
-               public Map<Long, String> get() {
+               public Map<String, String> get() {
                   GuestOSClient guestOSClient = client.getGuestOSClient();
                   return guestOSClient.listOSCategories();
                }
@@ -134,17 +134,17 @@ public class CloudStackComputeServiceContextModule extends
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<Long, OSType>> listOSTypes(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<Map<String, OSType>> listOSTypes(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final CloudStackClient client) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, OSType>>(authException,
-            seconds, new Supplier<Map<Long, OSType>>() {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, OSType>>(authException,
+            seconds, new Supplier<Map<String, OSType>>() {
                @Override
-               public Map<Long, OSType> get() {
+               public Map<String, OSType> get() {
                   GuestOSClient guestOSClient = client.getGuestOSClient();
-                  return Maps.uniqueIndex(guestOSClient.listOSTypes(), new Function<OSType, Long>() {
+                  return Maps.uniqueIndex(guestOSClient.listOSTypes(), new Function<OSType, String>() {
 
                      @Override
-                     public Long apply(OSType arg0) {
+                     public String apply(OSType arg0) {
                         return arg0.getId();
                      }
                   });
@@ -155,9 +155,9 @@ public class CloudStackComputeServiceContextModule extends
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<Long, Network>> listNetworks(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<Map<String, Network>> listNetworks(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final NetworksForCurrentUser networksForCurrentUser) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, Network>>(authException,
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Network>>(authException,
             seconds, networksForCurrentUser);
    }
 
@@ -172,20 +172,20 @@ public class CloudStackComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   protected Predicate<Long> jobComplete(JobComplete jobComplete) {
+   protected Predicate<String> jobComplete(JobComplete jobComplete) {
       // TODO: parameterize
-      return new RetryablePredicate<Long>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
+      return new RetryablePredicate<String>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
-   protected LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
-      CacheLoader<Long, Set<IPForwardingRule>> getIPForwardingRules) {
+   protected LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
+      CacheLoader<String, Set<IPForwardingRule>> getIPForwardingRules) {
       return CacheBuilder.newBuilder().build(getIPForwardingRules);
    }
 
    @Singleton
-   public static class GetIPForwardingRulesByVirtualMachine extends CacheLoader<Long, Set<IPForwardingRule>> {
+   public static class GetIPForwardingRulesByVirtualMachine extends CacheLoader<String, Set<IPForwardingRule>> {
       private final CloudStackClient client;
 
       @Inject
@@ -198,7 +198,7 @@ public class CloudStackComputeServiceContextModule extends
        *            when there is no ip forwarding rule available for the VM
        */
       @Override
-      public Set<IPForwardingRule> load(Long input) {
+      public Set<IPForwardingRule> load(String input) {
          Set<IPForwardingRule> rules = client.getNATClient().getIPForwardingRulesForVirtualMachine(input);
          return rules != null ? rules : ImmutableSet.<IPForwardingRule>of();
       }

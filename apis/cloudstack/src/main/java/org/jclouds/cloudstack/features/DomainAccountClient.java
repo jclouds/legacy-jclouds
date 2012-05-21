@@ -44,7 +44,7 @@ public interface DomainAccountClient extends AccountClient {
     * @param domainId
     *    the domain ID
     */
-   Account enableAccount(String accountName, long domainId);
+   Account enableAccount(String accountName, String domainId);
 
    /**
     * Disable or lock an account
@@ -56,6 +56,6 @@ public interface DomainAccountClient extends AccountClient {
     * @param onlyLock
     *    only lock if true disable otherwise
     */
-   AsyncCreateResponse disableAccount(String accountName, long domainId, boolean onlyLock);
+   AsyncCreateResponse disableAccount(String accountName, String domainId, boolean onlyLock);
 
 }

@@ -38,7 +38,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param id the id of the host
     */
-   public ListHostsOptions id(long id) {
+   public ListHostsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -54,7 +54,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param clusterId lists hosts existing in particular cluster
     */
-   public ListHostsOptions clusterId(long clusterId) {
+   public ListHostsOptions clusterId(String clusterId) {
       this.queryParameters.replaceValues("clusterid", ImmutableSet.of(clusterId + ""));
       return this;
    }
@@ -94,7 +94,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param podId the Pod ID for the host
     */
-   public ListHostsOptions podId(long podId) {
+   public ListHostsOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
@@ -119,7 +119,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
     * @param virtualMachineId lists hosts in the same cluster as this VM and flag hosts with
     *                         enough CPU/RAm to host this VM
     */
-   public ListHostsOptions virtualMachineId(long virtualMachineId) {
+   public ListHostsOptions virtualMachineId(String virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
    }
@@ -127,7 +127,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param zoneId the Zone ID for the host
     */
-   public ListHostsOptions zoneId(long zoneId) {
+   public ListHostsOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -136,7 +136,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListHostsOptions accountInDomain(String account, long domain) {
+   public ListHostsOptions accountInDomain(String account, String domain) {
       return ListHostsOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -144,7 +144,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListHostsOptions domainId(long domainId) {
+   public ListHostsOptions domainId(String domainId) {
       return ListHostsOptions.class.cast(super.domainId(domainId));
    }
 
@@ -152,7 +152,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#id
        */
-      public static ListHostsOptions id(long id) {
+      public static ListHostsOptions id(String id) {
          ListHostsOptions options = new ListHostsOptions();
          return options.id(id);
       }
@@ -168,7 +168,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#clusterId
        */
-      public static ListHostsOptions clusterId(long clusterId) {
+      public static ListHostsOptions clusterId(String clusterId) {
          ListHostsOptions options = new ListHostsOptions();
          return options.clusterId(clusterId);
       }
@@ -208,7 +208,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#podId
        */
-      public static ListHostsOptions podId(long podId) {
+      public static ListHostsOptions podId(String podId) {
          ListHostsOptions options = new ListHostsOptions();
          return options.podId(podId);
       }
@@ -232,7 +232,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#virtualMachineId
        */
-      public static ListHostsOptions virtualMachineId(long virtualMachineId) {
+      public static ListHostsOptions virtualMachineId(String virtualMachineId) {
          ListHostsOptions options = new ListHostsOptions();
          return options.virtualMachineId(virtualMachineId);
       }
@@ -240,7 +240,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#zoneId
        */
-      public static ListHostsOptions zoneId(long zoneId) {
+      public static ListHostsOptions zoneId(String zoneId) {
          ListHostsOptions options = new ListHostsOptions();
          return options.zoneId(zoneId);
       }
@@ -248,7 +248,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#accountInDomain
        */
-      public static ListHostsOptions accountInDomain(String account, long domain) {
+      public static ListHostsOptions accountInDomain(String account, String domain) {
          ListHostsOptions options = new ListHostsOptions();
          return options.accountInDomain(account, domain);
       }
@@ -256,7 +256,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#domainId
        */
-      public static ListHostsOptions domainId(long domainId) {
+      public static ListHostsOptions domainId(String domainId) {
          ListHostsOptions options = new ListHostsOptions();
          return options.domainId(domainId);
       }

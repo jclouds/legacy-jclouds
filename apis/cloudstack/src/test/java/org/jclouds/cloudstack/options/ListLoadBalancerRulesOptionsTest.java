@@ -42,23 +42,23 @@ import com.google.common.collect.ImmutableList;
 public class ListLoadBalancerRulesOptionsTest {
 
    public void testId() {
-      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().id(6);
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListLoadBalancerRulesOptions options = id(6);
+      ListLoadBalancerRulesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testAccount() {
-      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().accountInDomain("account", 6);
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().accountInDomain("account", "6");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountStatic() {
-      ListLoadBalancerRulesOptions options = accountInDomain("account", 6);
+      ListLoadBalancerRulesOptions options = accountInDomain("account", "6");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
@@ -74,42 +74,42 @@ public class ListLoadBalancerRulesOptionsTest {
    }
 
    public void testPublicIPId() {
-      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().publicIPId(9);
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().publicIPId("9");
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("publicipid"));
    }
 
    public void testPublicIPIdStatic() {
-      ListLoadBalancerRulesOptions options = publicIPId(9);
+      ListLoadBalancerRulesOptions options = publicIPId("9");
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("publicipid"));
    }
 
    public void testDomainId() {
-      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().domainId(6);
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListLoadBalancerRulesOptions options = domainId(6);
+      ListLoadBalancerRulesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testVirtualMachineId() {
-      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().virtualMachineId(6);
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testVirtualMachineIdStatic() {
-      ListLoadBalancerRulesOptions options = virtualMachineId(6);
+      ListLoadBalancerRulesOptions options = virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testZoneId() {
-      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().zoneId(6);
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListLoadBalancerRulesOptions options = zoneId(6);
+      ListLoadBalancerRulesOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 

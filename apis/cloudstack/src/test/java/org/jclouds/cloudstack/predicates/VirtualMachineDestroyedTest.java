@@ -51,7 +51,7 @@ public class VirtualMachineDestroyedTest {
    @Test
    public void testIsDestroyed() {
       VirtualMachine virtualMachine = VirtualMachine.builder().
-         id(229).state(VirtualMachine.State.DESTROYED).build();
+         id("229").state(VirtualMachine.State.DESTROYED).build();
 
       expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
 
@@ -63,7 +63,7 @@ public class VirtualMachineDestroyedTest {
    @Test
    public void testStillRunning() {
       VirtualMachine virtualMachine = VirtualMachine.builder().
-         id(229).state(VirtualMachine.State.RUNNING).build();
+         id("229").state(VirtualMachine.State.RUNNING).build();
 
       expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
 

@@ -55,7 +55,7 @@ public interface GlobalPodClient {
     *           pod to get
     * @return pod or null if not found
     */
-   Pod getPod(long id);
+   Pod getPod(String id);
 
    /**
     * Creates a new Pod.
@@ -69,7 +69,7 @@ public interface GlobalPodClient {
     * @param createPodOptions optional arguments
     * @return the new Pod
     */
-   Pod createPod(String name, long zoneId, String startIp, String endIp, String gateway, String netmask, CreatePodOptions... createPodOptions);
+   Pod createPod(String name, String zoneId, String startIp, String endIp, String gateway, String netmask, CreatePodOptions... createPodOptions);
 
    /**
     * Creates a new Pod.
@@ -82,13 +82,13 @@ public interface GlobalPodClient {
     * @param createPodOptions optional arguments
     * @return the new Pod
     */
-   Pod createPod(String name, long zoneId, String startIp, String gateway, String netmask, CreatePodOptions... createPodOptions);
+   Pod createPod(String name, String zoneId, String startIp, String gateway, String netmask, CreatePodOptions... createPodOptions);
 
    /**
     * Deletes a Pod.
     * @param id the ID of the Pod
     */
-   void deletePod(long id);
+   void deletePod(String id);
 
    /**
     * Updates a Pod.
@@ -96,6 +96,6 @@ public interface GlobalPodClient {
     * @param updatePodOptions optional arguments
     * @return the updated pod
     */
-   Pod updatePod(long id, UpdatePodOptions... updatePodOptions);
+   Pod updatePod(String id, UpdatePodOptions... updatePodOptions);
 
 }

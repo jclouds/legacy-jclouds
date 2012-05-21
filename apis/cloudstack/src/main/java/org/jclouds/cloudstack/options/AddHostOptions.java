@@ -46,7 +46,7 @@ public class AddHostOptions extends BaseHttpRequestOptions {
    /**
     * @param clusterId the cluster ID for the host
     */
-   public AddHostOptions clusterId(long clusterId) {
+   public AddHostOptions clusterId(String clusterId) {
       this.queryParameters.replaceValues("clusterid", ImmutableSet.of(clusterId + ""));
       return this;
    }
@@ -70,7 +70,7 @@ public class AddHostOptions extends BaseHttpRequestOptions {
    /**
     * @param podId the Pod ID for the host
     */
-   public AddHostOptions podId(long podId) {
+   public AddHostOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
@@ -87,7 +87,7 @@ public class AddHostOptions extends BaseHttpRequestOptions {
       /**
        * @param clusterId the cluster ID for the host
        */
-      public static AddHostOptions clusterId(long clusterId) {
+      public static AddHostOptions clusterId(String clusterId) {
          return new AddHostOptions().clusterId(clusterId);
       }
 
@@ -108,7 +108,7 @@ public class AddHostOptions extends BaseHttpRequestOptions {
       /**
        * @param podId the Pod ID for the host
        */
-      public static AddHostOptions podId(long podId) {
+      public static AddHostOptions podId(String podId) {
          return new AddHostOptions().podId(podId);
       }
 

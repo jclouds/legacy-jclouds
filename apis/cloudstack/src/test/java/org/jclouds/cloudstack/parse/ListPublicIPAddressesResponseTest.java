@@ -43,10 +43,10 @@ public class ListPublicIPAddressesResponseTest extends BaseSetParserTest<PublicI
    @Override
    @SelectJson("publicipaddress")
    public Set<PublicIPAddress> expected() {
-      return ImmutableSet.of(PublicIPAddress.builder().id(30).IPAddress("72.52.126.59")
-            .allocated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-19T21:15:01-0800")).zoneId(1)
-            .zoneName("San Jose 1").isSourceNAT(false).account("adrian").domainId(1).domain("ROOT")
-            .usesVirtualNetwork(true).isStaticNAT(false).associatedNetworkId(204).networkId(200)
+      return ImmutableSet.of(PublicIPAddress.builder().id("30").IPAddress("72.52.126.59")
+            .allocated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-19T21:15:01-0800")).zoneId("1")
+            .zoneName("San Jose 1").isSourceNAT(false).account("adrian").domainId("1").domain("ROOT")
+            .usesVirtualNetwork(true).isStaticNAT(false).associatedNetworkId("204").networkId("200")
             .state(PublicIPAddress.State.ALLOCATED).build());
    }
 

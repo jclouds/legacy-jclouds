@@ -34,12 +34,12 @@ public class Alert implements Comparable<Alert> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String description;
       private Date sent;
       private String type;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -64,7 +64,7 @@ public class Alert implements Comparable<Alert> {
       }
    }
 
-   private long id;
+   private String id;
    private String description;
    private Date sent;
    private String type;
@@ -73,14 +73,14 @@ public class Alert implements Comparable<Alert> {
    Alert() {
    }
 
-   private Alert(long id, String description, Date sent, String type) {
+   private Alert(String id, String description, Date sent, String type) {
       this.id = id;
       this.description = description;
       this.sent = sent;
       this.type = type;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -129,6 +129,6 @@ public class Alert implements Comparable<Alert> {
 
    @Override
    public int compareTo(Alert other) {
-      return Long.valueOf(this.getId()).compareTo(other.getId());
+      return this.getId().compareTo(other.getId());
    }
 }

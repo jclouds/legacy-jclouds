@@ -41,7 +41,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String name;
       private String displayText;
       private Date created;
@@ -54,7 +54,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       private GuestIPType guestIPType;
       private Set<String> tags = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -120,7 +120,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
@@ -141,7 +141,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    private int networkRate = -1;
    private String tags;
 
-   public NetworkOffering(long id, String name, String displayText, @Nullable Date created,
+   public NetworkOffering(String id, String name, String displayText, @Nullable Date created,
          NetworkOfferingAvailabilityType availability, boolean supportsVLAN, @Nullable Integer maxConnections,
          boolean isDefault, TrafficType trafficType, GuestIPType guestIPType, int networkRate, Set<String> tags) {
       this.id = id;
@@ -170,7 +170,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
     * 
     * @return the id of the network offering
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -312,7 +312,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
    @Override
    public int compareTo(NetworkOffering arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

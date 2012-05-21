@@ -72,22 +72,22 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private Algorithm algorithm;
       private String description;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String name;
       private int privatePort;
       private String publicIP;
-      private long publicIPId;
+      private String publicIPId;
       private int publicPort;
       private State state;
       private Set<String> CIDRs = ImmutableSet.of();
-      private long zoneId;
+      private String zoneId;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -112,7 +112,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -132,7 +132,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder publicIPId(long publicIPId) {
+      public Builder publicIPId(String publicIPId) {
          this.publicIPId = publicIPId;
          return this;
       }
@@ -152,7 +152,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -163,36 +163,36 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Algorithm algorithm;
    private String description;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private String name;
    @SerializedName("privateport")
    private int privatePort;
    @SerializedName("publicip")
    private String publicIP;
    @SerializedName("publicipid")
-   private long publicIPId;
+   private String publicIPId;
    @SerializedName("publicport")
    private int publicPort;
    private State state;
    @SerializedName("cidrlist")
    private Set<String> CIDRs;
    @SerializedName("zoneId")
-   private long zoneId;
+   private String zoneId;
 
    // for deserializer
    LoadBalancerRule() {
 
    }
 
-   public LoadBalancerRule(long id, String account, Algorithm algorithm, String description, String domain,
-                           long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state,
-                           long zoneId, Set<String> CIDRs) {
+   public LoadBalancerRule(String id, String account, Algorithm algorithm, String description, String domain,
+                           String domainId, String name, int privatePort, String publicIP, String publicIPId, int publicPort, State state,
+                           String zoneId, Set<String> CIDRs) {
       this.id = id;
       this.account = account;
       this.algorithm = algorithm;
@@ -213,7 +213,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the load balancer rule ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -248,7 +248,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the domain ID of the load balancer rule
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -276,7 +276,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the public ip address id
     */
-   public long getPublicIPId() {
+   public String getPublicIPId() {
       return publicIPId;
    }
 
@@ -304,13 +304,13 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the id of the zone the rule beStrings to
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
    @Override
    public int compareTo(LoadBalancerRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 

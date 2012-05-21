@@ -43,8 +43,8 @@ public class ListZonesResponseTest extends BaseSetParserTest<Zone> {
    @Override
    @SelectJson("zone")
    public Set<Zone> expected() {
-      return ImmutableSet.of(Zone.builder().id(1).name("San Jose 1").networkType(NetworkType.ADVANCED)
+      return ImmutableSet.of(Zone.builder().id("1").name("San Jose 1").networkType(NetworkType.ADVANCED)
             .securityGroupsEnabled(false).build(),
-            Zone.builder().id(2).name("Chicago").networkType(NetworkType.ADVANCED).securityGroupsEnabled(true).build());
+            Zone.builder().id("2").name("Chicago").networkType(NetworkType.ADVANCED).securityGroupsEnabled(true).build());
    }
 }

@@ -47,7 +47,7 @@ public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClien
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listConfigurations&apiKey=identity&signature=FUQCDbc4TH2S%2B7ExDgrOCqKI2bw%3D"))
+                  "command=listConfigurations&listAll=true&apiKey=identity&signature=%2BJ9mTuw%2BZXaumzMAJAXgZQaO2cc%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -74,7 +74,7 @@ public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClien
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listConfigurations&apiKey=identity&signature=FUQCDbc4TH2S%2B7ExDgrOCqKI2bw%3D"))
+                  "command=listConfigurations&listAll=true&apiKey=identity&signature=%2BJ9mTuw%2BZXaumzMAJAXgZQaO2cc%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")

@@ -62,14 +62,14 @@ public class ListSnapshotPoliciesOptions extends AccountInDomainOptions {
       /**
        * @param account lists snapshot policies for the specified account.
        */
-      public static ListSnapshotPoliciesOptions accountInDomain(String account, long domainId) {
+      public static ListSnapshotPoliciesOptions accountInDomain(String account, String domainId) {
          return (ListSnapshotPoliciesOptions) new ListSnapshotPoliciesOptions().accountInDomain(account, domainId);
       }
 
       /**
        * @param domainId the domain ID.
        */
-      public static ListSnapshotPoliciesOptions domainId(long domainId) {
+      public static ListSnapshotPoliciesOptions domainId(String domainId) {
          return (ListSnapshotPoliciesOptions) new ListSnapshotPoliciesOptions().domainId(domainId);
       }
 

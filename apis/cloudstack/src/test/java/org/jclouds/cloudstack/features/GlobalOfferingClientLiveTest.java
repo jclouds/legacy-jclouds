@@ -80,7 +80,7 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkServiceOffering(ServiceOffering offering) {
-      assertTrue(offering.getId() > 0);
+       assertTrue(offering.getId() != null);
       assertEquals(offering.getCpuNumber(), 2);
       assertEquals(offering.getCpuSpeed(), 1024);
       assertEquals(offering.getMemory(), 2048);

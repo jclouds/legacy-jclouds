@@ -54,12 +54,12 @@ public class CreatePortForwardingRulesForIP {
 
    private final CloudStackClient client;
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
-   private final LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
+   private final LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    public CreatePortForwardingRulesForIP(CloudStackClient client,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
-         LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
+         LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.client = checkNotNull(client, "client");
       this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
             "blockUntilJobCompletesAndReturnResult");
@@ -72,7 +72,7 @@ public class CreatePortForwardingRulesForIP {
    }
 
    public Set<IPForwardingRule> apply(PublicIPAddress ip, String protocol, Iterable<Integer> ports) {
-      checkState(ip.getVirtualMachineId() != -1,
+      checkState(ip.getVirtualMachineId() != null,
             "ip %s should be static NATed to a virtual machine before applying rules", ip);
       if (Iterables.size(ports) == 0)
          return ImmutableSet.<IPForwardingRule> of();

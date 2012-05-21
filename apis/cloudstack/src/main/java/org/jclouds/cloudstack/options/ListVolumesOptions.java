@@ -36,7 +36,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
     *
     * @param hostId hostId.
     */
-   public ListVolumesOptions hostId(long hostId) {
+   public ListVolumesOptions hostId(String hostId) {
       this.queryParameters.replaceValues("hostid", ImmutableSet.of(hostId + ""));
       return this;
    }
@@ -44,7 +44,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
    /**
     * @param id the ID of the volume
     */
-   public ListVolumesOptions id(long id) {
+   public ListVolumesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -77,7 +77,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
    /**
     * @param podId the pod id the disk volume belongs to
     */
-   public ListVolumesOptions podId(long podId) {
+   public ListVolumesOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
 
@@ -94,7 +94,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
    /**
     * @param virtualMachineId list volumes by id virtual machine.
     */
-   public ListVolumesOptions virtualMachineId(long virtualMachineId) {
+   public ListVolumesOptions virtualMachineId(String virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
 
@@ -103,7 +103,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
    /**
     * @param zoneId list volumes  by zoneId.
     */
-   public ListVolumesOptions zoneId(long zoneId) {
+   public ListVolumesOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
@@ -115,7 +115,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#accountInDomain
        */
-      public static ListVolumesOptions accountInDomain(String account, long domain) {
+      public static ListVolumesOptions accountInDomain(String account, String domain) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -123,7 +123,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#domainId
        */
-      public static ListVolumesOptions domainId(long id) {
+      public static ListVolumesOptions domainId(String id) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.domainId(id);
       }
@@ -131,7 +131,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#hostId
        */
-      public static ListVolumesOptions hostId(long id) {
+      public static ListVolumesOptions hostId(String id) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.hostId(id);
       }
@@ -139,7 +139,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#id
        */
-      public static ListVolumesOptions id(long id) {
+      public static ListVolumesOptions id(String id) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.id(id);
       }
@@ -172,7 +172,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#podId
        */
-      public static ListVolumesOptions podId(long id) {
+      public static ListVolumesOptions podId(String id) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.podId(id);
       }
@@ -186,9 +186,9 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       }
 
       /**
-       * @see ListVolumesOptions#virtualMachineId(long)
+       * @see ListVolumesOptions#virtualMachineId(String)
        */
-      public static ListVolumesOptions virtualMachineId(long virtualMachineId) {
+      public static ListVolumesOptions virtualMachineId(String virtualMachineId) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.virtualMachineId(virtualMachineId);
       }
@@ -196,7 +196,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#zoneId
        */
-      public static ListVolumesOptions zoneId(long id) {
+      public static ListVolumesOptions zoneId(String id) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.zoneId(id);
       }
@@ -206,7 +206,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListVolumesOptions accountInDomain(String account, long domain) {
+   public ListVolumesOptions accountInDomain(String account, String domain) {
       return ListVolumesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -214,7 +214,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListVolumesOptions domainId(long domainId) {
+   public ListVolumesOptions domainId(String domainId) {
       return ListVolumesOptions.class.cast(super.domainId(domainId));
    }
 }

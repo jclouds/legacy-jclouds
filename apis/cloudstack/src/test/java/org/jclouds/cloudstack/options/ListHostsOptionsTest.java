@@ -47,12 +47,12 @@ import com.google.common.collect.ImmutableList;
 public class ListHostsOptionsTest {
 
    public void testId() {
-      ListHostsOptions options = new ListHostsOptions().id(42L);
+      ListHostsOptions options = new ListHostsOptions().id("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListHostsOptions options = id(42L);
+      ListHostsOptions options = id("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("id"));
    }
 
@@ -67,12 +67,12 @@ public class ListHostsOptionsTest {
    }
 
    public void testClusterId() {
-      ListHostsOptions options = new ListHostsOptions().clusterId(42L);
+      ListHostsOptions options = new ListHostsOptions().clusterId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("clusterid"));
    }
 
    public void testClusterIdStatic() {
-      ListHostsOptions options = clusterId(42L);
+      ListHostsOptions options = clusterId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("clusterid"));
    }
 
@@ -107,7 +107,7 @@ public class ListHostsOptionsTest {
    }
 
    public void testPageSize() {
-      ListHostsOptions options = new ListHostsOptions().pageSize(42L);
+       ListHostsOptions options = new ListHostsOptions().pageSize(42L);
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("pagesize"));
    }
 
@@ -117,12 +117,12 @@ public class ListHostsOptionsTest {
    }
 
    public void testPodId() {
-      ListHostsOptions options = new ListHostsOptions().podId(42L);
+      ListHostsOptions options = new ListHostsOptions().podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      ListHostsOptions options = podId(42L);
+      ListHostsOptions options = podId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("podid"));
    }
 
@@ -147,22 +147,22 @@ public class ListHostsOptionsTest {
    }
 
    public void testVirtualMachineId() {
-      ListHostsOptions options = new ListHostsOptions().virtualMachineId(42L);
+      ListHostsOptions options = new ListHostsOptions().virtualMachineId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testVirtualMachineIdStatic() {
-      ListHostsOptions options = virtualMachineId(42L);
+      ListHostsOptions options = virtualMachineId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testZoneId() {
-      ListHostsOptions options = new ListHostsOptions().zoneId(42L);
+      ListHostsOptions options = new ListHostsOptions().zoneId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListHostsOptions options = zoneId(42L);
+      ListHostsOptions options = zoneId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("zoneid"));
    }
 

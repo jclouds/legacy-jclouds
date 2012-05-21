@@ -57,7 +57,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
                ListDiskOfferingsOptions.Builder.id(offering.getId())));
            assertEquals(offering, newDetails);
            assertEquals(offering, client.getOfferingClient().getDiskOffering(offering.getId()));
-           assert offering.getId() > 0 : offering;
+           assert offering.getId() != null : offering;
            assert offering.getName() != null : offering;
            assert offering.getCreated() != null : offering;
            assert offering.getDisplayText() != null : offering;
@@ -82,7 +82,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
                ListServiceOfferingsOptions.Builder.id(offering.getId())));
          assertEquals(offering, newDetails);
 
-         assert offering.getId() > 0 : offering;
+         assert offering.getId() != null : offering;
          assert offering.getName() != null : offering;
          assert offering.getDisplayText() != null : offering;
          assert offering.getCpuNumber() > 0 : offering;
@@ -103,7 +103,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
                ListNetworkOfferingsOptions.Builder.id(offering.getId())));
          assertEquals(offering, newDetails);
          assertEquals(offering, client.getOfferingClient().getNetworkOffering(offering.getId()));
-         assert offering.getId() > 0 : offering;
+         assert offering.getId() != null : offering;
          assert offering.getName() != null : offering;
          assert offering.getDisplayText() != null : offering;
          assert offering.getMaxConnections() == null || offering.getMaxConnections() > 0 : offering;

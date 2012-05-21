@@ -54,7 +54,7 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
    /**
     * @param id lists snapshot by snapshot ID
     */
-   public ListSnapshotsOptions id(long id) {
+   public ListSnapshotsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -102,7 +102,7 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
    /**
     * @param volumeId the ID of the disk volume
     */
-   public ListSnapshotsOptions volumeId(long volumeId) {
+   public ListSnapshotsOptions volumeId(String volumeId) {
       this.queryParameters.replaceValues("volumeid", ImmutableSet.of(volumeId + ""));
       return this;
    }
@@ -113,21 +113,21 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
        * @param account lists snapshot belonging to the specified account.
        * @param domainId The domain ID.
        */
-      public static ListSnapshotsOptions accountInDomain(String account, long domainId) {
+      public static ListSnapshotsOptions accountInDomain(String account, String domainId) {
          return (ListSnapshotsOptions) new ListSnapshotsOptions().accountInDomain(account, domainId);
       }
 
       /**
        * @param domainId the domain ID.
        */
-      public static ListSnapshotsOptions domainId(long domainId) {
+      public static ListSnapshotsOptions domainId(String domainId) {
          return (ListSnapshotsOptions) new ListSnapshotsOptions().domainId(domainId);
       }
 
       /**
        * @param id lists snapshot by snapshot ID
        */
-      public static ListSnapshotsOptions id(long id) {
+      public static ListSnapshotsOptions id(String id) {
          return new ListSnapshotsOptions().id(id);
       }
 
@@ -169,7 +169,7 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
       /**
        * @param volumeId the ID of the disk volume
        */
-      public static ListSnapshotsOptions volumeId(long volumeId) {
+      public static ListSnapshotsOptions volumeId(String volumeId) {
          return new ListSnapshotsOptions().volumeId(volumeId);
       }
    }

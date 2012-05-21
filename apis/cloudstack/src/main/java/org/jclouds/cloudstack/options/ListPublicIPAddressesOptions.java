@@ -36,7 +36,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
     * @param id
     *           lists ip address by id
     */
-   public ListPublicIPAddressesOptions id(long id) {
+   public ListPublicIPAddressesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -55,7 +55,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
     * @param networkId
     *           list ip addresss by networkId.
     */
-   public ListPublicIPAddressesOptions networkId(long networkId) {
+   public ListPublicIPAddressesOptions networkId(String networkId) {
       this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId + ""));
       return this;
 
@@ -65,7 +65,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
     * @param VLANId
     *           lists all public IP addresses by VLAN ID
     */
-   public ListPublicIPAddressesOptions VLANId(long VLANId) {
+   public ListPublicIPAddressesOptions VLANId(String VLANId) {
       this.queryParameters.replaceValues("vlanid", ImmutableSet.of(VLANId + ""));
       return this;
 
@@ -84,7 +84,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
     * @param zoneId
     *           lists all public IP addresses by Zone ID
     */
-   public ListPublicIPAddressesOptions zoneId(long zoneId) {
+   public ListPublicIPAddressesOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
@@ -104,7 +104,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       /**
        * @see ListPublicIPAddressesOptions#accountInDomain
        */
-      public static ListPublicIPAddressesOptions accountInDomain(String account, long domain) {
+      public static ListPublicIPAddressesOptions accountInDomain(String account, String domain) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -120,7 +120,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       /**
        * @see ListPublicIPAddressesOptions#domainId
        */
-      public static ListPublicIPAddressesOptions domainId(long id) {
+      public static ListPublicIPAddressesOptions domainId(String id) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.domainId(id);
       }
@@ -128,7 +128,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       /**
        * @see ListPublicIPAddressesOptions#id
        */
-      public static ListPublicIPAddressesOptions id(long id) {
+      public static ListPublicIPAddressesOptions id(String id) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.id(id);
       }
@@ -144,7 +144,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       /**
        * @see ListPublicIPAddressesOptions#networkId
        */
-      public static ListPublicIPAddressesOptions networkId(long id) {
+      public static ListPublicIPAddressesOptions networkId(String id) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.networkId(id);
       }
@@ -152,7 +152,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       /**
        * @see ListPublicIPAddressesOptions#VLANId
        */
-      public static ListPublicIPAddressesOptions VLANId(long id) {
+      public static ListPublicIPAddressesOptions VLANId(String id) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.VLANId(id);
       }
@@ -160,7 +160,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       /**
        * @see ListPublicIPAddressesOptions#zoneId
        */
-      public static ListPublicIPAddressesOptions zoneId(long id) {
+      public static ListPublicIPAddressesOptions zoneId(String id) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.zoneId(id);
       }
@@ -178,7 +178,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListPublicIPAddressesOptions accountInDomain(String account, long domain) {
+   public ListPublicIPAddressesOptions accountInDomain(String account, String domain) {
       return ListPublicIPAddressesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -186,7 +186,7 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListPublicIPAddressesOptions domainId(long domainId) {
+   public ListPublicIPAddressesOptions domainId(String domainId) {
       return ListPublicIPAddressesOptions.class.cast(super.domainId(domainId));
    }
 }

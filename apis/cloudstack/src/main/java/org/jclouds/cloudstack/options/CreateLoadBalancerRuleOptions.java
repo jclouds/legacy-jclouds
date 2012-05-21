@@ -64,7 +64,7 @@ public class CreateLoadBalancerRuleOptions extends AccountInDomainOptions {
    /**
     * @param zoneId the availability zone ID
     */
-   public CreateLoadBalancerRuleOptions zoneId(long zoneId) {
+   public CreateLoadBalancerRuleOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -98,7 +98,7 @@ public class CreateLoadBalancerRuleOptions extends AccountInDomainOptions {
       /**
        * @see CreateLoadBalancerRuleOptions#zoneId
        */
-      public static CreateLoadBalancerRuleOptions zoneId(long zoneId) {
+      public static CreateLoadBalancerRuleOptions zoneId(String zoneId) {
          CreateLoadBalancerRuleOptions options = new CreateLoadBalancerRuleOptions();
          return options.zoneId(zoneId);
       }
@@ -106,7 +106,7 @@ public class CreateLoadBalancerRuleOptions extends AccountInDomainOptions {
       /**
        * @see CreateLoadBalancerRuleOptions#accountInDomain
        */
-      public static CreateLoadBalancerRuleOptions accountInDomain(String account, long domain) {
+      public static CreateLoadBalancerRuleOptions accountInDomain(String account, String domain) {
          CreateLoadBalancerRuleOptions options = new CreateLoadBalancerRuleOptions();
          return options.accountInDomain(account, domain);
       }
@@ -114,7 +114,7 @@ public class CreateLoadBalancerRuleOptions extends AccountInDomainOptions {
       /**
        * @see CreateLoadBalancerRuleOptions#domainId
        */
-      public static CreateLoadBalancerRuleOptions domainId(long id) {
+      public static CreateLoadBalancerRuleOptions domainId(String id) {
          CreateLoadBalancerRuleOptions options = new CreateLoadBalancerRuleOptions();
          return options.domainId(id);
       }
@@ -124,7 +124,7 @@ public class CreateLoadBalancerRuleOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public CreateLoadBalancerRuleOptions accountInDomain(String account, long domain) {
+   public CreateLoadBalancerRuleOptions accountInDomain(String account, String domain) {
       return CreateLoadBalancerRuleOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -132,7 +132,7 @@ public class CreateLoadBalancerRuleOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public CreateLoadBalancerRuleOptions domainId(long domainId) {
+   public CreateLoadBalancerRuleOptions domainId(String domainId) {
       return CreateLoadBalancerRuleOptions.class.cast(super.domainId(domainId));
    }
 }

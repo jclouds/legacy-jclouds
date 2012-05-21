@@ -63,22 +63,22 @@ public class ListNetworkOfferingsOptionsTest {
    }
 
    public void testId() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id(6);
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListNetworkOfferingsOptions options = id(6);
+      ListNetworkOfferingsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testZoneId() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().zoneId(6);
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListNetworkOfferingsOptions options = zoneId(6);
+      ListNetworkOfferingsOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
@@ -114,12 +114,12 @@ public class ListNetworkOfferingsOptionsTest {
    }
 
    public void testName() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id(6);
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testNameStatic() {
-      ListNetworkOfferingsOptions options = id(6);
+      ListNetworkOfferingsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 

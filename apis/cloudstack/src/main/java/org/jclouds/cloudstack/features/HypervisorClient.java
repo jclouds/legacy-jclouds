@@ -47,6 +47,6 @@ public interface HypervisorClient {
     *           the zone id for listing hypervisors.
     * @return hypervisors in the zone, or empty set, if no hypervisors are found
     */
-   Set<String> listHypervisorsInZone(long zoneId);
+   Set<String> listHypervisorsInZone(String zoneId);
 
 }

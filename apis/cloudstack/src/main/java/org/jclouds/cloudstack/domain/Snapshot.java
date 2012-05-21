@@ -37,25 +37,25 @@ public class Snapshot implements Comparable<Snapshot> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String account;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private Interval interval;
-      private long jobId;
+      private String jobId;
       private String jobStatus;
       private String name;
       private Type snapshotType;
       private State state;
-      private long volumeId;
+      private String volumeId;
       private String volumeName;
       private Volume.Type volumeType;
 
       /**
        * @param id ID of the snapshot
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -87,7 +87,7 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param domainId the domain ID of the snapshot's account
        */
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -103,7 +103,7 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param jobId the job ID associated with the snapshot. This is only displayed if the snapshot listed is part of a currently running asynchronous job.
        */
-      public Builder jobId(long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -143,7 +143,7 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param volumeId ID of the disk volume
        */
-      public Builder volumeId(long volumeId) {
+      public Builder volumeId(String volumeId) {
          this.volumeId = volumeId;
          return this;
       }
@@ -215,16 +215,16 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("intervaltype")
    private Interval interval;
    @SerializedName("jobid")
-   private long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    private String jobStatus;
    private String name;
@@ -232,14 +232,14 @@ public class Snapshot implements Comparable<Snapshot> {
    private Type snapshotType;
    private State state;
    @SerializedName("volumeid")
-   private long volumeId;
+   private String volumeId;
    @SerializedName("volumename")
    private String volumeName;
    @SerializedName("volumetype")
    private Volume.Type volumeType;
 
-   public Snapshot(long id, String account, Date created, String domain, long domainId, Interval interval, long jobId,
-         String jobStatus, String name, Type snapshotType, State state, long volumeId, String volumeName, Volume.Type volumeType) {
+   public Snapshot(String id, String account, Date created, String domain, String domainId, Interval interval, String jobId,
+         String jobStatus, String name, Type snapshotType, State state, String volumeId, String volumeName, Volume.Type volumeType) {
       this.id = id;
       this.account = account;
       this.created = created;
@@ -265,7 +265,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return ID of the snapshot
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -293,7 +293,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return the domain ID of the snapshot's account
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -307,7 +307,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return the job ID associated with the snapshot. This is only displayed if the snapshot listed is part of a currently running asynchronous job.
     */
-   public long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -342,7 +342,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return ID of the disk volume
     */
-   public long getVolumeId() {
+   public String getVolumeId() {
       return volumeId;
    }
 
@@ -414,6 +414,6 @@ public class Snapshot implements Comparable<Snapshot> {
 
    @Override
    public int compareTo(Snapshot other) {
-      return new Long(this.id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 }

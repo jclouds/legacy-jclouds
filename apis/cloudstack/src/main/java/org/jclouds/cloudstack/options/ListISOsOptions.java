@@ -82,8 +82,8 @@ public class ListISOsOptions extends AccountInDomainOptions {
    /**
     * @param id list all isos by id
     */
-   public ListISOsOptions id(long id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(Long.toString(id)));
+   public ListISOsOptions id(String id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id));
       return this;
    }
 
@@ -146,8 +146,8 @@ public class ListISOsOptions extends AccountInDomainOptions {
    /**
     * @param zoneId the ID of the zone
     */
-   public ListISOsOptions zoneId(long zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(Long.toString(zoneId)));
+   public ListISOsOptions zoneId(String zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId));
       return this;
    }
 
@@ -155,7 +155,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
       /**
        * @param account the account of the ISO file. Must be used with the domainId parameter.
        */
-      public static ListISOsOptions accountInDomain(String account, long domainId) {
+      public static ListISOsOptions accountInDomain(String account, String domainId) {
          return (ListISOsOptions) new ListISOsOptions().accountInDomain(account, domainId);
       }
 
@@ -176,7 +176,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
       /**
        * @param domainId lists all available ISO files by ID of a domain. If used with the account parameter, lists all available ISO files for the account in the ID of a domain.
        */
-      public static ListISOsOptions domainId(long domainId) {
+      public static ListISOsOptions domainId(String domainId) {
          return (ListISOsOptions) new ListISOsOptions().domainId(domainId);
       }
 
@@ -190,7 +190,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
       /**
        * @param id list all isos by id
        */
-      public static ListISOsOptions id(long id) {
+      public static ListISOsOptions id(String id) {
          return new ListISOsOptions().id(id);
       }
 
@@ -246,7 +246,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
       /**
        * @param zoneId the ID of the zone
        */
-      public static ListISOsOptions zoneId(long zoneId) {
+      public static ListISOsOptions zoneId(String zoneId) {
          return new ListISOsOptions().zoneId(zoneId);
       }
    }

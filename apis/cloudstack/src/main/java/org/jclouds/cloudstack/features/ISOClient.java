@@ -52,7 +52,7 @@ public interface ISOClient {
     * @param vmId the ID of the virtual machine
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse attachISO(long isoId, long vmId);
+   AsyncCreateResponse attachISO(String isoId, String vmId);
 
    /**
     * Detaches any ISO file (if any) currently attached to a virtual machine.
@@ -60,7 +60,7 @@ public interface ISOClient {
     * @param vmId The ID of the virtual machine
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse detachISO(long vmId);
+   AsyncCreateResponse detachISO(String vmId);
 
    /**
     * Gets information about an ISO by its ID.
@@ -68,7 +68,7 @@ public interface ISOClient {
     * @param id the ID of the ISO file
     * @return the ISO object matching the ID
     */
-   ISO getISO(long id);
+   ISO getISO(String id);
 
    /**
     * Lists all available ISO files.
@@ -88,7 +88,7 @@ public interface ISOClient {
     * @param options optional arguments
     * @return the newly-added ISO
     */
-   ISO registerISO(String name, String displayText, String url, long zoneId, RegisterISOOptions... options);
+   ISO registerISO(String name, String displayText, String url, String zoneId, RegisterISOOptions... options);
 
    /**
     * 
@@ -97,7 +97,7 @@ public interface ISOClient {
     * @param options optional arguments
     * @return the ISO object matching the ID
     */
-   ISO updateISO(long id, UpdateISOOptions... options);
+   ISO updateISO(String id, UpdateISOOptions... options);
 
    /**
     * Deletes an ISO file.
@@ -106,7 +106,7 @@ public interface ISOClient {
     * @param options optional arguments
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse deleteISO(long id, DeleteISOOptions... options);
+   AsyncCreateResponse deleteISO(String id, DeleteISOOptions... options);
 
    /**
     * Copies a template from one zone to another.
@@ -116,7 +116,7 @@ public interface ISOClient {
     * @param destZoneId ID of the zone the template is being copied to.
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse copyISO(long isoId, long sourceZoneId, long destZoneId);
+   AsyncCreateResponse copyISO(String isoId, String sourceZoneId, String destZoneId);
 
    /**
     * Updates iso permissions
@@ -125,7 +125,7 @@ public interface ISOClient {
     * @param options optional arguments
     * @return 
     */
-   void updateISOPermissions(long id, UpdateISOPermissionsOptions... options);
+   void updateISOPermissions(String id, UpdateISOPermissionsOptions... options);
 
    /**
     * List template visibility and all accounts that have permissions to view this template.
@@ -134,7 +134,7 @@ public interface ISOClient {
     * @param options optional arguments
     * @return A set of the permissions on this ISO
     */
-   ISOPermissions listISOPermissions(long id, AccountInDomainOptions... options);
+   ISOPermissions listISOPermissions(String id, AccountInDomainOptions... options);
 
    /**
     * Extracts an ISO
@@ -145,6 +145,6 @@ public interface ISOClient {
     * @param options optional arguments
     * @return an asynchronous job response.
     */
-   AsyncCreateResponse extractISO(long id, ExtractMode mode, long zoneId, ExtractISOOptions... options);
+   AsyncCreateResponse extractISO(String id, ExtractMode mode, String zoneId, ExtractISOOptions... options);
 
 }

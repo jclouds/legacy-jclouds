@@ -60,7 +60,7 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testUpdateAccount() throws Exception {
-      Method method = GlobalAccountAsyncClient.class.getMethod("updateAccount", String.class, long.class,
+      Method method = GlobalAccountAsyncClient.class.getMethod("updateAccount", String.class, String.class,
          String.class, UpdateAccountOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, "account", 42L, "new-account-name");
 
@@ -78,7 +78,7 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testDeleteAccount() throws Exception {
-      Method method = GlobalAccountAsyncClient.class.getMethod("deleteAccount", long.class);
+      Method method = GlobalAccountAsyncClient.class.getMethod("deleteAccount", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 42L);
 
       assertRequestLineEquals(httpRequest,

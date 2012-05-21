@@ -121,12 +121,12 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
       }
    }
 
-   public static long defaultTemplateOrPreferredInZone(Long defaultTemplate, CloudStackClient client, long zoneId) {
-      long templateId = defaultTemplate != null ? defaultTemplate : getTemplateForZone(client, zoneId);
+   public static String defaultTemplateOrPreferredInZone(String defaultTemplate, CloudStackClient client, String zoneId) {
+      String templateId = defaultTemplate != null ? defaultTemplate : getTemplateForZone(client, zoneId);
       return templateId;
    }
 
-   public static long getTemplateForZone(CloudStackClient client, long zoneId) {
+   public static String getTemplateForZone(CloudStackClient client, String zoneId) {
       // TODO enum, as this is way too easy to mess up.
       Set<String> acceptableCategories = ImmutableSet.of("Ubuntu", "CentOS");
 
@@ -144,7 +144,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
       if (Iterables.size(templates) == 0) {
          throw new NoSuchElementException(templatePredicate.toString());
       }
-      long templateId = get(templates, 0).getId();
+      String templateId = get(templates, 0).getId();
       return templateId;
    }
 
@@ -157,8 +157,8 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    protected User user;
 
    protected Predicate<HostAndPort> socketTester;
-   protected RetryablePredicate<Long> jobComplete;
-   protected RetryablePredicate<Long> adminJobComplete;
+   protected RetryablePredicate<String> jobComplete;
+   protected RetryablePredicate<String> adminJobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> adminVirtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
@@ -226,9 +226,9 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketTester);
-      jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
+      jobComplete = new RetryablePredicate<String>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
       injector.injectMembers(jobComplete);
-      adminJobComplete = new RetryablePredicate<Long>(new JobComplete(adminClient), 1200, 1, 5, TimeUnit.SECONDS);
+      adminJobComplete = new RetryablePredicate<String>(new JobComplete(adminClient), 1200, 1, 5, TimeUnit.SECONDS);
       injector.injectMembers(adminJobComplete);
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
             TimeUnit.SECONDS);
