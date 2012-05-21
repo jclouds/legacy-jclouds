@@ -48,6 +48,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.TemplateBuilderSpec;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -968,6 +969,16 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    public TemplateBuilder os64Bit(boolean is64Bit) {
       this.os64Bit = is64Bit;
       return this;
+   }
+
+   @Override
+   public TemplateBuilder from(TemplateBuilderSpec spec) {
+      return spec.copyTo(this, options != null ? options : optionsProvider.get());
+   }
+
+   @Override
+   public TemplateBuilder from(String spec) {
+      return from(TemplateBuilderSpec.parse(spec));
    }
 
 }

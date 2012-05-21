@@ -18,8 +18,10 @@
  */
 package org.jclouds.gogrid.location;
 
-import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -31,6 +33,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
@@ -44,10 +47,11 @@ public class GoGridDefaultLocationSupplier implements ImplicitLocationSupplier {
    private final String defaultDC;
 
    @Inject
-   GoGridDefaultLocationSupplier(@Memoized Supplier<Set<? extends Location>> locations,
-            @Named(PROPERTY_GOGRID_DEFAULT_DC) String defaultDC) {
+   GoGridDefaultLocationSupplier(@Memoized Supplier<Set<? extends Location>> locations, @Named(TEMPLATE) String template) {
       this.locations = locations;
-      this.defaultDC = defaultDC;
+      Map<String, String> map = Splitter.on(',').trimResults().withKeyValueSeparator("=").split(template);
+      //TODO: move to real ImplicitLocationSupplier
+      this.defaultDC = checkNotNull(map.get("locationId"), "locationId not in % value: %s", TEMPLATE, template);
    }
 
    @Override

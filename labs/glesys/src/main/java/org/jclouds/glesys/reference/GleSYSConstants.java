@@ -13,9 +13,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
  * @author Adam Lowe
  */
 public class GleSYSConstants {
-   public static final String PROPERTY_GLESYS_DEFAULT_DC = "jclouds.glesys.defaultdc";
-   public static final String PROPERTY_GLESYS_MIN_DISK = "jclouds.glesys.mindisk";
-   public static final String PROPERTY_GLESYS_MIN_RAM = "jclouds.glesys.minram";
 
    public static final Pattern JCLOUDS_ID_TO_PLATFORM = Pattern.compile("([a-zA-Z]+) .*");
    

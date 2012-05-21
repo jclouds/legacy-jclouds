@@ -18,7 +18,7 @@
  */
 package org.jclouds.glesys;
 
-import static org.jclouds.glesys.reference.GleSYSConstants.PROPERTY_GLESYS_DEFAULT_DC;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
@@ -62,7 +62,7 @@ public class GleSYSProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_ZONE + ".Falkenberg." + ISO3166_CODES, "SE-N");
       properties.setProperty(PROPERTY_ZONE + ".New York City." + ISO3166_CODES, "US-NY");
       properties.setProperty(PROPERTY_ZONE + ".Stockholm." + ISO3166_CODES, "SE-AB");
-      properties.setProperty(PROPERTY_GLESYS_DEFAULT_DC, "Falkenberg");
+      properties.setProperty(TEMPLATE, "minRam=512,osFamily=UBUNTU,hypervisorMatches=OpenVZ,osVersionMatches=1[012].[01][04],os64Bit=true,locationId=Falkenberg");
       return properties;
    }
 

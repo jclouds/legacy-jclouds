@@ -19,7 +19,6 @@
 package org.jclouds.aws.ec2.compute.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +41,6 @@ import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
@@ -164,11 +162,6 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    protected Supplier<LoadingCache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
             final RegionAndNameToImageSupplier supplier) {
       return supplier;
-   }
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(AMZN_LINUX).os64Bit(true);
    }
 
    /**

@@ -24,7 +24,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
 import java.io.File;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -50,12 +49,8 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.IMachineToVmSpec;
-import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
-import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
-import org.jclouds.virtualbox.predicates.DefaultImagePredicate;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
@@ -139,20 +134,18 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       super.setupContext();
       view.utils().injector().injectMembers(this);
 
-      YamlImage image = getDefaultImage();
-
-      imageId = image.id;
-      masterVmName = VIRTUALBOX_IMAGE_PREFIX + image.id;
-      isosDir = workingDir + File.separator + "isos";
-
-      hostVersion = Iterables.get(Splitter.on('r').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
-      operatingSystemIso = String.format("%s/%s.iso", isosDir, image.name);
-      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
-
       // try and get a master from the cache, this will initialize the config/download isos and
       // prepare everything IF a master is not available, subsequent calls should be pretty fast
       Template template = view.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
+
+      imageId = template.getImage().getId();
+      masterVmName = VIRTUALBOX_IMAGE_PREFIX + imageId;
+      isosDir = workingDir + File.separator + "isos";
+
+      hostVersion = Iterables.get(Splitter.on('r').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
+      operatingSystemIso = String.format("%s/%s.iso", isosDir, template.getImage().getName());
+      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
    }
 
    protected void undoVm(String vmNameOrId) {
@@ -213,12 +206,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       return MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(networkSpec).build();
    }
 
-   public static YamlImage getDefaultImage() {
-      Map<Image, YamlImage> images = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig(
-               "/default-images.yaml")).get();
-      return images.get(Iterables.getOnlyElement(Iterables.filter(images.keySet(), new DefaultImagePredicate())));
-   }
-   
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();

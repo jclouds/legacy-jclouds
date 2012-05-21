@@ -18,6 +18,7 @@
  */
 package org.jclouds.softlayer;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY;
@@ -83,7 +84,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
       prices.add("420"); // Unlimited SSL VPN Users & 1 PPTP VPN User per account: categoryCode:
                          // vpn_management
       properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES, Joiner.on(',').join(prices.build()));
-
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,osDescriptionMatches=.*Minimal Install.*");
       return properties;
    }
 

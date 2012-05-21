@@ -43,7 +43,6 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
@@ -59,7 +58,6 @@ import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -69,11 +67,6 @@ import com.google.inject.TypeLiteral;
  */
 public class CloudSigmaComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<ServerInfo, Hardware, DriveInfo, Location> {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU).imageNameMatches(".*[Aa]utomated SSH Access.*").os64Bit(true);
-   }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override

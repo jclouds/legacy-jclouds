@@ -18,6 +18,8 @@
  */
 package org.jclouds.savvis.vpdc;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -53,6 +55,7 @@ public class VPDCProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
+      properties.setProperty(TEMPLATE, "osFamily=RHEL,os64Bit=true");
       return properties;
    }
 

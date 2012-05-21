@@ -22,16 +22,24 @@ import static junit.framework.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.YamlImage;
+import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
+import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
 import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
+
 /**
- * Tests that jetty is able to serve the preseed.cfg from the provided yaml image. This test is here
- * to have access to the defaultProperties() method in {@link VirtualBoxPropertiesBuilder}.
+ * Tests that jetty is able to serve the preseed.cfg from the provided yaml
+ * image. This test is here to have access to the defaultProperties() method in
+ * {@link VirtualBoxPropertiesBuilder}.
  * 
  * @author dralves
  * 
@@ -49,12 +57,18 @@ public class PreseedCfgServerTest {
 
       PreseedCfgServer starter = new PreseedCfgServer();
 
-      starter.start(preconfigurationUrl, BaseVirtualBoxClientLiveTest.getDefaultImage().preseed_cfg);
+      starter.start(preconfigurationUrl, getDefaultImage().preseed_cfg);
 
       String preseedFileFromJetty = IOUtils.toString(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
-      String preseedFileFromFile = BaseVirtualBoxClientLiveTest.getDefaultImage().preseed_cfg + "\n";
+      String preseedFileFromFile = getDefaultImage().preseed_cfg + "\n";
       assertEquals(preseedFileFromFile, preseedFileFromJetty);
 
       starter.stop();
+   }
+
+   public static YamlImage getDefaultImage() {
+      Map<Image, YamlImage> images = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig(
+            "/default-images.yaml")).get();
+      return Iterables.get(images.values(), 0);
    }
 }

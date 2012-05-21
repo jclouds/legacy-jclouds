@@ -18,8 +18,7 @@
  */
 package org.jclouds.virtualbox;
 
-import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_AUTHENTICATE_SUDO;
-import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_LOGIN_USER;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
@@ -65,10 +64,6 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = BaseApiMetadata.defaultProperties();
       
-      properties.put(IMAGE_LOGIN_USER, "toor:password");
-      properties.put(IMAGE_AUTHENTICATE_SUDO, "true");
-      
-
       properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
                + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "
                + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + "HOSTNAME "
@@ -86,6 +81,7 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
       properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
 
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232/preseed.cfg");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=11.10,os64Bit=true,osArchMatches=x86,loginUser=toor:password,authenticateSudo=true");
       return properties;
    }
 

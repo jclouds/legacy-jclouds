@@ -59,6 +59,7 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
             case UBUNTU:
                return input.version.equals("")
                      || input.version.equals("10.04")
+                     || input.version.equals("12.04")
                      || ((input.version.equals("8.04") || input.version.equals("11.04") || input.version
                            .equals("10.10")) && input.is64Bit);
             case DEBIAN:
@@ -82,8 +83,8 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = view.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 11.04 64-bit");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
+      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 12.04 LTS 64-bit");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

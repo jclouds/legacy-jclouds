@@ -20,6 +20,7 @@ package org.jclouds.compute.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_ID;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
@@ -174,17 +175,20 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplateOptionallyFromProperties(Injector injector, TemplateBuilder template,
          @Provider String provider, ValueOfConfigurationKeyOrNull config) {
-      template = provideTemplate(injector, template);
+      String templateString = config.apply(provider + ".template");
+      if (templateString == null)
+         templateString = config.apply(TEMPLATE);
+      if (templateString != null) {
+         template.from(templateString);
+      } else {
+         template.osFamily(UBUNTU).osVersionMatches("1[012].[01][04]").os64Bit(true);
+      }
       String imageId = config.apply(provider + ".image-id");
       if (imageId == null)
          imageId = config.apply(IMAGE_ID);
       if (imageId != null)
          template.imageId(imageId);
       return template;
-   }
-
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("1[012].[01][04]").os64Bit(true);
    }
    
    @Provides

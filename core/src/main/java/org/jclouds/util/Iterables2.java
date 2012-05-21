@@ -18,7 +18,7 @@
  */
 package org.jclouds.util;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * General utilities used in jclouds code for {@link Iterable Iterables}.
@@ -34,7 +34,8 @@ public class Iterables2 {
     * @return concrete-typed copy of the source
     */
    public static <T> Iterable<T> concreteCopy(Iterable<? extends T> unboundedValues) {
-      return ImmutableSortedSet.copyOf(unboundedValues);
+      // Please do not attempt to sort, as this is wasteful
+      return ImmutableSet.copyOf(unboundedValues);
    }
    
 }

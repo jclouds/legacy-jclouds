@@ -34,8 +34,6 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.AuthorizationException;
@@ -59,7 +57,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -86,11 +83,6 @@ public class SoftLayerComputeServiceContextModule extends
       bind(TemplateOptions.class).to(SoftLayerTemplateOptions.class);
       // to have the compute service adapter override default locations
       install(new LocationsFromComputeServiceAdapterModule<VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter>(){});
-   }
-
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true).osDescriptionMatches(
-               ".*Minimal Install.*");
    }
 
    /**

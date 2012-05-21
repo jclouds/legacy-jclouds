@@ -19,10 +19,6 @@
 
 package org.jclouds.virtualbox.config;
 
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_ARCH;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_OS;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_VERSION;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Map;
@@ -32,14 +28,13 @@ import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -171,12 +166,6 @@ public class VirtualBoxComputeServiceContextModule extends
    @Singleton
    protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
       return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning, 500l, TimeUnit.MILLISECONDS);
-   }
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(VIRTUALBOX_DEFAULT_IMAGE_OS).osVersionMatches(VIRTUALBOX_DEFAULT_IMAGE_VERSION)
-               .osArchMatches(VIRTUALBOX_DEFAULT_IMAGE_ARCH);
    }
 
    @Override

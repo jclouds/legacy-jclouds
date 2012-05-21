@@ -18,6 +18,7 @@
  */
 package org.jclouds.hpcloud.compute;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
@@ -70,6 +71,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(CREDENTIAL_TYPE, "apiAccessKeyCredentials");
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,locationId=az-2.region-a.geo-1");
       return properties;
    }
    

@@ -18,6 +18,7 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.net.URI;
@@ -62,6 +63,7 @@ public class StratoGenVCloudMyCloudProviderMetadata extends BaseProviderMetadata
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "Direct Internet");
+      properties.setProperty(TEMPLATE, "imageNameMatches=Ubuntu server 11.04 64bit no GUI (base)");
       return properties;
    }
    

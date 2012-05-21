@@ -18,16 +18,11 @@
  */
 package org.jclouds.trmk.ecloud.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.trmk.ecloud.compute.functions.TerremarkECloudParseOsFromVAppTemplateName;
 import org.jclouds.trmk.ecloud.suppliers.TerremarkECloudInternetServiceAndPublicIpAddressSupplier;
 import org.jclouds.trmk.vcloud_0_8.compute.config.TerremarkVCloudComputeServiceContextModule;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ParseOsFromVAppTemplateName;
 import org.jclouds.trmk.vcloud_0_8.suppliers.InternetServiceAndPublicIpAddressSupplier;
-
-import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
@@ -40,11 +35,6 @@ public class TerremarkECloudComputeServiceContextModule extends TerremarkVCloudC
                TerremarkECloudInternetServiceAndPublicIpAddressSupplier.class);
       bind(ParseOsFromVAppTemplateName.class).to(TerremarkECloudParseOsFromVAppTemplateName.class);
       super.configure();
-   }
-   
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true);
    }
 
 }
