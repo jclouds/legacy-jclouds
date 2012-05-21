@@ -182,7 +182,7 @@ END_OF_JCLOUDS_SCRIPT
 		%wheel ALL = (ALL) NOPASSWD:ALL
 	END_OF_JCLOUDS_FILE
 	chmod 0440 /etc/sudoers
-	mkdir -p /home/users
+	mkdir -p /home/users/defaultAdminUsername
 	groupadd -f wheel
 	useradd -s /bin/bash -g wheel -m  -d /home/users/defaultAdminUsername -p 'crypt(randompassword)' defaultAdminUsername
 	mkdir -p /home/users/defaultAdminUsername/.ssh

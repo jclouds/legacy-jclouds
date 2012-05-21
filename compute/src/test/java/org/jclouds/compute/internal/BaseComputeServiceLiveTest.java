@@ -244,9 +244,9 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          checkNodes(nodes, group, "runScriptWithCreds");
 
          // test adding AdminAccess later changes the default boot user, in this
-         // case to foo
+         // case to foo, with home dir /over/ridden/foo
          ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), AdminAccess.builder()
-               .adminUsername("foo").build(), nameTask("adminUpdate"));
+               .adminUsername("foo").adminHome("/over/ridden/foo").build(), nameTask("adminUpdate"));
 
          response = future.get(3, TimeUnit.MINUTES);
 

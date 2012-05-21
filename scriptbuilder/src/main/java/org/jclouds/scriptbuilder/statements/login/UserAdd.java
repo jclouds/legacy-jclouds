@@ -60,6 +60,7 @@ public class UserAdd implements Statement {
 
    public static class Builder {
       private String defaultHome = "/home/users";
+      private String home;
       private String login;
       private String password;
       private String RSAPrivateKey;
@@ -67,6 +68,17 @@ public class UserAdd implements Statement {
       private List<String> authorizeRSAPublicKeys = Lists.newArrayList();
       private String shell = "/bin/bash";
 
+      /**
+       * See --home in `man useradd`. 
+       */
+      public UserAdd.Builder home(String home) {
+         this.home = home;
+         return this;
+      }
+
+      /**
+       * See --base-dir in `man useradd`. 
+       */
       public UserAdd.Builder defaultHome(String defaultHome) {
          this.defaultHome = defaultHome;
          return this;
@@ -115,22 +127,29 @@ public class UserAdd implements Statement {
       }
 
       public UserAdd build() {
-         return new UserAdd(login, groups, password, RSAPrivateKey, authorizeRSAPublicKeys, defaultHome, shell);
+         return new UserAdd(login, groups, password, RSAPrivateKey, authorizeRSAPublicKeys, home, defaultHome, shell);
       }
    }
 
    public UserAdd(String login, List<String> groups, @Nullable String password, @Nullable String installRSAPrivateKey,
          List<String> authorizeRSAPublicKeys, String defaultHome, String shell) {
+      this(login, groups, password, installRSAPrivateKey, authorizeRSAPublicKeys, null, defaultHome, shell);
+   }
+   
+   public UserAdd(String login, List<String> groups, @Nullable String password, @Nullable String installRSAPrivateKey,
+         List<String> authorizeRSAPublicKeys, @Nullable String home, String defaultHome, String shell) {
       this.login = checkNotNull(login, "login");
       this.password = password;
       this.groups = ImmutableList.copyOf(checkNotNull(groups, "groups"));
       this.installRSAPrivateKey = installRSAPrivateKey;
       this.authorizeRSAPublicKeys = ImmutableList
             .copyOf(checkNotNull(authorizeRSAPublicKeys, "authorizeRSAPublicKeys"));
+      this.home = home;
       this.defaultHome = checkNotNull(defaultHome, "defaultHome");
       this.shell = checkNotNull(shell, "shell");
    }
 
+   private final String home;
    private final String defaultHome;
    private final String login;
    private final List<String> groups;
@@ -159,10 +178,10 @@ public class UserAdd implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      String homeDir = defaultHome + "{fs}" + login;
+      String homeDir = (home != null) ? home : (defaultHome + "{fs}" + login);
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       // useradd cannot create the default homedir
-      statements.add(Statements.exec("{md} " + defaultHome));
+      statements.add(Statements.exec("{md} " + homeDir));
 
       ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.builder();
       userAddOptions.put("-s", shell);

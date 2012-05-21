@@ -109,6 +109,7 @@ public class AdminAccess implements Statement {
       }
 
       private String adminUsername;
+      private String adminHome;
       private String adminPublicKey;
       private File adminPublicKeyFile;
       private String adminPrivateKey;
@@ -123,6 +124,11 @@ public class AdminAccess implements Statement {
 
       public AdminAccess.Builder adminUsername(String adminUsername) {
          this.adminUsername = adminUsername;
+         return this;
+      }
+
+      public AdminAccess.Builder adminHome(String adminHome) {
+         this.adminHome = adminHome;
          return this;
       }
 
@@ -197,8 +203,8 @@ public class AdminAccess implements Statement {
             String adminPrivateKey = this.adminPrivateKey;
             if (adminPrivateKey == null && adminPrivateKeyFile != null)
                adminPrivateKey = Files.toString(adminPrivateKeyFile, UTF_8);
-            return new Config(adminUsername, adminPublicKey, adminPrivateKey, adminPassword, loginPassword, lockSsh,
-                     grantSudoToAdminUser, authorizeAdminPublicKey, installAdminPrivateKey, resetLoginPassword,
+            return new Config(adminUsername, adminHome, adminPublicKey, adminPrivateKey, adminPassword, loginPassword, 
+                     lockSsh, grantSudoToAdminUser, authorizeAdminPublicKey, installAdminPrivateKey, resetLoginPassword,
                      cryptFunction);
          } catch (IOException e) {
             throw Throwables.propagate(e);
@@ -208,6 +214,7 @@ public class AdminAccess implements Statement {
 
    protected static class Config {
       private final String adminUsername;
+      private final String adminHome;
       private final String adminPublicKey;
       private final String adminPrivateKey;
       private final String adminPassword;
@@ -220,11 +227,12 @@ public class AdminAccess implements Statement {
       private final Function<String, String> cryptFunction;
       private final Credentials adminCredentials;
 
-      protected Config(@Nullable String adminUsername, @Nullable String adminPublicKey,
+      protected Config(@Nullable String adminUsername, @Nullable String adminHome, @Nullable String adminPublicKey,
                @Nullable String adminPrivateKey, @Nullable String adminPassword, @Nullable String loginPassword,
                boolean lockSsh, boolean grantSudoToAdminUser, boolean authorizeAdminPublicKey,
                boolean installAdminPrivateKey, boolean resetLoginPassword, Function<String, String> cryptFunction) {
          this.adminUsername = adminUsername;
+         this.adminHome = adminHome;
          this.adminPublicKey = adminPublicKey;
          this.adminPrivateKey = adminPrivateKey;
          this.adminPassword = adminPassword;
@@ -243,6 +251,10 @@ public class AdminAccess implements Statement {
 
       public String getAdminUsername() {
          return adminUsername;
+      }
+
+      public String getAdminHome() {
+         return adminHome;
       }
 
       public String getAdminPublicKey() {
@@ -324,6 +336,7 @@ public class AdminAccess implements Statement {
       Builder builder = AdminAccess.builder(configuration.cryptFunction());
       builder.adminUsername(config.getAdminUsername() != null ? config.getAdminUsername() : configuration
                .defaultAdminUsername().get());
+      builder.adminHome(config.getAdminHome());
       builder.adminPassword(config.getAdminPassword() != null ? config.getAdminPassword() : configuration
                .passwordGenerator().get());
       Map<String, String> adminSshKeys = (config.getAdminPublicKey() != null && config.getAdminPrivateKey() != null) ? ImmutableMap
@@ -363,6 +376,8 @@ public class AdminAccess implements Statement {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       UserAdd.Builder userBuilder = UserAdd.builder();
       userBuilder.login(config.getAdminUsername());
+      if (config.getAdminHome() != null)
+         userBuilder.home(config.getAdminHome());
       if (config.shouldAuthorizeAdminPublicKey())
          userBuilder.authorizeRSAPublicKey(config.getAdminPublicKey());
       userBuilder.password(config.getAdminPassword());
