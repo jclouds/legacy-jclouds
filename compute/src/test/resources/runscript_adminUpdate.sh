@@ -89,15 +89,15 @@ END_OF_JCLOUDS_SCRIPT
 		%wheel ALL = (ALL) NOPASSWD:ALL
 	END_OF_JCLOUDS_FILE
 	chmod 0440 /etc/sudoers
-	mkdir -p /home/users
+	mkdir -p /over/ridden/foo
 	groupadd -f wheel
-	useradd -s /bin/bash -g wheel -m  -d /home/users/foo -p 'crypt(randompassword)' foo
-	mkdir -p /home/users/foo/.ssh
-	cat >> /home/users/foo/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'
+	useradd -s /bin/bash -g wheel -m  -d /over/ridden/foo -p 'crypt(randompassword)' foo
+	mkdir -p /over/ridden/foo/.ssh
+	cat >> /over/ridden/foo/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'
 		publicKey
 	END_OF_JCLOUDS_FILE
-	chmod 600 /home/users/foo/.ssh/authorized_keys
-	chown -R foo /home/users/foo
+	chmod 600 /over/ridden/foo/.ssh/authorized_keys
+	chown -R foo /over/ridden/foo
 	exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
 	PermitRootLogin no
 	" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
