@@ -66,7 +66,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -222,7 +221,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
          adminClient = globalAdminContext.getApi();
       }
 
-      injector = Guice.createInjector(setupModules());
+      injector = cloudStackContext.utils().injector();
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketTester);
