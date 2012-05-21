@@ -152,7 +152,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       String serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
 
-      System.out.printf("serviceOfferingId %d, templateId %d, zoneId %d, options %s%n", serviceOfferingId, templateId,
+      System.out.printf("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,
             zoneId, options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
             templateId, options);
