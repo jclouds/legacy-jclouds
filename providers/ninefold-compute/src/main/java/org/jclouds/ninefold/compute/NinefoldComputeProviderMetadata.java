@@ -1,5 +1,7 @@
 package org.jclouds.ninefold.compute;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -36,9 +38,7 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty("ninefold-compute.image-id", "1215");
-      properties.setProperty("ninefold-compute.image.login-user", "user:Password01");
-      properties.setProperty("ninefold-compute.image.authenticate-sudo", "true");
+      properties.setProperty(TEMPLATE, "imageId=1215,loginUser=user:Password01,authenticateSudo=true");
       return properties;
    }
 
