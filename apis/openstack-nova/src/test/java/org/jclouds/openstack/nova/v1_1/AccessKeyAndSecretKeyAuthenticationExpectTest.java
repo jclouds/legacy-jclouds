@@ -47,7 +47,7 @@ public class AccessKeyAndSecretKeyAuthenticationExpectTest extends BaseNovaClien
    @Override
    protected Properties setupProperties() {
       Properties contextProperties = super.setupProperties();
-      contextProperties.setProperty("jclouds.keystone.credential-type", "authenticateApiAccessKeyCredentials");
+      contextProperties.setProperty("jclouds.keystone.credential-type", "apiAccessKeyCredentials");
       return contextProperties;
    }
 

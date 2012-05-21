@@ -40,6 +40,9 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest")
 public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends BaseNovaClientExpectTest {
+   public AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest() {
+      identity = identityWithTenantId;
+   }
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -47,7 +50,7 @@ public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends Ba
    @Override
    protected Properties setupProperties() {
       Properties contextProperties = super.setupProperties();
-      contextProperties.setProperty("jclouds.keystone.credential-type", "authenticateApiAccessKeyCredentials");
+      contextProperties.setProperty("jclouds.keystone.credential-type", "apiAccessKeyCredentials");
       return contextProperties;
    }
 
