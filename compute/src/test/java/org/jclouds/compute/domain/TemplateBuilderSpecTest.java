@@ -34,6 +34,8 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
+import com.google.gson.Gson;
+
 /**
  * 
  * <p/>
@@ -598,6 +600,12 @@ public class TemplateBuilderSpecTest {
       assertTemplateBuilderEquivalence(expected, templateBuilders.get().from(spec));
    }
 
+   public void testNiceJson() {
+      TemplateBuilderSpec spec = parse("osFamily=UBUNTU,osVersionMatches=1[012].[01][04],imageNameMatches=.*w/ None.*");
+      assertEquals(new Gson().toJson(spec), "{\"imageNameMatches\":\".*w/ None.*\",\"osFamily\":\"UBUNTU\",\"osVersionMatches\":\"1[012].[01][04]\"}");
+      assertEquals(new Gson().fromJson(new Gson().toJson(spec), TemplateBuilderSpec.class), spec);
+   }
+   
    public void testParse_unknownKey() {
       try {
          parse("foo=17");
