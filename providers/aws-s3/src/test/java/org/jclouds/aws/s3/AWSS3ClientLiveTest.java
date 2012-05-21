@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -44,9 +45,9 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ClientLiveTest;
 import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
-import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -155,6 +156,20 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          Blob blob = blobStore.blobBuilder("const.txt")
             .payload(new File("target/const.txt")).build();
          blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   public void testMultipartAsynchronouslySmallBlob() throws IOException, InterruptedException, Exception {
+      String containerName = getContainerName();
+      
+      try {
+         AsyncBlobStore asyncBlobStore = view.getAsyncBlobStore();
+         asyncBlobStore.createContainerInLocation(null, containerName).get();
+         Blob blob = asyncBlobStore.blobBuilder("small").payload("small").build();
+         asyncBlobStore.putBlob(containerName, blob, PutOptions.Builder.multipart()).get();
 
       } finally {
          returnContainer(containerName);
