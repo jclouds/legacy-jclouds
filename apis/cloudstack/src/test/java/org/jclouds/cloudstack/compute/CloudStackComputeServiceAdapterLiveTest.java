@@ -59,7 +59,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
 import org.testng.annotations.AfterGroups;
@@ -135,7 +135,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             return CacheBuilder.newBuilder().build(getIPForwardingRule);
          }
       };
-      adapter = Guice.createInjector(module, new Log4JLoggingModule()).getInstance(
+      adapter = Guice.createInjector(module, new SLF4JLoggingModule()).getInstance(
             CloudStackComputeServiceAdapter.class);
 
       keyPairName = prefix + "-adapter-test-keypair";
