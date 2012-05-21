@@ -38,8 +38,8 @@ import com.google.inject.TypeLiteral;
 public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<DomainAccountAsyncClient> {
 
    public void testEnableAccount() throws Exception {
-      Method method = DomainAccountAsyncClient.class.getMethod("enableAccount", String.class, long.class);
-      HttpRequest httpRequest = processor.createRequest(method, "goo", 2L);
+      Method method = DomainAccountAsyncClient.class.getMethod("enableAccount", String.class, String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "goo", "2");
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=enableAccount&account=goo&domainid=2 HTTP/1.1");
@@ -54,8 +54,8 @@ public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testDisableAccount() throws Exception {
-      Method method = DomainAccountAsyncClient.class.getMethod("disableAccount", String.class, long.class, boolean.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L, 2L, true);
+      Method method = DomainAccountAsyncClient.class.getMethod("disableAccount", String.class, String.class, boolean.class);
+      HttpRequest httpRequest = processor.createRequest(method, "1", "2", true);
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=disableAccount&account=1&lock=true&domainid=2 HTTP/1.1");

@@ -75,7 +75,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
                }
             }));
 
-         Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+         String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
 
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
             defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()),
@@ -174,7 +174,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    protected void checkFirewallRule(FirewallRule rule) {
       assertEquals(rule,
          client.getFirewallClient().getFirewallRule(rule.getId()));
-      assert rule.getId() > 0 : rule;
+      assert rule.getId() != null : rule;
       assert rule.getStartPort() > 0 : rule;
       assert rule.getEndPort() >= rule.getStartPort() : rule;
       assert rule.getProtocol() != null;
@@ -183,14 +183,14 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    protected void checkPortForwardingRule(PortForwardingRule rule) {
       assertEquals(rule,
          client.getFirewallClient().getPortForwardingRule(rule.getId()));
-      assert rule.getId() > 0 : rule;
+      assert rule.getId() != null : rule;
       assert rule.getIPAddress() != null : rule;
-      assert rule.getIPAddressId() > 0 : rule;
+      assert rule.getIPAddressId() != null : rule;
       assert rule.getPrivatePort() > 0 : rule;
       assert rule.getProtocol() != null : rule;
       assert rule.getPublicPort() > 0 : rule;
       assert rule.getState() != null : rule;
-      assert rule.getVirtualMachineId() > 0 : rule;
+      assert rule.getVirtualMachineId() != null : rule;
       assert rule.getVirtualMachineName() != null : rule;
    }
 }

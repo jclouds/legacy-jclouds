@@ -37,7 +37,7 @@ public class CreateUserOptions extends BaseHttpRequestOptions {
    /**
     * @param domainId The domain for the resource
     */
-   public CreateUserOptions domainId(long domainId) {
+   public CreateUserOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
@@ -57,7 +57,7 @@ public class CreateUserOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateUserOptions#domainId
        */
-      public static CreateUserOptions domainId(long domainId) {
+      public static CreateUserOptions domainId(String domainId) {
          CreateUserOptions options = new CreateUserOptions();
          return options.domainId(domainId);
       }

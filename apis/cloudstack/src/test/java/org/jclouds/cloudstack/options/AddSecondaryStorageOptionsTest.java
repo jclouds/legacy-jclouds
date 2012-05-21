@@ -34,12 +34,12 @@ import com.google.common.collect.ImmutableList;
 public class AddSecondaryStorageOptionsTest {
 
    public void testZoneId() {
-      AddSecondaryStorageOptions options = new AddSecondaryStorageOptions().zoneId(6);
+      AddSecondaryStorageOptions options = new AddSecondaryStorageOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      AddSecondaryStorageOptions options = zoneId(6);
+      AddSecondaryStorageOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 

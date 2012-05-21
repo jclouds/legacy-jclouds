@@ -42,7 +42,7 @@ public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientT
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listStoragePools HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listStoragePools&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -55,10 +55,10 @@ public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientT
 
    public void testListStoragePoolsOptions() throws NoSuchMethodException {
       Method method = GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListStoragePoolsOptions.Builder.clusterId(3).id(4).ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId(4).zoneId(5));
+      HttpRequest httpRequest = processor.createRequest(method, ListStoragePoolsOptions.Builder.clusterId("3").id("4").ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId("4").zoneId("5"));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listStoragePools&clusterid=3&id=4&ipaddress=192.168.42.42&keyword=fred&name=bob&path=/mnt/store42&podid=4&zoneid=5 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listStoragePools&listAll=true&clusterid=3&id=4&ipaddress=192.168.42.42&keyword=fred&name=bob&path=/mnt/store42&podid=4&zoneid=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

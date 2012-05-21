@@ -44,7 +44,7 @@ public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<Hyp
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listHypervisors HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listHypervisors&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -57,11 +57,11 @@ public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<Hyp
    }
 
    public void testListHypervisorsInZon() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = HypervisorAsyncClient.class.getMethod("listHypervisorsInZone", long.class);
+      Method method = HypervisorAsyncClient.class.getMethod("listHypervisorsInZone", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 11);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listHypervisors&zoneid=11 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listHypervisors&listAll=true&zoneid=11 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 

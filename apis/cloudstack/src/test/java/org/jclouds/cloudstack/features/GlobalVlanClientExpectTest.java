@@ -46,7 +46,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listVlanIpRanges&apiKey=identity&signature=mS38BVfJjz1Y8bk0EdjJTeusJ0w%3D"))
+                  "command=listVlanIpRanges&listAll=true&apiKey=identity&signature=xPwCeAcMp9kDGbD5oPgztLtSdnU%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -58,35 +58,35 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .build());
 
       VlanIPRange range1 = VlanIPRange.builder()
-         .id(1)
+         .id("1")
          .forVirtualNetwork(true)
-         .zoneId(1)
-         .vlan(127)
+         .zoneId("1")
+         .vlan("127")
          .account("system")
-         .domainId(1)
+         .domainId("1")
          .domain("ROOT")
          .gateway("10.27.27.254")
          .netmask("255.255.255.0")
          .startIP("10.27.27.50")
          .endIP("10.27.27.100")
-         .networkId(200)
+         .networkId("200")
          .build();
 
       VlanIPRange range2 = VlanIPRange.builder()
-         .id(2)
+         .id("2")
          .forVirtualNetwork(false)
-         .zoneId(2)
+         .zoneId("2")
          .vlan("untagged")
          .account("system")
-         .domainId(1)
+         .domainId("1")
          .domain("ROOT")
-         .podId(2)
+         .podId("2")
          .podName("Dev Pod 2")
          .gateway("10.22.22.254")
          .netmask("255.255.255.0")
          .startIP("10.22.22.51")
          .endIP("10.22.22.100")
-         .networkId(209)
+         .networkId("209")
          .build();
 
       assertEquals(client.listVlanIPRanges(), ImmutableSet.of(range1, range2));
@@ -98,7 +98,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listVlanIpRanges&apiKey=identity&signature=mS38BVfJjz1Y8bk0EdjJTeusJ0w%3D"))
+                  "command=listVlanIpRanges&listAll=true&apiKey=identity&signature=xPwCeAcMp9kDGbD5oPgztLtSdnU%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -130,29 +130,29 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       VlanIPRange actual = client.createVlanIPRange("10.22.22.51", "10.22.22.100", new CreateVlanIPRangeOptions()
          .forVirtualNetwork(false)
-         .zoneId(2)
+         .zoneId("2")
          .vlan("untagged")
-         .accountInDomain("system", 1)
-         .podId(2)
+         .accountInDomain("system", "1")
+         .podId("2")
          .gateway("10.22.22.254")
          .netmask("255.255.255.0")
-         .networkId(209));
+         .networkId("209"));
 
       VlanIPRange expected = VlanIPRange.builder()
-         .id(2)
+         .id("2")
          .forVirtualNetwork(false)
-         .zoneId(2)
+         .zoneId("2")
          .vlan("untagged")
          .account("system")
-         .domainId(1)
+         .domainId("1")
          .domain("ROOT")
-         .podId(2)
+         .podId("2")
          .podName("Dev Pod 2")
          .gateway("10.22.22.254")
          .netmask("255.255.255.0")
          .startIP("10.22.22.51")
          .endIP("10.22.22.100")
-         .networkId(209)
+         .networkId("209")
          .build();
 
       assertEquals(actual, expected);
@@ -175,7 +175,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .payload(payloadFromResource("/createvlaniprangeresponse.json"))
             .build());
 
-      client.deleteVlanIPRange(1);
+      client.deleteVlanIPRange("1");
    }
 
    @Override

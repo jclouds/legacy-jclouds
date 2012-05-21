@@ -46,7 +46,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listEventTypes HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&listAll=true&command=listEventTypes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -62,7 +62,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listEvents HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&listAll=true&command=listEvents HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -79,7 +79,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
       HttpRequest httpRequest = processor.createRequest(method, ListEventsOptions.Builder.account("jclouds"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listEvents&account=jclouds HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&listAll=true&command=listEvents&account=jclouds HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

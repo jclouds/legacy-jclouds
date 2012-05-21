@@ -65,7 +65,7 @@ public interface GlobalUserClient extends DomainUserClient {
     * @param userId the ID of the user
     * @return
     */
-   ApiKeyPair registerUserKeys(long userId);
+   ApiKeyPair registerUserKeys(String userId);
 
    /**
     * Update an user
@@ -74,12 +74,12 @@ public interface GlobalUserClient extends DomainUserClient {
     * @param options optional arguments
     * @return
     */
-   User updateUser(long id, UpdateUserOptions... options);
+   User updateUser(String id, UpdateUserOptions... options);
 
    /**
     * Delete an user with the specified ID
     *
     * @param id  user ID
     */
-   Void deleteUser(long id);
+   Void deleteUser(String id);
 }

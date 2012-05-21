@@ -54,7 +54,7 @@ public interface GlobalConfigurationAsyncClient extends ConfigurationAsyncClient
     * @see GlobalConfigurationClient#listConfigurationEntries
     */
    @GET
-   @QueryParams(keys = "command", values = "listConfigurations")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listConfigurations", "true" })
    @SelectJson("configuration")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)

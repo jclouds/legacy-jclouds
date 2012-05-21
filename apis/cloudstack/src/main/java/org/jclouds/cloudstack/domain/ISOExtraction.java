@@ -34,10 +34,10 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
 
    public static class Builder {
 
-      private long id;
-      private long accountId;
+      private String id;
+      private String accountId;
       private Date created;
-      private long extractId;
+      private String extractId;
       private ExtractMode extractMode;
       private String name;
       private String state;
@@ -45,13 +45,13 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
       private String storageType;
       private int uploadPercentage;
       private String url;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
       /**
        * @param id the id of extracted object
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -59,7 +59,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
       /**
        * @param accountId the account id to which the extracted object belongs
        */
-      public Builder accountId(long accountId) {
+      public Builder accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -75,7 +75,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
       /**
        * @param extractId the upload id of extracted object
        */
-      public Builder extractId(long extractId) {
+      public Builder extractId(String extractId) {
          this.extractId = extractId;
          return this;
       }
@@ -139,7 +139,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
       /**
        * @param zoneId zone ID the object was extracted from
        */
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -154,11 +154,11 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("accountid")
-   private long accountId;
+   private String accountId;
    private Date created;
-   private long extractId;
+   private String extractId;
    private ExtractMode extractMode;
    private String name;
    private String state;
@@ -169,7 +169,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
    private int uploadPercentage;
    private String url;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
 
@@ -182,14 +182,14 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
    /**
     * @return the id of extracted object
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return the account id to which the extracted object belongs
     */
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -203,7 +203,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
    /**
     * @return the upload id of extracted object
     */
-   public long getExtractId() {
+   public String getExtractId() {
       return extractId;
    }
 
@@ -259,7 +259,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
    /**
     * @return zone ID the object was extracted from
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -320,7 +320,7 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
 
    @Override
    public int compareTo(ISOExtraction other) {
-      return new Long(id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 
 }

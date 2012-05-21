@@ -52,22 +52,22 @@ public class ListPublicIPAddressesOptionsTest {
    }
 
    public void testVLANId() {
-      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().VLANId(6);
+      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().VLANId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("vlanid"));
    }
 
    public void testVLANIdStatic() {
-      ListPublicIPAddressesOptions options = VLANId(6);
+      ListPublicIPAddressesOptions options = VLANId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("vlanid"));
    }
 
    public void testNetworkId() {
-      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().networkId(6);
+      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().networkId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testNetworkIdStatic() {
-      ListPublicIPAddressesOptions options = networkId(6);
+      ListPublicIPAddressesOptions options = networkId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("networkid"));
    }
 
@@ -82,24 +82,24 @@ public class ListPublicIPAddressesOptionsTest {
    }
 
    public void testAccountInDomainId() {
-      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().accountInDomain("adrian", 6);
+      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListPublicIPAddressesOptions options = accountInDomain("adrian", 6);
+      ListPublicIPAddressesOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testZoneId() {
-      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().zoneId(6);
+      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListPublicIPAddressesOptions options = zoneId(6);
+      ListPublicIPAddressesOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
@@ -114,22 +114,22 @@ public class ListPublicIPAddressesOptionsTest {
    }
 
    public void testId() {
-      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().id(6);
+      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainId() {
-      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().domainId(6);
+      ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testIdStatic() {
-      ListPublicIPAddressesOptions options = id(6);
+      ListPublicIPAddressesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainIdStatic() {
-      ListPublicIPAddressesOptions options = domainId(6);
+      ListPublicIPAddressesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

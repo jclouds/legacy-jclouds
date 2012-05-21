@@ -58,7 +58,7 @@ public interface GuestOSAsyncClient {
     * @see GuestOSClient#listOSTypes
     */
    @GET
-   @QueryParams(keys = "command", values = "listOsTypes")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listOsTypes", "true" })
    @SelectJson("ostype")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -68,29 +68,29 @@ public interface GuestOSAsyncClient {
     * @see OSTypeClient#getOSType
     */
    @GET
-   @QueryParams(keys = "command", values = "listOsTypes")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listOsTypes", "true" })
    @SelectJson("ostype")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<OSType> getOSType(@QueryParam("id") long id);
+   ListenableFuture<OSType> getOSType(@QueryParam("id") String id);
 
    /**
     * @see GuestOSClient#listOSCategories
     */
    @GET
-   @QueryParams(keys = "command", values = "listOsCategories")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listOsCategories", "true" })
    @ResponseParser(ParseIdToNameFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Map<Long, String>> listOSCategories();
+   ListenableFuture<Map<String, String>> listOSCategories();
 
    /**
     * @see GuestOSClient#getOSCategory
     */
    @GET
-   @QueryParams(keys = "command", values = "listOsCategories")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listOsCategories", "true" })
    @ResponseParser(ParseIdToNameEntryFromHttpResponse.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Map.Entry<Long, String>> getOSCategory(@QueryParam("id") long id);
+   ListenableFuture<Map.Entry<String, String>> getOSCategory(@QueryParam("id") String id);
 
 }

@@ -34,9 +34,9 @@ public class Pod implements Comparable<Pod> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String name;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
       private String gateway;
       private String netmask;
@@ -49,7 +49,7 @@ public class Pod implements Comparable<Pod> {
       /**
        * @param id the ID of the Pod
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id  = id;
          return this;
       }
@@ -65,7 +65,7 @@ public class Pod implements Comparable<Pod> {
       /**
        * @param zoneId the Zone ID of the Pod
        */
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -127,9 +127,9 @@ public class Pod implements Comparable<Pod> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    @SerializedName("zonename") private String zoneName;
    private String gateway;
    private String netmask;
@@ -140,7 +140,7 @@ public class Pod implements Comparable<Pod> {
    /* Just for the serializer */
    Pod() {}
 
-   public Pod(long id, String name, long zoneId, String zoneName, String gateway, String netmask, String startIp, String endIp, AllocationState allocationState) {
+   public Pod(String id, String name, String zoneId, String zoneName, String gateway, String netmask, String startIp, String endIp, AllocationState allocationState) {
       this.id = id;
       this.name = name;
       this.zoneId = zoneId;
@@ -155,7 +155,7 @@ public class Pod implements Comparable<Pod> {
    /**
     * @return id the ID of the Pod
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -169,7 +169,7 @@ public class Pod implements Comparable<Pod> {
    /**
     * @return zoneId the Zone ID of the Pod
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -257,6 +257,6 @@ public class Pod implements Comparable<Pod> {
 
    @Override
    public int compareTo(Pod other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

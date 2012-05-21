@@ -48,7 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface GlobalStoragePoolAsyncClient {
 
    @GET
-   @QueryParams(keys = "command", values = "listStoragePools")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listStoragePools", "true" })
    @SelectJson("storagepool")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Set<StoragePool>> listStoragePools(ListStoragePoolsOptions... options);

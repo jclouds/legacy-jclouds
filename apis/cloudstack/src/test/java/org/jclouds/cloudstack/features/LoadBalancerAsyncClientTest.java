@@ -50,7 +50,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRules HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRules&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -65,10 +65,10 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    public void testListLoadBalancerRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
             ListLoadBalancerRulesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListLoadBalancerRulesOptions.Builder.publicIPId(3));
+      HttpRequest httpRequest = processor.createRequest(method, ListLoadBalancerRulesOptions.Builder.publicIPId("3"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRules&publicipid=3 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRules&listAll=true&publicipid=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -81,7 +81,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testCreateLoadBalancerRuleForPublicIP() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", long.class,
+      Method method = LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", String.class,
             Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6, Algorithm.LEASTCONN, "tcp", 22, 22);
 
@@ -100,7 +100,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testUpdateLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("updateLoadBalancerRule", long.class, UpdateLoadBalancerRuleOptions[].class);
+      Method method = LoadBalancerAsyncClient.class.getMethod("updateLoadBalancerRule", String.class, UpdateLoadBalancerRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
@@ -116,7 +116,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testDeleteLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("deleteLoadBalancerRule", long.class);
+      Method method = LoadBalancerAsyncClient.class.getMethod("deleteLoadBalancerRule", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
@@ -135,11 +135,11 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    public void testListVirtualMachinesAssignedToLoadBalancerRule() throws SecurityException, NoSuchMethodException,
          IOException {
       Method method = LoadBalancerAsyncClient.class.getMethod("listVirtualMachinesAssignedToLoadBalancerRule",
-            long.class);
+            String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRuleInstances&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRuleInstances&listAll=true&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

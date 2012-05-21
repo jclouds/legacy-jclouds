@@ -55,7 +55,7 @@ public class JobCompleteTest {
 
    @Test
    public void testJobComplete() {
-      AsyncJob<?> job = AsyncJob.builder().id(100L)
+      AsyncJob<?> job = AsyncJob.builder().id("100")
          .status(Status.SUCCEEDED).resultCode(ResultCode.SUCCESS).build();
       expect((Object) asyncJobClient.getAsyncJob(job.getId())).andReturn(job);
 
@@ -66,7 +66,7 @@ public class JobCompleteTest {
 
    @Test
    public void testFailedJobComplete() {
-      AsyncJob<?> job = AsyncJob.builder().id(100L)
+      AsyncJob<?> job = AsyncJob.builder().id("100")
          .status(Status.FAILED).resultCode(ResultCode.FAIL)
          .error(new AsyncJobError(ErrorCode.INTERNAL_ERROR, "Dummy test error")).build();
       expect((Object) asyncJobClient.getAsyncJob(job.getId())).andReturn(job);

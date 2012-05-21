@@ -54,7 +54,7 @@ public class ListStoragePoolsResponseTest extends BaseItemParserTest<Set<Storage
       c.set(Calendar.SECOND, 6);
       Date created = c.getTime();
 
-      StoragePool storagePool = StoragePool.builder().id(201).zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").name("NFS Pri 1").ipAddress("10.26.26.165").path("/mnt/nfs/cs_pri").created(created).type(StoragePool.Type.NETWORK_FILESYSTEM).clusterId(1).clusterName("Xen Clust 1").diskSizeTotal(898356445184L).diskSizeAllocated(18276679680L).tags("").state(StoragePool.State.UP).build();
+      StoragePool storagePool = StoragePool.builder().id("201").zoneId("1").zoneName("Dev Zone 1").podId("1").podName("Dev Pod 1").name("NFS Pri 1").ipAddress("10.26.26.165").path("/mnt/nfs/cs_pri").created(created).type(StoragePool.Type.NETWORK_FILESYSTEM).clusterId("1").clusterName("Xen Clust 1").diskSizeTotal(898356445184L).diskSizeAllocated(18276679680L).tags("").state(StoragePool.State.UP).build();
       return ImmutableSet.of(storagePool);
    }
 }

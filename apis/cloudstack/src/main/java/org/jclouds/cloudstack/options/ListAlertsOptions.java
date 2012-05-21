@@ -31,7 +31,7 @@ public class ListAlertsOptions extends BaseHttpRequestOptions {
 
    public static final ListAlertsOptions NONE = new ListAlertsOptions();
 
-   public ListAlertsOptions id(long id) {
+   public ListAlertsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -48,7 +48,7 @@ public class ListAlertsOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
 
-      public static ListAlertsOptions id(long id) {
+      public static ListAlertsOptions id(String id) {
          final ListAlertsOptions options = new ListAlertsOptions();
          return options.id(id);
       }

@@ -39,12 +39,12 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String name;
       private String displayText;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private int cpuNumber;
       private int cpuSpeed;
       private int memory;
@@ -59,7 +59,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
       private Set<String> tags = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -84,7 +84,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -157,14 +157,14 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("cpunumber")
    private int cpuNumber;
    @SerializedName("cpuspeed")
@@ -189,7 +189,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    private boolean systemVmType;
 
 
-   public ServiceOffering(long id, String name, String displayText, Date created, String domain, long domainId,
+   public ServiceOffering(String id, String name, String displayText, Date created, String domain, String domainId,
                           int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags,
                           boolean defaultUse, String hostTags, boolean systemOffering, boolean cpuUseLimited, long networkRate,
                           boolean systemVmType) {
@@ -217,7 +217,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    /**
     * @return the id of the service offering
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -253,7 +253,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    /**
     * @return the domain id of the service offering
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -395,7 +395,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
    @Override
    public int compareTo(ServiceOffering arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

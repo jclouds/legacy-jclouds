@@ -54,7 +54,7 @@ public interface ZoneAsyncClient {
     * @see ZoneClient#listZones
     */
    @GET
-   @QueryParams(keys = "command", values = "listZones")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listZones", "true" })
    @SelectJson("zone")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -64,11 +64,11 @@ public interface ZoneAsyncClient {
     * @see ZoneClient#getZone
     */
    @GET
-   @QueryParams(keys = "command", values = "listZones")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listZones", "true" })
    @SelectJson("zone")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Zone> getZone(@QueryParam("id") long id);
+   ListenableFuture<Zone> getZone(@QueryParam("id") String id);
 
 }

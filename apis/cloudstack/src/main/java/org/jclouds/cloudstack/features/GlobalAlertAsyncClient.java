@@ -52,7 +52,7 @@ public interface GlobalAlertAsyncClient {
     * @see GlobalAlertClient#listAlerts(org.jclouds.cloudstack.options.ListAlertsOptions...)
     */
    @GET
-   @QueryParams(keys = "command", values = "listAlerts")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listAlerts", "true" })
    @SelectJson("alert")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)

@@ -63,7 +63,7 @@ public interface SecurityGroupClient {
     *           the cidr list associated
     * @return response relating to the creation of this ingress rule
     */
-   long authorizeIngressPortsToCIDRs(long securityGroupId, String protocol, int startPort, int endPort,
+   String authorizeIngressPortsToCIDRs(String securityGroupId, String protocol, int startPort, int endPort,
          Iterable<String> cidrList, AccountInDomainOptions... options);
 
    /**
@@ -82,7 +82,7 @@ public interface SecurityGroupClient {
     *           authorize
     * @return response relating to the creation of this ingress rule
     */
-   long authorizeIngressPortsToSecurityGroups(long securityGroupId, String protocol, int startPort, int endPort,
+   String authorizeIngressPortsToSecurityGroups(String securityGroupId, String protocol, int startPort, int endPort,
          Multimap<String, String> accountToGroup, AccountInDomainOptions... options);
 
    /**
@@ -98,7 +98,7 @@ public interface SecurityGroupClient {
     *           the cidr list associated
     * @return response relating to the creation of this ingress rule
     */
-   long authorizeIngressICMPToCIDRs(long securityGroupId, int ICMPCode, int ICMPType, Iterable<String> cidrList,
+   String authorizeIngressICMPToCIDRs(String securityGroupId, int ICMPCode, int ICMPType, Iterable<String> cidrList,
          AccountInDomainOptions... options);
 
    /**
@@ -115,7 +115,7 @@ public interface SecurityGroupClient {
     *           authorize
     * @return response relating to the creation of this ingress rule
     */
-   long authorizeIngressICMPToSecurityGroups(long securityGroupId, int ICMPCode, int ICMPType,
+   String authorizeIngressICMPToSecurityGroups(String securityGroupId, int ICMPCode, int ICMPType,
          Multimap<String, String> accountToGroup, AccountInDomainOptions... options);
 
    /**
@@ -126,7 +126,7 @@ public interface SecurityGroupClient {
     * @param options
     *           scope of the rule.
     */
-   long revokeIngressRule(long id, AccountInDomainOptions... options);;
+   String revokeIngressRule(String id, AccountInDomainOptions... options);;
 
    /**
     * get a specific security group by id
@@ -135,7 +135,7 @@ public interface SecurityGroupClient {
     *           group to get
     * @return security group or null if not found
     */
-   SecurityGroup getSecurityGroup(long id);
+   SecurityGroup getSecurityGroup(String id);
 
    /**
     * Creates a security group
@@ -152,5 +152,5 @@ public interface SecurityGroupClient {
     * @param id
     *           group to delete
     */
-   void deleteSecurityGroup(long id);
+   void deleteSecurityGroup(String id);
 }

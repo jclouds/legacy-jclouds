@@ -58,7 +58,7 @@ public interface AddressAsyncClient {
     * @see AddressClient#listPublicIPAddresses
     */
    @GET
-   @QueryParams(keys = "command", values = "listPublicIpAddresses")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listPublicIpAddresses", "true" })
    @SelectJson("publicipaddress")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -68,12 +68,12 @@ public interface AddressAsyncClient {
     * @see AddressClient#getPublicIPAddress
     */
    @GET
-   @QueryParams(keys = "command", values = "listPublicIpAddresses")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listPublicIpAddresses", "true" })
    @SelectJson("publicipaddress")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PublicIPAddress> getPublicIPAddress(@QueryParam("id") long id);
+   ListenableFuture<PublicIPAddress> getPublicIPAddress(@QueryParam("id") String id);
 
    /**
     * @see AddressClient#associateIPAddressInZone
@@ -82,7 +82,7 @@ public interface AddressAsyncClient {
    @QueryParams(keys = "command", values = "associateIpAddress")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> associateIPAddressInZone(@QueryParam("zoneid") long zoneId,
+   ListenableFuture<AsyncCreateResponse> associateIPAddressInZone(@QueryParam("zoneid") String zoneId,
          AssociateIPAddressOptions... options);
 
    /**
@@ -91,6 +91,6 @@ public interface AddressAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "disassociateIpAddress")
    @ExceptionParser(ReturnVoidOnNotFoundOr404OrUnableToFindAccountOwner.class)
-   ListenableFuture<Void> disassociateIPAddress(@QueryParam("id") long id);
+   ListenableFuture<Void> disassociateIPAddress(@QueryParam("id") String id);
 
 }

@@ -64,49 +64,49 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListSnapshotsById() {
-      Iterable<Long> snapshotIds = Iterables.transform(client.getSnapshotClient().listSnapshots(), new Function<Snapshot, Long>() {
-          public Long apply(Snapshot input) {
+      Iterable<String> snapshotIds = Iterables.transform(client.getSnapshotClient().listSnapshots(), new Function<Snapshot, String>() {
+          public String apply(Snapshot input) {
               return input.getId();
           }
       });
       assertNotNull(snapshotIds);
       assertFalse(Iterables.isEmpty(snapshotIds));
 
-      for (Long id : snapshotIds) {
+      for (String id : snapshotIds) {
          Set<Snapshot> found = client.getSnapshotClient().listSnapshots(ListSnapshotsOptions.Builder.id(id));
          assertNotNull(found);
          assertEquals(1, found.size());
          Snapshot snapshot = Iterables.getOnlyElement(found);
-         assertEquals(id.longValue(), snapshot.getId());
+         assertEquals(id, snapshot.getId());
          checkSnapshot(snapshot);
       }
    }
 
    public void testListSnapshotsNonexistantId() {
-      Set<Snapshot> found = client.getSnapshotClient().listSnapshots(ListSnapshotsOptions.Builder.id(-1));
+      Set<Snapshot> found = client.getSnapshotClient().listSnapshots(ListSnapshotsOptions.Builder.id("foo"));
       assertNotNull(found);
       assertTrue(found.isEmpty());
    }
 
    public void testGetSnapshotById() {
-      Iterable<Long> snapshotIds = Iterables.transform(client.getSnapshotClient().listSnapshots(), new Function<Snapshot, Long>() {
-          public Long apply(Snapshot input) {
+      Iterable<String> snapshotIds = Iterables.transform(client.getSnapshotClient().listSnapshots(), new Function<Snapshot, String>() {
+          public String apply(Snapshot input) {
               return input.getId();
           }
       });
       assertNotNull(snapshotIds);
       assertFalse(Iterables.isEmpty(snapshotIds));
 
-      for (Long id : snapshotIds) {
+      for (String id : snapshotIds) {
          Snapshot found = client.getSnapshotClient().getSnapshot(id);
          assertNotNull(found);
-         assertEquals(id.longValue(), found.getId());
+         assertEquals(id, found.getId());
          checkSnapshot(found);
       }
    }
 
    public void testGetSnapshotNonexistantId() {
-      Snapshot found = client.getSnapshotClient().getSnapshot(-1);
+      Snapshot found = client.getSnapshotClient().getSnapshot("foo");
       assertNull(found);
    }
 
@@ -143,7 +143,7 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotSame(Snapshot.Type.UNRECOGNIZED, snapshot.getSnapshotType());
    }
 
-   private Snapshot findSnapshotWithId(final long id) {
+   private Snapshot findSnapshotWithId(final String id) {
       return find(client.getSnapshotClient().listSnapshots(), new Predicate<Snapshot>() {
          @Override
          public boolean apply(Snapshot arg0) {

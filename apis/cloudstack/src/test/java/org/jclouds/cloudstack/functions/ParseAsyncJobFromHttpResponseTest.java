@@ -63,7 +63,7 @@ public class ParseAsyncJobFromHttpResponseTest {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":860,\"jobstatus\":0,\"jobprocstatus\":0,\"jobresultcode\":0} }";
 
       AsyncJob<PublicIPAddress> expects = AsyncJob.<PublicIPAddress>builder()
-         .id(860)
+         .id("860")
          .status(Status.IN_PROGRESS)
          .progress(0)
          .resultCode(ResultCode.SUCCESS).build();
@@ -80,7 +80,7 @@ public class ParseAsyncJobFromHttpResponseTest {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":1138,\"jobstatus\":1,\"jobprocstatus\":0,\"jobresultcode\":0,\"jobresulttype\":\"object\",\"jobresult\":{\"success\":true}} }";
 
       AsyncJob<PublicIPAddress> expects = AsyncJob.<PublicIPAddress>builder()
-         .id(1138)
+         .id("1138")
          .status(Status.SUCCEEDED)
          .progress(0)
          .resultType("object")
@@ -99,7 +99,7 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       AsyncJob<PublicIPAddress> expects = AsyncJob
          .<PublicIPAddress>builder()
-         .id(1103)
+         .id("1103")
          .status(Status.FAILED)
          .progress(0)
          .resultType("object")
@@ -119,7 +119,7 @@ public class ParseAsyncJobFromHttpResponseTest {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":860,\"jobstatus\":0,\"jobprocstatus\":0,\"jobresultcode\":0,\"jobresult\":{\"foo\":{\"bar\":1}}}}";
 
       AsyncJob<?> expects = AsyncJob.builder()
-         .id(860)
+         .id("860")
          .status(Status.IN_PROGRESS)
          .progress(0)
          .resultCode(ResultCode.SUCCESS)
@@ -143,7 +143,7 @@ public class ParseAsyncJobFromHttpResponseTest {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":860,\"jobstatus\":0,\"jobprocstatus\":0,\"jobresultcode\":0,\"jobresult\":{\"foo\":{\"bar\":1},\"foo2\":{\"bar2\":2}}}}";
 
       AsyncJob<?> expects = AsyncJob.builder()
-         .id(860)
+         .id("860")
          .status(Status.IN_PROGRESS)
          .progress(0)
          .resultCode(ResultCode.SUCCESS)
@@ -161,7 +161,7 @@ public class ParseAsyncJobFromHttpResponseTest {
       InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-ipaddress.json");
       AsyncJob<PublicIPAddress> expects = AsyncJob
          .<PublicIPAddress>builder()
-         .id(860)
+         .id("860")
          .status(Status.SUCCEEDED)
          .progress(0)
          .resultType("object")
@@ -169,13 +169,13 @@ public class ParseAsyncJobFromHttpResponseTest {
          .result(
             PublicIPAddress
                .builder()
-               .id(6)
+               .id("6")
                .IPAddress("72.52.126.35")
                .allocated(
                   new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-23T20:15:01-0800"))
-               .zoneId(1).zoneName("San Jose 1").isSourceNAT(false).account("adrian").domainId(1)
-               .domain("ROOT").usesVirtualNetwork(true).isStaticNAT(false).associatedNetworkId(204)
-               .networkId(200).state(PublicIPAddress.State.ALLOCATING).build()
+               .zoneId("1").zoneName("San Jose 1").isSourceNAT(false).account("adrian").domainId("1")
+               .domain("ROOT").usesVirtualNetwork(true).isStaticNAT(false).associatedNetworkId("204")
+               .networkId("200").state(PublicIPAddress.State.ALLOCATING).build()
 
          ).build();
 
@@ -191,14 +191,14 @@ public class ParseAsyncJobFromHttpResponseTest {
       InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-ipforwardingrule.json");
       AsyncJob<IPForwardingRule> expects = AsyncJob
          .<IPForwardingRule>builder()
-         .id(1133)
+         .id("1133")
          .status(Status.SUCCEEDED)
          .progress(0)
          .resultType("object")
          .resultCode(ResultCode.SUCCESS)
          .result(
-            IPForwardingRule.builder().id(109).protocol("tcp").virtualMachineId(226)
-               .virtualMachineName("i-3-226-VM").IPAddressId(36).IPAddress("72.52.126.65").startPort(22)
+            IPForwardingRule.builder().id("109").protocol("tcp").virtualMachineId("226")
+               .virtualMachineName("i-3-226-VM").IPAddressId("36").IPAddress("72.52.126.65").startPort(22)
                .endPort(22).state("Active").build()).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);

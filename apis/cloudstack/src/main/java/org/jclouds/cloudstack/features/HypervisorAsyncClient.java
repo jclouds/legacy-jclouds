@@ -49,7 +49,7 @@ public interface HypervisorAsyncClient {
     * @see HypervisorClient#listHypervisors
     */
    @GET
-   @QueryParams(keys = "command", values = "listHypervisors")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listHypervisors", "true" })
    @ResponseParser(ParseNamesFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listHypervisors();
@@ -58,8 +58,8 @@ public interface HypervisorAsyncClient {
     * @see HypervisorClient#listHypervisorsInZone
     */
    @GET
-   @QueryParams(keys = "command", values = "listHypervisors")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listHypervisors", "true" })
    @ResponseParser(ParseNamesFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<String>> listHypervisorsInZone(@QueryParam("zoneid") long zoneId);
+   ListenableFuture<Set<String>> listHypervisorsInZone(@QueryParam("zoneid") String zoneId);
 }

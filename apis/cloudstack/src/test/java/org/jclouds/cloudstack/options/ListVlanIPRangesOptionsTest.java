@@ -42,24 +42,24 @@ import com.google.common.collect.ImmutableList;
 public class ListVlanIPRangesOptionsTest {
 
    public void testAccountInDomain() {
-      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().accountInDomain("fred", 19);
+      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().accountInDomain("fred", "19");
       assertEquals(ImmutableList.of("fred"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("19"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainStatic() {
-      ListVlanIPRangesOptions options = accountInDomain("fred", 19);
+      ListVlanIPRangesOptions options = accountInDomain("fred", "19");
       assertEquals(ImmutableList.of("fred"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("19"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainId() {
-      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().domainId(19);
+      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().domainId("19");
       assertEquals(ImmutableList.of("19"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListVlanIPRangesOptions options = domainId(19);
+      ListVlanIPRangesOptions options = domainId("19");
       assertEquals(ImmutableList.of("19"), options.buildQueryParameters().get("domainid"));
    }
 
@@ -74,12 +74,12 @@ public class ListVlanIPRangesOptionsTest {
    }
 
    public void testId() {
-      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().id(6);
+      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListVlanIPRangesOptions options = id(6);
+      ListVlanIPRangesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -94,22 +94,22 @@ public class ListVlanIPRangesOptionsTest {
    }
 
    public void testNetworkId() {
-      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().networkId(209);
+      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().networkId("209");
       assertEquals(ImmutableList.of("209"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testNetworkIdStatic() {
-      ListVlanIPRangesOptions options = networkId(209);
+      ListVlanIPRangesOptions options = networkId("209");
       assertEquals(ImmutableList.of("209"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testPodId() {
-      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().podId(13);
+      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().podId("13");
       assertEquals(ImmutableList.of("13"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      ListVlanIPRangesOptions options = podId(13);
+      ListVlanIPRangesOptions options = podId("13");
       assertEquals(ImmutableList.of("13"), options.buildQueryParameters().get("podid"));
    }
 
@@ -124,12 +124,12 @@ public class ListVlanIPRangesOptionsTest {
    }
 
    public void testZoneId() {
-      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().zoneId(6);
+      ListVlanIPRangesOptions options = new ListVlanIPRangesOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListVlanIPRangesOptions options = zoneId(6);
+      ListVlanIPRangesOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 

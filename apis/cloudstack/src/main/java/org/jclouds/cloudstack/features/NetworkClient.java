@@ -52,7 +52,7 @@ public interface NetworkClient {
     *           network to get
     * @return network or null if not found
     */
-   Network getNetwork(long id);
+   Network getNetwork(String id);
 
    /**
     * Creates a network
@@ -69,7 +69,7 @@ public interface NetworkClient {
     *           optional parameters
     * @return newly created network
     */
-   Network createNetworkInZone(long zoneId, long networkOfferingId, String name, String displayText,
+   Network createNetworkInZone(String zoneId, String networkOfferingId, String name, String displayText,
          CreateNetworkOptions... options);
 
    /**
@@ -80,5 +80,5 @@ public interface NetworkClient {
     * @return job id related to destroying the network, or null if resource was
     *         not found
     */
-   Long deleteNetwork(long id);
+   String deleteNetwork(String id);
 }

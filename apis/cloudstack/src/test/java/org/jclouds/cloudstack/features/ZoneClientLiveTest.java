@@ -48,7 +48,7 @@ public class ZoneClientLiveTest extends BaseCloudStackClientLiveTest {
                ListZonesOptions.Builder.id(zone.getId())));
          assertEquals(zone, newDetails);
          assertEquals(zone, client.getZoneClient().getZone(zone.getId()));
-         assert zone.getId() > 0 : zone;
+         assert zone.getId() != null : zone;
          assert zone.getName() != null : zone;
          assert zone.getNetworkType() != null && zone.getNetworkType() != NetworkType.UNRECOGNIZED : zone;
          switch (zone.getNetworkType()) {
@@ -64,7 +64,7 @@ public class ZoneClientLiveTest extends BaseCloudStackClientLiveTest {
             assert zone.getDNS().size() >= 0 : zone;
             assert zone.getInternalDNS().size() >= 0 : zone;
             assert zone.getDomain() == null : zone;
-            assert zone.getDomainId() <= 0 : zone;
+            assert zone.getDomainId() == null : zone;
             assert zone.getGuestCIDRAddress() == null : zone;
             break;
          }

@@ -35,12 +35,12 @@ import com.google.common.collect.ImmutableSet;
 public class CreateUserOptionsTest {
 
    public void testDomainId() {
-      CreateUserOptions options = new CreateUserOptions().domainId(6);
+      CreateUserOptions options = new CreateUserOptions().domainId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      CreateUserOptions options = domainId(6);
+      CreateUserOptions options = domainId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 

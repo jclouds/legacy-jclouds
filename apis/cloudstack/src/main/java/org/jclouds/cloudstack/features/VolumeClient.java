@@ -44,7 +44,7 @@ public interface VolumeClient {
     * @param zoneId         the ID of the availability zone
     * @return AsyncCreateResponse job response used to track creation
     */
-   AsyncCreateResponse createVolumeFromDiskOfferingInZone(String name, long diskOfferingId, long zoneId);
+   AsyncCreateResponse createVolumeFromDiskOfferingInZone(String name, String diskOfferingId, String zoneId);
 
    /**
     * Create a volume with given name and snapshotId
@@ -54,7 +54,7 @@ public interface VolumeClient {
     * @param zoneId     the ID of the availability zone
     * @return AsyncCreateResponse job response used to track creation
     */
-   AsyncCreateResponse createVolumeFromSnapshotInZone(String name, long snapshotId, long zoneId);
+   AsyncCreateResponse createVolumeFromSnapshotInZone(String name, String snapshotId, String zoneId);
 
    /**
     * List volumes
@@ -69,14 +69,14 @@ public interface VolumeClient {
     * @param id the volume id to retrieve
     * @return volume or null if not found
     */
-   Volume getVolume(long id);
+   Volume getVolume(String id);
 
    /**
     * Deletes a attached disk volume
     *
     * @param id id of the volume
     */
-   void deleteVolume(long id);
+   void deleteVolume(String id);
 
    /**
     * Attaches a disk volume to a virtual machine.
@@ -85,7 +85,7 @@ public interface VolumeClient {
     * @param virtualMachineId the ID of the virtual machine
     * @return AsyncCreateResponse job response used to track creation
     */
-   AsyncCreateResponse attachVolume(long volumeId, long virtualMachineId);
+   AsyncCreateResponse attachVolume(String volumeId, String virtualMachineId);
 
    /**
     * Detaches a disk volume to a virtual machine.
@@ -93,6 +93,6 @@ public interface VolumeClient {
     * @param volumeId         the ID of the disk volume
     * @return AsyncCreateResponse job response used to track creation
     */
-   AsyncCreateResponse detachVolume(long volumeId);
+   AsyncCreateResponse detachVolume(String volumeId);
 
 }

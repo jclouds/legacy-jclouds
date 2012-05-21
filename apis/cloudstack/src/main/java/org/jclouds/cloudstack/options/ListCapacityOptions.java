@@ -32,7 +32,7 @@ public class ListCapacityOptions extends BaseHttpRequestOptions {
 
    public static final ListCapacityOptions NONE = new ListCapacityOptions();
 
-   public ListCapacityOptions hostId(long hostId) {
+   public ListCapacityOptions hostId(String hostId) {
       this.queryParameters.replaceValues("hostid", ImmutableSet.of(hostId + ""));
       return this;
    }
@@ -42,7 +42,7 @@ public class ListCapacityOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListCapacityOptions podId(long podId) {
+   public ListCapacityOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
@@ -52,14 +52,14 @@ public class ListCapacityOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListCapacityOptions zoneId(long zoneId) {
+   public ListCapacityOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
 
    public static class Builder {
 
-      public static ListCapacityOptions hostId(long hostId) {
+      public static ListCapacityOptions hostId(String hostId) {
          final ListCapacityOptions options = new ListCapacityOptions();
          return options.hostId(hostId);
       }
@@ -69,7 +69,7 @@ public class ListCapacityOptions extends BaseHttpRequestOptions {
          return options.keyword(keyword);
       }
 
-      public static ListCapacityOptions podId(long podId) {
+      public static ListCapacityOptions podId(String podId) {
          final ListCapacityOptions options = new ListCapacityOptions();
          return options.podId(podId);
       }
@@ -79,7 +79,7 @@ public class ListCapacityOptions extends BaseHttpRequestOptions {
          return options.type(type);
       }
 
-      public static ListCapacityOptions zoneId(long zoneId) {
+      public static ListCapacityOptions zoneId(String zoneId) {
          final ListCapacityOptions options = new ListCapacityOptions();
          return options.zoneId(zoneId);
       }

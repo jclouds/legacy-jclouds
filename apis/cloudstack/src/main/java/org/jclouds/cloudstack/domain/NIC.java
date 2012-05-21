@@ -33,7 +33,7 @@ public class NIC {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private URI broadcastURI;
       private String gateway;
       private String IPAddress;
@@ -41,11 +41,11 @@ public class NIC {
       private URI isolationURI;
       private String netmask;
       private String macAddress;
-      private long networkId;
+      private String networkId;
       private TrafficType trafficType;
       private GuestIPType guestIPType;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -85,7 +85,7 @@ public class NIC {
          return this;
       }
 
-      public Builder networkId(long networkId) {
+      public Builder networkId(String networkId) {
          this.networkId = networkId;
          return this;
       }
@@ -107,7 +107,7 @@ public class NIC {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("broadcasturi")
    private URI broadcastURI;
    private String gateway;
@@ -121,7 +121,7 @@ public class NIC {
    @SerializedName("macaddress")
    private String macAddress;
    @SerializedName("networkid")
-   private long networkId;
+   private String networkId;
    @SerializedName("traffictype")
    private TrafficType trafficType;
    @SerializedName("type")
@@ -134,8 +134,8 @@ public class NIC {
 
    }
 
-   public NIC(long id, URI broadcastURI, String gateway, String iPAddress, boolean isDefault, URI isolationURI,
-              String netmask, String macAddress, long networkId, TrafficType trafficType, GuestIPType guestIPType) {
+   public NIC(String id, URI broadcastURI, String gateway, String iPAddress, boolean isDefault, URI isolationURI,
+              String netmask, String macAddress, String networkId, TrafficType trafficType, GuestIPType guestIPType) {
       this.id = id;
       this.broadcastURI = broadcastURI;
       this.gateway = gateway;
@@ -152,7 +152,7 @@ public class NIC {
    /**
     * the ID of the nic
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -208,7 +208,7 @@ public class NIC {
    /**
     * the ID of the corresponding network
     */
-   public long getNetworkId() {
+   public String getNetworkId() {
       return networkId;
    }
 

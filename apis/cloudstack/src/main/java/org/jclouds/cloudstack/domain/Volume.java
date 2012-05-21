@@ -43,39 +43,39 @@ public class Volume implements Comparable<Volume> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String account;
       private Date attached;
       private Date created;
       private boolean destroyed;
-      private long deviceId;
+      private String deviceId;
       private String diskOfferingDisplayText;
-      private long diskOfferingId;
+      private String diskOfferingId;
       private String diskOfferingName;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String hypervisor;
       private boolean isExtractable;
-      private long jobId;
+      private String jobId;
       private String jobStatus;
       private String name;
       private String serviceOfferingDisplayText;
-      private long serviceOfferingId;
+      private String serviceOfferingId;
       private String serviceOfferingName;
       private long size;
-      private long snapshotId;
+      private String snapshotId;
       private State state;
       private String storage;
       private String storageType;
       private Type type;
-      private long virtualMachineId;
+      private String virtualMachineId;
       private String vmDisplayName;
       private String vmName;
       private VirtualMachine.State vmState;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -100,7 +100,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder deviceId(long deviceId) {
+      public Builder deviceId(String deviceId) {
          this.deviceId = deviceId;
          return this;
       }
@@ -110,7 +110,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder diskOfferingId(long diskOfferingId) {
+      public Builder diskOfferingId(String diskOfferingId) {
          this.diskOfferingId = diskOfferingId;
          return this;
       }
@@ -125,7 +125,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -140,7 +140,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder jobId(long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -160,7 +160,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder serviceOfferingId(long serviceOfferingId) {
+      public Builder serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
          return this;
       }
@@ -175,7 +175,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder snapshotId(long snapshotId) {
+      public Builder snapshotId(String snapshotId) {
          this.snapshotId = snapshotId;
          return this;
       }
@@ -200,7 +200,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -220,7 +220,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -238,39 +238,39 @@ public class Volume implements Comparable<Volume> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Date attached;
    private Date created;
    private boolean destroyed;
    @SerializedName("deviceid")
-   private long deviceId;
+   private String deviceId;
    @SerializedName("diskofferingdisplaytext")
    private String diskOfferingDisplayText;
    @SerializedName("diskofferingid")
-   private long diskOfferingId;
+   private String diskOfferingId;
    @SerializedName("diskofferingname")
    private String diskOfferingName;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private String hypervisor;
    @SerializedName("isextractable")
    private boolean isExtractable;
    @SerializedName("jobid")
-   private long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    private String jobStatus;
    private String name;
    @SerializedName("serviceofferingdisplaytext")
    private String serviceOfferingDisplayText;
    @SerializedName("serviceofferingid")
-   private long serviceOfferingId;
+   private String serviceOfferingId;
    @SerializedName("serviceofferingname")
    private String serviceOfferingName;
    private long size;
    @SerializedName("snapshotid")
-   private long snapshotId;
+   private String snapshotId;
    private State state;
    private String storage;
    @SerializedName("storagetype")
@@ -278,7 +278,7 @@ public class Volume implements Comparable<Volume> {
    private String storageType;
    private Type type;
    @SerializedName("virtualmachineid")
-   private long virtualMachineId;
+   private String virtualMachineId;
    @SerializedName("vmdisplayname")
    private String vmDisplayName;
    @SerializedName("vmname")
@@ -286,17 +286,17 @@ public class Volume implements Comparable<Volume> {
    @SerializedName("vmstate")
    private VirtualMachine.State vmState;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
 
-   public Volume(long id,String account,  Date attached, Date created, boolean destroyed, long deviceId,
-                 String diskOfferingDisplayText, long diskOfferingId, String diskOfferingName,
-                 String domain, long domainId, String hypervisor, boolean extractable, long jobId,
-                 String jobStatus, String name, String serviceOfferingDisplayText, long serviceOfferingId,
-                 String serviceOfferingName, long size, long snapshotId, State state, String storage,
-                 String storageType, Type type, long virtualMachineId, String vmDisplayName, String vmName,
-                 VirtualMachine.State vmState, long zoneId, String zoneName) {
+   public Volume(String id,String account,  Date attached, Date created, boolean destroyed, String deviceId,
+                 String diskOfferingDisplayText, String diskOfferingId, String diskOfferingName,
+                 String domain, String domainId, String hypervisor, boolean extractable, String jobId,
+                 String jobStatus, String name, String serviceOfferingDisplayText, String serviceOfferingId,
+                 String serviceOfferingName, long size, String snapshotId, State state, String storage,
+                 String storageType, Type type, String virtualMachineId, String vmDisplayName, String vmName,
+                 VirtualMachine.State vmState, String zoneId, String zoneName) {
       this.id = id;
       this.account = account;
       this.attached = attached;
@@ -334,7 +334,7 @@ public class Volume implements Comparable<Volume> {
    Volume() {
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -350,7 +350,7 @@ public class Volume implements Comparable<Volume> {
       return destroyed;
    }
 
-   public long getDeviceId() {
+   public String getDeviceId() {
       return deviceId;
    }
 
@@ -358,7 +358,7 @@ public class Volume implements Comparable<Volume> {
       return diskOfferingDisplayText;
    }
 
-   public long getDiskOfferingId() {
+   public String getDiskOfferingId() {
       return diskOfferingId;
    }
 
@@ -370,7 +370,7 @@ public class Volume implements Comparable<Volume> {
       return domain;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -382,7 +382,7 @@ public class Volume implements Comparable<Volume> {
       return isExtractable;
    }
 
-   public long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -398,7 +398,7 @@ public class Volume implements Comparable<Volume> {
       return serviceOfferingDisplayText;
    }
 
-   public long getServiceOfferingId() {
+   public String getServiceOfferingId() {
       return serviceOfferingId;
    }
 
@@ -410,7 +410,7 @@ public class Volume implements Comparable<Volume> {
       return size;
    }
 
-   public long getSnapshotId() {
+   public String getSnapshotId() {
       return snapshotId;
    }
 
@@ -430,7 +430,7 @@ public class Volume implements Comparable<Volume> {
       return type;
    }
 
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 
@@ -446,7 +446,7 @@ public class Volume implements Comparable<Volume> {
       return vmState;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -460,7 +460,7 @@ public class Volume implements Comparable<Volume> {
 
    @Override
    public int compareTo(Volume volume) {
-      return Long.valueOf(this.id).compareTo(volume.id);
+      return this.id.compareTo(volume.id);
    }
 
 

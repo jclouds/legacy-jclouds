@@ -70,7 +70,7 @@ public interface DomainUserAsyncClient {
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> enableUser(@QueryParam("id") long userId);
+   ListenableFuture<User> enableUser(@QueryParam("id") String userId);
 
    /**
     * @see DomainUserClient#disableUser
@@ -80,6 +80,6 @@ public interface DomainUserAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<AsyncCreateResponse> disableUser(@QueryParam("id") long userId);
+   ListenableFuture<AsyncCreateResponse> disableUser(@QueryParam("id") String userId);
 
 }

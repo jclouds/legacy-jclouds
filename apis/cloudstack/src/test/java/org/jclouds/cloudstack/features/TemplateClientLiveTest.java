@@ -79,22 +79,22 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
          assertEquals(template, newDetails);
          assertEquals(template, client.getTemplateClient().getTemplateInZone(template.getId(), template.getZoneId()));
-         assert template.getId() > 0 : template;
+         assert template.getId() != null : template;
          assert template.getName() != null : template;
          assert template.getDisplayText() != null : template;
          assert template.getCreated() != null : template;
          assert template.getFormat() != null && template.getFormat() != Template.Format.UNRECOGNIZED : template;
          assert template.getOSType() != null : template;
-         assert template.getOSTypeId() > 0 : template;
+         assert template.getOSTypeId() != null : template;
          assert template.getAccount() != null : template;
          assert template.getZone() != null : template;
-         assert template.getZoneId() > 0 : template;
+         assert template.getZoneId() != null : template;
          assert (template.getStatus() == null ||
             template.getStatus().equals("Download Complete")) : template;
          assert template.getType() != null && template.getType() != Template.Type.UNRECOGNIZED : template;
          assert template.getHypervisor() != null : template;
          assert template.getDomain() != null : template;
-         assert template.getDomainId() > 0 : template;
+         assert template.getDomainId() != null : template;
          assert template.getSize() > 0 : template;
       }
    }
@@ -115,7 +115,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotNull(network);
 
       // Create a VM and stop it
-      Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
       vmForCreation = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, templateId, client, jobComplete, virtualMachineRunning);
       assertTrue(jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
 
@@ -177,7 +177,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotNull(registeredTemplate);
 
       // Ensure it is available
-      final long zoneId = zone.getId();
+      final String zoneId = zone.getId();
       Predicate<Template> templateReadyPredicate = new Predicate<Template>() {
          @Override
          public boolean apply(@Nullable Template template) {

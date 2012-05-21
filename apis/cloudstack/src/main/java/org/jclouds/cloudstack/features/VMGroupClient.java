@@ -51,7 +51,7 @@ public interface VMGroupClient {
     * @param id the id of the required VM group.
     * @return the VM group with the requested id, or null if not found
     */
-   VMGroup getInstanceGroup(long id);
+   VMGroup getInstanceGroup(String id);
 
    /**
     * Creates a VM group
@@ -68,12 +68,12 @@ public interface VMGroupClient {
     * @param name the new name of the group
     * @return the modified VMGroup
     */
-   VMGroup updateInstanceGroup(long id, UpdateVMGroupOptions... options);
+   VMGroup updateInstanceGroup(String id, UpdateVMGroupOptions... options);
 
    /**
     * Delete a VM group
     *
     * @param id the ID of the VM group
     */
-   void deleteInstanceGroup(long id);
+   void deleteInstanceGroup(String id);
 }

@@ -53,7 +53,7 @@ public class CreateAccountOptions extends BaseHttpRequestOptions {
    /**
     * @param domainId The domain for the resource
     */
-   public CreateAccountOptions domainId(long domainId) {
+   public CreateAccountOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
@@ -80,7 +80,7 @@ public class CreateAccountOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateAccountOptions#domainId
        */
-      public static CreateAccountOptions domainId(long domainId) {
+      public static CreateAccountOptions domainId(String domainId) {
          CreateAccountOptions options = new CreateAccountOptions();
          return options.domainId(domainId);
       }

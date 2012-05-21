@@ -55,7 +55,7 @@ public interface NetworkAsyncClient {
     * @see NetworkClient#listNetworks
     */
    @GET
-   @QueryParams(keys = "command", values = "listNetworks")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listNetworks", "true" })
    @SelectJson("network")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -65,12 +65,12 @@ public interface NetworkAsyncClient {
     * @see NetworkClient#getNetwork
     */
    @GET
-   @QueryParams(keys = "command", values = "listNetworks")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listNetworks", "true" })
    @SelectJson("network")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Network> getNetwork(@QueryParam("id") long id);
+   ListenableFuture<Network> getNetwork(@QueryParam("id") String id);
 
    /**
     * @see NetworkClient#createNetworkInZone
@@ -79,8 +79,8 @@ public interface NetworkAsyncClient {
    @QueryParams(keys = "command", values = "createNetwork")
    @SelectJson("network")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Network> createNetworkInZone(@QueryParam("zoneid") long zoneId,
-         @QueryParam("networkofferingid") long networkOfferingId, @QueryParam("name") String name,
+   ListenableFuture<Network> createNetworkInZone(@QueryParam("zoneid") String zoneId,
+         @QueryParam("networkofferingid") String networkOfferingId, @QueryParam("name") String name,
          @QueryParam("displaytext") String displayText, CreateNetworkOptions... options);
 
    /**
@@ -91,5 +91,5 @@ public interface NetworkAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Long> deleteNetwork(@QueryParam("id") long id);
+   ListenableFuture<String> deleteNetwork(@QueryParam("id") String id);
 }

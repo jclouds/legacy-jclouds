@@ -35,7 +35,7 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
     * @param account - the account for which the resource limits are retrieved for.
     * @return ListResourceLimitsOptions
     */
-   public ListResourceLimitsOptions account(String account, long domainId) {
+   public ListResourceLimitsOptions account(String account, String domainId) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account));
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(String.valueOf(domainId)));
       return this;
@@ -48,7 +48,7 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
     * @param domainId
     * @return ListResourceLimitsOptions
     */
-   public ListResourceLimitsOptions domainId(long domainId) {
+   public ListResourceLimitsOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(String.valueOf(domainId)));
       return this;
    }
@@ -59,7 +59,7 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
     * @param id of the resource limit.
     * @return ListResourceLimitsOptions
     */
-   public ListResourceLimitsOptions id(long id) {
+   public ListResourceLimitsOptions id(String id) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(String.valueOf(id)));
       return this;
    }
@@ -96,25 +96,25 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
       /**
-       * @see ListResourceLimitsOptions#account(String, long)
+       * @see ListResourceLimitsOptions#account(String, String)
        */
-      public static ListResourceLimitsOptions account(String account, long domainId) {
+      public static ListResourceLimitsOptions account(String account, String domainId) {
          ListResourceLimitsOptions options = new ListResourceLimitsOptions();
          return options.account(account, domainId);
       }
 
       /**
-       * @see ListResourceLimitsOptions#domainId(long)
+       * @see ListResourceLimitsOptions#domainId(String)
        */
-      public static ListResourceLimitsOptions domainId(long domainId) {
+      public static ListResourceLimitsOptions domainId(String domainId) {
          ListResourceLimitsOptions options = new ListResourceLimitsOptions();
          return options.domainId(domainId);
       }
 
       /**
-       * @see ListResourceLimitsOptions#id(long)
+       * @see ListResourceLimitsOptions#id(String)
        */
-      public static ListResourceLimitsOptions id(long id) {
+      public static ListResourceLimitsOptions id(String id) {
          ListResourceLimitsOptions options = new ListResourceLimitsOptions();
          return options.id(id);
       }

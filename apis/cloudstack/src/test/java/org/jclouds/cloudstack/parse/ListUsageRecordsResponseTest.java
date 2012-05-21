@@ -63,10 +63,10 @@ public class ListUsageRecordsResponseTest extends BaseSetParserTest<UsageRecord>
       Date end = c.getTime();
 
       return ImmutableSet.of(UsageRecord.builder()
-               .accountName("admin").accountId(2L).domainId(1L).zoneId(1L)
+               .accountName("admin").accountId("2").domainId("1").zoneId("1")
                .description("Template Id:203 Size:3117171712")
                .usage("24 Hrs").usageType(UsageRecord.UsageType.TEMPLATE).rawUsageHours(24)
-            .templateId(0L).id(203).startDate(start).endDate(end).build());
+            .templateId("0").id("203").startDate(start).endDate(end).build());
 
    }
 

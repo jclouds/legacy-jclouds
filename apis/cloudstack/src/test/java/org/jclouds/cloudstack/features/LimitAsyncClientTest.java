@@ -43,7 +43,7 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listResourceLimits HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -57,10 +57,10 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
 
    public void testListResourceLimitsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListResourceLimitsOptions.Builder.account("jclouds" , 23));
+      HttpRequest httpRequest = processor.createRequest(method, ListResourceLimitsOptions.Builder.account("jclouds" , "23"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&account=jclouds&domainid=23 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&listAll=true&account=jclouds&domainid=23 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

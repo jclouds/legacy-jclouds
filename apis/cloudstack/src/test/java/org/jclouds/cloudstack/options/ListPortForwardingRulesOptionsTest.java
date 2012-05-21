@@ -36,34 +36,34 @@ import com.google.common.collect.ImmutableList;
 public class ListPortForwardingRulesOptionsTest {
 
    public void testAccount() {
-      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().accountInDomain("account", 6);
+      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().accountInDomain("account", "6");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountStatic() {
-      ListPortForwardingRulesOptions options = accountInDomain("account", 6);
+      ListPortForwardingRulesOptions options = accountInDomain("account", "6");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testName() {
-      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().ipAddressId(9);
+      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().ipAddressId("9");
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("ipaddressid"));
    }
 
    public void testNameStatic() {
-      ListPortForwardingRulesOptions options = ipAddressId(9);
+      ListPortForwardingRulesOptions options = ipAddressId("9");
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("ipaddressid"));
    }
 
    public void testDomainId() {
-      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().domainId(6);
+      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListPortForwardingRulesOptions options = domainId(6);
+      ListPortForwardingRulesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 

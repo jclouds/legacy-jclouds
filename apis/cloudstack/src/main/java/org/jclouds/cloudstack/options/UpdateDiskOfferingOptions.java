@@ -71,7 +71,7 @@ public class UpdateDiskOfferingOptions extends AccountInDomainOptions {
       /**
        * @see org.jclouds.cloudstack.options.UpdateDiskOfferingOptions#accountInDomain
        */
-      public static UpdateDiskOfferingOptions accountInDomain(String account, long domain) {
+      public static UpdateDiskOfferingOptions accountInDomain(String account, String domain) {
          UpdateDiskOfferingOptions options = new UpdateDiskOfferingOptions();
          return options.accountInDomain(account, domain);
       }
@@ -79,7 +79,7 @@ public class UpdateDiskOfferingOptions extends AccountInDomainOptions {
       /**
        * @see org.jclouds.cloudstack.options.UpdateDiskOfferingOptions#domainId
        */
-      public static UpdateDiskOfferingOptions domainId(long domainId) {
+      public static UpdateDiskOfferingOptions domainId(String domainId) {
          UpdateDiskOfferingOptions options = new UpdateDiskOfferingOptions();
          return options.domainId(domainId);
       }
@@ -89,7 +89,7 @@ public class UpdateDiskOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public UpdateDiskOfferingOptions accountInDomain(String account, long domain) {
+   public UpdateDiskOfferingOptions accountInDomain(String account, String domain) {
       return UpdateDiskOfferingOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -97,7 +97,7 @@ public class UpdateDiskOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public UpdateDiskOfferingOptions domainId(long domainId) {
+   public UpdateDiskOfferingOptions domainId(String domainId) {
       return UpdateDiskOfferingOptions.class.cast(super.domainId(domainId));
    }
 }

@@ -42,24 +42,24 @@ import com.google.common.collect.ImmutableSet;
 public class CreateVlanIPRangeOptionsTest {
 
    public void testAccountInDomain() {
-      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().accountInDomain("fred", 6);
+      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().accountInDomain("fred", "6");
       assertEquals(ImmutableSet.of("fred"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainStatic() {
-      CreateVlanIPRangeOptions options = accountInDomain("fred", 6);
+      CreateVlanIPRangeOptions options = accountInDomain("fred", "6");
       assertEquals(ImmutableSet.of("fred"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainId() {
-      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().domainId(6);
+      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().domainId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      CreateVlanIPRangeOptions options = domainId(6);
+      CreateVlanIPRangeOptions options = domainId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
@@ -94,22 +94,22 @@ public class CreateVlanIPRangeOptionsTest {
    }
 
    public void testNetworkId() {
-      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().networkId(9);
+      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().networkId("9");
       assertEquals(ImmutableSet.of("9"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testNetworkIdStatic() {
-      CreateVlanIPRangeOptions options = networkId(9);
+      CreateVlanIPRangeOptions options = networkId("9");
       assertEquals(ImmutableSet.of("9"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testPodId() {
-      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().podId(8);
+      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().podId("8");
       assertEquals(ImmutableSet.of("8"), options.buildQueryParameters().get("podid"));
    }
 
    public void testPodIdStatic() {
-      CreateVlanIPRangeOptions options = podId(8);
+      CreateVlanIPRangeOptions options = podId("8");
       assertEquals(ImmutableSet.of("8"), options.buildQueryParameters().get("podid"));
    }
 
@@ -124,12 +124,12 @@ public class CreateVlanIPRangeOptionsTest {
    }
 
    public void testZoneId() {
-      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().zoneId(7);
+      CreateVlanIPRangeOptions options = new CreateVlanIPRangeOptions().zoneId("7");
       assertEquals(ImmutableSet.of("7"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      CreateVlanIPRangeOptions options = zoneId(7);
+      CreateVlanIPRangeOptions options = zoneId("7");
       assertEquals(ImmutableSet.of("7"), options.buildQueryParameters().get("zoneid"));
    }
 

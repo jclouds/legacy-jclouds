@@ -35,7 +35,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseIdToNameEntryFromHttpResponse implements Function<HttpResponse, Map.Entry<Long, String>> {
+public class ParseIdToNameEntryFromHttpResponse implements Function<HttpResponse, Map.Entry<String, String>> {
    private final ParseIdToNameFromHttpResponse parser;
 
    @Inject
@@ -43,9 +43,9 @@ public class ParseIdToNameEntryFromHttpResponse implements Function<HttpResponse
       this.parser = checkNotNull(parser, "parser");
    }
 
-   public Map.Entry<Long, String> apply(HttpResponse response) {
+   public Map.Entry<String, String> apply(HttpResponse response) {
       checkNotNull(response, "response");
-      Map<Long, String> toParse = parser.apply(response);
+      Map<String, String> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
       return Iterables.getFirst(toParse.entrySet(), null);
    }

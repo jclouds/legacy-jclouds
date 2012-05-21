@@ -36,7 +36,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
     * @param id
     *           Lists rule with the specified ID.
     */
-   public ListIPForwardingRulesOptions id(long id) {
+   public ListIPForwardingRulesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -45,7 +45,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
     * @param IPAddressId
     *           list the rule belonging to this public ip address
     */
-   public ListIPForwardingRulesOptions IPAddressId(long IPAddressId) {
+   public ListIPForwardingRulesOptions IPAddressId(String IPAddressId) {
       this.queryParameters.replaceValues("ipaddressid", ImmutableSet.of(IPAddressId + ""));
       return this;
 
@@ -55,7 +55,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
     * @param virtualMachineId
     *           Lists all rules applied to the specified Vm.
     */
-   public ListIPForwardingRulesOptions virtualMachineId(long virtualMachineId) {
+   public ListIPForwardingRulesOptions virtualMachineId(String virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
 
@@ -66,7 +66,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListIPForwardingRulesOptions#accountInDomain
        */
-      public static ListIPForwardingRulesOptions accountInDomain(String account, long domain) {
+      public static ListIPForwardingRulesOptions accountInDomain(String account, String domain) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -74,7 +74,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListIPForwardingRulesOptions#IPAddressId
        */
-      public static ListIPForwardingRulesOptions IPAddressId(long IPAddressId) {
+      public static ListIPForwardingRulesOptions IPAddressId(String IPAddressId) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
          return options.IPAddressId(IPAddressId);
       }
@@ -82,7 +82,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListIPForwardingRulesOptions#domainId
        */
-      public static ListIPForwardingRulesOptions domainId(long id) {
+      public static ListIPForwardingRulesOptions domainId(String id) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
          return options.domainId(id);
       }
@@ -90,7 +90,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListIPForwardingRulesOptions#id
        */
-      public static ListIPForwardingRulesOptions id(long id) {
+      public static ListIPForwardingRulesOptions id(String id) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
          return options.id(id);
       }
@@ -98,7 +98,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
       /**
        * @see ListIPForwardingRulesOptions#virtualMachineId
        */
-      public static ListIPForwardingRulesOptions virtualMachineId(long virtualMachineId) {
+      public static ListIPForwardingRulesOptions virtualMachineId(String virtualMachineId) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
          return options.virtualMachineId(virtualMachineId);
       }
@@ -108,7 +108,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListIPForwardingRulesOptions accountInDomain(String account, long domain) {
+   public ListIPForwardingRulesOptions accountInDomain(String account, String domain) {
       return ListIPForwardingRulesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -116,7 +116,7 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListIPForwardingRulesOptions domainId(long domainId) {
+   public ListIPForwardingRulesOptions domainId(String domainId) {
       return ListIPForwardingRulesOptions.class.cast(super.domainId(domainId));
    }
 }

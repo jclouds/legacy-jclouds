@@ -92,7 +92,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVm() {
       if (networksDisabled)
          return;
-      Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
       vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
             defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()),
             client, jobComplete, virtualMachineRunning);
@@ -108,7 +108,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       while (rule == null && attempts < 10) {
          ip = reuseOrAssociate.apply(network);
          try {
-            Long jobId = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(),
+            String jobId = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(),
                   Algorithm.LEASTCONN, prefix, 22, 22);
             assertTrue(jobComplete.apply(jobId));
             AsyncJob<LoadBalancerRule> asyncJob = client.getAsyncJobClient().getAsyncJob(jobId);
@@ -135,7 +135,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testAssignToLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
-      long jobId = client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(), vm.getId());
+      String jobId = client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(), vm.getId());
       assertTrue(jobComplete.apply(jobId));
       AsyncJob<JobResult> result = client.getAsyncJobClient().getAsyncJob(jobId);
       assertTrue(result.hasSucceed());
@@ -204,7 +204,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
-   private LoadBalancerRule findRuleWithId(final long id) {
+   private LoadBalancerRule findRuleWithId(final String id) {
       return find(client.getLoadBalancerClient().listLoadBalancerRules(), new Predicate<LoadBalancerRule>() {
 
          @Override
@@ -217,16 +217,16 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkRule(LoadBalancerRule rule) {
       assertEquals(rule.getId(), findRuleWithId(rule.getId()).getId());
-      assert rule.getId() > 0 : rule;
+      assert rule.getId() != null : rule;
       assert rule.getAccount() != null : rule;
       assert rule.getAlgorithm() != null : rule;
       assert rule.getPrivatePort() > 0 : rule;
       assert rule.getPublicPort() > 0 : rule;
       assert rule.getDomain() != null : rule;
-      assert rule.getDomainId() > 0 : rule;
+      assert rule.getDomainId() != null : rule;
       assert rule.getState() != null : rule;
       assert rule.getName() != null : rule;
       assert rule.getPublicIP() != null : rule;
-      assert rule.getPublicIPId() > 0 : rule;
+      assert rule.getPublicIPId() != null : rule;
    }
 }

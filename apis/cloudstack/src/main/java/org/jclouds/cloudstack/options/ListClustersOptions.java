@@ -52,7 +52,7 @@ public class ListClustersOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListClustersOptions id(long id) {
+   public ListClustersOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -72,12 +72,12 @@ public class ListClustersOptions extends BaseHttpRequestOptions {
       return this;
    }
 
-   public ListClustersOptions podId(long podId) {
+   public ListClustersOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
 
-   public ListClustersOptions zoneId(long zoneId) {
+   public ListClustersOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -96,7 +96,7 @@ public class ListClustersOptions extends BaseHttpRequestOptions {
          return new ListClustersOptions().hypervisor(hypervisor);
       }
 
-      public static ListClustersOptions id(long id) {
+      public static ListClustersOptions id(String id) {
          return new ListClustersOptions().id(id);
       }
 
@@ -112,11 +112,11 @@ public class ListClustersOptions extends BaseHttpRequestOptions {
          return new ListClustersOptions().name(name);
       }
 
-      public static ListClustersOptions podId(long podId) {
+      public static ListClustersOptions podId(String podId) {
          return new ListClustersOptions().podId(podId);
       }
 
-      public static ListClustersOptions zoneId(long zoneId) {
+      public static ListClustersOptions zoneId(String zoneId) {
          return new ListClustersOptions().zoneId(zoneId);
       }
 

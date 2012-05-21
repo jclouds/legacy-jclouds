@@ -129,7 +129,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
       });
 
-      assert ICMPPingRule.getId() > 0 : ICMPPingRule;
+      assert ICMPPingRule.getId() != null : ICMPPingRule;
       assert "icmp".equals(ICMPPingRule.getProtocol()) : ICMPPingRule;
       assert ICMPPingRule.getStartPort() == -1 : ICMPPingRule;
       assert ICMPPingRule.getEndPort() == -1 : ICMPPingRule;
@@ -148,7 +148,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
       });
 
-      assert SSHRule.getId() > 0 : SSHRule;
+      assert SSHRule.getId() != null : SSHRule;
       assert "tcp".equals(SSHRule.getProtocol()) : SSHRule;
       assert SSHRule.getStartPort() == 22 : SSHRule;
       assert SSHRule.getEndPort() == 22 : SSHRule;
@@ -171,7 +171,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMInSecurityGroup() throws Exception {
       if (!securityGroupsSupported)
          return;
-      Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
       vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(),
             defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), group.getId(), client,
             jobComplete, virtualMachineRunning);
@@ -188,11 +188,11 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       // http://bugs.cloud.com/show_bug.cgi?id=8968
       if (group.getIngressRules().size() <= 1)
          assertEquals(group, client.getSecurityGroupClient().getSecurityGroup(group.getId()));
-      assert group.getId() > 0 : group;
+      assert group.getId() != null : group;
       assert group.getName() != null : group;
       assert group.getAccount() != null : group;
       assert group.getDomain() != null : group;
-      assert group.getDomainId() >= 0 : group;
+      assert group.getDomainId() != null : group;
       assert group.getIngressRules() != null : group;
    }
 
@@ -200,7 +200,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMWithoutSecurityGroupAssignsDefault() throws Exception {
       if (!securityGroupsSupported)
          return;
-      Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
       VirtualMachine newVm = VirtualMachineClientLiveTest.createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions.NONE,
             zone.getId(), defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), client,
             jobComplete, virtualMachineRunning);

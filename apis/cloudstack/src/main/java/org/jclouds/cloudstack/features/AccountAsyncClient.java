@@ -53,7 +53,7 @@ public interface AccountAsyncClient {
     * @see AccountClient#listAccounts
     */
    @GET
-   @QueryParams(keys = "command", values = "listAccounts")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listAccounts", "true" })
    @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -63,11 +63,11 @@ public interface AccountAsyncClient {
     * @see AccountClient#getAccount
     */
    @GET
-   @QueryParams(keys = "command", values = "listAccounts")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listAccounts", "true" })
    @SelectJson("account")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> getAccount(@QueryParam("id") long id);
+   ListenableFuture<Account> getAccount(@QueryParam("id") String id);
 
 }

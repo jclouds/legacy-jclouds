@@ -35,24 +35,24 @@ import com.google.common.collect.ImmutableList;
 public class AssociateIPAddressOptionsTest {
 
    public void testAccountInDomainId() {
-      AssociateIPAddressOptions options = new AssociateIPAddressOptions().accountInDomain("adrian", 6);
+      AssociateIPAddressOptions options = new AssociateIPAddressOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      AssociateIPAddressOptions options = accountInDomain("adrian", 6);
+      AssociateIPAddressOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testNetworkId() {
-      AssociateIPAddressOptions options = new AssociateIPAddressOptions().networkId(6);
+      AssociateIPAddressOptions options = new AssociateIPAddressOptions().networkId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("networkid"));
    }
 
    public void testNetworkIdStatic() {
-      AssociateIPAddressOptions options = networkId(6);
+      AssociateIPAddressOptions options = networkId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("networkid"));
    }
 }

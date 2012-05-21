@@ -29,11 +29,11 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
 
    public static class Builder {
 
-      public static ListVlanIPRangesOptions accountInDomain(String account, long domainId) {
+      public static ListVlanIPRangesOptions accountInDomain(String account, String domainId) {
          return new ListVlanIPRangesOptions().accountInDomain(account, domainId);
       }
 
-      public static ListVlanIPRangesOptions domainId(long domainId) {
+      public static ListVlanIPRangesOptions domainId(String domainId) {
          return new ListVlanIPRangesOptions().domainId(domainId);
       }
 
@@ -41,7 +41,7 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
          return new ListVlanIPRangesOptions().forVirtualNetwork(forVirtualNetwork);
       }
 
-      public static ListVlanIPRangesOptions id(long id) {
+      public static ListVlanIPRangesOptions id(String id) {
          return new ListVlanIPRangesOptions().id(id);
       }
 
@@ -49,34 +49,34 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
          return new ListVlanIPRangesOptions().keyword(keyword);
       }
 
-      public static ListVlanIPRangesOptions networkId(long networkId) {
+      public static ListVlanIPRangesOptions networkId(String networkId) {
          return new ListVlanIPRangesOptions().networkId(networkId);
       }
 
-      public static ListVlanIPRangesOptions podId(long podId) {
+      public static ListVlanIPRangesOptions podId(String podId) {
          return new ListVlanIPRangesOptions().podId(podId);
       }
 
-      public static ListVlanIPRangesOptions vlan(String vlan) {
+      public static ListVlanIPRangesOptions vlan(long vlan) {
          return new ListVlanIPRangesOptions().vlan(vlan);
       }
 
-      public static ListVlanIPRangesOptions vlan(long vlan) {
+      public static ListVlanIPRangesOptions vlan(String vlan) {
          return new ListVlanIPRangesOptions().vlan(vlan+"");
       }
 
-      public static ListVlanIPRangesOptions zoneId(long zoneId) {
+      public static ListVlanIPRangesOptions zoneId(String zoneId) {
          return new ListVlanIPRangesOptions().zoneId(zoneId);
       }
    }
 
    @Override
-   public ListVlanIPRangesOptions accountInDomain(String account, long domainId) {
+   public ListVlanIPRangesOptions accountInDomain(String account, String domainId) {
       return (ListVlanIPRangesOptions) super.accountInDomain(account, domainId);
    }
 
    @Override
-   public ListVlanIPRangesOptions domainId(long domainId) {
+   public ListVlanIPRangesOptions domainId(String domainId) {
       return (ListVlanIPRangesOptions) super.domainId(domainId);
    }
 
@@ -85,7 +85,7 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
       return this;
    }
 
-   public ListVlanIPRangesOptions id(long id) {
+   public ListVlanIPRangesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id+""));
       return this;
    }
@@ -95,12 +95,12 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
       return this;
    }
 
-   public ListVlanIPRangesOptions networkId(long networkId) {
+   public ListVlanIPRangesOptions networkId(String networkId) {
       this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId+""));
       return this;
    }
 
-   public ListVlanIPRangesOptions podId(long podId) {
+   public ListVlanIPRangesOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId+""));
       return this;
    }
@@ -115,7 +115,7 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
       return this;
    }
 
-   public ListVlanIPRangesOptions zoneId(long zoneId) {
+   public ListVlanIPRangesOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId+""));
       return this;
    }

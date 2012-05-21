@@ -75,7 +75,7 @@ public class VirtualMachineRunningTest {
    }
 
    private void assertPredicateResult(State state, boolean expected) {
-      long virtualMachineId = 229;
+      String virtualMachineId = "229";
       VirtualMachine virtualMachine = VirtualMachine.builder().
          id(virtualMachineId).state(state).build();
 

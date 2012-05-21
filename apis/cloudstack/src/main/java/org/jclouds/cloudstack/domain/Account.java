@@ -43,11 +43,11 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private Type type;
       private String networkDomain;
       private String domain;
-      private long domainId;
+      private String domainId;
       private Long IPsAvailable;
       private Long IPLimit;
       private long IPs;
@@ -72,7 +72,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
       private long volumes;
       private Set<User> users = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -92,7 +92,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -285,14 +285,14 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("accounttype")
    private Type type;
    @SerializedName("networkdomain")
    private String networkDomain;
    private String domain;
    @SerializedName("domainId")
-   private long domainId;
+   private String domainId;
    @SerializedName("ipsavailable")
    private Long IPsAvailable;
    @SerializedName("iplimit")
@@ -337,7 +337,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    private long volumes;
    private Set<User> users;
 
-   public Account(long id, Type type, String networkDomain, String domain, long domainId, Long IPsAvailable, Long IPLimit, long iPs,
+   public Account(String id, Type type, String networkDomain, String domain, String domainId, Long IPsAvailable, Long IPLimit, long iPs,
                   boolean cleanupRequired, String name, long receivedBytes, long sentBytes, Long snapshotsAvailable,
                   Long snapshotLimit, long snapshots, org.jclouds.cloudstack.domain.Account.State state,
                   Long templatesAvailable, Long templateLimit, long templates, Long VMsAvailable, Long VMLimit, long vMsRunning,
@@ -382,7 +382,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    /**
     * @return the id of the account
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -418,7 +418,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    /**
     * @return id of the Domain the account belongs to
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -598,7 +598,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    @Override
    public int compareTo(Account arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 

@@ -47,7 +47,7 @@ public class ZoneClientExpectTest extends BaseCloudStackRestClientExpectTest<Zon
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listZones&apiKey=identity&signature=wLSqVlxuiLXZcHi9IoSAwXNRGFs%3D"))
+                  "command=listZones&listAll=true&apiKey=identity&signature=8iHCtck0qfxFTqJ8reyAObRf31I%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -61,12 +61,12 @@ public class ZoneClientExpectTest extends BaseCloudStackRestClientExpectTest<Zon
       assertEquals(client.listZones(),
          ImmutableSet.of(
             Zone.builder()
-               .id(1)
+               .id("1")
                .name("San Jose 1")
                .networkType(NetworkType.ADVANCED)
                .securityGroupsEnabled(false).build(),
             Zone.builder()
-               .id(2)
+               .id("2")
                .name("Chicago")
                .networkType(NetworkType.ADVANCED)
                .securityGroupsEnabled(true).build()));
@@ -78,7 +78,7 @@ public class ZoneClientExpectTest extends BaseCloudStackRestClientExpectTest<Zon
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listZones&apiKey=identity&signature=wLSqVlxuiLXZcHi9IoSAwXNRGFs%3D"))
+                  "command=listZones&listAll=true&apiKey=identity&signature=8iHCtck0qfxFTqJ8reyAObRf31I%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")

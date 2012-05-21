@@ -58,12 +58,12 @@ public class UpdateHostOptionsTest {
    }
 
    public void testOsCategoryId() {
-      UpdateHostOptions options = new UpdateHostOptions().osCategoryId(42L);
+      UpdateHostOptions options = new UpdateHostOptions().osCategoryId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("oscategoryid"));
    }
 
    public void testOsCategoryIdStatic() {
-      UpdateHostOptions options = osCategoryId(42L);
+      UpdateHostOptions options = osCategoryId("42");
       assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("oscategoryid"));
    }
 

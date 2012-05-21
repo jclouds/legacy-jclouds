@@ -45,9 +45,9 @@ public class ListNetworkOfferingsResponseTest extends BaseSetParserTest<NetworkO
    @SelectJson("networkoffering")
    public Set<NetworkOffering> expected() {
       return ImmutableSet.<NetworkOffering>of(
-         NetworkOffering.builder().id(7).name("DefaultDirectNetworkOffering").displayText("Direct")
+         NetworkOffering.builder().id("7").name("DefaultDirectNetworkOffering").displayText("Direct")
             .trafficType(TrafficType.PUBLIC).isDefault(true).supportsVLAN(false).availability(REQUIRED)
-            .networkRate(200).build(), NetworkOffering.builder().id(6).name("DefaultVirtualizedNetworkOffering")
+            .networkRate(200).build(), NetworkOffering.builder().id("6").name("DefaultVirtualizedNetworkOffering")
             .displayText("Virtual Vlan").trafficType(TrafficType.GUEST).isDefault(true).supportsVLAN(false)
             .availability(REQUIRED).networkRate(200).build());
    }

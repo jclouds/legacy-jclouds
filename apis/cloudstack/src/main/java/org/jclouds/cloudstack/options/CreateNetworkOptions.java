@@ -172,7 +172,7 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
       /**
        * @see CreateNetworkOptions#accountInDomain
        */
-      public static CreateNetworkOptions accountInDomain(String account, long domain) {
+      public static CreateNetworkOptions accountInDomain(String account, String domain) {
          CreateNetworkOptions options = new CreateNetworkOptions();
          return options.accountInDomain(account, domain);
       }
@@ -180,7 +180,7 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
       /**
        * @see CreateNetworkOptions#domainId
        */
-      public static CreateNetworkOptions domainId(long domainId) {
+      public static CreateNetworkOptions domainId(String domainId) {
          CreateNetworkOptions options = new CreateNetworkOptions();
          return options.domainId(domainId);
       }
@@ -199,7 +199,7 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
     *           domain ID
     */
    @Override
-   public CreateNetworkOptions accountInDomain(String account, long domain) {
+   public CreateNetworkOptions accountInDomain(String account, String domain) {
       return CreateNetworkOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -216,7 +216,7 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
     *           domain ID
     */
    @Override
-   public CreateNetworkOptions domainId(long domainId) {
+   public CreateNetworkOptions domainId(String domainId) {
       return CreateNetworkOptions.class.cast(super.domainId(domainId));
    }
 }

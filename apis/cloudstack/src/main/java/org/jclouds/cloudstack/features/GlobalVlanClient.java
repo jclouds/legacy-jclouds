@@ -42,7 +42,7 @@ public interface GlobalVlanClient {
     * @param id the required IP range.
     * @return the requested IP range.
     */
-   VlanIPRange getVlanIPRange(long id);
+   VlanIPRange getVlanIPRange(String id);
 
    /**
     * Lists all VLAN IP ranges.
@@ -66,5 +66,5 @@ public interface GlobalVlanClient {
     * Deletes a VLAN IP range.
     * @param rangeId the id of the VLAN IP range
     */
-   void deleteVlanIPRange(long rangeId);
+   void deleteVlanIPRange(String rangeId);
 }

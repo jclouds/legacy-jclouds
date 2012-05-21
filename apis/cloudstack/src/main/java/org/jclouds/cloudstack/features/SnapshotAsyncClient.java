@@ -71,7 +71,7 @@ public interface SnapshotAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "createSnapshot")
    @Unwrap
-   ListenableFuture<AsyncCreateResponse> createSnapshot(@QueryParam("volumeid") long volumeId, CreateSnapshotOptions... options);
+   ListenableFuture<AsyncCreateResponse> createSnapshot(@QueryParam("volumeid") String volumeId, CreateSnapshotOptions... options);
 
    /**
     * Lists all available snapshots for the account, matching the query described by the options.
@@ -81,7 +81,7 @@ public interface SnapshotAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listSnapshots")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshots", "true" })
    @SelectJson("snapshot")
    @Unwrap
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -95,11 +95,11 @@ public interface SnapshotAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listSnapshots")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshots", "true" })
    @SelectJson("snapshot")
    @OnlyElement
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Snapshot> getSnapshot(@QueryParam("id") long id);
+   ListenableFuture<Snapshot> getSnapshot(@QueryParam("id") String id);
 
    /**
     * Deletes a snapshot of a disk volume.
@@ -111,7 +111,7 @@ public interface SnapshotAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshot")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteSnapshot(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteSnapshot(@QueryParam("id") String id);
 
    /**
     * Creates a snapshot policy for the account.
@@ -126,7 +126,7 @@ public interface SnapshotAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Unwrap
    @QueryParams(keys = "command", values = "createSnapshotPolicy")
-   ListenableFuture<SnapshotPolicy> createSnapshotPolicy(@BinderParam(BindSnapshotPolicyScheduleToQueryParam.class) SnapshotPolicySchedule schedule, @QueryParam("maxsnaps") long numberToRetain, @QueryParam("timezone") String timezone, @QueryParam("volumeid") long volumeId);
+   ListenableFuture<SnapshotPolicy> createSnapshotPolicy(@BinderParam(BindSnapshotPolicyScheduleToQueryParam.class) SnapshotPolicySchedule schedule, @QueryParam("maxsnaps") String numberToRetain, @QueryParam("timezone") String timezone, @QueryParam("volumeid") String volumeId);
 
    /**
     * Deletes a snapshot policy for the account.
@@ -138,7 +138,7 @@ public interface SnapshotAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteSnapshotPolicy(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteSnapshotPolicy(@QueryParam("id") String id);
 
    /**
     * Deletes snapshot policies for the account.
@@ -150,7 +150,7 @@ public interface SnapshotAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteSnapshotPolicies(@BinderParam(BindIdListToCommaDelimitedQueryParam.class) Iterable<Long> id);
+   ListenableFuture<Void> deleteSnapshotPolicies(@BinderParam(BindIdListToCommaDelimitedQueryParam.class) Iterable<String> id);
 
    /**
     * Lists snapshot policies.
@@ -161,8 +161,8 @@ public interface SnapshotAsyncClient {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "command", values = "listSnapshotPolicies")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshotPolicies", "true" })
    @Unwrap
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<SnapshotPolicy>> listSnapshotPolicies(@QueryParam("volumeid") long volumeId, ListSnapshotPoliciesOptions... options);
+   ListenableFuture<Set<SnapshotPolicy>> listSnapshotPolicies(@QueryParam("volumeid") String volumeId, ListSnapshotPoliciesOptions... options);
 }
