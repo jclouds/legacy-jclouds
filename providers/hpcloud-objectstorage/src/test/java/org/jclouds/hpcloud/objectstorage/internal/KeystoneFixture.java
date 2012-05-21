@@ -67,7 +67,7 @@ public enum KeystoneFixture {
             .payload(
                      payloadFromStringWithContentType(
                               format(
-                                       "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantName\":\"%s\"}}",
+                                       "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantId\":\"%s\"}}",
                                        accessKey, secretKey, getTenantName()), "application/json")).build();
    }
 
