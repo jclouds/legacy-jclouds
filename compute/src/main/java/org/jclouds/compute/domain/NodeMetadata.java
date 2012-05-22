@@ -20,7 +20,6 @@ package org.jclouds.compute.domain;
 
 import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
