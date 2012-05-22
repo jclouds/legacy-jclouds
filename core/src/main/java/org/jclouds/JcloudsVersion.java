@@ -39,10 +39,11 @@ public class JcloudsVersion {
     static final String VERSION_RESOURCE_FILE = "META-INF/maven/org.jclouds/jclouds-core/pom.properties";
     private static final String VERSION_PROPERTY_NAME = "version";
 
-    // x.y.z or x.y.z-alpha.n or x.y.z-rc.n or x.y.z-SNAPSHOT - see http://semver.org
+    // x.y.z or x.y.z-alpha.n or x.y.z-beta.n or x.y.z-rc.n or x.y.z-SNAPSHOT - see http://semver.org
     private static final Pattern SEMANTIC_VERSION_PATTERN =
-        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-(alpha|rc)\\.(\\d+)|-SNAPSHOT)?");
+        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-(alpha|beta|rc)\\.(\\d+)|-SNAPSHOT)?");
     private static final String ALPHA_VERSION_IDENTIFIER = "alpha";
+    private static final String BETA_VERSION_IDENTIFIER = "beta";
 
     private static final JcloudsVersion INSTANCE = new JcloudsVersion();
 
@@ -50,11 +51,18 @@ public class JcloudsVersion {
     public final int minorVersion;
     public final int patchVersion;
     public final boolean alpha;
+    public final boolean beta;
 
     /**
      * Non-null iff {@link #alpha} is {@code true}
      */
     public final @Nullable Integer alphaVersion;
+
+    /**
+     * Non-null iff {@link #beta} is {@code true}
+     */
+    public final @Nullable Integer betaVersion;
+
     public final boolean releaseCandidate;
 
     /**
@@ -90,28 +98,41 @@ public class JcloudsVersion {
         checkArgument(versionMatcher.matches(), "Version '%s' did not match expected pattern '%s'", 
                 version, SEMANTIC_VERSION_PATTERN);
         this.version = version;
-        // a match will produce three or five matching groups (alpha/release candidate identifier and version optional)
+        // a match will produce three or five matching groups (alpha/beta/release candidate identifier and version optional)
         majorVersion = Integer.valueOf(versionMatcher.group(1));
         minorVersion = Integer.valueOf(versionMatcher.group(2));
         patchVersion = Integer.valueOf(versionMatcher.group(3));
 
-        String alphaOrReleaseCandidateVersionIfPresent = versionMatcher.group(4);
-        if (alphaOrReleaseCandidateVersionIfPresent != null) {
+        String alphaOrBetaOrReleaseCandidateVersionIfPresent = versionMatcher.group(4);
+        if (alphaOrBetaOrReleaseCandidateVersionIfPresent != null) {
             Integer alphaOrReleaseCandidateVersion = Integer.valueOf(versionMatcher.group(5));
-            if (alphaOrReleaseCandidateVersionIfPresent.equals(ALPHA_VERSION_IDENTIFIER)) {
+            if (alphaOrBetaOrReleaseCandidateVersionIfPresent.equals(ALPHA_VERSION_IDENTIFIER)) {
                 alpha = true;
                 alphaVersion = alphaOrReleaseCandidateVersion;
+                beta = false;
+                betaVersion = null;
+                releaseCandidate = false;
+                releaseCandidateVersion = null;
+            } else if (alphaOrBetaOrReleaseCandidateVersionIfPresent.equals(BETA_VERSION_IDENTIFIER)) {
+                alpha = false;
+                alphaVersion = null;
+                beta = true;
+                betaVersion = alphaOrReleaseCandidateVersion;
                 releaseCandidate = false;
                 releaseCandidateVersion = null;
             } else {
                 alpha = false;
                 alphaVersion = null;
+                beta = false;
+                betaVersion = null;
                 releaseCandidate = true;
                 releaseCandidateVersion = alphaOrReleaseCandidateVersion;
             }
         } else {
             alpha = false;
             alphaVersion = null;
+            beta = false;
+            betaVersion = null;
             releaseCandidate = false;
             releaseCandidateVersion = null;
         }
