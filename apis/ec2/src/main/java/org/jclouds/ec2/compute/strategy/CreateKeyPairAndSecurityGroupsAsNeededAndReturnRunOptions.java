@@ -179,8 +179,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, options.getInboundPorts(), true);
          }
          if (ec2Opts.shouldUseMarkerGroup()) {
-             groups.add(markerGroup);
-             // this will create if not yet exists.
+             groups.add(markerGroup); // this will create if not yet exists.
              securityGroupMap.getUnchecked(regionNameAndIngessRulesForMarkerGroup);
          }
       }

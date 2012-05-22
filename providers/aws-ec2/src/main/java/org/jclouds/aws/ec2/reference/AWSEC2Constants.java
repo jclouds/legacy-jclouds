@@ -38,4 +38,10 @@ public interface AWSEC2Constants extends EC2Constants {
    public static final String PROPERTY_EC2_CC_REGIONS = "jclouds.ec2.cc-regions";
    public static final String PROPERTY_EC2_AMI_QUERY = "jclouds.ec2.ami-query";
 
+   /**
+    * If this property is set to true(default is false), jclouds generate a tag for each instance based on
+    * the group.
+    */
+   public static final String PROPERTY_EC2_ENCODE_GROUP_IN_TAGS = "jclouds.ec2.encode-group-in-tags";
+
 }

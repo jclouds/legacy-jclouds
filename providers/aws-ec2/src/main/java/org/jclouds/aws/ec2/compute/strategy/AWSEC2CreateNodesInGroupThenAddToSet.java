@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_ENCODE_GROUP_IN_TAGS;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -76,6 +77,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    final SpotInstanceRequestToAWSRunningInstance spotConverter;
    final AWSEC2AsyncClient aclient;
    final boolean generateInstanceNames;
+   final boolean encodeGroupInTags;
 
    @Inject
    protected AWSEC2CreateNodesInGroupThenAddToSet(
@@ -84,6 +86,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             AWSEC2AsyncClient aclient,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+            @Named(PROPERTY_EC2_ENCODE_GROUP_IN_TAGS) boolean encodeGroupInTags,
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             AWSEC2InstancePresent instancePresent,
@@ -96,6 +99,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
       this.aclient = checkNotNull(aclient, "aclient");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");
       this.generateInstanceNames = generateInstanceNames;
+      this.encodeGroupInTags = encodeGroupInTags;
    }
 
    @Override
@@ -110,39 +114,35 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
          if (logger.isDebugEnabled())
             logger.debug(">> requesting %d spot instances region(%s) price(%f) spec(%s) options(%s)", count, region,
                      spotPrice, spec, options);
-         return addTagsToInstancesInRegion(template.getOptions(), transform(client
+         return addTagsToInstancesInRegion(tags, transform(client
                   .getSpotInstanceServices().requestSpotInstancesInRegion(region, spotPrice, count, spec, options),
                   spotConverter), region, group);
       } else {
-         return addTagsToInstancesInRegion(template.getOptions(), super.createNodesInRegionAndZone(
+         return addTagsToInstancesInRegion(tags, super.createNodesInRegionAndZone(
                   region, zone, group, count, template, instanceOptions), region, group);
       }
 
    }
 
-   public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(TemplateOptions options, Iterable<? extends RunningInstance> iterable, String region, String group) {
-      Map<String, String> metadata = options.getUserMetadata();
+   public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(Map<String, String> metadata, Iterable<? extends RunningInstance> iterable, String region, String group) {
       if (metadata.size() > 0 || generateInstanceNames) {
          for (String id : transform(iterable, new Function<RunningInstance, String>() {
-
             @Override
             public String apply(RunningInstance arg0) {
                return arg0.getId();
             }
-
          }))
-         aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id), metadataForId(options, id, group, metadata));
+         aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id), metadataForId(id, group, metadata));
       }
       return iterable;
    }
 
-   protected Map<String, String> metadataForId(TemplateOptions options, String id, String group, Map<String, String> metadata) {
+   protected Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
       ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder().putAll(metadata);
-      AWSEC2TemplateOptions ec2opts = AWSEC2TemplateOptions.class.cast(options);
       if (generateInstanceNames && !metadata.containsKey("Name")) {
           builder.put("Name", id.replaceAll(".*-", group + "-"));
       }
-      if (ec2opts.shouldEncodeGroupInTags() && !metadata.containsKey("Group")) {
+      if (encodeGroupInTags && !metadata.containsKey("Group")) {
           builder.put("Group", group);
       }
       return builder.build();
@@ -152,5 +152,4 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    private Float getSpotPriceOrNull(TemplateOptions options) {
       return options instanceof AWSEC2TemplateOptions ? AWSEC2TemplateOptions.class.cast(options).getSpotPrice() : null;
    }
-
 }

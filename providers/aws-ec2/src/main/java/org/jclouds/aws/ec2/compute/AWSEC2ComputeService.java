@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_ENCODE_GROUP_IN_TAGS;
 
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +64,7 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.EC2ComputeService;
@@ -93,6 +95,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    private final AWSEC2Client ec2Client;
    private final AWSEC2AsyncClient aclient;
    private final boolean generateInstanceNames;
+   private final boolean encodeGroupInTags;
 
    @Inject
    protected AWSEC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -114,7 +117,9 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
             @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted,
-            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient,
+            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+            @Named(PROPERTY_EC2_ENCODE_GROUP_IN_TAGS) boolean encodeGroupInTags,
+            AWSEC2AsyncClient aclient,
             Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
@@ -125,6 +130,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;
       this.generateInstanceNames = generateInstanceNames;
+      this.encodeGroupInTags = encodeGroupInTags;
       this.aclient = checkNotNull(aclient, "aclient");
    }
 
@@ -144,23 +150,28 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    protected void addTagsToNodesFromUserMetadataInTemplate(Set<? extends NodeMetadata> nodes, String group,
             final Template template) {
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
-      if (template.getOptions().getUserMetadata().size() > 0 || generateInstanceNames) {
+      Map<String, String> metadata = ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString(template.getOptions());
+      if (metadata.size() > 0 || generateInstanceNames) {
          for (String id : transform(nodes, new Function<NodeMetadata, String>() {
-
             @Override
             public String apply(NodeMetadata arg0) {
                return arg0.getProviderId();
             }
-
          }))
-            aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id),
-                     metadataForId(id, group, template.getOptions().getUserMetadata()));
+         aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id),
+                     metadataForId(id, group, metadataForId(id, group, metadata)));
       }
    }
 
-   private Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
-      return generateInstanceNames && !metadata.containsKey("Name") ? ImmutableMap.<String, String> builder().putAll(
-               metadata).put("Name", id.replaceAll(".*-", group + "-")).build() : metadata;
+   protected Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
+      ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder().putAll(metadata);
+      if (generateInstanceNames && !metadata.containsKey("Name")) {
+          builder.put("Name", id.replaceAll(".*-", group + "-"));
+      }
+      if (encodeGroupInTags && !metadata.containsKey("Group")) {
+          builder.put("Group", group);
+      }
+      return builder.build();
    }
 
    protected boolean templateWasASpotRequestWithUserMetadata(final Template template) {
@@ -171,13 +182,11 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    protected Set<? extends NodeMetadata> addUserMetadataFromTemplateOptionsToNodes(final Template template,
             final String group, Set<? extends NodeMetadata> nodes) {
       nodes = ImmutableSet.copyOf(Iterables.transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
-
          @Override
          public NodeMetadata apply(NodeMetadata arg0) {
             Map<String, String> md = metadataForId(arg0.getProviderId(), group, template.getOptions().getUserMetadata());
             return NodeMetadataBuilder.fromNodeMetadata(arg0).name(md.get("Name")).userMetadata(md).build();
          }
-
       }));
       return nodes;
    }
