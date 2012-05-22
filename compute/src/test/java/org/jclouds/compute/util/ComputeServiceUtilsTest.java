@@ -60,7 +60,7 @@ public class ComputeServiceUtilsTest {
    @Test
    public void testMetadataAndTagsAsCommaDelimitedValue() {
       TemplateOptions options = TemplateOptions.Builder.tags(ImmutableSet.of("tag")).userMetadata(ImmutableMap.<String, String>of("foo", "bar"));
-      assertEquals(metadataAndTagsAsCommaDelimitedValue(options), ImmutableMap.<String, String>of("foo", "bar", "jclouds.tags", "tag"));
+      assertEquals(metadataAndTagsAsCommaDelimitedValue(options), ImmutableMap.<String, String>of("foo", "bar", "jclouds_tags", "tag"));
    }
 
    @Test

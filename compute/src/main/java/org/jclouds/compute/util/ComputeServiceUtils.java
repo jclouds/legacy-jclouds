@@ -193,7 +193,7 @@ public class ComputeServiceUtils {
       Builder<String, String> builder = ImmutableMap.<String, String> builder();
       builder.putAll(options.getUserMetadata());
       if (options.getTags().size() > 0)
-         builder.put("jclouds.tags", Joiner.on(',').join(options.getTags()));
+         builder.put("jclouds_tags", Joiner.on(',').join(options.getTags()));
       return builder.build();
    }
 
@@ -202,10 +202,10 @@ public class ComputeServiceUtils {
     */
    public static NodeMetadataBuilder addMetadataAndParseTagsFromCommaDelimitedValue(NodeMetadataBuilder builder,
             Map<String, String> map) {
-      String tagString = map.get("jclouds.tags");
+      String tagString = map.get("jclouds_tags");
       if (tagString != null)
          builder.tags(Splitter.on(',').split(tagString));
-      builder.userMetadata(filterKeys(map, not(equalTo("jclouds.tags"))));
+      builder.userMetadata(filterKeys(map, not(equalTo("jclouds_tags"))));
       return builder;
    }
 
