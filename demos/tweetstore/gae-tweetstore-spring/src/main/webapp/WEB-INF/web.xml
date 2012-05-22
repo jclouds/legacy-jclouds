@@ -45,6 +45,10 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/stores/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/clear/*</url-pattern>
+    </servlet-mapping>
 
     <!-- limit submission of storage tasks to the cron job -->
     <security-constraint>

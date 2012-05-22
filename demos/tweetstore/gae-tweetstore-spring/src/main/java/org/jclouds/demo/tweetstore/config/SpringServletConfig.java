@@ -46,6 +46,7 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
+import org.jclouds.demo.tweetstore.controller.ClearTweetsController;
 import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
@@ -172,6 +173,11 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       return new EnqueueStoresController(providerTypeToBlobStoreMap, queue);
    }
 
+   @Bean
+   public ClearTweetsController clearTweetsController() {
+      return new ClearTweetsController(providerTypeToBlobStoreMap, container);
+   }
+
    private void injectServletConfig(Servlet servlet) {
       LOGGER.trace("About to inject servlet config '%s'", servletConfig);
       try {
@@ -194,6 +200,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       urlMap.put("/store/*", storeTweetsController());
       urlMap.put("/tweets/*", addTweetsController());
       urlMap.put("/stores/*", enqueueStoresController());
+      urlMap.put("/clear/*", clearTweetsController());
       mapping.setUrlMap(urlMap);
       /*
        * "/store", "/tweets" and "/stores" are part of the servlet mapping and thus 
