@@ -61,6 +61,11 @@ public class JcloudsVersionTest {
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfBetSanapshot() {
+        new JcloudsVersion("1.2.3-beta.5-SNAPSHOT");
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class })
     public void testFailsIfReleaseCandidateSnapshot() {
         new JcloudsVersion("1.2.3-rc.4-SNAPSHOT");
     }
@@ -95,7 +100,9 @@ public class JcloudsVersionTest {
     public void testSupportsReleaseVersion() {
         JcloudsVersion version = new JcloudsVersion("1.2.3");
         assertFalse(version.alpha, "Expected non-alpha");
+        assertFalse(version.beta, "Expected non-beta");
         assertNull(version.alphaVersion);
+        assertNull(version.betaVersion);
         assertFalse(version.releaseCandidate, "Expected non-release candidate");
         assertNull(version.releaseCandidateVersion);
     }
@@ -110,6 +117,18 @@ public class JcloudsVersionTest {
     public void testExtractsAlphaVersion() {
         JcloudsVersion version = new JcloudsVersion("1.2.3-alpha.5");
         assertEquals(Integer.valueOf(5), version.alphaVersion);
+    }
+
+    @Test
+    public void testRecognisesBeta() {
+        JcloudsVersion version = new JcloudsVersion("1.2.3-beta.5");
+        assertTrue(version.beta, "Expected beta");
+    }
+
+    @Test
+    public void testExtractsBetaVersion() {
+        JcloudsVersion version = new JcloudsVersion("1.2.3-beta.5");
+        assertEquals(Integer.valueOf(5), version.betaVersion);
     }
 
     @Test
