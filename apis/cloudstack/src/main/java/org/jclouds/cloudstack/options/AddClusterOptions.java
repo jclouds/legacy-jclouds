@@ -51,7 +51,7 @@ public class AddClusterOptions extends BaseHttpRequestOptions {
    /**
     * @param podId the Pod ID for the host
     */
-   public AddClusterOptions podId(long podId) {
+   public AddClusterOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
@@ -91,7 +91,7 @@ public class AddClusterOptions extends BaseHttpRequestOptions {
       /**
        * @param podId the Pod ID for the host
        */
-      public static AddClusterOptions podId(long podId) {
+      public static AddClusterOptions podId(String podId) {
          return new AddClusterOptions().podId(podId);
       }
 

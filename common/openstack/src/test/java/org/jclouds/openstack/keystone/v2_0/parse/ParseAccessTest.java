@@ -80,14 +80,23 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                  URI.create("https://glance.jclouds.org:9292/v1.0")).region("az-1.region-a.geo-1")
                                  .versionId("1.0").build()).build(),
 
-               Service.builder().name("Cloud Servers").type("compute").endpoints(
-                        Endpoint.builder().tenantId("1").publicURL(URI.create("https://compute.north.host/v1/1234"))
-                                 .internalURL(URI.create("https://compute.north.host/v1/1234")).region("az-1.region-a.geo-1")
-                                 .versionId("1.0").build(),
-                        Endpoint.builder().tenantId("2").publicURL(URI.create("https://compute.north.host/v1.1/3456"))
-                                 .internalURL(URI.create("https://compute.north.host/v1.1/3456")).region("az-1.region-a.geo-1")
-                                 .versionId("1.1").build()).build()).build();
-
+               Service.builder().name("Compute").type("compute").endpoints(
+                        Endpoint.builder()
+                                .tenantId("3456")
+                                .publicURL(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
+                                .region("az-1.region-a.geo-1")
+                                .versionId("1.1").build(),
+                        Endpoint.builder()
+                                .tenantId("3456")
+                                .publicURL(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
+                                .region("az-2.region-a.geo-1")
+                                .versionId("1.1").build(),
+                        Endpoint.builder()
+                                .tenantId("3456")
+                                .publicURL(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
+                                .region("az-3.region-a.geo-1")
+                                .versionId("1.1").build()).build()
+                     ).build();
    }
 
 }

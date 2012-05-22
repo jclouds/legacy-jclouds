@@ -42,10 +42,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
@@ -104,7 +104,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
    private final String preconfigurationUrl;
 
    @Inject
-   public MastersLoadingCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
+   public MastersLoadingCache(@BuildVersion String version,
             @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
             @Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl,
             @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,

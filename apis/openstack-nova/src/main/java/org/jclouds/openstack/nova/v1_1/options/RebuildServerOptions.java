@@ -44,7 +44,7 @@ public class RebuildServerOptions implements MapBinder {
    String imageRef;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Map<String, String> image = Maps.newHashMap();
       if (imageRef != null)
          image.put("imageRef", imageRef);

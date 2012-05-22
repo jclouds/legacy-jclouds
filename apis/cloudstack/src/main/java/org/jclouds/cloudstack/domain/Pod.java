@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -33,9 +34,9 @@ public class Pod implements Comparable<Pod> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String name;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
       private String gateway;
       private String netmask;
@@ -48,7 +49,7 @@ public class Pod implements Comparable<Pod> {
       /**
        * @param id the ID of the Pod
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id  = id;
          return this;
       }
@@ -64,7 +65,7 @@ public class Pod implements Comparable<Pod> {
       /**
        * @param zoneId the Zone ID of the Pod
        */
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -126,9 +127,9 @@ public class Pod implements Comparable<Pod> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    @SerializedName("zonename") private String zoneName;
    private String gateway;
    private String netmask;
@@ -139,7 +140,7 @@ public class Pod implements Comparable<Pod> {
    /* Just for the serializer */
    Pod() {}
 
-   public Pod(long id, String name, long zoneId, String zoneName, String gateway, String netmask, String startIp, String endIp, AllocationState allocationState) {
+   public Pod(String id, String name, String zoneId, String zoneName, String gateway, String netmask, String startIp, String endIp, AllocationState allocationState) {
       this.id = id;
       this.name = name;
       this.zoneId = zoneId;
@@ -154,7 +155,7 @@ public class Pod implements Comparable<Pod> {
    /**
     * @return id the ID of the Pod
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -168,7 +169,7 @@ public class Pod implements Comparable<Pod> {
    /**
     * @return zoneId the Zone ID of the Pod
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -219,33 +220,24 @@ public class Pod implements Comparable<Pod> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Pod pod = (Pod) o;
+      Pod that = (Pod) o;
 
-      if (id != pod.id) return false;
-      if (zoneId != pod.zoneId) return false;
-      if (allocationState != pod.allocationState) return false;
-      if (endIp != null ? !endIp.equals(pod.endIp) : pod.endIp != null) return false;
-      if (gateway != null ? !gateway.equals(pod.gateway) : pod.gateway != null) return false;
-      if (name != null ? !name.equals(pod.name) : pod.name != null) return false;
-      if (netmask != null ? !netmask.equals(pod.netmask) : pod.netmask != null) return false;
-      if (startIp != null ? !startIp.equals(pod.startIp) : pod.startIp != null) return false;
-      if (zoneName != null ? !zoneName.equals(pod.zoneName) : pod.zoneName != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(allocationState, that.allocationState)) return false;
+      if (!Objects.equal(endIp, that.endIp)) return false;
+      if (!Objects.equal(gateway, that.gateway)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(netmask, that.netmask)) return false;
+      if (!Objects.equal(startIp, that.startIp)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      result = 31 * result + (gateway != null ? gateway.hashCode() : 0);
-      result = 31 * result + (netmask != null ? netmask.hashCode() : 0);
-      result = 31 * result + (startIp != null ? startIp.hashCode() : 0);
-      result = 31 * result + (endIp != null ? endIp.hashCode() : 0);
-      result = 31 * result + (allocationState != null ? allocationState.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, zoneId, allocationState, endIp, gateway, name, netmask, startIp, zoneName);
    }
 
    @Override
@@ -265,6 +257,6 @@ public class Pod implements Comparable<Pod> {
 
    @Override
    public int compareTo(Pod other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

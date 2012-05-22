@@ -53,6 +53,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -64,6 +65,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code CloudServersClient}
@@ -602,5 +604,10 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       if (sharedIpGroupId > 0) {
          client.deleteSharedIpGroup(sharedIpGroupId);
       }
+   }
+
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 }

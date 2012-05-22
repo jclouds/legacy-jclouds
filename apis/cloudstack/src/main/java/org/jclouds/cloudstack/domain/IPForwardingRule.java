@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.domain;
 import java.util.Collections;
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
@@ -34,22 +35,22 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String IPAddress;
-      private long IPAddressId;
+      private String IPAddressId;
       private int startPort;
       private String protocol;
       public int endPort;
       private String state;
       private String virtualMachineDisplayName;
-      public long virtualMachineId;
+      public String virtualMachineId;
       private String virtualMachineName;
       private Set<String> CIDRs = ImmutableSet.of();
       private int privateEndPort;
       private int publicEndPort;
       public int publicPort;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -59,7 +60,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return this;
       }
 
-      public Builder IPAddressId(long IPAddressId) {
+      public Builder IPAddressId(String IPAddressId) {
          this.IPAddressId = IPAddressId;
          return this;
       }
@@ -89,7 +90,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -125,11 +126,11 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("ipaddress")
    private String IPAddress;
    @SerializedName("ipaddressid")
-   private long IPAddressId;
+   private String IPAddressId;
    @SerializedName("startport")
    private int startPort;
    private String protocol;
@@ -139,7 +140,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
-   public long virtualMachineId;
+   public String virtualMachineId;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("publicport")
@@ -156,8 +157,8 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
 
    }
 
-   public IPForwardingRule(long id, String iPAddress, long iPAddressId, int startPort, String protocol, int endPort,
-                           String state, String virtualMachineDisplayName, long virtualMachineId, String virtualMachineName,
+   public IPForwardingRule(String id, String iPAddress, String iPAddressId, int startPort, String protocol, int endPort,
+                           String state, String virtualMachineDisplayName, String virtualMachineId, String virtualMachineName,
                            int publicEndPort, int publicPort, Set<String> CIDRs, int privateEndPort) {
       this.id = id;
       this.IPAddress = iPAddress;
@@ -178,13 +179,13 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
 
    @Override
    public int compareTo(IPForwardingRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    /**
     * @return the ID of the ip forwarding rule
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -198,7 +199,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    /**
     * @return the public ip address id for the ip forwarding rule
     */
-   public long getIPAddressId() {
+   public String getIPAddressId() {
       return IPAddressId;
    }
 
@@ -240,7 +241,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    /**
     * @return the VM ID for the ip forwarding rule
     */
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 
@@ -280,76 +281,34 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((IPAddress == null) ? 0 : IPAddress.hashCode());
-      result = prime * result + (int) (IPAddressId ^ (IPAddressId >>> 32));
-      result = prime * result + endPort;
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      result = prime * result + startPort;
-      result = prime * result + publicEndPort;
-      result = prime * result + privateEndPort;
-      result = prime * result + publicPort;
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
-      result = prime * result + ((virtualMachineDisplayName == null) ? 0 : virtualMachineDisplayName.hashCode());
-      result = prime * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
-      result = prime * result + ((virtualMachineName == null) ? 0 : virtualMachineName.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      IPForwardingRule that = (IPForwardingRule) o;
+
+      if (!Objects.equal(IPAddress, that.IPAddress)) return false;
+      if (!Objects.equal(IPAddressId, that.IPAddressId)) return false;
+      if (!Objects.equal(endPort, that.endPort)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(protocol, that.protocol)) return false;
+      if (!Objects.equal(startPort, that.startPort)) return false;
+      if (!Objects.equal(publicEndPort, that.publicEndPort)) return false;
+      if (!Objects.equal(privateEndPort, that.privateEndPort)) return false;
+      if (!Objects.equal(publicPort, that.publicPort)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(virtualMachineDisplayName, that.virtualMachineDisplayName)) return false;
+      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
+      if (!Objects.equal(virtualMachineName, that.virtualMachineName)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      IPForwardingRule other = (IPForwardingRule) obj;
-      if (IPAddress == null) {
-         if (other.IPAddress != null)
-            return false;
-      } else if (!IPAddress.equals(other.IPAddress))
-         return false;
-      if (IPAddressId != other.IPAddressId)
-         return false;
-      if (endPort != other.endPort)
-         return false;
-      if (publicPort != other.publicPort)
-         return false;
-      if (publicEndPort != other.publicEndPort)
-         return false;
-      if (privateEndPort != other.privateEndPort)
-         return false;
-      if (id != other.id)
-         return false;
-      if (protocol == null) {
-         if (other.protocol != null)
-            return false;
-      } else if (!protocol.equals(other.protocol))
-         return false;
-      if (startPort != other.startPort)
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
-         return false;
-      if (virtualMachineDisplayName == null) {
-         if (other.virtualMachineDisplayName != null)
-            return false;
-      } else if (!virtualMachineDisplayName.equals(other.virtualMachineDisplayName))
-         return false;
-      if (virtualMachineId != other.virtualMachineId)
-         return false;
-      if (virtualMachineName == null) {
-         if (other.virtualMachineName != null)
-            return false;
-      } else if (!virtualMachineName.equals(other.virtualMachineName))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(IPAddress, IPAddressId, endPort, id, protocol, startPort, publicEndPort,
+                               privateEndPort, publicPort, state, virtualMachineDisplayName,
+                               virtualMachineId, virtualMachineName);
    }
 
    @Override

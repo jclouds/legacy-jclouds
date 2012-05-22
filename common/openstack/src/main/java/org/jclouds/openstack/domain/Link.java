@@ -133,11 +133,17 @@ public class Link {
          return relation(from.getRelation()).type(from.getType()).href(from.getHref());
       }
    }
+  
+   protected Link() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
 
    @SerializedName("rel")
-   protected final Relation relation;
-   protected final String type;
-   protected final URI href;
+   protected Relation relation;
+   protected String type;
+   protected URI href;
 
    protected Link(Relation relation, @Nullable String type, URI href) {
       this.relation = checkNotNull(relation, "relation");

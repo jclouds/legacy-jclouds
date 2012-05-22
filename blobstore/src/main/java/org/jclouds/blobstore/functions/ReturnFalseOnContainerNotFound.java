@@ -19,13 +19,13 @@
 package org.jclouds.blobstore.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -38,6 +38,6 @@ public class ReturnFalseOnContainerNotFound implements Function<Exception, Boole
       if (checkNotNull(from, "exception") instanceof ContainerNotFoundException) {
          return false;
       }
-      return Boolean.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 }

@@ -395,8 +395,9 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
    public void testDiscardSuspendedState() {
-      // Suspend the VApp
-      vApp = suspendVApp(vApp.getHref());
+      // Power on, then suspend the VApp
+      vApp = powerOnVApp(vAppURI);
+      vApp = suspendVApp(vAppURI);
       
       // The method under test
       Task discardSuspendedState = vAppClient.discardSuspendedState(vApp.getHref());

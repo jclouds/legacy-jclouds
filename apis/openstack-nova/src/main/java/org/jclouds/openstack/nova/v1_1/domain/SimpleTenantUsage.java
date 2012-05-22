@@ -123,21 +123,27 @@ public class SimpleTenantUsage {
          return this;
       }
    }
-
+   
+   protected SimpleTenantUsage() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName("tenant_id")
-   private final String tenantId;
+   private String tenantId;
    @SerializedName("total_local_gb_usage")
-   private final double totalLocalGbUsage;
+   private double totalLocalGbUsage;
    @SerializedName("total_vcpus_usage")
-   private final double totalVcpusUsage;
+   private double totalVcpusUsage;
    @SerializedName("total_memory_mb_usage")
-   private final double totalMemoryMbUsage;
+   private double totalMemoryMbUsage;
    @SerializedName("total_hours")
-   private final double totalHours;
-   private final Date start;
-   private final Date stop;
+   private double totalHours;
+   private Date start;
+   private Date stop;
    @SerializedName("server_usages")
-   private final Set<SimpleServerUsage> serverUsages;
+   private Set<SimpleServerUsage> serverUsages = ImmutableSet.of();
 
    private SimpleTenantUsage(Builder<?> builder) {
       this.tenantId = builder.tenantId;

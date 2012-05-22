@@ -22,11 +22,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getRootCause;
 import static java.lang.String.format;
-import static org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOnNode;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
@@ -38,9 +38,9 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -71,8 +71,8 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
    private final InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory;
-   private final RetryIfSocketNotYetOpen socketTester;
    private final Timeouts timeouts;
+   private final OpenSocketFinder openSocketFinder;
 
    @Nullable
    private final Statement statement;
@@ -87,7 +87,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
          @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
+         OpenSocketFinder openSocketFinder, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
          @Assisted AtomicReference<NodeMetadata> node, @Assisted Set<NodeMetadata> goodNodes,
@@ -97,7 +97,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
             checkNotNull(options, "options"));
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
       this.initScriptRunnerFactory = checkNotNull(initScriptRunnerFactory, "initScriptRunnerFactory");
-      this.socketTester = checkNotNull(socketTester, "socketTester");
+      this.openSocketFinder = checkNotNull(openSocketFinder, "openSocketFinder");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.node = node;
       this.options = checkNotNull(options, "options");
@@ -109,12 +109,12 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
          @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
-         RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
+         OpenSocketFinder openSocketFinder, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
          @Assisted Set<NodeMetadata> goodNodes, @Assisted Map<NodeMetadata, Exception> badNodes,
          @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
-      this(nodeRunning, socketTester, timeouts, templateOptionsToStatement, initScriptRunnerFactory, options,
+      this(nodeRunning, openSocketFinder, timeouts, templateOptionsToStatement, initScriptRunnerFactory, options,
             new AtomicReference<NodeMetadata>(null), goodNodes, badNodes, customizationResponses);
    }
 
@@ -153,7 +153,8 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
                }
             }
             if (options.getPort() > 0) {
-               findReachableSocketOnNode(socketTester.seconds(options.getSeconds()), node.get(), options.getPort());
+               openSocketFinder.findOpenSocketOnNode(node.get(), options.getPort(), 
+                         options.getSeconds(), TimeUnit.SECONDS);
             }
          }
          logger.debug("<< customized node(%s)", originalId);

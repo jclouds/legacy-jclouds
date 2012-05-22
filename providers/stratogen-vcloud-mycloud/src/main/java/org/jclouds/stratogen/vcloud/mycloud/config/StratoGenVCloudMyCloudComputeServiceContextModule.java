@@ -18,7 +18,6 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud.config;
 
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -33,11 +32,6 @@ import com.google.inject.Injector;
  */
 public class StratoGenVCloudMyCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.imageNameMatches("Ubuntu server 11.04 64bit no GUI (base)");
-   }
-   
    @Override
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
       return options.as(VCloudTemplateOptions.class).ipAddressAllocationMode(IpAddressAllocationMode.POOL);

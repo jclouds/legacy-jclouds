@@ -88,7 +88,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       binder.bindToRequest(request, map);
       verify(request);
    }
@@ -124,7 +124,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       binder.bindToRequest(request, map);
       verify(request);
    }
@@ -153,7 +153,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       binder.bindToRequest(request, map);
       verify(request);
    }
@@ -180,7 +180,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       binder.bindToRequest(request, map);
       verify(request);
    }
@@ -209,7 +209,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       binder.bindToRequest(request, map);
       verify(request);
    }

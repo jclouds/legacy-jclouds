@@ -59,7 +59,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       provider = "cloudstack";
    }
 
-   protected void deleteNetworksInZoneWithVlanId(long zoneId, String vlanId) {
+   protected void deleteNetworksInZoneWithVlanId(String zoneId, String vlanId) {
       Set<Network> networks = domainAdminContext.getApi().getNetworkClient().listNetworks(
          ListNetworksOptions.Builder
             .isDefault(false)
@@ -72,7 +72,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       URI broadcastUri = URI.create("vlan://" + vlanId);
       for (Network net : networks) {
          if (broadcastUri.equals(net.getBroadcastURI())) {
-            long jobId = domainAdminContext.getApi().getNetworkClient().deleteNetwork(net.getId());
+            String jobId = domainAdminContext.getApi().getNetworkClient().deleteNetwork(net.getId());
             adminJobComplete.apply(jobId);
          }
       }
@@ -95,13 +95,13 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          Template template = view.getComputeService().templateBuilder().build();
 
          // get the zone we are launching into
-         long zoneId = Long.parseLong(template.getLocation().getId());
+         String zoneId = template.getLocation().getId();
 
          // cleanup before running the test
          deleteNetworksInZoneWithVlanId(zoneId, vlanId);
 
          // find a network offering that supports vlans in our zone
-         long offeringId = get(
+         String offeringId = get(
             cloudStackContext.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zoneId)), 0).getId();
 
          // create an arbitrary network
@@ -154,7 +154,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
             .createNodesInGroup(group, 1, template));
 
          String encryptedPassword = client.getVirtualMachineClient()
-            .getEncryptedPasswordForVirtualMachine(Long.parseLong(node.getId()));
+            .getEncryptedPasswordForVirtualMachine(node.getId());
 
          Crypto crypto = new BouncyCastleCrypto();
          WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);

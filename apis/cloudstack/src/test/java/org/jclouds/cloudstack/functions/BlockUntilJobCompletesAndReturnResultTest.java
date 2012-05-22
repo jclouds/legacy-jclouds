@@ -44,11 +44,11 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class BlockUntilJobCompletesAndReturnResultTest {
 
    public void testApply() {
-      long id = 1;
-      long jobId = 2;
+      String id = "1";
+      String jobId = "2";
 
       CloudStackClient client = createMock(CloudStackClient.class);
-      Predicate<Long> jobComplete = Predicates.alwaysTrue();
+      Predicate<String> jobComplete = Predicates.alwaysTrue();
       AsyncJobClient jobClient = createMock(AsyncJobClient.class);
 
       expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
@@ -68,12 +68,12 @@ public class BlockUntilJobCompletesAndReturnResultTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testJobDoesntCompleteThrowsIllegalStateException() {
-      long id = 1;
-      long jobId = 2;
+      String id = "1";
+      String jobId = "2";
 
       CloudStackClient client = createMock(CloudStackClient.class);
       // the alwaysfalse predicate should blow up with IllegalStateException
-      Predicate<Long> jobComplete = Predicates.alwaysFalse();
+      Predicate<String> jobComplete = Predicates.alwaysFalse();
       AsyncJobClient jobClient = createMock(AsyncJobClient.class);
 
       expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
@@ -93,11 +93,11 @@ public class BlockUntilJobCompletesAndReturnResultTest {
 
    @Test(expectedExceptions = UncheckedExecutionException.class)
    public void testJobWithErrorThrowsUncheckedExecutionException() {
-      long id = 1;
-      long jobId = 2;
+      String id = "1";
+      String jobId = "2";
 
       CloudStackClient client = createMock(CloudStackClient.class);
-      Predicate<Long> jobComplete = Predicates.alwaysTrue();
+      Predicate<String> jobComplete = Predicates.alwaysTrue();
       AsyncJobClient jobClient = createMock(AsyncJobClient.class);
 
       expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();

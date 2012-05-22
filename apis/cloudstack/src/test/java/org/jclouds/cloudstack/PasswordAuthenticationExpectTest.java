@@ -61,7 +61,7 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackRestClientEx
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&sessionkey=" + URLEncoder.encode(sessionKey)))
+               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&sessionkey=" + URLEncoder.encode(sessionKey)))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")

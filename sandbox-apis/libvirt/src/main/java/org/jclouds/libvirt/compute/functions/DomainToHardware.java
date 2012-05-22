@@ -83,22 +83,16 @@ public class DomainToHardware implements Function<Domain, Hardware> {
 			}
 			builder.volumes((List<Volume>) volumes);
 		} catch (LibvirtException e) {
-			propagate(e);
+			Throwables.propagate(e);
 		} catch (XPathExpressionException e) {
-			propagate(e);
+			Throwables.propagate(e);
 		} catch (ParserConfigurationException e) {
-			propagate(e);
+			Throwables.propagate(e);
 		} catch (SAXException e) {
-			propagate(e);
+			Throwables.propagate(e);
 		} catch (IOException e) {
-			propagate(e);
+			Throwables.propagate(e);
 		}
 		return builder.build();
-	}
-	
-	protected <T> T propagate(Exception e) {
-		Throwables.propagate(e);
-		assert false;
-		return null;
 	}
 }

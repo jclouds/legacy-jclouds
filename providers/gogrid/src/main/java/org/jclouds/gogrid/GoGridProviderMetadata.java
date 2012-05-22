@@ -19,7 +19,7 @@
 package org.jclouds.gogrid;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
@@ -63,7 +63,7 @@ public class GoGridProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_ZONE + ".2." + ISO3166_CODES, "US-VA");
       properties.setProperty(PROPERTY_ZONE + ".3." + ISO3166_CODES, "NL-NH");
       properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
-      properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "1");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],imageNameMatches=.*w/ None.*,locationId=1");
       return properties;
    }
 
@@ -75,7 +75,7 @@ public class GoGridProviderMetadata extends BaseProviderMetadata {
          .apiMetadata(new GoGridApiMetadata())
          .homepage(URI.create("http://www.gogrid.com"))
          .console(URI.create("https://my.gogrid.com/gogrid"))
-         .iso3166Codes("US-CA", "US-VA", "BR-SP")
+         .iso3166Codes("US-CA", "US-VA", "NL-NH")
          .endpoint("https://api.gogrid.com/api")
          .defaultProperties(GoGridProviderMetadata.defaultProperties());
       }

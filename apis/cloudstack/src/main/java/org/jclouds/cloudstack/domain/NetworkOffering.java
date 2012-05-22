@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
@@ -40,7 +41,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String name;
       private String displayText;
       private Date created;
@@ -53,7 +54,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       private GuestIPType guestIPType;
       private Set<String> tags = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -119,7 +120,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
@@ -140,7 +141,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    private int networkRate = -1;
    private String tags;
 
-   public NetworkOffering(long id, String name, String displayText, @Nullable Date created,
+   public NetworkOffering(String id, String name, String displayText, @Nullable Date created,
          NetworkOfferingAvailabilityType availability, boolean supportsVLAN, @Nullable Integer maxConnections,
          boolean isDefault, TrafficType trafficType, GuestIPType guestIPType, int networkRate, Set<String> tags) {
       this.id = id;
@@ -169,7 +170,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
     * 
     * @return the id of the network offering
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -266,70 +267,29 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((availability == null) ? 0 : availability.hashCode());
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (isDefault ? 1231 : 1237);
-      result = prime * result + ((maxConnections == null) ? 0 : maxConnections.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + (supportsVLAN ? 1231 : 1237);
-      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-      result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      NetworkOffering that = (NetworkOffering) o;
+
+      if (!Objects.equal(availability, that.availability)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isDefault, that.isDefault)) return false;
+      if (!Objects.equal(maxConnections, that.maxConnections)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(supportsVLAN, that.supportsVLAN)) return false;
+      if (!Objects.equal(tags, that.tags)) return false;
+      if (!Objects.equal(trafficType, that.trafficType)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NetworkOffering other = (NetworkOffering) obj;
-      if (availability == null) {
-         if (other.availability != null)
-            return false;
-      } else if (!availability.equals(other.availability))
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (displayText == null) {
-         if (other.displayText != null)
-            return false;
-      } else if (!displayText.equals(other.displayText))
-         return false;
-      if (id != other.id)
-         return false;
-      if (isDefault != other.isDefault)
-         return false;
-      if (maxConnections == null) {
-         if (other.maxConnections != null)
-            return false;
-      } else if (!maxConnections.equals(other.maxConnections))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (supportsVLAN != other.supportsVLAN)
-         return false;
-      if (tags == null) {
-         if (other.tags != null)
-            return false;
-      } else if (!tags.equals(other.tags))
-         return false;
-      if (trafficType != other.trafficType)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(availability, created, displayText, id, isDefault, maxConnections, name, supportsVLAN, tags, trafficType);
    }
 
    @Override
@@ -352,7 +312,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
    @Override
    public int compareTo(NetworkOffering arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

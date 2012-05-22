@@ -1,10 +1,13 @@
 package org.jclouds.openstack.nova.v1_1.compute;
 
+import static java.util.logging.Logger.getAnonymousLogger;
+
 import java.util.Properties;
 
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -31,9 +34,16 @@ public class NovaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       // start call is blocking anyway.
    }
 
-   @Test(enabled = true, dependsOnMethods = "testReboot", expectedExceptions = UnsupportedOperationException.class)
+   @Test(enabled = true, dependsOnMethods = "testReboot")
    public void testSuspendResume() throws Exception {
-      super.testSuspendResume();
+      try {
+         // may fail because of lack of AdminActions extension or non-admin user, so log and continue
+         super.testSuspendResume();
+      } catch (AuthorizationException e) {
+         getAnonymousLogger().info("testSuspendResume() threw, probably due to lack of privileges: " + e.getMessage());
+      } catch (UnsupportedOperationException e) {
+         getAnonymousLogger().info("testSuspendResume() threw, probably due to unavailable AdminActions extension: " + e.getMessage());
+      }
    }
 
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")

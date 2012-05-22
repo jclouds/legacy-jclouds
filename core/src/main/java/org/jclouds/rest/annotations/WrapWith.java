@@ -18,6 +18,7 @@
  */
 package org.jclouds.rest.annotations;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -31,7 +32,7 @@ import java.lang.annotation.Target;
  * 
  * @author Adrian Cole
  */
-@Target(PARAMETER)
+@Target( { METHOD, PARAMETER })
 @Retention(RUNTIME)
 public @interface WrapWith {
 

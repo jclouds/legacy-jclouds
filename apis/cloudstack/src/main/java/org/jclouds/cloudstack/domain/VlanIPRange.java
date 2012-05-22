@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -33,23 +34,23 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String description;
       private boolean forVirtualNetwork;
-      private long zoneId;
+      private String zoneId;
       private String vlan;
       private String account;
-      private long domainId;
+      private String domainId;
       private String domain;
-      private long podId;
+      private String podId;
       private String podName;
       private String gateway;
       private String netmask;
       private String startIP;
       private String endIP;
-      private long networkId;
+      private String networkId;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -64,13 +65,8 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
-      }
-
-      public Builder vlan(long vlan) {
-         this.vlan = vlan+"";
          return this;
       }
 
@@ -84,7 +80,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -94,7 +90,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -124,7 +120,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return this;
       }
 
-      public Builder networkId(long networkId) {
+      public Builder networkId(String networkId) {
          this.networkId = networkId;
          return this;
       }
@@ -134,26 +130,26 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       }
    }
    
-   private long id;
+   private String id;
    private String description;
    @SerializedName("forvirtualnetwork") private boolean forVirtualNetwork;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    private String vlan;
    private String account;
-   @SerializedName("domainid") private long domainId;
+   @SerializedName("domainid") private String domainId;
    private String domain;
-   @SerializedName("podid") private long podId;
+   @SerializedName("podid") private String podId;
    @SerializedName("podname") private String podName;
    private String gateway;
    private String netmask;
    @SerializedName("startip") private String startIP;
    @SerializedName("endip") private String endIP;
-   @SerializedName("networkid") private long networkId;
+   @SerializedName("networkid") private String networkId;
 
    /* just for the deserializer */
    VlanIPRange() {}
    
-   public VlanIPRange(long id, String description, boolean forVirtualNetwork, long zoneId, String vlan, String account, long domainId, String domain, long podId, String podName, String gateway, String netmask, String startIP, String endIP, long networkId) {
+   public VlanIPRange(String id, String description, boolean forVirtualNetwork, String zoneId, String vlan, String account, String domainId, String domain, String podId, String podName, String gateway, String netmask, String startIP, String endIP, String networkId) {
       this.id = id;
       this.description = description;
       this.forVirtualNetwork = forVirtualNetwork;
@@ -171,7 +167,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       this.networkId = networkId;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -183,7 +179,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return forVirtualNetwork;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -195,7 +191,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return account;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -203,7 +199,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return domain;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -227,7 +223,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return endIP;
    }
 
-   public long getNetworkId() {
+   public String getNetworkId() {
       return networkId;
    }
 
@@ -238,43 +234,30 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
 
       VlanIPRange that = (VlanIPRange) o;
 
-      if (domainId != that.domainId) return false;
-      if (forVirtualNetwork != that.forVirtualNetwork) return false;
-      if (id != that.id) return false;
-      if (networkId != that.networkId) return false;
-      if (podId != that.podId) return false;
-      if (zoneId != that.zoneId) return false;
-      if (account != null ? !account.equals(that.account) : that.account != null) return false;
-      if (description != null ? !description.equals(that.description) : that.description != null) return false;
-      if (domain != null ? !domain.equals(that.domain) : that.domain != null) return false;
-      if (endIP != null ? !endIP.equals(that.endIP) : that.endIP != null) return false;
-      if (gateway != null ? !gateway.equals(that.gateway) : that.gateway != null) return false;
-      if (netmask != null ? !netmask.equals(that.netmask) : that.netmask != null) return false;
-      if (podName != null ? !podName.equals(that.podName) : that.podName != null) return false;
-      if (startIP != null ? !startIP.equals(that.startIP) : that.startIP != null) return false;
-      if (vlan != null ? !vlan.equals(that.vlan) : that.vlan != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(forVirtualNetwork, that.forVirtualNetwork)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(networkId, that.networkId)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(endIP, that.endIP)) return false;
+      if (!Objects.equal(gateway, that.gateway)) return false;
+      if (!Objects.equal(netmask, that.netmask)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(startIP, that.startIP)) return false;
+      if (!Objects.equal(vlan, that.vlan)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + (forVirtualNetwork ? 1 : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (vlan != null ? vlan.hashCode() : 0);
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (domain != null ? domain.hashCode() : 0);
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (gateway != null ? gateway.hashCode() : 0);
-      result = 31 * result + (netmask != null ? netmask.hashCode() : 0);
-      result = 31 * result + (startIP != null ? startIP.hashCode() : 0);
-      result = 31 * result + (endIP != null ? endIP.hashCode() : 0);
-      result = 31 * result + (int) (networkId ^ (networkId >>> 32));
-      return result;
+       return Objects.hashCode(domainId, forVirtualNetwork, id, networkId, podId,
+                               zoneId, account, description, domain, endIP, gateway,
+                               netmask, podName, startIP, vlan);
    }
 
    @Override
@@ -300,6 +283,6 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
 
    @Override
    public int compareTo(VlanIPRange other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

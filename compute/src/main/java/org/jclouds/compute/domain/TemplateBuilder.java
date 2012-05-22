@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
@@ -54,6 +55,24 @@ public interface TemplateBuilder {
     */
    TemplateBuilder fromTemplate(Template image);
 
+   /**
+    * Constructs a new {@code TemplateBuilderSpec} instance with the settings specified in {@code spec}.
+    *
+    * @since 1.5
+    */
+   @Beta
+   TemplateBuilder from(TemplateBuilderSpec spec);
+   
+   /**
+    * Constructs a new {@code TemplateBuilder} instance with the settings specified in {@code spec}.
+    * This is especially useful for command-line configuration of a {@code TemplateBuilder}.
+    *
+    * @param spec a String in the format specified by {@link TemplateBuilderSpec}
+    * @since 1.5
+    */
+   @Beta
+   TemplateBuilder from(String spec);
+   
    /**
     * configure this template to the smallest hardware, based on cores, ram, then disk
     */
@@ -162,7 +181,9 @@ public interface TemplateBuilder {
    Template build();
 
    /**
-    * options such as inbound ports and run scripts.
+    * Sets options on the template (i.e. items which adorn a created node rather than restricting selection of the node).
+    * Note that this method typically replaces any options previously specified in the builder.
+    * Normal usage is to build up all options and pass them to the builder with a single call to this method.
     */
    TemplateBuilder options(TemplateOptions options);
 

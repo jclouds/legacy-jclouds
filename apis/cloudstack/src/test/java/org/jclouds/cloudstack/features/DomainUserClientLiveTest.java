@@ -53,7 +53,7 @@ public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkUser(User user) {
-      assert user.getId() > 0;
+      assert user.getId() != null;
       assert user.getAccount() != null;
       assert user.getDomain() != null;
    }

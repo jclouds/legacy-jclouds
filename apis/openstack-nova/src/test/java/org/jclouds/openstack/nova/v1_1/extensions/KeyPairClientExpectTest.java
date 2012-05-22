@@ -46,7 +46,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listKeyPairs = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -67,7 +67,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listKeyPairs = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -85,7 +85,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build())
@@ -107,7 +107,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build())
@@ -136,7 +136,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest deleteKeyPair = HttpRequest
             .builder()
             .method("DELETE")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-keypairs/testkeypair"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs/testkeypair"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "*/*").put("X-Auth-Token", authToken)
                         .build()).build();

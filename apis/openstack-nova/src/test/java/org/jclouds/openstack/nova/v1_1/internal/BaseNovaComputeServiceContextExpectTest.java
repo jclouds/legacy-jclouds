@@ -40,7 +40,7 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
          Function<ComputeServiceContext, T> {
    
    protected final HttpRequest listImagesDetail = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/images/detail")).headers(
+            URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/detail")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build()).build();
 
@@ -48,7 +48,7 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
             payloadFromResource("/image_list_detail.json")).build();
 
    protected final HttpRequest listFlavorsDetail = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/flavors/detail")).headers(
+            URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/detail")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build()).build();
 
@@ -56,7 +56,7 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
             payloadFromResource("/flavor_list_detail.json")).build();
 
    protected final HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
+            URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/detail")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build()).build();
 
@@ -64,7 +64,7 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
             payloadFromResource("/server_list_details.json")).build();
 
    protected final HttpRequest listFloatingIps = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/os-floating-ips")).headers(
+            URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build()).build();
 

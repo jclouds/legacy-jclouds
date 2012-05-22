@@ -18,6 +18,7 @@
  */
 package org.jclouds.epc;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
@@ -67,6 +68,7 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
       properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
       properties.setProperty(PROPERTY_REGION + ".Eucalyptus." + ISO3166_CODES, "US-CA");
       properties.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", "kvm");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,locationId=${eucalyptus-partnercloud-ec2.virtualization-type}-cluster");
       return properties;
    }
    

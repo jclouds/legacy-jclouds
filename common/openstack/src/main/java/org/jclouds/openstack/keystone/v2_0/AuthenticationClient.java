@@ -50,4 +50,11 @@ public interface AuthenticationClient {
     * @return access with token
     */
    Access authenticateTenantWithCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
+   
+   /**
+    * Authenticate to generate a token.
+    * 
+    * @return access with token
+    */
+   Access authenticateTenantWithTenantIdAndCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
 }

@@ -53,7 +53,7 @@ public class RebuildServerOptionsTest {
    private HttpRequest buildRequest(RebuildServerOptions options) {
       injector.injectMembers(options);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      options.bindToRequest(request, new HashMap<String, String>());
+      options.bindToRequest(request, new HashMap<String, Object>());
       return request;
    }
 

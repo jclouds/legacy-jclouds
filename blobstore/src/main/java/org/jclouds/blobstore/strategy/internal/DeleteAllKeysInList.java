@@ -93,9 +93,9 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          message = message + " recursively";
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
       PageSet<? extends StorageMetadata> listing;
-      Iterable<? extends StorageMetadata> toDelete;
       int maxErrors = 3; // TODO parameterize
       for (int i = 0; i < maxErrors; ) {
+         // fetch partial directory listing
          try {
             listing = connection.list(containerName, options).get();
          } catch (ExecutionException ee) {
@@ -108,36 +108,52 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          } catch (InterruptedException ie) {
             throw Throwables.propagate(ie);
          }
-         toDelete = filterListing(listing, options);
 
-         Map<StorageMetadata, Future<?>> responses = Maps.newHashMap();
-         try {
-            for (final StorageMetadata md : toDelete) {
+         // recurse on subdirectories
+         if (options.isRecursive()) {
+            for (StorageMetadata md : listing) {
                String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
                         + md.getName() : md.getName();
                switch (md.getType()) {
                   case BLOB:
-                     responses.put(md, connection.removeBlob(containerName, fullPath));
                      break;
                   case FOLDER:
-                     if (options.isRecursive() && !fullPath.equals(options.getDir())) {
-                        execute(containerName, options.clone().inDirectory(fullPath));
-                     }
-                     responses.put(md, connection.deleteDirectory(containerName, fullPath));
-                     break;
                   case RELATIVE_PATH:
                      if (options.isRecursive() && !fullPath.equals(options.getDir())) {
                         execute(containerName, options.clone().inDirectory(fullPath));
                      }
-                     responses.put(md, connection.deleteDirectory(containerName, md.getName()));
                      break;
                   case CONTAINER:
                      throw new IllegalArgumentException("Container type not supported");
                }
             }
-         } finally {
-            exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
          }
+
+         // remove blobs and now-empty subdirectories
+         Map<StorageMetadata, Future<?>> responses = Maps.newHashMap();
+         for (StorageMetadata md : listing) {
+            String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
+                     + md.getName() : md.getName();
+            switch (md.getType()) {
+               case BLOB:
+                  responses.put(md, connection.removeBlob(containerName, fullPath));
+                  break;
+               case FOLDER:
+                  if (options.isRecursive()) {
+                     responses.put(md, connection.deleteDirectory(containerName, fullPath));
+                  }
+                  break;
+               case RELATIVE_PATH:
+                  if (options.isRecursive()) {
+                     responses.put(md, connection.deleteDirectory(containerName, md.getName()));
+                  }
+                  break;
+               case CONTAINER:
+                  throw new IllegalArgumentException("Container type not supported");
+            }
+         }
+
+         exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
          if (!exceptions.isEmpty()) {
             ++i;
             retryHandler.imposeBackoffExponentialDelay(i, message);
@@ -157,29 +173,4 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    private boolean parentIsFolder(final ListContainerOptions options, final StorageMetadata md) {
       return (options.getDir() != null && md.getName().indexOf('/') == -1);
    }
-
-   private Iterable<? extends StorageMetadata> filterListing(
-            final PageSet<? extends StorageMetadata> listing,
-            final ListContainerOptions options) {
-      Iterable<? extends StorageMetadata> toDelete = Iterables.filter(listing,
-               new Predicate<StorageMetadata>() {
-
-         @Override
-         public boolean apply(StorageMetadata input) {
-            switch (input.getType()) {
-               case BLOB:
-                  return true;
-               case FOLDER:
-               case RELATIVE_PATH:
-                  if (options.isRecursive())
-                     return true;
-                  break;
-            }
-            return false;
-         }
-
-      });
-      return toDelete;
-   }
-
 }

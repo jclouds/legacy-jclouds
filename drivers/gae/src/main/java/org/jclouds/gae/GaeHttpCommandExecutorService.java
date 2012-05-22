@@ -37,6 +37,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.io.ContentMetadataCodec;
 
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -60,11 +61,12 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService, HttpUtils utils,
+            ContentMetadataCodec contentMetadataCodec,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
             IOExceptionRetryHandler ioRetryHandler, DelegatingRetryHandler retryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, ConvertToGaeRequest convertToGaeRequest,
             ConvertToJcloudsResponse convertToJcloudsResponse) {
-      super(utils, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+      super(utils, contentMetadataCodec, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
       this.convertToGaeRequest = convertToGaeRequest;
       this.convertToJcloudsResponse = convertToJcloudsResponse;

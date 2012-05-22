@@ -19,6 +19,7 @@
 package org.jclouds.cloudsigma;
 
 import static org.jclouds.cloudsigma.reference.CloudSigmaConstants.PROPERTY_VNC_PASSWORD;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 
 import java.net.URI;
 import java.util.Properties;
@@ -67,6 +68,7 @@ public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
       // from a race condition applying the password set script
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,imageNameMatches=.*[Aa]utomated SSH Access.*,os64Bit=true");
       return properties;
    }
 

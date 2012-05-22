@@ -64,7 +64,7 @@ public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<Sessi
    private SessionClient client;
    private SessionWithToken sessionWithToken;
    
-   @Test(testName = "POST /sessions")
+   @Test(description = "POST /sessions")
    public void testLogin() {
       String user = identity.substring(0, identity.lastIndexOf('@'));
       String org = identity.substring(identity.lastIndexOf('@') + 1);

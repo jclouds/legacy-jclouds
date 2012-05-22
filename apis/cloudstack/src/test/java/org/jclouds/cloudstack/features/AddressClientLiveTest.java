@@ -55,7 +55,7 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
          return;
       AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(
             Iterables.get(client.getNetworkClient().listNetworks(), 0).getZoneId());
-      checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
+      checkState(jobComplete.apply(job.getJobId()), "job %s failed to complete", job.getJobId());
       ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();
       checkIP(ip);
    }
@@ -84,12 +84,12 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkIP(PublicIPAddress ip) {
       assertEquals(ip.getId(), client.getAddressClient().getPublicIPAddress(ip.getId()).getId());
-      assert ip.getId() > 0 : ip;
+      assert ip.getId() != null : ip;
       assert ip.getAccount() != null : ip;
       assert ip.getDomain() != null : ip;
-      assert ip.getDomainId() > 0 : ip;
+      assert ip.getDomainId() != null : ip;
       assert ip.getState() != null : ip;
-      assert ip.getZoneId() > 0 : ip;
+      assert ip.getZoneId() != null : ip;
       assert ip.getZoneName() != null : ip;
 
    }

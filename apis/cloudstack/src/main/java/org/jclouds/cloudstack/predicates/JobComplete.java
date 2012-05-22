@@ -38,7 +38,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class JobComplete implements Predicate<Long> {
+public class JobComplete implements Predicate<String> {
 
    private final CloudStackClient client;
 
@@ -50,7 +50,7 @@ public class JobComplete implements Predicate<Long> {
       this.client = client;
    }
 
-   public boolean apply(Long jobId) {
+   public boolean apply(String jobId) {
       logger.trace(">> looking for status on job %s", checkNotNull(jobId, "jobId"));
       AsyncJob<?> job = refresh(jobId);
       if (job == null) {
@@ -65,7 +65,7 @@ public class JobComplete implements Predicate<Long> {
       return job.hasSucceed();
    }
 
-   private AsyncJob<?> refresh(Long jobId) {
+   private AsyncJob<?> refresh(String jobId) {
       return client.getAsyncJobClient().getAsyncJob(jobId);
    }
 }

@@ -80,12 +80,12 @@ public class ListISOsOptionsTest {
    }
 
    public void testId() {
-      ListISOsOptions options = new ListISOsOptions().id(6);
+      ListISOsOptions options = new ListISOsOptions().id("6");
       assertEquals(options.buildQueryParameters().get("id"), ImmutableSet.of("6"));
    }
 
    public void testIdStatic() {
-      ListISOsOptions options = id(6);
+      ListISOsOptions options = id("6");
       assertEquals(options.buildQueryParameters().get("id"), ImmutableSet.of("6"));
    }
 
@@ -160,12 +160,12 @@ public class ListISOsOptionsTest {
    }
 
    public void testZoneId() {
-      ListISOsOptions options = new ListISOsOptions().zoneId(6);
+      ListISOsOptions options = new ListISOsOptions().zoneId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListISOsOptions options = zoneId(6);
+      ListISOsOptions options = zoneId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 }

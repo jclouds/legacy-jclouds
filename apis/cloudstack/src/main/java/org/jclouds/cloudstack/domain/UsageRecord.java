@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -89,20 +90,20 @@ public class UsageRecord implements Comparable<UsageRecord> {
       private Builder() {
       }
 
-      private long id;
+      private String id;
       private String description;
-      private long accountId;
+      private String accountId;
       private String accountName;
-      private long domainId;
+      private String domainId;
       private Date startDate;
       private Date endDate;
       private Date assignDate;
-      private long releaseDate;
-      private long zoneId;
-      private long virtualMachineId;
+      private String releaseDate;
+      private String zoneId;
+      private String virtualMachineId;
       private String virtualMachineName;
-      private long serviceOfferingId;
-      private long templateId;
+      private String serviceOfferingId;
+      private String templateId;
       private String ipAddress;
       private boolean isSourceNAT;
       private double rawUsageHours;
@@ -110,7 +111,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       private String type;
       private UsageType usageType;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -120,7 +121,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder accountId(long accountId) {
+      public Builder accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -130,7 +131,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -150,17 +151,17 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder releaseDate(long releaseDate) {
+      public Builder releaseDate(String releaseDate) {
          this.releaseDate = releaseDate;
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -170,12 +171,12 @@ public class UsageRecord implements Comparable<UsageRecord> {
          return this;
       }
 
-      public Builder serviceOfferingId(long serviceOfferingId) {
+      public Builder serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
          return this;
       }
 
-      public Builder templateId(long templateId) {
+      public Builder templateId(String templateId) {
          this.templateId = templateId;
          return this;
       }
@@ -215,20 +216,20 @@ public class UsageRecord implements Comparable<UsageRecord> {
       }
    }
 
-   @SerializedName("usageid") private long id;
+   @SerializedName("usageid") private String id;
    private String description;
-   @SerializedName("accountid") private long accountId;
+   @SerializedName("accountid") private String accountId;
    @SerializedName("account") private String accountName;
-   @SerializedName("domainid") private long domainId;
+   @SerializedName("domainid") private String domainId;
    @SerializedName("startdate") private Date startDate;
    @SerializedName("enddate") private Date endDate;
    @SerializedName("assigndate") private Date assignDate;
-   @SerializedName("releasedate") private long releaseDate;
-   @SerializedName("zoneid") private long zoneId;
-   @SerializedName("virtualmachineid") private long virtualMachineId;
+   @SerializedName("releasedate") private String releaseDate;
+   @SerializedName("zoneid") private String zoneId;
+   @SerializedName("virtualmachineid") private String virtualMachineId;
    @SerializedName("name") private String virtualMachineName;
-   @SerializedName("offeringid") private long serviceOfferingId;
-   @SerializedName("templateid") private long templateId;
+   @SerializedName("offeringid") private String serviceOfferingId;
+   @SerializedName("templateid") private String templateId;
    @SerializedName("ipaddress") private String ipAddress;
    @SerializedName("issourcenat") private boolean isSourceNAT;
    @SerializedName("rawusage") private double rawUsageHours;
@@ -240,7 +241,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
    UsageRecord(){
    }
 
-   public UsageRecord(long id, String description, long accountId, String accountName, long domainId, Date startDate, Date endDate, Date assignDate, long releaseDate, long zoneId, long virtualMachineId, String virtualMachineName, long serviceOfferingId, long templateId, String ipAddress, boolean sourceNAT, double rawUsageHours, String usage, String type, UsageType usageType) {
+   public UsageRecord(String id, String description, String accountId, String accountName, String domainId, Date startDate, Date endDate, Date assignDate, String releaseDate, String zoneId, String virtualMachineId, String virtualMachineName, String serviceOfferingId, String templateId, String ipAddress, boolean sourceNAT, double rawUsageHours, String usage, String type, UsageType usageType) {
       this.id = id;
       this.description = description;
       this.accountId = accountId;
@@ -263,7 +264,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       this.usageType = usageType;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -271,7 +272,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return description;
    }
 
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -279,7 +280,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return accountName;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -295,15 +296,15 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return assignDate;
    }
 
-   public long getReleaseDate() {
+   public String getReleaseDate() {
       return releaseDate;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 
@@ -311,11 +312,11 @@ public class UsageRecord implements Comparable<UsageRecord> {
       return virtualMachineName;
    }
 
-   public long getServiceOfferingId() {
+   public String getServiceOfferingId() {
       return serviceOfferingId;
    }
 
-   public long getTemplateId() {
+   public String getTemplateId() {
       return templateId;
    }
 
@@ -350,57 +351,36 @@ public class UsageRecord implements Comparable<UsageRecord> {
 
       UsageRecord that = (UsageRecord) o;
 
-      if (accountId != that.accountId) return false;
-      if (domainId != that.domainId) return false;
-      if (id != that.id) return false;
-      if (isSourceNAT != that.isSourceNAT) return false;
-      if (Double.compare(that.rawUsageHours, rawUsageHours) != 0) return false;
-      if (releaseDate != that.releaseDate) return false;
-      if (serviceOfferingId != that.serviceOfferingId) return false;
-      if (templateId != that.templateId) return false;
-      if (virtualMachineId != that.virtualMachineId) return false;
-      if (zoneId != that.zoneId) return false;
-      if (accountName != null ? !accountName.equals(that.accountName) : that.accountName != null) return false;
-      if (assignDate != null ? !assignDate.equals(that.assignDate) : that.assignDate != null) return false;
-      if (description != null ? !description.equals(that.description) : that.description != null) return false;
-      if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) return false;
-      if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null) return false;
-      if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null) return false;
-      if (type != null ? !type.equals(that.type) : that.type != null) return false;
-      if (usage != null ? !usage.equals(that.usage) : that.usage != null) return false;
-      if (usageType != that.usageType) return false;
-      if (virtualMachineName != null ? !virtualMachineName.equals(that.virtualMachineName) : that.virtualMachineName != null)
-         return false;
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isSourceNAT, that.isSourceNAT)) return false;
+      if (!Objects.equal(rawUsageHours, that.rawUsageHours)) return false;
+      if (!Objects.equal(releaseDate, that.releaseDate)) return false;
+      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
+      if (!Objects.equal(templateId, that.templateId)) return false;
+      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(accountName, that.accountName)) return false;
+      if (!Objects.equal(assignDate, that.assignDate)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(endDate, that.endDate)) return false;
+      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
+      if (!Objects.equal(startDate, that.startDate)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(usage, that.usage)) return false;
+      if (!Objects.equal(usageType, that.usageType)) return false;
+      if (!Objects.equal(virtualMachineName, that.virtualMachineName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result;
-      long temp;
-      result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + (int) (accountId ^ (accountId >>> 32));
-      result = 31 * result + (accountName != null ? accountName.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-      result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-      result = 31 * result + (assignDate != null ? assignDate.hashCode() : 0);
-      result = 31 * result + (int) (releaseDate ^ (releaseDate >>> 32));
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
-      result = 31 * result + (virtualMachineName != null ? virtualMachineName.hashCode() : 0);
-      result = 31 * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
-      result = 31 * result + (int) (templateId ^ (templateId >>> 32));
-      result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (isSourceNAT ? 1 : 0);
-      temp = rawUsageHours != +0.0d ? Double.doubleToLongBits(rawUsageHours) : 0L;
-      result = 31 * result + (int) (temp ^ (temp >>> 32));
-      result = 31 * result + (usage != null ? usage.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (usageType != null ? usageType.hashCode() : 0);
-      return result;
+       return Objects.hashCode(accountId, domainId, id, isSourceNAT, rawUsageHours, releaseDate,
+                               serviceOfferingId, templateId, virtualMachineId, zoneId, accountName,
+                               assignDate, description, endDate, ipAddress, startDate, type, usage,
+                               usageType, virtualMachineName);
    }
 
    @Override
@@ -431,6 +411,6 @@ public class UsageRecord implements Comparable<UsageRecord> {
 
    @Override
    public int compareTo(UsageRecord other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

@@ -27,6 +27,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * Generic binder for RimuHosting POSTS/PUTS. In the form of
  * 
@@ -41,14 +43,12 @@ public class RimuHostingJsonBinder extends BindToJsonPayload {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       return bindToRequest(request, (Object) postParams);
    }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
-      Map<String, Object> test = new HashMap<String, Object>();
-      test.put("request", toBind);
-      return super.bindToRequest(request, test);
+      return super.bindToRequest(request, (Object) ImmutableMap.of("request", toBind));
    }
 }

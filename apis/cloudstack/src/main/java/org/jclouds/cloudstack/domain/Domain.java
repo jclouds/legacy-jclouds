@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -34,15 +35,15 @@ public class Domain implements Comparable<Domain> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private boolean hasChild;
       private long level;
       private String name;
       private String networkDomain;
-      private long parentDomainId;
+      private String parentDomainId;
       private String parentDomainName;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -67,7 +68,7 @@ public class Domain implements Comparable<Domain> {
          return this;
       }
 
-      public Builder parentDomainId(long parentDomainId) {
+      public Builder parentDomainId(String parentDomainId) {
          this.parentDomainId = parentDomainId;
          return this;
       }
@@ -87,7 +88,7 @@ public class Domain implements Comparable<Domain> {
    Domain() {
    }
 
-   private long id;
+   private String id;
    @SerializedName("haschild")
    private boolean hasChild;
    private long level;
@@ -95,12 +96,12 @@ public class Domain implements Comparable<Domain> {
    @SerializedName("networkdomain")
    private String networkDomain;
    @SerializedName("parentdomainid")
-   private long parentDomainId;
+   private String parentDomainId;
    @SerializedName("parentdomainname")
    private String parentDomainName;
 
-   public Domain(long id, boolean hasChild, long level, String name, String networkDomain,
-         long parentDomainId, String parentDomainName) {
+   public Domain(String id, boolean hasChild, long level, String name, String networkDomain,
+         String parentDomainId, String parentDomainName) {
       this.id = id;
       this.hasChild = hasChild;
       this.level = level;
@@ -110,7 +111,7 @@ public class Domain implements Comparable<Domain> {
       this.parentDomainName = parentDomainName;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -130,7 +131,7 @@ public class Domain implements Comparable<Domain> {
       return networkDomain;
    }
 
-   public long getParentDomainId() {
+   public String getParentDomainId() {
       return parentDomainId;
    }
 
@@ -143,50 +144,40 @@ public class Domain implements Comparable<Domain> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Domain domain = (Domain) o;
+      Domain that = (Domain) o;
 
-      if (hasChild != domain.hasChild) return false;
-      if (id != domain.id) return false;
-      if (level != domain.level) return false;
-      if (parentDomainId != domain.parentDomainId) return false;
-      if (name != null ? !name.equals(domain.name) : domain.name != null)
-         return false;
-      if (networkDomain != null ? !networkDomain.equals(domain.networkDomain) : domain.networkDomain != null)
-         return false;
-      if (parentDomainName != null ? !parentDomainName.equals(domain.parentDomainName) : domain.parentDomainName != null)
-         return false;
+      if (!Objects.equal(hasChild, that.hasChild)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(level, that.level)) return false;
+      if (!Objects.equal(parentDomainId, that.parentDomainId)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(networkDomain, that.networkDomain)) return false;
+      if (!Objects.equal(parentDomainName, that.parentDomainName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (hasChild ? 1 : 0);
-      result = 31 * result + (int) (level ^ (level >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (networkDomain != null ? networkDomain.hashCode() : 0);
-      result = 31 * result + (int) (parentDomainId ^ (parentDomainId >>> 32));
-      result = 31 * result + (parentDomainName != null ? parentDomainName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, hasChild, level, name, networkDomain, parentDomainId, parentDomainName);
    }
 
    @Override
    public String toString() {
       return "Domain{" +
-         "id=" + id +
+         "id='" + id + '\'' +
          ", hasChild=" + hasChild +
          ", level=" + level +
          ", name='" + name + '\'' +
          ", networkDomain='" + networkDomain + '\'' +
-         ", parentDomainId=" + parentDomainId +
+         ", parentDomainId='" + parentDomainId + '\'' +
          ", parentDomainName='" + parentDomainName + '\'' +
          '}';
    }
 
    @Override
    public int compareTo(Domain arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

@@ -54,7 +54,7 @@ public interface VirtualMachineClient {
     *           VirtualMachine to get
     * @return VirtualMachine or null if not found
     */
-   VirtualMachine getVirtualMachine(long id);
+   VirtualMachine getVirtualMachine(String id);
 
    /**
     * Creates and automatically starts a virtual machine based on a service
@@ -69,7 +69,7 @@ public interface VirtualMachineClient {
     * 
     * @return virtual machine
     */
-   AsyncCreateResponse deployVirtualMachineInZone(long zoneId, long serviceOfferingId, long templateId,
+   AsyncCreateResponse deployVirtualMachineInZone(String zoneId, String serviceOfferingId, String templateId,
          DeployVirtualMachineOptions... options);
 
    /**
@@ -79,7 +79,7 @@ public interface VirtualMachineClient {
     *           The ID of the virtual machine
     * @return job id related to destroying the VM
     */
-   Long rebootVirtualMachine(long id);
+   String rebootVirtualMachine(String id);
 
    /**
     * Starts a virtual machine.
@@ -88,7 +88,7 @@ public interface VirtualMachineClient {
     *           The ID of the virtual machine
     * @return job id related to destroying the VM
     */
-   Long startVirtualMachine(long id);
+   String startVirtualMachine(String id);
 
    /**
     * Stops a virtual machine.
@@ -97,7 +97,7 @@ public interface VirtualMachineClient {
     *           The ID of the virtual machine
     * @return job id related to destroying the VM
     */
-   Long stopVirtualMachine(long id);
+   String stopVirtualMachine(String id);
 
    /**
     * Resets the password for virtual machine. The virtual machine must be in a
@@ -108,7 +108,7 @@ public interface VirtualMachineClient {
     *           The ID of the virtual machine
     * @return job id related to destroying the VM
     */
-   Long resetPasswordForVirtualMachine(long id);
+   String resetPasswordForVirtualMachine(String id);
 
 
    /**
@@ -119,7 +119,7 @@ public interface VirtualMachineClient {
     *          the ID of the virtual machine
     * @return encrypted password
     */
-   String getEncryptedPasswordForVirtualMachine(long id);
+   String getEncryptedPasswordForVirtualMachine(String id);
 
    /**
     * Changes the service offering for a virtual machine. The virtual machine
@@ -129,7 +129,7 @@ public interface VirtualMachineClient {
     *           The ID of the virtual machine
     * @return job id related to destroying the VM
     */
-   Long changeServiceForVirtualMachine(long id);
+   String changeServiceForVirtualMachine(String id);
 
    /**
     * Updates parameters of a virtual machine.
@@ -138,7 +138,7 @@ public interface VirtualMachineClient {
     *           The ID of the virtual machine
     * @return job id related to destroying the VM
     */
-   Long updateVirtualMachine(long id);
+   String updateVirtualMachine(String id);
 
    /**
     * Destroys a virtual machine. Once destroyed, only the administrator can
@@ -149,5 +149,5 @@ public interface VirtualMachineClient {
     * @return job id related to destroying the VM, or null if resource was not
     *         found
     */
-   Long destroyVirtualMachine(long id);
+   String destroyVirtualMachine(String id);
 }

@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -71,22 +72,22 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private Algorithm algorithm;
       private String description;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String name;
       private int privatePort;
       private String publicIP;
-      private long publicIPId;
+      private String publicIPId;
       private int publicPort;
       private State state;
       private Set<String> CIDRs = ImmutableSet.of();
-      private long zoneId;
+      private String zoneId;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -111,7 +112,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -131,7 +132,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder publicIPId(long publicIPId) {
+      public Builder publicIPId(String publicIPId) {
          this.publicIPId = publicIPId;
          return this;
       }
@@ -151,7 +152,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -162,36 +163,36 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Algorithm algorithm;
    private String description;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private String name;
    @SerializedName("privateport")
    private int privatePort;
    @SerializedName("publicip")
    private String publicIP;
    @SerializedName("publicipid")
-   private long publicIPId;
+   private String publicIPId;
    @SerializedName("publicport")
    private int publicPort;
    private State state;
    @SerializedName("cidrlist")
    private Set<String> CIDRs;
    @SerializedName("zoneId")
-   private long zoneId;
+   private String zoneId;
 
    // for deserializer
    LoadBalancerRule() {
 
    }
 
-   public LoadBalancerRule(long id, String account, Algorithm algorithm, String description, String domain,
-                           long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state,
-                           long zoneId, Set<String> CIDRs) {
+   public LoadBalancerRule(String id, String account, Algorithm algorithm, String description, String domain,
+                           String domainId, String name, int privatePort, String publicIP, String publicIPId, int publicPort, State state,
+                           String zoneId, Set<String> CIDRs) {
       this.id = id;
       this.account = account;
       this.algorithm = algorithm;
@@ -212,7 +213,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the load balancer rule ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -247,7 +248,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the domain ID of the load balancer rule
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -275,7 +276,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    /**
     * @return the public ip address id
     */
-   public long getPublicIPId() {
+   public String getPublicIPId() {
       return publicIPId;
    }
 
@@ -301,95 +302,45 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    /**
-    * @return the id of the zone the rule belongs to
+    * @return the id of the zone the rule beStrings to
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
    @Override
    public int compareTo(LoadBalancerRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      LoadBalancerRule that = (LoadBalancerRule) o;
+
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(algorithm, that.algorithm)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(privatePort, that.privatePort)) return false;
+      if (!Objects.equal(publicIP, that.publicIP)) return false;
+      if (!Objects.equal(publicIPId, that.publicIPId)) return false;
+      if (!Objects.equal(publicPort, that.publicPort)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+
+      return true;
+   }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((algorithm == null) ? 0 : algorithm.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + privatePort;
-      result = prime * result + ((publicIP == null) ? 0 : publicIP.hashCode());
-      result = prime * result + (int) (publicIPId ^ (publicIPId >>> 32));
-      result = prime * result + publicPort;
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LoadBalancerRule other = (LoadBalancerRule) obj;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (algorithm == null) {
-         if (other.algorithm != null)
-            return false;
-      } else if (!algorithm.equals(other.algorithm))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (privatePort != other.privatePort)
-         return false;
-      if (publicIP == null) {
-         if (other.publicIP != null)
-            return false;
-      } else if (!publicIP.equals(other.publicIP))
-         return false;
-      if (publicIPId != other.publicIPId)
-         return false;
-      if (publicPort != other.publicPort)
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
-         return false;
-      return true;
+       return Objects.hashCode(account, algorithm, description, domain, domainId, id, name, privatePort, publicIP, publicIPId, publicPort, zoneId, state);
    }
 
    @Override

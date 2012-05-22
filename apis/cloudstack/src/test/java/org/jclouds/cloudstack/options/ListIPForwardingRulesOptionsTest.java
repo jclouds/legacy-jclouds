@@ -38,54 +38,54 @@ import com.google.common.collect.ImmutableList;
 public class ListIPForwardingRulesOptionsTest {
 
    public void testId() {
-      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().id(6);
+      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListIPForwardingRulesOptions options = id(6);
+      ListIPForwardingRulesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testAccount() {
-      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().accountInDomain("account", 6);
+      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().accountInDomain("account", "6");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountStatic() {
-      ListIPForwardingRulesOptions options = accountInDomain("account", 6);
+      ListIPForwardingRulesOptions options = accountInDomain("account", "6");
       assertEquals(ImmutableList.of("account"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testName() {
-      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().IPAddressId(9);
+      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().IPAddressId("9");
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("ipaddressid"));
    }
 
    public void testNameStatic() {
-      ListIPForwardingRulesOptions options = IPAddressId(9);
+      ListIPForwardingRulesOptions options = IPAddressId("9");
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("ipaddressid"));
    }
 
    public void testDomainId() {
-      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().domainId(6);
+      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListIPForwardingRulesOptions options = domainId(6);
+      ListIPForwardingRulesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testVirtualMachineId() {
-      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().virtualMachineId(6);
+      ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions().virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 
    public void testVirtualMachineIdStatic() {
-      ListIPForwardingRulesOptions options = virtualMachineId(6);
+      ListIPForwardingRulesOptions options = virtualMachineId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
    }
 }

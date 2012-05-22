@@ -18,102 +18,134 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
-
-import java.util.Set;
-
-import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * A flavor is an available hardware configuration for a server. Each flavor has
  * a unique combination of disk space and memory capacity.
- * 
+ *
  * @author Jeremy Daggett
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
  *      />
  */
 public class Flavor extends Resource {
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromFlavor(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromFlavor(this);
    }
 
-   public static class Builder extends Resource.Builder {
-
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       private int ram;
       private int disk;
       private int vcpus;
+      private String swap;
+      private Double rxtxFactor;
+      private Integer ephemeral;
 
-      public Builder ram(int ram) {
+
+      /**
+       * @see Flavor#getRam()
+       */
+      public T ram(int ram) {
          this.ram = ram;
-         return this;
+         return self();
       }
 
-      public Builder disk(int disk) {
+      /**
+       * @see Flavor#getDisk()
+       */
+      public T disk(int disk) {
          this.disk = disk;
-         return this;
+         return self();
       }
 
-      public Builder vcpus(int vcpus) {
+      /**
+       * @see Flavor#getVcpus()
+       */
+      public T vcpus(int vcpus) {
          this.vcpus = vcpus;
-         return this;
+         return self();
       }
+
+      /**
+       * @see Flavor#getVcpus()
+       */
+      public T swap(String swap) {
+         this.swap = swap;
+         return self();
+      }
+
+      /**
+       * @see Flavor#getVcpus()
+       */
+      public T rxtxFactor(Double rxtxFactor) {
+         this.rxtxFactor = rxtxFactor;
+         return self();
+      }
+
+      /**
+       * @see Flavor#getVcpus()
+       */
+      public T ephemeral(Integer ephemeral) {
+         this.ephemeral = ephemeral;
+         return self();
+      }
+
 
       public Flavor build() {
-         return new Flavor(id, name, links, ram, disk, vcpus);
+         return new Flavor(this);
       }
 
-      public Builder fromFlavor(Flavor in) {
-         return fromResource(in).ram(in.getRam()).disk(in.getDisk()).vcpus(in.getVcpus());
+      public T fromFlavor(Flavor in) {
+         return super.fromResource(in)
+               .ram(in.getRam())
+               .disk(in.getDisk())
+               .vcpus(in.getVcpus())
+               .swap(in.getSwap().orNull())
+               .rxtxFactor(in.getRxtxFactor().orNull())
+               .ephemeral(in.getEphemeral().orNull());
       }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder id(String id) {
-         return Builder.class.cast(super.id(id));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResource(Resource in) {
-         return Builder.class.cast(super.fromResource(in));
-      }
    }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
+   protected Flavor() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
    private int ram;
    private int disk;
    private int vcpus;
+   private Optional<String> swap = Optional.absent();
+   @SerializedName("rxtx_factor")
+   private Optional<Double> rxtxFactor = Optional.absent();
+   @SerializedName("OS-FLV-EXT-DATA:ephemeral")
+   private Optional<Integer> ephemeral = Optional.absent();
 
-   protected Flavor(String id, String name, Set<Link> links, int ram, int disk, int vcpus) {
-      super(id, name, links);
-      this.ram = ram;
-      this.disk = disk;
-      this.vcpus = vcpus;
+   protected Flavor(Builder<?> builder) {
+      super(builder);
+      this.ram = builder.ram;
+      this.disk = builder.disk;
+      this.vcpus = builder.vcpus;
+      this.swap = Optional.fromNullable(builder.swap);
+      this.rxtxFactor = Optional.fromNullable(builder.rxtxFactor);
+      this.ephemeral = Optional.fromNullable(builder.ephemeral);
    }
 
    public int getRam() {
@@ -128,10 +160,34 @@ public class Flavor extends Resource {
       return this.vcpus;
    }
 
-   @Override
-   public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("ram", ram).add("disk", disk)
-            .add("vcpus", vcpus).toString();
+   public Optional<String> getSwap() {
+      return swap;
    }
 
+   public Optional<Double> getRxtxFactor() {
+      return rxtxFactor;
+   }
+
+   /**
+    * Retrieves ephemeral disk space in GB
+    * <p/>
+    * NOTE: This field is only present if the Flavor Extra Data extension is installed (alias "OS-FLV-EXT-DATA").
+    *
+    * @see org.jclouds.openstack.nova.v1_1.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#FLAVOR_EXTRA_DATA
+    */
+   public Optional<Integer> getEphemeral() {
+      return ephemeral;
+   }
+
+   @Override
+   protected Objects.ToStringHelper string() {
+      return super.string()
+            .add("ram", ram)
+            .add("disk", disk)
+            .add("vcpus", vcpus)
+            .add("swap", swap)
+            .add("rxtxFactor", rxtxFactor)
+            .add("ephemeral", ephemeral);
+   }
 }

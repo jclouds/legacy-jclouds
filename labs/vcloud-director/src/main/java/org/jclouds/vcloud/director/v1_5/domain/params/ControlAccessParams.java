@@ -133,10 +133,11 @@ public class ControlAccessParams {
       this.sharedToEveryone = sharedToEveryone;
       if (sharedToEveryone) {
 	      this.everyoneAccessLevel = checkNotNull(everyoneAccessLevel, "everyoneAccessLevel");
+	      this.accessSettings = null;
       } else {
-         checkNotNull(accessSettings, "accessSettings");
+	      this.everyoneAccessLevel = null;
+         this.accessSettings = Iterables.isEmpty(checkNotNull(accessSettings, "accessSettings")) ? null : ImmutableList.copyOf(accessSettings);
       }
-      this.accessSettings = Iterables.isEmpty(accessSettings) ? null : ImmutableList.copyOf(accessSettings);
    }
 
    @XmlElement(name = "IsSharedToEveryone", required = true)

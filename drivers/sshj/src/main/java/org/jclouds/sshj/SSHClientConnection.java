@@ -116,6 +116,8 @@ public class SSHClientConnection implements Connection<SSHClient> {
       if (ssh != null && ssh.isConnected()) {
          try {
             ssh.disconnect();
+         } catch (AssertionError e) {
+            // already connected
          } catch (IOException e) {
             logger.debug("<< exception disconnecting from %s: %s", e, e.getMessage());
          }

@@ -18,15 +18,10 @@
  */
 package org.jclouds.vcloud.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
-
-import com.google.inject.Injector;
 
 /**
  * Configures the {@link VCloudComputeServiceContext}; requires {@link VCloudComputeClientImpl}
@@ -41,12 +36,6 @@ public class VCloudComputeServiceContextModule extends
    protected void configure() {
       super.configure();
       install(new VCloudComputeServiceDependenciesModule());
-   }
-   
-   // CIM ostype does not include version info
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).os64Bit(true);
    }
 
 }

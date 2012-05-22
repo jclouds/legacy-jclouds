@@ -102,13 +102,19 @@ public class SecurityGroup {
       }
 
    }
-
-   protected final String id;
+   
+   protected SecurityGroup() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   protected String id;
    @SerializedName("tenant_id")
-   protected final String tenantId;
-   protected final String name;
-   protected final String description;
-   protected final Set<SecurityGroupRule> rules;
+   protected String tenantId;
+   protected String name;
+   protected String description;
+   protected Set<SecurityGroupRule> rules = ImmutableSet.of();
 
    protected SecurityGroup(String id, String tenantId, @Nullable String name, @Nullable String description,
             Set<SecurityGroupRule> rules) {

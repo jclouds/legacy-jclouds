@@ -45,25 +45,25 @@ import com.google.common.collect.ImmutableMap.Builder;
  * @author Adrian Cole
  */
 @Singleton
-public class CorrectHypervisorForZone implements Function<Long, Predicate<Template>> {
-   private final Supplier<Map<Long, Set<String>>> hypervisorsSupplier;
+public class CorrectHypervisorForZone implements Function<String, Predicate<Template>> {
+   private final Supplier<Map<String, Set<String>>> hypervisorsSupplier;
 
    @Inject
    public CorrectHypervisorForZone(CloudStackClient client) {
       this(Suppliers.ofInstance(new CloudStackClientToZoneToHypervisors().apply(checkNotNull(client, "client"))));
    }
 
-   public CorrectHypervisorForZone(Supplier<Map<Long, Set<String>>> hypervisorsSupplier) {
+   public CorrectHypervisorForZone(Supplier<Map<String, Set<String>>> hypervisorsSupplier) {
       this.hypervisorsSupplier = checkNotNull(hypervisorsSupplier, "hypervisorsSupplier");
    }
 
    private static class CloudStackClientToZoneToHypervisors implements
-         Function<CloudStackClient, Map<Long, Set<String>>> {
+         Function<CloudStackClient, Map<String, Set<String>>> {
 
       @Override
-      public Map<Long, Set<String>> apply(CloudStackClient client) {
+      public Map<String, Set<String>> apply(CloudStackClient client) {
          checkNotNull(client, "client");
-         Builder<Long, Set<String>> builder = ImmutableMap.builder();
+         Builder<String, Set<String>> builder = ImmutableMap.builder();
          for (Zone zone : client.getZoneClient().listZones()) {
             builder.put(zone.getId(), client.getHypervisorClient().listHypervisorsInZone(zone.getId()));
          }
@@ -72,7 +72,7 @@ public class CorrectHypervisorForZone implements Function<Long, Predicate<Templa
    }
 
    @Override
-   public Predicate<Template> apply(final Long zoneId) {
+   public Predicate<Template> apply(final String zoneId) {
 
       final Set<String> acceptableHypervisorsInZone;
       try {

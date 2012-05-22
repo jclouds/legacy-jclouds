@@ -28,9 +28,7 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -44,7 +42,6 @@ import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.domain.ServerDetails;
 
 import com.google.common.base.Function;
-import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -76,12 +73,6 @@ public class GleSYSComputeServiceContextModule extends
       bind(String.class).annotatedWith(Names.named("PASSWORD")).toProvider(PasswordProvider.class).in(Scopes.SINGLETON);
       // to have the compute service adapter override default locations
       install(new LocationsFromComputeServiceAdapterModule<ServerDetails, Hardware, OSTemplate, String>(){});
-   }
-
-   // 128MB is perhaps too little ram
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.minRam(512).osFamily(OsFamily.UBUNTU).hypervisorMatches("OpenVZ").osVersionMatches("1[10].[10][04]").os64Bit(true);
    }
 
    @Named("PASSWORD")

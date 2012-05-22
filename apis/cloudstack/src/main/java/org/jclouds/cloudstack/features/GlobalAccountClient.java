@@ -64,7 +64,7 @@ public interface GlobalAccountClient extends DomainAccountClient {
     * @param options optional arguments
     * @return
     */
-   Account updateAccount(String accountName, long domainId, String newName, UpdateAccountOptions... options);
+   Account updateAccount(String accountName, String domainId, String newName, UpdateAccountOptions... options);
 
    /**
     * Delete an account with the specified ID
@@ -72,6 +72,6 @@ public interface GlobalAccountClient extends DomainAccountClient {
     * @param accountId
     * @return
     */
-   Void deleteAccount(long accountId);
+   Void deleteAccount(String accountId);
 
 }

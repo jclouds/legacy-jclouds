@@ -35,7 +35,7 @@ public class AddSecondaryStorageOptions extends BaseHttpRequestOptions {
     * @param zoneId
     *           the ID of the zone
     */
-   public AddSecondaryStorageOptions zoneId(long zoneId) {
+   public AddSecondaryStorageOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -46,7 +46,7 @@ public class AddSecondaryStorageOptions extends BaseHttpRequestOptions {
        * @param zoneId
        *           the ID of the zone
        */
-      public static AddSecondaryStorageOptions zoneId(long zoneId) {
+      public static AddSecondaryStorageOptions zoneId(String zoneId) {
          return new AddSecondaryStorageOptions().zoneId(zoneId);
       }
 

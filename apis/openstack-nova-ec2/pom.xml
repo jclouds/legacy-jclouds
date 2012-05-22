@@ -78,7 +78,7 @@
     </dependency>
     <dependency>
       <groupId>org.jclouds.driver</groupId>
-      <artifactId>jclouds-slf4j</artifactId>
+      <artifactId>jclouds-log4j</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

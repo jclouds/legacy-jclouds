@@ -20,7 +20,6 @@ package org.jclouds.vcloud.functions;
 
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
-import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -44,6 +43,8 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Throwables;
 
 /**
  * @author Adrian Cole
@@ -64,7 +65,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
          if (from instanceof AuthorizationException) {
             return null;
          }
-         return propagateOrNull(from);
+         throw Throwables.propagate(from);
       }
    }
 
@@ -79,7 +80,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
 
    @Override
    public Iterable<VAppTemplate> apply(Iterable<CatalogItem> from) {
-      return Iterables2.concreteCopy(transformParallel(filter(from, new Predicate<CatalogItem>() {
+      return Iterables2.concreteCopy(filter(transformParallel(filter(from, new Predicate<CatalogItem>() {
 
          @Override
          public boolean apply(CatalogItem input) {
@@ -95,7 +96,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
                      returnNullOnAuthorizationException);
          }
 
-      }, executor, null, logger, "vappTemplates in"));
+      }, executor, null, logger, "vappTemplates in"), Predicates.notNull()));
    }
 
 }

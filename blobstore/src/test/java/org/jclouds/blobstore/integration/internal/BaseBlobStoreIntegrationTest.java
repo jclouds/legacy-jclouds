@@ -23,9 +23,10 @@ import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNull
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -43,6 +44,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.domain.Location;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -332,6 +334,37 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
                      containerName);
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
+            }
+         }
+      });
+   }
+
+   protected void assertConsistencyAwareBlobExpiryMetadata(final String containerName, final String blobName, final Date expectedExpires)
+                           throws InterruptedException {
+                        assertConsistencyAware(new Runnable() {
+                           public void run() {
+                              try {
+                                 Blob blob = view.getBlobStore().getBlob(containerName, blobName);
+                                 Date actualExpires = blob.getPayload().getContentMetadata().getExpires();
+                                 assert expectedExpires.equals(actualExpires) : "expires="+actualExpires+"; expected="+expectedExpires;
+                              } catch (Exception e) {
+                                 Throwables.propagateIfPossible(e);
+                              }
+                           }
+                        });
+                     }
+
+   protected void assertConsistencyAwareBlobInLocation(final String containerName, final String blobName, final Location loc)
+            throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               Location actualLoc = view.getBlobStore().getBlob(containerName, blobName).getMetadata().getLocation();
+               
+               assert loc.equals(actualLoc) : String.format(
+                     "blob %s in %s, in location %s instead of %s", blobName, containerName, actualLoc, loc);
+            } catch (Exception e) {
+               Throwables.propagate(e);
             }
          }
       });

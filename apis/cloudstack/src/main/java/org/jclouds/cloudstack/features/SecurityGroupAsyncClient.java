@@ -60,7 +60,7 @@ public interface SecurityGroupAsyncClient {
     * @see SecurityGroupClient#listSecurityGroups
     */
    @GET
-   @QueryParams(keys = "command", values = "listSecurityGroups")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSecurityGroups", "true" })
    @SelectJson("securitygroup")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -70,12 +70,12 @@ public interface SecurityGroupAsyncClient {
     * @see SecurityGroupClient#getSecurityGroup
     */
    @GET
-   @QueryParams(keys = "command", values = "listSecurityGroups")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSecurityGroups", "true" })
    @SelectJson("securitygroup")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SecurityGroup> getSecurityGroup(@QueryParam("id") long id);
+   ListenableFuture<SecurityGroup> getSecurityGroup(@QueryParam("id") String id);
 
    /**
     * @see SecurityGroupClient#createSecurityGroup
@@ -93,7 +93,7 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> authorizeIngressPortsToCIDRs(@QueryParam("securitygroupid") long securityGroupId,
+   ListenableFuture<String> authorizeIngressPortsToCIDRs(@QueryParam("securitygroupid") String securityGroupId,
          @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
          @QueryParam("endport") int endPort,
          @BinderParam(BindCIDRsToCommaDelimitedQueryParam.class) Iterable<String> cidrList,
@@ -106,7 +106,7 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> authorizeIngressPortsToSecurityGroups(@QueryParam("securitygroupid") long securityGroupId,
+   ListenableFuture<String> authorizeIngressPortsToSecurityGroups(@QueryParam("securitygroupid") String securityGroupId,
          @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
          @QueryParam("endport") int endPort,
          @BinderParam(BindAccountSecurityGroupPairsToIndexedQueryParams.class) Multimap<String, String> accountToGroup,
@@ -119,7 +119,7 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> authorizeIngressICMPToCIDRs(@QueryParam("securitygroupid") long securityGroupId,
+   ListenableFuture<String> authorizeIngressICMPToCIDRs(@QueryParam("securitygroupid") String securityGroupId,
          @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
          @BinderParam(BindCIDRsToCommaDelimitedQueryParam.class) Iterable<String> cidrList,
          AccountInDomainOptions... options);
@@ -131,7 +131,7 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> authorizeIngressICMPToSecurityGroups(@QueryParam("securitygroupid") long securityGroupId,
+   ListenableFuture<String> authorizeIngressICMPToSecurityGroups(@QueryParam("securitygroupid") String securityGroupId,
          @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
          @BinderParam(BindAccountSecurityGroupPairsToIndexedQueryParams.class) Multimap<String, String> accountToGroup,
          AccountInDomainOptions... options);
@@ -144,7 +144,7 @@ public interface SecurityGroupAsyncClient {
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> revokeIngressRule(@QueryParam("id") long id, AccountInDomainOptions... options);
+   ListenableFuture<String> revokeIngressRule(@QueryParam("id") String id, AccountInDomainOptions... options);
 
    /**
     * @see SecurityGroupClient#deleteSecurityGroup
@@ -152,6 +152,6 @@ public interface SecurityGroupAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "deleteSecurityGroup")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteSecurityGroup(@QueryParam("id") long id);
+   ListenableFuture<Void> deleteSecurityGroup(@QueryParam("id") String id);
 
 }

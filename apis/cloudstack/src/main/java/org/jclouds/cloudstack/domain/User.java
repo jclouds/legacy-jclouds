@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.jclouds.cloudstack.domain.Account.Type;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -54,7 +55,7 @@ public class User implements Comparable<User> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String name;
       private String firstName;
       private String lastName;
@@ -64,12 +65,12 @@ public class User implements Comparable<User> {
       private String account;
       private Account.Type accountType;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String timeZone;
       private String apiKey;
       private String secretKey;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -119,7 +120,7 @@ public class User implements Comparable<User> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -153,7 +154,7 @@ public class User implements Comparable<User> {
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("username")
    private String name;
    @SerializedName("firstname")
@@ -168,7 +169,7 @@ public class User implements Comparable<User> {
    private Account.Type accountType;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("timezone")
    private String timeZone;
    @SerializedName("apikey")
@@ -176,8 +177,8 @@ public class User implements Comparable<User> {
    @SerializedName("secretkey")
    private String secretKey;
 
-   public User(long id, String name, String firstname, String lastname, String email, Date created, State state,
-         String account, Type accountType, String domain, long domainId, String timeZone, String apiKey,
+   public User(String id, String name, String firstname, String lastname, String email, Date created, State state,
+         String account, Type accountType, String domain, String domainId, String timeZone, String apiKey,
          String secretKey) {
       this.id = id;
       this.name = name;
@@ -199,7 +200,7 @@ public class User implements Comparable<User> {
     * 
     * @return the user ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -279,7 +280,7 @@ public class User implements Comparable<User> {
     * 
     * @return the domain ID of the user
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -309,38 +310,26 @@ public class User implements Comparable<User> {
 
    @Override
    public int compareTo(User arg0) {
-      return new Long(id).compareTo(arg0.getId());
+       return id.compareTo(arg0.getId());
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      User that = (User) o;
+
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+
+      return true;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      User other = (User) obj;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      return true;
+       return Objects.hashCode(account, domainId, id);
    }
 
    @Override

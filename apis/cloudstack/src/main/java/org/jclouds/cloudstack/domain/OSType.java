@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -31,16 +32,16 @@ public class OSType implements Comparable<OSType> {
    }
 
    public static class Builder {
-      private long id;
-      private long OSCategoryId;
+      private String id;
+      private String OSCategoryId;
       private String description;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
 
-      public Builder OSCategoryId(long OSCategoryId) {
+      public Builder OSCategoryId(String OSCategoryId) {
          this.OSCategoryId = OSCategoryId;
          return this;
       }
@@ -60,12 +61,12 @@ public class OSType implements Comparable<OSType> {
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("oscategoryid")
-   private long OSCategoryId;
+   private String OSCategoryId;
    private String description;
 
-   public OSType(long id, long OSCategoryId, String description) {
+   public OSType(String id, String OSCategoryId, String description) {
       this.id = id;
       this.OSCategoryId = OSCategoryId;
       this.description = description;
@@ -74,14 +75,14 @@ public class OSType implements Comparable<OSType> {
    /**
     * @return the ID of the OS type
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return the ID of the OS category
     */
-   public long getOSCategoryId() {
+   public String getOSCategoryId() {
       return OSCategoryId;
    }
 
@@ -93,34 +94,22 @@ public class OSType implements Comparable<OSType> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (OSCategoryId ^ (OSCategoryId >>> 32));
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      OSType that = (OSType) o;
+
+      if (!Objects.equal(OSCategoryId, that.OSCategoryId)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      OSType other = (OSType) obj;
-      if (OSCategoryId != other.OSCategoryId)
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (id != other.id)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(OSCategoryId, description, id);
    }
 
    @Override
@@ -134,7 +123,7 @@ public class OSType implements Comparable<OSType> {
 
    @Override
    public int compareTo(OSType arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }

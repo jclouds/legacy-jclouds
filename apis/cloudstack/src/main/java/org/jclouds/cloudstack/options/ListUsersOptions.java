@@ -38,7 +38,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
     * @param id
     *           list account by account ID
     */
-   public ListUsersOptions id(long id) {
+   public ListUsersOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -103,7 +103,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
       /**
        * @see ListUsersOptions#id
        */
-      public static ListUsersOptions id(long id) {
+      public static ListUsersOptions id(String id) {
          ListUsersOptions options = new ListUsersOptions();
          return options.id(id);
       }
@@ -159,7 +159,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
       /**
        * @see ListUsersOptions#accountInDomain
        */
-      public static ListUsersOptions accountInDomain(String account, long domain) {
+      public static ListUsersOptions accountInDomain(String account, String domain) {
          ListUsersOptions options = new ListUsersOptions();
          return options.accountInDomain(account, domain);
       }
@@ -167,7 +167,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
       /**
        * @see ListUsersOptions#domainId
        */
-      public static ListUsersOptions domainId(long id) {
+      public static ListUsersOptions domainId(String id) {
          ListUsersOptions options = new ListUsersOptions();
          return options.domainId(id);
       }
@@ -177,7 +177,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListUsersOptions accountInDomain(String account, long domain) {
+   public ListUsersOptions accountInDomain(String account, String domain) {
       return ListUsersOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -185,7 +185,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListUsersOptions domainId(long domainId) {
+   public ListUsersOptions domainId(String domainId) {
       return ListUsersOptions.class.cast(super.domainId(domainId));
    }
 }

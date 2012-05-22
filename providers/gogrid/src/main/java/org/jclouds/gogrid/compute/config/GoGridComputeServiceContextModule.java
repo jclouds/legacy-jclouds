@@ -18,7 +18,6 @@
  */
 package org.jclouds.gogrid.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 
@@ -32,7 +31,6 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -49,7 +47,6 @@ import org.jclouds.gogrid.domain.ServerState;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -60,11 +57,6 @@ import com.google.inject.TypeLiteral;
  */
 public class GoGridComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<Server, Hardware, ServerImage, Option> {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").imageNameMatches(".*w/ None.*");
-   }
 
    @SuppressWarnings("unchecked")
    @Override

@@ -53,27 +53,27 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
       return ImmutableSet
             .<Network> of(Network
                   .builder()
-                  .id(204)
+                  .id("204")
                   .account("adrian")
                   .name("Virtual Network")
                   .displayText(
                         "A dedicated virtualized network for your account.  The broadcast domain is contained within a VLAN and all public network access is routed out by a virtual router.")
                   .broadcastDomainType("Vlan")
                   .trafficType(TrafficType.GUEST)
-                  .zoneId(1)
-                  .networkOfferingId(6)
+                  .zoneId("1")
+                  .networkOfferingId("6")
                   .networkOfferingName("DefaultVirtualizedNetworkOffering")
                   .networkOfferingDisplayText("Virtual Vlan")
                   .networkOfferingAvailability("Required")
                   .isShared(false)
                   .isSystem(false)
                   .state("Implemented")
-                  .related(204)
+                  .related("204")
                   .broadcastURI(URI.create("vlan://240"))
                   .DNS(ImmutableList.of("8.8.8.8"))
                   .guestIPType(GuestIPType.VIRTUAL)
                   .domain("ROOT")
-                  .domainId(1)
+                  .domainId("1")
                   .isDefault(true)
                   .services(
                         ImmutableSortedSet.of(

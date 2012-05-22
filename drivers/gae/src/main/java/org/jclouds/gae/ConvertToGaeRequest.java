@@ -34,6 +34,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
@@ -52,14 +53,17 @@ import com.google.common.io.Closeables;
 @Singleton
 public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
    public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.4.3";
-   protected final HttpUtils utils;
    // http://code.google.com/appengine/docs/java/urlfetch/overview.html
    public final Set<String> prohibitedHeaders = ImmutableSet.of("Accept-Encoding", "Content-Length", "Host", "Var",
          "X-Forwarded-For");
 
+   protected final HttpUtils utils;
+   protected final ContentMetadataCodec contentMetadataCodec;
+
    @Inject
-   ConvertToGaeRequest(HttpUtils utils) {
+   ConvertToGaeRequest(HttpUtils utils, ContentMetadataCodec contentMetadataCodec) {
       this.utils = utils;
+      this.contentMetadataCodec = contentMetadataCodec;
    }
 
    /**
@@ -115,7 +119,7 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
             Closeables.closeQuietly(input);
          }
 
-         for (Entry<String, String> header : HttpUtils.getContentHeadersFromMetadata(
+         for (Entry<String, String> header : contentMetadataCodec.toHeaders(
                request.getPayload().getContentMetadata()).entries()) {
             if (!prohibitedHeaders.contains(header.getKey()))
                gaeRequest.setHeader(new HTTPHeader(header.getKey(), header.getValue()));

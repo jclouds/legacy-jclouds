@@ -40,33 +40,33 @@ import com.google.common.collect.ImmutableList;
 public class ListTemplatesOptionsTest {
 
    public void testId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().id(6);
+      ListTemplatesOptions options = new ListTemplatesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListTemplatesOptions options = id(6);
+      ListTemplatesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testDomainId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().domainId(6);
+      ListTemplatesOptions options = new ListTemplatesOptions().domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListTemplatesOptions options = domainId(6);
+      ListTemplatesOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().accountInDomain("adrian", 6);
+      ListTemplatesOptions options = new ListTemplatesOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListTemplatesOptions options = accountInDomain("adrian", 6);
+      ListTemplatesOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
@@ -82,22 +82,22 @@ public class ListTemplatesOptionsTest {
    }
 
    public void testName() {
-      ListTemplatesOptions options = new ListTemplatesOptions().id(6);
+      ListTemplatesOptions options = new ListTemplatesOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testNameStatic() {
-      ListTemplatesOptions options = id(6);
+      ListTemplatesOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testZoneId() {
-      ListTemplatesOptions options = new ListTemplatesOptions().zoneId(6);
+      ListTemplatesOptions options = new ListTemplatesOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListTemplatesOptions options = zoneId(6);
+      ListTemplatesOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 

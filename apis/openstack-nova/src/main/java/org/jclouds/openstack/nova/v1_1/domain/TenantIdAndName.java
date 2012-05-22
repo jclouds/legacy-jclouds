@@ -31,9 +31,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class TenantIdAndName {
 
+   protected TenantIdAndName() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName("tenant_id")
-   protected final String tenantId;
-   protected final String name;
+   protected String tenantId;
+   protected String name;
 
    public TenantIdAndName(String tenantId, String name) {
       this.tenantId = checkNotNull(tenantId, "tenantId");

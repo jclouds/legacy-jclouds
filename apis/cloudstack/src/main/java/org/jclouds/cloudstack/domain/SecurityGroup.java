@@ -25,6 +25,7 @@ import java.util.SortedSet;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.annotations.SerializedName;
@@ -38,18 +39,18 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private String name;
       private String description;
       private String domain;
-      private long domainId;
-      private Long jobId;
+      private String domainId;
+      private String jobId;
       private Integer jobStatus;
 
       private Set<IngressRule> ingressRules = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -74,12 +75,12 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -99,16 +100,16 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private String name;
    private String description;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("jobid")
    @Nullable
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    @Nullable
    private Integer jobStatus;
@@ -116,8 +117,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    // so that tests and serialization come out expected
    private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule>of();
 
-   public SecurityGroup(long id, String account, String name, String description, String domain, long domainId,
-                        Long jobId, Integer jobStatus, Set<IngressRule> ingressRules) {
+   public SecurityGroup(String id, String account, String name, String description, String domain, String domainId,
+                        String jobId, Integer jobStatus, Set<IngressRule> ingressRules) {
       this.id = id;
       this.account = account;
       this.name = name;
@@ -139,7 +140,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    /**
     * @return the id of the security group
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -168,7 +169,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    /**
     * @return the domain id of the security group
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -178,7 +179,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
     *         machine
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -205,39 +206,22 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      SecurityGroup that = (SecurityGroup) o;
+
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SecurityGroup other = (SecurityGroup) obj;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (jobId == null) {
-         if (other.jobId != null)
-            return false;
-      } else if (!jobId.equals(other.jobId))
-         return false;
-      if (jobStatus == null) {
-         if (other.jobStatus != null)
-            return false;
-      } else if (!jobStatus.equals(other.jobStatus))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(domainId, id, jobStatus);
    }
 
    @Override
@@ -257,6 +241,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
 
    @Override
    public int compareTo(SecurityGroup arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

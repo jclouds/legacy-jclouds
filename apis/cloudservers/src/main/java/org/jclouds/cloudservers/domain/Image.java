@@ -138,8 +138,8 @@ public class Image {
 
    @Override
    public String toString() {
-      return "Image [created=" + created + ", id=" + id + ", name=" + name + ", serverId="
-               + serverId + "]";
+      return "Image [created=" + created + ", id=" + id + ", name=" + name + ", serverId=" + serverId + ", status="
+               + status + "]";
    }
 
 }

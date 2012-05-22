@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -31,17 +32,17 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private Snapshot.Interval interval;
       private long numberToRetain;
       private String schedule;
       private String timezone;
-      private long volumeId;
+      private String volumeId;
 
       /**
        * @param id the ID of the snapshot policy
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -81,7 +82,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
       /**
        * @param volumeId ID of the disk volume
        */
-      public Builder volumeId(long volumeId) {
+      public Builder volumeId(String volumeId) {
          this.volumeId = volumeId;
          return this;
       }
@@ -91,7 +92,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("intervaltype")
    private Snapshot.Interval interval;
    @SerializedName("maxsnaps")
@@ -99,9 +100,9 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    private String schedule;
    private String timezone;
    @SerializedName("volumeid")
-   private long volumeId;
+   private String volumeId;
 
-   public SnapshotPolicy(long id, Snapshot.Interval interval, long numberToRetain, String schedule, String timezone, long volumeId) {
+   public SnapshotPolicy(String id, Snapshot.Interval interval, long numberToRetain, String schedule, String timezone, String volumeId) {
       this.id = id;
       this.interval = interval;
       this.numberToRetain = numberToRetain;
@@ -119,7 +120,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    /**
     * @return the ID of the snapshot policy
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -154,7 +155,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    /**
     * @return ID of the disk volume
     */
-   public long getVolumeId() {
+   public String getVolumeId() {
       return volumeId;
    }
 
@@ -165,25 +166,19 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
       SnapshotPolicy that = (SnapshotPolicy) o;
 
-      if (id != that.id) return false;
-      if (numberToRetain != that.numberToRetain) return false;
-      if (volumeId != that.volumeId) return false;
-      if (interval != that.interval) return false;
-      if (schedule != null ? !schedule.equals(that.schedule) : that.schedule != null) return false;
-      if (timezone != null ? !timezone.equals(that.timezone) : that.timezone != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(numberToRetain, that.numberToRetain)) return false;
+      if (!Objects.equal(volumeId, that.volumeId)) return false;
+      if (!Objects.equal(interval, that.interval)) return false;
+      if (!Objects.equal(schedule, that.schedule)) return false;
+      if (!Objects.equal(timezone, that.timezone)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (interval != null ? interval.hashCode() : 0);
-      result = 31 * result + (int) (numberToRetain ^ (numberToRetain >>> 32));
-      result = 31 * result + (schedule != null ? schedule.hashCode() : 0);
-      result = 31 * result + (timezone != null ? timezone.hashCode() : 0);
-      result = 31 * result + (int) (volumeId ^ (volumeId >>> 32));
-      return result;
+       return Objects.hashCode(id, numberToRetain, volumeId, interval, schedule, timezone);
    }
 
    @Override
@@ -200,7 +195,7 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
    @Override
    public int compareTo(SnapshotPolicy other) {
-      return new Long(id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 
 }

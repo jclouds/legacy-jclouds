@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<ImportKeyPairResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+    <requestId>req-dd54edc5-4beb-4b40-9694-0209fcf50459</requestId>
+    <keyName>aplowe-nova-ec22</keyName>
+    <keyFingerprint>e3:fd:de:f6:4c:36:7d:9b:8f:2f:4c:20:f8:ae:b0:ea</keyFingerprint>
+</ImportKeyPairResponse>

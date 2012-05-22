@@ -22,21 +22,31 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.Host;
 import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.MaintenanceModeDisabledResponseParser;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.MaintenanceModeEnabledResponseParser;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.PowerIsRebootResponseParser;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.PowerIsShutdownResponseParser;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.PowerIsStartupResponseParser;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.StatusDisabledResponseParser;
+import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.StatusEnabledResponseParser;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -45,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  *
  * @author Adam Lowe
- * @see SimpleTenantUsageClient
+ * @see HostAdministrationClient
  * @see <a href= "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"/>
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.hosts.html" />
@@ -53,15 +63,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.HOSTS)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
+@Path("/os-hosts")
+@Consumes(MediaType.APPLICATION_JSON)
 public interface HostAdministrationAsyncClient {
 
    /**
     * @see HostAdministrationClient#listHosts()
     */
    @GET
-   @Path("/os-hosts")
    @SelectJson("hosts")
-   @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Host>> listHosts();
 
@@ -69,10 +79,72 @@ public interface HostAdministrationAsyncClient {
     * @see HostAdministrationClient#getHostResourceUsage(String)
     */
    @GET
-   @Path("/os-hosts/{id}")
+   @Path("/{id}")
    @SelectJson("host")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<HostResourceUsage>> getHostResourceUsage(@PathParam("id") String hostId);
 
+   /**
+    * @see HostAdministrationClient#enableHost(String)
+    */
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/{id}")
+   @Payload("{\"status\":\"enable\"}")
+   @ResponseParser(StatusEnabledResponseParser.class)
+   ListenableFuture<Boolean> enableHost(@PathParam("id") String hostId);
+
+   /**
+    * @see HostAdministrationClient#disableHost(String) 
+    */
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/{id}")
+   @Payload("{\"status\":\"disable\"}")
+   @ResponseParser(StatusDisabledResponseParser.class)
+   ListenableFuture<Boolean> disableHost(@PathParam("id") String hostId);
+
+   /**
+    * @see HostAdministrationClient#startHostMaintenance(String)
+    */
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/{id}")
+   @Payload("{\"maintenance_mode\":\"enable\"}")
+   @ResponseParser(MaintenanceModeEnabledResponseParser.class)
+   ListenableFuture<Boolean> startHostMaintenance(@PathParam("id") String hostId);
+
+   /**
+    * @see HostAdministrationClient#stopHostMaintenance(String)
+    */
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/{id}")
+   @Payload("{\"maintenance_mode\":\"disable\"}")
+   @ResponseParser(MaintenanceModeDisabledResponseParser.class)
+   ListenableFuture<Boolean> stopHostMaintenance(@PathParam("id") String hostId);
+
+   /**
+    * @see HostAdministrationClient#startupHost(String)
+    */
+   @GET
+   @Path("/{id}/startup")
+   @ResponseParser(PowerIsStartupResponseParser.class)
+   ListenableFuture<Boolean> startupHost(@PathParam("id") String hostId);
+
+   /**
+    * @see HostAdministrationClient#shutdownHost(String)
+    */
+   @GET
+   @Path("/{id}/shutdown")
+   @ResponseParser(PowerIsShutdownResponseParser.class)
+   ListenableFuture<Boolean> shutdownHost(@PathParam("id") String hostId);
+
+   /**
+    * @see HostAdministrationClient#rebootHost(String)
+    */
+   @GET
+   @Path("/{id}/reboot")
+   @ResponseParser(PowerIsRebootResponseParser.class)
+   ListenableFuture<Boolean> rebootHost(@PathParam("id") String hostId);
 }

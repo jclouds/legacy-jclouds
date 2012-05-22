@@ -95,13 +95,19 @@ public class SecurityGroupRule extends Ingress {
       }
 
    }
-
-   protected final String id;
-
-   protected final TenantIdAndName group;
-
+   
+   protected SecurityGroupRule() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   protected String id;
+   protected TenantIdAndName group;
    @SerializedName(value = "parent_group_id")
-   protected final String parentGroupId;
+   protected String parentGroupId;
+   @SerializedName(value = "ip_range")
+   protected Cidr ipRange;
 
    // type to get around unnecessary structure
    private static class Cidr extends ForwardingObject {
@@ -117,8 +123,6 @@ public class SecurityGroupRule extends Ingress {
       }
    }
 
-   @SerializedName(value = "ip_range")
-   protected final Cidr ipRange;
 
    protected SecurityGroupRule(IpProtocol ipProtocol, int fromPort, int toPort, String id, String parentGroupId,
             @Nullable TenantIdAndName group, @Nullable String ipRange) {

@@ -111,9 +111,8 @@ public class FormatSharedNamesAndAppendUniqueStringToThoseWhichRepeat implements
       this.delimiter = delimiter;
       this.suffixSupplier = checkNotNull(suffixSupplier, "suffixSupplier");
       this.groupValidator = checkNotNull(groupValidator, "groupValidator");
-      this.sharedFormat = "".equals(prefix) ? "%s" : new StringBuilder().append(prefix).append(delimiter).append("%s")
-            .toString();
-      this.uniqueFormat = new StringBuilder(sharedFormat).append(delimiter).append("%s").toString();
+      this.sharedFormat = "".equals(prefix) ? "%s" : prefix + delimiter + "%s";
+      this.uniqueFormat = sharedFormat + delimiter + "%s";
       this.uniqueGroupPattern = Pattern.compile("^" + ("".equals(prefix) ? "" : (prefix + delimiter)) + "(.+)"
             + delimiter + "[^" + delimiter + "]+");
       this.sharedGroupPattern = Pattern.compile("^" + ("".equals(prefix) ? "" : (prefix + delimiter)) + "(.+)$");
@@ -172,4 +171,32 @@ public class FormatSharedNamesAndAppendUniqueStringToThoseWhichRepeat implements
       };
    }
 
+   @Override
+   public Predicate<String> containsAnyGroup() {
+      return new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            try {
+               return groupInUniqueNameOrNull(input) != null || groupInSharedNameOrNull(input) != null;
+            } catch (NoSuchElementException e) {
+               return false;
+            }
+         }
+
+         @Override
+         public String toString() {
+            return "containsAnyGroup()";
+         }
+      };
+   }
+
+   @Override
+   public String extractGroup(String encoded) {
+      String result = groupInUniqueNameOrNull(encoded);
+      if (result != null) return result;
+      
+      result = groupInSharedNameOrNull(encoded);
+      return result;
+   }
 }

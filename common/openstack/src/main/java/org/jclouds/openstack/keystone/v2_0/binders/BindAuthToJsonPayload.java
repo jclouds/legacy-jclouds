@@ -67,7 +67,7 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
@@ -77,8 +77,10 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       addCredentialsInArgsOrNull(gRequest, builder);
       // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
       // still use tenantName
-      if (Strings.emptyToNull(postParams.get("tenantName")) != null)
+      if (!Strings.isNullOrEmpty((String) postParams.get("tenantName")))
          builder.put("tenantName", postParams.get("tenantName"));
+      else if (!Strings.isNullOrEmpty((String) postParams.get("tenantId")))
+          builder.put("tenantId", postParams.get("tenantId"));
       return super.bindToRequest(request, ImmutableMap.of("auth", builder.build()));
    }
 

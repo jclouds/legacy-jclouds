@@ -110,6 +110,7 @@ public class CreateServerOptions implements MapBinder {
    private Set<String> securityGroupNames = ImmutableSet.of();
    private Map<String, String> metadata = ImmutableMap.of();
    private List<File> personality = Lists.newArrayList();
+   private byte[] userData;
 
    @Override
    public boolean equals(Object object) {
@@ -132,8 +133,10 @@ public class CreateServerOptions implements MapBinder {
    }
 
    protected ToStringHelper string() {
-      return toStringHelper("").add("keyName", "keyName").add("securityGroupNames", securityGroupNames).add("metadata",
-               metadata).add("personality", personality).add("adminPassPresent", adminPass != null);
+      return toStringHelper("").add("keyName", keyName).add("securityGroupNames", securityGroupNames)
+              .add("metadata", metadata).add("personality", personality)
+              .add("adminPassPresent", adminPass != null)
+              .add("userData", userData == null ? null : new String(userData));
    }
 
    @Override
@@ -152,6 +155,7 @@ public class CreateServerOptions implements MapBinder {
       String key_name;
       @SerializedName(value = "security_groups")
       Set<SecurityGroup> securityGroupNames;
+      String user_data;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -162,16 +166,18 @@ public class CreateServerOptions implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present"),
-            checkNotNull(postParams.get("imageRef"), "imageRef parameter not present"), checkNotNull(
-                  postParams.get("flavorRef"), "flavorRef parameter not present"));
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present").toString(),
+            checkNotNull(postParams.get("imageRef"), "imageRef parameter not present").toString(),
+            checkNotNull(postParams.get("flavorRef"), "flavorRef parameter not present").toString());
       if (metadata.size() > 0)
          server.metadata = metadata;
       if (personality.size() > 0)
          server.personality = personality;
       if (keyName != null)
          server.key_name = keyName;
+      if (userData != null)
+          server.user_data = Base64.encodeBytes(userData);
       if (securityGroupNames.size() > 0) {
          server.securityGroupNames = Sets.newHashSet();
          for (String groupName : securityGroupNames) {
@@ -241,11 +247,18 @@ public class CreateServerOptions implements MapBinder {
    }
 
    /**
+    * Custom user-data can be also be supplied at launch time.
+    * It is retrievable by the instance and is often used for launch-time configuration
+    * by instance scripts.
+    */
+   public CreateServerOptions userData(byte[] userData) {
+       this.userData = userData;
+       return this;
+   }
+
+   /**
     * A keypair name can be defined when creating a server. This key will be
     * linked to the server and used to SSH connect to the machine
-    * 
-    * @param keyName
-    * @return
     */
    public String getKeyPairName() {
       return keyName;

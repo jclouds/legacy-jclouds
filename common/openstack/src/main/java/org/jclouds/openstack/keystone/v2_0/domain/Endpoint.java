@@ -115,19 +115,26 @@ public class Endpoint implements Comparable<Endpoint> {
                   from.getInternalURL()).tenantId(from.getTenantId());
       }
    }
+   
+   protected Endpoint() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
    // renamed half-way through
    @Deprecated
    protected String id;
-   protected final String versionId;
-   protected final String region;
-   protected final URI publicURL;
-   protected final URI internalURL;
-   protected final URI adminURL;
+   protected String versionId;
+   protected String region;
+   protected URI publicURL;
+   protected URI internalURL;
+   protected URI adminURL;
    
    // renamed half-way through
    @Deprecated
    protected String tenantName;
-   protected final String tenantId;
+   protected String tenantId;
 
    protected Endpoint(String versionId, String region, @Nullable URI publicURL, @Nullable URI internalURL,
             @Nullable URI adminURL, @Nullable String tenantId) {

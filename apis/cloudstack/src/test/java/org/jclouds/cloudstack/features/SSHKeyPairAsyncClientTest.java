@@ -54,7 +54,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -71,7 +71,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
       HttpRequest httpRequest = processor.createRequest(method, ListSSHKeyPairsOptions.Builder.name("jclouds"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&name=jclouds HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&listAll=true&name=jclouds HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -88,7 +88,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
       HttpRequest httpRequest = processor.createRequest(method, "jclouds-keypair");
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&name=jclouds-keypair HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&listAll=true&name=jclouds-keypair HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

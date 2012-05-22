@@ -21,7 +21,6 @@ package org.jclouds.ec2.compute.strategy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
@@ -33,6 +32,8 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.GroupNamingConvention;
+import org.jclouds.compute.functions.GroupNamingConvention.Factory;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
@@ -63,16 +64,19 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    public final LoadingCache<RegionAndName, String> securityGroupMap;
    @VisibleForTesting
    public final Provider<RunInstancesOptions> optionsProvider;
+   private final Factory namingConvention;
 
    @Inject
    public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Function<RegionAndName, KeyPair> makeKeyPair,
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
-            Provider<RunInstancesOptions> optionsProvider) {
+            Provider<RunInstancesOptions> optionsProvider,
+            GroupNamingConvention.Factory namingConvention) {
       this.makeKeyPair = checkNotNull(makeKeyPair, "makeKeyPair");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.optionsProvider = checkNotNull(optionsProvider, "optionsProvider");
+      this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
    public RunInstancesOptions execute(String region, String group, Template template) {
@@ -160,16 +164,13 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
       return keyPair.getKeyName();
    }
 
-   @Inject(optional = true)
-   @Named(RESOURCENAME_DELIMITER)
-   char delimiter = '#';
-
    @VisibleForTesting
    public Set<String> getSecurityGroupsForTagAndOptions(String region, @Nullable String group, TemplateOptions options) {
       Builder<String> groups = ImmutableSet.builder();
 
       if (group != null) {
-         String markerGroup = String.format("jclouds#%s#%s", group, region).replace('#', delimiter);
+         String markerGroup = namingConvention.create().sharedNameForGroup(group);
+
          groups.add(markerGroup);
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;

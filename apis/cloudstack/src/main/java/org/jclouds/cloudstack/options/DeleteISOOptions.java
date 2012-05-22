@@ -54,7 +54,7 @@ public class DeleteISOOptions extends BaseHttpRequestOptions {
    /**
     * @param zoneId the ID of the zone of the ISO file. If not specified, the ISO will be deleted from all the zones
     */
-   public DeleteISOOptions zoneId(long zoneId) {
+   public DeleteISOOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
@@ -64,7 +64,7 @@ public class DeleteISOOptions extends BaseHttpRequestOptions {
       /**
        * @param zoneId the ID of the zone of the ISO file. If not specified, the ISO will be deleted from all the zones
        */
-      public static DeleteISOOptions zoneId(long zoneId) {
+      public static DeleteISOOptions zoneId(String zoneId) {
          return new DeleteISOOptions().zoneId(zoneId);
       }
    }

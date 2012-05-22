@@ -45,17 +45,17 @@ public class GlobalStoragePoolClientLiveTest extends BaseCloudStackClientLiveTes
       assertNotNull(result);
       assertTrue(result.size() > 0);
       for(StoragePool pool : result) {
-         assertTrue(pool.getId() > 0);
+         assertTrue(pool.getId() != null);
          assertFalse(Strings.isNullOrEmpty(pool.getName()));
          assertFalse(Strings.isNullOrEmpty(pool.getPath()));
          assertNotNull(pool.getTags());
          assertTrue(pool.getState() != StoragePool.State.UNRECOGNIZED);
          assertTrue(pool.getType() != StoragePool.Type.UNRECOGNIZED);
-         assertTrue(pool.getZoneId() > 0);
+         assertTrue(pool.getZoneId() != null);
          assertFalse(Strings.isNullOrEmpty(pool.getZoneName()));
-         assertTrue(pool.getPodId() > 0);
+         assertTrue(pool.getPodId() != null);
          assertFalse(Strings.isNullOrEmpty(pool.getPodName()));
-         assertTrue(pool.getClusterId() > 0);
+         assertTrue(pool.getClusterId() != null);
          assertFalse(Strings.isNullOrEmpty(pool.getClusterName()));
          assertNotNull(pool.getCreated());
          assertTrue(pool.getDiskSizeTotal() > 0);

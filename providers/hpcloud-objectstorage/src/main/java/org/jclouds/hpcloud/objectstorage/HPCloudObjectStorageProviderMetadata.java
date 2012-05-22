@@ -18,8 +18,6 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
-
 import java.net.URI;
 import java.util.Properties;
 
@@ -55,8 +53,6 @@ public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_BUILD_VERSION, "???"); //FIXME
-//      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External"); FIXME: needed?
       return properties;
    }
    

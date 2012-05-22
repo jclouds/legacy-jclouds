@@ -89,9 +89,16 @@ public class Access implements Comparable<Access> {
       }
    }
 
-   protected final Token token;
-   protected final User user;
-   protected final Set<Service> serviceCatalog;
+
+   protected Access() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+
+   protected Token token;
+   protected User user;
+   protected Set<Service> serviceCatalog = ImmutableSet.of();
 
    public Access(Token token, User user, Set<Service> serviceCatalog) {
       this.token = checkNotNull(token, "token");

@@ -43,9 +43,9 @@ public class ListIPForwardingRulesResponseTest extends BaseSetParserTest<IPForwa
    @SelectJson("ipforwardingrule")
    public Set<IPForwardingRule> expected() {
       return ImmutableSet.<IPForwardingRule> of(
-         IPForwardingRule.builder().id(66).protocol("tcp").startPort(22).endPort(22).virtualMachineId(58)
+         IPForwardingRule.builder().id("66").protocol("tcp").startPort(22).endPort(22).virtualMachineId("58")
             .virtualMachineDisplayName("i-4-58-VM").virtualMachineName("i-4-58-VM")
-            .IPAddressId(15).IPAddress("10.27.27.64").state("Active").build());
+            .IPAddressId("15").IPAddress("10.27.27.64").state("Active").build());
    }
 
 }

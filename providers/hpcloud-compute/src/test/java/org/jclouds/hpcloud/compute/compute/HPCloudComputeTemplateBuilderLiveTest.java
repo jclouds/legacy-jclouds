@@ -53,7 +53,7 @@ public class HPCloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return (input.version.equals("") || input.version.matches("^1[01].*")) && input.is64Bit;
+                  return (input.version.equals("") || input.version.equals("12.04") || input.version.matches("^1[01].*")) && input.is64Bit;
                case DEBIAN:
                   return input.is64Bit && !input.version.equals("5.0");
                case CENTOS:
@@ -71,9 +71,9 @@ public class HPCloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLi
    public void testTemplateBuilder() {
       Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu Oneiric 11.10 Server 64-bit 20120311");
+      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu Precise 12.04 LTS Server 64-bit 20120424");
       assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "ubuntu");
       assertEquals(defaultTemplate.getLocation().getId(), "az-2.region-a.geo-1");
       assertEquals(defaultTemplate.getImage().getLocation().getId(), "az-2.region-a.geo-1");

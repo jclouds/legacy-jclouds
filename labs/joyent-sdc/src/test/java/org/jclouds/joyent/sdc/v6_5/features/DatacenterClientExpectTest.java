@@ -36,25 +36,24 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "DatacenterClientExpectTest")
 public class DatacenterClientExpectTest extends BaseSDCClientExpectTest {
-   HttpRequest getDatacenters = HttpRequest.builder()
-                                           .method("GET")
-                                           .endpoint(URI.create("https://api.joyentcloud.com/my/datacenters"))
-                                           .headers(ImmutableMultimap.<String, String> builder()
-                                                    .put("X-Api-Version", "~6.5")
-                                                    .put("Accept", "application/json")
-                                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                                           .build();
+   HttpRequest getDatacenters = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://api.joyentcloud.com/my/datacenters"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
+                     .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                     .build()).build();
 
    public void testGetDatacentersWhenResponseIs2xx() {
-      HttpResponse getDatacentersResponse = HttpResponse.builder()
-                                                        .statusCode(200)
-                                                        .payload(payloadFromResource("/datacenters.json")).build();
-      
+      HttpResponse getDatacentersResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/datacenters.json")).build();
+
       SDCClient clientWhenDatacentersExists = requestSendsResponse(getDatacenters, getDatacentersResponse);
-      
-      assertEquals(clientWhenDatacentersExists.getDatacenterClient().getDatacenters(), 
-               ImmutableMap.<String, URI> builder()
-                  .put("us-east-1", URI.create("https://us-east-1.api.joyentcloud.com"))
+
+      assertEquals(
+            clientWhenDatacentersExists.getDatacenterClient().getDatacenters(),
+            ImmutableMap.<String, URI> builder().put("us-east-1", URI.create("https://us-east-1.api.joyentcloud.com"))
                   .put("us-west-1", URI.create("https://us-west-1.api.joyentcloud.com"))
                   .put("us-sw-1", URI.create("https://us-sw-1.api.joyentcloud.com"))
                   .put("eu-ams-1", URI.create("https://eu-ams-1.api.joyentcloud.com")).build());
@@ -62,9 +61,9 @@ public class DatacenterClientExpectTest extends BaseSDCClientExpectTest {
 
    public void testGetDatacentersWhenResponseIs404() {
       HttpResponse getDatacentersResponse = HttpResponse.builder().statusCode(404).build();
-      
+
       SDCClient getDatacentersWhenNone = requestSendsResponse(getDatacenters, getDatacentersResponse);
-      
+
       assertEquals(getDatacentersWhenNone.getDatacenterClient().getDatacenters(), ImmutableMap.of());
    }
 }

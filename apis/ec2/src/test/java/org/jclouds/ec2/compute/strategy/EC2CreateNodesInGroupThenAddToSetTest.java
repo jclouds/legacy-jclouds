@@ -95,6 +95,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       strategy.autoAllocateElasticIps = true;
 
       // setup expectations
+      expect(templateBuilder.imageId(region + "/" + imageId)).andReturn(templateBuilder);
       expect(templateBuilder.fromTemplate(input.template)).andReturn(templateBuilder);
       expect(templateBuilder.build()).andReturn(input.template);
       expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
@@ -105,6 +106,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
 
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
+      expect(input.image.getId()).andReturn(region + "/" + imageId).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
 
       // differences when ip allocation
@@ -202,6 +204,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
             "reservationId");
 
       // setup expectations
+      expect(templateBuilder.imageId(region + "/" + imageId)).andReturn(templateBuilder);
       expect(templateBuilder.fromTemplate(input.template)).andReturn(templateBuilder);
       expect(templateBuilder.build()).andReturn(input.template);
       expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
@@ -210,6 +213,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
                   .execute(region, input.tag, input.template)).andReturn(ec2Options);
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
+      expect(input.image.getId()).andReturn(region + "/" + imageId).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
       expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
             Reservation.class.cast(reservation));

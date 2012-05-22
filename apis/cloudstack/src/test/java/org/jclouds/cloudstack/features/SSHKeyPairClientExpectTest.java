@@ -53,7 +53,7 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTe
          .method("GET")
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&" +
-               "command=listSSHKeyPairs&apiKey=identity&signature=9Mz1e7xf3vdH3QrDrvWm5eiRsjc%3D"))
+               "command=listSSHKeyPairs&listAll=true&apiKey=identity&signature=5d2J9u%2BdKpkQsadDbl9i9OcUSLQ%3D"))
          .headers(
             ImmutableMultimap.<String, String>builder()
                .put("Accept", "application/json")
@@ -67,8 +67,8 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTe
       client = requestSendsResponse(HttpRequest.builder()
          .method("GET")
          .endpoint(
-            URI.create("http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&" +
-               "name=jclouds-keypair&apiKey=identity&signature=vYFm%2BwYIxwpjyk3xLjjGBzSkLRc%3D"))
+            URI.create("http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&listAll=true&" +
+               "name=jclouds-keypair&apiKey=identity&signature=hJIVCFOHhdOww3aq19tFHpeD2HI%3D"))
          .headers(
             ImmutableMultimap.<String, String>builder()
                .put("Accept", "application/json")

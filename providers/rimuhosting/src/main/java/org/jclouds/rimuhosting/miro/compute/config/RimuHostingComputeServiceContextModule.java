@@ -19,9 +19,6 @@
 package org.jclouds.rimuhosting.miro.compute.config;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
-
-import com.google.inject.Injector;
 
 /**
  * Configures the {@link RimuHostingComputeServiceContext}; requires
@@ -37,11 +34,6 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
       install(new RimuHostingBindComputeStrategiesByClass());
       install(new RimuHostingBindComputeSuppliersByClass());
       super.configure();
-   }
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return super.provideTemplate(injector, template).hardwareId("MIRO4B");
    }
 
 }

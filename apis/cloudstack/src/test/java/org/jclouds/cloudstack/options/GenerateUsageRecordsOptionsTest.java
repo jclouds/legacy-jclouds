@@ -34,12 +34,12 @@ import com.google.common.collect.ImmutableSet;
 public class GenerateUsageRecordsOptionsTest {
 
    public void testDomainId() {
-      GenerateUsageRecordsOptions options = new GenerateUsageRecordsOptions().domainId(42);
+      GenerateUsageRecordsOptions options = new GenerateUsageRecordsOptions().domainId("42");
       assertEquals(ImmutableSet.of("42"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      GenerateUsageRecordsOptions options = domainId(42);
+      GenerateUsageRecordsOptions options = domainId("42");
       assertEquals(ImmutableSet.of("42"), options.buildQueryParameters().get("domainid"));
    }
 }

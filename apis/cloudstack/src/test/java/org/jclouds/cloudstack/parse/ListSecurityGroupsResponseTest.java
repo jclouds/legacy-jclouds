@@ -47,47 +47,47 @@ public class ListSecurityGroupsResponseTest extends BaseSetParserTest<SecurityGr
             .<SecurityGroup> builder()
             .add(SecurityGroup
                   .builder()
-                  .id(13)
+                  .id("13")
                   .name("default")
                   .description("description")
                   .account("adrian")
-                  .domainId(1)
+                  .domainId("1")
                   .domain("ROOT")
                   .ingressRules(
                         ImmutableSet.of(
 
-                              IngressRule.builder().id(5).protocol("tcp").startPort(22).endPort(22)
+                              IngressRule.builder().id("5").protocol("tcp").startPort(22).endPort(22)
                                     .securityGroupName("adriancole").account("adrian").build(),
 
-                              IngressRule.builder().id(6).protocol("udp").startPort(11).endPort(11).CIDR("1.1.1.1/24")
+                              IngressRule.builder().id("6").protocol("udp").startPort(11).endPort(11).CIDR("1.1.1.1/24")
                                     .build())).build())
-            .add(SecurityGroup.builder().id(12).name("adriancole").account("adrian").domainId(1).domain("ROOT").build())
-            .add(SecurityGroup.builder().id(15).name("2").description("description").account("adrian").domainId(1)
+            .add(SecurityGroup.builder().id("12").name("adriancole").account("adrian").domainId("1").domain("ROOT").build())
+            .add(SecurityGroup.builder().id("15").name("2").description("description").account("adrian").domainId("1")
                   .domain("ROOT").build())
 
-            .add(SecurityGroup.builder().id(14).name("1").description("description").account("adrian").domainId(1)
+            .add(SecurityGroup.builder().id("14").name("1").description("description").account("adrian").domainId("1")
                   .domain("ROOT").ingressRules(ImmutableSet.of(
 
-                  IngressRule.builder().id(7).protocol("tcp").startPort(10).endPort(10).CIDR("1.1.1.1/24").build(),
+                  IngressRule.builder().id("7").protocol("tcp").startPort(10).endPort(10).CIDR("1.1.1.1/24").build(),
 
-                  IngressRule.builder().id(8).protocol("tcp").startPort(10).endPort(10).CIDR("2.2.2.2/16").build()))
+                  IngressRule.builder().id("8").protocol("tcp").startPort(10).endPort(10).CIDR("2.2.2.2/16").build()))
                   .build())
             .add(SecurityGroup
                   .builder()
-                  .id(16)
+                  .id("16")
                   .name("with1and2")
                   .description("description")
                   .account("adrian")
-                  .domainId(1)
+                  .domainId("1")
                   .domain("ROOT")
                   .ingressRules(
-                        ImmutableSet.of(IngressRule.builder().id(9).protocol("icmp").ICMPType(-1).ICMPCode(-1)
+                        ImmutableSet.of(IngressRule.builder().id("9").protocol("icmp").ICMPType(-1).ICMPCode(-1)
                               .securityGroupName("1").account("adrian").build(),
 
-                        IngressRule.builder().id(10).protocol("tcp").startPort(22).endPort(22).securityGroupName("1")
+                        IngressRule.builder().id("10").protocol("tcp").startPort(22).endPort(22).securityGroupName("1")
                               .account("adrian").build(),
 
-                        IngressRule.builder().id(11).protocol("tcp").startPort(22).endPort(22).securityGroupName("2")
+                        IngressRule.builder().id("11").protocol("tcp").startPort(22).endPort(22).securityGroupName("2")
                               .account("adrian").build())).build()).build();
 
    }

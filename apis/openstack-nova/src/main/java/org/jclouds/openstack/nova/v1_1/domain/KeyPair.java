@@ -76,15 +76,21 @@ public class KeyPair implements Comparable<KeyPair> {
       }
 
    }
-
+   
+   protected KeyPair() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
    @SerializedName("public_key")
-   String publicKey;
+   private String publicKey;
    @SerializedName("private_key")
-   String privateKey;
+   private String privateKey;
    @SerializedName("user_id")
-   String userId;
-   String name;
-   String fingerprint;
+   private String userId;
+   private String name;
+   private String fingerprint;
 
    protected KeyPair(String publicKey, String privateKey, @Nullable String userId, String name, String fingerprint) {
       this.publicKey = publicKey;

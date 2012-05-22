@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
@@ -37,12 +38,12 @@ public class Zone implements Comparable<Zone> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String description;
       private String displayText;
       private List<String> DNS = ImmutableList.of();
       private String domain;
-      private long domainId;
+      private String domainId;
       private String guestCIDRAddress;
       private List<String> internalDNS = ImmutableList.of();
       private String name;
@@ -53,7 +54,7 @@ public class Zone implements Comparable<Zone> {
       private String dhcpProvider;
       private String zoneToken;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -78,7 +79,7 @@ public class Zone implements Comparable<Zone> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -135,7 +136,7 @@ public class Zone implements Comparable<Zone> {
       }
    }
 
-   private long id;
+   private String id;
    private String description;
    @SerializedName("displaytext")
    private String displayText;
@@ -146,7 +147,7 @@ public class Zone implements Comparable<Zone> {
    private String domain;
    @Nullable
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("guestcidraddress")
    private String guestCIDRAddress;
    @SerializedName("internaldns1")
@@ -174,7 +175,7 @@ public class Zone implements Comparable<Zone> {
 
    }
 
-   public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
+   public Zone(String id, String description, String displayText, List<String> DNS, String domain, String domainId,
                String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType,
                String vLAN, boolean securityGroupsEnabled, AllocationState allocationState, String dhcpProvider, String zoneToken) {
       this.id = id;
@@ -199,7 +200,7 @@ public class Zone implements Comparable<Zone> {
    /**
     * @return Zone id
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -240,7 +241,7 @@ public class Zone implements Comparable<Zone> {
     * @return the ID of the containing domain, null for public zones
     */
    @Nullable
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -313,103 +314,39 @@ public class Zone implements Comparable<Zone> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((DNS1 == null) ? 0 : DNS1.hashCode());
-      result = prime * result + ((DNS2 == null) ? 0 : DNS2.hashCode());
-      result = prime * result + ((VLAN == null) ? 0 : VLAN.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + ((guestCIDRAddress == null) ? 0 : guestCIDRAddress.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((internalDNS1 == null) ? 0 : internalDNS1.hashCode());
-      result = prime * result + ((internalDNS2 == null) ? 0 : internalDNS2.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((allocationState == null) ? 0 : allocationState.hashCode());
-      result = prime * result + ((networkType == null) ? 0 : networkType.hashCode());
-      result = prime * result + (securityGroupsEnabled ? 1231 : 1237);
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Zone that = (Zone) o;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(DNS1, that.DNS1)) return false;
+      if (!Objects.equal(DNS2, that.DNS2)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(guestCIDRAddress, that.guestCIDRAddress)) return false;
+      if (!Objects.equal(internalDNS1, that.internalDNS1)) return false;
+      if (!Objects.equal(internalDNS2, that.internalDNS2)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(networkType, that.networkType)) return false;
+      if (!Objects.equal(VLAN, that.VLAN)) return false;
+      if (!Objects.equal(securityGroupsEnabled, that.securityGroupsEnabled)) return false;
+      if (!Objects.equal(allocationState, that.allocationState)) return false;
+      if (!Objects.equal(dhcpProvider, that.dhcpProvider)) return false;
+      if (!Objects.equal(zoneToken, that.zoneToken)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Zone other = (Zone) obj;
-      if (DNS1 == null) {
-         if (other.DNS1 != null)
-            return false;
-      } else if (!DNS1.equals(other.DNS1))
-         return false;
-      if (DNS2 == null) {
-         if (other.DNS2 != null)
-            return false;
-      } else if (!DNS2.equals(other.DNS2))
-         return false;
-      if (VLAN == null) {
-         if (other.VLAN != null)
-            return false;
-      } else if (!VLAN.equals(other.VLAN))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (allocationState == null) {
-         if (other.allocationState != null)
-            return false;
-      } else if (!allocationState.equals(other.allocationState))
-         return false;
-      if (displayText == null) {
-         if (other.displayText != null)
-            return false;
-      } else if (!displayText.equals(other.displayText))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (guestCIDRAddress == null) {
-         if (other.guestCIDRAddress != null)
-            return false;
-      } else if (!guestCIDRAddress.equals(other.guestCIDRAddress))
-         return false;
-      if (id != other.id)
-         return false;
-      if (internalDNS1 == null) {
-         if (other.internalDNS1 != null)
-            return false;
-      } else if (!internalDNS1.equals(other.internalDNS1))
-         return false;
-      if (internalDNS2 == null) {
-         if (other.internalDNS2 != null)
-            return false;
-      } else if (!internalDNS2.equals(other.internalDNS2))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (networkType == null) {
-         if (other.networkType != null)
-            return false;
-      } else if (!networkType.equals(other.networkType))
-         return false;
-      if (securityGroupsEnabled != other.securityGroupsEnabled)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(id, description, displayText, DNS1, DNS2, domain, domainId,
+                               guestCIDRAddress, internalDNS1, internalDNS2, name, networkType, VLAN,
+                               securityGroupsEnabled, allocationState, dhcpProvider,
+                               zoneToken);
    }
 
    @Override
@@ -437,6 +374,6 @@ public class Zone implements Comparable<Zone> {
 
    @Override
    public int compareTo(Zone arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

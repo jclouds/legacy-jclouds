@@ -79,15 +79,15 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkCluster(Cluster cluster) {
-      assertTrue(cluster.getId() > 0);
+      assertTrue(cluster.getId() != null);
       assertFalse(Strings.isNullOrEmpty(cluster.getName()));
       assertTrue(cluster.getAllocationState() != AllocationState.UNKNOWN);
       assertTrue(cluster.getClusterType() != Host.ClusterType.UNKNOWN);
       assertFalse(Strings.isNullOrEmpty(cluster.getHypervisor()));
       assertTrue(cluster.getManagedState() != Cluster.ManagedState.UNRECOGNIZED);
-      assertTrue(cluster.getPodId() > 0);
+      assertTrue(cluster.getPodId() != null);
       assertFalse(Strings.isNullOrEmpty(cluster.getPodName()));
-      assertTrue(cluster.getZoneId() > 0);
+      assertTrue(cluster.getZoneId() != null);
       assertFalse(Strings.isNullOrEmpty(cluster.getZoneName()));
    }
 

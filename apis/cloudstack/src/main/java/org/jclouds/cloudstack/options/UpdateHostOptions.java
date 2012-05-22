@@ -55,7 +55,7 @@ public class UpdateHostOptions extends BaseHttpRequestOptions {
    /**
     * @param osCategoryId the id of Os category to update the host with
     */
-   public UpdateHostOptions osCategoryId(long osCategoryId) {
+   public UpdateHostOptions osCategoryId(String osCategoryId) {
       this.queryParameters.replaceValues("oscategoryid", ImmutableSet.of(osCategoryId + ""));
       return this;
    }
@@ -79,7 +79,7 @@ public class UpdateHostOptions extends BaseHttpRequestOptions {
       /**
        * @param podId the Pod ID for the host
        */
-      public static UpdateHostOptions osCategoryId(long osCategoryId) {
+      public static UpdateHostOptions osCategoryId(String osCategoryId) {
          return new UpdateHostOptions().osCategoryId(osCategoryId);
       }
 

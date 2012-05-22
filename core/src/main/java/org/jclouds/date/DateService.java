@@ -60,4 +60,10 @@ public interface DateService {
 
    Date iso8601SecondsDateParse(String toParse);
 
+   String rfc1123DateFormat(Date date);
+
+   String rfc1123DateFormat();
+
+   Date rfc1123DateParse(String toParse);
+
 }

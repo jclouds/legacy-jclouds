@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class AuthenticationResponse {
    private final String authToken;
-   private Map<String, URI> services;
+   private final Map<String, URI> services;
 
    public AuthenticationResponse(String authToken, Map<String, URI> services) {
       this.authToken = checkNotNull(authToken, "authToken");
@@ -38,11 +38,7 @@ public class AuthenticationResponse {
    public Map<String, URI> getServices() {
       return services;
    }
-
-   public void setEndpoints(Map<String, URI> services) {
-      this.services = services;
-   }
-
+   
    public String getAuthToken() {
       return authToken;
    }

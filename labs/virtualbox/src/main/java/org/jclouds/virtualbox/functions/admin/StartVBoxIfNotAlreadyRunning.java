@@ -33,13 +33,13 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 

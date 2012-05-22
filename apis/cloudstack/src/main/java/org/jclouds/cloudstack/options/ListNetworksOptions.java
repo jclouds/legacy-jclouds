@@ -75,7 +75,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
     * @param id
     *           list networks by id
     */
-   public ListNetworksOptions id(long id) {
+   public ListNetworksOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -84,7 +84,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
     * @param zoneId
     *           the Zone ID of the network
     */
-   public ListNetworksOptions zoneId(long zoneId) {
+   public ListNetworksOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
@@ -103,7 +103,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListNetworksOptions accountInDomain(String account, long domain) {
+   public ListNetworksOptions accountInDomain(String account, String domain) {
       return ListNetworksOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -111,7 +111,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListNetworksOptions domainId(long domainId) {
+   public ListNetworksOptions domainId(String domainId) {
       return ListNetworksOptions.class.cast(super.domainId(domainId));
    }
 
@@ -151,7 +151,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
       /**
        * @see ListNetworksOptions#id
        */
-      public static ListNetworksOptions id(long id) {
+      public static ListNetworksOptions id(String id) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.id(id);
       }
@@ -159,7 +159,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
       /**
        * @see ListNetworksOptions#zoneId
        */
-      public static ListNetworksOptions zoneId(long id) {
+      public static ListNetworksOptions zoneId(String id) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.zoneId(id);
       }
@@ -175,7 +175,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
       /**
        * @see ListNetworksOptions#accountInDomain
        */
-      public static ListNetworksOptions accountInDomain(String account, long domain) {
+      public static ListNetworksOptions accountInDomain(String account, String domain) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.accountInDomain(account, domain);
       }
@@ -183,7 +183,7 @@ public class ListNetworksOptions extends AccountInDomainOptions {
       /**
        * @see ListNetworksOptions#domainId
        */
-      public static ListNetworksOptions domainId(long domainId) {
+      public static ListNetworksOptions domainId(String domainId) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.domainId(domainId);
       }

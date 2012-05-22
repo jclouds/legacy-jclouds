@@ -36,7 +36,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
     * @param id
     *           the ID of the security group
     */
-   public ListSecurityGroupsOptions id(long id) {
+   public ListSecurityGroupsOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -56,7 +56,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
     *           the available service offering that a virtual machine can be
     *           changed to.
     */
-   public ListSecurityGroupsOptions virtualMachineId(long virtualMachineId) {
+   public ListSecurityGroupsOptions virtualMachineId(String virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
 
@@ -75,7 +75,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
       /**
        * @see ListSecurityGroupsOptions#id
        */
-      public static ListSecurityGroupsOptions id(long id) {
+      public static ListSecurityGroupsOptions id(String id) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.id(id);
       }
@@ -83,7 +83,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
       /**
        * @see ListSecurityGroupsOptions#virtualMachineId
        */
-      public static ListSecurityGroupsOptions virtualMachineId(long virtualMachineId) {
+      public static ListSecurityGroupsOptions virtualMachineId(String virtualMachineId) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.virtualMachineId(virtualMachineId);
       }
@@ -91,7 +91,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
       /**
        * @see DeployVirtualMachineOptions#accountInDomain
        */
-      public static ListSecurityGroupsOptions accountInDomain(String account, long domain) {
+      public static ListSecurityGroupsOptions accountInDomain(String account, String domain) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.accountInDomain(account, domain);
       }
@@ -99,7 +99,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
       /**
        * @see DeployVirtualMachineOptions#domainId
        */
-      public static ListSecurityGroupsOptions domainId(long domainId) {
+      public static ListSecurityGroupsOptions domainId(String domainId) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.domainId(domainId);
       }
@@ -109,7 +109,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListSecurityGroupsOptions accountInDomain(String account, long domain) {
+   public ListSecurityGroupsOptions accountInDomain(String account, String domain) {
       return ListSecurityGroupsOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -117,7 +117,7 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListSecurityGroupsOptions domainId(long domainId) {
+   public ListSecurityGroupsOptions domainId(String domainId) {
       return ListSecurityGroupsOptions.class.cast(super.domainId(domainId));
    }
 }

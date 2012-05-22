@@ -72,7 +72,7 @@ public interface GlobalOfferingClient extends OfferingClient {
     * @return
     *          service offering instance
     */
-   ServiceOffering updateServiceOffering(long id, UpdateServiceOfferingOptions... options);
+   ServiceOffering updateServiceOffering(String id, UpdateServiceOfferingOptions... options);
 
    /**
     * Delete service offering
@@ -80,7 +80,7 @@ public interface GlobalOfferingClient extends OfferingClient {
     * @param id
     *       the ID of the service offering
     */
-   Void deleteServiceOffering(long id);
+   Void deleteServiceOffering(String id);
 
    /**
     * Create a new disk offering
@@ -106,7 +106,7 @@ public interface GlobalOfferingClient extends OfferingClient {
     * @return
     *          disk offering instance
     */
-   DiskOffering updateDiskOffering(long id, UpdateDiskOfferingOptions... options);
+   DiskOffering updateDiskOffering(String id, UpdateDiskOfferingOptions... options);
 
    /**
     * Delete disk offering
@@ -114,7 +114,7 @@ public interface GlobalOfferingClient extends OfferingClient {
     * @param id
     *       the ID of the disk offering
     */
-   Void deleteDiskOffering(long id);
+   Void deleteDiskOffering(String id);
 
    /**
     * Update network offering
@@ -126,5 +126,5 @@ public interface GlobalOfferingClient extends OfferingClient {
     * @return
     *       network offering instance
     */
-   NetworkOffering updateNetworkOffering(long id, UpdateNetworkOfferingOptions... options);
+   NetworkOffering updateNetworkOffering(String id, UpdateNetworkOfferingOptions... options);
 }

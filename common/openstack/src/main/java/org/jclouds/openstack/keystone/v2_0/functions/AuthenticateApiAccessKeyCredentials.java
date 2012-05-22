@@ -41,7 +41,7 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
    @Override
    public Access apply(Credentials input) {
       if (input.identity.indexOf(':') == -1) {
-         throw new AuthorizationException(String.format("Identity %s does not match format tenantId:accesskey",
+         throw new AuthorizationException(String.format("Identity %s does not match format tenantName:accessKey",
                   input.identity), null);
       }
 
@@ -51,7 +51,13 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
 
       ApiAccessKeyCredentials apiAccessKeyCredentials = ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(
                usernameOrAccessKey, passwordOrSecretKey);
-      return client.authenticateTenantWithCredentials(tenantId, apiAccessKeyCredentials);
+      Access access;
+      if(tenantId.matches("[0-9]*")) {
+    	  access = client.authenticateTenantWithTenantIdAndCredentials(tenantId, apiAccessKeyCredentials);
+      } else {
+    	  access = client.authenticateTenantWithCredentials(tenantId, apiAccessKeyCredentials);
+      }
+      return access;
    }
 
    @Override

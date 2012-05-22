@@ -76,7 +76,7 @@ class StaxSdkAppServer2 {
     }
     
     private final StaxSdkAppServer server;
-    private Thread serverThread;
+    private final Thread serverThread;
     
     private StaxSdkAppServer2(StaxSdkAppServer server) {
         this.server = server;

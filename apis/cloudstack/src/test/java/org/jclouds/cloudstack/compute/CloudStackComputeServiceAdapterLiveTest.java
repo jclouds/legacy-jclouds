@@ -59,7 +59,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
 import org.testng.annotations.AfterGroups;
@@ -105,17 +105,17 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             bind(String.class).annotatedWith(Identity.class).toInstance(identity);
             bind(new TypeLiteral<Supplier<User>>() {
             }).annotatedWith(Memoized.class).to(GetCurrentUser.class).in(Scopes.SINGLETON);
-            bind(new TypeLiteral<Supplier<Map<Long, Network>>>() {
+            bind(new TypeLiteral<Supplier<Map<String, Network>>>() {
             }).annotatedWith(Memoized.class).to(NetworksForCurrentUser.class).in(Scopes.SINGLETON);
             bind(new TypeLiteral<Map<String, Credentials>>() {
             }).toInstance(credentialStore);
             bind(CloudStackClient.class).toInstance(cloudStackContext.getApi());
             bind(new TypeLiteral<Map<NetworkType, ? extends OptionsConverter>>() {}).
                toInstance(new CloudStackComputeServiceContextModule().optionsConverters());
-            bind(Long.class).annotatedWith(Names.named(PROPERTY_SESSION_INTERVAL)).toInstance(60L);
-            bind(new TypeLiteral<CacheLoader<Long, Zone>>() {}).
+            bind(String.class).annotatedWith(Names.named(PROPERTY_SESSION_INTERVAL)).toInstance("60");
+            bind(new TypeLiteral<CacheLoader<String, Zone>>() {}).
                to(ZoneIdToZone.class);
-            bind(new TypeLiteral<Supplier<LoadingCache<Long, Zone>>>() {}).
+            bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {}).
                to(ZoneIdToZoneSupplier.class);
             install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
          }
@@ -123,19 +123,19 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected Predicate<Long> jobComplete(JobComplete jobComplete) {
-            return new RetryablePredicate<Long>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
+         protected Predicate<String> jobComplete(JobComplete jobComplete) {
+            return new RetryablePredicate<String>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
          }
 
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRuleByVirtualMachine(
+         protected LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRuleByVirtualMachine(
                GetIPForwardingRulesByVirtualMachine getIPForwardingRule) {
             return CacheBuilder.newBuilder().build(getIPForwardingRule);
          }
       };
-      adapter = Guice.createInjector(module, new Log4JLoggingModule()).getInstance(
+      adapter = Guice.createInjector(module, new SLF4JLoggingModule()).getInstance(
             CloudStackComputeServiceAdapter.class);
 
       keyPairName = prefix + "-adapter-test-keypair";
@@ -161,8 +161,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
 
       if (!client
             .getTemplateClient()
-            .getTemplateInZone(Long.parseLong(template.getImage().getId()),
-                  Long.parseLong(template.getLocation().getId())).isPasswordEnabled()) {
+            .getTemplateInZone(template.getImage().getId(),
+                  template.getLocation().getId()).isPasswordEnabled()) {
 
          // TODO: look at SecurityGroupClientLiveTest for how to do this
          template.getOptions().as(CloudStackTemplateOptions.class).keyPair(keyPairName);

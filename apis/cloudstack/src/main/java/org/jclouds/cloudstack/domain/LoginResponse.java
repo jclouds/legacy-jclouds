@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -35,9 +36,9 @@ public class LoginResponse implements Comparable<LoginResponse> {
    public static class Builder {
 
       private String username;
-      private long userId;
+      private String userId;
       private String password;
-      private long domainId;
+      private String domainId;
       private long timeout;
       private boolean registered;
       private String accountName;
@@ -72,7 +73,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
          return this;
       }
 
-      public Builder userId(long userId) {
+      public Builder userId(String userId) {
          this.userId = userId;
          return this;
       }
@@ -82,7 +83,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -145,10 +146,10 @@ public class LoginResponse implements Comparable<LoginResponse> {
 
    private final String username;
    @SerializedName("userid")
-   private final long userId;
+   private final String userId;
    private final String password;
    @SerializedName("domainid")
-   private final long domainId;
+   private final String domainId;
    private final long timeout;
    private final boolean registered;
    @SerializedName("account")
@@ -166,7 +167,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
    private final String sessionKey;
    private final String jSessionId;
 
-   public LoginResponse(String username, long userId, String password, long domainId, long timeout, boolean registered,
+   public LoginResponse(String username, String userId, String password, String domainId, long timeout, boolean registered,
             String accountName, String firstName, String lastName, Account.Type accountType, String timezone,
             String timezoneOffset, String sessionKey, String jSessionId) {
       this.username = username;
@@ -189,7 +190,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
       return username;
    }
 
-   public long getUserId() {
+   public String getUserId() {
       return userId;
    }
 
@@ -197,7 +198,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
       return password;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -242,94 +243,35 @@ public class LoginResponse implements Comparable<LoginResponse> {
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LoginResponse other = (LoginResponse) obj;
-      if (accountName == null) {
-         if (other.accountName != null)
-            return false;
-      } else if (!accountName.equals(other.accountName))
-         return false;
-      if (accountType == null) {
-         if (other.accountType != null)
-            return false;
-      } else if (!accountType.equals(other.accountType))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (firstName == null) {
-         if (other.firstName != null)
-            return false;
-      } else if (!firstName.equals(other.firstName))
-         return false;
-      if (jSessionId == null) {
-         if (other.jSessionId != null)
-            return false;
-      } else if (!jSessionId.equals(other.jSessionId))
-         return false;
-      if (lastName == null) {
-         if (other.lastName != null)
-            return false;
-      } else if (!lastName.equals(other.lastName))
-         return false;
-      if (password == null) {
-         if (other.password != null)
-            return false;
-      } else if (!password.equals(other.password))
-         return false;
-      if (registered != other.registered)
-         return false;
-      if (sessionKey == null) {
-         if (other.sessionKey != null)
-            return false;
-      } else if (!sessionKey.equals(other.sessionKey))
-         return false;
-      if (timeout != other.timeout)
-         return false;
-      if (timezone == null) {
-         if (other.timezone != null)
-            return false;
-      } else if (!timezone.equals(other.timezone))
-         return false;
-      if (timezoneOffset == null) {
-         if (other.timezoneOffset != null)
-            return false;
-      } else if (!timezoneOffset.equals(other.timezoneOffset))
-         return false;
-      if (userId != other.userId)
-         return false;
-      if (username == null) {
-         if (other.username != null)
-            return false;
-      } else if (!username.equals(other.username))
-         return false;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      LoginResponse that = (LoginResponse) o;
+
+      if (!Objects.equal(accountName, that.accountName)) return false;
+      if (!Objects.equal(accountType, that.accountType)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(firstName, that.firstName)) return false;
+      if (!Objects.equal(jSessionId, that.jSessionId)) return false;
+      if (!Objects.equal(lastName, that.lastName)) return false;
+      if (!Objects.equal(password, that.password)) return false;
+      if (!Objects.equal(registered, that.registered)) return false;
+      if (!Objects.equal(sessionKey, that.sessionKey)) return false;
+      if (!Objects.equal(timeout, that.timeout)) return false;
+      if (!Objects.equal(timezone, that.timezone)) return false;
+      if (!Objects.equal(timezoneOffset, that.timezoneOffset)) return false;
+      if (!Objects.equal(userId, that.userId)) return false;
+      if (!Objects.equal(username, that.username)) return false;
+
       return true;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((accountName == null) ? 0 : accountName.hashCode());
-      result = prime * result + ((accountType == null) ? 0 : accountType.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-      result = prime * result + ((jSessionId == null) ? 0 : jSessionId.hashCode());
-      result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + (registered ? 1231 : 1237);
-      result = prime * result + ((sessionKey == null) ? 0 : sessionKey.hashCode());
-      result = prime * result + (int) (timeout ^ (timeout >>> 32));
-      result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
-      result = prime * result + ((timezoneOffset == null) ? 0 : timezoneOffset.hashCode());
-      result = prime * result + (int) (userId ^ (userId >>> 32));
-      result = prime * result + ((username == null) ? 0 : username.hashCode());
-      return result;
+       return Objects.hashCode(accountName, accountType, domainId, firstName, jSessionId, lastName,
+                               password, registered, sessionKey, timeout, timezone, timezoneOffset,
+                               userId, username);
    }
 
    @Override

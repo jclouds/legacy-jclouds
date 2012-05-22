@@ -49,11 +49,11 @@ import com.google.inject.Guice;
  */
 @Test(groups = "unit")
 public class TemplateToOperatingSystemTest {
-   static Map<Long, OSType> ostypes = Maps.<Long, OSType> uniqueIndex(new ListOSTypesResponseTest().expected(),
-         new Function<OSType, Long>() {
+   static Map<String, OSType> ostypes = Maps.<String, OSType> uniqueIndex(new ListOSTypesResponseTest().expected(),
+         new Function<OSType, String>() {
 
             @Override
-            public Long apply(OSType arg0) {
+            public String apply(OSType arg0) {
                return arg0.getId();
             }
          });

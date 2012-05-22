@@ -75,7 +75,7 @@ public class TemplateToImage implements Function<Template, Image> {
 
       @Override
       public boolean matches(Template from, Location input) {
-         return input.getId().equals(Long.toString(from.getZoneId()));
+         return input.getId().equals(from.getZoneId());
       }
    }
 }

@@ -56,9 +56,7 @@ public class SetAndThrowAuthorizationExceptionSupplier<T> implements Supplier<T>
             authException.set(aex);
             throw aex;
          }
-         propagate(e);
-         assert false : e;
-         return null;
+         throw propagate(e);
       }
    }
 

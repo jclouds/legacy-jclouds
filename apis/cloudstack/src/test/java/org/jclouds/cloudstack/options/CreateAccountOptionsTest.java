@@ -56,12 +56,12 @@ public class CreateAccountOptionsTest {
    }
 
    public void testAccountDomain() {
-      CreateAccountOptions options = new CreateAccountOptions().domainId(6);
+      CreateAccountOptions options = new CreateAccountOptions().domainId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      CreateAccountOptions options = domainId(6);
+      CreateAccountOptions options = domainId("6");
       assertEquals(ImmutableSet.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

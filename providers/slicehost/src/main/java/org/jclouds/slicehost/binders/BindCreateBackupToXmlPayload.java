@@ -45,9 +45,9 @@ public class BindCreateBackupToXmlPayload implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      String sliceId = checkNotNull(postParams.get("slice_id"), "slice_id");
-      String name = checkNotNull(postParams.get("name"), "name");
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      String sliceId = checkNotNull(postParams.get("slice_id"), "slice_id").toString();
+      String name = checkNotNull(postParams.get("name"), "name").toString();
       StringBuilder builder = new StringBuilder();
       builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><backup>");
       builder.append("<slice-id type=\"integer\">").append(sliceId).append("</slice-id>");

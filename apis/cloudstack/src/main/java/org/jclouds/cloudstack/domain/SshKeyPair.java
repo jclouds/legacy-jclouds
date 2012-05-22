@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -85,42 +86,22 @@ public class SshKeyPair implements Comparable<SshKeyPair> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
-      return result;
+      SshKeyPair that = (SshKeyPair) o;
+
+      if (!Objects.equal(fingerprint, that.fingerprint)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(privateKey, that.privateKey)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SshKeyPair other = (SshKeyPair) obj;
-      if (fingerprint == null) {
-         if (other.fingerprint != null)
-            return false;
-      } else if (!fingerprint.equals(other.fingerprint))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (privateKey == null) {
-         if (other.privateKey != null)
-            return false;
-      } else if (!privateKey.equals(other.privateKey))
-         return false;
-
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(fingerprint, name, privateKey);
    }
 
    @Override

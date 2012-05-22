@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +43,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private long cpuCount;
       private long cpuSpeed;
@@ -50,19 +51,19 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       private String displayName;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private boolean usesVirtualNetwork;
       private String group;
-      private long groupId;
-      private long guestOSId;
+      private String groupId;
+      private String guestOSId;
       private boolean HAEnabled;
-      private long hostId;
+      private String hostId;
       private String hostname;
       private String IPAddress;
       private String ISODisplayText;
-      private long ISOId;
+      private String ISOId;
       private String ISOName;
-      private Long jobId;
+      private String jobId;
       private Integer jobStatus;
       private long memory;
       private String name;
@@ -70,21 +71,21 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       private Long networkKbsWrite;
       private String password;
       private boolean passwordEnabled;
-      private long rootDeviceId;
+      private String rootDeviceId;
       private String rootDeviceType;
-      private long serviceOfferingId;
+      private String serviceOfferingId;
       private String serviceOfferingName;
       private State state;
       private String templateDisplayText;
-      private long templateId;
+      private String templateId;
       private String templateName;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
       private Set<NIC> nics = ImmutableSet.<NIC> of();
       private String hypervisor;
       private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -124,7 +125,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -139,12 +140,12 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder groupId(long groupId) {
+      public Builder groupId(String groupId) {
          this.groupId = groupId;
          return this;
       }
 
-      public Builder guestOSId(long guestOSId) {
+      public Builder guestOSId(String guestOSId) {
          this.guestOSId = guestOSId;
          return this;
       }
@@ -154,7 +155,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder hostId(long hostId) {
+      public Builder hostId(String hostId) {
          this.hostId = hostId;
          return this;
       }
@@ -174,7 +175,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder ISOId(long ISOId) {
+      public Builder ISOId(String ISOId) {
          this.ISOId = ISOId;
          return this;
       }
@@ -184,7 +185,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -224,7 +225,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder rootDeviceId(long rootDeviceId) {
+      public Builder rootDeviceId(String rootDeviceId) {
          this.rootDeviceId = rootDeviceId;
          return this;
       }
@@ -234,7 +235,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder serviceOfferingId(long serviceOfferingId) {
+      public Builder serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
          return this;
       }
@@ -254,7 +255,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder templateId(long templateId) {
+      public Builder templateId(String templateId) {
          this.templateId = templateId;
          return this;
       }
@@ -264,7 +265,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -315,7 +316,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
 
    }
 
-   private long id;
+   private String id;
    private String account;
    @SerializedName("cpunumber")
    private long cpuCount;
@@ -328,30 +329,30 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("forvirtualnetwork")
    private boolean usesVirtualNetwork;
    private String group;
    @SerializedName("groupid")
-   private long groupId;
+   private String groupId;
    @SerializedName("guestosid")
-   private long guestOSId;
+   private String guestOSId;
    @SerializedName("haenable")
    private boolean HAEnabled;
    @SerializedName("hostid")
-   private long hostId;
+   private String hostId;
    private String hostname;
    @SerializedName("ipaddress")
    private String IPAddress;
    @SerializedName("isodisplaytext")
    private String ISODisplayText;
    @SerializedName("isoid")
-   private long ISOId;
+   private String ISOId;
    @SerializedName("isoname")
    private String ISOName;
    @SerializedName("jobid")
    @Nullable
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    @Nullable
    private Integer jobStatus;
@@ -366,22 +367,22 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    @SerializedName("passwordenabled")
    private boolean passwordEnabled;
    @SerializedName("rootdeviceid")
-   private long rootDeviceId;
+   private String rootDeviceId;
    @SerializedName("rootdevicetype")
    private String rootDeviceType;
    @SerializedName("serviceofferingid")
-   private long serviceOfferingId;
+   private String serviceOfferingId;
    @SerializedName("serviceofferingname")
    private String serviceOfferingName;
    private State state;
    @SerializedName("templatedisplaytext")
    private String templateDisplayText;
    @SerializedName("templateid")
-   private long templateId;
+   private String templateId;
    @SerializedName("templatename")
    private String templateName;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
    @SerializedName("nic")
@@ -390,13 +391,13 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    @SerializedName("securitygroup")
    private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
-   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, String cpuUsed, String displayName,
-         Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
-         long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
-         long iSOId, String iSOName, Long jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
-         Long networkKbsWrite, String password, boolean passwordEnabled, long rootDeviceId, String rootDeviceType,
-         Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
-         String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName, Set<NIC> nics,
+   public VirtualMachine(String id, String account, long cpuCount, long cpuSpeed, String cpuUsed, String displayName,
+         Date created, String domain, String domainId, boolean usesVirtualNetwork, String group, String groupId,
+         String guestOSId, boolean hAEnabled, String hostId, String hostname, String iPAddress, String iSODisplayText,
+         String iSOId, String iSOName, String jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
+         Long networkKbsWrite, String password, boolean passwordEnabled, String rootDeviceId, String rootDeviceType,
+         Set<SecurityGroup> securityGroups, String serviceOfferingId, String serviceOfferingName, State state,
+         String templateDisplayText, String templateId, String templateName, String zoneId, String zoneName, Set<NIC> nics,
          String hypervisor) {
       Preconditions.checkArgument(Strings.isNullOrEmpty(cpuUsed) || cpuUsed.matches("^[0-9\\.]+%$"), "cpuUsed value should be a decimal number followed by %");
       this.id = id;
@@ -452,7 +453,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the virtual machine
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -509,7 +510,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the domain in which the virtual machine exists
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -530,14 +531,14 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the group ID of the virtual machine
     */
-   public long getGroupId() {
+   public String getGroupId() {
       return groupId;
    }
 
    /**
     * @return Os type ID of the virtual machine
     */
-   public long getGuestOSId() {
+   public String getGuestOSId() {
       return guestOSId;
    }
 
@@ -551,7 +552,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the host for the virtual machine
     */
-   public long getHostId() {
+   public String getHostId() {
       return hostId;
    }
 
@@ -586,7 +587,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the ISO attached to the virtual machine
     */
-   public long getISOId() {
+   public String getISOId() {
       return ISOId;
    }
 
@@ -603,7 +604,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
     *         machine
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -661,7 +662,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return device ID of the root volume
     */
-   public long getRootDeviceId() {
+   public String getRootDeviceId() {
       return rootDeviceId;
    }
 
@@ -682,7 +683,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the service offering of the virtual machine
     */
-   public long getServiceOfferingId() {
+   public String getServiceOfferingId() {
       return serviceOfferingId;
    }
 
@@ -711,7 +712,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
     * @return the ID of the template for the virtual machine. A -1 is returned
     *         if the virtual machine was created from an ISO file.
     */
-   public long getTemplateId() {
+   public String getTemplateId() {
       return templateId;
    }
 
@@ -725,7 +726,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    /**
     * @return the ID of the availablility zone for the virtual machine
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -751,209 +752,67 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (HAEnabled ? 1231 : 1237);
-      result = prime * result + ((IPAddress == null) ? 0 : IPAddress.hashCode());
-      result = prime * result + ((ISODisplayText == null) ? 0 : ISODisplayText.hashCode());
-      result = prime * result + (int) (ISOId ^ (ISOId >>> 32));
-      result = prime * result + ((ISOName == null) ? 0 : ISOName.hashCode());
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + (int) (cpuCount ^ (cpuCount >>> 32));
-      result = prime * result + (int) (cpuSpeed ^ (cpuSpeed >>> 32));
-      result = prime * result + ((cpuUsed == null) ? 0 : cpuUsed.hashCode());
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + ((group == null) ? 0 : group.hashCode());
-      result = prime * result + (int) (groupId ^ (groupId >>> 32));
-      result = prime * result + (int) (guestOSId ^ (guestOSId >>> 32));
-      result = prime * result + (int) (hostId ^ (hostId >>> 32));
-      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
-      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
-      result = prime * result + (int) (memory ^ (memory >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((networkKbsRead == null) ? 0 : networkKbsRead.hashCode());
-      result = prime * result + ((networkKbsWrite == null) ? 0 : networkKbsWrite.hashCode());
-      result = prime * result + ((nics == null) ? 0 : nics.hashCode());
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + (passwordEnabled ? 1231 : 1237);
-      result = prime * result + (int) (rootDeviceId ^ (rootDeviceId >>> 32));
-      result = prime * result + ((securityGroups == null) ? 0 : securityGroups.hashCode());
-      result = prime * result + (int) (serviceOfferingId ^ (serviceOfferingId >>> 32));
-      result = prime * result + ((serviceOfferingName == null) ? 0 : serviceOfferingName.hashCode());
-      result = prime * result + ((templateDisplayText == null) ? 0 : templateDisplayText.hashCode());
-      result = prime * result + (int) (templateId ^ (templateId >>> 32));
-      result = prime * result + ((templateName == null) ? 0 : templateName.hashCode());
-      result = prime * result + (usesVirtualNetwork ? 1231 : 1237);
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = prime * result + ((zoneName == null) ? 0 : zoneName.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      VirtualMachine that = (VirtualMachine) o;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(cpuCount, that.cpuCount)) return false;
+      if (!Objects.equal(cpuSpeed, that.cpuSpeed)) return false;
+      if (!Objects.equal(cpuUsed, that.cpuUsed)) return false;
+      if (!Objects.equal(displayName, that.displayName)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(usesVirtualNetwork, that.usesVirtualNetwork)) return false;
+      if (!Objects.equal(group, that.group)) return false;
+      if (!Objects.equal(groupId, that.groupId)) return false;
+      if (!Objects.equal(guestOSId, that.guestOSId)) return false;
+      if (!Objects.equal(HAEnabled, that.HAEnabled)) return false;
+      if (!Objects.equal(hostId, that.hostId)) return false;
+      if (!Objects.equal(hostname, that.hostname)) return false;
+      if (!Objects.equal(IPAddress, that.IPAddress)) return false;
+      if (!Objects.equal(ISODisplayText, that.ISODisplayText)) return false;
+      if (!Objects.equal(ISOId, that.ISOId)) return false;
+      if (!Objects.equal(ISOName, that.ISOName)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(memory, that.memory)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(networkKbsRead, that.networkKbsRead)) return false;
+      if (!Objects.equal(networkKbsWrite, that.networkKbsWrite)) return false;
+      if (!Objects.equal(password, that.password)) return false;
+      if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
+      if (!Objects.equal(rootDeviceId, that.rootDeviceId)) return false;
+      if (!Objects.equal(rootDeviceType, that.rootDeviceType)) return false;
+      if (!Objects.equal(securityGroups, that.securityGroups)) return false;
+      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
+      if (!Objects.equal(serviceOfferingName, that.serviceOfferingName)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(templateDisplayText, that.templateDisplayText)) return false;
+      if (!Objects.equal(templateId, that.templateId)) return false;
+      if (!Objects.equal(templateName, that.templateName)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
+      if (!Objects.equal(nics, that.nics)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VirtualMachine other = (VirtualMachine) obj;
-      if (HAEnabled != other.HAEnabled)
-         return false;
-      if (IPAddress == null) {
-         if (other.IPAddress != null)
-            return false;
-      } else if (!IPAddress.equals(other.IPAddress))
-         return false;
-      if (ISODisplayText == null) {
-         if (other.ISODisplayText != null)
-            return false;
-      } else if (!ISODisplayText.equals(other.ISODisplayText))
-         return false;
-      if (ISOId != other.ISOId)
-         return false;
-      if (ISOName == null) {
-         if (other.ISOName != null)
-            return false;
-      } else if (!ISOName.equals(other.ISOName))
-         return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (cpuCount != other.cpuCount)
-         return false;
-      if (cpuSpeed != other.cpuSpeed)
-         return false;
-      if (cpuUsed == null) {
-         if (other.cpuUsed != null)
-            return false;
-      } else if (!cpuUsed.equals(other.cpuUsed))
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (displayName == null) {
-         if (other.displayName != null)
-            return false;
-      } else if (!displayName.equals(other.displayName))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (group == null) {
-         if (other.group != null)
-            return false;
-      } else if (!group.equals(other.group))
-         return false;
-      if (groupId != other.groupId)
-         return false;
-      if (guestOSId != other.guestOSId)
-         return false;
-      if (hostId != other.hostId)
-         return false;
-      if (hostname == null) {
-         if (other.hostname != null)
-            return false;
-      } else if (!hostname.equals(other.hostname))
-         return false;
-      if (hypervisor == null) {
-         if (other.hypervisor != null)
-            return false;
-      } else if (!hypervisor.equals(other.hypervisor))
-         return false;
-      if (id != other.id)
-         return false;
-      if (jobId == null) {
-         if (other.jobId != null)
-            return false;
-      } else if (!jobId.equals(other.jobId))
-         return false;
-      if (jobStatus == null) {
-         if (other.jobStatus != null)
-            return false;
-      } else if (!jobStatus.equals(other.jobStatus))
-         return false;
-      if (memory != other.memory)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (networkKbsRead == null) {
-         if (other.networkKbsRead != null)
-            return false;
-      } else if (!networkKbsRead.equals(other.networkKbsRead))
-         return false;
-      if (networkKbsWrite == null) {
-         if (other.networkKbsWrite != null)
-            return false;
-      } else if (!networkKbsWrite.equals(other.networkKbsWrite))
-         return false;
-      if (nics == null) {
-         if (other.nics != null)
-            return false;
-      } else if (!nics.equals(other.nics))
-         return false;
-      if (password == null) {
-         if (other.password != null)
-            return false;
-      } else if (!password.equals(other.password))
-         return false;
-      if (passwordEnabled != other.passwordEnabled)
-         return false;
-      if (rootDeviceId != other.rootDeviceId)
-         return false;
-      // rootDeviceType and state are volatile
-      if (securityGroups == null) {
-         if (other.securityGroups != null)
-            return false;
-      } else if (!securityGroups.equals(other.securityGroups))
-         return false;
-      if (serviceOfferingId != other.serviceOfferingId)
-         return false;
-      if (serviceOfferingName == null) {
-         if (other.serviceOfferingName != null)
-            return false;
-      } else if (!serviceOfferingName.equals(other.serviceOfferingName))
-         return false;
-      if (templateDisplayText == null) {
-         if (other.templateDisplayText != null)
-            return false;
-      } else if (!templateDisplayText.equals(other.templateDisplayText))
-         return false;
-      if (templateId != other.templateId)
-         return false;
-      if (templateName == null) {
-         if (other.templateName != null)
-            return false;
-      } else if (!templateName.equals(other.templateName))
-         return false;
-      if (usesVirtualNetwork != other.usesVirtualNetwork)
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      if (zoneName == null) {
-         if (other.zoneName != null)
-            return false;
-      } else if (!zoneName.equals(other.zoneName))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(id, account, cpuCount, cpuSpeed, cpuUsed, displayName, created,
+                               domain, domainId, usesVirtualNetwork, group, groupId, guestOSId,
+                               HAEnabled, hostId, hostname, IPAddress, ISODisplayText, ISOId,
+                               ISOName, jobId, jobStatus, memory, name, networkKbsRead,
+                               networkKbsWrite, password, passwordEnabled, rootDeviceId,
+                               rootDeviceType, securityGroups, serviceOfferingId,
+                               serviceOfferingName, state, templateDisplayText, templateId,
+                               templateName, zoneId, zoneName, nics, hypervisor);
    }
 
    @Override
@@ -1005,6 +864,6 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
 
    @Override
    public int compareTo(VirtualMachine arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

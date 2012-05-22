@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -43,10 +44,10 @@ public class Capacity implements Comparable<Capacity> {
       private long capacityTotal;
       private long capacityUsed;
       private double percentUsed;
-      private long podId;
+      private String podId;
       private String podName;
       private Type type;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
       public Builder capacityTotal(long capacityTotal) {
@@ -64,7 +65,7 @@ public class Capacity implements Comparable<Capacity> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -79,7 +80,7 @@ public class Capacity implements Comparable<Capacity> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -141,12 +142,12 @@ public class Capacity implements Comparable<Capacity> {
    @SerializedName("percentused")
    private double percentUsed;
    @SerializedName("podid")
-   private long podId = -1;
+   private String podId;
    @SerializedName("podname")
    private String podName;
    private Capacity.Type type;
    @SerializedName("zoneid")
-   private long zoneId = -1;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
    
@@ -154,7 +155,7 @@ public class Capacity implements Comparable<Capacity> {
    Capacity() {
    }
 
-   public Capacity(long capacityTotal, long capacityUsed, double percentUsed, long podId, String podName, Type type, long zoneId, String zoneName) {
+   public Capacity(long capacityTotal, long capacityUsed, double percentUsed, String podId, String podName, Type type, String zoneId, String zoneName) {
       this.capacityTotal = capacityTotal;
       this.capacityUsed = capacityUsed;
       this.percentUsed = percentUsed;
@@ -177,7 +178,7 @@ public class Capacity implements Comparable<Capacity> {
       return percentUsed;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -189,7 +190,7 @@ public class Capacity implements Comparable<Capacity> {
       return type;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -202,34 +203,24 @@ public class Capacity implements Comparable<Capacity> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Capacity capacity = (Capacity) o;
+      Capacity that = (Capacity) o;
 
-      if (capacityTotal != capacity.capacityTotal) return false;
-      if (capacityUsed != capacity.capacityUsed) return false;
-      if (Double.compare(capacity.percentUsed, percentUsed) != 0) return false;
-      if (podId != capacity.podId) return false;
-      if (zoneId != capacity.zoneId) return false;
-      if (podName != null ? !podName.equals(capacity.podName) : capacity.podName != null) return false;
-      if (type != capacity.type) return false;
-      if (zoneName != null ? !zoneName.equals(capacity.zoneName) : capacity.zoneName != null) return false;
+      if (!Objects.equal(capacityTotal, that.capacityTotal)) return false;
+      if (!Objects.equal(capacityUsed, that.capacityUsed)) return false;
+      if (!Objects.equal(percentUsed, that.percentUsed)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result;
-      long temp;
-      result = (int) (capacityTotal ^ (capacityTotal >>> 32));
-      result = 31 * result + (int) (capacityUsed ^ (capacityUsed >>> 32));
-      temp = percentUsed != +0.0d ? Double.doubleToLongBits(percentUsed) : 0L;
-      result = 31 * result + (int) (temp ^ (temp >>> 32));
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(capacityTotal, capacityUsed, percentUsed, podId, podName,
+                               type, zoneId, zoneName);
    }
 
    @Override
@@ -248,9 +239,9 @@ public class Capacity implements Comparable<Capacity> {
 
    @Override
    public int compareTo(Capacity other) {
-      int comparison = Long.valueOf(this.zoneId).compareTo(other.zoneId);
+      int comparison = this.zoneId.compareTo(other.zoneId);
       if (comparison != 0) return comparison;
-      comparison = Long.valueOf(this.podId).compareTo(other.podId);
+      comparison = this.podId.compareTo(other.podId);
       if (comparison != 0) return comparison;
       return Integer.valueOf(this.type.code).compareTo(other.type.code);
    }

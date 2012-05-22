@@ -18,9 +18,6 @@
  */
 package org.jclouds.blobstore.config;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
@@ -41,20 +38,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class TransientBlobStoreContextModule extends AbstractModule {
-
-   // must be singleton for all threads and all objects or tests may fail;
-   static final ConcurrentHashMap<String, ConcurrentMap<String, Blob>> map = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
-   static final ConcurrentHashMap<String, Location> containerToLocation = new ConcurrentHashMap<String, Location>();
-
    @Override
    protected void configure() {
       bind(AsyncBlobStore.class).to(TransientAsyncBlobStore.class).asEagerSingleton();
       // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
       BinderUtils.bindClient(binder(), TransientBlobStore.class, AsyncBlobStore.class, ImmutableMap.<Class<?>, Class<?>>of());
-      bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
-      }).toInstance(map);
-      bind(new TypeLiteral<ConcurrentMap<String, Location>>() {
-      }).toInstance(containerToLocation);
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       bind(BlobStore.class).to(TransientBlobStore.class);

@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
@@ -35,8 +36,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -53,7 +56,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       @SuppressWarnings("unchecked")
@@ -62,10 +65,15 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
 
       CloneDriveOptions options = findOptionsInArgsOrNull(gRequest);
       if (options != null) {
-         postParams = ImmutableMap.<String, String> builder().putAll(postParams).putAll(options.getOptions()).build();
+         postParams = ImmutableMap.<String, Object> builder().putAll(postParams).putAll(options.getOptions()).build();
       }
 
-      request.setPayload(listOfMapsToListOfKeyValuesDelimitedByBlankLines.apply(ImmutableSet.of(postParams)));
+      request.setPayload(listOfMapsToListOfKeyValuesDelimitedByBlankLines.apply(ImmutableSet.of(Maps.transformValues(postParams, new Function<Object, String>() {
+         @Override
+         public String apply(@Nullable Object input) {
+            return input == null ? null : input.toString();
+         }
+      }))));
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
       return request;
    }

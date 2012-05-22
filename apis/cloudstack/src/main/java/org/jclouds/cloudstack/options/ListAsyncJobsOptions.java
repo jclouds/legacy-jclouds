@@ -63,7 +63,7 @@ public class ListAsyncJobsOptions extends AccountInDomainOptions {
       /**
        * @see ListAsyncJobsOptions#domainId
        */
-      public static ListAsyncJobsOptions domainId(long id) {
+      public static ListAsyncJobsOptions domainId(String id) {
          ListAsyncJobsOptions options = new ListAsyncJobsOptions();
          return options.domainId(id);
       }
@@ -71,7 +71,7 @@ public class ListAsyncJobsOptions extends AccountInDomainOptions {
       /**
        * @see ListAsyncJobsOptions#accountInDomain
        */
-      public static ListAsyncJobsOptions accountInDomain(String account, long domain) {
+      public static ListAsyncJobsOptions accountInDomain(String account, String domain) {
          ListAsyncJobsOptions options = new ListAsyncJobsOptions();
          return options.accountInDomain(account, domain);
       }
@@ -82,7 +82,7 @@ public class ListAsyncJobsOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListAsyncJobsOptions accountInDomain(String account, long domain) {
+   public ListAsyncJobsOptions accountInDomain(String account, String domain) {
       return ListAsyncJobsOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -90,7 +90,7 @@ public class ListAsyncJobsOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListAsyncJobsOptions domainId(long domainId) {
+   public ListAsyncJobsOptions domainId(String domainId) {
       return ListAsyncJobsOptions.class.cast(super.domainId(domainId));
    }
 }

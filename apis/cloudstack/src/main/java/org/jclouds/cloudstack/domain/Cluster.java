@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.domain;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -56,18 +57,18 @@ public class Cluster implements Comparable<Cluster> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private AllocationState allocationState;
       private Host.ClusterType clusterType;
       private String hypervisor;
       private ManagedState managedState;
       private String name;
-      private long podId;
+      private String podId;
       private String podName;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -97,7 +98,7 @@ public class Cluster implements Comparable<Cluster> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -107,7 +108,7 @@ public class Cluster implements Comparable<Cluster> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -122,21 +123,21 @@ public class Cluster implements Comparable<Cluster> {
       }
    }
 
-   private long id;
+   private String id;
    @SerializedName("allocationstate") private AllocationState allocationState;
    @SerializedName("clustertype") private Host.ClusterType clusterType;
    @SerializedName("hypervisortype") private String hypervisor;
    @SerializedName("managedstate") private ManagedState managedState;
    private String name;
-   @SerializedName("podid") private long podId;
+   @SerializedName("podid") private String podId;
    @SerializedName("podname") private String podName;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    @SerializedName("zonename") private String zoneName;
 
    // Just for the serializer
    Cluster() {}
 
-   public Cluster(long id, AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, long podId, String podName, long zoneId, String zoneName) {
+   public Cluster(String id, AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, String podId, String podName, String zoneId, String zoneName) {
       this.id = id;
       this.allocationState = allocationState;
       this.clusterType = clusterType;
@@ -149,7 +150,7 @@ public class Cluster implements Comparable<Cluster> {
       this.zoneName = zoneName;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -173,7 +174,7 @@ public class Cluster implements Comparable<Cluster> {
       return name;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -181,7 +182,7 @@ public class Cluster implements Comparable<Cluster> {
       return podName;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -194,35 +195,26 @@ public class Cluster implements Comparable<Cluster> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Cluster cluster = (Cluster) o;
+      Cluster that = (Cluster) o;
 
-      if (id != cluster.id) return false;
-      if (podId != cluster.podId) return false;
-      if (zoneId != cluster.zoneId) return false;
-      if (allocationState != cluster.allocationState) return false;
-      if (clusterType != cluster.clusterType) return false;
-      if (hypervisor != null ? !hypervisor.equals(cluster.hypervisor) : cluster.hypervisor != null) return false;
-      if (managedState != cluster.managedState) return false;
-      if (name != null ? !name.equals(cluster.name) : cluster.name != null) return false;
-      if (podName != null ? !podName.equals(cluster.podName) : cluster.podName != null) return false;
-      if (zoneName != null ? !zoneName.equals(cluster.zoneName) : cluster.zoneName != null) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(allocationState, that.allocationState)) return false;
+      if (!Objects.equal(clusterType, that.clusterType)) return false;
+      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
+      if (!Objects.equal(managedState, that.managedState)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (allocationState != null ? allocationState.hashCode() : 0);
-      result = 31 * result + (clusterType != null ? clusterType.hashCode() : 0);
-      result = 31 * result + (hypervisor != null ? hypervisor.hashCode() : 0);
-      result = 31 * result + (managedState != null ? managedState.hashCode() : 0);
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, allocationState, clusterType, hypervisor, managedState, name, podId, podName,
+                               zoneId, zoneName);
    }
 
    @Override
@@ -243,6 +235,6 @@ public class Cluster implements Comparable<Cluster> {
 
    @Override
    public int compareTo(Cluster other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

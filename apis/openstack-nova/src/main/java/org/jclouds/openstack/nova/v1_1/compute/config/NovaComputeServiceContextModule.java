@@ -33,13 +33,13 @@ import javax.inject.Singleton;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.Location;
@@ -47,7 +47,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.NovaImageExtension;
+import org.jclouds.openstack.nova.v1_1.compute.extensions.NovaImageExtension;
 import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
@@ -58,6 +58,7 @@ import org.jclouds.openstack.nova.v1_1.compute.loaders.CreateUniqueKeyPair;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.FindSecurityGroupOrCreate;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.compute.predicates.GetImageWhenImageInZoneHasActiveStatusPredicateWithResult;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
@@ -68,6 +69,7 @@ import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
 import org.jclouds.openstack.nova.v1_1.predicates.FindSecurityGroupWithNameAndReturnTrue;
+import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -141,6 +143,9 @@ public class NovaComputeServiceContextModule extends
       
       bind(new TypeLiteral<ImageExtension>() {
       }).to(NovaImageExtension.class);
+      
+      bind(new TypeLiteral<PredicateWithResult<ZoneAndId, Image>>() {
+      }).to(GetImageWhenImageInZoneHasActiveStatusPredicateWithResult.class);
    }
 
    @Override

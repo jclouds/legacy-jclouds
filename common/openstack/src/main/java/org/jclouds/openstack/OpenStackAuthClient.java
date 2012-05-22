@@ -33,4 +33,7 @@ import org.jclouds.openstack.domain.AuthenticationResponse;
 public interface OpenStackAuthClient {
 
    AuthenticationResponse authenticate(String user, String key);
+
+   AuthenticationResponse authenticateStorage(String user, String key);
+
 }

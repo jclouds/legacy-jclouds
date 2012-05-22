@@ -45,13 +45,13 @@ public class BindBackupScheduleToJsonPayload extends BindToJsonPayload {
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       throw new IllegalStateException("Replace Backup Schedule needs an BackupSchedule object, not a Map");
    }
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       checkArgument(toBind instanceof BackupSchedule, "this binder is only valid for BackupSchedules!");
-      return super.bindToRequest(request, ImmutableMap.of("backupSchedule", toBind));
+      return super.bindToRequest(request, (Object) ImmutableMap.of("backupSchedule", toBind));
    }
 }

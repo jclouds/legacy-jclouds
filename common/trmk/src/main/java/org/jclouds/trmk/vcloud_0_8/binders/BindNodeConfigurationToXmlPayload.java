@@ -55,21 +55,21 @@ public class BindNodeConfigurationToXmlPayload implements MapBinder {
       this.stringBinder = stringBinder;
    }
 
-   protected String generateXml(Map<String, String> postParams) throws ParserConfigurationException,
+   protected String generateXml(Map<String, Object> postParams) throws ParserConfigurationException,
          FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = XMLBuilder.create("NodeService").a("xmlns", ns).a("xmlns:xsi",
             "http://www.w3.org/2001/XMLSchema-instance").a("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-      rootBuilder.e("Name").t(checkNotNull(postParams.get("name"), "name"));
-      rootBuilder.e("Enabled").t(checkNotNull(postParams.get("enabled"), "enabled"));
+      rootBuilder.e("Name").t(checkNotNull(postParams.get("name"), "name").toString());
+      rootBuilder.e("Enabled").t(checkNotNull(postParams.get("enabled"), "enabled").toString());
       if (postParams.containsKey("description") && postParams.get("description") != null)
-         rootBuilder.e("Description").t(postParams.get("description"));
+         rootBuilder.e("Description").t((String) postParams.get("description"));
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       try {
          return stringBinder.bindToRequest(request, generateXml(postParams));
       } catch (Exception e) {

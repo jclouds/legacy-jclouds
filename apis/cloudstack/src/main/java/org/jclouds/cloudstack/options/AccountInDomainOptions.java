@@ -39,7 +39,7 @@ public class AccountInDomainOptions extends BaseHttpRequestOptions {
     * @param domain
     *           domain id
     */
-   public AccountInDomainOptions accountInDomain(String account, long domain) {
+   public AccountInDomainOptions accountInDomain(String account, String domain) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(account));
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domain + ""));
       return this;
@@ -49,7 +49,7 @@ public class AccountInDomainOptions extends BaseHttpRequestOptions {
     * @param domainId
     *           The domain for the resource
     */
-   public AccountInDomainOptions domainId(long domainId) {
+   public AccountInDomainOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
@@ -59,7 +59,7 @@ public class AccountInDomainOptions extends BaseHttpRequestOptions {
       /**
        * @see AccountInDomainOptions#accountInDomain
        */
-      public static AccountInDomainOptions accountInDomain(String account, long domain) {
+      public static AccountInDomainOptions accountInDomain(String account, String domain) {
          AccountInDomainOptions options = new AccountInDomainOptions();
          return options.accountInDomain(account, domain);
       }
@@ -67,7 +67,7 @@ public class AccountInDomainOptions extends BaseHttpRequestOptions {
       /**
        * @see AccountInDomainOptions#domainId
        */
-      public static AccountInDomainOptions domainId(long domainId) {
+      public static AccountInDomainOptions domainId(String domainId) {
          AccountInDomainOptions options = new AccountInDomainOptions();
          return options.domainId(domainId);
       }

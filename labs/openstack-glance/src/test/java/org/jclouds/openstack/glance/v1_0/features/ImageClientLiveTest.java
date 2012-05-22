@@ -18,6 +18,12 @@
  */
 package org.jclouds.openstack.glance.v1_0.features;
 
+import static org.testng.Assert.assertEquals;
+
+import java.util.Set;
+
+import org.jclouds.openstack.glance.v1_0.domain.Image;
+import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.internal.BaseGlanceClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -26,5 +32,50 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "ImageClientLiveTest")
 public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
+
+   @Test
+   public void testList() throws Exception {
+      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
+         ImageClient client = glanceContext.getApi().getImageClientForRegion(zoneId);
+         Set<Image> response = client.list();
+         assert null != response;
+         for (Image image : response) {
+            checkImage(image);
+         }
+      }
+   }
+
+   private void checkImage(Image image) {
+      assert image.getId() != null : image;
+      assert image.getSize().isPresent() : image;
+      assert image.getChecksum().isPresent() : image;
+      assert image.getContainerFormat().isPresent() : image;
+      assert image.getContainerFormat().isPresent() : image;
+   }
+
+   @Test
+   public void testListInDetail() throws Exception {
+      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
+         ImageClient client = glanceContext.getApi().getImageClientForRegion(zoneId);
+         Set<ImageDetails> response = client.listInDetail();
+         assert null != response;
+         for (ImageDetails image : response) {
+            checkImage(image);
+            ImageDetails newDetails = client.show(image.getId());
+            checkImageDetails(newDetails);
+            checkImageDetailsEqual(image, newDetails);
+         }
+      }
+   }
+
+   private void checkImageDetails(ImageDetails image) {
+      //TODO
+   }
+
+   private void checkImageDetailsEqual(ImageDetails image, ImageDetails newDetails) {
+      assertEquals(newDetails.getId(), image.getId());
+      assertEquals(newDetails.getName(), image.getName());
+      assertEquals(newDetails.getLinks(), image.getLinks());
+   }
 
 }

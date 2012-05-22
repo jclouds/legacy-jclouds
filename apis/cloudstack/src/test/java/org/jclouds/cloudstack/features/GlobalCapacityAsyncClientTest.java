@@ -46,7 +46,7 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listCapacity HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listCapacity&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -59,10 +59,10 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testListCapacityOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListCapacityOptions.Builder.hostId(3).keyword("fred").podId(4).type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId(6));
+      HttpRequest httpRequest = processor.createRequest(method, ListCapacityOptions.Builder.hostId("3").keyword("fred").podId("4").type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId("6"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listCapacity&hostid=3&keyword=fred&podid=4&type=1&zoneid=6 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listCapacity&listAll=true&hostid=3&keyword=fred&podid=4&type=1&zoneid=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

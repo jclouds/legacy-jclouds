@@ -36,7 +36,7 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
     * @param networkId
     *           The network this ip address should be associated to.
     */
-   public AssociateIPAddressOptions networkId(long networkId) {
+   public AssociateIPAddressOptions networkId(String networkId) {
       this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId + ""));
       return this;
 
@@ -47,7 +47,7 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
       /**
        * @see AssociateIPAddressOptions#networkId
        */
-      public static AssociateIPAddressOptions networkId(long networkId) {
+      public static AssociateIPAddressOptions networkId(String networkId) {
          AssociateIPAddressOptions options = new AssociateIPAddressOptions();
          return options.networkId(networkId);
       }
@@ -55,7 +55,7 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
       /**
        * @see AssociateIPAddressOptions#accountInDomain
        */
-      public static AssociateIPAddressOptions accountInDomain(String account, long domain) {
+      public static AssociateIPAddressOptions accountInDomain(String account, String domain) {
          AssociateIPAddressOptions options = new AssociateIPAddressOptions();
          return options.accountInDomain(account, domain);
       }
@@ -63,7 +63,7 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
       /**
        * @see AssociateIPAddressOptions#domainId
        */
-      public static AssociateIPAddressOptions domainId(long domainId) {
+      public static AssociateIPAddressOptions domainId(String domainId) {
          AssociateIPAddressOptions options = new AssociateIPAddressOptions();
          return options.domainId(domainId);
       }
@@ -73,7 +73,7 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public AssociateIPAddressOptions accountInDomain(String account, long domain) {
+   public AssociateIPAddressOptions accountInDomain(String account, String domain) {
       return AssociateIPAddressOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -81,7 +81,7 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public AssociateIPAddressOptions domainId(long domainId) {
+   public AssociateIPAddressOptions domainId(String domainId) {
       return AssociateIPAddressOptions.class.cast(super.domainId(domainId));
    }
 }

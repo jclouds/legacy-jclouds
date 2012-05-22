@@ -34,6 +34,7 @@ import javax.inject.Provider;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
@@ -416,7 +417,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupIds = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -450,7 +451,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupIds = ImmutableSet.<String> of();
       int[] ports = new int[] { 22, 80 };
       boolean shouldAuthorizeSelf = true;
@@ -484,7 +485,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupIds = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -517,7 +518,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      String generatedMarkerGroup = "jclouds#group#" + Region.AP_SOUTHEAST_1;
+      String generatedMarkerGroup = "jclouds#group";
       Set<String> groupIds = ImmutableSet.<String> of("group1", "group2");
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
@@ -559,8 +560,15 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       Function<RegionAndName, KeyPair> makeKeyPair = createMock(Function.class);
       ConcurrentMap<RegionAndName, KeyPair> credentialsMap = createMock(ConcurrentMap.class);
       LoadingCache<RegionAndName, String> securityGroupMap = createMock(LoadingCache.class);
+      GroupNamingConvention.Factory namingConventionFactory = createMock(GroupNamingConvention.Factory.class);
+      GroupNamingConvention namingConvention = createMock(GroupNamingConvention.class);
+      expect(namingConventionFactory.create()).andReturn(namingConvention).anyTimes();
+      expect(namingConvention.sharedNameForGroup("group")).andReturn("jclouds#group").anyTimes();
+      replay(namingConventionFactory);
+      replay(namingConvention);
+      
       return new CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(makeKeyPair, credentialsMap,
-            securityGroupMap, OPTIONS_PROVIDER);
+            securityGroupMap, OPTIONS_PROVIDER, namingConventionFactory);
    }
 
    private void replayStrategy(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {

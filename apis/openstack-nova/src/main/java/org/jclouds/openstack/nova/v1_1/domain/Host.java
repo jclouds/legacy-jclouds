@@ -72,10 +72,16 @@ public class Host {
          return this;
       }
    }
-
+   
+   protected Host() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
    @SerializedName(value="host_name")
-   private final String name;
-   private final String service;
+   private String name;
+   private String service;
 
    protected Host(Builder<?> builder) {
       this.name = builder.name;

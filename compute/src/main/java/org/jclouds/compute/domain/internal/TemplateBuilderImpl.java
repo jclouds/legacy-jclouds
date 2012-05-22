@@ -33,6 +33,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -47,6 +48,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.TemplateBuilderSpec;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -499,13 +501,13 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       if (image.getName() != null)
          this.imageName = image.getName();
       if (image.getDescription() != null)
-         this.imageDescription = String.format("^%s$", image.getDescription());
+         this.imageDescription = String.format("^%s$", Pattern.quote(image.getDescription()));
       if (image.getOperatingSystem().getName() != null)
          this.osName = image.getOperatingSystem().getName();
       if (image.getOperatingSystem().getDescription() != null)
          this.osDescription = image.getOperatingSystem().getDescription();
       if (image.getVersion() != null)
-         this.imageVersion = String.format("^%s$", image.getVersion());
+         this.imageVersion = String.format("^%s$", Pattern.quote(image.getVersion()));
       if (image.getOperatingSystem().getVersion() != null)
          this.osVersion = image.getOperatingSystem().getVersion();
       this.os64Bit = image.getOperatingSystem().is64Bit();
@@ -967,6 +969,16 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    public TemplateBuilder os64Bit(boolean is64Bit) {
       this.os64Bit = is64Bit;
       return this;
+   }
+
+   @Override
+   public TemplateBuilder from(TemplateBuilderSpec spec) {
+      return spec.copyTo(this, options != null ? options : optionsProvider.get());
+   }
+
+   @Override
+   public TemplateBuilder from(String spec) {
+      return from(TemplateBuilderSpec.parse(spec));
    }
 
 }

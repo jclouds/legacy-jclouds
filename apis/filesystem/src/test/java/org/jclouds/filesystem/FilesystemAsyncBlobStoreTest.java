@@ -57,6 +57,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.testng.annotations.AfterMethod;
@@ -64,6 +65,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 import com.google.inject.CreationException;
 
 /**
@@ -564,8 +569,12 @@ public class FilesystemAsyncBlobStoreTest {
 
         // when location doesn't exists
         blobKey = TestUtils.createRandomBlobKey();
-        result = blobStore.blobExists(CONTAINER_NAME, blobKey);
-        assertFalse(result, "Blob exists");
+        try {
+            blobStore.blobExists(CONTAINER_NAME, blobKey);
+            fail();
+        } catch (ContainerNotFoundException cnfe) {
+            // expected
+        }
 
         // when location exists
         blobStore.createContainerInLocation(null, CONTAINER_NAME);
@@ -615,9 +624,13 @@ public class FilesystemAsyncBlobStoreTest {
 
         assertNotNull(resultBlob, "Blob exists");
         // checks file content
-        InputStream expectedFile = new FileInputStream(TARGET_CONTAINER_NAME + File.separator + blobKey);
-        InputStream currentFile = resultBlob.getPayload().getInput();
-        assertTrue(TestUtils.isSame(expectedFile, currentFile), "Blob payload differs from file content");
+        InputSupplier<FileInputStream> expectedFile =
+                Files.newInputStreamSupplier(new File(
+                TARGET_CONTAINER_NAME, blobKey));
+        InputSupplier<? extends InputStream> actualFile =
+                InputSuppliers.of(resultBlob.getPayload().getInput());
+        assertTrue(ByteStreams.equal(expectedFile, actualFile),
+                "Blob payload differs from file content");
         // metadata are verified in the test for blobMetadata, so no need to
         // perform a complete test here
         assertNotNull(resultBlob.getMetadata(), "Metadata null");
@@ -730,23 +743,39 @@ public class FilesystemAsyncBlobStoreTest {
          */
         final String containerName = "containerWithRanges";
         String payload = "abcdefgh";
+        InputStream is;
         Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(payload)).build();
         blobStore.putBlob(containerName, blob);
 
         GetOptions getOptionsRangeStartAt = new GetOptions();
         getOptionsRangeStartAt.startAt(1);
         Blob blobRangeStartAt = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeStartAt);
-        Assert.assertEquals("bcdefgh", IOUtils.toString(blobRangeStartAt.getPayload().getInput()));
+        is = blobRangeStartAt.getPayload().getInput();
+        try {
+            Assert.assertEquals("bcdefgh", IOUtils.toString(is));
+        } finally {
+            Closeables.closeQuietly(is);
+        }
 
         GetOptions getOptionsRangeTail = new GetOptions();
         getOptionsRangeTail.tail(3);
         Blob blobRangeTail = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeTail);
-        Assert.assertEquals("fgh", IOUtils.toString(blobRangeTail.getPayload().getInput()));
+        is = blobRangeTail.getPayload().getInput();
+        try {
+            Assert.assertEquals("fgh", IOUtils.toString(is));
+        } finally {
+            Closeables.closeQuietly(is);
+        }
 
         GetOptions getOptionsFragment = new GetOptions();
         getOptionsFragment.range(4, 6);
         Blob blobFragment = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsFragment);
-        Assert.assertEquals("efg", IOUtils.toString(blobFragment.getPayload().getInput()));
+        is = blobFragment.getPayload().getInput();
+        try {
+            Assert.assertEquals("efg", IOUtils.toString(is));
+        } finally {
+            Closeables.closeQuietly(is);
+        }
     }
 
     /** Test that BlobRequestSigner creates expected URIs.  */

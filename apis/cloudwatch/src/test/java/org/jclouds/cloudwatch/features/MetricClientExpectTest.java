@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.cloudwatch.domain.Dimension;
@@ -45,6 +46,11 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "MetricClientExpectTest")
 public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
+
+   public MetricClientExpectTest() {
+      TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
+   }
+
    HttpRequest listMetrics = HttpRequest.builder()
                                        .method("POST")
                                        .endpoint(URI.create("https://monitoring.us-east-1.amazonaws.com/"))

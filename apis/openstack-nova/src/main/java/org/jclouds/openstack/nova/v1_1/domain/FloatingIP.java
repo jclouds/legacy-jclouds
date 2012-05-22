@@ -76,7 +76,13 @@ public class FloatingIP implements Comparable<FloatingIP> {
       }
 
    }
-
+   
+   protected FloatingIP() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
    private String id;
    private String ip;
    @SerializedName("fixed_ip")

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.Futures;
@@ -55,6 +57,7 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -74,18 +77,16 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    private final ResourceToObjectInfo blob2ObjectInfo;
    private final ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions;
    private final ResourceToObjectList resource2ObjectList;
-   private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    private final ExecutorService service;
 
    @Inject
    private StubSwiftAsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            TransientAsyncBlobStore blobStore, ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+            TransientAsyncBlobStore blobStore,
             SwiftObject.Factory objectProvider, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             ObjectToBlob object2Blob, BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
             ResourceToObjectList resource2ContainerList) {
       this.service = service;
-      this.containerToBlobs = containerToBlobs;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -98,7 +99,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    }
 
    public ListenableFuture<Boolean> containerExists(final String container) {
-      return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
+      return blobStore.containerExists(container);
    }
 
    public ListenableFuture<Boolean> createContainer(String container) {
@@ -106,7 +107,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    }
 
    public ListenableFuture<Boolean> deleteContainerIfEmpty(String container) {
-      return blobStore.deleteContainerImpl(container);
+      return blobStore.deleteContainerIfEmpty(container);
    }
 
    public ListenableFuture<Boolean> disableCDN(String container) {
@@ -145,10 +146,18 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
 
    public ListenableFuture<? extends Set<ContainerMetadata>> listContainers(
             org.jclouds.openstack.swift.options.ListContainerOptions... options) {
-      return immediateFuture(Sets.newHashSet(Iterables.transform(blobStore.getContainerToBlobs().keySet(),
-               new Function<String, ContainerMetadata>() {
-                  public ContainerMetadata apply(String name) {              	 
-                     return new ContainerMetadata(name, -1, -1, null, new HashMap<String,String>());
+      PageSet<? extends StorageMetadata> listing;
+      try {
+         listing = blobStore.list().get();
+      } catch (ExecutionException ee) {
+         throw Throwables.propagate(ee);
+      } catch (InterruptedException ie) {
+         throw Throwables.propagate(ie);
+      }
+      return immediateFuture(Sets.newHashSet(Iterables.transform(listing,
+               new Function<StorageMetadata, ContainerMetadata>() {
+                  public ContainerMetadata apply(StorageMetadata md) {
+                     return new ContainerMetadata(md.getName(), -1, -1, null, new HashMap<String,String>());
                   }
                })));
    }
@@ -186,7 +195,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
 
    @Override
    public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
-      return immediateFuture(containerToBlobs.get(bucketName).containsKey(key));
+      return blobStore.blobExists(bucketName, key);
    }
 
 }

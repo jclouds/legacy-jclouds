@@ -66,17 +66,17 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
             ListVlanIPRangesOptions.Builder.id(range.getId())));
          assertEquals(range, newDetails);
          assertEquals(range, globalAdminClient.getVlanClient().getVlanIPRange(range.getId()));
-         assertFalse(range.getId() <= 0);
-         assertFalse(range.getZoneId() <= 0);
+         assertFalse(range.getId() != null);
+         assertFalse(range.getZoneId() != null);
          assertFalse(Strings.isNullOrEmpty(range.getVlan()));
          assertFalse(Strings.isNullOrEmpty(range.getAccount()));
-         assertFalse(range.getDomainId() <= 0);
+         assertFalse(range.getDomainId() != null);
          assertFalse(Strings.isNullOrEmpty(range.getDomain()));
          assertFalse(Strings.isNullOrEmpty(range.getGateway()));
          assertFalse(Strings.isNullOrEmpty(range.getNetmask()));
          assertFalse(Strings.isNullOrEmpty(range.getStartIP()));
          assertFalse(Strings.isNullOrEmpty(range.getEndIP()));
-         assertFalse(range.getNetworkId() <= 0);
+         assertFalse(range.getNetworkId() != null);
       }
    }
 

@@ -59,7 +59,7 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                case UBUNTU:
                   return input.version.equals("") || input.version.equals("10.04");
                case CENTOS:
-                  return input.version.equals("") || input.version.matches("5.[56]") || input.version.equals("6.0");
+                  return input.version.equals("") || input.version.matches("5.[06]") || input.version.equals("6.0");
                case WINDOWS:
                   return input.version.equals("") || input.version.matches("200[38]");
                default:

@@ -39,12 +39,14 @@ import org.jclouds.Constants;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.functions.GroupNamingConvention;
+import org.jclouds.compute.functions.GroupNamingConvention.Factory;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
@@ -87,6 +89,7 @@ public class EC2ComputeService extends BaseComputeService {
    private final EC2Client ec2Client;
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final LoadingCache<RegionAndName, String> securityGroupMap;
+   private final Factory namingConvention;
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -104,7 +107,7 @@ public class EC2ComputeService extends BaseComputeService {
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
          ConcurrentMap<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
-         Optional<ImageExtension> imageExtension) {
+         Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
             templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
@@ -113,6 +116,7 @@ public class EC2ComputeService extends BaseComputeService {
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
+      this.namingConvention = namingConvention;
    }
 
    @Inject(optional = true)
@@ -126,7 +130,8 @@ public class EC2ComputeService extends BaseComputeService {
    void deleteSecurityGroup(String region, String group) {
       checkNotEmpty(region, "region");
       checkNotEmpty(group, "group");
-      String groupName = String.format("jclouds#%s#%s", group, region).replace('#', delimiter);
+      String groupName = namingConvention.create().sharedNameForGroup(group);
+      
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", groupName);
          ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
@@ -139,13 +144,12 @@ public class EC2ComputeService extends BaseComputeService {
    @VisibleForTesting
    void deleteKeyPair(String region, String group) {
       for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
-         if (
-         // when the keypair is unique per group
-         keyPair.getKeyName().equals("jclouds"+ delimiter + group)
-               || keyPair.getKeyName().matches(String.format("jclouds#%s#%s", group, "[0-9a-f]+").replace('#', delimiter))
-               // old keypair pattern too verbose as it has an unnecessary
-               // region qualifier
-               || keyPair.getKeyName().matches(String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+").replace('#', delimiter))) {
+         String keyName = keyPair.getKeyName();
+         Predicate<String> keyNameMatcher = namingConvention.create().containsGroup(group);
+         String oldKeyNameRegex = String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+").replace('#', delimiter);
+         // old keypair pattern too verbose as it has an unnecessary region qualifier
+         
+         if (keyNameMatcher.apply(keyName) || keyName.matches(oldKeyNameRegex)) {
             Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(ec2Client.getInstanceServices()
                   .describeInstancesInRegion(region)), usingKeyPairAndNotDead(keyPair)));
             if (instancesUsingKeyPair.size() > 0) {

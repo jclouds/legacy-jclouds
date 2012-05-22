@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
-            <version>1.6.3</version>
+            <version>1.7.4</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

@@ -64,6 +64,8 @@ public class RegionIdToAdminURIFromAccessForTypeAndVersionSupplierTest {
                .<URI> supplierFunction()), ImmutableMap.of("region-a.geo-1", URI.create("https://csnode.jclouds.org:35357/v2.0/")));
       Map<String, URI> map = Maps.newLinkedHashMap();
       map.put("region-a.geo-1", null);
+      map.put("region-b.geo-1", null);
+      map.put("region-c.geo-1", null);
       assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("compute", "1.1").get(), Suppliers
                .<URI> supplierFunction()), map);
    }

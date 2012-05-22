@@ -80,11 +80,11 @@ public class CloudStackParserModule extends AbstractModule {
       }
 
       static final class PortForwardingRuleInternal {
-         private long id;
+         private String id;
          @SerializedName("ipaddress")
          private String IPAddress;
          @SerializedName("ipaddressid")
-         private long IPAddressId;
+         private String IPAddressId;
          @SerializedName("privateport")
          private int privatePort;
          private PortForwardingRule.Protocol protocol;
@@ -94,7 +94,7 @@ public class CloudStackParserModule extends AbstractModule {
          @SerializedName("virtualmachinedisplayname")
          private String virtualMachineDisplayName;
          @SerializedName("virtualmachineid")
-         public long virtualMachineId;
+         public String virtualMachineId;
          @SerializedName("virtualmachinename")
          private String virtualMachineName;
          @SerializedName("cidrlist")
@@ -132,7 +132,7 @@ public class CloudStackParserModule extends AbstractModule {
       }
 
       static final class FirewallRuleInternal {
-         private long id;
+         private String id;
          @SerializedName("cidrlist")
          private String CIDRs;
          @SerializedName("startport")
@@ -146,7 +146,7 @@ public class CloudStackParserModule extends AbstractModule {
          @SerializedName("ipaddress")
          private String ipAddress;
          @SerializedName("ipaddressid")
-         private long ipAddressId;
+         private String ipAddressId;
          private FirewallRule.Protocol protocol;
          private FirewallRule.State state;
       }
@@ -173,27 +173,27 @@ public class CloudStackParserModule extends AbstractModule {
       }
 
       static final class LoadBalancerRuleInternal {
-         private long id;
+         private String id;
          private String account;
          private LoadBalancerRule.Algorithm algorithm;
          private String description;
          private String domain;
          @SerializedName("domainid")
-         private long domainId;
+         private String domainId;
          private String name;
          @SerializedName("privateport")
          private int privatePort;
          @SerializedName("publicip")
          private String publicIP;
          @SerializedName("publicipid")
-         private long publicIPId;
+         private String publicIPId;
          @SerializedName("publicport")
          private int publicPort;
          private LoadBalancerRule.State state;
          @SerializedName("cidrlist")
          private String CIDRs;
          @SerializedName("zoneId")
-         private long zoneId;
+         private String zoneId;
       }
    }
 
@@ -224,12 +224,12 @@ public class CloudStackParserModule extends AbstractModule {
       }
 
       static final class AccountInternal {
-         private long id;
+         private String id;
          @SerializedName("accounttype")
          private Account.Type type;
          private String domain;
          @SerializedName("domainid")
-         private long domainId;
+         private String domainId;
          @SerializedName("ipavailable")
          private String IPsAvailable;
          @SerializedName("iplimit")

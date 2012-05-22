@@ -36,7 +36,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * @param id
     *           the ID of the virtual machine
     */
-   public ListVirtualMachinesOptions id(long id) {
+   public ListVirtualMachinesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -63,7 +63,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * @param groupId
     *           list virtual machines by groupId.
     */
-   public ListVirtualMachinesOptions groupId(long groupId) {
+   public ListVirtualMachinesOptions groupId(String groupId) {
       this.queryParameters.replaceValues("groupid", ImmutableSet.of(groupId + ""));
       return this;
 
@@ -73,7 +73,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * @param hostId
     *           list virtual machines by hostId.
     */
-   public ListVirtualMachinesOptions hostId(long hostId) {
+   public ListVirtualMachinesOptions hostId(String hostId) {
       this.queryParameters.replaceValues("hostid", ImmutableSet.of(hostId + ""));
       return this;
 
@@ -83,7 +83,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * @param networkId
     *           list virtual machines by networkId.
     */
-   public ListVirtualMachinesOptions networkId(long networkId) {
+   public ListVirtualMachinesOptions networkId(String networkId) {
       this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId + ""));
       return this;
 
@@ -93,7 +93,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * @param podId
     *           list virtual machines by podId.
     */
-   public ListVirtualMachinesOptions podId(long podId) {
+   public ListVirtualMachinesOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
 
@@ -103,7 +103,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * @param zoneId
     *           list virtual machines by zoneId.
     */
-   public ListVirtualMachinesOptions zoneId(long zoneId) {
+   public ListVirtualMachinesOptions zoneId(String zoneId) {
       this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
 
@@ -124,7 +124,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#accountInDomain
        */
-      public static ListVirtualMachinesOptions accountInDomain(String account, long domain) {
+      public static ListVirtualMachinesOptions accountInDomain(String account, String domain) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.accountInDomain(account, domain);
       }
@@ -132,7 +132,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#domainId
        */
-      public static ListVirtualMachinesOptions domainId(long id) {
+      public static ListVirtualMachinesOptions domainId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.domainId(id);
       }
@@ -140,7 +140,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#id
        */
-      public static ListVirtualMachinesOptions id(long id) {
+      public static ListVirtualMachinesOptions id(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.id(id);
       }
@@ -164,7 +164,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#groupId
        */
-      public static ListVirtualMachinesOptions groupId(long id) {
+      public static ListVirtualMachinesOptions groupId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.groupId(id);
       }
@@ -172,7 +172,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#hostId
        */
-      public static ListVirtualMachinesOptions hostId(long id) {
+      public static ListVirtualMachinesOptions hostId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.hostId(id);
       }
@@ -180,7 +180,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#networkId
        */
-      public static ListVirtualMachinesOptions networkId(long id) {
+      public static ListVirtualMachinesOptions networkId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.networkId(id);
       }
@@ -188,7 +188,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#podId
        */
-      public static ListVirtualMachinesOptions podId(long id) {
+      public static ListVirtualMachinesOptions podId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.podId(id);
       }
@@ -196,7 +196,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       /**
        * @see ListVirtualMachinesOptions#zoneId
        */
-      public static ListVirtualMachinesOptions zoneId(long id) {
+      public static ListVirtualMachinesOptions zoneId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.zoneId(id);
       }
@@ -214,7 +214,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListVirtualMachinesOptions accountInDomain(String account, long domain) {
+   public ListVirtualMachinesOptions accountInDomain(String account, String domain) {
       return ListVirtualMachinesOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -222,7 +222,7 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListVirtualMachinesOptions domainId(long domainId) {
+   public ListVirtualMachinesOptions domainId(String domainId) {
       return ListVirtualMachinesOptions.class.cast(super.domainId(domainId));
    }
 }

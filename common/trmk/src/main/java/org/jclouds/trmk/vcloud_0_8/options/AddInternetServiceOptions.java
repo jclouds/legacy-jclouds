@@ -41,8 +41,8 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
    Boolean monitorEnabled = null;
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      ImmutableMap.Builder<String, String> copy = ImmutableMap.builder();
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      ImmutableMap.Builder<String, Object> copy = ImmutableMap.builder();
       copy.putAll(postParams);
       if (description != null)
          copy.put("description", description);

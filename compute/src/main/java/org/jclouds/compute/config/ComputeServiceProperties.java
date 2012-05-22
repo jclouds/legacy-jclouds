@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.config;
 
+import org.jclouds.compute.domain.TemplateBuilderSpec;
+
 
 /**
  * 
@@ -35,6 +37,12 @@ public interface ComputeServiceProperties {
    
    public static final String INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
    public static final String INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
+   
+   /**
+    * overrides the default specified in the subclass of {@link BaseComputeServiceContextModule#provideTemplate}
+    * @see TemplateBuilderSpec
+    */
+   public static final String TEMPLATE = "jclouds.template";
    
    /**
     * overrides the image specified in the subclass of {@link BaseComputeServiceContextModule#provideTemplate}

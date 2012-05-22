@@ -1,5 +1,7 @@
 package org.jclouds.slicehost;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -35,6 +37,7 @@ public class SlicehostProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,osDescriptionMatches=^((?!MGC).)*$");
       return properties;
    }
    

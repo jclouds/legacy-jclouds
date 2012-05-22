@@ -1,0 +1,24 @@
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+  <imagesSet>
+    <item>
+      <imageId>ami-0</imageId>
+      <imageLocation>ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml
+      </imageLocation>
+      <imageState>available</imageState>
+      <imageOwnerId>206029621532</imageOwnerId>
+      <isPublic>false</isPublic>
+      <productCodes>
+        <item>
+          <productCode>9961934F</productCode>
+        </item>
+      </productCodes>
+      <architecture>i386</architecture>
+      <imageType>machine</imageType>
+      <kernelId>aki-4438dd2d</kernelId>
+      <ramdiskId>ari-4538dd2c</ramdiskId>
+      <rootDeviceType>instance-store</rootDeviceType>
+      <blockDeviceMapping />
+      <virtualizationType>paravirtual</virtualizationType>
+    </item>
+  </imagesSet>
+</DescribeImagesResponse>

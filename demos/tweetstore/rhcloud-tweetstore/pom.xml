@@ -33,8 +33,8 @@
 
     <properties>
         <rhcloud.jboss.version>7.0.2.Final</rhcloud.jboss.version>
-        <rhcloud.jboss.address>localhost</rhcloud.jboss.address>
-        <rhcloud.jboss.port>8088</rhcloud.jboss.port>
+        <test.jboss.address>localhost</test.jboss.address>
+        <test.jboss.port>8088</test.jboss.port>
         <jclouds.tweetstore.container>jclouds-rhcloud-tweetstore</jclouds.tweetstore.container>
     </properties>
 
@@ -98,9 +98,9 @@
                                         <test.cloudonestorage.credential>${test.cloudonestorage.credential}</test.cloudonestorage.credential>
                                         <test.ninefold-storage.identity>${test.ninefold-storage.identity}</test.ninefold-storage.identity>
                                         <test.ninefold-storage.credential>${test.ninefold-storage.credential}</test.ninefold-storage.credential>
-                                        <rhcloud.jboss.home>${rhcloud.jboss.home}</rhcloud.jboss.home>
-                                        <rhcloud.jboss.address>${rhcloud.jboss.address}</rhcloud.jboss.address>
-                                        <rhcloud.jboss.port>${rhcloud.jboss.port}</rhcloud.jboss.port>
+                                        <jboss.home>${rhcloud.jboss.home}</jboss.home>
+                                        <jboss.address>${test.jboss.address}</jboss.address>
+                                        <jboss.port>${test.jboss.port}</jboss.port>
                                         <jclouds.tweetstore.blobstores>${jclouds.tweetstore.blobstores}</jclouds.tweetstore.blobstores>
                                         <jclouds.tweetstore.container>test.${jclouds.tweetstore.container}</jclouds.tweetstore.container>
                                         <jboss.embedded.root>${project.build.directory}/rhcloud-jboss</jboss.embedded.root>
@@ -108,8 +108,8 @@
                                         <warfile>${project.build.directory}/${project.build.finalName}</warfile>
                                     </systemPropertyVariables>
                                     <environmentVariables>
-                                        <OPENSHIFT_INTERNAL_IP>${rhcloud.jboss.address}</OPENSHIFT_INTERNAL_IP>
-                                        <OPENSHIFT_INTERNAL_PORT>${rhcloud.jboss.port}</OPENSHIFT_INTERNAL_PORT>
+                                        <OPENSHIFT_INTERNAL_IP>${test.jboss.address}</OPENSHIFT_INTERNAL_IP>
+                                        <OPENSHIFT_INTERNAL_PORT>${test.jboss.port}</OPENSHIFT_INTERNAL_PORT>
                                     </environmentVariables>
                                 </configuration>
                             </execution>

@@ -17,10 +17,10 @@
  * under the License.
  */
 package org.jclouds.aws.ec2;
-
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 
 import java.net.URI;
@@ -74,6 +74,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
                .setProperty(
                         PROPERTY_EC2_CC_AMI_QUERY,
                         "virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;state=available;image-type=machine;root-device-type=ebs");
+      properties.setProperty(TEMPLATE, "osFamily=AMZN_LINUX,os64Bit=true");
       return properties;
    }
    

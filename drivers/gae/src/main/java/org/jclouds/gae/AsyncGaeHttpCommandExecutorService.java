@@ -32,7 +32,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.Futures;
-import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
@@ -57,7 +56,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@SingleThreaded
 @Singleton
 public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorService {
    private final ExecutorService service;

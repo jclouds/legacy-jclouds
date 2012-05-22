@@ -180,7 +180,7 @@ public class CreateServiceOfferingOptions extends AccountInDomainOptions {
       /**
        * @see CreateServiceOfferingOptions#accountInDomain
        */
-      public static CreateServiceOfferingOptions accountInDomain(String account, long domain) {
+      public static CreateServiceOfferingOptions accountInDomain(String account, String domain) {
          CreateServiceOfferingOptions options = new CreateServiceOfferingOptions();
          return options.accountInDomain(account, domain);
       }
@@ -188,7 +188,7 @@ public class CreateServiceOfferingOptions extends AccountInDomainOptions {
       /**
        * @see CreateServiceOfferingOptions#domainId
        */
-      public static CreateServiceOfferingOptions domainId(long domainId) {
+      public static CreateServiceOfferingOptions domainId(String domainId) {
          CreateServiceOfferingOptions options = new CreateServiceOfferingOptions();
          return options.domainId(domainId);
       }
@@ -198,7 +198,7 @@ public class CreateServiceOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public CreateServiceOfferingOptions accountInDomain(String account, long domain) {
+   public CreateServiceOfferingOptions accountInDomain(String account, String domain) {
       return CreateServiceOfferingOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -206,7 +206,7 @@ public class CreateServiceOfferingOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public CreateServiceOfferingOptions domainId(long domainId) {
+   public CreateServiceOfferingOptions domainId(String domainId) {
       return CreateServiceOfferingOptions.class.cast(super.domainId(domainId));
    }
 }

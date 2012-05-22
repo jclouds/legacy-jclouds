@@ -86,7 +86,7 @@ public class UpdateISOOptions extends BaseHttpRequestOptions {
    /**
     * @param osTypeId the ID of the OS type that best represents the OS of this image.
     */
-   public UpdateISOOptions osTypeId(long osTypeId) {
+   public UpdateISOOptions osTypeId(String osTypeId) {
       this.queryParameters.replaceValues("ostypeid", ImmutableSet.of(osTypeId + ""));
       return this;
    }
@@ -132,7 +132,7 @@ public class UpdateISOOptions extends BaseHttpRequestOptions {
       /**
        * @param osTypeId the ID of the OS type that best represents the OS of this image.
        */
-      public static UpdateISOOptions osTypeId(long osTypeId) {
+      public static UpdateISOOptions osTypeId(String osTypeId) {
          return new UpdateISOOptions().osTypeId(osTypeId);
       }
 

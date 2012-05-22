@@ -42,7 +42,6 @@ import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
@@ -51,6 +50,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
@@ -114,12 +115,12 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
             @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient,
-            Optional<ImageExtension> imageExtension) {
+            Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
                stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
                nodeSuspended, initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess, persistNodeCredentials,
-               timeouts, executor, ec2Client, credentialsMap, securityGroupMap, imageExtension);
+               timeouts, executor, ec2Client, credentialsMap, securityGroupMap, imageExtension, namingConvention);
       this.ec2Client = ec2Client;
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;

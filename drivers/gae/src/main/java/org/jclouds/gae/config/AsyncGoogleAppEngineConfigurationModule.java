@@ -24,7 +24,9 @@ import org.jclouds.gae.AsyncGaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
-import com.google.inject.Injector;
+import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.inject.Module;
 
 /**
  * Configures {@link AsyncGaeHttpCommandExecutorService}.
@@ -35,13 +37,25 @@ import com.google.inject.Injector;
 @ConfiguresExecutorService
 @SingleThreaded
 public class AsyncGoogleAppEngineConfigurationModule extends GoogleAppEngineConfigurationModule {
-
    public AsyncGoogleAppEngineConfigurationModule() {
       super();
    }
 
-   protected HttpCommandExecutorService providerHttpCommandExecutorService(Injector injector) {
-      return injector.getInstance(AsyncGaeHttpCommandExecutorService.class);
+   public AsyncGoogleAppEngineConfigurationModule(Module executorServiceModule) {
+      super(executorServiceModule);
+   }
+
+   /**
+    * Used when you are creating multiple contexts in the same app.
+    * @param memoizedCurrentRequestExecutorService
+    * @see CurrentRequestExecutorServiceModule#memoizedCurrentRequestExecutorService
+    */
+   public AsyncGoogleAppEngineConfigurationModule(Supplier<ListeningExecutorService> memoizedCurrentRequestExecutorService) {
+      super(memoizedCurrentRequestExecutorService);
+   }
+
+   protected void bindHttpCommandExecutorService() {
+      bind(HttpCommandExecutorService.class).to(AsyncGaeHttpCommandExecutorService.class);
    }
 
 }

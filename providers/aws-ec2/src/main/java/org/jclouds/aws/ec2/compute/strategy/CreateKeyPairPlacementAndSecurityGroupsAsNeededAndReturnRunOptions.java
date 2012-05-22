@@ -34,6 +34,7 @@ import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
 import org.jclouds.aws.ec2.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -72,8 +73,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          Provider<RunInstancesOptions> optionsProvider,
          @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
          CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded,
-         Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair) {
-      super(makeKeyPair, credentialsMap, securityGroupMap, optionsProvider);
+         Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair, 
+         GroupNamingConvention.Factory namingConvention) {
+      super(makeKeyPair, credentialsMap, securityGroupMap, optionsProvider, namingConvention);
       this.placementGroupMap = placementGroupMap;
       this.createPlacementGroupIfNeeded = createPlacementGroupIfNeeded;
       this.importExistingKeyPair = importExistingKeyPair;

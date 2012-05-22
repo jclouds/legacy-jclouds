@@ -58,12 +58,12 @@ public interface GlobalVlanAsyncClient {
     * @return the requested IP range.
     */
    @GET
-   @QueryParams(keys = "command", values = "listVlanIpRanges")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listVlanIpRanges", "true" })
    @SelectJson("vlaniprange")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VlanIPRange> getVlanIPRange(@QueryParam("id") long id);
+   ListenableFuture<VlanIPRange> getVlanIPRange(@QueryParam("id") String id);
 
    /**
     * Lists all VLAN IP ranges.
@@ -72,7 +72,7 @@ public interface GlobalVlanAsyncClient {
     * @return the list of IP ranges that match the criteria.
     */
    @GET
-   @QueryParams(keys = "command", values = "listVlanIpRanges")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listVlanIpRanges", "true" })
    @SelectJson("vlaniprange")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -102,5 +102,5 @@ public interface GlobalVlanAsyncClient {
    @QueryParams(keys = "command", values = "deleteVlanIpRange")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteVlanIPRange(@QueryParam("id") long rangeId);
+   ListenableFuture<Void> deleteVlanIPRange(@QueryParam("id") String rangeId);
 }

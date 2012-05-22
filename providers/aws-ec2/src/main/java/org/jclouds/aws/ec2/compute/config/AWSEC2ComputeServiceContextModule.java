@@ -19,7 +19,6 @@
 package org.jclouds.aws.ec2.compute.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +40,7 @@ import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGro
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
@@ -62,6 +61,7 @@ import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
@@ -164,11 +164,6 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       return supplier;
    }
 
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(AMZN_LINUX).os64Bit(true);
-   }
-
    /**
     * With amazon linux 2011.09, ssh starts after package updates, which slows the boot process and
     * runs us out of ssh retries (context property {@code "jclouds.ssh.max-retries"}).
@@ -179,5 +174,10 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Override
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
       return options.as(EC2TemplateOptions.class).userData("#cloud-config\nrepo_upgrade: none\n".getBytes());
+   }
+   
+   @Override
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
+      return Optional.of(i.getInstance(ImageExtension.class));
    }
 }

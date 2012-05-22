@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
+
 import java.util.Date;
 
 /**
@@ -30,12 +32,12 @@ public class Event implements Comparable<Event> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private String description;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       //TODO Change to enum : the event level (INFO, WARN, ERROR)
       private String level;
       private String parentId;
@@ -44,7 +46,7 @@ public class Event implements Comparable<Event> {
       private String type;
       private String username;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -69,7 +71,7 @@ public class Event implements Comparable<Event> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -105,12 +107,12 @@ public class Event implements Comparable<Event> {
 
    }
 
-   private long id;
+   private String id;
    private String account;
    private String description;
    private Date created;
    private String domain;
-   private long domainId;
+   private String domainId;
    //TODO Change to enum : the event level (INFO, WARN, ERROR)
    private String level;
    private String parentId;
@@ -119,7 +121,7 @@ public class Event implements Comparable<Event> {
    private String type;
    private String username;
 
-   public Event(long id, String account, String description, Date created, String domain, long domainId, String level,
+   public Event(String id, String account, String description, Date created, String domain, String domainId, String level,
                 String parentId, String state, String type, String username) {
       this.id = id;
       this.account = account;
@@ -144,7 +146,7 @@ public class Event implements Comparable<Event> {
    /**
     * @return the ID of the event
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -180,7 +182,7 @@ public class Event implements Comparable<Event> {
    /**
     * @return the id of the account's domain
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -222,7 +224,7 @@ public class Event implements Comparable<Event> {
 
    @Override
    public int compareTo(Event arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    @Override
@@ -230,37 +232,26 @@ public class Event implements Comparable<Event> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Event event = (Event) o;
+      Event that = (Event) o;
 
-      if (domainId != event.domainId) return false;
-      if (id != event.id) return false;
-      if (account != null ? !account.equals(event.account) : event.account != null) return false;
-      if (created != null ? !created.equals(event.created) : event.created != null) return false;
-      if (description != null ? !description.equals(event.description) : event.description != null) return false;
-      if (domain != null ? !domain.equals(event.domain) : event.domain != null) return false;
-      if (level != null ? !level.equals(event.level) : event.level != null) return false;
-      if (parentId != null ? !parentId.equals(event.parentId) : event.parentId != null) return false;
-      if (state != null ? !state.equals(event.state) : event.state != null) return false;
-      if (type != null ? !type.equals(event.type) : event.type != null) return false;
-      if (username != null ? !username.equals(event.username) : event.username != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(description, that.description)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(level, that.level)) return false;
+      if (!Objects.equal(parentId, that.parentId)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(username, that.username)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (domain != null ? domain.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (level != null ? level.hashCode() : 0);
-      result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (username != null ? username.hashCode() : 0);
-      return result;
+       return Objects.hashCode(id, account, description, created, domain, domainId, level, parentId, state, type, username);
    }
 
    @Override

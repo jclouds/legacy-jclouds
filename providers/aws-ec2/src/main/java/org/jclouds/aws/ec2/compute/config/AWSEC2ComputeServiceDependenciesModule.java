@@ -42,19 +42,23 @@ import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
+import org.jclouds.ec2.compute.predicates.GetImageWhenStatusAvailablePredicateWithResult;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -94,6 +98,10 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(EC2ImageExtension.class);
+      bind(new TypeLiteral<PredicateWithResult<String, Image>>() {
+      }).to(GetImageWhenStatusAvailablePredicateWithResult.class);
    }
 
    @Provides

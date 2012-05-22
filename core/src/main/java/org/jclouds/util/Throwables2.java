@@ -114,12 +114,6 @@ public class Throwables2 {
       return null;
    }
 
-   public static <T> T propagateOrNull(Exception from) {
-      propagate(from);
-      assert false : "exception should have propogated";
-      return null;
-   }
-
    // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
    @SuppressWarnings( { "unchecked", "rawtypes" })
    public static Exception returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(Class[] exceptionTypes,

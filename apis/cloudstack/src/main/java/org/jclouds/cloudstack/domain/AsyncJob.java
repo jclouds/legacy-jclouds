@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -102,21 +103,21 @@ public class AsyncJob<T> {
    }
 
    public static class Builder<T> {
-      private long accountId = -1;
+      private String accountId;
       private String cmd;
       private Date created;
-      private long id = -1;
-      private long instanceId = -1;
+      private String id;
+      private String instanceId;
       private String instanceType;
-      private int progress = -1;
+      private int progress;
       private T result;
       private ResultCode resultCode = ResultCode.UNKNOWN;
       private String resultType;
       private AsyncJobError error;
       private Status status = Status.UNKNOWN;
-      private int userId = -1;
+      private String userId;
 
-      public Builder<T> accountId(long accountId) {
+      public Builder<T> accountId(String accountId) {
          this.accountId = accountId;
          return this;
       }
@@ -131,12 +132,12 @@ public class AsyncJob<T> {
          return this;
       }
 
-      public Builder<T> id(long id) {
+      public Builder<T> id(String id) {
          this.id = id;
          return this;
       }
 
-      public Builder<T> instanceId(long instanceId) {
+      public Builder<T> instanceId(String instanceId) {
          this.instanceId = instanceId;
          return this;
       }
@@ -176,7 +177,7 @@ public class AsyncJob<T> {
          return this;
       }
 
-      public Builder<T> userId(int userId) {
+      public Builder<T> userId(String userId) {
          this.userId = userId;
          return this;
       }
@@ -194,17 +195,17 @@ public class AsyncJob<T> {
    }
 
    @SerializedName("accountid")
-   private long accountId = -1;
+   private String accountId;
    private String cmd;
    private Date created;
    @SerializedName("jobid")
-   private long id = -1;
+   private String id;
    @SerializedName("jobinstanceid")
-   private long instanceId = -1;
+   private String instanceId;
    @SerializedName("jobinstancetype")
    private String instanceType;
    @SerializedName("jobprocstatus")
-   private int progress = -1;
+   private int progress;
    @SerializedName("jobresult")
    private T result;
    @SerializedName("jobresultcode")
@@ -214,11 +215,11 @@ public class AsyncJob<T> {
    @SerializedName("jobstatus")
    private Status status = Status.UNKNOWN;
    @SerializedName("userid")
-   private int userId = -1;
+   private String userId;
    private AsyncJobError error;
 
-   public AsyncJob(long accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-         int progress, T result, ResultCode resultCode, String resultType, Status status, int userId, AsyncJobError error) {
+   public AsyncJob(String accountId, String cmd, Date created, String id, String instanceId, String instanceType,
+         int progress, T result, ResultCode resultCode, String resultType, Status status, String userId, AsyncJobError error) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -245,7 +246,7 @@ public class AsyncJob<T> {
    /**
     * @return the account that executed the async command
     */
-   public long getAccountId() {
+   public String getAccountId() {
       return accountId;
    }
 
@@ -266,14 +267,14 @@ public class AsyncJob<T> {
    /**
     * @return async job ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return the unique ID of the instance/entity object related to the job
     */
-   public long getInstanceId() {
+   public String getInstanceId() {
       return instanceId;
    }
 
@@ -322,7 +323,7 @@ public class AsyncJob<T> {
    /**
     * @return the user that executed the async command
     */
-   public int getUserId() {
+   public String getUserId() {
       return userId;
    }
 
@@ -346,22 +347,8 @@ public class AsyncJob<T> {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (accountId ^ (accountId >>> 32));
-      result = prime * result + ((cmd == null) ? 0 : cmd.hashCode());
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (int) (instanceId ^ (instanceId >>> 32));
-      result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
-      result = prime * result + ((error == null) ? 0 : error.hashCode());
-      result = prime * result + progress;
-      result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
-      result = prime * result + resultCode.code();
-      result = prime * result + ((resultType == null) ? 0 : resultType.hashCode());
-      result = prime * result + status.code();
-      result = prime * result + userId;
-      return result;
+       return Objects.hashCode(accountId, cmd, created, id, instanceId, instanceType, error, progress,
+                               result, resultCode, resultType, status, userId);
    }
 
    @Override
@@ -372,51 +359,23 @@ public class AsyncJob<T> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AsyncJob<?> other = (AsyncJob<?>) obj;
-      if (accountId != other.accountId)
-         return false;
-      if (cmd == null) {
-         if (other.cmd != null)
-            return false;
-      } else if (!cmd.equals(other.cmd))
-         return false;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (id != other.id)
-         return false;
-      if (instanceId != other.instanceId)
-         return false;
-      if (instanceType == null) {
-         if (other.instanceType != null)
-            return false;
-      } else if (!instanceType.equals(other.instanceType))
-         return false;
-      if (error == null) {
-         if (other.error != null)
-            return false;
-      } else if (!error.equals(other.error))
-         return false;
-      if (progress != other.progress)
-         return false;
-      if (result == null) {
-         if (other.result != null)
-            return false;
-      } else if (!result.equals(other.result))
-         return false;
-      if (resultCode != other.resultCode)
-         return false;
-      if (resultType == null) {
-         if (other.resultType != null)
-            return false;
-      } else if (!resultType.equals(other.resultType))
-         return false;
-      if (status != other.status)
-         return false;
-      if (userId != other.userId)
-         return false;
+
+      AsyncJob<?> that = (AsyncJob<?>) obj;
+
+      if (!Objects.equal(accountId, that.accountId)) return false;
+      if (!Objects.equal(cmd, that.cmd)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(instanceId, that.instanceId)) return false;
+      if (!Objects.equal(instanceType, that.instanceType)) return false;
+      if (!Objects.equal(error, that.error)) return false;
+      if (!Objects.equal(progress, that.progress)) return false;
+      if (!Objects.equal(result, that.result)) return false;
+      if (!Objects.equal(resultCode, that.resultCode)) return false;
+      if (!Objects.equal(resultType, that.resultType)) return false;
+      if (!Objects.equal(status, that.status)) return false;
+      if (!Objects.equal(userId, that.userId)) return false;
+
       return true;
    }
 

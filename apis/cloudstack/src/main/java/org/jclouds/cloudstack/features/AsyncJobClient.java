@@ -51,5 +51,5 @@ public interface AsyncJobClient {
     *           asyncJob to get
     * @return asyncJob or null if not found
     */
-   <T> AsyncJob<T> getAsyncJob(long id);
+   <T> AsyncJob<T> getAsyncJob(String id);
 }

@@ -49,7 +49,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -64,10 +64,10 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    public void testListIPForwardingRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = NATAsyncClient.class.getMethod("listIPForwardingRules", ListIPForwardingRulesOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method,
-            ListIPForwardingRulesOptions.Builder.virtualMachineId(3));
+            ListIPForwardingRulesOptions.Builder.virtualMachineId("3"));
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&virtualmachineid=3 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&listAll=true&virtualmachineid=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -80,11 +80,11 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testGetIPForwardingRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NATAsyncClient.class.getMethod("getIPForwardingRule", long.class);
+      Method method = NATAsyncClient.class.getMethod("getIPForwardingRule", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&id=5 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&listAll=true&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -97,7 +97,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testCreateIPForwardingRuleForVirtualMachine() throws SecurityException, NoSuchMethodException,
          IOException {
-      Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", long.class, String.class, int.class,
+      Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
             CreateIPForwardingRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 7, "tcp", 22);
 
@@ -117,7 +117,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testCreateIPForwardingRuleForVirtualMachineOptions() throws SecurityException, NoSuchMethodException,
          IOException {
-      Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", long.class, String.class, int.class,
+      Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
             CreateIPForwardingRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 7, "tcp", 22,
             CreateIPForwardingRuleOptions.Builder.endPort(22));
@@ -137,7 +137,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testEnableStaticNATForVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NATAsyncClient.class.getMethod("enableStaticNATForVirtualMachine", long.class, long.class);
+      Method method = NATAsyncClient.class.getMethod("enableStaticNATForVirtualMachine", String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5, 6);
 
       assertRequestLineEquals(httpRequest,
@@ -154,7 +154,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testDisableStaticNATOnPublicIP() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NATAsyncClient.class.getMethod("disableStaticNATOnPublicIP", long.class);
+      Method method = NATAsyncClient.class.getMethod("disableStaticNATOnPublicIP", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
@@ -171,7 +171,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testDeleteIPForwardingRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NATAsyncClient.class.getMethod("deleteIPForwardingRule", long.class);
+      Method method = NATAsyncClient.class.getMethod("deleteIPForwardingRule", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,

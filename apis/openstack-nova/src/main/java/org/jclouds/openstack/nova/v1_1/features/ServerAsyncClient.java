@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.functions.ParseImageIdFromLocationHeader;
@@ -154,7 +155,7 @@ public interface ServerAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
+   ListenableFuture<ServerCreated> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
          @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**

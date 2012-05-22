@@ -45,7 +45,7 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
 
       for (AsyncJob<?> asyncJob : response) {
          assert asyncJob.getCmd() != null : asyncJob;
-         assert asyncJob.getUserId() >= 0 : asyncJob;
+         assert asyncJob.getUserId() != null : asyncJob;
          checkJob(asyncJob);
 
          AsyncJob<?> query = client.getAsyncJobClient().getAsyncJob(asyncJob.getId());

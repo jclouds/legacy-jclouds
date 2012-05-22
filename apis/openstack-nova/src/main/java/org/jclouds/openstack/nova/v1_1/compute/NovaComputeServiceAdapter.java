@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 
 import java.util.Set;
 
@@ -44,6 +45,7 @@ import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
@@ -101,8 +103,9 @@ public class NovaComputeServiceAdapter implements
       NovaTemplateOptions templateOptions = template.getOptions().as(NovaTemplateOptions.class);
 
       CreateServerOptions options = new CreateServerOptions();
-      options.metadata(templateOptions.getUserMetadata());
+      options.metadata(metadataAndTagsAsCommaDelimitedValue(template.getOptions()));
       options.securityGroupNames(templateOptions.getSecurityGroupNames());
+      options.userData(templateOptions.getUserData());
 
       Optional<String> privateKey = Optional.absent();
       if (templateOptions.getKeyPairName() != null) {
@@ -119,17 +122,14 @@ public class NovaComputeServiceAdapter implements
       String flavorId = template.getHardware().getProviderId();
 
       logger.debug(">> creating new server zone(%s) name(%s) image(%s) flavor(%s) options(%s)", zoneId, name, imageId, flavorId, options);
-      Server lightweightServer = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
-      Server heavyweightServer = novaClient.getServerClientForZone(zoneId).getServer(lightweightServer.getId());
-      Server server = Server.builder().fromServer(heavyweightServer)
-                                      .adminPass(lightweightServer.getAdminPass())
-                                      .build();
+      ServerCreated lightweightServer = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      Server server = novaClient.getServerClientForZone(zoneId).getServer(lightweightServer.getId());
 
       logger.trace("<< server(%s)", server.getId());
 
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
       if (!privateKey.isPresent())
-         credentialsBuilder.password(server.getAdminPass());
+         credentialsBuilder.password(lightweightServer.getAdminPass());
       return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), credentialsBuilder
                .build());
    }
@@ -219,12 +219,20 @@ public class NovaComputeServiceAdapter implements
 
    @Override
    public void resumeNode(String id) {
-      throw new UnsupportedOperationException("suspend not supported");
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      if (novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().resumeServer(zoneAndId.getId());
+      }
+      throw new UnsupportedOperationException("resume requires installation of the Admin Actions extension");
    }
 
    @Override
    public void suspendNode(String id) {
-      throw new UnsupportedOperationException("suspend not supported");
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      if (novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaClient.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().suspendServer(zoneAndId.getId());
+      }
+      throw new UnsupportedOperationException("suspend requires installation of the Admin Actions extension");
    }
 
 }

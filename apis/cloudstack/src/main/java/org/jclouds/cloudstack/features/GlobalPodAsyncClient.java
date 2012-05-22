@@ -58,7 +58,7 @@ public interface GlobalPodAsyncClient {
     * @see PodClient#listPods
     */
    @GET
-   @QueryParams(keys = "command", values = "listPods")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listPods", "true" })
    @SelectJson("pod")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -68,12 +68,12 @@ public interface GlobalPodAsyncClient {
     * @see PodClient#getPod
     */
    @GET
-   @QueryParams(keys = "command", values = "listPods")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listPods", "true" })
    @SelectJson("pod")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Pod> getPod(@QueryParam("id") long id);
+   ListenableFuture<Pod> getPod(@QueryParam("id") String id);
 
    /**
     * Creates a new Pod.
@@ -92,7 +92,7 @@ public interface GlobalPodAsyncClient {
    @SelectJson("pod")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Pod> createPod(@QueryParam("name") String name, @QueryParam("zoneid") long zoneId, @QueryParam("startip") String startIp, @QueryParam("endip") String endIp, @QueryParam("gateway") String gateway, @QueryParam("netmask") String netmask, CreatePodOptions... createPodOptions);
+   ListenableFuture<Pod> createPod(@QueryParam("name") String name, @QueryParam("zoneid") String zoneId, @QueryParam("startip") String startIp, @QueryParam("endip") String endIp, @QueryParam("gateway") String gateway, @QueryParam("netmask") String netmask, CreatePodOptions... createPodOptions);
 
    /**
     * Creates a new Pod.
@@ -110,7 +110,7 @@ public interface GlobalPodAsyncClient {
    @SelectJson("pod")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Pod> createPod(@QueryParam("name") String name, @QueryParam("zoneid") long zoneId, @QueryParam("startip") String startIp, @QueryParam("gateway") String gateway, @QueryParam("netmask") String netmask, CreatePodOptions... createPodOptions);
+   ListenableFuture<Pod> createPod(@QueryParam("name") String name, @QueryParam("zoneid") String zoneId, @QueryParam("startip") String startIp, @QueryParam("gateway") String gateway, @QueryParam("netmask") String netmask, CreatePodOptions... createPodOptions);
 
    /**
     * Deletes a Pod.
@@ -120,7 +120,7 @@ public interface GlobalPodAsyncClient {
    @QueryParams(keys = "command", values = "deletePod")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deletePod(@QueryParam("id") long id);
+   ListenableFuture<Void> deletePod(@QueryParam("id") String id);
 
    /**
     * Updates a Pod.
@@ -133,6 +133,6 @@ public interface GlobalPodAsyncClient {
    @SelectJson("pod")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Pod> updatePod(@QueryParam("id") long id, UpdatePodOptions... updatePodOptions);
+   ListenableFuture<Pod> updatePod(@QueryParam("id") String id, UpdatePodOptions... updatePodOptions);
 
 }

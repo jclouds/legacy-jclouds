@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -27,9 +28,9 @@ import com.google.gson.annotations.SerializedName;
 public class AsyncCreateResponse {
    public static final AsyncCreateResponse UNINITIALIZED = new AsyncCreateResponse();
    
-   private long id = -1;
+   private String id;
    @SerializedName("jobid")
-   private long jobId = -1;
+   private String jobId;
 
    /**
     * present only for serializer
@@ -39,7 +40,7 @@ public class AsyncCreateResponse {
 
    }
 
-   public AsyncCreateResponse(long id, long jobId) {
+   public AsyncCreateResponse(String id, String jobId) {
       this.id = id;
       this.jobId = jobId;
    }
@@ -47,24 +48,20 @@ public class AsyncCreateResponse {
    /**
     * @return id of the resource being created
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
    /**
     * @return id of the job in progress
     */
-   public long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (int) (jobId ^ (jobId >>> 32));
-      return result;
+       return Objects.hashCode(id, jobId);
    }
 
    @Override
@@ -75,11 +72,11 @@ public class AsyncCreateResponse {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AsyncCreateResponse other = (AsyncCreateResponse) obj;
-      if (id != other.id)
-         return false;
-      if (jobId != other.jobId)
-         return false;
+      AsyncCreateResponse that = (AsyncCreateResponse) obj;
+
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+
       return true;
    }
 

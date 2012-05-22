@@ -53,7 +53,7 @@ public class VMGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<VMGrou
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listInstanceGroups HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listInstanceGroups&listAll=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -68,11 +68,11 @@ public class VMGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<VMGrou
    public void testListVMGroupsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMGroupAsyncClient.class.getMethod("listInstanceGroups", ListVMGroupsOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, ListVMGroupsOptions.Builder.account("fred")
-         .domainId(5).id(6));
+         .domainId("5").id("6"));
 
       assertRequestLineEquals(
          httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listInstanceGroups&account=fred&domainid=5&id=6 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listInstanceGroups&listAll=true&account=fred&domainid=5&id=6 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -85,11 +85,11 @@ public class VMGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<VMGrou
    }
 
    public void testGetVMGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VMGroupAsyncClient.class.getMethod("getInstanceGroup", long.class);
+      Method method = VMGroupAsyncClient.class.getMethod("getInstanceGroup", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listInstanceGroups&id=5 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listInstanceGroups&listAll=true&id=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -121,7 +121,7 @@ public class VMGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<VMGrou
 
    public void testCreateVMGroupOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMGroupAsyncClient.class.getMethod("createInstanceGroup", String.class, CreateVMGroupOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "goo", CreateVMGroupOptions.Builder.account("foo").domainId(42));
+      HttpRequest httpRequest = processor.createRequest(method, "goo", CreateVMGroupOptions.Builder.account("foo").domainId("42"));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=createInstanceGroup&name=goo&account=foo&domainid=42 HTTP/1.1");
@@ -137,7 +137,7 @@ public class VMGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<VMGrou
    }
 
    public void testUpdateVMGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VMGroupAsyncClient.class.getMethod("updateInstanceGroup", long.class, UpdateVMGroupOptions[].class);
+      Method method = VMGroupAsyncClient.class.getMethod("updateInstanceGroup", String.class, UpdateVMGroupOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 5, UpdateVMGroupOptions.Builder.name("fred"));
 
       assertRequestLineEquals(httpRequest,
@@ -154,7 +154,7 @@ public class VMGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<VMGrou
    }
 
    public void testDeleteVMGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VMGroupAsyncClient.class.getMethod("deleteInstanceGroup", long.class);
+      Method method = VMGroupAsyncClient.class.getMethod("deleteInstanceGroup", String.class);
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,

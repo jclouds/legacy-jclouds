@@ -18,13 +18,12 @@
  */
 package org.jclouds.ec2.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 @Singleton
 public class ReturnVoidOnVolumeAvailable implements Function<Exception, Void> {
@@ -36,7 +35,7 @@ public class ReturnVoidOnVolumeAvailable implements Function<Exception, Void> {
                   && e.getError().getCode().contains("available"))
             return null;
       }
-      return Void.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 
 }

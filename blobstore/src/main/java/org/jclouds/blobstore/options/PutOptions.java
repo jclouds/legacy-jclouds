@@ -77,23 +77,39 @@ public class PutOptions implements Cloneable {
    }
 
    /**
-    * split large blobs into pieces, if supported by the provider
+    * split large blobs into pieces, if supported by the provider.
+    * 
+    * Equivalent to <code>multipart(true)</code>
     */
    public PutOptions multipart() {
-      this.multipart = true;
+      return multipart(true);
+   }
+
+   /**
+    * whether to split large blobs into pieces, if supported by the provider
+    */
+   public PutOptions multipart(boolean val) {
+      this.multipart = val;
       return this;
    }
 
    public static class Builder {
 
+      public static PutOptions fromPutOptions(PutOptions putOptions) {
+         return multipart(putOptions.multipart);
+      }
+      
       /**
        * @see PutOptions#multipart()
        */
       public static PutOptions multipart() {
-         PutOptions options = new PutOptions();
-         return options.multipart();
+         return multipart(true);
       }
 
+      public static PutOptions multipart(boolean val) {
+         PutOptions options = new PutOptions();
+         return options.multipart(val);
+      }
    }
 
    @Override

@@ -18,9 +18,7 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Maps.filterValues;
+import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromValuesOfEmptyString;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +33,7 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -55,8 +54,9 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
    @Inject
    protected AWSRunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
          Map<String, Credentials> credentialStore, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap,
-         @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
-      super(instanceToNodeState, credentialStore, imageMap, locations, hardware);
+         @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware,
+         GroupNamingConvention.Factory namingConvention) {
+      super(instanceToNodeState, credentialStore, imageMap, locations, hardware, namingConvention);
    }
 
    @Override
@@ -85,8 +85,8 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
    @Override
    protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
       AWSRunningInstance awsInstance = AWSRunningInstance.class.cast(instance);
-      Map<String, String> tags = awsInstance.getTags();
-      return super.buildInstance(instance, builder).name(tags.get("Name")).tags(
-               filterValues(tags, equalTo("")).keySet()).userMetadata(filterValues(tags, not(equalTo(""))));
+      builder.name(awsInstance.getTags().get("Name"));
+      addMetadataAndParseTagsFromValuesOfEmptyString(builder, awsInstance.getTags());
+      return super.buildInstance(instance, builder);
    }
 }

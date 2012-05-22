@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
 public class NetworkPredicatesTest {
 
    public void testHasLoadBalancerService() {
-      Network network = Network.builder().id(204).services(ImmutableSet.of(new NetworkService("Lb"))).build();
+      Network network = Network.builder().id("204").services(ImmutableSet.of(new NetworkService("Lb"))).build();
 
       assert hasLoadBalancerService().apply(network);
       assert !supportsStaticNAT().apply(network);
@@ -53,7 +53,7 @@ public class NetworkPredicatesTest {
    public void testSupportsStaticNATFindsWhenFirewallHasStaticNatFeature() {
       Network network = Network
             .builder()
-            .id(204)
+            .id("204")
             .services(
                   ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true"))))
             .build();
@@ -64,7 +64,7 @@ public class NetworkPredicatesTest {
    }
 
    public void testNoSupport() {
-      Network network = Network.builder().id(204)
+      Network network = Network.builder().id("204")
             .services(ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of()))).build();
 
       assert !hasLoadBalancerService().apply(network);
@@ -75,7 +75,7 @@ public class NetworkPredicatesTest {
    public void testSupportsPortForwardingFindsWhenFirewallHasPortForwardingFeature() {
       Network network = Network
             .builder()
-            .id(204)
+            .id("204")
             .services(
                   ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("PortForwarding",
                         "true")))).build();
@@ -88,7 +88,7 @@ public class NetworkPredicatesTest {
    public void testSupportsPortForwardingAndStaticNATWhenFirewallHasFeatures() {
       Network network = Network
             .builder()
-            .id(204)
+            .id("204")
             .services(
                   ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true",
                         "PortForwarding", "true")))).build();
@@ -99,12 +99,12 @@ public class NetworkPredicatesTest {
    }
 
    public void testDefaultNetworkInZone() {
-      Network defaultInZone = Network.builder().isDefault(true).zoneId(42).build();
-      Network defaultNotInZone = Network.builder().isDefault(true).zoneId(200).build();
-      Network notDefaultInZone = Network.builder().isDefault(false).zoneId(42).build();
-      Network notDefaultNotInZone = Network.builder().isDefault(false).zoneId(200).build();
+      Network defaultInZone = Network.builder().isDefault(true).zoneId("42").build();
+      Network defaultNotInZone = Network.builder().isDefault(true).zoneId("200").build();
+      Network notDefaultInZone = Network.builder().isDefault(false).zoneId("42").build();
+      Network notDefaultNotInZone = Network.builder().isDefault(false).zoneId("200").build();
 
-      Predicate<Network> predicate = defaultNetworkInZone(42);
+      Predicate<Network> predicate = defaultNetworkInZone("42");
       assertTrue(predicate.apply(defaultInZone));
       assertFalse(predicate.apply(defaultNotInZone));
       assertFalse(predicate.apply(notDefaultInZone));

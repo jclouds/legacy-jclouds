@@ -50,7 +50,7 @@ public interface LimitAsyncClient {
     * @see org.jclouds.cloudstack.features.LimitClient#listResourceLimits
     */
    @GET
-   @QueryParams(keys = "command", values = "listResourceLimits")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listResourceLimits", "true" })
    @SelectJson("resourcelimit")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)

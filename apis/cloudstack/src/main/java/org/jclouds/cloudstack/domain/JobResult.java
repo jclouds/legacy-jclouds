@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -60,17 +61,15 @@ public class JobResult implements Comparable<JobResult> {
 
       JobResult that = (JobResult) o;
 
-      if (success != that.success) return false;
-      if (displayText != null ? !displayText.equals(that.displayText) : that.displayText != null) return false;
+      if (!Objects.equal(success, that.success)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (success ? 1 : 0);
-      result = 31 * result + (displayText != null ? displayText.hashCode() : 0);
-      return result;
+       return Objects.hashCode(success, displayText);
    }
 
    @Override

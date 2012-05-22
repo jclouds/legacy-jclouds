@@ -18,20 +18,14 @@
  */
 package org.jclouds.concurrent.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.concurrent.DynamicExecutors.newScalingThreadPool;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ThreadFactory;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -95,14 +89,14 @@ public class ExecutorServiceModule extends AbstractModule {
       this.ioExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(ioThreads));
    }
 
-   static ExecutorService addToStringOnSubmit(ExecutorService executor) {
+   ExecutorService addToStringOnSubmit(ExecutorService executor) {
       if (executor != null) {
          return new DescribingExecutorService(executor);
       }
       return executor;
    }
 
-   static ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
+   ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
       // we detect behavior based on the class
       if (executor != null && !(executor.getClass().isAnnotationPresent(SingleThreaded.class))
                && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
@@ -122,205 +116,6 @@ public class ExecutorServiceModule extends AbstractModule {
    protected void configure() {
    }
 
-   static class DescribingExecutorService implements ExecutorService {
-
-      protected final ExecutorService delegate;
-
-      public DescribingExecutorService(ExecutorService delegate) {
-         this.delegate = checkNotNull(delegate, "delegate");
-      }
-
-      @Override
-      public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-         return delegate.awaitTermination(timeout, unit);
-      }
-
-      @Override
-      public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-         return delegate.invokeAll(tasks);
-      }
-
-      @Override
-      public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-               throws InterruptedException {
-         return delegate.invokeAll(tasks, timeout, unit);
-      }
-
-      @Override
-      public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
-         return delegate.invokeAny(tasks);
-      }
-
-      @Override
-      public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-               throws InterruptedException, ExecutionException, TimeoutException {
-         return delegate.invokeAny(tasks, timeout, unit);
-      }
-
-      @Override
-      public boolean isShutdown() {
-         return delegate.isShutdown();
-      }
-
-      @Override
-      public boolean isTerminated() {
-         return delegate.isTerminated();
-      }
-
-      @Override
-      public void shutdown() {
-         delegate.shutdown();
-      }
-
-      @Override
-      public List<Runnable> shutdownNow() {
-         return delegate.shutdownNow();
-      }
-
-      @Override
-      public <T> Future<T> submit(Callable<T> task) {
-         return new DescribedFuture<T>(delegate.submit(task), task.toString(), getStackTraceHere());
-      }
-
-      @SuppressWarnings({ "unchecked", "rawtypes" })
-      @Override
-      public Future<?> submit(Runnable task) {
-         return new DescribedFuture(delegate.submit(task), task.toString(), getStackTraceHere());
-      }
-
-      @Override
-      public <T> Future<T> submit(Runnable task, T result) {
-         return new DescribedFuture<T>(delegate.submit(task, result), task.toString(), getStackTraceHere());
-      }
-
-      @Override
-      public void execute(Runnable arg0) {
-         delegate.execute(arg0);
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         return delegate.equals(obj);
-      }
-
-      @Override
-      public int hashCode() {
-         return delegate.hashCode();
-      }
-
-      @Override
-      public String toString() {
-         return delegate.toString();
-      }
-
-   }
-
-   static class DescribedFuture<T> implements Future<T> {
-      protected final Future<T> delegate;
-      private final String description;
-      private StackTraceElement[] submissionTrace;
-
-      public DescribedFuture(Future<T> delegate, String description, StackTraceElement[] submissionTrace) {
-         this.delegate = delegate;
-         this.description = description;
-         this.submissionTrace = submissionTrace;
-      }
-
-      @Override
-      public boolean cancel(boolean arg0) {
-         return delegate.cancel(arg0);
-      }
-
-      @Override
-      public T get() throws InterruptedException, ExecutionException {
-         try {
-            return delegate.get();
-         } catch (ExecutionException e) {
-            throw ensureCauseHasSubmissionTrace(e);
-         } catch (InterruptedException e) {
-            throw ensureCauseHasSubmissionTrace(e);
-         }
-      }
-
-      @Override
-      public T get(long arg0, TimeUnit arg1) throws InterruptedException, ExecutionException, TimeoutException {
-         try {
-            return delegate.get(arg0, arg1);
-         } catch (ExecutionException e) {
-            throw ensureCauseHasSubmissionTrace(e);
-         } catch (InterruptedException e) {
-            throw ensureCauseHasSubmissionTrace(e);
-         } catch (TimeoutException e) {
-            throw ensureCauseHasSubmissionTrace(e);
-         }
-      }
-
-      /** This method does the work to ensure _if_ a submission stack trace was provided,
-       * it is included in the exception.  most errors are thrown from the frame of the
-       * Future.get call, with a cause that took place in the executor's thread.
-       * We extend the stack trace of that cause with the submission stack trace.
-       * (An alternative would be to put the stack trace as a root cause,
-       * at the bottom of the stack, or appended to all traces, or inserted
-       * after the second cause, etc ... but since we can't change the "Caused by:"
-       * method in Throwable the compromise made here seems best.)
-       */
-      private <ET extends Exception> ET ensureCauseHasSubmissionTrace(ET e) {
-         if (submissionTrace==null) return e;
-         if (e.getCause()==null) {
-            ExecutionException ee = new ExecutionException("task submitted from the following trace", null);
-            e.initCause(ee);
-            return e;
-         }
-         Throwable cause = e.getCause();
-         StackTraceElement[] causeTrace = cause.getStackTrace();
-         boolean causeIncludesSubmissionTrace = submissionTrace.length >= causeTrace.length;
-         for (int i=0; causeIncludesSubmissionTrace && i<submissionTrace.length; i++) {
-            if (!causeTrace[causeTrace.length-1-i].equals(submissionTrace[submissionTrace.length-1-i])) {
-               causeIncludesSubmissionTrace = false;
-            }
-         }
-         
-         if (!causeIncludesSubmissionTrace) {
-            cause.setStackTrace(merge(causeTrace, submissionTrace));
-         }
-         
-         return e;
-      }
-
-      private StackTraceElement[] merge(StackTraceElement[] t1, StackTraceElement[] t2) {
-         StackTraceElement[] t12 = new StackTraceElement[t1.length + t2.length];
-         System.arraycopy(t1, 0, t12, 0, t1.length);
-         System.arraycopy(t2, 0, t12, t1.length, t2.length);
-         return t12;
-      }
-
-      @Override
-      public boolean isCancelled() {
-         return delegate.isCancelled();
-      }
-
-      @Override
-      public boolean isDone() {
-         return delegate.isDone();
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         return delegate.equals(obj);
-      }
-
-      @Override
-      public int hashCode() {
-         return delegate.hashCode();
-      }
-
-      @Override
-      public String toString() {
-         return description;
-      }
-
-   }
-   
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_USER_THREADS)
@@ -346,21 +141,24 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    @VisibleForTesting
-   static ExecutorService newCachedThreadPoolNamed(String name) {
-      return Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat(name).setThreadFactory(
-               Executors.defaultThreadFactory()).build());
+   ExecutorService newCachedThreadPoolNamed(String name) {
+      return Executors.newCachedThreadPool(namedThreadFactory(name));
    }
 
    @VisibleForTesting
-   static ExecutorService newThreadPoolNamed(String name, int maxCount) {
+   ExecutorService newThreadPoolNamed(String name, int maxCount) {
       return maxCount == 0 ? newCachedThreadPoolNamed(name) : newScalingThreadPoolNamed(name, maxCount);
    }
 
    @VisibleForTesting
-   static ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
-      return newScalingThreadPool(1, maxCount, 60L * 1000, new ThreadFactoryBuilder().setNameFormat(name)
-               .setThreadFactory(Executors.defaultThreadFactory()).build());
+   ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
+      return newScalingThreadPool(1, maxCount, 60L * 1000, namedThreadFactory(name));
    }
+
+   protected ThreadFactory namedThreadFactory(String name) {
+      return new ThreadFactoryBuilder().setNameFormat(name).setThreadFactory(Executors.defaultThreadFactory()).build();
+   }
+
 
    /** returns the stack trace at the caller */
    static StackTraceElement[] getStackTraceHere() {

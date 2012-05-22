@@ -55,13 +55,13 @@ public class TemplateToOperatingSystem implements Function<Template, OperatingSy
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Supplier<Map<Long, OSType>> osTypes;
-   private final Supplier<Map<Long, String>> osCategories;
+   private final Supplier<Map<String, OSType>> osTypes;
+   private final Supplier<Map<String, String>> osCategories;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public TemplateToOperatingSystem(@Memoized Supplier<Map<Long, OSType>> osTypes,
-         @Memoized Supplier<Map<Long, String>> osCategories, Map<OsFamily, Map<String, String>> osVersionMap) {
+   public TemplateToOperatingSystem(@Memoized Supplier<Map<String, OSType>> osTypes,
+         @Memoized Supplier<Map<String, String>> osCategories, Map<OsFamily, Map<String, String>> osVersionMap) {
       this.osTypes = checkNotNull(osTypes, "osTypes");
       this.osCategories = checkNotNull(osCategories, "osCategories");
       this.osVersionMap = checkNotNull(osVersionMap, "osVersionMap");

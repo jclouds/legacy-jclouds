@@ -87,7 +87,7 @@ public interface TemplateClient {
     * @return data about the newly-registered template
     */
    Set<Template> registerTemplate(TemplateMetadata templateMetadata, String format, String hypervisor, String url,
-         long zoneId, RegisterTemplateOptions... options);
+         String zoneId, RegisterTemplateOptions... options);
 
    /**
     * Updates attributes of a template.
@@ -101,7 +101,7 @@ public interface TemplateClient {
     *           optional arguments
     * @return updated data about the template
     */
-   Template updateTemplate(long id, UpdateTemplateOptions... options);
+   Template updateTemplate(String id, UpdateTemplateOptions... options);
 
    /**
     * Copies a template from one zone to another.
@@ -116,7 +116,7 @@ public interface TemplateClient {
     *           ID of the zone the template is being copied to.
     * @return an asynchronous job response
     */
-   AsyncCreateResponse copyTemplateToZone(long id, long sourceZoneId, long destZoneId);
+   AsyncCreateResponse copyTemplateToZone(String id, String sourceZoneId, String destZoneId);
 
    /**
     * Deletes a template from the system. All virtual machines using the deleted
@@ -130,7 +130,7 @@ public interface TemplateClient {
     * @param options
     *           optional arguments
     */
-   AsyncCreateResponse deleteTemplate(long id, DeleteTemplateOptions... options);
+   AsyncCreateResponse deleteTemplate(String id, DeleteTemplateOptions... options);
 
    /**
     * List all executable templates.
@@ -165,7 +165,7 @@ public interface TemplateClient {
     *           zone template is defined in
     * @return template or null if not found
     */
-   Template getTemplateInZone(long templateId, long zoneId);
+   Template getTemplateInZone(String templateId, String zoneId);
 
    /**
     * Updates a template visibility permissions. A public template is visible to
@@ -181,7 +181,7 @@ public interface TemplateClient {
     * @param options
     *           optional arguments
     */
-   void updateTemplatePermissions(long id, UpdateTemplatePermissionsOptions... options);
+   void updateTemplatePermissions(String id, UpdateTemplatePermissionsOptions... options);
 
    /**
     * List template visibility and all accounts that have permissions to view
@@ -195,7 +195,7 @@ public interface TemplateClient {
     *           optional arguments
     * @return the list of permissions that apply to the template
     */
-   Set<TemplatePermission> listTemplatePermissions(long id, AccountInDomainOptions... options);
+   Set<TemplatePermission> listTemplatePermissions(String id, AccountInDomainOptions... options);
 
    /**
     * 
@@ -212,6 +212,6 @@ public interface TemplateClient {
     *           optional arguments
     * @return an asynchronous job response
     */
-   AsyncCreateResponse extractTemplate(long id, ExtractMode mode, long zoneId,
+   AsyncCreateResponse extractTemplate(String id, ExtractMode mode, String zoneId,
          ExtractTemplateOptions... options);
 }

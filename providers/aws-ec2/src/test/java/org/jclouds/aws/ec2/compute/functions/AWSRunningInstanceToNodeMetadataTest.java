@@ -23,12 +23,14 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -53,7 +55,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -86,7 +90,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                .instanceState(InstanceState.RUNNING)
                .privateDnsName("ip-10-212-81-7.ec2.internal")
                .dnsName("ec2-174-129-173-155.compute-1.amazonaws.com")
-               .keyName("jclouds#zkclustertest#us-east-1#23")
+               .keyName("jclouds#zkclustertest#23")
                .amiLaunchIndex("0")
                .instanceType("t1.micro")
                .launchTime(dateService.iso8601DateParse("2011-08-16T13:40:50.000Z"))
@@ -95,7 +99,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                .monitoringState(MonitoringState.DISABLED)
                .privateIpAddress("10.212.81.7")
                .ipAddress("174.129.173.155")
-               .securityGroupIdToNames(ImmutableMap.<String, String> of("sg-ef052b86", "jclouds#zkclustertest#us-east-1"))
+               .securityGroupIdToNames(ImmutableMap.<String, String> of("sg-ef052b86", "jclouds#zkclustertest"))
                .rootDeviceType(RootDeviceType.EBS)
                .rootDeviceName("/dev/sda1")
                .device("/dev/sda1", new BlockDevice("vol-5829fc32", Attachment.Status.ATTACHED, dateService.iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
@@ -111,7 +115,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                         .instanceState(InstanceState.RUNNING)
                         .privateDnsName("ip-10-212-185-8.ec2.internal")
                         .dnsName("ec2-50-19-207-248.compute-1.amazonaws.com")
-                        .keyName("jclouds#zkclustertest#us-east-1#23")
+                        .keyName("jclouds#zkclustertest#23")
                         .amiLaunchIndex("0")
                         .instanceType("t1.micro")
                         .launchTime(dateService.iso8601DateParse("2011-08-16T13:40:50.000Z"))
@@ -120,7 +124,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                         .monitoringState(MonitoringState.DISABLED)
                         .privateIpAddress("10.212.185.8")
                         .ipAddress("50.19.207.248")
-                        .securityGroupIdToNames(ImmutableMap.<String, String>of("sg-ef052b86", "jclouds#zkclustertest#us-east-1"))
+                        .securityGroupIdToNames(ImmutableMap.<String, String>of("sg-ef052b86", "jclouds#zkclustertest"))
                         .rootDeviceType(RootDeviceType.EBS)
                         .rootDeviceName("/dev/sda1")
                         .device("/dev/sda1", new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService.iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
@@ -195,9 +199,19 @@ public class AWSRunningInstanceToNodeMetadataTest {
          }
 
       };
+      
+      GroupNamingConvention.Factory namingConvention = Guice.createInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(),new AWSEC2ApiMetadata().getDefaultProperties());
+         }
+
+      }).getInstance(GroupNamingConvention.Factory.class);
+
       AWSRunningInstanceToNodeMetadata parser = new AWSRunningInstanceToNodeMetadata(instanceToNodeState,
             credentialStore, Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(instanceToImage),
-            locationSupplier, hardwareSupplier);
+            locationSupplier, hardwareSupplier, namingConvention);
       return parser;
    }
 

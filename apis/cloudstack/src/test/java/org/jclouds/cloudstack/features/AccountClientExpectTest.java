@@ -49,7 +49,7 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&apiKey=identity&signature=maSZcp9ivkL7osVh87qxlrYbZC8%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&apiKey=identity&signature=yMZYMZxzFlaUsbfxtuppMwNhpXI%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -62,7 +62,7 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<
 
       Set<User> users = ImmutableSet.of(
          User.builder()
-            .id(505)
+            .id("505")
             .name("jclouds")
             .firstName("Adrian")
             .lastName("Cole")
@@ -71,17 +71,17 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<
             .state(User.State.ENABLED)
             .account("jclouds")
             .accountType(Account.Type.USER)
-            .domainId(457)
+            .domainId("457")
             .domain("AA000062-jclouds-dev")
             .apiKey("APIKEY")
             .secretKey("SECRETKEY").build());
 
       assertEquals(client.listAccounts(),
          ImmutableSet.of(Account.builder()
-            .id(505)
+            .id("505")
             .name("jclouds")
             .type(Account.Type.USER)
-            .domainId(457)
+            .domainId("457")
             .domain("AA000062-jclouds-dev")
             .receivedBytes(318900216)
             .sentBytes(23189677)

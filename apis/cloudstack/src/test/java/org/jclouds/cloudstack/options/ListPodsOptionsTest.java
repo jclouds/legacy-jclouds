@@ -39,12 +39,12 @@ import com.google.common.collect.ImmutableList;
 public class ListPodsOptionsTest {
 
    public void testId() {
-      ListPodsOptions options = new ListPodsOptions().id(6);
+      ListPodsOptions options = new ListPodsOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListPodsOptions options = id(6);
+      ListPodsOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -79,12 +79,12 @@ public class ListPodsOptionsTest {
    }
 
    public void testZoneId() {
-      ListPodsOptions options = new ListPodsOptions().zoneId(6);
+      ListPodsOptions options = new ListPodsOptions().zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testZoneIdStatic() {
-      ListPodsOptions options = zoneId(6);
+      ListPodsOptions options = zoneId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 

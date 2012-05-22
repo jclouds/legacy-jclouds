@@ -18,8 +18,6 @@
  */
 package org.jclouds.gae.config;
 
-import javax.inject.Singleton;
-
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
@@ -32,7 +30,10 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.inject.Injector;
+import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 
 /**
@@ -43,26 +44,46 @@ import com.google.inject.Provides;
 @ConfiguresHttpCommandExecutorService
 @ConfiguresExecutorService
 @SingleThreaded
-public class GoogleAppEngineConfigurationModule extends ExecutorServiceModule {
+public class GoogleAppEngineConfigurationModule extends AbstractModule {
+   private final Module executorServiceModule;
 
    public GoogleAppEngineConfigurationModule() {
-      super(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor());
+      this(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
+   }
+
+   /**
+    * Used when you are creating multiple contexts in the same app.
+    * 
+    * @param currentRequestExecutorService
+    * @see CurrentRequestExecutorServiceModule#currentRequestExecutorService
+    */
+   public GoogleAppEngineConfigurationModule(Module executorServiceModule) {
+      this.executorServiceModule = executorServiceModule;
+   }
+
+   /**
+    * Used when you are creating multiple contexts in the same app.
+    * 
+    * @param memoizedCurrentRequestExecutorService
+    * @see CurrentRequestExecutorServiceModule#memoizedCurrentRequestExecutorService
+    */
+   public GoogleAppEngineConfigurationModule(Supplier<ListeningExecutorService> memoizedCurrentRequestExecutorService) {
+      this.executorServiceModule = new CurrentRequestExecutorServiceModule(memoizedCurrentRequestExecutorService);
    }
 
    @Override
    protected void configure() {
-      super.configure();
+      install(executorServiceModule);
       bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class);
+      bindHttpCommandExecutorService();
    }
 
-   @Singleton
-   @Provides
-   protected HttpCommandExecutorService providerHttpCommandExecutorService(Injector injector) {
-      return injector.getInstance(GaeHttpCommandExecutorService.class);
+   protected void bindHttpCommandExecutorService() {
+      bind(HttpCommandExecutorService.class).to(GaeHttpCommandExecutorService.class);
    }
 
    @Provides
-   URLFetchService provideURLFetchService() {
+   protected URLFetchService provideURLFetchService() {
       return URLFetchServiceFactory.getURLFetchService();
    }
 }

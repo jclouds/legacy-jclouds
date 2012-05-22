@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -93,26 +94,26 @@ public class StoragePool implements Comparable<StoragePool> {
       private Builder() {
       }
 
-      private long id;
+      private String id;
       private String name;
       private String path;
       private String tags;
       private State state;
       private Type type;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
-      private long podId;
+      private String podId;
       private String podName;
-      private long clusterId;
+      private String clusterId;
       private String clusterName;
       private Date created;
       private long diskSizeAllocated;
       private long diskSizeTotal;
       private String ipAddress;
-      private Long jobId;
+      private String jobId;
       private String jobStatus;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -142,7 +143,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -152,7 +153,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder podId(long podId) {
+      public Builder podId(String podId) {
          this.podId = podId;
          return this;
       }
@@ -162,7 +163,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder clusterId(long clusterId) {
+      public Builder clusterId(String clusterId) {
          this.clusterId = clusterId;
          return this;
       }
@@ -192,7 +193,7 @@ public class StoragePool implements Comparable<StoragePool> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -207,30 +208,30 @@ public class StoragePool implements Comparable<StoragePool> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    private String path;
    private String tags;
    private State state;
    private Type type;
-   @SerializedName("zoneid") private long zoneId;
+   @SerializedName("zoneid") private String zoneId;
    @SerializedName("zonename") private String zoneName;
-   @SerializedName("podid") private long podId;
+   @SerializedName("podid") private String podId;
    @SerializedName("podname") private String podName;
-   @SerializedName("clusterid") private long clusterId;
+   @SerializedName("clusterid") private String clusterId;
    @SerializedName("clustername") private String clusterName;
    private Date created;
    @SerializedName("disksizeallocated") private long diskSizeAllocated;
    @SerializedName("disksizetotal") private long diskSizeTotal;
    @SerializedName("ipaddress") private String ipAddress;
-   @SerializedName("jobid") private Long jobId;
+   @SerializedName("jobid") private String jobId;
    @SerializedName("jobstatus") private String jobStatus;
 
    /* Exists only for the serializer */
    StoragePool() {
    }
 
-   public StoragePool(long id, String name, String path, String tags, State state, Type type, long zoneId, String zoneName, long podId, String podName, long clusterId, String clusterName, Date created, long diskSizeAllocated, long diskSizeTotal, String ipAddress, Long jobId, String jobStatus) {
+   public StoragePool(String id, String name, String path, String tags, State state, Type type, String zoneId, String zoneName, String podId, String podName, String clusterId, String clusterName, Date created, long diskSizeAllocated, long diskSizeTotal, String ipAddress, String jobId, String jobStatus) {
       this.id = id;
       this.name = name;
       this.path = path;
@@ -251,7 +252,7 @@ public class StoragePool implements Comparable<StoragePool> {
       this.jobStatus = jobStatus;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -275,7 +276,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return type;
    }
 
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -283,7 +284,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return zoneName;
    }
 
-   public long getPodId() {
+   public String getPodId() {
       return podId;
    }
 
@@ -291,7 +292,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return podName;
    }
 
-   public long getClusterId() {
+   public String getClusterId() {
       return clusterId;
    }
 
@@ -315,7 +316,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return ipAddress;
    }
 
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -330,49 +331,33 @@ public class StoragePool implements Comparable<StoragePool> {
 
       StoragePool that = (StoragePool) o;
 
-      if (clusterId != that.clusterId) return false;
-      if (diskSizeAllocated != that.diskSizeAllocated) return false;
-      if (diskSizeTotal != that.diskSizeTotal) return false;
-      if (id != that.id) return false;
-      if (podId != that.podId) return false;
-      if (zoneId != that.zoneId) return false;
-      if (clusterName != null ? !clusterName.equals(that.clusterName) : that.clusterName != null) return false;
-      if (created != null ? !created.equals(that.created) : that.created != null) return false;
-      if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null) return false;
-      if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
-      if (jobStatus != null ? !jobStatus.equals(that.jobStatus) : that.jobStatus != null) return false;
-      if (name != null ? !name.equals(that.name) : that.name != null) return false;
-      if (path != null ? !path.equals(that.path) : that.path != null) return false;
-      if (podName != null ? !podName.equals(that.podName) : that.podName != null) return false;
-      if (state != that.state) return false;
-      if (tags != null ? !tags.equals(that.tags) : that.tags != null) return false;
-      if (type != that.type) return false;
-      if (zoneName != null ? !zoneName.equals(that.zoneName) : that.zoneName != null) return false;
+      if (!Objects.equal(clusterId, that.clusterId)) return false;
+      if (!Objects.equal(diskSizeAllocated, that.diskSizeAllocated)) return false;
+      if (!Objects.equal(diskSizeTotal, that.diskSizeTotal)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(podId, that.podId)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(clusterName, that.clusterName)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(path, that.path)) return false;
+      if (!Objects.equal(podName, that.podName)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(tags, that.tags)) return false;
+      if (!Objects.equal(type, that.type)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      result = 31 * result + (path != null ? path.hashCode() : 0);
-      result = 31 * result + (tags != null ? tags.hashCode() : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
-      result = 31 * result + (int) (podId ^ (podId >>> 32));
-      result = 31 * result + (podName != null ? podName.hashCode() : 0);
-      result = 31 * result + (int) (clusterId ^ (clusterId >>> 32));
-      result = 31 * result + (clusterName != null ? clusterName.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (int) (diskSizeAllocated ^ (diskSizeAllocated >>> 32));
-      result = 31 * result + (int) (diskSizeTotal ^ (diskSizeTotal >>> 32));
-      result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (jobId != null ? jobId.hashCode() : 0);
-      result = 31 * result + (jobStatus != null ? jobStatus.hashCode() : 0);
-      return result;
+       return Objects.hashCode(clusterId, diskSizeAllocated, diskSizeTotal, id, podId, zoneId,
+                               clusterName, created, ipAddress, jobId, jobStatus, name, path,
+                               podName, state, tags, type, zoneName);
    }
 
    @Override
@@ -401,6 +386,6 @@ public class StoragePool implements Comparable<StoragePool> {
 
    @Override
    public int compareTo(StoragePool other) {
-      return Long.valueOf(this.id).compareTo(other.id);
+      return this.id.compareTo(other.id);
    }
 }

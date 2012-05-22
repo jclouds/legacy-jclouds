@@ -38,7 +38,7 @@ public class ListZonesOptions extends BaseHttpRequestOptions {
     * @param id
     *           the ID of the zone
     */
-   public ListZonesOptions id(long id) {
+   public ListZonesOptions id(String id) {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
@@ -47,7 +47,7 @@ public class ListZonesOptions extends BaseHttpRequestOptions {
     * @param domainId
     *           the ID of the domain associated with the zone
     */
-   public ListZonesOptions domainId(long domainId) {
+   public ListZonesOptions domainId(String domainId) {
       this.queryParameters.replaceValues("domainid", ImmutableSet.of(domainId + ""));
       return this;
 
@@ -77,7 +77,7 @@ public class ListZonesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListZonesOptions#domainId
        */
-      public static ListZonesOptions domainId(long id) {
+      public static ListZonesOptions domainId(String id) {
          ListZonesOptions options = new ListZonesOptions();
          return options.domainId(id);
       }
@@ -85,7 +85,7 @@ public class ListZonesOptions extends BaseHttpRequestOptions {
       /**
        * @see ListZonesOptions#id
        */
-      public static ListZonesOptions id(long id) {
+      public static ListZonesOptions id(String id) {
          ListZonesOptions options = new ListZonesOptions();
          return options.id(id);
       }

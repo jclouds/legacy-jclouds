@@ -45,12 +45,12 @@ public class ListUsersOptionsTest {
 
 
    public void testId() {
-      ListUsersOptions options = new ListUsersOptions().id(6);
+      ListUsersOptions options = new ListUsersOptions().id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
    public void testIdStatic() {
-      ListUsersOptions options = id(6);
+      ListUsersOptions options = id("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
    }
 
@@ -115,19 +115,19 @@ public class ListUsersOptionsTest {
    }
 
    public void testAccountInDomainId() {
-      ListUsersOptions options = new ListUsersOptions().accountInDomain("adrian", 6);
+      ListUsersOptions options = new ListUsersOptions().accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testAccountInDomainIdStatic() {
-      ListUsersOptions options = accountInDomain("adrian", 6);
+      ListUsersOptions options = accountInDomain("adrian", "6");
       assertEquals(ImmutableList.of("adrian"), options.buildQueryParameters().get("account"));
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 
    public void testDomainIdStatic() {
-      ListUsersOptions options = domainId(6);
+      ListUsersOptions options = domainId("6");
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("domainid"));
    }
 }

@@ -62,7 +62,7 @@ public class BindUndeployVAppParamsToXmlPayloadTest {
 
       BindUndeployVAppParamsToXmlPayload binder = injector.getInstance(BindUndeployVAppParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("saveState", "true");
       binder.bindToRequest(request, map);
       verify(request);
@@ -78,7 +78,7 @@ public class BindUndeployVAppParamsToXmlPayloadTest {
 
       BindUndeployVAppParamsToXmlPayload binder = injector.getInstance(BindUndeployVAppParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
 
       binder.bindToRequest(request, map);
       verify(request);

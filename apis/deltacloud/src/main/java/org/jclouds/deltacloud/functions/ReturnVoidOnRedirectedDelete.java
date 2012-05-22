@@ -18,8 +18,6 @@
  */
 package org.jclouds.deltacloud.functions;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
-
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 
@@ -27,6 +25,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * When a delete operation is performed, Deltacloud returns 302.
@@ -42,6 +41,6 @@ public class ReturnVoidOnRedirectedDelete implements Function<Exception, Void> {
             && exception.getResponse().getStatusCode() == 302) {
          return null;
       }
-      return Void.class.cast(propagateOrNull(from));
+      throw Throwables.propagate(from);
    }
 }

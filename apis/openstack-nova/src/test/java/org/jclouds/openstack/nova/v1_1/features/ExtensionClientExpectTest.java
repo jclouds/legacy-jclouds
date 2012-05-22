@@ -47,7 +47,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listExtensions = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -68,7 +68,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listExtensions = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -87,7 +87,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getExtension = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions/RS-PIE"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions/RS-PIE"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -106,7 +106,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getExtension = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions/RS-PIE"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions/RS-PIE"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();

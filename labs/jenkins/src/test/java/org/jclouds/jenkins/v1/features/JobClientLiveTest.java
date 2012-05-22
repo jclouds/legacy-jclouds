@@ -22,12 +22,15 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.jclouds.jenkins.v1.domain.JobDetails;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -66,11 +69,28 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
       getClient().delete("blagoo");
    }
    
+   @Test(dependsOnMethods = "testDeleteJob")
+   public void testCreateJobWithParameters() throws IOException {
+      getClient().delete("jobWithParameters");
+      getClient().createFromXML("jobWithParameters", Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job_with_parameters.xml")));
+   }
+   
+   @Test(dependsOnMethods = "testCreateJobWithParameters")
+   public void testBuildJobWithParameters() throws IOException {
+      Map<String, String> parameters = ImmutableMap.of("name", "test1", "password", "secret");
+      getClient().buildWithParameters("jobWithParameters", parameters);
+   }   
+   
+   @Test(dependsOnMethods = "testBuildJob")
+   public void testDeleteJobWithParameters() {
+      getClient().delete("jobWithParameters");
+   }
+   
    @AfterClass(groups = { "integration", "live" })
    @Override
    protected void tearDownContext() {
       getClient().delete("blagoo");
-      getClient().delete("blagooCopy");
+      getClient().delete("jobWithParameters");
       super.tearDownContext();
    }
 

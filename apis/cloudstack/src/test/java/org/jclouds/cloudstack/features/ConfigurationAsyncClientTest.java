@@ -44,7 +44,7 @@ public class ConfigurationAsyncClientTest extends BaseCloudStackAsyncClientTest<
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listCapabilities HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&listAll=true&command=listCapabilities HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

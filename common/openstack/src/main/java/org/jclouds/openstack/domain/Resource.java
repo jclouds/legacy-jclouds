@@ -19,10 +19,9 @@
 
 package org.jclouds.openstack.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -41,73 +40,92 @@ import com.google.common.collect.ImmutableSet;
  */
 public class Resource implements Comparable<Resource> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromResource(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromResource(this);
    }
 
-   public static class Builder {
-      protected String id;
-      protected String name;
-      protected Set<Link> links = ImmutableSet.of();
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      private String id;
+      private String name;
+      private Set<Link> links = ImmutableSet.of();
 
       /**
        * @see Resource#getId()
        */
-      public Builder id(String id) {
-         this.id = checkNotNull(id, "id");
-         return this;
+      public T id(String id) {
+         this.id = id;
+         return self();
       }
 
       /**
        * @see Resource#getName()
        */
-      public Builder name(@Nullable String name) {
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       /**
        * @see Resource#getLinks()
        */
-      public Builder links(Link... links) {
+      public T links(Link... links) {
          return links(ImmutableSet.copyOf(checkNotNull(links, "links")));
       }
 
       /**
        * @see Resource#getLinks()
        */
-      public Builder links(Set<Link> links) {
-         this.links = ImmutableSet.copyOf(checkNotNull(links, "links"));
-         return this;
+      public T links(Set<Link> links) {
+         this.links = links;
+         return self();
       }
 
       public Resource build() {
-         return new Resource(id, name, links);
+         return new Resource(this);
       }
 
-      public Builder fromResource(Resource from) {
-         return id(from.getId()).name(from.getName()).links(from.getLinks());
+      public T fromResource(Resource in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .links(in.getLinks())
+               ;
       }
    }
 
-   protected final String id;
-   protected final String name;
-   protected final Set<Link> links;
-
-   public Resource(String id,@Nullable String name, Set<Link> links) {
-      this.id = checkNotNull(id, "id");
-      this.name =  name;
-      this.links = ImmutableSet.copyOf(checkNotNull(links, "links"));
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
+   protected Resource() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
    }
 
+   private String id;
+   private String name;
+   private Set<Link> links = ImmutableSet.of();
+
+   protected Resource(Builder<?> builder) {
+      this.id = checkNotNull(builder.id, "id");
+      this.name = builder.name;
+      this.links = ImmutableSet.copyOf(checkNotNull(builder.links, "links"));
+   }
+   
    /**
     * When providing an ID, it is assumed that the resource exists in the current OpenStack
     * deployment
-    * 
+    *
     * @return the id of the resource in the current OpenStack deployment
     */
    public String getId() {
@@ -126,36 +144,35 @@ public class Resource implements Comparable<Resource> {
     * @return the links of the id address allocated to the new server
     */
    public Set<Link> getLinks() {
-      return links;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Resource) {
-         final Resource other = Resource.class.cast(object);
-         return equal(getId(), other.getId()) && equal(name, other.name) && equal(links, other.links);
-      } else {
-         return false;
-      }
+      return Collections.unmodifiableSet(this.links);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(getId(), name, links);
+      return Objects.hashCode(id, name, links);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Resource that = Resource.class.cast(obj);
+      return Objects.equal(this.getId(), that.getId())
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.links, that.links);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("id", getId())
+            .add("name", name)
+            .add("links", links);
    }
 
    @Override
    public String toString() {
       return string().toString();
    }
-
-   protected ToStringHelper string() {
-      return toStringHelper("").add("id", getId()).add("name", name).add("links", links);
-   }
-
    @Override
    public int compareTo(Resource that) {
       if (that == null)

@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.JcloudsVersion;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -50,7 +51,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
-import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
@@ -68,7 +68,8 @@ import com.ning.http.client.generators.InputStreamBodyGenerator;
  */
 public class NingHttpCommandExecutorService implements HttpCommandExecutorService {
 
-   public static final String USER_AGENT = "jclouds/1.0 ning http/1.0.0";
+   //TODO: get async version from maven or something
+   public static final String USER_AGENT = String.format("jclouds/%s async-http-client/%s", JcloudsVersion.get(), "1.7.4");
 
    private final AsyncHttpClient client;
    private final ConvertToNingRequest convertToNingRequest;
@@ -99,10 +100,10 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
                   continue;
                } else {
                   errorHandler.handleError(command, httpResponse);
-                  return wrapAsFuture(httpResponse);
+                  return Futures.immediateFuture(httpResponse);
                }
             } else {
-               return wrapAsFuture(httpResponse);
+               return Futures.immediateFuture(httpResponse);
             }
          }
 
@@ -113,15 +114,6 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
       } catch (ExecutionException e) {
          throw Throwables.propagate(e);
       }
-   }
-
-   private ListenableFuture<HttpResponse> wrapAsFuture(final HttpResponse httpResponse) {
-      return Futures.makeListenable(new AbstractFuture<HttpResponse>() {
-         @Override
-         public HttpResponse get() throws InterruptedException, ExecutionException {
-            return httpResponse;
-         }
-      });
    }
 
    @Singleton
@@ -192,8 +184,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
             in = BaseHttpCommandExecutorService.consumeOnClose(nativeResponse.getResponseBodyAsStream());
          } catch (IOException e) {
             Closeables.closeQuietly(in);
-            propagate(e);
-            assert false : "should have propagated exception";
+            throw propagate(e);
          }
 
          Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;

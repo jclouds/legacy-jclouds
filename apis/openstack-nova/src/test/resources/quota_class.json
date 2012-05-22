@@ -1,0 +1,15 @@
+{"quota_class_set": {
+    "metadata_items": 128,
+    "injected_file_content_bytes": 10240,
+    "injected_files": 5,
+    "gigabytes": 1000,
+    "ram": 4096,
+    "floating_ips": 10,
+    "security_group_rules": 20,
+    "instances": 5,
+    "key_pairs": 100,
+    "volumes": 5,
+    "cores": 10,
+    "id": "jcloudstestquotas",
+    "security_groups": 10
+}}

@@ -20,30 +20,22 @@ package org.jclouds.openstack.nova.v1_1.options;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Adam Lowe
@@ -62,7 +54,7 @@ public class CreateVolumeOptions implements MapBinder {
    private Map<String, String> metadata = ImmutableMap.of();
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Map<String, Object> image = Maps.newHashMap();
       image.putAll(postParams);
       if (name != null)

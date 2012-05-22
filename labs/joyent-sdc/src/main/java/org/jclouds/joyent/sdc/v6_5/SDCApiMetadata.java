@@ -36,7 +36,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class SDCApiMetadata extends BaseRestApiMetadata {
-   
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
@@ -66,17 +66,12 @@ public class SDCApiMetadata extends BaseRestApiMetadata {
 
       protected Builder() {
          super(SDCClient.class, SDCAsyncClient.class);
-          id("joyent-sdc")
-         .name("Joyent SDC API")
-         .identityName("username")
-         .credentialName("password")
-         .documentation(URI.create("http://sdc.joyent.org/sdcapi.html"))
-         .version("~6.5")
-         .defaultEndpoint("https://api.joyentcloud.com")
-         .defaultProperties(SDCApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SDCRestClientModule.class));
+         id("joyent-sdc").name("Joyent SDC API").identityName("username").credentialName("password")
+               .documentation(URI.create("http://sdc.joyent.org/sdcapi.html")).version("~6.5")
+               .defaultEndpoint("https://api.joyentcloud.com").defaultProperties(SDCApiMetadata.defaultProperties())
+               .defaultModules(ImmutableSet.<Class<? extends Module>> of(SDCRestClientModule.class));
       }
-      
+
       @Override
       public SDCApiMetadata build() {
          return new SDCApiMetadata(this);

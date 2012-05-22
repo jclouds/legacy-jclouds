@@ -87,7 +87,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          Logger.getAnonymousLogger().log(Level.SEVERE, "couldn't create a network, skipping test", e);
       } finally {
          if (network != null) {
-            Long jobId = client.getNetworkClient().deleteNetwork(network.getId());
+            String jobId = client.getNetworkClient().deleteNetwork(network.getId());
             if (jobId != null)
                jobComplete.apply(jobId);
          }
@@ -123,7 +123,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          Logger.getAnonymousLogger().log(Level.SEVERE, "couldn't create a network, skipping test", e);
       } finally {
          if (network != null) {
-            Long jobId = adminClient.getNetworkClient().deleteNetwork(network.getId());
+            String jobId = adminClient.getNetworkClient().deleteNetwork(network.getId());
             if (jobId != null)
                adminJobComplete.apply(jobId);
          }
@@ -147,7 +147,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkNetwork(Network network) {
-      assert network.getId() > 0 : network;
+      assert network.getId() != null : network;
       assert network.getName() != null : network;
       assert network.getDNS().size() != 0 : network;
       assert network.getGuestIPType() != null && network.getGuestIPType() != GuestIPType.UNRECOGNIZED : network;
@@ -157,13 +157,13 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       // assert network.getNetworkDomain() != null : network;
       assert network.getNetworkOfferingAvailability() != null : network;
       assert network.getNetworkOfferingDisplayText() != null : network;
-      assert network.getNetworkOfferingId() > 0 : network;
+      assert network.getNetworkOfferingId() != null : network;
       assert network.getNetworkOfferingName() != null : network;
-      assert network.getRelated() > 0 : network;
+      assert network.getRelated() != null : network;
       assert network.getServices().size() != 0 : network;
       assert network.getState() != null : network;
       assert network.getTrafficType() != null : network;
-      assert network.getZoneId() > 0 : network;
+      assert network.getZoneId() != null : network;
       assert network.getDomain() != null : network;
       switch (network.getGuestIPType()) {
       case VIRTUAL:

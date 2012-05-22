@@ -46,7 +46,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listImages = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/images"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -67,7 +67,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listImages = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/images"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -85,7 +85,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getImage = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/images/52415800-8b69-11e0-9b19-734f5736d2a2"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/52415800-8b69-11e0-9b19-734f5736d2a2"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -105,7 +105,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getImage = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/images/52415800-8b69-11e0-9b19-734f5736d2a2"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/52415800-8b69-11e0-9b19-734f5736d2a2"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();

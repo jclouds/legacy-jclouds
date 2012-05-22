@@ -20,6 +20,7 @@ package org.jclouds.cloudservers.domain;
 
 import java.util.Map;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 /**
@@ -109,6 +110,10 @@ public class Server {
       return imageId;
    }
 
+   public void setName(String name) {
+      this.name = name;
+   }
+
    public String getName() {
       return name;
    }
@@ -141,86 +146,32 @@ public class Server {
       return status;
    }
 
+
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((addresses == null) ? 0 : addresses.hashCode());
-      result = prime * result + ((adminPass == null) ? 0 : adminPass.hashCode());
-      result = prime * result + ((flavorId == null) ? 0 : flavorId.hashCode());
-      result = prime * result + ((hostId == null) ? 0 : hostId.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((sharedIpGroupId == null) ? 0 : sharedIpGroupId.hashCode());
-      return result;
+      return Objects.hashCode(id, name);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Server other = (Server) obj;
-      if (addresses == null) {
-         if (other.addresses != null)
-            return false;
-      } else if (!addresses.equals(other.addresses))
-         return false;
-      if (adminPass == null) {
-         if (other.adminPass != null)
-            return false;
-      } else if (!adminPass.equals(other.adminPass))
-         return false;
-      if (flavorId == null) {
-         if (other.flavorId != null)
-            return false;
-      } else if (!flavorId.equals(other.flavorId))
-         return false;
-      if (hostId == null) {
-         if (other.hostId != null)
-            return false;
-      } else if (!hostId.equals(other.hostId))
-         return false;
-      if (id != other.id)
-         return false;
-      if (imageId == null) {
-         if (other.imageId != null)
-            return false;
-      } else if (!imageId.equals(other.imageId))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (sharedIpGroupId == null) {
-         if (other.sharedIpGroupId != null)
-            return false;
-      } else if (!sharedIpGroupId.equals(other.sharedIpGroupId))
-         return false;
-      return true;
-   }
-
-   public void setName(String name) {
-      this.name = name;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Server that = Server.class.cast(obj);
+      return Objects.equal(this.getId(), that.getId())
+            && Objects.equal(this.name, that.name);
    }
 
    @Override
    public String toString() {
-      return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorId="
-               + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId=" + imageId
-               + ", metadata=" + metadata + ", name=" + name + ", sharedIpGroupId="
-               + sharedIpGroupId + "]";
+      return Objects.toStringHelper("")
+            .add("id", getId())
+            .add("name", name)
+            .add("addresses", addresses)
+            .add("flavorId", flavorId)
+            .add("imageId", imageId)
+            .add("hostId", hostId)
+            .add("metadata", metadata)
+            .add("sharedIpGroupId", sharedIpGroupId).toString();
    }
 
 }

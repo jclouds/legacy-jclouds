@@ -94,7 +94,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
        BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
             .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "name");
       map.put("template", "https://vcloud/vAppTemplate/3");
       binder.bindToRequest(request, map);

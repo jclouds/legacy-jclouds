@@ -23,8 +23,6 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.ws.rs.DefaultValue;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -84,10 +82,16 @@ public class Tenant implements Comparable<Tenant> {
          return id(from.getId()).name(from.getName());
       }
    }
-
-   protected final String id;
-   protected final String name;
-   protected final String description;
+   
+   protected Tenant() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
+   protected String id;
+   protected String name;
+   protected String description;
 
    protected Tenant(String id, String name, String description) {
       this.id = checkNotNull(id, "id");

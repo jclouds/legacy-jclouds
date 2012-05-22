@@ -52,8 +52,9 @@ public class AdminAccessTest {
       try {
          assertEquals(
                AdminAccess.builder().adminPassword("bar").adminPrivateKey("fooPrivateKey")
-                     .adminPublicKey("fooPublicKey").adminUsername("foo").build().init(TestConfiguration.INSTANCE)
-                     .render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
+                     .adminPublicKey("fooPublicKey").adminUsername("foo").adminHome("/over/ridden/foo").build()
+                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX), 
+                     CharStreams.toString(Resources.newReaderSupplier(
                      Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8)));
       } finally {
          TestConfiguration.INSTANCE.reset();

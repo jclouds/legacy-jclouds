@@ -18,13 +18,10 @@
  */
 package org.jclouds.savvis.vpdc.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.RHEL;
-
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.savvis.vpdc.compute.functions.CIMOperatingSystemToImage;
 import org.jclouds.savvis.vpdc.compute.functions.NetworkToLocation;
@@ -36,7 +33,6 @@ import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 
 import com.google.common.base.Function;
-import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -45,11 +41,6 @@ import com.google.inject.TypeLiteral;
  */
 public class VPDCComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<VM, VMSpec, CIMOperatingSystem, Network> {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(RHEL).os64Bit(true);
-   }
 
    @Override
    protected void configure() {

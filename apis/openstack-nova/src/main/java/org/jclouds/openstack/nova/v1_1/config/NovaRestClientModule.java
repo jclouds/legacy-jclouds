@@ -74,6 +74,14 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(HostAdministrationClient.class, HostAdministrationAsyncClient.class)
          .put(SimpleTenantUsageClient.class, SimpleTenantUsageAsyncClient.class)
          .put(VolumeClient.class, VolumeAsyncClient.class)
+         .put(VirtualInterfaceClient.class, VirtualInterfaceAsyncClient.class)
+         .put(ServerWithSecurityGroupsClient.class, ServerWithSecurityGroupsAsyncClient.class)
+         .put(AdminActionsClient.class, AdminActionsAsyncClient.class)
+         .put(HostAggregateClient.class, HostAggregateAsyncClient.class)
+         .put(FlavorExtraSpecsClient.class, FlavorExtraSpecsAsyncClient.class)
+         .put(QuotaClient.class, QuotaAsyncClient.class)
+         .put(QuotaClassClient.class, QuotaClassAsyncClient.class)
+         .put(VolumeTypeClient.class, VolumeTypeAsyncClient.class)
          .build();
 
    public NovaRestClientModule() {

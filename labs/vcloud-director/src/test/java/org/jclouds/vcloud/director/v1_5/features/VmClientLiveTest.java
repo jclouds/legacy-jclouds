@@ -198,7 +198,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       checkVm(vm);
 
       // Check the required fields are set
-      assertEquals(vm.isDeployed(), Boolean.FALSE, String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vm.isDeployed().toString()));
+      assertEquals(vm.isDeployed(), Boolean.FALSE, String.format(OBJ_FIELD_EQ, VM, "deployed", "FALSE", vm.isDeployed().toString()));
 
       // Check status
       assertVmStatus(vm.getHref(), Status.POWERED_OFF);
@@ -349,7 +349,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       vm = vmClient.getVm(vm.getHref());
 
       // Check status
-      assertFalse(vm.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vm.isDeployed().toString()));
+      assertFalse(vm.isDeployed(), String.format(OBJ_FIELD_EQ, VM, "deployed", "FALSE", vm.isDeployed().toString()));
       assertVmStatus(vmURI, Status.POWERED_OFF);
    }
 
@@ -663,7 +663,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
 
-   @Test(description = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testDeployVm" })
+   @Test(description = "POST /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testDeployVm" })
    public void testGetScreenTicket() {
       // Power on Vm
       vm = powerOnVm(vm.getHref());
@@ -911,7 +911,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       // See the description in testModifyVirtualHardwareSectionDisks
    }
 
-   @Test(description = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVm" })
+   @Test(description = "PUT /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetVm" })
    public void testSetMetadataValue() {
       key = name("key-");
       String value = name("value-");
@@ -922,7 +922,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       MetadataValue newMetadataValue = vmClient.getMetadataClient().getMetadataValue(vm.getHref(), key);
 
       // Check the retrieved object is well formed
-      checkMetadataValueFor(VAPP, newMetadataValue, value);
+      checkMetadataValueFor(VM, newMetadataValue, value);
    }
    
    @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
@@ -957,7 +957,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       Metadata newMetadata = vmClient.getMetadataClient().getMetadata(vm.getHref());
 
       // Check the retrieved object is well formed
-      checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
+      checkMetadataKeyAbsentFor(VM, newMetadata, key);
    }
 
    @Test(description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
@@ -982,7 +982,7 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // Check the retrieved object is well formed
-      checkMetadataFor(VAPP, newMetadata, expectedMetadataMap);
+      checkMetadataFor(VM, newMetadata, expectedMetadataMap);
    }
 
    /**
@@ -1003,6 +1003,9 @@ public class VmClientLiveTest extends AbstractVAppClientLiveTest {
       // Get the updated VApp and the Vm
       delete = vAppClient.getVApp(delete.getHref());
       Vm temp = Iterables.getOnlyElement(delete.getChildren().getVms());
+
+      // Power off the Vm
+      temp = powerOffVm(temp.getHref());
 
       // The method under test
       Task deleteVm = vmClient.deleteVm(temp.getHref());

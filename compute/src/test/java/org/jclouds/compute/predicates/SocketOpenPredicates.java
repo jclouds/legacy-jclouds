@@ -24,7 +24,7 @@ import com.google.common.net.HostAndPort;
 
 
 /**
- * For use in unit tests, e.g. {@link RetryIfSocketNotYetOpenTest}.
+ * For use in unit tests.
  */
 public class SocketOpenPredicates {
 

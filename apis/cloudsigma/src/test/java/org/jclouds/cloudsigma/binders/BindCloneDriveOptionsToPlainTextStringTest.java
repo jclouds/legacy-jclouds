@@ -47,16 +47,16 @@ public class BindCloneDriveOptionsToPlainTextStringTest {
          BindCloneDriveOptionsToPlainTextString.class);
 
    public void testDefault() throws IOException {
-      assertInputAndArgsCreatesPayload(ImmutableMap.of("name", "newdrive"), ImmutableList.<Object> of(),
+      assertInputAndArgsCreatesPayload(ImmutableMap.<String, Object>of("name", "newdrive"), ImmutableList.<Object> of(),
             "name newdrive");
    }
 
    public void testWithSize() throws IOException {
-      assertInputAndArgsCreatesPayload(ImmutableMap.of("name", "newdrive"),
+      assertInputAndArgsCreatesPayload(ImmutableMap.<String, Object>of("name", "newdrive"),
             ImmutableList.<Object> of(new CloneDriveOptions().size(1024)), "name newdrive\nsize 1024");
    }
 
-   protected void assertInputAndArgsCreatesPayload(ImmutableMap<String, String> inputMap, List<Object> args,
+   protected void assertInputAndArgsCreatesPayload(ImmutableMap<String, Object> inputMap, List<Object> args,
          String expected) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getArgs()).andReturn(args).atLeastOnce();

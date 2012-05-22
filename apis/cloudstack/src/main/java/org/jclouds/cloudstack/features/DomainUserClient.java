@@ -53,11 +53,11 @@ public interface DomainUserClient {
     * @param userId
     *    the user ID to enable
     */
-   User enableUser(long userId);
+   User enableUser(String userId);
 
    /**
     * Disable a user with a specific ID
     */
-   AsyncCreateResponse disableUser(long userId);
+   AsyncCreateResponse disableUser(String userId);
 
 }

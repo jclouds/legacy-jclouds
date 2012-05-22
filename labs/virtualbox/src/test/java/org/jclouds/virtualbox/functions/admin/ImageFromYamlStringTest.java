@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import static junit.framework.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
@@ -30,7 +29,6 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
-import org.jclouds.virtualbox.predicates.DefaultImagePredicate;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -60,14 +58,5 @@ public class ImageFromYamlStringTest {
    @Test
    public void testNodesParse() {
       assertEquals(Iterables.getFirst(images.keySet(), null), TEST1);
-   }
-
-   @Test
-   public void testDefaultImagePresent() {
-
-      Iterable<Image> defaultImage = Iterables.filter(images.keySet(), new DefaultImagePredicate());
-
-      assertTrue(!Iterables.isEmpty(defaultImage));
-      assertEquals(1, Iterables.size(defaultImage));
    }
 }

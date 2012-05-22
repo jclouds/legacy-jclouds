@@ -75,9 +75,15 @@ public class Address {
          return addr(from.getAddr()).version(from.getVersion());
       }
    }
-
-   protected final String addr;
-   protected final int version;
+   
+   protected Address() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
+   protected String addr;
+   protected int version;
 
    public Address(String addr, int version) {
       this.addr = addr;

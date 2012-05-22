@@ -25,4 +25,6 @@
 	<system-properties>
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
 	</system-properties>
+	<!-- potential race condition in GuiceServletConfig -->
+    <threadsafe>false</threadsafe>
 </appengine-web-app>

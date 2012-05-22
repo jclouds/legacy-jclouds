@@ -41,10 +41,10 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class ReuseOrAssociateNewPublicIPAddressTest {
-   long networkId = 99l;
-   long zoneId = 100l;
+   String networkId = "99l";
+   String zoneId = "100l";
    // note that it is associated network, not networkId
-   PublicIPAddress address = PublicIPAddress.builder().id(200).state(PublicIPAddress.State.ALLOCATED)
+   PublicIPAddress address = PublicIPAddress.builder().id("200").state(PublicIPAddress.State.ALLOCATED)
          .associatedNetworkId(networkId).zoneId(zoneId).build();
 
    public void testReuseWorks() throws SecurityException, NoSuchMethodException {
@@ -85,7 +85,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
             ImmutableSet.<PublicIPAddress> of());
 
-      AsyncCreateResponse job = new AsyncCreateResponse(1, 2);
+      AsyncCreateResponse job = new AsyncCreateResponse("1", "2");
       // make sure we created the job relating to a new ip
       expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
 

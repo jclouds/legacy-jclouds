@@ -52,7 +52,7 @@ public class UserClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    public void testCreateUser() {
       VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs")
+            .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/users")
             .xmlFilePayload("/user/createUserSource.xml", VCloudDirectorMediaType.USER)
             .acceptMedia(VCloudDirectorMediaType.USER)
             .httpRequestBuilder().build(), 

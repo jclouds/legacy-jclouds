@@ -119,16 +119,22 @@ public class VolumeSnapshot {
       }
    }
 
-   private final String id;
-   private final String volumeId;
-   private final Volume.Status status;
-   private final int size;
+   protected VolumeSnapshot() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String id;
+   private String volumeId;
+   private Volume.Status status;
+   private int size;
    @SerializedName(value="createdAt")
-   private final Date created;
+   private Date created;
    @SerializedName(value="displayName")
-   private final String name;
+   private String name;
    @SerializedName(value="displayDescription")
-   private final String description;
+   private String description;
 
    protected VolumeSnapshot(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");

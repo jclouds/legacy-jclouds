@@ -18,7 +18,6 @@
  */
 package org.jclouds.concurrent;
 
-import static org.jclouds.util.Throwables2.propagateOrNull;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
@@ -87,7 +86,7 @@ public class FutureExceptionParserTest {
          public String apply(Exception from) {
             if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from), RuntimeException.class)) >= 1)
                return from.getMessage();
-            return String.class.cast(propagateOrNull(from));
+            throw Throwables.propagate(from);
          }
 
       });

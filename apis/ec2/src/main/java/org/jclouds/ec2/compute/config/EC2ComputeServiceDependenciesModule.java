@@ -33,10 +33,12 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
@@ -47,11 +49,13 @@ import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.compute.predicates.GetImageWhenStatusAvailablePredicateWithResult;
 import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.reference.EC2Constants;
+import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -104,6 +108,10 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
       bind(WindowsLoginCredentialsFromEncryptedData.class);
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(EC2ImageExtension.class);
+      bind(new TypeLiteral<PredicateWithResult<String, Image>>() {
+      }).to(GetImageWhenStatusAvailablePredicateWithResult.class);
    }
 
    /**

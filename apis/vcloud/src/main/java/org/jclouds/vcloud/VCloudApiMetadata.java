@@ -19,6 +19,7 @@
 package org.jclouds.vcloud;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_SCHEMA;
@@ -82,6 +83,8 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
       // everything.
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 1200l * 1000l + "");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 300 + "");
+      // CIM ostype does not include version info
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,os64Bit=true");
       return properties;
    }
 

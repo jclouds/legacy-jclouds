@@ -115,14 +115,7 @@ public class LibvirtComputeService extends BaseComputeService {
          storageVol.delete(0);
          client.domainLookupByUUIDString(id).undefine();
       } catch (Exception e) {
-         propogate(e);
+         Throwables.propagate(e);
       }
    }
-
-   protected <T> T propogate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
-   }
-
 }

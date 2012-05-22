@@ -21,8 +21,6 @@ package org.jclouds.virtualbox.config;
 
 import java.io.File;
 
-import org.jclouds.compute.domain.OsFamily;
-
 /**
  * Configuration properties used for interacting with VirtualBox instances.
  * 
@@ -61,13 +59,7 @@ public interface VirtualBoxConstants {
 
    public static final String VIRTUALBOX_DEFAULT_DIR = System.getProperty("user.home") + File.separator
             + ".jclouds-vbox";
-
-   public static final OsFamily VIRTUALBOX_DEFAULT_IMAGE_OS = OsFamily.UBUNTU;
    
-   public static final String VIRTUALBOX_DEFAULT_IMAGE_VERSION = "11.10";
-   
-   public static final String VIRTUALBOX_DEFAULT_IMAGE_ARCH = "x86";
-
    public static final String VIRTUALBOX_PROVIDER = "virtualbox";
 
 }

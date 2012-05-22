@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.v1_1.internal;
 
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
@@ -42,6 +43,8 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpRequest extensionsOfNovaRequest;
    protected HttpResponse extensionsOfNovaResponse;
    protected HttpResponse unmatchedExtensionsOfNovaResponse;
+   protected HttpRequest keystoneAuthWithAccessKeyAndSecretKeyAndTenantId;
+   protected String identityWithTenantId;
 
    public BaseNovaExpectTest() {
       provider = "openstack-nova";
@@ -49,17 +52,20 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
             credential);
       keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
             credential);
+      keystoneAuthWithAccessKeyAndSecretKeyAndTenantId = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantId(identity,
+              credential);
       
       authToken = KeystoneFixture.INSTANCE.getAuthToken();
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
       // now, createContext arg will need tenant prefix
+      identityWithTenantId = KeystoneFixture.INSTANCE.getTenantId() + ":" + identity;
       identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
       
       extensionsOfNovaRequest = HttpRequest
             .builder()
             .method("GET")
              // NOTE THIS IS NOVA, NOT KEYSTONE
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions"))
             .headers(
                   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
@@ -71,6 +77,14 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
             .payload(payloadFromResource("/extension_list.json")).build();
    }
    
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      // hpcloud or trystack
+      overrides.setProperty("jclouds.zones", "az-1.region-a.geo-1,RegionOne");
+      return overrides;
+   }
+
    protected HttpRequest.Builder standardRequestBuilder(URI endpoint) {
       return HttpRequest.builder().method("GET")
             .headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
@@ -79,5 +93,10 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
 
    protected HttpResponse.Builder standardResponseBuilder(int status) {
       return HttpResponse.builder().statusCode(status);
+   }
+   
+   @Override
+   protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
+      return HttpRequestComparisonType.JSON;
    }
 }

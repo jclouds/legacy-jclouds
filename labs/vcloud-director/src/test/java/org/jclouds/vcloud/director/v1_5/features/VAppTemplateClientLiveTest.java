@@ -112,7 +112,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       if (waitForTask) {
          Task cloneTask = Iterables.getFirst(clonedVappTemplate.getTasks(), null);
          assertNotNull(cloneTask, "vdcClient.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
-         retryTaskSuccess.apply(cloneTask);
+         assertTaskSucceeds(cloneTask);
       }
 
       return clonedVappTemplate;
@@ -174,7 +174,6 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "GET /vAppTemplate/{id}/leaseSettingsSection")
    public void testGetLeaseSettingsSection() {
-      // FIXME Wrong case for Vapp
       LeaseSettingsSection leaseSettingsSection = vAppTemplateClient.getLeaseSettingsSection(vAppTemplateURI);
       
       checkLeaseSettingsSection(leaseSettingsSection);
@@ -240,7 +239,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .build();
       
       final Task task = vAppTemplateClient.modifyVAppTemplate(vAppTemplateURI, template);
-      retryTaskSuccess.apply(task);
+      assertTaskSucceeds(task);
 
       VAppTemplate newTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       assertEquals(newTemplate.getName(), name);
@@ -258,7 +257,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       Metadata metadata = Metadata.builder().fromMetadata(oldMetadata).entry(metadataEntry).build();
       
       final Task task = vAppTemplateClient.getMetadataClient().mergeMetadata(vAppTemplateURI, metadata);
-      retryTaskSuccess.apply(task);
+      assertTaskSucceeds(task);
 
       Metadata newMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       Map<String,String> expectedMetadataMap = ImmutableMap.<String,String>builder()
@@ -283,7 +282,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "DELETE /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" })
    public void testDeleteVAppTemplateMetadataValue() {
       final Task deletionTask = vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key);
-      retryTaskSuccess.apply(deletionTask);
+      assertTaskSucceeds(deletionTask);
 
       Metadata newMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
@@ -318,7 +317,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .build();
       
       final Task task = vAppTemplateClient.modifyCustomizationSection(vAppTemplateURI, customizationSection);
-      retryTaskSuccess.apply(task);
+      assertTaskSucceeds(task);
 
       CustomizationSection newCustomizationSection = vAppTemplateClient.getCustomizationSection(vAppTemplateURI);
       assertEquals(newCustomizationSection.isCustomizeOnInstantiate(), newVal);
@@ -338,7 +337,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .build();
       
       final Task task = vAppTemplateClient.modifyLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
-      retryTaskSuccess.apply(task);
+      assertTaskSucceeds(task);
       
       LeaseSettingsSection newLeaseSettingsSection = vAppTemplateClient.getLeaseSettingsSection(vAppTemplateURI);
       assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer) storageLeaseInSeconds);
@@ -411,7 +410,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       
       // Delete the template
       final Task task = vAppTemplateClient.deleteVappTemplate(clonedVappTemplate.getHref());
-      retryTaskSuccess.apply(task);
+      assertTaskSucceeds(task);
 
       // Confirm that can't access post-delete, i.e. template has been deleted
       VAppTemplate deleted = vAppTemplateClient.getVAppTemplate(clonedVappTemplate.getHref());
@@ -436,7 +435,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       // First disable so that enable really has some work to do...
       vAppTemplateClient.disableDownload(vAppTemplateURI);
       final Task task = vAppTemplateClient.enableDownload(vAppTemplateURI);
-      retryTaskSuccess.apply(task);
+      assertTaskSucceeds(task);
       
       // TODO Check that it really is enabled. The only thing I can see for determining this 
       // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
@@ -462,9 +461,9 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       // TODO Need assertion that command had effect
    }
    
-   @Test(description = "POST /vAppTemplate/{id}/action/relocate") // FIXME Need a datastore reference
+   // TODO How to obtain a datastore reference?
+   @Test(description = "POST /vAppTemplate/{id}/action/relocate")
    public void testRelocateVAppTemplate() throws Exception {
-      // TODO Need assertion that command had effect
       Reference dataStore = null; // FIXME
       RelocateParams relocateParams = RelocateParams.builder()
                .datastore(dataStore)
@@ -472,9 +471,12 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       
       final Task task = vAppTemplateClient.relocateVm(vAppTemplateURI, relocateParams);
       assertTaskSucceedsLong(task);
+
+      // TODO Need assertion that command had effect
    }
    
-   @Test(description = "GET /vAppTemplate/{id}/shadowVms")
+   // NOTE This will fail unless we can relocate a template to another datastore
+   @Test(description = "GET /vAppTemplate/{id}/shadowVms", dependsOnMethods = { "testRelocateVAppTemplate" })
    public void testGetShadowVms() {
       References references = vAppTemplateClient.getShadowVms(vAppTemplateURI);
       

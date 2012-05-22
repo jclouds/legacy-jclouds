@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
@@ -41,7 +42,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
 
       private String account;
       private String domain;
-      private long domainId;
+      private String domainId;
       private int max;
       private ResourceType resourceType;
 
@@ -55,7 +56,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -83,12 +84,12 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
    private String account;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private int max;
    @SerializedName("resourcetype")
    private ResourceType resourceType;
 
-   public ResourceLimit(String account, String domain, long domainId, int max, ResourceType resourceType) {
+   public ResourceLimit(String account, String domain, String domainId, int max, ResourceType resourceType) {
       this.account = account;
       this.domain = domain;
       this.domainId = domainId;
@@ -104,7 +105,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
       return domain;
    }
 
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -123,22 +124,18 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
 
       ResourceLimit that = (ResourceLimit) o;
 
-      if (domainId != that.domainId) return false;
-      if (max != that.max) return false;
-      if (resourceType != that.resourceType) return false;
-      if (!account.equals(that.account)) return false;
-      if (!domain.equals(that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(max, that.max)) return false;
+      if (!Objects.equal(resourceType, that.resourceType)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = account.hashCode();
-      result = 31 * result + domain.hashCode();
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + max;
-      return result;
+       return Objects.hashCode(domainId, max, resourceType, account, domain);
    }
 
    @Override

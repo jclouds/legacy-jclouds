@@ -48,7 +48,7 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listPods&apiKey=identity&signature=asx1px2NQkW4R44%2FDgdozuu9wQg%3D"))
+                  "command=listPods&listAll=true&apiKey=identity&signature=MuowIOuZqOpKTPVQOfrDZEmpepw%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -60,9 +60,9 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .build());
 
       Pod pod1 = Pod.builder()
-         .id(1)
+         .id("1")
          .name("Dev Pod 1")
-         .zoneId(1)
+         .zoneId("1")
          .zoneName("Dev Zone 1")
          .gateway("10.26.26.254")
          .netmask("255.255.255.0")
@@ -71,9 +71,9 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
          .allocationState(AllocationState.ENABLED)
          .build();
       Pod pod2 = Pod.builder()
-         .id(2)
+         .id("2")
          .name("Dev Pod 2")
-         .zoneId(2)
+         .zoneId("2")
          .zoneName("Dev Zone 2")
          .gateway("10.22.22.254")
          .netmask("255.255.255.0")
@@ -91,7 +91,7 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listPods&apiKey=identity&signature=asx1px2NQkW4R44%2FDgdozuu9wQg%3D"))
+                  "command=listPods&listAll=true&apiKey=identity&signature=MuowIOuZqOpKTPVQOfrDZEmpepw%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -121,9 +121,9 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .build());
 
       Pod expected = Pod.builder()
-         .id(6)
+         .id("6")
          .name("richard-pod")
-         .zoneId(10)
+         .zoneId("10")
          .zoneName("richard-zone")
          .gateway("172.20.0.254")
          .netmask("255.255.255.0")
@@ -132,7 +132,7 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
          .allocationState(AllocationState.ENABLED)
          .build();
 
-      Pod actual = client.createPod("richard-pod", 10, "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",
+      Pod actual = client.createPod("richard-pod", "10", "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",
          CreatePodOptions.Builder.allocationState(AllocationState.ENABLED));
 
       assertEquals(actual, expected);
@@ -155,9 +155,9 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .build());
 
       Pod expected = Pod.builder()
-         .id(7)
+         .id("7")
          .name("richard-updatedpod")
-         .zoneId(11)
+         .zoneId("11")
          .zoneName("richard-zone")
          .gateway("172.21.0.254")
          .netmask("255.255.255.128")
@@ -166,7 +166,7 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
          .allocationState(AllocationState.DISABLED)
          .build();
 
-      Pod actual = client.updatePod(7, UpdatePodOptions.Builder
+      Pod actual = client.updatePod("7", UpdatePodOptions.Builder
          .netmask("255.255.255.128")
          .name("richard-updatepod")
          .startIp("172.21.0.129")
@@ -193,7 +193,7 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .statusCode(200)
             .build());
 
-      client.deletePod(3);
+      client.deletePod("3");
    }
 
    @Override

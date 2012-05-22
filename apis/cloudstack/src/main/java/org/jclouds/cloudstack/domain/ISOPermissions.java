@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -33,15 +34,15 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String account;
-      private long domainId;
+      private String domainId;
       private boolean isPublic;
 
       /**
        * @param id the template ID
        */
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -57,7 +58,7 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
       /**
        * @param domainId the ID of the domain to which the template belongs
        */
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -72,11 +73,11 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
 
    }
 
-   private long id;
+   private String id;
    @SerializedName("account")
    private Set<String> accounts;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("ispublic")
    private boolean isPublic;
 
@@ -89,7 +90,7 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    /**
     * @return the template ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -103,7 +104,7 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    /**
     * @return the ID of the domain to which the template belongs
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -115,37 +116,23 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ISOPermissions other = (ISOPermissions) obj;
-      if (accounts == null) {
-         if (other.accounts != null)
-            return false;
-      } else if (!accounts.equals(other.accounts))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (isPublic != other.isPublic)
-         return false;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ISOPermissions that = (ISOPermissions) o;
+
+      if (!Objects.equal(accounts, that.accounts)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isPublic, that.isPublic)) return false;
+
       return true;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((accounts == null) ? 0 : accounts.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (isPublic ? 1231 : 1237);
-      return result;
+       return Objects.hashCode(accounts, domainId, id, isPublic);
    }
 
    @Override
@@ -160,7 +147,7 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
 
    @Override
    public int compareTo(ISOPermissions other) {
-      return new Long(id).compareTo(other.getId());
+      return id.compareTo(other.getId());
    }
 
 }

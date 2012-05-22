@@ -138,6 +138,7 @@ public abstract class Wire {
       wiredMd.setContentDisposition(oldMd.getContentDisposition());
       wiredMd.setContentEncoding(oldMd.getContentEncoding());
       wiredMd.setContentLanguage(oldMd.getContentLanguage());
+      wiredMd.setExpires(oldMd.getExpires());
    }
 
    @SuppressWarnings("unchecked")

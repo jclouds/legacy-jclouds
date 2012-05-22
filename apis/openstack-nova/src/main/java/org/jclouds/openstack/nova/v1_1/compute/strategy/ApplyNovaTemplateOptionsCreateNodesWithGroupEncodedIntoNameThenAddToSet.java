@@ -65,7 +65,7 @@ import com.google.common.primitives.Ints;
  */
 @Singleton
 public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet extends
-      CreateNodesWithGroupEncodedIntoNameThenAddToSet {
+         CreateNodesWithGroupEncodedIntoNameThenAddToSet {
 
    private final AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode;
    private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache;
@@ -75,56 +75,67 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
    @Inject
    protected ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet(
-         CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
-         ListNodesStrategy listNodesStrategy,
-         GroupNamingConvention.Factory namingConvention,
-         CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-         Provider<TemplateBuilder> templateBuilderProvider,
-         AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
-         LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
-         LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaClient novaClient) {
+            CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
+            ListNodesStrategy listNodesStrategy,
+            GroupNamingConvention.Factory namingConvention,
+            CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Provider<TemplateBuilder> templateBuilderProvider,
+            AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
+            LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
+            LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaClient novaClient) {
       super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
-            customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
+               customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");
       this.securityGroupCache = checkNotNull(securityGroupCache, "securityGroupCache");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.allocateAndAddFloatingIpToNode = checkNotNull(allocateAndAddFloatingIpToNode,
-            "allocateAndAddFloatingIpToNode");
+               "allocateAndAddFloatingIpToNode");
       this.novaClient = checkNotNull(novaClient, "novaClient");
    }
 
    @Override
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
-         Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
-      // ensure we don't mutate the input template
-      Template mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
+            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
+
+      Template mutableTemplate;
+      // ensure we don't mutate the input template, fromTemplate ignores imageId so
+      // build directly from imageId if we have it
+      if (template.getImage() != null && template.getImage().getId() != null) {
+         mutableTemplate = templateBuilderProvider.get().imageId(template.getImage().getId()).fromTemplate(template)
+                  .build();
+         // otherwise build from generic parameters
+      } else {
+         mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
+      }
+
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(mutableTemplate.getOptions());
-      
+
       assert template.getOptions().equals(templateOptions) : "options didn't clone properly";
-      
+
       String zone = mutableTemplate.getLocation().getId();
 
       if (templateOptions.shouldAutoAssignFloatingIp()) {
          checkArgument(novaClient.getFloatingIPExtensionForZone(zone).isPresent(),
-               "Floating IPs are required by options, but the extension is not available! options: %s", templateOptions);
+                  "Floating IPs are required by options, but the extension is not available! options: %s",
+                  templateOptions);
       }
 
       boolean keyPairExensionPresent = novaClient.getKeyPairExtensionForZone(zone).isPresent();
       if (templateOptions.shouldGenerateKeyPair()) {
          checkArgument(keyPairExensionPresent,
-               "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
+                  "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
          KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, namingConvention.create()
-               .sharedNameForGroup(group)));
+                  .sharedNameForGroup(group)));
          keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
          templateOptions.keyPairName(keyPair.getName());
       } else if (templateOptions.getKeyPairName() != null) {
          checkArgument(keyPairExensionPresent,
-               "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
+                  "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
          if (templateOptions.getLoginPrivateKey() != null) {
             String pem = templateOptions.getLoginPrivateKey();
             KeyPair keyPair = KeyPair.builder().name(templateOptions.getKeyPairName())
-                  .fingerprint(fingerprintPrivateKey(pem)).privateKey(pem).build();
+                     .fingerprint(fingerprintPrivateKey(pem)).privateKey(pem).build();
             keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
          }
       }
@@ -133,8 +144,8 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
       List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
       if (templateOptions.getSecurityGroupNames().size() > 0) {
          checkArgument(novaClient.getSecurityGroupExtensionForZone(zone).isPresent(),
-               "Security groups are required by options, but the extension is not available! options: %s",
-               templateOptions);
+                  "Security groups are required by options, but the extension is not available! options: %s",
+                  templateOptions);
       } else if (securityGroupExensionPresent && inboundPorts.size() > 0) {
          String securityGroupName = namingConvention.create().sharedNameForGroup(group);
          try {
@@ -150,7 +161,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
    @Override
    protected Future<AtomicReference<NodeMetadata>> createNodeInGroupWithNameAndTemplate(String group,
-         final String name, Template template) {
+            final String name, Template template) {
 
       Future<AtomicReference<NodeMetadata>> future = super.createNodeInGroupWithNameAndTemplate(group, name, template);
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());

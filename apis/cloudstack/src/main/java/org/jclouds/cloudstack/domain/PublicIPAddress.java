@@ -25,6 +25,7 @@ import java.util.Date;
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -37,29 +38,29 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String account;
       private Date allocated;
-      private long associatedNetworkId;
+      private String associatedNetworkId;
       private String domain;
-      private long domainId;
+      private String domainId;
       private boolean usesVirtualNetwork;
       private String IPAddress;
       private boolean isSourceNAT;
       private boolean isStaticNAT;
-      private long networkId;
+      private String networkId;
       private State state;
       private String virtualMachineDisplayName;
-      private long virtualMachineId = -1;
+      private String virtualMachineId;
       private String virtualMachineName;
-      private long VLANId;
+      private String VLANId;
       private String VLANName;
-      private long zoneId;
+      private String zoneId;
       private String zoneName;
-      private Long jobId;
+      private String jobId;
       private Integer jobStatus;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -74,7 +75,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder associatedNetworkId(long associatedNetworkId) {
+      public Builder associatedNetworkId(String associatedNetworkId) {
          this.associatedNetworkId = associatedNetworkId;
          return this;
       }
@@ -84,7 +85,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -109,7 +110,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder networkId(long networkId) {
+      public Builder networkId(String networkId) {
          this.networkId = networkId;
          return this;
       }
@@ -124,7 +125,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder virtualMachineId(long virtualMachineId) {
+      public Builder virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
          return this;
       }
@@ -134,7 +135,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder VLANId(long VLANId) {
+      public Builder VLANId(String VLANId) {
          this.VLANId = VLANId;
          return this;
       }
@@ -144,7 +145,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder zoneId(long zoneId) {
+      public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
          return this;
       }
@@ -154,7 +155,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
-      public Builder jobId(Long jobId) {
+      public Builder jobId(String jobId) {
          this.jobId = jobId;
          return this;
       }
@@ -171,14 +172,14 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Date allocated;
    @SerializedName("associatednetworkid")
-   private long associatedNetworkId;
+   private String associatedNetworkId;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("forvirtualnetwork")
    private boolean usesVirtualNetwork;
    @SerializedName("ipaddress")
@@ -188,25 +189,25 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    @SerializedName("isstaticnat")
    private boolean isStaticNAT;
    @SerializedName("networkid")
-   private long networkId;
+   private String networkId;
    private State state;
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
-   private long virtualMachineId = -1;
+   private String virtualMachineId;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("VLANid")
-   private long VLANId;
+   private String VLANId;
    @SerializedName("VLANname")
    private String VLANName;
    @SerializedName("zoneid")
-   private long zoneId;
+   private String zoneId;
    @SerializedName("zonename")
    private String zoneName;
    @SerializedName("jobid")
    @Nullable
-   private Long jobId;
+   private String jobId;
    @SerializedName("jobstatus")
    @Nullable
    private Integer jobStatus;
@@ -234,10 +235,10 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    }
 
-   public PublicIPAddress(long id, String account, Date allocated, long associatedNetworkId, String domain,
-                          long domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
-                          long networkId, State state, String virtualMachineDisplayName, long virtualMachineId,
-                          String virtualMachineName, long VLANId, String VLANName, long zoneId, String zoneName, Long jobId, 
+   public PublicIPAddress(String id, String account, Date allocated, String associatedNetworkId, String domain,
+                          String domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
+                          String networkId, State state, String virtualMachineDisplayName, String virtualMachineId,
+                          String virtualMachineName, String VLANId, String VLANName, String zoneId, String zoneName, String jobId, 
                           Integer jobStatus) {
       this.id = id;
       this.account = account;
@@ -265,13 +266,13 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    @Override
    public int compareTo(PublicIPAddress arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
    /**
     * @return public IP address id
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -295,7 +296,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
     *         machine
     */
    @Nullable
-   public Long getJobId() {
+   public String getJobId() {
       return jobId;
    }
 
@@ -311,7 +312,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the Network associated with the IP address
     */
-   public long getAssociatedNetworkId() {
+   public String getAssociatedNetworkId() {
       return associatedNetworkId;
    }
 
@@ -325,7 +326,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the domain ID the public IP address is associated with
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -360,7 +361,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the Network where ip belongs to
     */
-   public long getNetworkId() {
+   public String getNetworkId() {
       return networkId;
    }
 
@@ -384,7 +385,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
     * @return virtual machine id the ip address is assigned to (not null only
     *         for static nat Ip)
     */
-   public long getVirtualMachineId() {
+   public String getVirtualMachineId() {
       return virtualMachineId;
    }
 
@@ -399,7 +400,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the VLAN associated with the IP address
     */
-   public long getVLANId() {
+   public String getVLANId() {
       return VLANId;
    }
 
@@ -413,7 +414,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    /**
     * @return the ID of the zone the public IP address belongs to
     */
-   public long getZoneId() {
+   public String getZoneId() {
       return zoneId;
    }
 
@@ -425,117 +426,42 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((IPAddress == null) ? 0 : IPAddress.hashCode());
-      result = prime * result + (int) (VLANId ^ (VLANId >>> 32));
-      result = prime * result + ((VLANName == null) ? 0 : VLANName.hashCode());
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((allocated == null) ? 0 : allocated.hashCode());
-      result = prime * result + (int) (associatedNetworkId ^ (associatedNetworkId >>> 32));
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (isSourceNAT ? 1231 : 1237);
-      result = prime * result + (isStaticNAT ? 1231 : 1237);
-      result = prime * result + (int) (networkId ^ (networkId >>> 32));
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
-      result = prime * result + (usesVirtualNetwork ? 1231 : 1237);
-      result = prime * result + ((virtualMachineDisplayName == null) ? 0 : virtualMachineDisplayName.hashCode());
-      result = prime * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
-      result = prime * result + ((virtualMachineName == null) ? 0 : virtualMachineName.hashCode());
-      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
-      result = prime * result + ((zoneName == null) ? 0 : zoneName.hashCode());
-      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      PublicIPAddress that = (PublicIPAddress) o;
+
+      if (!Objects.equal(IPAddress, that.IPAddress)) return false;
+      if (!Objects.equal(VLANId, that.VLANId)) return false;
+      if (!Objects.equal(VLANName, that.VLANName)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(allocated, that.allocated)) return false;
+      if (!Objects.equal(associatedNetworkId, that.associatedNetworkId)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(isSourceNAT, that.isSourceNAT)) return false;
+      if (!Objects.equal(isStaticNAT, that.isStaticNAT)) return false;
+      if (!Objects.equal(networkId, that.networkId)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(usesVirtualNetwork, that.usesVirtualNetwork)) return false;
+      if (!Objects.equal(virtualMachineDisplayName, that.virtualMachineDisplayName)) return false;
+      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
+      if (!Objects.equal(virtualMachineName, that.virtualMachineName)) return false;
+      if (!Objects.equal(zoneId, that.zoneId)) return false;
+      if (!Objects.equal(zoneName, that.zoneName)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      PublicIPAddress other = (PublicIPAddress) obj;
-      if (IPAddress == null) {
-         if (other.IPAddress != null)
-            return false;
-      } else if (!IPAddress.equals(other.IPAddress))
-         return false;
-      if (VLANId != other.VLANId)
-         return false;
-      if (VLANName == null) {
-         if (other.VLANName != null)
-            return false;
-      } else if (!VLANName.equals(other.VLANName))
-         return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (allocated == null) {
-         if (other.allocated != null)
-            return false;
-      } else if (!allocated.equals(other.allocated))
-         return false;
-      if (associatedNetworkId != other.associatedNetworkId)
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (isSourceNAT != other.isSourceNAT)
-         return false;
-      if (isStaticNAT != other.isStaticNAT)
-         return false;
-      if (networkId != other.networkId)
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
-         return false;
-      if (usesVirtualNetwork != other.usesVirtualNetwork)
-         return false;
-      if (virtualMachineDisplayName == null) {
-         if (other.virtualMachineDisplayName != null)
-            return false;
-      } else if (!virtualMachineDisplayName.equals(other.virtualMachineDisplayName))
-         return false;
-      if (virtualMachineId != other.virtualMachineId)
-         return false;
-      if (virtualMachineName == null) {
-         if (other.virtualMachineName != null)
-            return false;
-      } else if (!virtualMachineName.equals(other.virtualMachineName))
-         return false;
-      if (zoneId != other.zoneId)
-         return false;
-      if (zoneName == null) {
-         if (other.zoneName != null)
-            return false;
-      } else if (!zoneName.equals(other.zoneName))
-         return false;
-      if (jobId == null) {
-         if (other.jobId != null)
-            return false;
-      } else if (!jobId.equals(other.jobId))
-         return false;
-      if (jobStatus == null) {
-         if (other.jobStatus != null)
-            return false;
-      } else if (!jobStatus.equals(other.jobStatus))
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(IPAddress, VLANId, VLANName, account, allocated, associatedNetworkId,
+                               domain, domainId, id, isSourceNAT, isStaticNAT, networkId, state,
+                               usesVirtualNetwork, virtualMachineDisplayName, virtualMachineId,
+                               virtualMachineName, zoneId, zoneName, jobStatus);
    }
 
    @Override

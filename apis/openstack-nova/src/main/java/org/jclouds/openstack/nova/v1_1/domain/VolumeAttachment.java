@@ -92,10 +92,16 @@ public class VolumeAttachment {
       }
    }
 
-   private final String id;
-   private final String volumeId;
-   private final String serverId;
-   private final String device;
+   protected VolumeAttachment() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+  
+   private String id;
+   private String volumeId;
+   private String serverId;
+   private String device;
 
    protected VolumeAttachment(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");

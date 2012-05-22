@@ -52,7 +52,7 @@ public interface GuestOSClient {
     *           os type to get
     * @return os type or null if not found
     */
-   OSType getOSType(long id);
+   OSType getOSType(String id);
 
    /**
     * Lists all supported OS categories for this cloud.
@@ -60,7 +60,7 @@ public interface GuestOSClient {
     * @return os categories matching query, or empty set, if no categories are
     *         found
     */
-   Map<Long, String> listOSCategories();
+   Map<String, String> listOSCategories();
 
    /**
     * get a specific os category by id
@@ -69,5 +69,5 @@ public interface GuestOSClient {
     *           os category to get
     * @return os category or null if not found
     */
-   Map.Entry<Long, String> getOSCategory(long id);
+   Map.Entry<String, String> getOSCategory(String id);
 }

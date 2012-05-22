@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -38,7 +39,7 @@ public class IngressRule implements Comparable<IngressRule> {
       private int ICMPCode = -1;
       private int ICMPType = -1;
       private String protocol;
-      private long id = -1;
+       private String id;
       private String securityGroupName;
       private int startPort = -1;
 
@@ -72,7 +73,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return this;
       }
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -103,7 +104,7 @@ public class IngressRule implements Comparable<IngressRule> {
    private int ICMPType = -1;
    private String protocol;
    @SerializedName("ruleid")
-   private long id = -1;
+   private String id;
    @SerializedName("securitygroupname")
    private String securityGroupName;
    @SerializedName("startport")
@@ -114,7 +115,7 @@ public class IngressRule implements Comparable<IngressRule> {
 
    }
 
-   public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, long id,
+   public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, String id,
          String securityGroupName, int startPort) {
       if (account == null)
          checkArgument(securityGroupName == null && CIDR != null,
@@ -178,7 +179,7 @@ public class IngressRule implements Comparable<IngressRule> {
    /**
     * @return the id of the ingress rule
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -197,61 +198,28 @@ public class IngressRule implements Comparable<IngressRule> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((CIDR == null) ? 0 : CIDR.hashCode());
-      result = prime * result + ICMPCode;
-      result = prime * result + ICMPType;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + endPort;
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      result = prime * result + ((securityGroupName == null) ? 0 : securityGroupName.hashCode());
-      result = prime * result + startPort;
-      return result;
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      IngressRule that = (IngressRule) o;
+
+      if (!Objects.equal(CIDR, that.CIDR)) return false;
+      if (!Objects.equal(ICMPCode, that.ICMPCode)) return false;
+      if (!Objects.equal(ICMPType, that.ICMPType)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(endPort, that.endPort)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(protocol, that.protocol)) return false;
+      if (!Objects.equal(securityGroupName, that.securityGroupName)) return false;
+      if (!Objects.equal(startPort, that.startPort)) return false;
+
+      return true;
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      IngressRule other = (IngressRule) obj;
-      if (CIDR == null) {
-         if (other.CIDR != null)
-            return false;
-      } else if (!CIDR.equals(other.CIDR))
-         return false;
-      if (ICMPCode != other.ICMPCode)
-         return false;
-      if (ICMPType != other.ICMPType)
-         return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
-      if (endPort != other.endPort)
-         return false;
-      if (id != other.id)
-         return false;
-      if (protocol == null) {
-         if (other.protocol != null)
-            return false;
-      } else if (!protocol.equals(other.protocol))
-         return false;
-      if (securityGroupName == null) {
-         if (other.securityGroupName != null)
-            return false;
-      } else if (!securityGroupName.equals(other.securityGroupName))
-         return false;
-      if (startPort != other.startPort)
-         return false;
-      return true;
+   public int hashCode() {
+       return Objects.hashCode(CIDR, ICMPCode, ICMPType, account, endPort, id, protocol, securityGroupName, startPort);
    }
 
    @Override
@@ -271,6 +239,6 @@ public class IngressRule implements Comparable<IngressRule> {
 
    @Override
    public int compareTo(IngressRule arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 }

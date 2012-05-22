@@ -18,10 +18,10 @@
  */
 package org.jclouds.rimuhosting.miro;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
-import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
 
 import java.net.URI;
 import java.util.Properties;
@@ -62,7 +62,7 @@ public class RimuHostingProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_ZONE + ".DCLONDON." + ISO3166_CODES, "GB-LND");
       properties.setProperty(PROPERTY_ZONE + ".DCDALLAS." + ISO3166_CODES, "US-TX");
       properties.setProperty(PROPERTY_ZONE + ".DCSYDNEY." + ISO3166_CODES, "AU-NSW");
-      properties.setProperty(PROPERTY_RIMUHOSTING_DEFAULT_DC, "DCDALLAS");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,hardwareId=MIRO4B,locationId=DCDALLAS");
       return properties;
    }
 

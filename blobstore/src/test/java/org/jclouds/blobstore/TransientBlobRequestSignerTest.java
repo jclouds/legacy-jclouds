@@ -86,7 +86,7 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<Transien
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 2\nContent-MD5: AAIECA==\nContent-Type: text/plain\n");
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, null);
 
       assertEquals(request.getFilters().size(), 0);
    }
@@ -94,9 +94,9 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<Transien
    public void testSignPutBlobWithGenerate() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
       Blob blob = blobFactory.get().name(blobName).payload("foo").calculateMD5().contentType("text/plain").build();
-
-      assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), new byte[] { -84, -67, 24, -37, 76, -62, -8,
-               92, -19, -17, 101, 79, -52, -60, -92, -40 });
+      byte[] md5 = new byte[] { -84, -67, 24, -37, 76, -62, -8, 92, -19, -17, 101, 79, -52, -60, -92, -40 };
+      
+      assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), md5);
 
       HttpRequest request = signer.signPutBlob(containerName, blob);
 
@@ -104,8 +104,7 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<Transien
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 3\nContent-MD5: rL0Y20zC+Fzt72VPzMSk2A==\nContent-Type: text/plain\n");
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 3l, new byte[] { -84, -67, 24, -37, 76,
-               -62, -8, 92, -19, -17, 101, 79, -52, -60, -92, -40 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 3l, md5, null);
 
       assertEquals(request.getFilters().size(), 0);
    }

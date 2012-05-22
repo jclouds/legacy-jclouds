@@ -55,7 +55,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * @param diskofferingid
     *           the ID of the disk offering
     */
-   public DeployVirtualMachineOptions diskOfferingId(long diskofferingid) {
+   public DeployVirtualMachineOptions diskOfferingId(String diskofferingid) {
       checkArgument(!queryParameters.containsKey("size"), "Mutually exclusive with size");
       this.queryParameters.replaceValues("diskofferingid", ImmutableSet.of(diskofferingid + ""));
       return this;
@@ -126,7 +126,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * @param ipsToNetworks
     *           mapping ip addresses to network ids (2.2.12 only option)
     */
-   public DeployVirtualMachineOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
+   public DeployVirtualMachineOptions ipsToNetworks(Map<String, String> ipsToNetworks) {
       int count = 0;
       for (String ip : ipsToNetworks.keySet()) {
          this.queryParameters.replaceValues(String.format("ipnetworklist[%d].ip", count), ImmutableSet.of(ip));
@@ -141,7 +141,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * @param networkId
     *           network id used by virtual machine
     */
-   public DeployVirtualMachineOptions networkId(long networkId) {
+   public DeployVirtualMachineOptions networkId(String networkId) {
       this.queryParameters.replaceValues("networkids", ImmutableSet.of(networkId + ""));
       return this;
    }
@@ -150,25 +150,25 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * @param networkIds
     *           network ids used by virtual machine
     */
-   public DeployVirtualMachineOptions networkIds(Iterable<Long> networkIds) {
+   public DeployVirtualMachineOptions networkIds(Iterable<String> networkIds) {
       this.queryParameters.replaceValues("networkids", ImmutableSet.of(Joiner.on(',').join(networkIds)));
       return this;
    }
 
-   public Iterable<Long> getNetworkIds() {
+   public Iterable<String> getNetworkIds() {
       if (queryParameters.get("networkids").size() == 1) {
          return Iterables.transform(
                Splitter.on(",").split(Iterables.getOnlyElement(queryParameters.get("networkids"))),
-               new Function<String, Long>() {
+               new Function<String, String>() {
 
                   @Override
-                  public Long apply(String arg0) {
-                     return Long.parseLong(arg0);
+                  public String apply(String arg0) {
+                     return arg0;
                   }
 
                });
       } else {
-         return ImmutableSet.<Long> of();
+         return ImmutableSet.<String> of();
       }
    }
 
@@ -177,7 +177,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     *           security group applied to the virtual machine. Should be passed
     *           only when vm is created from a zone with Basic Network support
     */
-   public DeployVirtualMachineOptions securityGroupId(long securityGroupId) {
+   public DeployVirtualMachineOptions securityGroupId(String securityGroupId) {
       this.queryParameters.replaceValues("securitygroupids", ImmutableSet.of(securityGroupId + ""));
       return this;
    }
@@ -187,7 +187,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     *           security groups applied to the virtual machine. Should be passed
     *           only when vm is created from a zone with Basic Network support
     */
-   public DeployVirtualMachineOptions securityGroupIds(Iterable<Long> securityGroupIds) {
+   public DeployVirtualMachineOptions securityGroupIds(Iterable<String> securityGroupIds) {
       this.queryParameters.replaceValues("securitygroupids", ImmutableSet.of(Joiner.on(',').join(securityGroupIds)));
       return this;
    }
@@ -224,7 +224,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#diskOfferingId
        */
-      public static DeployVirtualMachineOptions diskOfferingId(long diskOfferingId) {
+      public static DeployVirtualMachineOptions diskOfferingId(String diskOfferingId) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.diskOfferingId(diskOfferingId);
       }
@@ -280,7 +280,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#ipsToNetworks
        */
-      public static DeployVirtualMachineOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
+      public static DeployVirtualMachineOptions ipsToNetworks(Map<String, String> ipsToNetworks) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.ipsToNetworks(ipsToNetworks);
       }
@@ -288,7 +288,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#networkId
        */
-      public static DeployVirtualMachineOptions networkId(long id) {
+      public static DeployVirtualMachineOptions networkId(String id) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.networkId(id);
       }
@@ -296,7 +296,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#networkIds
        */
-      public static DeployVirtualMachineOptions networkIds(Iterable<Long> networkIds) {
+      public static DeployVirtualMachineOptions networkIds(Iterable<String> networkIds) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.networkIds(networkIds);
       }
@@ -304,7 +304,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#securityGroupId
        */
-      public static DeployVirtualMachineOptions securityGroupId(long id) {
+      public static DeployVirtualMachineOptions securityGroupId(String id) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.securityGroupId(id);
       }
@@ -312,7 +312,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#securityGroupIds
        */
-      public static DeployVirtualMachineOptions securityGroupIds(Iterable<Long> securityGroupIds) {
+      public static DeployVirtualMachineOptions securityGroupIds(Iterable<String> securityGroupIds) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.securityGroupIds(securityGroupIds);
       }
@@ -336,7 +336,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#accountInDomain
        */
-      public static DeployVirtualMachineOptions accountInDomain(String account, long domain) {
+      public static DeployVirtualMachineOptions accountInDomain(String account, String domain) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.accountInDomain(account, domain);
       }
@@ -344,7 +344,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       /**
        * @see DeployVirtualMachineOptions#domainId
        */
-      public static DeployVirtualMachineOptions domainId(long domainId) {
+      public static DeployVirtualMachineOptions domainId(String domainId) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.domainId(domainId);
       }
@@ -354,7 +354,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public DeployVirtualMachineOptions accountInDomain(String account, long domain) {
+   public DeployVirtualMachineOptions accountInDomain(String account, String domain) {
       return DeployVirtualMachineOptions.class.cast(super.accountInDomain(account, domain));
    }
 
@@ -362,7 +362,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * {@inheritDoc}
     */
    @Override
-   public DeployVirtualMachineOptions domainId(long domainId) {
+   public DeployVirtualMachineOptions domainId(String domainId) {
       return DeployVirtualMachineOptions.class.cast(super.domainId(domainId));
    }
 }

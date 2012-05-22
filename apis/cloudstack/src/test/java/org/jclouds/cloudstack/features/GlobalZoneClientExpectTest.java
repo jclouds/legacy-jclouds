@@ -64,7 +64,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       assertEquals(client.createZone("test-zone", NetworkType.BASIC, "8.8.8.8", "10.10.10.10"),
          Zone.builder()
-            .id(6)
+            .id("6")
             .name("test-zone")
             .DNS(ImmutableList.of("8.8.8.8"))
             .internalDNS(ImmutableList.of("10.10.10.10"))
@@ -96,9 +96,9 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
             .payload(payloadFromResource("/updatezoneresponse.json"))
             .build());
 
-      assertEquals(client.updateZone(6, name("test-zone").externalDns(ImmutableList.of("8.8.8.8"))),
+      assertEquals(client.updateZone("6", name("test-zone").externalDns(ImmutableList.of("8.8.8.8"))),
          Zone.builder()
-            .id(6)
+            .id("6")
             .name("test-zone")
             .DNS(ImmutableList.of("8.8.8.8"))
             .internalDNS(ImmutableList.of("10.10.10.10"))
@@ -109,7 +109,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
             .dhcpProvider("DhcpServer").build());
 
       client = requestSendsResponse(request, HttpResponse.builder().statusCode(404).build());
-      assertNull(client.updateZone(6, name("test-zone").externalDns(ImmutableList.of("8.8.8.8"))));
+      assertNull(client.updateZone("6", name("test-zone").externalDns(ImmutableList.of("8.8.8.8"))));
    }
 
    public void testDeleteZone() {
@@ -129,7 +129,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
             .payload(payloadFromResource("/deletezoneresponse.json"))
             .build());
 
-      client.deleteZone(6);
+      client.deleteZone("6");
    }
 
    @Override

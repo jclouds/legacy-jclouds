@@ -59,7 +59,7 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected String prefix = System.getProperty("user.name")+"-"+getClass().getSimpleName();
 
-   private long zoneId;
+   private String zoneId;
 
    @BeforeMethod(groups = "live")
    public void setZoneId() {
@@ -80,49 +80,49 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListVolumesById() {
-      Iterable<Long> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, Long>() {
-         public Long apply(Volume input) {
+      Iterable<String> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, String>() {
+         public String apply(Volume input) {
             return input.getId();
          }
       });
       assertNotNull(volumeIds);
       assertFalse(Iterables.isEmpty(volumeIds));
 
-      for (Long id : volumeIds) {
+      for (String id : volumeIds) {
          Set<Volume> found = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.id(id));
          assertNotNull(found);
          assertEquals(1, found.size());
          Volume volume = Iterables.getOnlyElement(found);
-         assertEquals(id.longValue(), volume.getId());
+         assertEquals(id, volume.getId());
          checkVolume(volume);
       }
    }
 
    public void testListVolumesNonexistantId() {
-      Set<Volume> found = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.id(-1));
+      Set<Volume> found = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.id("foo"));
       assertNotNull(found);
       assertTrue(found.isEmpty());
    }
 
    public void testGetVolumeById() {
-      Iterable<Long> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, Long>() {
-         public Long apply(Volume input) {
+      Iterable<String> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, String>() {
+         public String apply(Volume input) {
             return input.getId();
          }
       });
       assertNotNull(volumeIds);
       assertFalse(Iterables.isEmpty(volumeIds));
 
-      for (Long id : volumeIds) {
+      for (String id : volumeIds) {
          Volume found = client.getVolumeClient().getVolume(id);
          assertNotNull(found);
-         assertEquals(id.longValue(), found.getId());
+         assertEquals(id, found.getId());
          checkVolume(found);
       }
    }
 
    public void testGetVolumeNonexistantId() {
-      Volume found = client.getVolumeClient().getVolume(-1);
+      Volume found = client.getVolumeClient().getVolume("foo");
       assertNull(found);
    }
 
@@ -240,11 +240,11 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotSame(Volume.Type.UNRECOGNIZED, volume.getType());
    }
 
-   Volume findVolumeWithId(final long id) {
+   Volume findVolumeWithId(final String id) {
       return findVolumeWithId(client, id);
    }
 
-   static Volume findVolumeWithId(final CloudStackClient client, final long id) {
+   static Volume findVolumeWithId(final CloudStackClient client, final String id) {
       for (Volume v: client.getVolumeClient().listVolumes())
          if (v.getId()==id) return v;
       throw new NoSuchElementException("no volume with id "+id);

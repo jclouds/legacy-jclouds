@@ -42,7 +42,7 @@ public class DomainLimitAsyncClientTest extends BaseCloudStackAsyncClientTest<Do
    public void testUpdateResourceLimit() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DomainLimitAsyncClient.class.getMethod("updateResourceLimit", ResourceLimit.class);
       HttpRequest httpRequest = processor.createRequest(method,
-            ResourceLimit.builder().resourceType(ResourceType.SNAPSHOT).account("foo").domainId(100l).max(101).build());
+            ResourceLimit.builder().resourceType(ResourceType.SNAPSHOT).account("foo").domainId("100").max(101).build());
 
       assertRequestLineEquals(
             httpRequest,

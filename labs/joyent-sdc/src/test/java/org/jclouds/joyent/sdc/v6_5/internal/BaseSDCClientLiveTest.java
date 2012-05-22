@@ -49,7 +49,7 @@ public class BaseSDCClientLiveTest extends BaseContextLiveTest<RestContext<SDCCl
       super.setupContext();
       sdcContext = context;
    }
-   
+
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (sdcContext != null)

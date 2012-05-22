@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Date;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -33,14 +34,14 @@ public class VMGroup implements Comparable<VMGroup> {
 
    public static class Builder {
 
-      private long id;
+      private String id;
       private String account;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private String name;
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -60,7 +61,7 @@ public class VMGroup implements Comparable<VMGroup> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -75,15 +76,15 @@ public class VMGroup implements Comparable<VMGroup> {
       }
    }
 
-   private long id;
+   private String id;
    private String account;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    private String name;
 
-   public VMGroup(long id, String account, Date created, String domain, long domainId, String name) {
+   public VMGroup(String id, String account, Date created, String domain, String domainId, String name) {
       this.id = id;
       this.account = account;
       this.created = created;
@@ -101,7 +102,7 @@ public class VMGroup implements Comparable<VMGroup> {
    /**
     * @return the VMGroup's ID
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -129,7 +130,7 @@ public class VMGroup implements Comparable<VMGroup> {
    /**
     * @return the ID of the domain that contains the VMGroup
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -145,27 +146,21 @@ public class VMGroup implements Comparable<VMGroup> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      VMGroup vmGroup = (VMGroup) o;
+      VMGroup that = (VMGroup) o;
 
-      if (domainId != vmGroup.domainId) return false;
-      if (id != vmGroup.id) return false;
-      if (account != null ? !account.equals(vmGroup.account) : vmGroup.account != null) return false;
-      if (created != null ? !created.equals(vmGroup.created) : vmGroup.created != null) return false;
-      if (domain != null ? !domain.equals(vmGroup.domain) : vmGroup.domain != null) return false;
-      if (name != null ? !name.equals(vmGroup.name) : vmGroup.name != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(name, that.name)) return false;
 
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (domain != null ? domain.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (name != null ? name.hashCode() : 0);
-      return result;
+       return Objects.hashCode(domainId, id, account, created, domain, name);
    }
 
    @Override
@@ -182,6 +177,6 @@ public class VMGroup implements Comparable<VMGroup> {
 
    @Override
    public int compareTo(VMGroup vmGroup) {
-      return new Long(id).compareTo(vmGroup.getId());
+      return id.compareTo(vmGroup.getId());
    }
 }

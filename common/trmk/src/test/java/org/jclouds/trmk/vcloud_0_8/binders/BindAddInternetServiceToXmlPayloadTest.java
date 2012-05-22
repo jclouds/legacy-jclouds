@@ -73,7 +73,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
       BindAddInternetServiceToXmlPayload binder = injector
                .getInstance(BindAddInternetServiceToXmlPayload.class);
 
-      Map<String, String> map = Maps.newHashMap();
+      Map<String, Object> map = Maps.newHashMap();
       map.put("name", "name");
       map.put("protocol", "TCP");
       map.put("port", "22");
@@ -88,7 +88,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
        BindAddInternetServiceToXmlPayload binder = injector
                 .getInstance(BindAddInternetServiceToXmlPayload.class);
 
-       Map<String, String> map = Maps.newHashMap();
+       Map<String, Object> map = Maps.newHashMap();
        map.put("name", "name");
        map.put("protocol", "TCP");
        map.put("port", "22");
@@ -106,7 +106,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
        BindAddInternetServiceToXmlPayload binder = injector
                 .getInstance(BindAddInternetServiceToXmlPayload.class);
 
-       Map<String, String> map = Maps.newHashMap();
+       Map<String, Object> map = Maps.newHashMap();
        map.put("name", "name");
        map.put("protocol", "TCP");
        map.put("port", "22");

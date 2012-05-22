@@ -90,10 +90,16 @@ public class Service implements Comparable<Service> {
          return type(from.getType()).name(from.getName()).endpoints(from.getEndpoints());
       }
    }
-
-   protected final String type;
-   protected final String name;
-   protected final Set<Endpoint> endpoints;
+   
+   protected Service() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   }
+   
+   protected String type;
+   protected String name;
+   protected Set<Endpoint> endpoints = ImmutableSet.of();
 
    public Service(String type, String name, Set<Endpoint> endpoints) {
       this.type = checkNotNull(type, "type");

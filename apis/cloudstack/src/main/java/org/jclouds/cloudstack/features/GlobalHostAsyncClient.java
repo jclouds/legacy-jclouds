@@ -60,7 +60,7 @@ public interface GlobalHostAsyncClient {
     * @see GlobalHostClient#listHosts
     */
    @GET
-   @QueryParams(keys = "command", values = "listHosts")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listHosts", "true" })
    @SelectJson("host")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -81,7 +81,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "addHost")
    @SelectJson("host")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Host> addHost(@QueryParam("zoneid") long zoneId, @QueryParam("url") String url, @QueryParam("hypervisor") String hypervisor, @QueryParam("username") String username, @QueryParam("password") String password, AddHostOptions... options);
+   ListenableFuture<Host> addHost(@QueryParam("zoneid") String zoneId, @QueryParam("url") String url, @QueryParam("hypervisor") String hypervisor, @QueryParam("username") String username, @QueryParam("password") String password, AddHostOptions... options);
 
    /**
     * Updates a host.
@@ -94,7 +94,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "updateHost")
    @SelectJson("host")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Host> updateHost(@QueryParam("id") long hostId, UpdateHostOptions... options);
+   ListenableFuture<Host> updateHost(@QueryParam("id") String hostId, UpdateHostOptions... options);
 
    /**
     * Update password of a host on management server.
@@ -106,7 +106,7 @@ public interface GlobalHostAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "updateHostPassword")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> updateHostPassword(@QueryParam("hostid") long hostId, @QueryParam("username") String username, @QueryParam("password") String password);
+   ListenableFuture<Void> updateHostPassword(@QueryParam("hostid") String hostId, @QueryParam("username") String username, @QueryParam("password") String password);
 
    /**
     * Deletes a host.
@@ -117,7 +117,7 @@ public interface GlobalHostAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "deleteHost")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> deleteHost(@QueryParam("id") long hostId, DeleteHostOptions... options);
+   ListenableFuture<Void> deleteHost(@QueryParam("id") String hostId, DeleteHostOptions... options);
 
    /**
     * Prepares a host for maintenance.
@@ -129,7 +129,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "prepareHostForMaintenance")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> prepareHostForMaintenance(@QueryParam("id") long hostId);
+   ListenableFuture<String> prepareHostForMaintenance(@QueryParam("id") String hostId);
 
    /**
     * Cancels host maintenance.
@@ -141,7 +141,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "cancelHostMaintenance")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> cancelHostMaintenance(@QueryParam("id") long hostId);
+   ListenableFuture<String> cancelHostMaintenance(@QueryParam("id") String hostId);
 
    /**
     * Reconnects a host.
@@ -153,7 +153,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "reconnectHost")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Long> reconnectHost(@QueryParam("id") long hostId);
+   ListenableFuture<String> reconnectHost(@QueryParam("id") String hostId);
 
    /**
     * Adds secondary storage.
@@ -172,7 +172,7 @@ public interface GlobalHostAsyncClient {
     * @see GlobalHostClient#listClusters
     */
    @GET
-   @QueryParams(keys = "command", values = "listClusters")
+   @QueryParams(keys = { "command", "listAll" }, values = { "listClusters", "true" })
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -192,7 +192,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "addCluster")
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Cluster> addCluster(@QueryParam("zoneid") long zoneId, @QueryParam("clustername") String clusterName, @QueryParam("clustertype") Host.ClusterType clusterType, @QueryParam("hypervisor") String hypervisor, AddClusterOptions... options);
+   ListenableFuture<Cluster> addCluster(@QueryParam("zoneid") String zoneId, @QueryParam("clustername") String clusterName, @QueryParam("clustertype") Host.ClusterType clusterType, @QueryParam("hypervisor") String hypervisor, AddClusterOptions... options);
 
    /**
     * Updates an existing cluster.
@@ -205,7 +205,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "updateCluster")
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Cluster> updateCluster(@QueryParam("id") long clusterId, UpdateClusterOptions... options);
+   ListenableFuture<Cluster> updateCluster(@QueryParam("id") String clusterId, UpdateClusterOptions... options);
 
    /**
     * Update password of a cluster on management server.
@@ -218,7 +218,7 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "updateHostPassword")
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> updateClusterPassword(@QueryParam("clusterid") long clusterId, @QueryParam("username") String username, @QueryParam("password") String password);
+   ListenableFuture<Void> updateClusterPassword(@QueryParam("clusterid") String clusterId, @QueryParam("username") String username, @QueryParam("password") String password);
 
    /**
     * Deletes a cluster.
@@ -228,6 +228,6 @@ public interface GlobalHostAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "deleteCluster")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> deleteCluster(@QueryParam("id") long clusterId);
+   ListenableFuture<Void> deleteCluster(@QueryParam("id") String clusterId);
 
 }

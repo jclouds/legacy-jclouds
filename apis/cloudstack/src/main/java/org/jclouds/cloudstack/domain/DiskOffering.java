@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
@@ -39,17 +40,17 @@ public class DiskOffering implements Comparable<DiskOffering> {
    }
 
    public static class Builder {
-      private long id;
+      private String id;
       private String name;
       private String displayText;
       private Date created;
       private String domain;
-      private long domainId;
+      private String domainId;
       private int diskSize;
       private boolean customized;
       private Set<String> tags = ImmutableSet.of();
 
-      public Builder id(long id) {
+      public Builder id(String id) {
          this.id = id;
          return this;
       }
@@ -74,7 +75,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
          return this;
       }
 
-      public Builder domainId(long domainId) {
+      public Builder domainId(String domainId) {
          this.domainId = domainId;
          return this;
       }
@@ -99,21 +100,21 @@ public class DiskOffering implements Comparable<DiskOffering> {
       }
    }
 
-   private long id;
+   private String id;
    private String name;
    @SerializedName("displaytext")
    private String displayText;
    private Date created;
    private String domain;
    @SerializedName("domainid")
-   private long domainId;
+   private String domainId;
    @SerializedName("disksize")
    private int diskSize;
    @SerializedName("iscustomized")
    private boolean customized;
    private String tags;
 
-   public DiskOffering(long id, String name, String displayText, Date created, String domain, long domainId,
+   public DiskOffering(String id, String name, String displayText, Date created, String domain, String domainId,
          int diskSize, boolean customized, Set<String> tags) {
       this.id = id;
       this.name = name;
@@ -138,7 +139,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
     * 
     * @return the id of the disk offering
     */
-   public long getId() {
+   public String getId() {
       return id;
    }
 
@@ -179,7 +180,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
     * 
     * @return the domain id of the disk offering
     */
-   public long getDomainId() {
+   public String getDomainId() {
       return domainId;
    }
 
@@ -209,18 +210,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
-      result = prime * result + (customized ? 1231 : 1237);
-      result = prime * result + diskSize;
-      result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
-      result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-      return result;
+       return Objects.hashCode(created, customized, diskSize, displayText, domain, domainId, id, name, tags);
    }
 
    @Override
@@ -231,40 +221,18 @@ public class DiskOffering implements Comparable<DiskOffering> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      DiskOffering other = (DiskOffering) obj;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
-      if (customized != other.customized)
-         return false;
-      if (diskSize != other.diskSize)
-         return false;
-      if (displayText == null) {
-         if (other.displayText != null)
-            return false;
-      } else if (!displayText.equals(other.displayText))
-         return false;
-      if (domain == null) {
-         if (other.domain != null)
-            return false;
-      } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (tags == null) {
-         if (other.tags != null)
-            return false;
-      } else if (!tags.equals(other.tags))
-         return false;
+      DiskOffering that = (DiskOffering) obj;
+
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(customized, that.customized)) return false;
+      if (!Objects.equal(diskSize, that.diskSize)) return false;
+      if (!Objects.equal(displayText, that.displayText)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(tags, that.tags)) return false;
+
       return true;
    }
 
@@ -285,7 +253,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
 
    @Override
    public int compareTo(DiskOffering arg0) {
-      return new Long(id).compareTo(arg0.getId());
+      return id.compareTo(arg0.getId());
    }
 
 }
