@@ -42,6 +42,7 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
+import org.jclouds.demo.tweetstore.controller.ClearTweetsController;
 import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
@@ -148,6 +149,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
             serve("/stores/*").with(EnqueueStoresController.class);
+            serve("/clear/*").with(ClearTweetsController.class);
          }
       });
    }
