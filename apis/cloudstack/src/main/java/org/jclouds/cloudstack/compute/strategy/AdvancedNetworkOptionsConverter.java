@@ -20,9 +20,11 @@ package org.jclouds.cloudstack.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetworkInZone;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.isIsolatedNetwork;
 
 import java.util.Map;
 
@@ -50,9 +52,12 @@ public class AdvancedNetworkOptionsConverter implements OptionsConverter {
          checkArgument(!networks.isEmpty(), "please setup a network for zone: " + zoneId);
          Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
          if(defaultNetworkInZone == null) {
-            throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
+             defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(isIsolatedNetwork(), not(supportsStaticNAT()))), null);
+         }
+         if (defaultNetworkInZone == null) {
+             throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
          } else {
-            options.networkId(defaultNetworkInZone.getId());
+             options.networkId(defaultNetworkInZone.getId());
          }
       }
       return options;

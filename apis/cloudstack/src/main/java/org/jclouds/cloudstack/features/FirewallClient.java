@@ -74,6 +74,13 @@ public interface FirewallClient {
    AsyncCreateResponse createFirewallRuleForIpAndProtocol(String ipAddressId,
          FirewallRule.Protocol protocol, CreateFirewallRuleOptions... options);
 
+    
+    AsyncCreateResponse createFirewallRuleForIpProtocolAndPort(String ipAddressId,
+                                                           FirewallRule.Protocol protocol,
+                                                           int startPort,
+                                                               int endPort);
+
+
    /**
     * Deletes a firewall rule
     *

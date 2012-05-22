@@ -40,6 +40,12 @@ public enum GuestIPType {
     */
    DIRECT,
 
+       /**
+        * Not sure what exactly these *are* yet, but I know they exist in CS3.
+        */
+   SHARED,
+   ISOLATED,
+
    UNRECOGNIZED;
 
    @Override

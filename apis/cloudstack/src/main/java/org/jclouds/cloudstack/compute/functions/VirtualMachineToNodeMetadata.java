@@ -134,6 +134,9 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
             publicAddresses.add(from.getIPAddress());
          }
       }
+      if (from.getPublicIP() != null) {
+          publicAddresses.add(from.getPublicIP());
+      }
       for (NIC nic : from.getNICs()) {
          if (nic.getIPAddress() != null) {
             if (isPrivateIPAddress(nic.getIPAddress())) {
