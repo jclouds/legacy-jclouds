@@ -111,6 +111,8 @@ public class JodaDateService implements DateService {
    }
 
    public final Date iso8601DateParse(String toParse) {
+      if (toParse.length() < 10)
+         throw new IllegalArgumentException("incorrect date format " + toParse);
       String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
@@ -121,6 +123,8 @@ public class JodaDateService implements DateService {
    }
 
    public final Date iso8601SecondsDateParse(String toParse) {
+      if (toParse.length() < 10)
+         throw new IllegalArgumentException("incorrect date format " + toParse);
       String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);

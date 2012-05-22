@@ -40,14 +40,24 @@ public interface DateService {
 
    String cDateFormat();
 
-   Date cDateParse(String toParse);
+   /**
+    * @param toParse text to parse
+    * @return parsed date
+    * @throws IllegalArgumentException if the input is invalid
+    */
+   Date cDateParse(String toParse) throws IllegalArgumentException;
 
    String rfc822DateFormat(Date date);
 
    String rfc822DateFormat();
-
-   Date rfc822DateParse(String toParse);
-
+   
+   /**
+    * @param toParse text to parse
+    * @return parsed date
+    * @throws IllegalArgumentException if the input is invalid
+    */
+   Date rfc822DateParse(String toParse) throws IllegalArgumentException;
+   
    String iso8601SecondsDateFormat(Date dateTime);
 
    String iso8601SecondsDateFormat();
@@ -55,15 +65,30 @@ public interface DateService {
    String iso8601DateFormat(Date date);
 
    String iso8601DateFormat();
+   
+   /**
+    * @param toParse text to parse
+    * @return parsed date
+    * @throws IllegalArgumentException if the input is invalid
+    */
+   Date iso8601DateParse(String toParse) throws IllegalArgumentException;
 
-   Date iso8601DateParse(String toParse);
-
-   Date iso8601SecondsDateParse(String toParse);
+   /**
+    * @param toParse text to parse
+    * @return parsed date
+    * @throws IllegalArgumentException if the input is invalid
+    */
+   Date iso8601SecondsDateParse(String toParse) throws IllegalArgumentException;
 
    String rfc1123DateFormat(Date date);
 
    String rfc1123DateFormat();
 
-   Date rfc1123DateParse(String toParse);
+   /**
+    * @param toParse text to parse
+    * @return parsed date
+    * @throws IllegalArgumentException if the input is invalid
+    */
+   Date rfc1123DateParse(String toParse) throws IllegalArgumentException;
 
 }

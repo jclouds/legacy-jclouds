@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.jclouds.PerformanceTest;
 import org.testng.annotations.BeforeTest;
@@ -96,90 +95,110 @@ public class DateServiceTest extends PerformanceTest {
    }
 
    @Test
-   public void testIso8601DateParse() throws ExecutionException, InterruptedException {
+   public void testIso8601DateParse() {
       Date dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
       assertEquals(dsDate, testData[0].date);
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testIso8601DateParseIllegal() {
+      dateService.iso8601DateParse("-1");
+   }
+   
    @Test
-   public void testIso8601DateParseTz() throws ExecutionException, InterruptedException {
+   public void testIso8601DateParseTz() {
       Date dsDate = dateService.iso8601SecondsDateParse(testData[0].iso8601DateStringTz);
       assertEquals(dsDate, testData[0].date);
    }
 
    @Test
-   public void testIso8601SecondsDateParse() throws ExecutionException, InterruptedException {
+   public void testIso8601SecondsDateParse() {
       Date dsDate = dateService.iso8601SecondsDateParse(testData[0].iso8601SecondsDateString);
       assertEquals(dsDate, testData[0].date);
    }
+   
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testIso8601SecondsDateParseIllegal() {
+      dateService.iso8601SecondsDateParse("-1");
+   }
 
    @Test
-   public void testCDateParse() throws ExecutionException, InterruptedException {
+   public void testCDateParse() {
       Date dsDate = dateService.cDateParse(testData[0].cDateString);
       assertEquals(dsDate, testData[0].date);
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testCDateParseIllegal() {
+      dateService.cDateParse("foo");
+   }
+   
    @Test
-   public void testRfc822DateParse() throws ExecutionException, InterruptedException {
+   public void testRfc822DateParse() {
       Date dsDate = dateService.rfc822DateParse(testData[0].rfc822DateString);
       assertEquals(dsDate, testData[0].date);
    }
+   
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testRfc822DateParseIllegal() {
+      dateService.rfc822DateParse("foo");
+   }
 
    @Test
-   public void testIso8601DateFormat() throws ExecutionException, InterruptedException {
+   public void testIso8601DateFormat() {
       String dsString = dateService.iso8601DateFormat(testData[0].date);
       assertEquals(dsString, testData[0].iso8601DateString);
    }
 
    @Test
-   public void testIso8601SecondsDateFormat() throws ExecutionException, InterruptedException {
+   public void testIso8601SecondsDateFormat() {
       String dsString = dateService.iso8601SecondsDateFormat(testData[0].date);
       assertEquals(dsString, testData[0].iso8601SecondsDateString);
    }
 
    @Test
-   public void testCDateFormat() throws ExecutionException, InterruptedException {
+   public void testCDateFormat() {
       String dsString = dateService.cDateFormat(testData[0].date);
       assertEquals(dsString, testData[0].cDateString);
    }
 
    @Test
-   public void testRfc822DateFormat() throws ExecutionException, InterruptedException {
+   public void testRfc822DateFormat() {
       String dsString = dateService.rfc822DateFormat(testData[0].date);
       assertEquals(dsString, testData[0].rfc822DateString);
    }
 
    @Test
-   void testIso8601DateFormatResponseTime() throws ExecutionException, InterruptedException {
+   void testIso8601DateFormatResponseTime() {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.iso8601DateFormat();
    }
 
    @Test
-   void testFromSeconds() throws ExecutionException, InterruptedException {
+   void testFromSeconds() {
       long seconds = 1254008225;
       Date date = dateService.fromSeconds(seconds);
       assertEquals(dateService.iso8601SecondsDateFormat(date), "2009-09-26T23:37:05Z");
    }
 
    @Test
-   void testTz() throws ExecutionException, InterruptedException {
+   void testTz() {
       assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T02:14:13-04:00").getTime(), 1306390453000l);
    }
    
    @Test
-   void testTzNoT() throws ExecutionException, InterruptedException {
+   void testTzNoT() {
       assertEquals(dateService.iso8601DateParse("2011-05-25 16:12:21.656+0000").getTime(), 1306339941656l);
    }
 
    @Test
-   void testRfc822DateFormatResponseTime() throws ExecutionException, InterruptedException {
+   void testRfc822DateFormatResponseTime() {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.rfc822DateFormat();
    }
 
    @Test
-   void testCDateFormatResponseTime() throws ExecutionException, InterruptedException {
+   void testCDateFormatResponseTime() {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.cDateFormat();
    }
@@ -212,7 +231,7 @@ public class DateServiceTest extends PerformanceTest {
    }
 
    @Test
-   void testParseIso8601DateSerialResponseTime() throws ExecutionException, InterruptedException {
+   void testParseIso8601DateSerialResponseTime() {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.iso8601DateParse(testData[0].iso8601DateString);
    }

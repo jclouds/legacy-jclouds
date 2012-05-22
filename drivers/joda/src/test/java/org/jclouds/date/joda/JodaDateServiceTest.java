@@ -21,7 +21,6 @@ package org.jclouds.date.joda;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.DateServiceTest;
@@ -56,14 +55,14 @@ public class JodaDateServiceTest extends DateServiceTest {
 
    @Override
    @Test
-   public void testRfc822DateFormat() throws ExecutionException, InterruptedException {
+   public void testRfc822DateFormat() {
       String dsString = dateService.rfc822DateFormat(testData[0].date);
       assertEquals(dsString, testData[0].rfc822DateString);
    }
 
    @Override
    @Test(enabled = false)
-   public void testRfc822DateParse() throws ExecutionException, InterruptedException {
+   public void testRfc822DateParse() {
       Date dsDate = dateService.rfc822DateParse(testData[0].rfc822DateString);
       assertEquals(dsDate, testData[0].date);
    }

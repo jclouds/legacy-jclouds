@@ -24,7 +24,6 @@ import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -34,7 +33,8 @@ import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.Crypto;
-import org.jclouds.date.internal.SimpleDateCodecFactory;
+import org.jclouds.date.internal.DateServiceDateCodecFactory;
+import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceRfc1123Codec;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpResponse;
@@ -68,10 +68,10 @@ public class ConvertToJcloudsResponseTest {
    }
 
    @BeforeTest
-   void setupClient() throws MalformedURLException {
+   void setupClient() {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToJcloudsResponse(new DefaultContentMetadataCodec(
-                new SimpleDateCodecFactory(new SimpleDateFormatDateService())));
+      req = new ConvertToJcloudsResponse(new DefaultContentMetadataCodec(new DateServiceDateCodecFactory(
+            new DateServiceRfc1123Codec(new SimpleDateFormatDateService()))));
    }
 
    @Test
