@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.openstack.keystone.v2_0.functions;
+
 import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
@@ -39,16 +40,22 @@ public class AuthenticatePasswordCredentials implements Function<Credentials, Ac
    public Access apply(Credentials input) {
       if (input.identity.indexOf(':') == -1) {
          throw new AuthorizationException(String.format("Identity %s does not match format tenantId:username",
-                  input.identity), null);
+               input.identity), null);
       }
-      
+
       String tenantId = input.identity.substring(0, input.identity.indexOf(':'));
       String usernameOrAccessKey = input.identity.substring(input.identity.indexOf(':') + 1);
       String passwordOrSecretKey = input.credential;
 
       PasswordCredentials passwordCredentials = PasswordCredentials.createWithUsernameAndPassword(usernameOrAccessKey,
-               passwordOrSecretKey);
-      return client.authenticateTenantWithCredentials(tenantId, passwordCredentials);
+            passwordOrSecretKey);
+      Access access;
+      if (tenantId.matches("^[0-9]+$")) {
+         access = client.authenticateWithTenantIdAndCredentials(tenantId, passwordCredentials);
+      } else {
+         access = client.authenticateWithTenantNameAndCredentials(tenantId, passwordCredentials);
+      }
+      return access;
    }
 
    @Override
