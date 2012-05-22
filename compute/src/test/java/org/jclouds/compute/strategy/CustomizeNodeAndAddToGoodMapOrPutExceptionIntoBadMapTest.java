@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -91,8 +92,9 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       
       assertEquals(goodNodes.size(), 0);
       assertEquals(badNodes.keySet(), ImmutableSet.of(node));
-      assertEquals(badNodes.get(node).getMessage(),
-               "node(id) didn't achieve the state running within 1200 seconds, so we couldn't customize; final state: PENDING");
+      assertTrue(badNodes.get(node).getMessage() != null && badNodes.get(node).getMessage().matches(
+               "node\\(id\\) didn't achieve the state running, so we couldn't customize; aborting prematurely after .* seconds with final state: PENDING"),
+               badNodes.get(node).getMessage());
       assertEquals(customizationResponses.size(), 0);
 
       // verify mocks

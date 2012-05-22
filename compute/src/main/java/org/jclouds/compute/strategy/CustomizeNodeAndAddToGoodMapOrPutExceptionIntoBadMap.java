@@ -47,6 +47,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multimap;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -127,16 +128,26 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
       try {
          if (options.shouldBlockUntilRunning()) {
             try {
+               Stopwatch stopwatch = new Stopwatch().start();
                if (!nodeRunning.apply(node)) {
+                  long timeWaited = stopwatch.elapsedMillis();
+                  long earlyReturnGrace = 10; // sleeps can sometimes return milliseconds early
+                  
                   if (node.get() == null) {
                      node.set(originalNode);
                      throw new IllegalStateException(format("api response for node(%s) was null, so we can't customize",
                            originalId));
+                  } else if (timeWaited < (timeouts.nodeRunning - earlyReturnGrace)) {
+                     throw new IllegalStateException(
+                           format(
+                                 "node(%s) didn't achieve the state running, so we couldn't customize; aborting prematurely after %d seconds with final state: %s",
+                                 originalId, timeWaited / 1000, node.get().getState()));
+                  } else {
+                     throw new IllegalStateException(
+                           format(
+                                 "node(%s) didn't achieve the state running within %d seconds, so we couldn't customize; final state: %s",
+                                 originalId, timeouts.nodeRunning / 1000, node.get().getState()));
                   }
-                  throw new IllegalStateException(
-                        format(
-                              "node(%s) didn't achieve the state running within %d seconds, so we couldn't customize; final state: %s",
-                              originalId, timeouts.nodeRunning / 1000, node.get().getState()));
                }
             } catch (IllegalStateException e) {
                if (node.get().getState() == NodeState.TERMINATED) {
