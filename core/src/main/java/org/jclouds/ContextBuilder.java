@@ -255,7 +255,12 @@ public class ContextBuilder {
 
       Credentials creds = new Credentials(getAndRemove(expanded, PROPERTY_IDENTITY), getAndRemove(expanded,
                PROPERTY_CREDENTIAL));
-
+      
+      // But if identity has been overridden in the builder, then use that identity+credential 
+      if (identity.isPresent()) {
+         creds = new Credentials(identity.get(), credential);
+      }
+      
       ProviderMetadata providerMetadata = new UpdateProviderMetadataFromProperties(apiMetadata, this.providerMetadata).apply(expanded);
 
       return buildInjector(providerMetadata, creds, modules);
