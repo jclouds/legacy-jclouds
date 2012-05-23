@@ -89,7 +89,7 @@ END_OF_JCLOUDS_SCRIPT
 		%wheel ALL = (ALL) NOPASSWD:ALL
 	END_OF_JCLOUDS_FILE
 	chmod 0440 /etc/sudoers
-	mkdir -p /over/ridden/foo
+	mkdir -p /over/ridden
 	groupadd -f wheel
 	useradd -s /bin/bash -g wheel -m  -d /over/ridden/foo -p 'crypt(randompassword)' foo
 	mkdir -p /over/ridden/foo/.ssh

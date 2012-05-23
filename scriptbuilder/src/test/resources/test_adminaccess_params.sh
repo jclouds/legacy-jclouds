@@ -3,7 +3,7 @@ cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'
 	%wheel ALL = (ALL) NOPASSWD:ALL
 END_OF_JCLOUDS_FILE
 chmod 0440 /etc/sudoers
-mkdir -p /over/ridden/foo
+mkdir -p /over/ridden
 groupadd -f wheel
 useradd -s /bin/bash -g wheel -m  -d /over/ridden/foo -p 'crypt(bar)' foo
 mkdir -p /over/ridden/foo/.ssh

@@ -18,6 +18,7 @@
  */
 package org.jclouds.scriptbuilder.statements.login;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
@@ -36,6 +37,7 @@ import org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -178,10 +180,10 @@ public class UserAdd implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      String homeDir = (home != null) ? home : (defaultHome + "{fs}" + login);
+      String homeDir = (home != null) ? home : (defaultHome + '/' + login);
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       // useradd cannot create the default homedir
-      statements.add(Statements.exec("{md} " + homeDir));
+      statements.add(Statements.exec("{md} " + homeDir.substring(0, homeDir.lastIndexOf('/'))));
 
       ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.builder();
       userAddOptions.put("-s", shell);
@@ -222,27 +224,22 @@ public class UserAdd implements Statement {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((login == null) ? 0 : login.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      UserAdd that = UserAdd.class.cast(o);
+      return equal(this.login, that.login);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      UserAdd other = (UserAdd) obj;
-      if (login == null) {
-         if (other.login != null)
-            return false;
-      } else if (!login.equals(other.login))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(login);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("").add("login", login).toString();
    }
 }
