@@ -42,19 +42,26 @@ public interface AuthenticationClient {
     * 
     * @return access with token
     */
-   Access authenticateTenantWithCredentials(String tenantId, PasswordCredentials passwordCredentials);
+   Access authenticateWithTenantNameAndCredentials(String tenantId, PasswordCredentials passwordCredentials);
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateTenantWithCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
+   Access authenticateWithTenantIdAndCredentials(String tenantId, PasswordCredentials passwordCredentials);
+
+   /**
+    * Authenticate to generate a token.
+    * 
+    * @return access with token
+    */
+   Access authenticateWithTenantNameAndCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
    
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateTenantWithTenantIdAndCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
+   Access authenticateWithTenantIdAndCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
 }

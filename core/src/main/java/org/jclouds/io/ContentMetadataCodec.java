@@ -5,7 +5,6 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.EXPIRES;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Map.Entry;
 
@@ -17,10 +16,8 @@ import org.jclouds.date.DateCodec;
 import org.jclouds.date.DateCodecFactory;
 import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.Multimap;
@@ -117,13 +114,10 @@ public interface ContentMetadataCodec {
       public Date parseExpires(String expires) {
          try {
             return (expires != null) ? getExpiresDateCodec().toDate(expires) : null;
-         } catch (Exception e) {
-            if (Throwables2.getFirstThrowableOfType(e, ParseException.class) != null) {
-               logger.debug("Invalid Expires header (%s); should be in RFC-1123 format; treating as already expired: %s", expires, e.getMessage());
-               return new Date(0);
-            } else {
-               throw Throwables.propagate(e);
-            }
+         } catch (IllegalArgumentException e) {
+            logger.debug("Invalid Expires header (%s); should be in RFC-1123 format; treating as already expired: %s",
+                  expires, e.getMessage());
+            return new Date(0);
          }
       }
    }

@@ -89,7 +89,7 @@ public class SimpleDateFormatDateService implements DateService {
          try {
             return cSimpleDateFormat.parse(toParse);
          } catch (ParseException pe) {
-            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
+            throw new IllegalArgumentException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
@@ -112,7 +112,7 @@ public class SimpleDateFormatDateService implements DateService {
          try {
             return rfc822SimpleDateFormat.parse(toParse);
          } catch (ParseException pe) {
-            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
+            throw new IllegalArgumentException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
@@ -141,6 +141,8 @@ public class SimpleDateFormatDateService implements DateService {
 
    @Override
    public final Date iso8601DateParse(String toParse) {
+      if (toParse.length() < 10)
+         throw new IllegalArgumentException("incorrect date format " + toParse);
       String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
@@ -151,13 +153,15 @@ public class SimpleDateFormatDateService implements DateService {
          try {
             return iso8601SimpleDateFormat.parse(toParse);
          } catch (ParseException pe) {
-            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
+            throw new IllegalArgumentException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
 
    @Override
    public final Date iso8601SecondsDateParse(String toParse) {
+      if (toParse.length() < 10)
+         throw new IllegalArgumentException("incorrect date format " + toParse);
       String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
@@ -168,7 +172,7 @@ public class SimpleDateFormatDateService implements DateService {
          try {
             return iso8601SecondsSimpleDateFormat.parse(toParse);
          } catch (ParseException pe) {
-            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
+            throw new IllegalArgumentException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
@@ -198,12 +202,12 @@ public class SimpleDateFormatDateService implements DateService {
    }
 
    @Override
-   public final Date rfc1123DateParse(String toParse) {
+   public final Date rfc1123DateParse(String toParse) throws IllegalArgumentException {
       synchronized (rfc1123SimpleDateFormat) {
          try {
             return rfc1123SimpleDateFormat.parse(toParse);
          } catch (ParseException pe) {
-            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
+            throw new IllegalArgumentException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }

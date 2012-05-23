@@ -23,29 +23,18 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.date.DateCodec;
-import org.jclouds.date.internal.SimpleDateCodecFactory;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Location;
-import org.jclouds.io.ContentMetadataCodec;
-import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.s3.blobstore.integration.S3ContainerLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -68,50 +57,6 @@ public class AWSS3ContainerLiveTest extends S3ContainerLiveTest {
          blobStore.putBlob(containerName, blobStore.blobBuilder(blobName).payload(TEST_STRING).expires(expires).build());
 
          assertConsistencyAwareBlobExpiryMetadata(containerName, blobName, expires);
-
-      } finally {
-         recycleContainer(containerName);
-      }
-   }
-   
-   @Test(groups = { "live" })
-   public void testCreateBlobWithMalformedExpiry() throws InterruptedException, MalformedURLException, IOException {
-      // Create a blob that has a malformed Expires value; requires overriding the ContentMetadataCodec in Guice...
-      final ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(new SimpleDateCodecFactory(new SimpleDateFormatDateService())) {
-         @Override
-         protected DateCodec getExpiresDateCodec() {
-            return new DateCodec() {
-               @Override public Date toDate(String date) throws ParseException {
-                  return new Date();
-               }
-               @Override public String toString(Date date) {
-                  return "wrong";
-               }
-            };
-         }
-      };
-      
-      Module customModule = new AbstractModule() {
-         @Override
-         protected void configure() {
-            bind(ContentMetadataCodec.class).toInstance(contentMetadataCodec);
-         }
-      };
-      
-      Iterable<Module> modules = Iterables.concat(setupModules(), ImmutableList.of(customModule));
-      BlobStoreContext naughtyBlobStoreContext = createView(setupProperties(), modules);
-      BlobStore naughtyBlobStore = naughtyBlobStoreContext.getBlobStore();
-      
-      final String containerName = getScratchContainerName();
-      
-      try {
-         final String blobName = "hello";
-         
-         naughtyBlobStore.createContainerInLocation(null, containerName, publicRead());
-         naughtyBlobStore.putBlob(containerName, naughtyBlobStore.blobBuilder(blobName)
-                  .payload(TEST_STRING).expires(new Date(System.currentTimeMillis() + 60*1000)).build());
-
-         assertConsistencyAwareBlobExpiryMetadata(containerName, blobName, new Date(0));
 
       } finally {
          recycleContainer(containerName);

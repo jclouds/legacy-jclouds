@@ -46,18 +46,29 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface AuthenticationAsyncClient {
 
    /**
-    * @see AuthenticationClient#authenticateTenantWithCredentials(String,PasswordCredentials)
+    * @see AuthenticationClient#authenticateWithTenantNameAndCredentials(String,PasswordCredentials)
     */
    @POST
    @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantName") String tenantId,
+   ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@PayloadParam("tenantName") String tenantName,
+            PasswordCredentials passwordCredentials);
+   
+   /**
+    * @see AuthenticationClient#authenticateWithTenantIdAndCredentials(String,PasswordCredentials)
+    */
+   @POST
+   @SelectJson("access")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tokens")
+   @MapBinder(BindAuthToJsonPayload.class)
+   ListenableFuture<Access> authenticateWithTenantIdAndCredentials(@PayloadParam("tenantId") String tenantId,
             PasswordCredentials passwordCredentials);
 
    /**
-    * @see AuthenticationClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
+    * @see AuthenticationClient#authenticateWithTenantNameAndCredentials(String,ApiAccessKeyCredentials)
     */
    @POST
    @SelectJson("access")
@@ -66,17 +77,17 @@ public interface AuthenticationAsyncClient {
    @MapBinder(BindAuthToJsonPayload.class)
    // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
    // still use tenantName
-   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantName") String tenantId,
+   ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@PayloadParam("tenantName") String tenantName,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
    
    /**
-    * @see AuthenticationClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
+    * @see AuthenticationClient#authenticateWithTenantIdAndCredentials(String,ApiAccessKeyCredentials)
     */
    @POST
    @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateTenantWithTenantIdAndCredentials(@PayloadParam("tenantId") String tenantId,
+   ListenableFuture<Access> authenticateWithTenantIdAndCredentials(@PayloadParam("tenantId") String tenantId,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
 }

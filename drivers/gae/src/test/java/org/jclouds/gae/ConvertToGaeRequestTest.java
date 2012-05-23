@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -32,7 +31,8 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.Crypto;
-import org.jclouds.date.internal.SimpleDateCodecFactory;
+import org.jclouds.date.internal.DateServiceDateCodecFactory;
+import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceRfc1123Codec;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
@@ -72,10 +72,10 @@ public class ConvertToGaeRequestTest {
    }
 
    @BeforeTest
-   void setupClient() throws MalformedURLException {
+   void setupClient() {
       endPoint = URI.create("http://localhost:80/foo");
       req = new ConvertToGaeRequest(new HttpUtils(0, 0, 0, 0), new DefaultContentMetadataCodec(
-               new SimpleDateCodecFactory(new SimpleDateFormatDateService())));
+               new DateServiceDateCodecFactory(new DateServiceRfc1123Codec(new SimpleDateFormatDateService()))));
 
    }
 
