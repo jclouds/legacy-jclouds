@@ -329,14 +329,17 @@ public class CloudStackComputeServiceAdapter implements
       // immutable doesn't permit duplicates
       Set<String> ipAddresses = Sets.newLinkedHashSet();
 
-      Set<FirewallRule> firewallRules = client.getFirewallClient()
-          .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId()));
-
-      for (FirewallRule rule : firewallRules) {
-          if (!FirewallRule.State.fromValue("DELETEING").equals(rule.getState())) {
-              ipAddresses.add(rule.getIpAddressId());
-              client.getFirewallClient().deleteFirewallRule(rule.getId());
-              logger.debug(">> deleting FirewallRule(%s)", rule.getId());
+      String publicIpId = client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId();
+      if (publicIpId != null) {
+          Set<FirewallRule> firewallRules = client.getFirewallClient()
+              .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId()));
+          
+          for (FirewallRule rule : firewallRules) {
+              if (!FirewallRule.State.fromValue("DELETEING").equals(rule.getState())) {
+                  ipAddresses.add(rule.getIpAddressId());
+                  client.getFirewallClient().deleteFirewallRule(rule.getId());
+                  logger.debug(">> deleting FirewallRule(%s)", rule.getId());
+              }
           }
       }
       return ipAddresses;
