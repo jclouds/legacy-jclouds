@@ -117,3 +117,7 @@ title: A List of applications that use jclouds
 
   * [Abiquo 2.0](http://www.abiquo.com/products/abiquo-2.0.php)
     * uses jclouds for OpsCode Chef integration
+
+  * [Nimble Servers](http://www.nimbleservers.com/)
+    * Nimble Servers uses jclouds to provision servers on public clouds in response to user demand
+
