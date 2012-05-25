@@ -18,14 +18,13 @@
  */
 package org.jclouds.cloudwatch.xml;
 
-import java.util.Date;
-
-import javax.inject.Inject;
-
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
+
+import javax.inject.Inject;
+import java.util.Date;
 
 /**
  * 
@@ -71,7 +70,7 @@ public class DatapointHandler extends ParseSax.HandlerForGeneratedRequestWithRes
          minimum = doubleOrNull();
       } else if (qName.equals("Timestamp")) {
          timestamp = dateService.iso8601SecondsDateParse(currentText.toString().trim());
-      } else if (qName.equals("Samples")) {
+      } else if (qName.equals("SampleCount")) {
          samples = doubleOrNull();
       } else if (qName.equals("Sum")) {
          sum = doubleOrNull();

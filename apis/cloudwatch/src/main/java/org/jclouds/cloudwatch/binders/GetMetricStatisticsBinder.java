@@ -18,8 +18,8 @@
  */
 package org.jclouds.cloudwatch.binders;
 
-import javax.inject.Inject;
-
+import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.Statistics;
@@ -27,8 +27,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMultimap;
+import javax.inject.Inject;
 
 /**
  * Binds the metrics request to the http request
@@ -45,7 +44,7 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
    
    @Inject
    protected GetMetricStatisticsBinder(DateService dateService){
-      this.dateService =dateService;
+      this.dateService = dateService;
    }
    
    @Override
@@ -54,7 +53,7 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
       int dimensionIndex = 1;
       int statisticIndex = 1;
 
-      ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.<String, String> builder();
+      ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.builder();
       for (Dimension dimension : getRequest.getDimensions()) {
          formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
          formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
@@ -77,4 +76,5 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
 
       return ModifyRequest.putFormParams(request, formParameters.build());
    }
+
 }

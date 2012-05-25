@@ -18,14 +18,15 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
+import org.jclouds.cloudwatch.domain.PutMetricData;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.concurrent.Timeout;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
@@ -45,10 +46,10 @@ public interface MetricClient {
     * use returned NextToken (
     * {@link org.jclouds.cloudwatch.domain.ListMetricsResponse#getNextToken()}) value with
     * subsequent calls .To retrieve all available metrics with one call, use
-    * {@link #list(MetricsClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}.
+    * {@link org.jclouds.cloudwatch.CloudWatch#listMetrics(MetricClient,
+    * org.jclouds.cloudwatch.options.ListMetricsOptions)}
     * 
-    * @param options
-    *           the options describing the metrics query
+    * @param options the options describing the metrics query
     * 
     * @return the response object
     */
@@ -59,15 +60,20 @@ public interface MetricClient {
    /**
     * Gets statistics for the specified metric.
     * 
-    * @param statistics
-    *           the statistics to gather
-    * @param options
-    *           the options describing the metric statistics query
+    * @param statistics the statistics to gather
+    * @param options the options describing the metric statistics query
     * 
     * @return the response object
     */
    GetMetricStatisticsResponse getMetricStatistics(GetMetricStatistics statistics, GetMetricStatisticsOptions options);
 
    GetMetricStatisticsResponse getMetricStatistics(GetMetricStatistics statistics);
+
+   /**
+    * Publishes metric data points to Amazon CloudWatch.
+    *
+    * @param putMetricData object describing the metric data
+    */
+   void putMetricData(PutMetricData putMetricData);
 
 }

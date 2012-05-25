@@ -18,12 +18,7 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-import java.util.Date;
-import java.util.TimeZone;
-
+import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
@@ -39,7 +34,11 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
+import java.net.URI;
+import java.util.Date;
+import java.util.TimeZone;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Jeremy Whitlock, Adrian Cole
@@ -237,6 +236,10 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
                         GetMetricStatisticsOptions.Builder.dimension(dimension1).dimension(dimension2)).toString(),
                // TODO: make an object for this
                "GetMetricStatisticsResponse{label=CPUUtilization, datapoints=[Datapoint{timestamp=Thu Jan 15 16:00:00 PST 2009, customUnit=null, maximum=null, minimum=null, average=0.17777777777777778, sum=null, samples=9.0, unit=Percent}, Datapoint{timestamp=Thu Jan 15 16:01:00 PST 2009, customUnit=null, maximum=null, minimum=null, average=0.1, sum=null, samples=8.0, unit=Percent}]}");
+   }
+
+   public void testPutMetricData() throws Exception {
+
    }
 
 }

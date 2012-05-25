@@ -18,15 +18,14 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import java.util.Date;
-import java.util.Set;
-
-import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.javax.annotation.Nullable;
+
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Options use to get statistics for the specified metric.
@@ -152,7 +151,7 @@ public class GetMetricStatistics {
        *
        * @return this {@code Builder} object
        *
-       * @throws IllegalArgumentException if this is invoked more than 10 times
+       * @throws IllegalArgumentException if the passed in dimensions has more than 10 members
        */
       public Builder dimensions(Set<Dimension> dimensions) {
          if (dimensions != null) {
@@ -335,8 +334,10 @@ public class GetMetricStatistics {
          Preconditions.checkNotNull(unit, "unit cannot be null.");
          Preconditions.checkArgument(statistics.size() >= 1, "statistics must have at least one member");
 
-         return new GetMetricStatistics(dimensions, endTime, metricName,namespace, period, startTime,  statistics, unit);
+         return new GetMetricStatistics(dimensions, endTime, metricName,namespace, period, startTime,  statistics,
+                                        unit);
       }
+
    }
 
 }
