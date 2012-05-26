@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudwatch.options;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.http.options.BaseHttpRequestOptions;
@@ -105,72 +104,50 @@ public class ListMetricsOptions extends BaseHttpRequestOptions {
       public Builder() {}
 
       /**
-       * The namespace to filter against.  (Should be called once.  Subsequent calls will overwrite the previous value.
-       * See {@link org.jclouds.cloudwatch.domain.Namespaces} for the known list of namespaces.)
+       * The namespace to filter against.
        *
        * @param namespace the namespace to filter against
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if namespace is empty
        */
       public Builder namespace(String namespace) {
-         if (namespace != null) {
-            Preconditions.checkArgument(namespace.length() > 1, "namespace must not be empty.");
-         }
          this.namespace = namespace;
          return this;
       }
 
       /**
-       * The name of the metric to filter against.  (Should be called once.  Subsequent calls will overwrite the
-       * previous value.)
+       * The name of the metric to filter against.
        *
        * @param metricName the metric name to filter against
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if metricName is empty
        */
       public Builder metricName(String metricName) {
-         if (metricName != null) {
-            Preconditions.checkArgument(metricName.length() > 1, "metricName must not be empty.");
-         }
          this.metricName = metricName;
          return this;
       }
 
       /**
-       * A list of dimensions to filter against.  (Set can be 10 or less items.)
+       * A list of dimensions to filter against.
        *
        * @param dimensions the dimensions to filter against
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if the number of dimensions would be greater than 10 after adding
        */
       public Builder dimensions(Set<Dimension> dimensions) {
-         if (dimensions != null) {
-             Preconditions.checkArgument(dimensions.size() <= 10, "dimensions can have 10 or fewer members.");
-            this.dimensions = dimensions;
-         }
+         this.dimensions = dimensions;
          return this;
       }
 
       /**
-       * A dimension to filter the available metrics by.  (Can be called multiple times up to a maximum of 10 times.)
+       * A dimension to filter the available metrics by.
        *
        * @param dimension a dimension to filter the returned metrics by
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if this is invoked more than 10 times
        */
       public Builder dimension(Dimension dimension) {
-         if (dimension != null) {
-            Preconditions.checkArgument(dimensions.size() < 10, "dimension member maximum count of 10 exceeded.");
-            this.dimensions.add(dimension);
-         }
+         this.dimensions.add(dimension);
          return this;
       }
 
@@ -194,20 +171,25 @@ public class ListMetricsOptions extends BaseHttpRequestOptions {
          ListMetricsOptions lmo = new ListMetricsOptions(namespace, metricName, dimensions, nextToken);
          int dimensionIndex = 1;
 
+         // If namespace isn't specified, don't include it
          if (namespace != null) {
             lmo.formParameters.put("Namespace", namespace);
          }
-
+         // If metricName isn't specified, don't include it
          if (metricName != null) {
             lmo.formParameters.put("MetricName", metricName);
          }
 
-         for (Dimension dimension : dimensions) {
-            lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
-            lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
-            dimensionIndex++;
+         // If dimensions isn't specified, don't include it
+         if (dimensions != null) {
+            for (Dimension dimension : dimensions) {
+               lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
+               lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
+               dimensionIndex++;
+            }
          }
 
+         // If nextToken isn't specified, don't include it
          if (nextToken != null) {
             lmo.formParameters.put("NextToken", nextToken);
          }
