@@ -28,6 +28,7 @@ import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.VirtualHost;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -39,6 +40,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
+@VirtualHost
 public interface OpenStackAuthAsyncClient {
    public static final String VERSION = "1.0";
 

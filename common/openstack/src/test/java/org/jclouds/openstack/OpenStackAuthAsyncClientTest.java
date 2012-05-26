@@ -48,7 +48,7 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
       HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nX-Auth-Key: bar\nX-Auth-User: foo\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nHost: localhost:8080\nX-Auth-Key: bar\nX-Auth-User: foo\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseAuthenticationResponseFromHeaders.class);
@@ -62,7 +62,7 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
       HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nX-Storage-Pass: bar\nX-Storage-User: foo\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nHost: localhost:8080\nX-Storage-Pass: bar\nX-Storage-User: foo\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseAuthenticationResponseFromHeaders.class);
