@@ -4,13 +4,13 @@
             <member>
                 <Timestamp>2009-01-16T00:00:00Z</Timestamp>
                 <Unit>Percent</Unit>
-                <Samples>9.0</Samples>
+                <SampleCount>9.0</SampleCount>
                 <Average>0.17777777777777778</Average>
             </member>
             <member>
                 <Timestamp>2009-01-16T00:01:00Z</Timestamp>
                 <Unit>Percent</Unit>
-                <Samples>8.0</Samples>
+                <SampleCount>8.0</SampleCount>
                 <Average>0.1</Average>
             </member>
           </Datapoints>

@@ -18,19 +18,16 @@
  */
 package org.jclouds.cloudwatch.options;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Set;
-
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Options used to control metric statistics are returned
@@ -42,39 +39,32 @@ import com.google.common.collect.Sets;
  */
 public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
 
-   private Set<Dimension> dimensions = Sets.newLinkedHashSet();
+   private Set<Dimension> dimensions;
    
    /**
-    * A dimension describing qualities of the metric.  (Can be called multiple times up to a maximum of 10 times.)
+    * A dimension describing qualities of the metric.
     *
     * @param dimension the dimension describing the qualities of the metric
     *
     * @return this {@code Builder} object
-    *
-    * @throws IllegalArgumentException if the number of dimensions would be greater than 10 after adding
     */
    public GetMetricStatisticsOptions dimension(Dimension dimension) {
-      if (dimension != null) {
-         Preconditions.checkArgument(dimensions.size() < 10, "dimension member maximum count of 10 exceeded.");
-         this.dimensions.add(dimension);
+      if (dimensions == null) {
+         dimensions = Sets.newLinkedHashSet();
       }
+      this.dimensions.add(dimension);
       return this;
    }
    
    /**
-    * A list of dimensions describing qualities of the metric.  (Set can be 10 or less items.)
+    * A list of dimensions describing qualities of the metric.
     *
     * @param dimensions the dimensions describing the qualities of the metric
     *
     * @return this {@code Builder} object
-    *
-    * @throws IllegalArgumentException if this is invoked more than 10 times
     */
    public GetMetricStatisticsOptions dimensions(Set<Dimension> dimensions) {
-      if (dimensions != null) {
-         Preconditions.checkArgument(dimensions.size() <= 10, "dimensions can have 10 or fewer members.");
-         this.dimensions = ImmutableSet.<Dimension>copyOf(dimensions);
-      }
+      this.dimensions = dimensions;
       return this;
    }
    
@@ -137,10 +127,12 @@ public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
    public Multimap<String, String> buildFormParameters() {
       Multimap<String, String> formParameters = super.buildFormParameters();
       int dimensionIndex = 1;
-      for (Dimension dimension : dimensions) {
-         formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
-         formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
-         dimensionIndex++;
+      if (dimensions != null) {
+         for (Dimension dimension : dimensions) {
+            formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
+            formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
+            dimensionIndex++;
+         }
       }
       return formParameters;
    }

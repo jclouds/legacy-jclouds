@@ -18,13 +18,10 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import junit.framework.Assert;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
@@ -32,20 +29,118 @@ import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
+import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.Namespaces;
+import org.jclouds.cloudwatch.domain.StatisticSet;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchClientLiveTest;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Jeremy Whitlock, Adrian Cole
  */
 @Test(groups = "live", testName = "MetricClientLiveTest")
 public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
+
+   @Test
+   protected void testPutMetricData() throws Exception {
+      String metricName = "TestMetricName" + System.currentTimeMillis();
+      String namespace = "JCLOUDS/Test";
+      Date metricTimestamp = new Date();
+      // CloudWatch rounds metric timestamps down to the closest minute
+      Date metricTimestampInCloudWatch =
+            new Date(metricTimestamp.getTime() - (metricTimestamp.getTime() % (60 * 1000)));
+      StatisticSet ss = StatisticSet.builder()
+                                    .maximum(4.0)
+                                    .minimum(1.0)
+                                    .sampleCount(4.0)
+                                    .sum(10.0)
+                                    .build();
+      MetricDatum metricDatum = MetricDatum.builder()
+                                           .metricName(metricName + "_1")
+                                           .statisticSet(ss)
+                                           .dimension(new Dimension("BaseMetricName", metricName))
+                                           .dimension(new Dimension("TestDimension2", "TEST2"))
+                                           .unit(Unit.COUNT)
+                                           .timestamp(metricTimestamp)
+                                           .build();
+      MetricDatum metricDatum2 = MetricDatum.builder()
+                                           .metricName(metricName + "_2")
+                                           .dimension(new Dimension("BaseMetricName", metricName))
+                                           .unit(Unit.COUNT)
+                                           .timestamp(metricTimestamp)
+                                           .value(10.0)
+                                           .build();
+
+      client().putMetricData(ImmutableSet.of(metricDatum, metricDatum2), namespace);
+
+      ListMetricsOptions lmo = ListMetricsOptions.builder().namespace(namespace)
+                                                 .dimension(new Dimension("BaseMetricName", metricName))
+                                                 .build();
+      boolean success = new RetryablePredicate<ListMetricsOptions>(new Predicate<ListMetricsOptions>() {
+         @Override
+         public boolean apply(ListMetricsOptions options) {
+            return Iterables.size(client().listMetrics(options)) == 2;
+         }
+      }, 20, 1, TimeUnit.MINUTES).apply(lmo);
+
+      if (!success) {
+         Assert.fail("Unable to gather the created CloudWatch data within the time (20m) allotted.");
+      }
+
+      ListMetricsResponse lmr = client().listMetrics(lmo);
+      Date endTime = new Date(metricTimestampInCloudWatch.getTime() + (60 * 1000)); // Pad a minute just in case
+      Date startTime = new Date(metricTimestampInCloudWatch.getTime() - (60 * 1000)); // Pad a minute just in case
+
+      for (Metric m : lmr) {
+         GetMetricStatistics gms = GetMetricStatistics.builder()
+                                                      .dimensions(m.getDimensions())
+                                                      .namespace(namespace)
+                                                      .metricName(m.getMetricName())
+                                                      .endTime(endTime)
+                                                      .statistic(Statistics.MAXIMUM)
+                                                      .statistic(Statistics.MINIMUM)
+                                                      .statistic(Statistics.SAMPLE_COUNT)
+                                                      .statistic(Statistics.SUM)
+                                                      .period(60)
+                                                      .startTime(startTime)
+                                                      .unit(Unit.COUNT)
+                                                      .build();
+         GetMetricStatisticsResponse gmr = client().getMetricStatistics(gms);
+
+         Assert.assertEquals(1, Iterables.size(gmr));
+
+         Datapoint datapoint = gmr.iterator().next();
+
+         Assert.assertEquals(datapoint.getTimestamp(), metricTimestampInCloudWatch);
+         Assert.assertNull(datapoint.getCustomUnit());
+         Assert.assertEquals(Unit.COUNT, datapoint.getUnit());
+         Assert.assertNull(datapoint.getAverage());
+
+         if (m.getDimensions().size() == 1) {
+            Assert.assertEquals(10.0, datapoint.getMaximum());
+            Assert.assertEquals(10.0, datapoint.getMinimum());
+            Assert.assertEquals(10.0, datapoint.getSum());
+            Assert.assertEquals(1.0, datapoint.getSamples());
+         } else {
+            Assert.assertEquals(4.0, datapoint.getMaximum());
+            Assert.assertEquals(1.0, datapoint.getMinimum());
+            Assert.assertEquals(10.0, datapoint.getSum());
+            Assert.assertEquals(4.0, datapoint.getSamples());
+         }
+      }
+   }
 
    // TODO: change this test to retrieve pre-seeded custom metrics
    @Test
