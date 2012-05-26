@@ -18,9 +18,13 @@
  */
 package org.jclouds.cloudwatch;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+
+import java.util.List;
+import java.util.Set;
+
 import org.easymock.EasyMock;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
@@ -30,18 +34,16 @@ import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Set;
-
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code CloudWatch}.
  *
  * @author Jeremy Whitlock
  */
+@Test(testName = "CloudWatchTest")
 public class CloudWatchTest {
 
    /**
@@ -115,18 +117,17 @@ public class CloudWatchTest {
       String namespace = "JCLOUDS/Test";
 
       for (int i = 0; i < 11; i++) {
-         metrics.add(MetricDatum.builder().build());
+         metrics.add(MetricDatum.builder().metricName("foo").build());
       }
 
       // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
       expect(client.getMetricClientForRegion(EasyMock.eq("")))
             .andReturn(metricClient)
             .atLeastOnce();
-
-
-      metricClient.putMetricData(metrics, namespace);
-
-      expectLastCall().times(2);
+      
+      for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
+         metricClient.putMetricData(slice, namespace);
+      }
 
       EasyMock.replay(client, metricClient);
 

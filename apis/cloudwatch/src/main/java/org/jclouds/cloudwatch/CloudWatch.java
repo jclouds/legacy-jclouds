@@ -18,16 +18,17 @@
  */
 package org.jclouds.cloudwatch;
 
-import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Sets;
+import java.util.Iterator;
+import java.util.List;
+
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 
-import java.util.Iterator;
-import java.util.Set;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Iterables;
 
 /**
  * Utilities for using CloudWatch.
@@ -107,22 +108,11 @@ public class CloudWatch {
     * @param namespace the namespace to publish the metrics in
     */
    public static void putMetricData(CloudWatchClient cloudWatchClient, String region, Iterable<MetricDatum> metrics,
-                                    String namespace) {
+            String namespace) {
       MetricClient metricClient = cloudWatchClient.getMetricClientForRegion(region);
-      Iterator<MetricDatum> mIterator = metrics.iterator();
-      Set<MetricDatum> metricsData = Sets.newLinkedHashSet();
 
-      while (mIterator.hasNext()) {
-         metricsData.add(mIterator.next());
-         if (metricsData.size() == 10 || !mIterator.hasNext()) {
-            // Make the call
-            metricClient.putMetricData(metrics, namespace);
-
-            // Reset the list for subsequent call if necessary
-            if (mIterator.hasNext()) {
-               metricsData = Sets.newLinkedHashSet();
-            }
-         }
+      for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
+         metricClient.putMetricData(slice, namespace);
       }
    }
 
