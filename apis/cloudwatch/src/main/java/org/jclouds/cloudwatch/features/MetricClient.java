@@ -21,7 +21,7 @@ package org.jclouds.cloudwatch.features;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
-import org.jclouds.cloudwatch.domain.PutMetricData;
+import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.concurrent.Timeout;
@@ -72,8 +72,9 @@ public interface MetricClient {
    /**
     * Publishes metric data points to Amazon CloudWatch.
     *
-    * @param putMetricData object describing the metric data
+    * @param metrics the metrics to publish
+    * @param namespace the namespace to publish the metrics to
     */
-   void putMetricData(PutMetricData putMetricData);
+   void putMetricData(Iterable<MetricDatum> metrics, String namespace);
 
 }

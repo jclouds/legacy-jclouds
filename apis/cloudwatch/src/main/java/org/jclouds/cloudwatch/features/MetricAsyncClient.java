@@ -21,11 +21,11 @@ package org.jclouds.cloudwatch.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.binders.GetMetricStatisticsBinder;
-import org.jclouds.cloudwatch.binders.PutMetricDataBinder;
+import org.jclouds.cloudwatch.binders.MetricDataBinder;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
-import org.jclouds.cloudwatch.domain.PutMetricData;
+import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandlerV2;
@@ -36,6 +36,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -90,11 +91,12 @@ public interface MetricAsyncClient {
             GetMetricStatisticsOptions options);
 
    /**
-    * @see MetricClient#putMetricData(org.jclouds.cloudwatch.domain.PutMetricData)
+    * @see MetricClient#putMetricData(Iterable, String)
     */
    @POST
    @Path("/")
    @FormParams(keys = "Action", values = "PutMetricData")
-   ListenableFuture<Void> putMetricData(@BinderParam(PutMetricDataBinder.class) PutMetricData putMetricData);
+   ListenableFuture<Void> putMetricData(@BinderParam(MetricDataBinder.class) Iterable<MetricDatum> metrics,
+                                        @FormParam("Namespace") String namespace);
 
 }

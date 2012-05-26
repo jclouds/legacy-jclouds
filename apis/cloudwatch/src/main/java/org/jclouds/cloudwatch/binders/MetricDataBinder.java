@@ -23,11 +23,13 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Inject;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
-import org.jclouds.cloudwatch.domain.PutMetricData;
 import org.jclouds.cloudwatch.domain.StatisticSet;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Binds the metrics request to the http request
@@ -37,12 +39,12 @@ import org.jclouds.http.utils.ModifyRequest;
  * @author Jeremy Whitlock
  */
 @Beta
-public class PutMetricDataBinder implements org.jclouds.rest.Binder {
+public class MetricDataBinder implements org.jclouds.rest.Binder {
 
    private final DateService dateService;
 
    @Inject
-   protected PutMetricDataBinder(DateService dateService) {
+   protected MetricDataBinder(DateService dateService) {
       this.dateService = dateService;
    }
 
@@ -51,17 +53,20 @@ public class PutMetricDataBinder implements org.jclouds.rest.Binder {
     */
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      PutMetricData pmdRequest = PutMetricData.class.cast(input);
+      Iterable<MetricDatum> metrics = input != null ?
+            (Iterable<MetricDatum>)input :
+            new HashSet<MetricDatum>();
       ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.builder();
       int metricDatumIndex = 1;
 
-      formParameters.put("Namespace", pmdRequest.getNamespace());
-
-      for (MetricDatum metricDatum : pmdRequest.getMetricData()) {
+      for (MetricDatum metricDatum : metrics) {
          int dimensionIndex = 1;
          StatisticSet statisticSet = metricDatum.getStatisticSet();
+         Set<Dimension> dimensions = metricDatum.getDimensions() != null ?
+               metricDatum.getDimensions() :
+               new HashSet<Dimension>();
 
-         for (Dimension dimension : metricDatum.getDimensions()) {
+         for (Dimension dimension : dimensions) {
             formParameters.put("MetricData.member." + metricDatumIndex + ".Dimensions.member." + dimensionIndex +
                                      ".Name", dimension.getName());
             formParameters.put("MetricData.member." + metricDatumIndex + ".Dimensions.member." + dimensionIndex +
@@ -86,10 +91,14 @@ public class PutMetricDataBinder implements org.jclouds.rest.Binder {
                                dateService.iso8601SecondsDateFormat(metricDatum.getTimestamp()));
          }
 
-         formParameters.put("MetricData.member." + metricDatumIndex + ".Unit", String.valueOf(metricDatum.getUnit()));
+         if (metricDatum.getUnit() != null) {
+            formParameters.put("MetricData.member." + metricDatumIndex + ".Unit",
+                               String.valueOf(metricDatum.getUnit()));
+         }
 
          if (metricDatum.getValue() != null) {
-            formParameters.put("MetricData.member." + metricDatumIndex + ".Value", String.valueOf(metricDatum.getValue()));
+            formParameters.put("MetricData.member." + metricDatumIndex + ".Value",
+                               String.valueOf(metricDatum.getValue()));
          }
 
          metricDatumIndex++;

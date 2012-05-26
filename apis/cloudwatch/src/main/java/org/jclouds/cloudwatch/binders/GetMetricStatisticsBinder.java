@@ -28,6 +28,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 
 import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Binds the metrics request to the http request
@@ -50,29 +52,41 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       GetMetricStatistics getRequest = GetMetricStatistics.class.cast(payload);
+      Set<Dimension> dimensions = getRequest.getDimensions() != null ?
+            getRequest.getDimensions() :
+            new HashSet<Dimension>();
+      Set<Statistics> statistics = getRequest.getStatistics() != null ?
+            getRequest.getStatistics() :
+            new HashSet<Statistics>();
       int dimensionIndex = 1;
       int statisticIndex = 1;
-
       ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.builder();
-      for (Dimension dimension : getRequest.getDimensions()) {
+
+      for (Dimension dimension : dimensions) {
          formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
          formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
          dimensionIndex++;
       }
 
-      formParameters.put("EndTime", dateService.iso8601SecondsDateFormat(getRequest.getEndTime()));
+      if (getRequest.getEndTime() != null) {
+         formParameters.put("EndTime", dateService.iso8601SecondsDateFormat(getRequest.getEndTime()));
+      }
       formParameters.put("MetricName", getRequest.getMetricName());
       formParameters.put("Namespace", getRequest.getNamespace());
       formParameters.put("Period", Integer.toString(getRequest.getPeriod()));
-      formParameters.put("StartTime", dateService.iso8601SecondsDateFormat(getRequest
-               .getStartTime()));
+      if (getRequest.getStartTime() != null) {
+         formParameters.put("StartTime", dateService.iso8601SecondsDateFormat(getRequest
+                  .getStartTime()));
+      }
 
-      for (Statistics statistic : getRequest.getStatistics()) {
+      for (Statistics statistic : statistics) {
          formParameters.put("Statistics.member." + statisticIndex, statistic.toString());
          statisticIndex++;
       }
 
-      formParameters.put("Unit", getRequest.getUnit().toString());
+      if (getRequest.getUnit() != null) {
+         formParameters.put("Unit", getRequest.getUnit().toString());
+      }
 
       return ModifyRequest.putFormParams(request, formParameters.build());
    }

@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.base.Preconditions;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -33,8 +32,7 @@ public class StatisticSet {
    private final Double sampleCount;
    private final Double sum;
 
-   public StatisticSet(@Nullable Double maximum, @Nullable Double minimum, @Nullable Double sampleCount,
-                       @Nullable Double sum) {
+   public StatisticSet(Double maximum, Double minimum, Double sampleCount, Double sum) {
       this.maximum = maximum;
       this.minimum = minimum;
       this.sampleCount = sampleCount;
@@ -44,6 +42,7 @@ public class StatisticSet {
    /**
     * return the maximum value of the sample set
     */
+   @Nullable
    public Double getMaximum() {
       return maximum;
    }
@@ -51,6 +50,7 @@ public class StatisticSet {
    /**
     * return the minimum value of the sample set
     */
+   @Nullable
    public Double getMinimum() {
       return minimum;
    }
@@ -58,6 +58,7 @@ public class StatisticSet {
    /**
     * return the number of samples used for the statistic set
     */
+   @Nullable
    public Double getSampleCount() {
       return sampleCount;
    }
@@ -65,6 +66,7 @@ public class StatisticSet {
    /**
     * return the sum of values for the sample set
     */
+   @Nullable
    public Double getSum() {
       return sum;
    }
@@ -91,79 +93,57 @@ public class StatisticSet {
       public Builder() {}
 
       /**
-       * The maximum value of the sample set.  (Should be called once.  Subsequent calls will overwrite the previous
-       * value.)
+       * The maximum value of the sample set.
        *
        * @param maximum the maximum value of the sample set
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if maximum is null
        */
       public Builder maximum(Double maximum) {
-         Preconditions.checkNotNull(maximum, "maximum cannot be null.");
          this.maximum = maximum;
          return this;
       }
 
       /**
-       * The minimum value of the sample set.  (Should be called once.  Subsequent calls will overwrite the previous
-       * value.)
+       * The minimum value of the sample set.
        *
        * @param minimum the minimum value of the sample set
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if minimum is null
        */
       public Builder minimum(Double minimum) {
-         Preconditions.checkNotNull(minimum, "minimum cannot be null.");
          this.minimum = minimum;
          return this;
       }
 
       /**
-       * The the number of samples used for the statistic set.  (Should be called once.  Subsequent calls will overwrite
-       * the previous value.)
+       * The the number of samples used for the statistic set.
        *
        * @param sampleCount the number of samples used for the statistic set
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if sampleCount is null
        */
       public Builder sampleCount(Double sampleCount) {
-         Preconditions.checkNotNull(sampleCount, "sampleCount cannot be null.");
          this.sampleCount = sampleCount;
          return this;
       }
 
       /**
-       * The sum of values for the sample set.  (Should be called once.  Subsequent calls will overwrite the previous
-       * value.)
+       * The sum of values for the sample set.
        *
        * @param sum the sum of values for the sample set
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if sum is null
        */
       public Builder sum(Double sum) {
-         Preconditions.checkNotNull(sum, "sum cannot be null.");
          this.sum = sum;
          return this;
       }
 
       /**
        * Returns a newly-created {@code StatisticSet} based on the contents of the {@code Builder}.
-       *
-       * @throws NullPointerException if any of the required fields are null
        */
       public StatisticSet build() {
-         Preconditions.checkNotNull(maximum, "maximum cannot be null.");
-         Preconditions.checkNotNull(minimum, "minimum cannot be null.");
-         Preconditions.checkNotNull(sampleCount, "sampleCount cannot be null.");
-         Preconditions.checkNotNull(sum, "sum cannot be null.");
          return new StatisticSet(maximum, minimum, sampleCount, sum);
       }
 

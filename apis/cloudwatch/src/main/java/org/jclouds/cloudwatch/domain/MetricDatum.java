@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -42,14 +41,9 @@ public class MetricDatum {
    /**
     * Private constructor to enforce using {@link Builder}.
     */
-   private MetricDatum(@Nullable Set<Dimension> dimensions, String metricName, StatisticSet statisticSet,
-                       @Nullable Date timestamp, Unit unit, Double value) {
-      // Default to an empty set
-      if (dimensions == null) {
-         this.dimensions = Sets.newLinkedHashSet();
-      } else {
-         this.dimensions = dimensions;
-      }
+   private MetricDatum(Set<Dimension> dimensions, String metricName, StatisticSet statisticSet, Date timestamp,
+                       Unit unit, Double value) {
+      this.dimensions = dimensions;
       this.metricName = metricName;
       this.statisticSet = statisticSet;
       this.timestamp = timestamp;
@@ -68,14 +62,15 @@ public class MetricDatum {
    /**
     * return the metric name for the metric.
     */
+   @Nullable
    public String getMetricName() {
       return metricName;
    }
 
    /**
-    * return the object describing the set of statistical values for the metric  (This and value are mutually
-    * exclusive.)
+    * return the object describing the set of statistical values for the metric
     */
+   @Nullable
    public StatisticSet getStatisticSet() {
       return statisticSet;
    }
@@ -91,14 +86,15 @@ public class MetricDatum {
    /**
     * return Standard unit used for the metric.
     */
+   @Nullable
    public Unit getUnit() {
       return unit;
    }
 
    /**
-    * return the actual value of the metric  (This and statisticSet are mutually exclusive.)
-    *
+    * return the actual value of the metric
     */
+   @Nullable
    public Double getValue() {
       return value;
    }
@@ -113,7 +109,7 @@ public class MetricDatum {
 
    public static class Builder {
 
-      private Set<Dimension> dimensions = Sets.newLinkedHashSet();
+      private Set<Dimension> dimensions;
       private String metricName;
       private StatisticSet statisticSet;
       private Date timestamp;
@@ -127,76 +123,59 @@ public class MetricDatum {
       public Builder() {}
 
       /**
-       * A list of dimensions describing qualities of the metric.  (Set can be 10 or less items.)
+       * A list of dimensions describing qualities of the metric.
        *
        * @param dimensions the dimensions describing the qualities of the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if the passed in dimensions has more than 10 members
        */
       public Builder dimensions(Set<Dimension> dimensions) {
-         if (dimensions != null) {
-            Preconditions.checkArgument(dimensions.size() <= 10, "dimensions can have 10 or fewer members.");
-            this.dimensions = dimensions;
-         }
+         this.dimensions = dimensions;
          return this;
       }
 
       /**
-       * A dimension describing qualities of the metric.  (Can be called multiple times up to a maximum of 10 times.)
+       * A dimension describing qualities of the metric.
        *
        * @param dimension the dimension describing the qualities of the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if the number of dimensions would be greater than 10 after adding
        */
       public Builder dimension(Dimension dimension) {
-         if (dimension != null) {
-            Preconditions.checkArgument(dimensions.size() < 10, "dimension member maximum count of 10 exceeded.");
-            this.dimensions.add(dimension);
+         if (dimensions == null) {
+            dimensions = Sets.newLinkedHashSet();
          }
+         this.dimensions.add(dimension);
          return this;
       }
 
       /**
-       * The name of the metric.  (Should be called once.  Subsequent calls will overwrite the previous value.)
+       * The name of the metric.
        *
        * @param metricName the metric name
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if metricName is null
-       * @throws IllegalArgumentException if metricName is empty
        */
       public Builder metricName(String metricName) {
-         Preconditions.checkNotNull(metricName, "metricName cannot be null.");
-         Preconditions.checkArgument(metricName.length() > 1, "metricName must not be empty.");
          this.metricName = metricName;
          return this;
       }
 
       /**
-       * The object describing the set of statistical values describing the metric.  (Should be called once.  Subsequent
-       * calls will overwrite the previous value.  Also, this cannot be set once you've set the value.)
+       * The object describing the set of statistical values describing the metric.
        *
        * @param statisticSet the object describing the set of statistical values for the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if statisticSet is null
-       * @throws IllegalArgumentException if value has already been set
        */
       public Builder statisticSet(StatisticSet statisticSet) {
-         Preconditions.checkArgument(value == null, "value and statisticSet are mutually exclusive");
          this.statisticSet = statisticSet;
          return this;
       }
 
       /**
        * The time stamp used for the metric.  If not specified, the default value is set to the time the metric data was
-       * received.  (Should be called once.  Subsequent calls will overwrite the previous value.)
+       * received.
        *
        * @param timestamp the time stamp used for the metric
        *
@@ -208,50 +187,33 @@ public class MetricDatum {
       }
 
       /**
-       * The unit for the metric.  (Should be called once.  Subsequent calls will overwrite the previous value.)
+       * The unit for the metric.
        *
        * @param unit the unit for the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if unit is null
        */
       public Builder unit(Unit unit) {
-         Preconditions.checkNotNull(unit, "unit cannot be null.");
          this.unit = unit;
          return this;
       }
 
       /**
-       * The value for the metric.  (Should be called once.  Subsequent calls will overwrite the previous value.  Also,
-       * this cannot be set once you've set the statisticValue.)
+       * The value for the metric.
        *
        * @param value the value for the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if statisticSet has already been set
        */
       public Builder value(Double value) {
-         Preconditions.checkArgument(statisticSet == null, "statisticSet and value are mutually exclusive");
          this.value = value;
          return this;
       }
 
       /**
        * Returns a newly-created {@code MetricDatum} based on the contents of the {@code Builder}.
-       *
-       * @throws NullPointerException if any of the required fields are null
-       * @throws IllegalArgumentException if any of the provided fields don't meet required criteria
        */
       public MetricDatum build() {
-         Preconditions.checkNotNull(metricName, "metricName cannot be null.");
-         Preconditions.checkNotNull(unit, "unit cannot be null.");
-         Preconditions.checkArgument(metricName.length() > 1 && metricName.length() <= 255,
-                                     "metricName cannot be empty and must be 255 characters or less.");
-         Preconditions.checkArgument(statisticSet != null || value != null,
-                                     "statisticSet or value must be set");
-
          return new MetricDatum(dimensions, metricName, statisticSet, timestamp, unit, value);
       }
 

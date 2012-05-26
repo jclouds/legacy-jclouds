@@ -31,7 +31,6 @@ import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.Namespaces;
-import org.jclouds.cloudwatch.domain.PutMetricData;
 import org.jclouds.cloudwatch.domain.StatisticSet;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
@@ -83,13 +82,8 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
                                            .timestamp(metricTimestamp)
                                            .value(10.0)
                                            .build();
-      PutMetricData pmd = PutMetricData.builder()
-                                       .namespace(namespace)
-                                       .metricDatum(metricDatum)
-                                       .metricDatum(metricDatum2)
-                                       .build();
 
-      client().putMetricData(pmd);
+      client().putMetricData(ImmutableSet.of(metricDatum, metricDatum2), namespace);
 
       ListMetricsOptions lmo = ListMetricsOptions.builder().namespace(namespace)
                                                  .dimension(new Dimension("BaseMetricName", metricName))
