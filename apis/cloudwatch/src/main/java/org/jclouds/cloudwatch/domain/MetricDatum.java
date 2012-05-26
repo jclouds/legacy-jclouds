@@ -18,11 +18,17 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.collect.Sets;
-import org.jclouds.javax.annotation.Nullable;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 import java.util.Set;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_MetricDatum.html" />
@@ -33,28 +39,27 @@ public class MetricDatum {
 
    private final Set<Dimension> dimensions;
    private final String metricName;
-   private final StatisticSet statisticSet;
-   private final Date timestamp;
+   private final Optional<StatisticValues> statisticValues;
+   private final Optional<Date> timestamp;
    private final Unit unit;
-   private final Double value;
+   private final double value;
 
    /**
     * Private constructor to enforce using {@link Builder}.
     */
-   private MetricDatum(Set<Dimension> dimensions, String metricName, StatisticSet statisticSet, Date timestamp,
-                       Unit unit, Double value) {
-      this.dimensions = dimensions;
-      this.metricName = metricName;
-      this.statisticSet = statisticSet;
-      this.timestamp = timestamp;
-      this.unit = unit;
-      this.value = value;
+   protected MetricDatum(Set<Dimension> dimensions, String metricName, StatisticValues statisticValues, Date timestamp,
+                       Unit unit, double value) {
+      this.dimensions = ImmutableSet.<Dimension>copyOf(checkNotNull(dimensions, "dimensions"));
+      this.metricName = checkNotNull(metricName, "metricName");
+      this.statisticValues = Optional.fromNullable(statisticValues);
+      this.timestamp = Optional.fromNullable(timestamp);
+      this.unit = checkNotNull(unit, "unit");
+      this.value = checkNotNull(value, "value");
    }
 
    /**
     * return the list of dimensions describing the the metric.
     */
-   @Nullable
    public Set<Dimension> getDimensions() {
       return dimensions;
    }
@@ -62,7 +67,6 @@ public class MetricDatum {
    /**
     * return the metric name for the metric.
     */
-   @Nullable
    public String getMetricName() {
       return metricName;
    }
@@ -70,23 +74,20 @@ public class MetricDatum {
    /**
     * return the object describing the set of statistical values for the metric
     */
-   @Nullable
-   public StatisticSet getStatisticSet() {
-      return statisticSet;
+   public Optional<StatisticValues> getStatisticValues() {
+      return statisticValues;
    }
 
    /**
     * return the time stamp used for the metric
     */
-   @Nullable
-   public Date getTimestamp() {
+   public Optional<Date> getTimestamp() {
       return timestamp;
    }
 
    /**
     * return Standard unit used for the metric.
     */
-   @Nullable
    public Unit getUnit() {
       return unit;
    }
@@ -94,8 +95,7 @@ public class MetricDatum {
    /**
     * return the actual value of the metric
     */
-   @Nullable
-   public Double getValue() {
+   public double getValue() {
       return value;
    }
 
@@ -109,12 +109,13 @@ public class MetricDatum {
 
    public static class Builder {
 
-      private Set<Dimension> dimensions;
+      // this builder is set to be additive on dimension calls, so make this mutable
+      private Set<Dimension> dimensions = Sets.newLinkedHashSet();
       private String metricName;
-      private StatisticSet statisticSet;
+      private StatisticValues statisticValues;
       private Date timestamp;
-      private Unit unit;
-      private Double value;
+      private Unit unit = Unit.NONE;
+      private double value;
 
       /**
        * Creates a new builder. The returned builder is equivalent to the builder
@@ -130,7 +131,7 @@ public class MetricDatum {
        * @return this {@code Builder} object
        */
       public Builder dimensions(Set<Dimension> dimensions) {
-         this.dimensions = dimensions;
+         this.dimensions.addAll(checkNotNull(dimensions, "dimensions"));
          return this;
       }
 
@@ -142,10 +143,7 @@ public class MetricDatum {
        * @return this {@code Builder} object
        */
       public Builder dimension(Dimension dimension) {
-         if (dimensions == null) {
-            dimensions = Sets.newLinkedHashSet();
-         }
-         this.dimensions.add(dimension);
+         this.dimensions.add(checkNotNull(dimension, "dimension"));
          return this;
       }
 
@@ -164,12 +162,12 @@ public class MetricDatum {
       /**
        * The object describing the set of statistical values describing the metric.
        *
-       * @param statisticSet the object describing the set of statistical values for the metric
+       * @param statisticValues the object describing the set of statistical values for the metric
        *
        * @return this {@code Builder} object
        */
-      public Builder statisticSet(StatisticSet statisticSet) {
-         this.statisticSet = statisticSet;
+      public Builder statisticValues(StatisticValues statisticValues) {
+         this.statisticValues = statisticValues;
          return this;
       }
 
@@ -205,7 +203,7 @@ public class MetricDatum {
        *
        * @return this {@code Builder} object
        */
-      public Builder value(Double value) {
+      public Builder value(double value) {
          this.value = value;
          return this;
       }
@@ -214,9 +212,35 @@ public class MetricDatum {
        * Returns a newly-created {@code MetricDatum} based on the contents of the {@code Builder}.
        */
       public MetricDatum build() {
-         return new MetricDatum(dimensions, metricName, statisticSet, timestamp, unit, value);
+         return new MetricDatum(dimensions, metricName, statisticValues, timestamp, unit, value);
       }
 
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      MetricDatum that = MetricDatum.class.cast(o);
+      return equal(this.dimensions, that.dimensions) && equal(this.metricName, that.metricName)
+               && equal(this.statisticValues, that.statisticValues) && equal(this.timestamp, that.timestamp)
+               && equal(this.unit, that.unit) && equal(this.value, that.value);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(dimensions, metricName, statisticValues, timestamp, unit, value);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("dimensions", dimensions).add("metricName", metricName).add(
+               "statisticValues", statisticValues).add("timestamp", timestamp).add("unit", unit).add("value", value);
+   }
 }

@@ -31,7 +31,7 @@ import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.Namespaces;
-import org.jclouds.cloudwatch.domain.StatisticSet;
+import org.jclouds.cloudwatch.domain.StatisticValues;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchClientLiveTest;
@@ -61,7 +61,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       // CloudWatch rounds metric timestamps down to the closest minute
       Date metricTimestampInCloudWatch =
             new Date(metricTimestamp.getTime() - (metricTimestamp.getTime() % (60 * 1000)));
-      StatisticSet ss = StatisticSet.builder()
+      StatisticValues ss = StatisticValues.builder()
                                     .maximum(4.0)
                                     .minimum(1.0)
                                     .sampleCount(4.0)
@@ -69,7 +69,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
                                     .build();
       MetricDatum metricDatum = MetricDatum.builder()
                                            .metricName(metricName + "_1")
-                                           .statisticSet(ss)
+                                           .statisticValues(ss)
                                            .dimension(new Dimension("BaseMetricName", metricName))
                                            .dimension(new Dimension("TestDimension2", "TEST2"))
                                            .unit(Unit.COUNT)

@@ -18,8 +18,10 @@
  */
 package org.jclouds.cloudwatch.binders;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMultimap;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.inject.Inject;
+
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.Statistics;
@@ -27,9 +29,8 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 
-import javax.inject.Inject;
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Binds the metrics request to the http request
@@ -51,41 +52,36 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
    
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      GetMetricStatistics getRequest = GetMetricStatistics.class.cast(payload);
-      Set<Dimension> dimensions = getRequest.getDimensions() != null ?
-            getRequest.getDimensions() :
-            new HashSet<Dimension>();
-      Set<Statistics> statistics = getRequest.getStatistics() != null ?
-            getRequest.getStatistics() :
-            new HashSet<Statistics>();
+      GetMetricStatistics getRequest = GetMetricStatistics.class.cast(checkNotNull(payload,
+               "GetMetricStatistics must be set!"));
       int dimensionIndex = 1;
       int statisticIndex = 1;
       ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.builder();
 
-      for (Dimension dimension : dimensions) {
+      for (Dimension dimension : getRequest.getDimensions()) {
          formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
          formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
          dimensionIndex++;
       }
 
-      if (getRequest.getEndTime() != null) {
-         formParameters.put("EndTime", dateService.iso8601SecondsDateFormat(getRequest.getEndTime()));
+      if (getRequest.getEndTime().isPresent()) {
+         formParameters.put("EndTime", dateService.iso8601SecondsDateFormat(getRequest.getEndTime().get()));
       }
       formParameters.put("MetricName", getRequest.getMetricName());
       formParameters.put("Namespace", getRequest.getNamespace());
       formParameters.put("Period", Integer.toString(getRequest.getPeriod()));
-      if (getRequest.getStartTime() != null) {
+      if (getRequest.getStartTime().isPresent()) {
          formParameters.put("StartTime", dateService.iso8601SecondsDateFormat(getRequest
-                  .getStartTime()));
+                  .getStartTime().get()));
       }
-
-      for (Statistics statistic : statistics) {
+      
+      for (Statistics statistic : getRequest.getStatistics()) {
          formParameters.put("Statistics.member." + statisticIndex, statistic.toString());
          statisticIndex++;
       }
 
-      if (getRequest.getUnit() != null) {
-         formParameters.put("Unit", getRequest.getUnit().toString());
+      if (getRequest.getUnit().isPresent()) {
+         formParameters.put("Unit", getRequest.getUnit().get().toString());
       }
 
       return ModifyRequest.putFormParams(request, formParameters.build());

@@ -24,7 +24,7 @@ import com.google.inject.Injector;
 import junit.framework.Assert;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
-import org.jclouds.cloudwatch.domain.StatisticSet;
+import org.jclouds.cloudwatch.domain.StatisticValues;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
@@ -37,28 +37,33 @@ import java.util.Date;
  *
  * @author Jeremy Whitlock
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "MetricDataBinderTest")
 public class MetricDataBinderTest {
 
    Injector injector = Guice.createInjector();
    MetricDataBinder binder = injector.getInstance(MetricDataBinder.class);
-   HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+   
+   HttpRequest request() {
+      return HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+   }
 
    public void testMetricWithoutTimestamp() throws Exception {
-      StatisticSet ss = StatisticSet.builder()
+      StatisticValues ss = StatisticValues.builder()
                                     .maximum(4.0)
                                     .minimum(1.0)
                                     .sampleCount(4.0)
                                     .sum(10.0)
                                     .build();
+      
       MetricDatum metricDatum = MetricDatum.builder()
                                            .metricName("TestMetricName")
-                                           .statisticSet(ss)
+                                           .statisticValues(ss)
                                            .dimension(new Dimension("TestDimension", "FAKE"))
                                            .unit(Unit.COUNT)
+                                           .value(2)
                                            .build();
 
-      request = binder.bindToRequest(request, ImmutableSet.of(metricDatum));
+      HttpRequest request = binder.bindToRequest(request(), ImmutableSet.of(metricDatum));
 
       Assert.assertEquals(request.getPayload().getRawContent(),
                           "MetricData.member.1.Dimensions.member.1.Name=TestDimension" +
@@ -68,7 +73,8 @@ public class MetricDataBinderTest {
                                 "&MetricData.member.1.StatisticValues.Minimum=1.0" +
                                 "&MetricData.member.1.StatisticValues.SampleCount=4.0" +
                                 "&MetricData.member.1.StatisticValues.Sum=10.0" +
-                                "&MetricData.member.1.Unit=" + Unit.COUNT.toString());
+                                "&MetricData.member.1.Unit=" + Unit.COUNT.toString() +
+                                "&MetricData.member.1.Value=2.0");
    }
 
    public void testMetricWithMultipleDimensions() throws Exception {
@@ -81,7 +87,7 @@ public class MetricDataBinderTest {
                                            .value(5.0)
                                            .build();
 
-      request = binder.bindToRequest(request, ImmutableSet.of(metricDatum));
+      HttpRequest request = binder.bindToRequest(request(), ImmutableSet.of(metricDatum));
 
       Assert.assertEquals(request.getPayload().getRawContent(),
                           "MetricData.member.1.Dimensions.member.1.Name=TestDimension" +
@@ -95,7 +101,7 @@ public class MetricDataBinderTest {
    }
 
    public void testMetricWithMultipleDatum() throws Exception {
-      StatisticSet ss = StatisticSet.builder()
+      StatisticValues ss = StatisticValues.builder()
                                     .maximum(4.0)
                                     .minimum(1.0)
                                     .sampleCount(4.0)
@@ -103,11 +109,12 @@ public class MetricDataBinderTest {
                                     .build();
       MetricDatum metricDatum = MetricDatum.builder()
                                            .metricName("TestMetricName")
-                                           .statisticSet(ss)
+                                           .statisticValues(ss)
                                            .dimension(new Dimension("TestDimension", "FAKE"))
                                            .dimension(new Dimension("TestDimension2", "FAKE2"))
                                            .unit(Unit.COUNT)
                                            .timestamp(new Date(10000000l))
+                                           .value(2.0)
                                            .build();
       MetricDatum metricDatum2 = MetricDatum.builder()
                                            .metricName("TestMetricName")
@@ -117,7 +124,7 @@ public class MetricDataBinderTest {
                                            .value(5.0)
                                            .build();
 
-      request = binder.bindToRequest(request, ImmutableSet.of(metricDatum, metricDatum2));
+      HttpRequest request = binder.bindToRequest(request(), ImmutableSet.of(metricDatum, metricDatum2));
 
       Assert.assertEquals(request.getPayload().getRawContent(),
                           "MetricData.member.1.Dimensions.member.1.Name=TestDimension" +
@@ -131,6 +138,7 @@ public class MetricDataBinderTest {
                                 "&MetricData.member.1.StatisticValues.Sum=10.0" +
                                 "&MetricData.member.1.Timestamp=1970-01-01T02%3A46%3A40Z" +
                                 "&MetricData.member.1.Unit=" + Unit.COUNT.toString() +
+                                "&MetricData.member.1.Value=2.0" +
                                 "&MetricData.member.2.Dimensions.member.1.Name=TestDimension" +
                                 "&MetricData.member.2.Dimensions.member.1.Value=FAKE" +
                                 "&MetricData.member.2.MetricName=TestMetricName" +

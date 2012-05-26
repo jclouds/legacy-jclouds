@@ -18,13 +18,17 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
-import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.javax.annotation.Nullable;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 import java.util.Set;
+
+import org.jclouds.cloudwatch.options.ListMetricsOptions;
+
+import com.google.common.annotations.Beta;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Options use to get statistics for the specified metric.
@@ -37,33 +41,32 @@ import java.util.Set;
 public class GetMetricStatistics {
 
    private final Set<Dimension> dimensions;
-   private final Date endTime;
+   private final Optional<Date> endTime;
    private final String metricName;
    private final String namespace;
    private final int period;
-   private final Date startTime;
+   private final Optional<Date> startTime;
    private final Set<Statistics> statistics;
-   private final Unit unit;
+   private final Optional<Unit> unit;
 
    /**
     * Private constructor to enforce using {@link Builder}.
     */
-   private GetMetricStatistics(Set<Dimension> dimensions, Date endTime, String metricName, String namespace, int period,
+   protected GetMetricStatistics(Set<Dimension> dimensions, Date endTime, String metricName, String namespace, int period,
                                Date startTime, Set<Statistics> statistics, Unit unit) {
-      this.dimensions = dimensions;
-      this.endTime = endTime;
-      this.metricName = metricName;
-      this.namespace = namespace;
+      this.dimensions = ImmutableSet.<Dimension>copyOf(checkNotNull(dimensions, "dimensions"));
+      this.endTime = Optional.fromNullable(endTime);
+      this.metricName = checkNotNull(metricName, "metricName");
+      this.namespace = checkNotNull(namespace, "namespace");
       this.period = period;
-      this.startTime = startTime;
-      this.statistics = statistics;
-      this.unit = unit;
+      this.startTime = Optional.fromNullable(startTime);
+      this.statistics = ImmutableSet.<Statistics>copyOf(checkNotNull(statistics, "statistics"));
+      this.unit = Optional.fromNullable(unit);
    }
 
    /**
     * return the set of dimensions for this request
     */
-   @Nullable
    public Set<Dimension> getDimensions() {
       return dimensions;
    }
@@ -71,15 +74,13 @@ public class GetMetricStatistics {
    /**
     * return the end time for this request
     */
-   @Nullable
-   public Date getEndTime() {
+   public Optional<Date> getEndTime() {
       return endTime;
    }
 
    /**
     * return the metric name for this request
     */
-   @Nullable
    public String getMetricName() {
       return metricName;
    }
@@ -87,7 +88,6 @@ public class GetMetricStatistics {
    /**
     * return the namespace for this request
     */
-   @Nullable
    public String getNamespace() {
       return namespace;
    }
@@ -95,7 +95,6 @@ public class GetMetricStatistics {
    /**
     * return the period for this request
     */
-   @Nullable
    public int getPeriod() {
       return period;
    }
@@ -103,15 +102,13 @@ public class GetMetricStatistics {
    /**
     * return the start time for this request
     */
-   @Nullable
-   public Date getStartTime() {
+   public Optional<Date> getStartTime() {
       return startTime;
    }
 
    /**
     * return the statistics for this request
     */
-   @Nullable
    public Set<Statistics> getStatistics() {
       return statistics;
    }
@@ -119,8 +116,7 @@ public class GetMetricStatistics {
    /**
     * return the unit for this request
     */
-   @Nullable
-   public Unit getUnit() {
+   public Optional<Unit> getUnit() {
       return unit;
    }
 
@@ -134,13 +130,15 @@ public class GetMetricStatistics {
 
    public static class Builder {
 
-      private Set<Dimension> dimensions;
+      // this builder is set to be additive on dimension calls, so make this mutable
+      private Set<Dimension> dimensions = Sets.newLinkedHashSet();
       private Date endTime;
       private String metricName;
       private String namespace;
-      private int period;
+      private int period = 60;
       private Date startTime;
-      private Set<Statistics> statistics;
+      // this builder is set to be additive on dimension calls, so make this mutable
+      private Set<Statistics> statistics = Sets.newLinkedHashSet();
       private Unit unit;
 
       /**
@@ -157,7 +155,7 @@ public class GetMetricStatistics {
        * @return this {@code Builder} object
        */
       public Builder dimensions(Set<Dimension> dimensions) {
-         this.dimensions = dimensions;
+         this.dimensions.addAll(checkNotNull(dimensions, "dimensions"));
          return this;
       }
 
@@ -169,10 +167,7 @@ public class GetMetricStatistics {
        * @return this {@code Builder} object
        */
       public Builder dimension(Dimension dimension) {
-         if (dimensions == null) {
-            dimensions = Sets.newLinkedHashSet();
-         }
-         this.dimensions.add(dimension);
+         this.dimensions.add(checkNotNull(dimension, "dimension"));
          return this;
       }
 
@@ -246,7 +241,7 @@ public class GetMetricStatistics {
        * @return this {@code Builder} object
        */
       public Builder statistics(Set<Statistics> statistics) {
-         this.statistics = statistics;
+         this.statistics.addAll(checkNotNull(statistics, "statistics"));
          return this;
       }
 
@@ -258,10 +253,7 @@ public class GetMetricStatistics {
        * @return this {@code Builder} object
        */
       public Builder statistic(Statistics statistic) {
-         if (statistics == null) {
-            statistics = Sets.newLinkedHashSet();
-         }
-         this.statistics.add(statistic);
+         this.statistics.add(checkNotNull(statistic, "statistic"));
          return this;
       }
 

@@ -18,18 +18,18 @@
  */
 package org.jclouds.cloudwatch.binders;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
-import org.jclouds.cloudwatch.domain.StatisticSet;
+import org.jclouds.cloudwatch.domain.StatisticValues;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.Inject;
 
 /**
  * Binds the metrics request to the http request
@@ -51,22 +51,18 @@ public class MetricDataBinder implements org.jclouds.rest.Binder {
    /**
     * {@inheritDoc}
     */
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      Iterable<MetricDatum> metrics = input != null ?
-            (Iterable<MetricDatum>)input :
-            new HashSet<MetricDatum>();
+      Iterable<MetricDatum> metrics = (Iterable<MetricDatum>) checkNotNull(input, "metrics must be set!");
+      
       ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.builder();
       int metricDatumIndex = 1;
 
       for (MetricDatum metricDatum : metrics) {
          int dimensionIndex = 1;
-         StatisticSet statisticSet = metricDatum.getStatisticSet();
-         Set<Dimension> dimensions = metricDatum.getDimensions() != null ?
-               metricDatum.getDimensions() :
-               new HashSet<Dimension>();
 
-         for (Dimension dimension : dimensions) {
+         for (Dimension dimension : metricDatum.getDimensions()) {
             formParameters.put("MetricData.member." + metricDatumIndex + ".Dimensions.member." + dimensionIndex +
                                      ".Name", dimension.getName());
             formParameters.put("MetricData.member." + metricDatumIndex + ".Dimensions.member." + dimensionIndex +
@@ -76,30 +72,30 @@ public class MetricDataBinder implements org.jclouds.rest.Binder {
 
          formParameters.put("MetricData.member." + metricDatumIndex + ".MetricName", metricDatum.getMetricName());
 
-         if (statisticSet != null) {
+
+         if (metricDatum.getStatisticValues().isPresent()) {
+            StatisticValues statisticValues = metricDatum.getStatisticValues().get();
+
             formParameters.put("MetricData.member." + metricDatumIndex + ".StatisticValues.Maximum",
-                               String.valueOf(statisticSet.getMaximum()));
+                               String.valueOf(statisticValues.getMaximum()));
             formParameters.put("MetricData.member." + metricDatumIndex + ".StatisticValues.Minimum",
-                               String.valueOf(statisticSet.getMinimum()));
+                               String.valueOf(statisticValues.getMinimum()));
             formParameters.put("MetricData.member." + metricDatumIndex + ".StatisticValues.SampleCount",
-                               String.valueOf(statisticSet.getSampleCount()));
+                               String.valueOf(statisticValues.getSampleCount()));
             formParameters.put("MetricData.member." + metricDatumIndex + ".StatisticValues.Sum",
-                               String.valueOf(statisticSet.getSum()));
+                               String.valueOf(statisticValues.getSum()));
          }
-         if (metricDatum.getTimestamp() != null) {
+         
+         if (metricDatum.getTimestamp().isPresent()) {
             formParameters.put("MetricData.member." + metricDatumIndex + ".Timestamp",
-                               dateService.iso8601SecondsDateFormat(metricDatum.getTimestamp()));
+                               dateService.iso8601SecondsDateFormat(metricDatum.getTimestamp().get()));
          }
 
-         if (metricDatum.getUnit() != null) {
-            formParameters.put("MetricData.member." + metricDatumIndex + ".Unit",
-                               String.valueOf(metricDatum.getUnit()));
-         }
+         formParameters.put("MetricData.member." + metricDatumIndex + ".Unit",
+                            String.valueOf(metricDatum.getUnit()));
 
-         if (metricDatum.getValue() != null) {
-            formParameters.put("MetricData.member." + metricDatumIndex + ".Value",
-                               String.valueOf(metricDatum.getValue()));
-         }
+         formParameters.put("MetricData.member." + metricDatumIndex + ".Value",
+                            String.valueOf(metricDatum.getValue()));
 
          metricDatumIndex++;
       }
