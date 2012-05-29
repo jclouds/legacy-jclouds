@@ -135,7 +135,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
          @Override
          public String get() {
-            return random.nextInt(100) + "";
+            return Integer.toString(random.nextInt(100));
          }
       };
 

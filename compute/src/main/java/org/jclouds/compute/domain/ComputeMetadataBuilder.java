@@ -21,6 +21,7 @@ package org.jclouds.compute.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,14 +30,14 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadataBuilder;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class ComputeMetadataBuilder extends ResourceMetadataBuilder<ComputeType> {
+   protected final ComputeType type;
    protected String id;
-   protected ComputeType type;
    protected Set<String> tags = ImmutableSet.<String>of();
 
    public ComputeMetadataBuilder(ComputeType type) {
@@ -44,12 +45,23 @@ public class ComputeMetadataBuilder extends ResourceMetadataBuilder<ComputeType>
    }
 
    public ComputeMetadataBuilder id(String id) {
-      this.id = id;
+      this.id = checkNotNull(id, "id");
       return this;
    }
 
    public ComputeMetadataBuilder tags(Iterable<String> tags) {
-      this.tags  = ImmutableSet.<String> copyOf(checkNotNull(tags, "tags"));
+      this.tags = ImmutableSet.<String>copyOf(checkNotNull(tags, "tags"));
+      return this;
+   }
+
+   public ComputeMetadataBuilder tags(String...tags) {
+      return tags(Arrays.asList(tags));
+   }
+
+   public ComputeMetadataBuilder tag(String tag) {
+      checkNotNull(tag, "tag");
+      if (this.tags == null) this.tags = Sets.newLinkedHashSet();
+      this.tags.add(tag);
       return this;
    }
 

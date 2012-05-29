@@ -66,8 +66,7 @@ public class AddElasticIpsToNodemetadata implements Function<NodeMetadata, NodeM
       try {
          String publicIp = cache.get(new RegionAndName(region, instanceId));
          // Replace existing public addresses with elastic IP (see note above)
-         return NodeMetadataBuilder.fromNodeMetadata(arg0)
-                 .publicAddresses(ImmutableSet.<String> builder().add(publicIp).build()).build();
+         return NodeMetadataBuilder.fromNodeMetadata(arg0).publicAddresses(ImmutableSet.of(publicIp)).build();
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // no ip was found
          return arg0;

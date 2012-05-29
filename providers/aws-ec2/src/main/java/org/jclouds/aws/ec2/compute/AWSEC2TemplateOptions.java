@@ -81,13 +81,16 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
          if (getSpotPrice() != null)
             eTo.spotPrice(getSpotPrice());
          if (getSpotOptions() != null)
-            eTo.spotOptions(getSpotOptions());
+             eTo.spotOptions(getSpotOptions());
+         if (shouldEncodeGroupInTags())
+             eTo.encodeGroupInTags();
       }
    }
 
    private boolean monitoringEnabled;
    private String placementGroup = null;
    private boolean noPlacementGroup;
+   private boolean encodeGroupInTags = false;
    private String subnetId;
    private Float spotPrice;
    private RequestSpotInstancesOptions spotOptions = RequestSpotInstancesOptions.NONE;
@@ -113,6 +116,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       checkState(!noPlacementGroup, "you cannot specify both options placementGroup and noPlacementGroup");
       Preconditions2.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
       this.placementGroup = placementGroup;
+      return this;
+   }
+
+   /**
+    * Encode the group name in metadata tags.
+    */
+   public AWSEC2TemplateOptions encodeGroupInTags() {
+      this.encodeGroupInTags = true;
       return this;
    }
 
@@ -300,6 +311,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
+       * @see AWSEC2TemplateOptions#noMarkerGroup
+       */
+      public static AWSEC2TemplateOptions noMarkerGroup() {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.noMarkerGroup();
+      }
+
+      /**
        * @see AWSEC2TemplateOptions#placementGroup
        */
       public static AWSEC2TemplateOptions placementGroup(String placementGroup) {
@@ -471,6 +490,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * {@inheritDoc}
     */
    @Override
+   public AWSEC2TemplateOptions noMarkerGroup() {
+      return AWSEC2TemplateOptions.class.cast(super.noMarkerGroup());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public AWSEC2TemplateOptions securityGroups(Iterable<String> groupIds) {
       return AWSEC2TemplateOptions.class.cast(super.securityGroups(groupIds));
    }
@@ -631,6 +658,13 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     */
    public boolean isMonitoringEnabled() {
       return monitoringEnabled;
+   }
+
+   /**
+    * @return true (default false) if we are supposed to encode group name in metadata tags
+    */
+   public boolean shouldEncodeGroupInTags() {
+      return encodeGroupInTags;
    }
 
    /**

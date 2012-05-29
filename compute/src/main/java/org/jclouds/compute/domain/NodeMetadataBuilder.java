@@ -148,6 +148,16 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    }
 
    @Override
+   public NodeMetadataBuilder tags(String...tags) {
+      return NodeMetadataBuilder.class.cast(super.tags(tags));
+   }
+
+   @Override
+   public NodeMetadataBuilder tag(String tag) {
+      return NodeMetadataBuilder.class.cast(super.tag(tag));
+   }
+
+   @Override
    public NodeMetadataBuilder ids(String id) {
       return NodeMetadataBuilder.class.cast(super.ids(id));
    }

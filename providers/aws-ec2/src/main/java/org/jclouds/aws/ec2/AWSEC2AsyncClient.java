@@ -84,7 +84,7 @@ public interface AWSEC2AsyncClient extends EC2AsyncClient {
    SpotInstanceAsyncClient getSpotInstanceServices();
 
    /**
-    * Provides asynchronous access to SpotInstance services.
+    * Provides asynchronous access to tag services.
     */
    @Delegate
    TagAsyncClient getTagServices();

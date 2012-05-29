@@ -20,8 +20,9 @@ package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_ENCODE_GROUP_IN_TAGS;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -76,6 +77,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    final SpotInstanceRequestToAWSRunningInstance spotConverter;
    final AWSEC2AsyncClient aclient;
    final boolean generateInstanceNames;
+   final boolean encodeGroupInTags;
 
    @Inject
    protected AWSEC2CreateNodesInGroupThenAddToSet(
@@ -84,6 +86,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             AWSEC2AsyncClient aclient,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+            @Named(PROPERTY_EC2_ENCODE_GROUP_IN_TAGS) boolean encodeGroupInTags,
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             AWSEC2InstancePresent instancePresent,
@@ -96,6 +99,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
       this.aclient = checkNotNull(aclient, "aclient");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");
       this.generateInstanceNames = generateInstanceNames;
+      this.encodeGroupInTags = encodeGroupInTags;
    }
 
    @Override
@@ -120,30 +124,32 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
 
    }
 
-   public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(Map<String, String> metadata,
-            Iterable<? extends RunningInstance> iterable, String region, String group) {
+   public Iterable<? extends RunningInstance> addTagsToInstancesInRegion(Map<String, String> metadata, Iterable<? extends RunningInstance> iterable, String region, String group) {
       if (metadata.size() > 0 || generateInstanceNames) {
          for (String id : transform(iterable, new Function<RunningInstance, String>() {
-
             @Override
             public String apply(RunningInstance arg0) {
                return arg0.getId();
             }
-
          }))
-            aclient.getTagServices()
-                     .createTagsInRegion(region, ImmutableSet.of(id), metadataForId(id, group, metadata));
+         aclient.getTagServices().createTagsInRegion(region, ImmutableSet.of(id), metadataForId(id, group, metadata));
       }
       return iterable;
    }
 
-   private Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
-      return generateInstanceNames && !metadata.containsKey("Name") ? ImmutableMap.<String, String> builder().putAll(
-               metadata).put("Name", id.replaceAll(".*-", group + "-")).build() : metadata;
+   protected Map<String, String> metadataForId(String id, String group, Map<String, String> metadata) {
+      ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder().putAll(metadata);
+      if (generateInstanceNames && !metadata.containsKey("Name")) {
+          builder.put("Name", id.replaceAll(".*-", group + "-"));
+      }
+      if (encodeGroupInTags && !metadata.containsKey("Group")) {
+          builder.put("Group", group);
+      }
+      return builder.build();
    }
+
 
    private Float getSpotPriceOrNull(TemplateOptions options) {
       return options instanceof AWSEC2TemplateOptions ? AWSEC2TemplateOptions.class.cast(options).getSpotPrice() : null;
    }
-
 }

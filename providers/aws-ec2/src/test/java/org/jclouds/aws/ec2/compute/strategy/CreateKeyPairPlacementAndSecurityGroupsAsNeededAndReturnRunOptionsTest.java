@@ -83,7 +83,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       Hardware size = EC2HardwareBuilder.m1_small().build();
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
-      String generatedGroup = "group";
+      String generatedGroup = "jclouds#group#" + region;
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
 
       // create mocks
@@ -664,6 +664,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
+      boolean shouldUsemarkerGroup = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
       // create mocks
@@ -674,6 +675,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       expect(options.getGroupIds()).andReturn(ImmutableSet.<String> of());
       expect(options.getGroups()).andReturn(groupNames).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
+      expect(options.shouldUseMarkerGroup()).andReturn(shouldUsemarkerGroup).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(group);
@@ -698,6 +700,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] { 22, 80 };
       boolean shouldAuthorizeSelf = true;
+      boolean shouldUsemarkerGroup = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
       // create mocks
@@ -708,6 +711,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       expect(options.getGroupIds()).andReturn(ImmutableSet.<String> of());
       expect(options.getGroups()).andReturn(groupNames).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
+      expect(options.shouldUseMarkerGroup()).andReturn(shouldUsemarkerGroup).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
@@ -732,6 +736,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Set<String> groupNames = ImmutableSet.<String> of();
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
+      boolean shouldUsemarkerGroup = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
       // create mocks
@@ -742,6 +747,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       expect(options.getGroupIds()).andReturn(ImmutableSet.<String> of());
       expect(options.getGroups()).andReturn(groupNames).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
+      expect(options.shouldUseMarkerGroup()).andReturn(shouldUsemarkerGroup).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
@@ -766,6 +772,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Set<String> groupNames = ImmutableSet.<String> of("group1", "group2");
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
+      boolean shouldUsemarkerGroup = true;
       boolean groupExisted = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup, "group1", "group2");
 
@@ -776,6 +783,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup expectations
       expect(options.getGroupIds()).andReturn(ImmutableSet.<String> of());
       expect(options.getGroups()).andReturn(groupNames).atLeastOnce();
+      expect(options.shouldUseMarkerGroup()).andReturn(shouldUsemarkerGroup).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
 
@@ -799,24 +807,56 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
-      Set<String> groupNames = ImmutableSet.<String> of();
+      Set<String> groupNames = ImmutableSet.<String> of("group1", "group2");
       int[] ports = new int[] {};
       boolean shouldAuthorizeSelf = true;
+      boolean shouldUsemarkerGroup = true;
       boolean groupExisted = true;
-      Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
+      Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup, "group1", "group2");
 
       // create mocks
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
       AWSEC2TemplateOptions options = createMock(AWSEC2TemplateOptions.class);
 
       // setup expectations
-      expect(options.getGroupIds()).andReturn(ImmutableSet.<String> of("group1", "group2"));
+      expect(options.getGroupIds()).andReturn(ImmutableSet.<String> of());
       expect(options.getGroups()).andReturn(groupNames).atLeastOnce();
+      expect(options.shouldUseMarkerGroup()).andReturn(shouldUsemarkerGroup).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
             ports, shouldAuthorizeSelf);
 
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules))
             .andReturn(groupExisted ? "group" : null);
+
+      // replay mocks
+      replay(options);
+      replayStrategy(strategy);
+
+      // run
+      assertEquals(strategy.getSecurityGroupsForTagAndOptions(region, group, options), returnVal);
+
+      // verify mocks
+      verify(options);
+      verifyStrategy(strategy);
+   }
+
+   public void testGetSecurityGroupsForTagAndOptions_noMarkerGroupAndAcceptsUserSuppliedGroupIds() {
+      // setup constants
+      String region = Region.AP_SOUTHEAST_1;
+      String group = "group";
+      Set<String> groupNames = ImmutableSet.<String> of("group1", "group2");
+      Set<String> groupIds = ImmutableSet.<String> of();
+      boolean shouldUsemarkerGroup = false;
+      Set<String> returnVal = ImmutableSet.<String> of("group1", "group2");
+
+      // create mocks
+      CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = setupStrategy();
+      AWSEC2TemplateOptions options = createMock(AWSEC2TemplateOptions.class);
+
+      // setup expectations
+      expect(options.getGroupIds()).andReturn(groupIds);
+      expect(options.getGroups()).andReturn(groupNames).atLeastOnce();
+      expect(options.shouldUseMarkerGroup()).andReturn(shouldUsemarkerGroup).atLeastOnce();
 
       // replay mocks
       replay(options);

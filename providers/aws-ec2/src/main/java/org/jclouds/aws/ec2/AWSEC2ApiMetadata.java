@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2;
 
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_ENCODE_GROUP_IN_TAGS;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Properties;
@@ -74,6 +75,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(PROPERTY_EC2_GENERATE_INSTANCE_NAMES, "true");
+      properties.setProperty(PROPERTY_EC2_ENCODE_GROUP_IN_TAGS, "false");
       return properties;
    }
 

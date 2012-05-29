@@ -20,57 +20,43 @@ package org.jclouds.compute.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.util.Preconditions2;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
- * Container for node filters (predicates).
- * 
+ * Container for {@link ComputeMetadata node} filtering {@link Predicate predicates}.
+ *
  * This class has static methods that create customized predicates to use with
- * {@link org.jclouds.compute.ComputeService}.
- * 
+ * {@link ComputeMetadata} and {@link NodeMetadata} objects.
+ *
  * @author Oleksiy Yarmula
+ * @author Andrew Kennedy
  */
 public class NodePredicates {
 
    private static class ParentLocationId implements Predicate<ComputeMetadata> {
+
       private final String id;
 
       private ParentLocationId(String id) {
          this.id = id;
-      }
-
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((id == null) ? 0 : id.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         ParentLocationId other = (ParentLocationId) obj;
-         if (id == null) {
-            if (other.id != null)
-               return false;
-         } else if (!id.equals(other.id))
-            return false;
-         return true;
       }
 
       @Override
@@ -81,36 +67,27 @@ public class NodePredicates {
       }
 
       @Override
+      public int hashCode() {
+         return Objects.hashCode(this.id);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o)
+            return true;
+         if (o == null || getClass() != o.getClass())
+            return false;
+         ParentLocationId that = (ParentLocationId) o;
+         return Objects.equal(this.id, that.id);
+      }
+
+      @Override
       public String toString() {
          return "ParentLocationId [id=" + id + "]";
       }
    }
 
    private static class LocationId implements Predicate<ComputeMetadata> {
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((id == null) ? 0 : id.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         LocationId other = (LocationId) obj;
-         if (id == null) {
-            if (other.id != null)
-               return false;
-         } else if (!id.equals(other.id))
-            return false;
-         return true;
-      }
 
       private final String id;
 
@@ -124,14 +101,29 @@ public class NodePredicates {
       }
 
       @Override
+      public int hashCode() {
+         return Objects.hashCode(id);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o)
+            return true;
+         if (o == null || getClass() != o.getClass())
+            return false;
+         LocationId that = LocationId.class.cast(o);
+         return Objects.equal(this.id, that.id);
+      }
+
+      @Override
       public String toString() {
-         return "locationId(" + id + ")";
+         return "LocationId [id=" + id + "]";
       }
    }
 
    /**
     * Return nodes in the specified location.
-    * 
+    *
     * @param id
     *           id of the location
     * @return predicate
@@ -143,7 +135,7 @@ public class NodePredicates {
 
    /**
     * Return nodes in the specified parent location.
-    * 
+    *
     * @param id
     *           id of the location
     * @return predicate
@@ -154,13 +146,15 @@ public class NodePredicates {
    }
 
    /**
-    * Return nodes with the specific ids Note: returns all nodes, regardless of the state.
-    * 
+    * Return nodes with the specific ids.
+    *
+    * NOTE Returns all nodes, regardless of the state.
+    *
     * @param ids
     *           ids of the resources
     * @return predicate
     */
-   public static <T extends ComputeMetadata> Predicate<T> withIds(String... ids) {
+   public static <T extends ComputeMetadata> Predicate<T> withIds(final String... ids) {
       checkNotNull(ids, "ids must be defined");
       final Set<String> search = ImmutableSet.copyOf(ids);
       return new Predicate<T>() {
@@ -177,7 +171,7 @@ public class NodePredicates {
    }
 
    /**
-    * return everything.
+    * Return everything.
     */
    public static Predicate<ComputeMetadata> all() {
       return Predicates.<ComputeMetadata> alwaysTrue();
@@ -185,7 +179,7 @@ public class NodePredicates {
 
    /**
     * Return nodes in the specified group. Note: returns all nodes, regardless of the state.
-    * 
+    *
     * @param group
     *           group to match the items
     * @return predicate
@@ -204,10 +198,9 @@ public class NodePredicates {
          }
       };
    }
-   
+
    /**
     * Return nodes who have a value for {@link NodeMetadata#getGroup}
-    * 
     */
    public static Predicate<NodeMetadata> hasGroup() {
       return new Predicate<NodeMetadata>() {
@@ -222,10 +215,10 @@ public class NodePredicates {
          }
       };
    }
-   
+
    /**
     * Return nodes with specified group that are in the NODE_RUNNING state.
-    * 
+    *
     * @param group
     *           group to match the items
     * @return predicate
@@ -264,15 +257,119 @@ public class NodePredicates {
     * Match nodes with State == NODE_TERMINATED
     */
    public static final Predicate<NodeMetadata> TERMINATED = new Predicate<NodeMetadata>() {
-      @Override
-      public boolean apply(NodeMetadata nodeMetadata) {
-         return nodeMetadata.getState() == NodeState.TERMINATED;
-      }
+       @Override
+       public boolean apply(NodeMetadata nodeMetadata) {
+          return nodeMetadata.getState() == NodeState.TERMINATED;
+       }
 
-      @Override
-      public String toString() {
-         return "TERMINATED";
-      }
+       @Override
+       public String toString() {
+          return "TERMINATED";
+       }
    };
 
+   /**
+    * Return nodes with the specified tags in their metadata.
+    *
+    * Searches for matching values in the list of {@link ComputeMetadata#getTags() tags} and
+    * any node {@link ComputeMetadata#getUserMetadata() metadata} regardless of value.
+    *
+    * @param tags
+    *           the list of tags that must be present
+    * @return predicate
+    * @see #hasMetadata(Map)
+    * @see #hasMetadataEntry(String, String)
+    */
+   public static Predicate<ComputeMetadata> hasTags(final String...tags) {
+      checkNotNull(tags, "tags must be defined");
+      final Set<String> search = ImmutableSet.copyOf(tags);
+      return new Predicate<ComputeMetadata>() {
+         @Override
+         public boolean apply(ComputeMetadata node) {
+            final Iterable<String> nodeTags = Iterables.concat(node.getTags(), node.getUserMetadata().keySet());
+            return Iterables.all(search, new Predicate<String>() {
+               @Override
+               public boolean apply(String input) {
+                  return Iterables.contains(nodeTags, input);
+               }
+            });
+         }
+
+         @Override
+         public String toString() {
+            return "hasTags(" + Iterables.toString(search) + ")";
+         }
+      };
+   }
+
+   /**
+    * Return nodes that contain the specified data in their metadata.
+    *
+    * Searches for matching key-value pairs in the node {@link ComputeMetadata#getUserMetadata() metadata}
+    * and any matching {@link ComputeMetadata#getTags() tags} with empty values.
+    *
+    * @param metadata
+    *           the map of metadata that must be present
+    * @return predicate
+    * @see #hasTags(String...)
+    * @see #hasMetadataEntry(String, String)
+    */
+   public static Predicate<ComputeMetadata> hasMetadata(final Map<String, String> metadata) {
+      checkNotNull(metadata, "metadata must be defined");
+      final Map<String, String> search = ImmutableMap.copyOf(metadata);
+      return new Predicate<ComputeMetadata>() {
+         @Override
+         public boolean apply(ComputeMetadata node) {
+            ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder().putAll(node.getUserMetadata());
+            for (String key : node.getTags()) {
+               builder.put(key, "");
+            }
+            Map<String, String> nodeMetadata = builder.build();
+            return Maps.difference(search, nodeMetadata).entriesOnlyOnLeft().isEmpty();
+         }
+
+         @Override
+         public String toString() {
+            return "hasMetadata(" + Joiner.on(",").withKeyValueSeparator("=").join(search) + ")";
+         }
+      };
+   }
+
+   /**
+    * Return nodes that contain the specified entry in their metadata.
+    *
+    * Searches for a matching key-value pair in the node {@link ComputeMetadata#getUserMetadata() metadata}
+    * and {@link ComputeMetadata#getTags() tags}. Null {@literal value} parameters will be treated the
+    * same as an empty string, althougth the {@link #hasTags(String...) hasTags} predicate may be preferable.
+    *
+    * @param key
+    *           the key that must be present in the metadata
+    * @param value
+    *           the metadata value for the key, which may be null or empty
+    * @return predicate
+    * @see #hasTags(String...)
+    * @see #hasMetadata(Map)
+    */
+   public static Predicate<ComputeMetadata> hasMetadataEntry(final String key, @Nullable final String value) {
+      checkNotNull(key, "key must be defined");
+      return new Predicate<ComputeMetadata>() {
+         @Override
+         public boolean apply(ComputeMetadata node) {
+            ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder().putAll(node.getUserMetadata());
+            for (String key : node.getTags()) {
+                builder.put(key, "");
+            }
+            Map<String, String> nodeMetadata = builder.build();
+            if (nodeMetadata.containsKey(key)) {
+                String found = nodeMetadata.get(key);
+                return Strings.nullToEmpty(value).equals(found);
+            } else return false;
+         }
+
+         @Override
+         public String toString() {
+            return "hasMetadataEntry(" + key + "," + (Strings.isNullOrEmpty(value) ? "<empty>" : value) + ")";
+         }
+      };
+   }
 }

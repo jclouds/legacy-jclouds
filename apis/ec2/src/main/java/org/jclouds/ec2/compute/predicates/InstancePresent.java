@@ -51,6 +51,7 @@ public class InstancePresent implements Predicate<RegionAndName> {
       this.client = checkNotNull(client, "client");
    }
 
+   @Override
    public boolean apply(RegionAndName instance) {
       logger.trace("looking for instance %s/%s", instance.getRegion(), instance.getName());
       try {
