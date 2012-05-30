@@ -78,7 +78,7 @@ public class Image implements Comparable<Image> {
             @Nullable String ramdiskId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
             Map<String, EbsBlockDevice> ebsBlockDevices, VirtualizationType virtualizationType, Hypervisor hypervisor) {
       this.region = checkNotNull(region, "region");
-      this.architecture = checkNotNull(architecture, "architecture");
+      this.architecture = architecture;
       this.imageId = checkNotNull(imageId, "imageId");
       this.name = name;
       this.description = description;
