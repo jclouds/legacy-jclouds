@@ -29,9 +29,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.annotations.Identity;
@@ -133,7 +133,7 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
             return false;
          String id = input.getHostText().replace(publicIpPrefix, "");
          NodeMetadata node = nodes.get(id);
-         return node != null && node.getState() == NodeState.RUNNING;
+         return node != null && node.getStatus() == Status.RUNNING;
       }
 
    }

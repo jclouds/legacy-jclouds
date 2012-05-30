@@ -18,26 +18,34 @@
  */
 package org.jclouds.compute.predicates;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
-import org.jclouds.compute.predicates.internal.RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid;
+import org.jclouds.compute.predicates.internal.TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a node is suspended.
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class AtomicNodeSuspended extends RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid {
+public class AtomicNodeTerminated extends TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse<NodeMetadata.Status, NodeMetadata> {
+
+   private final GetNodeMetadataStrategy client;
 
    @Inject
-   public AtomicNodeSuspended(GetNodeMetadataStrategy client) {
-      super(Status.SUSPENDED, ImmutableSet.of(Status.ERROR, Status.TERMINATED), client);
+   public AtomicNodeTerminated(GetNodeMetadataStrategy client) {
+      super(Status.TERMINATED);
+      this.client = checkNotNull(client, "client");
+   }
+   
+   @Override
+   protected NodeMetadata refreshOrNull(NodeMetadata resource) {
+      if (resource == null || resource.getId() == null)
+         return null;
+      return client.getNode(resource.getId());
    }
 }

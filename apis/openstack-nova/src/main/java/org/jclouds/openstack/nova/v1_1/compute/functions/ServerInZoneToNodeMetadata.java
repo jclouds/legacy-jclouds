@@ -103,7 +103,7 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.imageId(ZoneAndId.fromZoneAndId(serverInZone.getZone(), from.getImage().getId()).slashEncode());
       builder.operatingSystem(findOperatingSystemForServerOrNull(serverInZone));
       builder.hardware(findHardwareForServerOrNull(serverInZone));
-      builder.state(from.getStatus().getNodeState());
+      builder.status(from.getStatus().getNodeStatus());
       builder.publicAddresses(filter(
             transform(filter(from.getAddresses().values(), Predicates.not(isPrivateAddress)),
                   AddressToStringTransformationFunction.INSTANCE), isInet4Address));

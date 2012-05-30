@@ -41,7 +41,6 @@ import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
-import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
 import org.testng.annotations.Test;
 
@@ -128,7 +127,7 @@ public class ServerInZoneToNodeMetadataTest {
 
       assertEquals(convertedNodeMetadata.getHardware(), expectedHardware);
 
-      assertEquals(serverToConvert.getStatus().getNodeState(), convertedNodeMetadata.getState());
+      assertEquals(serverToConvert.getStatus().getNodeStatus(), convertedNodeMetadata.getStatus());
 
       assertNotNull(convertedNodeMetadata.getPrivateAddresses());
       assertEquals(convertedNodeMetadata.getPrivateAddresses(), ImmutableSet.of("10.176.42.16"));

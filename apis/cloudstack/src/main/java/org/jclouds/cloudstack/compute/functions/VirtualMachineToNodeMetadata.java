@@ -41,8 +41,8 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -64,17 +64,17 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 @Singleton
 public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, NodeMetadata> {
 
-   public static final Map<VirtualMachine.State, NodeState> vmStateToNodeState = ImmutableMap
-         .<VirtualMachine.State, NodeState> builder().put(VirtualMachine.State.STARTING, NodeState.PENDING)
-         .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.PENDING)
-         .put(VirtualMachine.State.STOPPED, NodeState.SUSPENDED)
-         .put(VirtualMachine.State.DESTROYED, NodeState.TERMINATED)
-         .put(VirtualMachine.State.EXPUNGING, NodeState.TERMINATED)
-         .put(VirtualMachine.State.MIGRATING, NodeState.PENDING).put(VirtualMachine.State.ERROR, NodeState.ERROR)
-         .put(VirtualMachine.State.UNKNOWN, NodeState.UNRECOGNIZED)
+   public static final Map<VirtualMachine.State, Status> vmStateToNodeStatus = ImmutableMap
+         .<VirtualMachine.State, Status> builder().put(VirtualMachine.State.STARTING, Status.PENDING)
+         .put(VirtualMachine.State.RUNNING, Status.RUNNING).put(VirtualMachine.State.STOPPING, Status.PENDING)
+         .put(VirtualMachine.State.STOPPED, Status.SUSPENDED)
+         .put(VirtualMachine.State.DESTROYED, Status.TERMINATED)
+         .put(VirtualMachine.State.EXPUNGING, Status.TERMINATED)
+         .put(VirtualMachine.State.MIGRATING, Status.PENDING).put(VirtualMachine.State.ERROR, Status.ERROR)
+         .put(VirtualMachine.State.UNKNOWN, Status.UNRECOGNIZED)
          // TODO: is this really a state?
-         .put(VirtualMachine.State.SHUTDOWNED, NodeState.PENDING)
-         .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+         .put(VirtualMachine.State.SHUTDOWNED, Status.PENDING)
+         .put(VirtualMachine.State.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
@@ -123,7 +123,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
         .hypervisor(from.getHypervisor())//
         .build());
 
-      builder.state(vmStateToNodeState.get(from.getState()));
+      builder.status(vmStateToNodeStatus.get(from.getState()));
 
       Set<String> publicAddresses = newHashSet(), privateAddresses = newHashSet();
       if (from.getIPAddress() != null) {

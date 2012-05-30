@@ -27,12 +27,9 @@ import java.util.Set;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +43,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    /** The serialVersionUID */
    private static final long serialVersionUID = 7924307572338157887L;
 
-   private final NodeState state;
+   private final Status status;
    private final int loginPort;
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
@@ -63,36 +60,9 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Nullable
    private final String hostname;
 
-   /**
-    * <h4>will be removed in jclouds 1.4.0</h4>
-    */
-   @Deprecated
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
          Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
-         @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
-         Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
-         @Nullable Credentials credentials, String hostname) {
-      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
-      this.group = group;
-      this.hardware = hardware;
-      this.imageId = imageId;
-      this.os = os;
-      this.state = checkNotNull(state, "state");
-      this.loginPort = loginPort;
-      this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
-      this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
-      this.hostname = hostname;
-      Builder builder = LoginCredentials.builder(credentials);
-      if (adminPassword != null) {
-         builder.authenticateSudo(true);
-         builder.password(adminPassword);
-      }
-      this.credentials = builder.build();
-   }
-
-   public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
-         @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
+         @Nullable String imageId, @Nullable OperatingSystem os, Status status, int loginPort,
          Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable LoginCredentials credentials,
          String hostname) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
@@ -100,7 +70,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       this.hardware = hardware;
       this.imageId = imageId;
       this.os = os;
-      this.state = checkNotNull(state, "state");
+      this.status = checkNotNull(status, "status");
       this.loginPort = loginPort;
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
@@ -161,8 +131,17 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
-   public NodeState getState() {
-      return state;
+   @Deprecated
+   public org.jclouds.compute.domain.NodeState getState() {
+      return org.jclouds.compute.domain.NodeState.from(status);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Status getStatus() {
+      return status;
    }
 
    /**
@@ -201,7 +180,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getGroup() + ", name=" + getName()
             + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-            + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort() + ", hostname="
+            + getOperatingSystem() + ", status=" + getStatus() + ", loginPort=" + getLoginPort() + ", hostname="
             + getHostname() + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
             + ", hardware=" + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
             + ", userMetadata=" + getUserMetadata() + ", tags=" + tags + "]";

@@ -32,12 +32,12 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -60,12 +60,12 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareNotFound() {
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.serverToNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
@@ -73,7 +73,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(
             metadata,
             new NodeMetadataBuilder()
-                  .state(NodeState.PENDING)
+                  .status(Status.PENDING)
                   .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
                   .privateAddresses(ImmutableSet.of("10.176.42.16"))
                   .imageId("2")
@@ -91,13 +91,13 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageFoundAndHardwareNotFound()  {
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.serverToNodeStatus;
       org.jclouds.compute.domain.Image jcImage = CloudServersImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
@@ -105,7 +105,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(
             metadata,
             new NodeMetadataBuilder()
-                  .state(NodeState.PENDING)
+                  .status(Status.PENDING)
                   .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
                   .privateAddresses(ImmutableSet.of("10.176.42.16"))
                   .imageId("2")
@@ -126,12 +126,12 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareFound()  {
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.serverToNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(CloudServersImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
@@ -139,7 +139,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(
             metadata,
             new NodeMetadataBuilder()
-                  .state(NodeState.PENDING)
+                  .status(Status.PENDING)
                   .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
                   .privateAddresses(ImmutableSet.of("10.176.42.16"))
                   .imageId("2")

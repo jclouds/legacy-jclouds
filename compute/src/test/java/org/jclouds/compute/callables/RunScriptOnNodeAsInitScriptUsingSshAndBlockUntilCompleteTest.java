@@ -34,7 +34,7 @@ import org.jclouds.compute.config.ComputeServiceProperties;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.concurrent.MoreExecutors;
@@ -91,7 +91,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testWithoutInitThrowsIllegalStateException() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
             new LoginCredentials("tester", "testpassword!", null, false)).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -139,7 +139,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
     */
    private void runDefaults(IAnswer<ExecResponse> answerForScriptStatus, int timesForScriptStatus) {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING)
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING)
             .credentials(LoginCredentials.builder().user("tester").password("testpassword!").build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -193,7 +193,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
 
    public void testWithSudoPassword() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
             new LoginCredentials("tester", "testpassword!", null, true)).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -242,7 +242,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
 
    public void testNotRoot() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
             new LoginCredentials("tester", "testpassword!", null, true)).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -292,7 +292,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
 
    public void testBadReturnCode() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("badreturncode").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("badreturncode").status(Status.RUNNING).credentials(
             new LoginCredentials("tester", "testpassword!", null, true)).build();
       
       SshClient sshClient = createMock(SshClient.class);

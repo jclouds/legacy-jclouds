@@ -28,12 +28,12 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -59,18 +59,18 @@ public class SliceToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareNotFound() {
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceContextModule.sliceStatusToNodeState;
+      Map<Slice.Status, Status> sliceStateToNodeStatus = SlicehostComputeServiceContextModule.sliceStatusToNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Slice slice = SliceHandlerTest.parseSlice();
 
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
+      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeStatus, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
                .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(slice);
 
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
+      assertEquals(metadata, new NodeMetadataBuilder().status(Status.PENDING).publicAddresses(
                ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds")
                .imageId("2").id("1").providerId("1").name("jclouds-foo").hostname("jclouds-foo").location(provider)
                .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
@@ -78,18 +78,18 @@ public class SliceToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageFoundAndHardwareNotFound() {
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceContextModule.sliceStatusToNodeState;
+      Map<Slice.Status, Status> sliceStateToNodeStatus = SlicehostComputeServiceContextModule.sliceStatusToNodeStatus;
       org.jclouds.compute.domain.Image jcImage = SlicehostImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Slice slice = SliceHandlerTest.parseSlice();
 
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
+      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeStatus, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
                .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(slice);
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
+      assertEquals(metadata, new NodeMetadataBuilder().status(Status.PENDING).publicAddresses(
                ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds")
                .imageId("2").operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
@@ -100,17 +100,17 @@ public class SliceToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareFound() {
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceContextModule.sliceStatusToNodeState;
+      Map<Slice.Status, Status> sliceStateToNodeStatus = SlicehostComputeServiceContextModule.sliceStatusToNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(SlicehostImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Slice slice = SliceHandlerTest.parseSlice();
 
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
+      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeStatus, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
                .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(slice);
-      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
+      assertEquals(metadata, new NodeMetadataBuilder().status(Status.PENDING).publicAddresses(
                ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds")
                .imageId("2").hardware(
                         new HardwareBuilder().ids("1").name("256 slice").processors(

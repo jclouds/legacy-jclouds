@@ -41,8 +41,8 @@ import org.jclouds.Constants;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
@@ -79,7 +79,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
          logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)", template.getLocation().getId(),
                   name, template.getImage().getProviderId(), template.getHardware().getProviderId());
          node = addNodeWithGroupStrategy.createNodeWithGroupEncodedIntoName(group, name, template);
-         logger.debug("<< %s node(%s)", node.getState(), node.getId());
+         logger.debug("<< %s node(%s)", node.getStatus(), node.getId());
          return new AtomicReference<NodeMetadata>(node);
       }
 
@@ -133,7 +133,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
     * to the jclouds {@link NodeMetadata} object. This call directly precedes customization, such as
     * executing scripts.
     * 
-    * </p> The outcome of this operation does not imply the node is {@link NodeState#RUNNING
+    * </p> The outcome of this operation does not imply the node is {@link Status#RUNNING
     * running}. If you want to insert logic after the node is created, yet before an attempt to
     * customize the node, then append your behaviour to this method.
     * 
@@ -162,7 +162,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
     * @param group group the node belongs to
     * @param name generated name of the node
     * @param template user-specified template
-    * @return node that is created, yet not necessarily in {@link NodeState#RUNNING}
+    * @return node that is created, yet not necessarily in {@link Status#RUNNING}
     */
    protected Future<AtomicReference<NodeMetadata>> createNodeInGroupWithNameAndTemplate(String group, String name,
             Template template) {

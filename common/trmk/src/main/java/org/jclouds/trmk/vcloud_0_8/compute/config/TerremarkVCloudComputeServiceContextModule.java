@@ -28,7 +28,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
@@ -60,15 +59,16 @@ import com.google.inject.TypeLiteral;
 public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   public static final Map<Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap.<Status, NodeState> builder()
-         .put(Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING)
-         .put(Status.RESOLVED, NodeState.PENDING).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-         .put(Status.DEPLOYED, NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED)
-         .put(Status.UNRESOLVED, NodeState.PENDING).build();
+   public static final Map<Status, NodeMetadata.Status> VAPPSTATUS_TO_NODESTATE = ImmutableMap
+            .<Status, NodeMetadata.Status> builder().put(Status.OFF, NodeMetadata.Status.SUSPENDED).put(Status.ON,
+                     NodeMetadata.Status.RUNNING).put(Status.RESOLVED, NodeMetadata.Status.PENDING).put(
+                     Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).put(Status.DEPLOYED,
+                     NodeMetadata.Status.PENDING).put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED).put(
+                     Status.UNRESOLVED, NodeMetadata.Status.PENDING).build();
 
    @Singleton
    @Provides
-   protected Map<Status, NodeState> provideVAppStatusToNodeState() {
+   protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {
       return VAPPSTATUS_TO_NODESTATE;
    }
 

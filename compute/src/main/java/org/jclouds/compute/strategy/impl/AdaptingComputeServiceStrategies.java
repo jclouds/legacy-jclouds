@@ -33,8 +33,8 @@ import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
@@ -127,7 +127,7 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    }
 
    private void checkStateAvailable(NodeMetadata node) {
-      checkState(node != null && node.getState() != NodeState.TERMINATED, "node %s terminated or unavailable!", node);
+      checkState(node != null && node.getStatus() != Status.TERMINATED, "node %s terminated or unavailable!", node);
    }
 
    @Override

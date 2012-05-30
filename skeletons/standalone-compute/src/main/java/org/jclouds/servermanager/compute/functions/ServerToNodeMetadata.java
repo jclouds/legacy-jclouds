@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -50,11 +50,11 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
-   public static final Map<Server.Status, NodeState> serverStatusToNodeState = ImmutableMap
-         .<Server.Status, NodeState> builder().put(Server.Status.ACTIVE, NodeState.RUNNING)//
-         .put(Server.Status.BUILD, NodeState.PENDING)//
-         .put(Server.Status.TERMINATED, NodeState.TERMINATED)//
-         .put(Server.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
+   public static final Map<Server.Status, Status> serverStatusToNodeStatus = ImmutableMap
+         .<Server.Status, Status> builder().put(Server.Status.ACTIVE, Status.RUNNING)//
+         .put(Server.Status.BUILD, Status.PENDING)//
+         .put(Server.Status.TERMINATED, Status.TERMINATED)//
+         .put(Server.Status.UNRECOGNIZED, Status.UNRECOGNIZED)//
          .build();
 
    private final FindHardwareForServer findHardwareForServer;
@@ -87,7 +87,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       if (image != null)
          builder.operatingSystem(image.getOperatingSystem());
       builder.hardware(findHardwareForServer.apply(from));
-      builder.state(serverStatusToNodeState.get(from.status));
+      builder.status(serverStatusToNodeStatus.get(from.status));
       builder.publicAddresses(ImmutableSet.<String> of(from.publicAddress));
       builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
       builder.credentials(LoginCredentials.fromCredentials(credentialStore.get(from.id + "")));

@@ -34,10 +34,10 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.domain.Device;
@@ -61,13 +61,13 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 @Singleton
 public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetadata> {
-   public static final Map<ServerStatus, NodeState> serverStatusToNodeState = ImmutableMap
-         .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
-         .put(ServerStatus.STOPPED, NodeState.SUSPENDED)//
-         .put(ServerStatus.PAUSED, NodeState.SUSPENDED)//
-         .put(ServerStatus.DUMPED, NodeState.PENDING)//
-         .put(ServerStatus.DEAD, NodeState.TERMINATED)//
-         .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
+   public static final Map<ServerStatus, Status> serverStatusToNodeStatus = ImmutableMap
+         .<ServerStatus, Status> builder().put(ServerStatus.ACTIVE, Status.RUNNING)//
+         .put(ServerStatus.STOPPED, Status.SUSPENDED)//
+         .put(ServerStatus.PAUSED, Status.SUSPENDED)//
+         .put(ServerStatus.DUMPED, Status.PENDING)//
+         .put(ServerStatus.DEAD, Status.TERMINATED)//
+         .put(ServerStatus.UNRECOGNIZED, Status.UNRECOGNIZED)//
          .build();
 
    private final Function<Server, String> getImageIdFromServer;
@@ -106,7 +106,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.hardware(new HardwareBuilder().ids(from.getUuid()).hypervisor("kvm")
             .processors(ImmutableList.of(new Processor(1, from.getCpu()))).ram(from.getMem())
             .volumes((List) ImmutableList.of(Iterables.transform(from.getDevices().values(), deviceToVolume))).build());
-      builder.state(serverStatusToNodeState.get(from.getStatus()));
+      builder.status(serverStatusToNodeStatus.get(from.getStatus()));
       builder.publicAddresses(ImmutableSet.<String> of(from.getNics().get(0).getDhcp()));
       builder.privateAddresses(ImmutableSet.<String> of());
       return builder.build();

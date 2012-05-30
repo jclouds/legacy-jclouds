@@ -33,7 +33,7 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
@@ -174,23 +174,23 @@ public class VirtualBoxComputeServiceContextModule extends
    }
 
    @VisibleForTesting
-   public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
-            .<MachineState, NodeState> builder().put(MachineState.Running, NodeState.RUNNING)
-            .put(MachineState.PoweredOff, NodeState.SUSPENDED)
-            .put(MachineState.DeletingSnapshot, NodeState.PENDING)
-            .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
-            .put(MachineState.DeletingSnapshotPaused, NodeState.PENDING)
-            .put(MachineState.FaultTolerantSyncing, NodeState.PENDING)
-            .put(MachineState.LiveSnapshotting, NodeState.PENDING)
-            .put(MachineState.SettingUp, NodeState.PENDING)
-            .put(MachineState.Starting, NodeState.PENDING)
-            .put(MachineState.Stopping, NodeState.PENDING)
-            .put(MachineState.Restoring, NodeState.PENDING)
+   public static final Map<MachineState, Status> machineToNodeStatus = ImmutableMap
+            .<MachineState, Status> builder().put(MachineState.Running, Status.RUNNING)
+            .put(MachineState.PoweredOff, Status.SUSPENDED)
+            .put(MachineState.DeletingSnapshot, Status.PENDING)
+            .put(MachineState.DeletingSnapshotOnline, Status.PENDING)
+            .put(MachineState.DeletingSnapshotPaused, Status.PENDING)
+            .put(MachineState.FaultTolerantSyncing, Status.PENDING)
+            .put(MachineState.LiveSnapshotting, Status.PENDING)
+            .put(MachineState.SettingUp, Status.PENDING)
+            .put(MachineState.Starting, Status.PENDING)
+            .put(MachineState.Stopping, Status.PENDING)
+            .put(MachineState.Restoring, Status.PENDING)
             // TODO What to map these states to?
-            .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING)
-            .put(MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
-            .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING)
-            .put(MachineState.TeleportingPausedVM, NodeState.PENDING).put(MachineState.Aborted, NodeState.ERROR)
-            .put(MachineState.Stuck, NodeState.ERROR).put(MachineState.Null, NodeState.UNRECOGNIZED).build();
+            .put(MachineState.FirstOnline, Status.PENDING).put(MachineState.FirstTransient, Status.PENDING)
+            .put(MachineState.LastOnline, Status.PENDING).put(MachineState.LastTransient, Status.PENDING)
+            .put(MachineState.Teleported, Status.PENDING).put(MachineState.TeleportingIn, Status.PENDING)
+            .put(MachineState.TeleportingPausedVM, Status.PENDING).put(MachineState.Aborted, Status.ERROR)
+            .put(MachineState.Stuck, Status.ERROR).put(MachineState.Null, Status.UNRECOGNIZED).build();
 
 }

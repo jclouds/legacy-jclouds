@@ -31,8 +31,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
@@ -79,17 +79,17 @@ import com.google.inject.name.Names;
  */
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
-   public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
-                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
-                     InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
-            .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+   public static final Map<InstanceState, Status> instanceToNodeStatus = ImmutableMap
+            .<InstanceState, Status> builder().put(InstanceState.PENDING, Status.PENDING).put(
+                     InstanceState.RUNNING, Status.RUNNING).put(InstanceState.SHUTTING_DOWN, Status.PENDING).put(
+                     InstanceState.TERMINATED, Status.TERMINATED).put(InstanceState.STOPPING, Status.PENDING)
+            .put(InstanceState.STOPPED, Status.SUSPENDED).put(InstanceState.UNRECOGNIZED, Status.UNRECOGNIZED)
             .build();
 
    @Singleton
    @Provides
-   Map<InstanceState, NodeState> provideServerToNodeState() {
-      return instanceToNodeState;
+   Map<InstanceState, Status> provideServerToNodeStatus() {
+      return instanceToNodeStatus;
    }
 
    @Override

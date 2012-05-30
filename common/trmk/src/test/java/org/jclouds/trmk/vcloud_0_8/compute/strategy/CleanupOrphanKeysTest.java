@@ -28,7 +28,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
@@ -94,7 +94,7 @@ public class CleanupOrphanKeysTest {
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
                .andReturn(ImmutableSet.of(nodeMetadata));
       expect(nodeMetadata.getGroup()).andReturn(orgTag.getName()).atLeastOnce();
-      expect(nodeMetadata.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
+      expect(nodeMetadata.getStatus()).andReturn(Status.RUNNING).atLeastOnce();
       expectCleanupCredentialStore(strategy, nodeMetadata);
 
       // replay mocks
@@ -121,7 +121,7 @@ public class CleanupOrphanKeysTest {
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
                .andReturn(ImmutableSet.of(nodeMetadata));
       expect(nodeMetadata.getGroup()).andReturn(orgTag.getName()).atLeastOnce();
-      expect(nodeMetadata.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
+      expect(nodeMetadata.getStatus()).andReturn(Status.TERMINATED).atLeastOnce();
       strategy.deleteKeyPair.execute(orgTag);
       expectCleanupCredentialStore(strategy, nodeMetadata);
 

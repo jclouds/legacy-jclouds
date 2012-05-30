@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.rimuhosting.miro.compute.functions.ServerToNodeMetadata;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
@@ -55,18 +55,18 @@ public class RimuHostingComputeServiceDependenciesModule extends AbstractModule 
    }
 
    @VisibleForTesting
-   static final Map<RunningState, NodeState> runningStateToNodeState = ImmutableMap.<RunningState, NodeState> builder()
-            .put(RunningState.RUNNING, NodeState.RUNNING)//
-            .put(RunningState.NOTRUNNING, NodeState.SUSPENDED)//
-            .put(RunningState.POWERCYCLING, NodeState.PENDING)//
-            .put(RunningState.RESTARTING, NodeState.PENDING)//
-            .put(RunningState.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
+   static final Map<RunningState, Status> runningStateToNodeStatus = ImmutableMap.<RunningState, Status> builder()
+            .put(RunningState.RUNNING, Status.RUNNING)//
+            .put(RunningState.NOTRUNNING, Status.SUSPENDED)//
+            .put(RunningState.POWERCYCLING, Status.PENDING)//
+            .put(RunningState.RESTARTING, Status.PENDING)//
+            .put(RunningState.UNRECOGNIZED, Status.UNRECOGNIZED)//
             .build();
 
    @Singleton
    @Provides
-   Map<RunningState, NodeState> provideServerToNodeState() {
-      return runningStateToNodeState;
+   Map<RunningState, Status> provideServerToNodeStatus() {
+      return runningStateToNodeStatus;
    }
 
    @Singleton

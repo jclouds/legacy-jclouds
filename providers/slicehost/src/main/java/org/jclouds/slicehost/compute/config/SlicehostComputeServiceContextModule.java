@@ -27,8 +27,8 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -79,18 +79,18 @@ public class SlicehostComputeServiceContextModule extends
    }
 
    @VisibleForTesting
-   public static final Map<Slice.Status, NodeState> sliceStatusToNodeState = ImmutableMap
-            .<Slice.Status, NodeState> builder().put(Slice.Status.ACTIVE, NodeState.RUNNING)//
-            .put(Slice.Status.BUILD, NodeState.PENDING)//
-            .put(Slice.Status.REBOOT, NodeState.PENDING)//
-            .put(Slice.Status.HARD_REBOOT, NodeState.PENDING)//
-            .put(Slice.Status.TERMINATED, NodeState.TERMINATED)//
-            .put(Slice.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
+   public static final Map<Slice.Status, Status> sliceStatusToNodeStatus = ImmutableMap
+            .<Slice.Status, Status> builder().put(Slice.Status.ACTIVE, Status.RUNNING)//
+            .put(Slice.Status.BUILD, Status.PENDING)//
+            .put(Slice.Status.REBOOT, Status.PENDING)//
+            .put(Slice.Status.HARD_REBOOT, Status.PENDING)//
+            .put(Slice.Status.TERMINATED, Status.TERMINATED)//
+            .put(Slice.Status.UNRECOGNIZED, Status.UNRECOGNIZED)//
             .build();
 
    @Singleton
    @Provides
-   Map<Slice.Status, NodeState> provideSliceToNodeState() {
-      return sliceStatusToNodeState;
+   Map<Slice.Status, Status> provideSliceToNodeStatus() {
+      return sliceStatusToNodeStatus;
    }
 }

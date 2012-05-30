@@ -51,6 +51,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adam Lowe
  */
+@Test(testName = "AdminClientExpectTest")
 public class AdminClientExpectTest extends BaseKeystoneRestClientExpectTest<KeystoneClient> {
    private DateService dateService = new SimpleDateFormatDateService();
 

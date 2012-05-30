@@ -30,7 +30,7 @@ public class NovaComputeServiceContextModuleTest {
    public void testAllStatusCovered() {
 
       for (ServerStatus state : ServerStatus.values()) {
-         assert NovaComputeServiceContextModule.serverToNodeState.containsKey(state) : state;
+         assert NovaComputeServiceContextModule.serverToNodeStatus.containsKey(state) : state;
       }
 
    }

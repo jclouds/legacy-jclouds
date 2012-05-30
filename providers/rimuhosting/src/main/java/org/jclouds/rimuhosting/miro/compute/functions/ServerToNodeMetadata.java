@@ -32,8 +32,8 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -57,7 +57,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    
    protected final Supplier<Set<? extends Location>> locations;
    protected final Function<Server, Iterable<String>> getPublicAddresses;
-   protected final Map<RunningState, NodeState> runningStateToNodeState;
+   protected final Map<RunningState, Status> runningStateToNodeStatus;
    protected final Supplier<Set<? extends Image>> images;
    protected final GroupNamingConvention nodeNamingConvention;
 
@@ -80,13 +80,13 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
-         @Memoized Supplier<Set<? extends Location>> locations, Map<RunningState, NodeState> runningStateToNodeState,
+         @Memoized Supplier<Set<? extends Location>> locations, Map<RunningState, Status> runningStateToNodeStatus,
          @Memoized Supplier<Set<? extends Image>> images,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
+      this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeStatus");
       this.locations = checkNotNull(locations, "locations");
-      this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
+      this.runningStateToNodeStatus = checkNotNull(runningStateToNodeStatus, "serverStateToNodeStatus");
       this.images = checkNotNull(images, "images");
    }
 
@@ -104,9 +104,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.hardware(null);// TODO
       if (from.getBillingData() != null && from.getBillingData().getDateCancelled() != null
             && RunningState.NOTRUNNING == from.getState())
-         builder.state(NodeState.TERMINATED);
+         builder.status(Status.TERMINATED);
       else
-         builder.state(runningStateToNodeState.get(from.getState()));
+         builder.status(runningStateToNodeStatus.get(from.getState()));
       builder.publicAddresses(getPublicAddresses.apply(from));
       return builder.build();
    }

@@ -31,7 +31,6 @@ import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -101,7 +100,7 @@ public class VAppToNodeMetadataTest {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
-         protected Map<Status, NodeState> provideVAppStatusToNodeState() {
+         protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {
             return VCloudComputeServiceDependenciesModule.VAPPSTATUS_TO_NODESTATE;
          }
 

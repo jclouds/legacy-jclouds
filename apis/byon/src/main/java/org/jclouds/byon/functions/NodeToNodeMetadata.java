@@ -36,9 +36,9 @@ import org.jclouds.byon.Node;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -90,7 +90,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.operatingSystem(OperatingSystem.builder().arch(from.getOsArch()).family(
                OsFamily.fromValue(from.getOsFamily())).description(from.getOsDescription())
                .version(from.getOsVersion()).build());
-      builder.state(NodeState.RUNNING);
+      builder.status(Status.RUNNING);
       builder.publicAddresses(ImmutableSet.<String> of(from.getHostname()));
 
       if (from.getUsername() != null) {

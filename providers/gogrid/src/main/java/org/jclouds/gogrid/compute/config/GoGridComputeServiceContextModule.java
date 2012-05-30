@@ -30,7 +30,7 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -85,21 +85,21 @@ public class GoGridComputeServiceContextModule extends
    }
 
    @VisibleForTesting
-   static final Map<ServerState, NodeState> serverStateToNodeState = ImmutableMap.<ServerState, NodeState> builder()
-            .put(ServerState.ON, NodeState.RUNNING)//
-            .put(ServerState.STARTING, NodeState.PENDING)//
-            .put(ServerState.OFF, NodeState.SUSPENDED)//
-            .put(ServerState.STOPPING, NodeState.PENDING)//
-            .put(ServerState.RESTARTING, NodeState.PENDING)//
-            .put(ServerState.SAVING, NodeState.PENDING)//
-            .put(ServerState.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
-            .put(ServerState.RESTORING, NodeState.PENDING)//
-            .put(ServerState.UPDATING, NodeState.PENDING).build();
+   static final Map<ServerState, Status> serverStateToNodeStatus = ImmutableMap.<ServerState, Status> builder()
+            .put(ServerState.ON, Status.RUNNING)//
+            .put(ServerState.STARTING, Status.PENDING)//
+            .put(ServerState.OFF, Status.SUSPENDED)//
+            .put(ServerState.STOPPING, Status.PENDING)//
+            .put(ServerState.RESTARTING, Status.PENDING)//
+            .put(ServerState.SAVING, Status.PENDING)//
+            .put(ServerState.UNRECOGNIZED, Status.UNRECOGNIZED)//
+            .put(ServerState.RESTORING, Status.PENDING)//
+            .put(ServerState.UPDATING, Status.PENDING).build();
 
    @Singleton
    @Provides
-   Map<ServerState, NodeState> provideServerToNodeState() {
-      return serverStateToNodeState;
+   Map<ServerState, Status> provideServerToNodeStatus() {
+      return serverStateToNodeStatus;
    }
 
    /**

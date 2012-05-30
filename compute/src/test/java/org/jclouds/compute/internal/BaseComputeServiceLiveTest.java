@@ -52,10 +52,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -77,10 +77,10 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -468,7 +468,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          assertNotNull(node.getProviderId());
          assertNotNull(node.getGroup());
          assertEquals(node.getGroup(), group);
-         assertEquals(node.getState(), NodeState.RUNNING);
+         assertEquals(node.getStatus(), Status.RUNNING);
          Credentials fromStore = view.utils().credentialStore().get("node#" + node.getId());
          assertEquals(fromStore, node.getCredentials());
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
@@ -505,7 +505,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
          checkImageIdMatchesTemplate(metadata);
          checkOsMatchesTemplate(metadata);
-         assert (metadata.getState() == NodeState.RUNNING) : metadata;
+         assert (metadata.getStatus() == Status.RUNNING) : metadata;
          // due to DHCP the addresses can actually change in-between runs.
          assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size(), String.format(
                "[%s] didn't match: [%s]", metadata.getPrivateAddresses(), node.getPrivateAddresses().size()));
@@ -537,9 +537,9 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
          @Override
          public boolean apply(NodeMetadata input) {
-            boolean returnVal = input.getState() == NodeState.SUSPENDED;
+            boolean returnVal = input.getStatus() == Status.SUSPENDED;
             if (!returnVal)
-               getAnonymousLogger().warning(format("node %s in state %s%n", input.getId(), input.getState()));
+               getAnonymousLogger().warning(format("node %s in state %s%n", input.getId(), input.getStatus()));
             return returnVal;
          }
 
@@ -571,7 +571,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          // assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
          // assert nodeMetadata.getName() != null : nodeMetadata;
-         if (nodeMetadata.getState() == NodeState.RUNNING) {
+         if (nodeMetadata.getStatus() == Status.RUNNING) {
             assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
             assert nodeMetadata.getPublicAddresses().size() > 0 || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
             assertNotNull(nodeMetadata.getPrivateAddresses());
@@ -585,7 +585,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       Set<? extends NodeMetadata> destroyed = client.destroyNodesMatching(inGroup(group));
       assertEquals(toDestroy, destroyed.size());
       for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), inGroup(group))) {
-         assert node.getState() == NodeState.TERMINATED : node;
+         assert node.getStatus() == Status.TERMINATED : node;
          assert view.utils().credentialStore().get("node#" + node.getId()) == null : "credential should have been null for "
                + "node#" + node.getId();
       }
@@ -794,7 +794,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          long time = currentTimeMillis();
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = getOnlyElement(nodes);
-         assert node.getState() != NodeState.RUNNING : node;
+         assert node.getStatus() != Status.RUNNING : node;
          long duration = (currentTimeMillis() - time) / 1000;
          assert duration < nonBlockDurationSeconds : format("duration(%d) longer than expected(%d) seconds! ",
                duration, nonBlockDurationSeconds);

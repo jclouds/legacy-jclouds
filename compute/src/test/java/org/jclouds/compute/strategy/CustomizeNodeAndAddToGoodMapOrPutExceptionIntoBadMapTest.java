@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
@@ -54,7 +54,7 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest")
 public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
 
    public void testBreakWhenNodeStillPending() {
@@ -69,7 +69,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
-      final NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
+      final NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
 
       // node always stays pending
       GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
@@ -93,7 +93,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       assertEquals(goodNodes.size(), 0);
       assertEquals(badNodes.keySet(), ImmutableSet.of(node));
       assertTrue(badNodes.get(node).getMessage() != null && badNodes.get(node).getMessage().matches(
-               "node\\(id\\) didn't achieve the state running, so we couldn't customize; aborting prematurely after .* seconds with final state: PENDING"),
+               "node\\(id\\) didn't achieve the status running, so we couldn't customize; aborting prematurely after .* seconds with final status: PENDING"),
                badNodes.get(node).getMessage());
       assertEquals(customizationResponses.size(), 0);
 
@@ -113,8 +113,8 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
-      final NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
-      final NodeMetadata deadNnode = new NodeMetadataBuilder().ids("id").state(NodeState.TERMINATED).build();
+      final NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
+      final NodeMetadata deadNnode = new NodeMetadataBuilder().ids("id").status(Status.TERMINATED).build();
 
       // node dies
       GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
@@ -156,8 +156,8 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
-      final NodeMetadata runningNode = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).build();
+      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
+      final NodeMetadata runningNode = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).build();
 
       expect(openSocketFinder.findOpenSocketOnNode(runningNode, 22, portTimeoutSecs, TimeUnit.SECONDS))
                .andThrow(new NoSuchElementException("could not connect to any ip address port")).once();

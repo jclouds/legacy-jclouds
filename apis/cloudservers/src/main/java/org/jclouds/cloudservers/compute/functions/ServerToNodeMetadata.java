@@ -37,8 +37,8 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -61,7 +61,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    protected Logger logger = Logger.NULL;
 
    protected final Supplier<Location> location;
-   protected final Map<ServerStatus, NodeState> serverToNodeState;
+   protected final Map<ServerStatus, Status> serverToNodeStatus;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
    protected final GroupNamingConvention nodeNamingConvention;
@@ -93,12 +93,12 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    }
 
    @Inject
-   ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState,
+   ServerToNodeMetadata(Map<ServerStatus, Status> serverStateToNodeStatus,
             @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
             @Memoized Supplier<Set<? extends Hardware>> hardwares,
             GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
+      this.serverToNodeStatus = checkNotNull(serverStateToNodeStatus, "serverStateToNodeStatus");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -117,7 +117,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));
-      builder.state(serverToNodeState.get(from.getStatus()));
+      builder.status(serverToNodeStatus.get(from.getStatus()));
       builder.publicAddresses(from.getAddresses().getPublicAddresses());
       builder.privateAddresses(from.getAddresses().getPrivateAddresses());
       return builder.build();

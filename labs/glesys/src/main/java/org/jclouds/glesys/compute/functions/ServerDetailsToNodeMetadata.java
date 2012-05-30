@@ -35,10 +35,10 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -65,11 +65,11 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   public static final Map<ServerDetails.State, NodeState> serverStateToNodeState = ImmutableMap
-         .<ServerDetails.State, NodeState> builder().put(ServerDetails.State.STOPPED, NodeState.SUSPENDED)
-         .put(ServerDetails.State.LOCKED, NodeState.PENDING)
-         .put(ServerDetails.State.RUNNING, NodeState.RUNNING)
-         .put(ServerDetails.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+   public static final Map<ServerDetails.State, Status> serverStateToNodeStatus = ImmutableMap
+         .<ServerDetails.State, Status> builder().put(ServerDetails.State.STOPPED, Status.SUSPENDED)
+         .put(ServerDetails.State.LOCKED, Status.PENDING)
+         .put(ServerDetails.State.RUNNING, Status.RUNNING)
+         .put(ServerDetails.State.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForServerDetails findLocationForServerDetails;
@@ -112,7 +112,7 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
             .processors(ImmutableList.of(new Processor(from.getCpuCores(), 1.0)))
             .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDiskSizeGB(), true, true)))
             .hypervisor(from.getPlatform()).build());
-      builder.state(serverStateToNodeState.get(from.getState()));
+      builder.status(serverStateToNodeStatus.get(from.getState()));
       Iterable<String> addresses = Iterables.filter(Iterables.transform(from.getIps(), new Function<Ip, String>() {
 
          @Override

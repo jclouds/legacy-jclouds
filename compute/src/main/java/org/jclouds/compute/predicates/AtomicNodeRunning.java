@@ -18,13 +18,14 @@
  */
 package org.jclouds.compute.predicates;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.predicates.internal.RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Inject;
 
 /**
  * 
@@ -33,10 +34,10 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class AtomicNodeRunning extends RefreshAndDoubleCheckOnFailUnlessStateInvalid {
+public class AtomicNodeRunning extends RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid {
 
    @Inject
    public AtomicNodeRunning(GetNodeMetadataStrategy client) {
-      super(NodeState.RUNNING, ImmutableSet.of(NodeState.ERROR, NodeState.TERMINATED), client);
+      super(Status.RUNNING, ImmutableSet.of(Status.ERROR, Status.TERMINATED), client);
    }
 }

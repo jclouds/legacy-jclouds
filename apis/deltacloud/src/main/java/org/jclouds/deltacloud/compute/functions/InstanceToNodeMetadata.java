@@ -34,8 +34,8 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.deltacloud.domain.Instance;
@@ -54,11 +54,11 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> {
 
-   public static final Map<Instance.State, NodeState> instanceToNodeState = ImmutableMap
-         .<Instance.State, NodeState> builder().put(Instance.State.STOPPED, NodeState.SUSPENDED)
-         .put(Instance.State.RUNNING, NodeState.RUNNING).put(Instance.State.PENDING, NodeState.PENDING)
-         .put(Instance.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Instance.State.SHUTTING_DOWN, NodeState.PENDING)
-         .put(Instance.State.START, NodeState.PENDING).build();
+   public static final Map<Instance.State, Status> instanceToNodeStatus = ImmutableMap
+         .<Instance.State, Status> builder().put(Instance.State.STOPPED, Status.SUSPENDED)
+         .put(Instance.State.RUNNING, Status.RUNNING).put(Instance.State.PENDING, Status.PENDING)
+         .put(Instance.State.UNRECOGNIZED, Status.UNRECOGNIZED).put(Instance.State.SHUTTING_DOWN, Status.PENDING)
+         .put(Instance.State.START, Status.PENDING).build();
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -155,7 +155,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       builder.imageId(from.getImage().toASCIIString());
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));
-      builder.state(instanceToNodeState.get(from.getState()));
+      builder.status(instanceToNodeStatus.get(from.getState()));
       builder.publicAddresses(from.getPublicAddresses());
       builder.privateAddresses(from.getPrivateAddresses());
       return builder.build();

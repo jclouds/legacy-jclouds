@@ -24,9 +24,9 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
@@ -37,8 +37,8 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
@@ -60,10 +60,10 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 
@@ -80,18 +80,18 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    protected final Supplier<Set<? extends Hardware>> hardware;
    protected final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
    protected final Map<String, Credentials> credentialStore;
-   protected final Map<InstanceState, NodeState> instanceToNodeState;
+   protected final Map<InstanceState, Status> instanceToNodeStatus;
    protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
-   protected RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
+   protected RunningInstanceToNodeMetadata(Map<InstanceState, Status> instanceToNodeStatus,
             Map<String, Credentials> credentialStore, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap,
             @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware,
             GroupNamingConvention.Factory namingConvention) {
       this.locations = checkNotNull(locations, "locations");
       this.hardware = checkNotNull(hardware, "hardware");
       this.imageMap = checkNotNull(imageMap, "imageMap");
-      this.instanceToNodeState = checkNotNull(instanceToNodeState, "instanceToNodeState");
+      this.instanceToNodeStatus = checkNotNull(instanceToNodeStatus, "instanceToNodeStatus");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
@@ -114,7 +114,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       if (instance.getPrivateDnsName() != null)
          builder.hostname(instance.getPrivateDnsName().replaceAll("\\..*", ""));
       addCredentialsForInstance(builder, instance);
-      builder.state(instanceToNodeState.get(instance.getInstanceState()));
+      builder.status(instanceToNodeStatus.get(instance.getInstanceState()));
 
       // collect all ip addresses into one bundle in case the api mistakenly put a private address
       // into the public address field

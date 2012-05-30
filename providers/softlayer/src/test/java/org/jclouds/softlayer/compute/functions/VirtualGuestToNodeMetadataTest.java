@@ -29,8 +29,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
@@ -75,7 +75,7 @@ public class VirtualGuestToNodeMetadataTest {
       assertEquals(
             node,
             new NodeMetadataBuilder().ids("416788").name("node1000360500").hostname("node1000360500")
-                  .location(expectedLocation).state(NodeState.PENDING)
+                  .location(expectedLocation).status(Status.PENDING)
                   .publicAddresses(ImmutableSet.of("173.192.29.186"))
                   .privateAddresses(ImmutableSet.of("10.37.102.194"))
                   .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
@@ -102,7 +102,7 @@ public class VirtualGuestToNodeMetadataTest {
       assertEquals(
             node,
             new NodeMetadataBuilder().ids("413348").name("foo-ef4").hostname("foo-ef4").group("foo")
-                  .state(NodeState.PENDING).hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+                  .status(Status.PENDING).hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
                   .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
                   .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem()).build());
 
@@ -127,7 +127,7 @@ public class VirtualGuestToNodeMetadataTest {
       assertEquals(
             node,
             new NodeMetadataBuilder().ids("416700").name("node1703810489").hostname("node1703810489")
-                  .location(expectedLocation).state(NodeState.PENDING)
+                  .location(expectedLocation).status(Status.PENDING)
                   .publicAddresses(ImmutableSet.of("173.192.29.187"))
                   .privateAddresses(ImmutableSet.of("10.37.102.195"))
                   .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
@@ -155,7 +155,7 @@ public class VirtualGuestToNodeMetadataTest {
       assertEquals(
             node,
             new NodeMetadataBuilder().ids("416700").name("node1703810489").hostname("node1703810489")
-                  .location(expectedLocation).state(NodeState.SUSPENDED)
+                  .location(expectedLocation).status(Status.SUSPENDED)
                   .publicAddresses(ImmutableSet.of("173.192.29.187"))
                   .privateAddresses(ImmutableSet.of("10.37.102.195"))
                   .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
@@ -183,7 +183,7 @@ public class VirtualGuestToNodeMetadataTest {
       assertEquals(
             node,
             new NodeMetadataBuilder().ids("416700").name("node1703810489").hostname("node1703810489")
-                  .location(expectedLocation).state(NodeState.RUNNING)
+                  .location(expectedLocation).status(Status.RUNNING)
                   .publicAddresses(ImmutableSet.of("173.192.29.187"))
                   .privateAddresses(ImmutableSet.of("10.37.102.195"))
                   .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))

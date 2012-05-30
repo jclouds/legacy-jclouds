@@ -37,8 +37,8 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
@@ -93,36 +93,36 @@ public class CloudServersComputeServiceContextModule extends
    }
    
    @VisibleForTesting
-   public static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap
-            .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
-            .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
-            .put(ServerStatus.DELETED, NodeState.TERMINATED)//
-            .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.MOVE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.RESCUE, NodeState.PENDING)//
-            .put(ServerStatus.ERROR, NodeState.ERROR)//
-            .put(ServerStatus.BUILD, NodeState.PENDING)//
-            .put(ServerStatus.RESTORING, NodeState.PENDING)//
-            .put(ServerStatus.PASSWORD, NodeState.PENDING)//
-            .put(ServerStatus.REBUILD, NodeState.PENDING)//
-            .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
-            .put(ServerStatus.REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.UNKNOWN, NodeState.UNRECOGNIZED)//
-            .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+   public static final Map<ServerStatus, Status> serverToNodeStatus = ImmutableMap
+            .<ServerStatus, Status> builder().put(ServerStatus.ACTIVE, Status.RUNNING)//
+            .put(ServerStatus.SUSPENDED, Status.SUSPENDED)//
+            .put(ServerStatus.DELETED, Status.TERMINATED)//
+            .put(ServerStatus.QUEUE_RESIZE, Status.PENDING)//
+            .put(ServerStatus.PREP_RESIZE, Status.PENDING)//
+            .put(ServerStatus.RESIZE, Status.PENDING)//
+            .put(ServerStatus.VERIFY_RESIZE, Status.PENDING)//
+            .put(ServerStatus.QUEUE_MOVE, Status.PENDING)//
+            .put(ServerStatus.PREP_MOVE, Status.PENDING)//
+            .put(ServerStatus.MOVE, Status.PENDING)//
+            .put(ServerStatus.VERIFY_MOVE, Status.PENDING)//
+            .put(ServerStatus.RESCUE, Status.PENDING)//
+            .put(ServerStatus.ERROR, Status.ERROR)//
+            .put(ServerStatus.BUILD, Status.PENDING)//
+            .put(ServerStatus.RESTORING, Status.PENDING)//
+            .put(ServerStatus.PASSWORD, Status.PENDING)//
+            .put(ServerStatus.REBUILD, Status.PENDING)//
+            .put(ServerStatus.DELETE_IP, Status.PENDING)//
+            .put(ServerStatus.SHARE_IP_NO_CONFIG, Status.PENDING)//
+            .put(ServerStatus.SHARE_IP, Status.PENDING)//
+            .put(ServerStatus.REBOOT, Status.PENDING)//
+            .put(ServerStatus.HARD_REBOOT, Status.PENDING)//
+            .put(ServerStatus.UNKNOWN, Status.UNRECOGNIZED)//
+            .put(ServerStatus.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
    @Singleton
    @Provides
-   Map<ServerStatus, NodeState> provideServerToNodeState() {
-      return serverToNodeState;
+   Map<ServerStatus, Status> provideServerToNodeStatus() {
+      return serverToNodeStatus;
    }
    
    @Override

@@ -33,8 +33,8 @@ import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.testng.annotations.Test;
@@ -54,7 +54,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       VirtualBoxManager manager = createMock(VirtualBoxManager.class);
       Factory runScriptOnNodeFactory = createMock(Factory.class);
       RetryIfSocketNotYetOpen client = createMock(RetryIfSocketNotYetOpen.class);
-      NodeMetadata host = new NodeMetadataBuilder().id("host").state(NodeState.RUNNING).build();
+      NodeMetadata host = new NodeMetadataBuilder().id("host").status(Status.RUNNING).build();
       URI provider = URI.create("http://localhost:18083/");
       String identity = "adminstrator";
       String credential = "12345";
@@ -80,7 +80,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       Factory runScriptOnNodeFactory = createMock(Factory.class);
       RetryIfSocketNotYetOpen client = createMock(RetryIfSocketNotYetOpen.class);
       RunScriptOnNode runScriptOnNode = createMock(RunScriptOnNode.class);
-      NodeMetadata host = new NodeMetadataBuilder().id("host").state(NodeState.RUNNING).operatingSystem(
+      NodeMetadata host = new NodeMetadataBuilder().id("host").status(Status.RUNNING).operatingSystem(
                OperatingSystem.builder().description("unix").build()).build();
       URI provider = URI.create("http://localhost:18083/");
       String identity = "adminstrator";

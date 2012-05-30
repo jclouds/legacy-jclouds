@@ -29,7 +29,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.predicates.AtomicNodeSuspended;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
-import org.jclouds.compute.predicates.TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse;
+import org.jclouds.compute.predicates.AtomicNodeTerminated;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.predicates.RetryablePredicate;
@@ -56,7 +56,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_TERMINATED")
-   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse stateTerminated, Timeouts timeouts) {
+   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(AtomicNodeTerminated stateTerminated, Timeouts timeouts) {
       return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<AtomicReference<NodeMetadata>>(stateTerminated,
             timeouts.nodeTerminated);
    }

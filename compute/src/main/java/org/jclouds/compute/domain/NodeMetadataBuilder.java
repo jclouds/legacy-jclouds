@@ -24,11 +24,10 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
@@ -38,7 +37,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class NodeMetadataBuilder extends ComputeMetadataBuilder {
-   private NodeState state;
+   private Status status;
    private Set<String> publicAddresses = Sets.newLinkedHashSet();
    private Set<String> privateAddresses = Sets.newLinkedHashSet();
    @Nullable
@@ -63,9 +62,20 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
       this.loginPort = loginPort;
       return this;
    }
-
+  
+   public NodeMetadataBuilder status(Status status) {
+      this.status = checkNotNull(status, "status");
+      return this;
+   }
+   
+   /**
+    * <h3>Note</h3>
+    * will be removed in jclouds 1.6!
+    * @see #status
+    */
+   @Deprecated
    public NodeMetadataBuilder state(NodeState state) {
-      this.state = checkNotNull(state, "state");
+      this.status = checkNotNull(state, "state").toStatus();
       return this;
    }
 
@@ -79,38 +89,10 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
-   /**
-    * <h4>will be removed in jclouds 1.4.0</h4>
-    * 
-    * @see LoginCredentials#shouldAuthenticateSudo
-    */
-   @Deprecated
-   public NodeMetadataBuilder adminPassword(@Nullable String adminPassword) {
-      if (adminPassword != null) {
-         Builder builder = credentials != null ? credentials.toBuilder() : LoginCredentials
-               .builder();
-         builder.authenticateSudo(true);
-         builder.password(adminPassword);
-         this.credentials = builder.build();
-      }
-      return this;
-   }
-
-   /**
-    * <h4>will be removed in jclouds 1.4.0</h4>
-    * 
-    * @see #credentials(LoginCredentials)
-    */
-   @Deprecated
-   public NodeMetadataBuilder credentials(@Nullable Credentials credentials) {
-      return credentials(LoginCredentials.fromCredentials(credentials));
-   }
-   
    public NodeMetadataBuilder credentials(@Nullable LoginCredentials credentials) {
       this.credentials = credentials;
       return this;
    }
-
 
    public NodeMetadataBuilder group(@Nullable String group) {
       this.group = group;
@@ -180,14 +162,14 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    @Override
    public NodeMetadata build() {
       return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tags, group, hardware, imageId,
-               os, state, loginPort, publicAddresses, privateAddresses,  credentials, hostname);
+               os, status, loginPort, publicAddresses, privateAddresses,  credentials, hostname);
    }
 
    public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
       return new NodeMetadataBuilder().providerId(node.getProviderId()).name(node.getName()).id(node.getId()).location(
                node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tags(node.getTags()).group(
                node.getGroup()).hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(
-               node.getOperatingSystem()).state(node.getState()).loginPort(node.getLoginPort()).publicAddresses(
+               node.getOperatingSystem()).status(node.getStatus()).loginPort(node.getLoginPort()).publicAddresses(
                node.getPublicAddresses()).privateAddresses(node.getPrivateAddresses()).credentials(node.getCredentials()).hostname(node.getHostname());
    }
 

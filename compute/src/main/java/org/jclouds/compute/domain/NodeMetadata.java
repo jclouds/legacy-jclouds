@@ -32,7 +32,36 @@ import com.google.inject.ImplementedBy;
  * @author Ivan Meredith
  */
 @ImplementedBy(NodeMetadataImpl.class)
-public interface NodeMetadata extends ComputeMetadata {
+public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadata.Status> {
+   
+   public static enum Status {
+      /**
+       * The node is in transition
+       */
+      PENDING,
+      /**
+       * The node is visible, and in the process of being deleted.
+       */
+      TERMINATED,
+      /**
+       * The node is deployed, but suspended or stopped.
+       */
+      SUSPENDED,
+      /**
+       * The node is available for requests
+       */
+      RUNNING,
+      /**
+       * There is an error on the node
+       */
+      ERROR,
+      /**
+       * The state of the node is unrecognized.
+       */
+      UNRECOGNIZED;
+
+   }
+   
    /**
     * <h4>note</h4> hostname is something that is set in the operating system image, so this value,
     * if present, cannot be guaranteed on images not directly controlled by the cloud provider.
@@ -75,8 +104,12 @@ public interface NodeMetadata extends ComputeMetadata {
    OperatingSystem getOperatingSystem();
 
    /**
-    * Current State of the node
+    * Current State of the node; replaced by {@link #getStatus()}
+    * <h3>Note</h3>
+    * will be removed in jclouds 1.6!
+    * @see #getStatus()
     */
+   @Deprecated
    NodeState getState();
 
    /**

@@ -31,12 +31,12 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -64,12 +64,12 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceContextModule.serverToNodeState;
+      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.serverToNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus,
             Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider),
             Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
@@ -83,7 +83,7 @@ public class ServerToNodeMetadataTest {
 
    private NodeMetadataBuilder newNodeMetadataBuilder() throws URISyntaxException {
       return new NodeMetadataBuilder()
-            .state(NodeState.PENDING)
+            .status(Status.PENDING)
             .publicAddresses(ImmutableSet.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"))
             .privateAddresses(ImmutableSet.of("10.176.42.16", "::babe:10.176.42.16"))
             .id("1234")
@@ -100,13 +100,13 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageFoundAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceContextModule.serverToNodeState;
+      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.serverToNodeStatus;
       org.jclouds.compute.domain.Image jcImage = NovaImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus,
             Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider),
             Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
@@ -125,12 +125,12 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageAndHardwareFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceContextModule.serverToNodeState;
+      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.serverToNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(NovaImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus,
             Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider),
             Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 

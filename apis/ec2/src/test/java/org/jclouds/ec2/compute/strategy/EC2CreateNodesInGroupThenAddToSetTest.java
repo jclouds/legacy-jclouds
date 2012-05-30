@@ -34,9 +34,9 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeUtils;
@@ -78,7 +78,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
       NodeMetadata nodeMetadata = new NodeMetadataBuilder().id(region + "/" + instanceCreatedId)
-            .providerId(instanceCreatedId).state(NodeState.RUNNING).build();
+            .providerId(instanceCreatedId).status(Status.RUNNING).build();
       // setup mocks
       TemplateBuilder templateBuilder = createMock(TemplateBuilder.class);
       EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder, nodeMetadata);
@@ -190,7 +190,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
       NodeMetadata nodeMetadata = new NodeMetadataBuilder().id(region + "/" + instanceCreatedId)
-            .providerId(instanceCreatedId).state(NodeState.RUNNING).build();
+            .providerId(instanceCreatedId).status(Status.RUNNING).build();
 
       // setup mocks
       TemplateBuilder templateBuilder = createMock(TemplateBuilder.class);

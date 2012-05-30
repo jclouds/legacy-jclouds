@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -54,7 +54,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
    final Location host = new LocationBuilder().scope(LocationScope.HOST).id("hostId").description("hostId")
             .parent(zone).build();
    final NodeMetadata node = new NodeMetadataBuilder().id("az-1.region-a.geo-1/71592").providerId("71592").location(
-            host).name("Server 71592").state(NodeState.RUNNING).privateAddresses(ImmutableSet.of("10.4.27.237"))
+            host).name("Server 71592").status(Status.RUNNING).privateAddresses(ImmutableSet.of("10.4.27.237"))
             .credentials(LoginCredentials.builder().password("foo").build()).build();
 
    HttpRequest allocateFloatingIP = HttpRequest.builder().method("POST").endpoint(

@@ -24,16 +24,16 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.util.Multimaps2;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
@@ -62,15 +62,17 @@ public class Server extends Resource {
     */
    public static enum Status {
 
-      ACTIVE(NodeState.RUNNING), BUILD(NodeState.PENDING), REBUILD(NodeState.PENDING), SUSPENDED(NodeState.SUSPENDED), RESIZE(
-               NodeState.PENDING), VERIFY_RESIZE(NodeState.PENDING), REVERT_RESIZE(NodeState.PENDING), PASSWORD(
-               NodeState.PENDING), REBOOT(NodeState.PENDING), HARD_REBOOT(NodeState.PENDING), DELETED(
-               NodeState.TERMINATED), UNKNOWN(NodeState.UNRECOGNIZED), ERROR(NodeState.ERROR), UNRECOGNIZED(
-               NodeState.UNRECOGNIZED), PAUSED(NodeState.SUSPENDED);
+      ACTIVE(NodeMetadata.Status.RUNNING), BUILD(NodeMetadata.Status.PENDING), REBUILD(NodeMetadata.Status.PENDING), SUSPENDED(
+               NodeMetadata.Status.SUSPENDED), RESIZE(NodeMetadata.Status.PENDING), VERIFY_RESIZE(
+               NodeMetadata.Status.PENDING), REVERT_RESIZE(NodeMetadata.Status.PENDING), PASSWORD(
+               NodeMetadata.Status.PENDING), REBOOT(NodeMetadata.Status.PENDING), HARD_REBOOT(
+               NodeMetadata.Status.PENDING), DELETED(NodeMetadata.Status.TERMINATED), UNKNOWN(
+               NodeMetadata.Status.UNRECOGNIZED), ERROR(NodeMetadata.Status.ERROR), UNRECOGNIZED(
+               NodeMetadata.Status.UNRECOGNIZED), PAUSED(NodeMetadata.Status.SUSPENDED);
 
-      protected final NodeState nodeState;
+      protected final NodeMetadata.Status nodeState;
 
-      Status(NodeState nodeState) {
+      Status(NodeMetadata.Status nodeState) {
          this.nodeState = nodeState;
       }
 
@@ -86,7 +88,7 @@ public class Server extends Resource {
          }
       }
 
-      public NodeState getNodeState() {
+      public NodeMetadata.Status getNodeStatus() {
          return nodeState;
       }
    }

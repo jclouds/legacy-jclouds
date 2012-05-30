@@ -36,7 +36,7 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Location;
@@ -87,7 +87,7 @@ public class VirtualMachineToNodeMetadataTest {
       assertEquals(
             node.toString(),
             new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3-54")
-                  .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
+                  .location(ZoneToLocationTest.one).status(Status.PENDING).hostname("i-3-54-VM")
                   .privateAddresses(ImmutableSet.of("10.1.1.18")).publicAddresses(ImmutableSet.of("1.1.1.1"))
                   .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))
                   .imageId(TemplateToImageTest.one.getId())
@@ -150,7 +150,7 @@ public class VirtualMachineToNodeMetadataTest {
       assertEquals(
          node.toString(),
          new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3-54")
-            .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
+            .location(ZoneToLocationTest.one).status(Status.PENDING).hostname("i-3-54-VM")
             .privateAddresses(ImmutableSet.<String>of())
             .publicAddresses(ImmutableSet.<String>of("1.1.1.5"))
             .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))
@@ -186,7 +186,7 @@ public class VirtualMachineToNodeMetadataTest {
       assertEquals(
             node.toString(),
             new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3-54")
-                  .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
+                  .location(ZoneToLocationTest.one).status(Status.PENDING).hostname("i-3-54-VM")
                   .privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))
                   .imageId(TemplateToImageTest.one.getId())

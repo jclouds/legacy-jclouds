@@ -30,8 +30,8 @@ import java.util.Set;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -60,7 +60,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplySetsTagFromNameAndCredentialsFromName() {
 
-      Map<ServerState, NodeState> serverStateToNodeState = createMock(Map.class);
+      Map<ServerState, Status> serverStateToNodeStatus = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
       Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
       Option ram = new Option(1l, "512MB", "Server with 512MB RAM");
@@ -72,7 +72,7 @@ public class ServerToNodeMetadataTest {
       expect(server.getName()).andReturn("group-ff").atLeastOnce();
       expect(server.getState()).andReturn(ServerState.ON).atLeastOnce();
 
-      expect(serverStateToNodeState.get(ServerState.ON)).andReturn(NodeState.RUNNING);
+      expect(serverStateToNodeStatus.get(ServerState.ON)).andReturn(Status.RUNNING);
 
       Location location = new LocationBuilder().scope(LocationScope.ZONE).id("1").description("US-West-1").build();
       Set< ? extends Location> locations = ImmutableSet.< Location> of( location);
@@ -88,12 +88,12 @@ public class ServerToNodeMetadataTest {
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
       expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
 
-      replay(serverStateToNodeState);
+      replay(serverStateToNodeStatus);
       replay(server);
       replay(image);
       replay(jcImage);
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeStatus, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers
                .<Set<? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
                .<Set<? extends Location>> ofInstance(locations), namingConvention);
@@ -103,7 +103,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(metadata.getImageId(), "2000");
       assertEquals(metadata.getGroup(), "group");
 
-      verify(serverStateToNodeState);
+      verify(serverStateToNodeStatus);
       verify(image);
       verify(server);
       verify(jcImage);

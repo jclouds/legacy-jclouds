@@ -27,7 +27,6 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
@@ -65,17 +64,17 @@ import com.google.inject.TypeLiteral;
 public class VCloudComputeServiceDependenciesModule extends AbstractModule {
 
    @VisibleForTesting
-   public static final Map<Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap.<Status, NodeState> builder().put(
-            Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING).put(Status.RESOLVED, NodeState.PENDING)
-            .put(Status.ERROR, NodeState.ERROR).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Status.DEPLOYED,
-                     NodeState.PENDING).put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN,
-                     NodeState.UNRECOGNIZED).put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT,
-                     NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED,
-                     NodeState.PENDING).build();
+   public static final Map<Status, NodeMetadata.Status> VAPPSTATUS_TO_NODESTATE = ImmutableMap.<Status, NodeMetadata.Status> builder().put(
+            Status.OFF, NodeMetadata.Status.SUSPENDED).put(Status.ON, NodeMetadata.Status.RUNNING).put(Status.RESOLVED, NodeMetadata.Status.PENDING)
+            .put(Status.ERROR, NodeMetadata.Status.ERROR).put(Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).put(Status.DEPLOYED,
+                     NodeMetadata.Status.PENDING).put(Status.INCONSISTENT, NodeMetadata.Status.PENDING).put(Status.UNKNOWN,
+                     NodeMetadata.Status.UNRECOGNIZED).put(Status.MIXED, NodeMetadata.Status.PENDING).put(Status.WAITING_FOR_INPUT,
+                     NodeMetadata.Status.PENDING).put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED).put(Status.UNRESOLVED,
+                     NodeMetadata.Status.PENDING).build();
 
    @Singleton
    @Provides
-   protected Map<Status, NodeState> provideVAppStatusToNodeState() {
+   protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {
       return VAPPSTATUS_TO_NODESTATE;
    }
 

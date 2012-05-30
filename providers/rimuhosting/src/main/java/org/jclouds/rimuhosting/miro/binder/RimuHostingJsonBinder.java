@@ -18,7 +18,6 @@
  */
 package org.jclouds.rimuhosting.miro.binder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;

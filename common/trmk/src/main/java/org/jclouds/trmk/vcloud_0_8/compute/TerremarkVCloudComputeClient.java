@@ -25,9 +25,9 @@ import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Buil
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -72,18 +72,18 @@ public class TerremarkVCloudComputeClient {
    protected final TerremarkVCloudClient client;
    protected final Provider<String> passwordGenerator;
    protected final InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier;
-   protected final Map<Status, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus;
    protected final Predicate<URI> taskTester;
 
    @Inject
    protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
          @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
-         Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
+         Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus, Map<String, Credentials> credentialStore,
          InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {
       this.client = client;
       this.passwordGenerator = passwordGenerator;
       this.internetServiceAndPublicIpAddressSupplier = internetServiceAndPublicIpAddressSupplier;
-      this.vAppStatusToNodeState = vAppStatusToNodeState;
+      this.vAppStatusToNodeStatus = vAppStatusToNodeStatus;
       this.taskTester = successTester;
    }
 
