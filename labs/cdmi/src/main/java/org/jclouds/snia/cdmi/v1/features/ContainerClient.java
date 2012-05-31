@@ -35,8 +35,11 @@ import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerClient {
-	Container createContainer(String containerName,CreateContainerOptions... options);
-    Container getContainer(String containerName);
-    void deleteContainer(String containerName);
+	Container createContainer(String containerName,
+			CreateContainerOptions... options);
+
+	Container getContainer(String containerName);
+
+	void deleteContainer(String containerName);
 
 }
