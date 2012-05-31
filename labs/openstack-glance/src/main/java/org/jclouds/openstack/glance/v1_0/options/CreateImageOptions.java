@@ -23,6 +23,18 @@ import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
 import org.jclouds.openstack.glance.v1_0.domain.StoreType;
 
 /**
+ * 
+ * <h2></h2>Usage</h2> The recommended way to instantiate a CreateImageOptions object is to statically import
+ * CreateImageOptions.Builder.* and invoke a static creation method for each option as needed:
+ * <p/>
+ * <code>
+ * import static org.jclouds.openstack.glance.v1_0.options.CreateImageOptions.Builder.*
+ *
+ *
+ * // this will create an image with the name "imageName", minimum required disk of 10GB, etc. 
+ * details = client.create("imageName", minDisk(10), isPublic(true), property("mykey", "somevalue"));
+ * <code>
+
  * @author Adam Lowe
  * @see <a href="http://glance.openstack.org/glanceapi.html"/>
  */

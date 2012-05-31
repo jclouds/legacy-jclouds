@@ -28,6 +28,17 @@ import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
 import org.jclouds.openstack.options.BaseListOptions;
 
 /**
+ * <h2></h2>Usage</h2> The recommended way to instantiate a ListImageOptions object is to statically import
+ * ListImageOptions.Builder.* and invoke a static creation method for each option as needed:
+ * <p/>
+ * <code>
+ * import static org.jclouds.openstack.glance.v1_0.options.ListImageOptions.Builder.*
+ *
+ *
+ * // this will list the first 10 images with the name "name", minimum required disk of 5GB.
+ * list = client.list(name("newName"), maxResults(10), minDisk(5));
+ * <code>
+ * 
  * @author Adam Lowe
  * @see <a href="http://glance.openstack.org/glanceapi.html"/>
  */
