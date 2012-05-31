@@ -103,9 +103,12 @@ public class CDMIObject {
     * identifier (ID) assigned at creation time. The CDMI object ID is a string with requirements
     * for how it is generated and how it obtains its uniqueness. Each offering that implements CDMI
     * is able to produce these identifiers without conflicting with other offerings.
+    * 
+    * note: CDMI Servers do not always support ObjectID tags, however downstream jclouds code
+    * does not handle null so we return a empty String instead.
     */
    public String getObjectID() {
-      return objectID;
+       return (objectID == null)? "": objectID; // Kenneth Nagin
    }
 
    /**

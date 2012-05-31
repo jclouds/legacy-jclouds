@@ -21,6 +21,7 @@ package org.jclouds.snia.cdmi.v1.parse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.domain.JsonBall;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.testng.annotations.Test;
@@ -30,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 @Test(groups = "unit", testName = "ParseContainerTest")
 public class ParseContainerTest extends BaseItemParserTest<Container> {
@@ -47,8 +48,8 @@ public class ParseContainerTest extends BaseItemParserTest<Container> {
                       .objectType("application/cdmi-container")
                       .objectID("00007E7F00102E230ED82694DAA975D2")
                       .objectName("MyContainer/")
-                      .metadata(ImmutableMap.<String, String>builder()
-                          .put("cdmi_size", "83")
+                      .metadata(ImmutableMap.<String, JsonBall>builder()
+                          .put("cdmi_size", new JsonBall("\"83\""))
                           .build())
                       .children(ImmutableSet.<String>builder()
                           .add("MyDataObject.txt")
