@@ -23,15 +23,21 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
 import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
+import org.jclouds.openstack.glance.v1_0.options.CreateImageOptions;
+import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
+import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
 
 /**
  * Image Services
- * 
- * @see ImageAsyncClient
+ *
  * @author Adrian Cole
+ * @author Adam Lowe
+ * @see ImageAsyncClient
  * @see <a href="http://glance.openstack.org/glanceapi.html">api doc</a>
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
@@ -39,13 +45,13 @@ public interface ImageClient {
    /**
     * Returns a set of brief metadata about images
     */
-   Set<Image> list();
-   
+   Set<Image> list(ListImageOptions... options);
+
    /**
     * Returns a set of detailed metadata about images
     */
-   Set<ImageDetails> listInDetail();
-   
+   Set<ImageDetails> listInDetail(ListImageOptions... options);
+
    /**
     * Return metadata about an image with id
     */
@@ -53,14 +59,51 @@ public interface ImageClient {
    ImageDetails show(String id);
 
    /**
-    * Return image data for image with id 
+    * Return image data for image with id
     */
    @Nullable
    InputStream getAsStream(String id);
-   
-// POST /images -- Store image data and return metadata about the
-// newly-stored image
-// PUT /images/<ID> -- Update image metadata and/or upload image
-// data for a previously-reserved image
-// DELETE /images/<ID> -- Delete the image with id <ID>
+
+   /**
+    * Create a new image
+    *
+    * @return detailed metadata about the newly stored image
+    */
+   ImageDetails create(String name, Payload imageData, CreateImageOptions... options);
+
+   /**
+    * Reserve a new image to be uploaded later
+    *
+    * @return detailed metadata about the newly stored image
+    * @see #upload
+    */
+   ImageDetails reserve(String name, CreateImageOptions... options);
+
+   /**
+    * Adjust the metadata stored for an existing image
+    *
+    * @return detailed metadata about the updated image
+    */
+   ImageDetails update(String id, UpdateImageOptions... options);
+
+   /**
+    * Upload image data for a previously-reserved image
+    * <p/>
+    * If an image was previously reserved, and thus is in the queued state, then image data can be added using this method.
+    * If the image already as data associated with it (e.g. not in the queued state), then you will receive a 409
+    * Conflict exception.
+    *
+    * @param imageData the new image to upload
+    * @param options   can be used to adjust the metadata stored for the image in the same call
+    * @return detailed metadata about the updated image
+    * @see #reserve
+    */
+   ImageDetails upload(String id, Payload imageData, UpdateImageOptions... options);
+
+   /**
+    * Delete the image with the specified id
+    *
+    * @return true if successful
+    */
+   Boolean delete(String id);
 }

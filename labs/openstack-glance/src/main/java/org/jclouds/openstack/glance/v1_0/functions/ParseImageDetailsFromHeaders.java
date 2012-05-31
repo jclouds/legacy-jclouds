@@ -18,16 +18,19 @@
  */
 package org.jclouds.openstack.glance.v1_0.functions;
 
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.*;
+
 import javax.inject.Inject;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;
 import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
-import org.jclouds.openstack.glance.v1_0.domain.Image;
 import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
+import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 /**
  * This parses {@link ImageDetails} from HTTP headers.
@@ -44,23 +47,27 @@ public class ParseImageDetailsFromHeaders implements Function<HttpResponse, Imag
 
    public ImageDetails apply(HttpResponse from) {
       ImageDetails.Builder<?> builder = ImageDetails.builder()
-                .id(from.getFirstHeaderOrNull("X-Image-Meta-Id"))
-                .name(from.getFirstHeaderOrNull("X-Image-Meta-Name"))
-                .checksum(from.getFirstHeaderOrNull("X-Image-Meta-Checksum"))
-                .containerFormat(ContainerFormat.fromValue(from.getFirstHeaderOrNull("X-Image-Meta-Container_format")))
-                .diskFormat(DiskFormat.fromValue(from.getFirstHeaderOrNull("X-Image-Meta-Disk_format")))
-                .size(Long.parseLong(from.getFirstHeaderOrNull("X-Image-Meta-Size")))
-                .minDisk(Long.parseLong(from.getFirstHeaderOrNull("X-Image-Meta-Min_disk")))
-                .minRam(Long.parseLong(from.getFirstHeaderOrNull("X-Image-Meta-Min_ram")))
-                .isPublic(Boolean.parseBoolean(from.getFirstHeaderOrNull("X-Image-Meta-Is_public")))
-                .createdAt(dateService.iso8601SecondsDateParse(from.getFirstHeaderOrNull("X-Image-Meta-Created_at")))
-                .updatedAt(dateService.iso8601SecondsDateParse(from.getFirstHeaderOrNull("X-Image-Meta-Updated_at")))
-                .owner(from.getFirstHeaderOrNull("X-Image-Meta-Owner"))
-                .status(Image.Status.fromValue(from.getFirstHeaderOrNull("X-Image-Meta-Status")));
-                         
-      String deletedAt = from.getFirstHeaderOrNull("X-Image-Meta-Deleted_at");
-      if (deletedAt != null)
-         builder.deletedAt(dateService.iso8601SecondsDateParse(deletedAt));
+                .id(from.getFirstHeaderOrNull(ID.asHeader()))
+                .name(from.getFirstHeaderOrNull(NAME.asHeader()))
+                .checksum(Optional.fromNullable(from.getFirstHeaderOrNull(CHECKSUM.asHeader())))
+                .minDisk(Long.parseLong(from.getFirstHeaderOrNull(MIN_DISK.asHeader())))
+                .minRam(Long.parseLong(from.getFirstHeaderOrNull(MIN_RAM.asHeader())))
+                .isPublic(Boolean.parseBoolean(from.getFirstHeaderOrNull(IS_PUBLIC.asHeader())))
+                .createdAt(dateService.iso8601SecondsDateParse(from.getFirstHeaderOrNull(CREATED_AT.asHeader())))
+                .updatedAt(dateService.iso8601SecondsDateParse(from.getFirstHeaderOrNull(UPDATED_AT.asHeader())))
+                .owner(Optional.fromNullable(from.getFirstHeaderOrNull(OWNER.asHeader())))
+                .location(Optional.fromNullable(from.getFirstHeaderOrNull(LOCATION.asHeader())))
+                .status(Status.fromValue(from.getFirstHeaderOrNull(STATUS.asHeader())));
+
+      String containerFormat = from.getFirstHeaderOrNull(CONTAINER_FORMAT.asHeader());
+      String diskFormat = from.getFirstHeaderOrNull(DISK_FORMAT.asHeader());
+      String deletedAt = from.getFirstHeaderOrNull(DELETED_AT.asHeader());
+      String size = from.getFirstHeaderOrNull(SIZE.asHeader());
+
+      if (containerFormat != null) builder.containerFormat(ContainerFormat.fromValue(containerFormat));
+      if (diskFormat != null) builder.diskFormat(DiskFormat.fromValue(diskFormat));
+      if (deletedAt != null) builder.deletedAt(dateService.iso8601SecondsDateParse(deletedAt));
+      if (size != null) builder.size(Long.parseLong(size));
 
       return builder.build();
    }
