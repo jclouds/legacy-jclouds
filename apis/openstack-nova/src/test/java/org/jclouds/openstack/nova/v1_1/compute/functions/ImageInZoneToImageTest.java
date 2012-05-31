@@ -23,18 +23,18 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -57,10 +57,11 @@ public class ImageInZoneToImageTest {
    @Test
    public void testConversionWhereLocationFound() {
       UUID id = UUID.randomUUID();
-      Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).build();
+      Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).status(Image.Status.DELETED).build();
       OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86",
                "My Test OS", true);
-      ImageInZoneToImage converter = new ImageInZoneToImage(new MockImageToOsConverter(operatingSystem), locationIndex);
+      ImageInZoneToImage converter = new ImageInZoneToImage(NovaComputeServiceContextModule.toPortableImageStatus,
+               constant(operatingSystem), locationIndex);
 
       ImageInZone novaImageInZoneToConvert = new ImageInZone(novaImageToConvert, "az-1.region-a.geo-1");
 
@@ -71,6 +72,7 @@ public class ImageInZoneToImageTest {
       assertEquals(convertedImage.getLocation(), locationIndex.get().get("az-1.region-a.geo-1"));
 
       assertEquals(convertedImage.getName(), novaImageToConvert.getName());
+      assertEquals(convertedImage.getStatus(), org.jclouds.compute.domain.Image.Status.DELETED);
       assertEquals(convertedImage.getOperatingSystem(), operatingSystem);
    }
 
@@ -80,29 +82,16 @@ public class ImageInZoneToImageTest {
       Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).build();
       OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86",
                "My Test OS", true);
-      ImageInZoneToImage converter = new ImageInZoneToImage(new MockImageToOsConverter(operatingSystem), locationIndex);
+      ImageInZoneToImage converter = new ImageInZoneToImage(NovaComputeServiceContextModule.toPortableImageStatus,
+               constant(operatingSystem), locationIndex);
 
       ImageInZone novaImageInZoneToConvert = new ImageInZone(novaImageToConvert, "South");
 
       converter.apply(novaImageInZoneToConvert);
    }
 
-   private class MockImageToOsConverter implements Function<Image, OperatingSystem> {
-
-      private final OperatingSystem operatingSystem;
-
-      public MockImageToOsConverter(OperatingSystem operatingSystem) {
-         this.operatingSystem = operatingSystem;
-      }
-
-      @Override
-      public OperatingSystem apply(@Nullable Image image) {
-         return operatingSystem;
-      }
-
-      @Override
-      public boolean equals(@Nullable Object o) {
-         return false;
-      }
+   @SuppressWarnings("unchecked")
+   private static Function<Image, OperatingSystem> constant(OperatingSystem operatingSystem){
+      return Function.class.cast(Functions.constant(operatingSystem));
    }
 }

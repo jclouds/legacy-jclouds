@@ -30,6 +30,7 @@ import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
@@ -66,7 +67,8 @@ public class OrphanedGroupsByZoneIdTest {
       ServerInZone withoutHost = new ServerInZone(new ServerInZoneToNodeMetadataTest().expectedServer(), "az-1.region-a.geo-1");
       ServerInZone withHost = new ServerInZone(new ParseServerTest().expected(), "az-1.region-a.geo-1");
       
-      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(
+               NovaComputeServiceContextModule.toPortableNodeStatus, locationIndex, Suppliers
                .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
                .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), namingConvention);
 
@@ -82,9 +84,10 @@ public class OrphanedGroupsByZoneIdTest {
       ServerInZone withoutHost = new ServerInZone(new ServerInZoneToNodeMetadataTest().expectedServer(), "az-1.region-a.geo-1");
       ServerInZone withHost = new ServerInZone(new ParseServerTest().expected(), "az-1.region-a.geo-1");
 
-      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
-               .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
-               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), namingConvention);
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(
+               NovaComputeServiceContextModule.toPortableNodeStatus, locationIndex, Suppliers
+                        .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
+                        .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), namingConvention);
 
       Set<? extends NodeMetadata> set = ImmutableSet.of(converter.apply(withHost), converter.apply(withoutHost));
 

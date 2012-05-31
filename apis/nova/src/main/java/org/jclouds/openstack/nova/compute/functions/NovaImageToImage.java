@@ -18,12 +18,16 @@
  */
 package org.jclouds.openstack.nova.compute.functions;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Image.Status;
+import org.jclouds.openstack.nova.domain.ImageStatus;
 
 import com.google.common.base.Function;
 
@@ -33,10 +37,13 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class NovaImageToImage implements Function<org.jclouds.openstack.nova.domain.Image, Image> {
+   private final Map<ImageStatus, Status> toPortableImageStatus;
    private final Function<org.jclouds.openstack.nova.domain.Image, OperatingSystem> imageToOs;
 
    @Inject
-   NovaImageToImage(Function<org.jclouds.openstack.nova.domain.Image, OperatingSystem> imageToOs) {
+   NovaImageToImage(Map<ImageStatus, Image.Status> toPortableImageStatus,
+            Function<org.jclouds.openstack.nova.domain.Image, OperatingSystem> imageToOs) {
+      this.toPortableImageStatus = toPortableImageStatus;
       this.imageToOs = imageToOs;
    }
 
@@ -47,6 +54,7 @@ public class NovaImageToImage implements Function<org.jclouds.openstack.nova.dom
       builder.description(from.getName() != null ? from.getName() : "unspecified");
       builder.version(from.getUpdated() != null ? from.getUpdated().getTime() + "" : "-1");
       builder.operatingSystem(imageToOs.apply(from)); //image name may not represent the OS type
+      builder.status(toPortableImageStatus.get(from.getStatus()));
       builder.uri(from.getURI());
       Image image = builder.build();
       return image;

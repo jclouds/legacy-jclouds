@@ -31,7 +31,7 @@ public class GoGridComputeServiceContextModuleTest {
    public void testAllStatusCovered() {
 
       for (ServerState state : ServerState.values()) {
-         assert GoGridComputeServiceContextModule.serverStateToNodeStatus.containsKey(state) : state;
+         assert GoGridComputeServiceContextModule.toPortableNodeStatus.containsKey(state) : state;
       }
 
    }

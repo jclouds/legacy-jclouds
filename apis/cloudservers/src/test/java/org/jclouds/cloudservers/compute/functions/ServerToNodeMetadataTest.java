@@ -60,7 +60,7 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareNotFound() {
-      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.serverToNodeStatus;
+      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.toPortableNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
@@ -91,7 +91,7 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageFoundAndHardwareNotFound()  {
-      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.serverToNodeStatus;
+      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.toPortableNodeStatus;
       org.jclouds.compute.domain.Image jcImage = CloudServersImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
@@ -126,7 +126,7 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareFound()  {
-      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.serverToNodeStatus;
+      Map<ServerStatus, Status> serverStateToNodeStatus = CloudServersComputeServiceContextModule.toPortableNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(CloudServersImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();

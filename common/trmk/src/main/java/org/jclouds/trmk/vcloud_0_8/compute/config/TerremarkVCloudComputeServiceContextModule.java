@@ -59,19 +59,37 @@ import com.google.inject.TypeLiteral;
 public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   public static final Map<Status, NodeMetadata.Status> VAPPSTATUS_TO_NODESTATE = ImmutableMap
-            .<Status, NodeMetadata.Status> builder().put(Status.OFF, NodeMetadata.Status.SUSPENDED).put(Status.ON,
-                     NodeMetadata.Status.RUNNING).put(Status.RESOLVED, NodeMetadata.Status.PENDING).put(
-                     Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).put(Status.DEPLOYED,
-                     NodeMetadata.Status.PENDING).put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED).put(
-                     Status.UNRESOLVED, NodeMetadata.Status.PENDING).build();
+   public static final Map<Status, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
+            .<Status, NodeMetadata.Status> builder()
+            .put(Status.OFF, NodeMetadata.Status.SUSPENDED)
+            .put(Status.ON, NodeMetadata.Status.RUNNING)
+            .put(Status.RESOLVED, NodeMetadata.Status.PENDING)
+            .put(Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED)
+            .put(Status.DEPLOYED, NodeMetadata.Status.PENDING)
+            .put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED)
+            .put(Status.UNRESOLVED, NodeMetadata.Status.PENDING).build();
 
    @Singleton
    @Provides
-   protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {
-      return VAPPSTATUS_TO_NODESTATE;
+   protected Map<Status, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
    }
+   
+   @VisibleForTesting
+   public static final Map<Status, Image.Status> toPortableImageStatus = ImmutableMap
+            .<Status, Image.Status> builder()
+            .put(Status.RESOLVED, Image.Status.AVAILABLE)
+            .put(Status.OFF, Image.Status.AVAILABLE)
+            .put(Status.UNRECOGNIZED, Image.Status.UNRECOGNIZED)
+            .put(Status.DEPLOYED, Image.Status.PENDING)
+            .put(Status.UNRESOLVED, Image.Status.PENDING).build();
 
+   @Singleton
+   @Provides
+   protected Map<Status, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
+   }
+   
    @Override
    protected void configure() {
       super.configure();

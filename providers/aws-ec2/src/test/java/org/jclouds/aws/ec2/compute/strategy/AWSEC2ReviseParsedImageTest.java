@@ -57,7 +57,8 @@ public class AWSEC2ReviseParsedImageTest {
 
         Image from = newImage("amazon", "Windows_Server-2008-R2_SP1-English-64Bit-Base-2012.03.13");
         OperatingSystem.Builder osBuilder = OperatingSystem.builder().description("test");
-        ImageBuilder builder = new ImageBuilder().id("1").operatingSystem(osBuilder.build()).description("test");
+      ImageBuilder builder = new ImageBuilder().id("1").operatingSystem(osBuilder.build()).status(
+               org.jclouds.compute.domain.Image.Status.AVAILABLE).description("test");
         OsFamily family = OsFamily.WINDOWS;
 
         rpi.reviseParsedImage(from, builder, family, osBuilder);
@@ -74,7 +75,8 @@ public class AWSEC2ReviseParsedImageTest {
 
         Image from = newImage("amazon", "Windows-2008R2-SP1-English-Base-2012.01.12");
         OperatingSystem.Builder osBuilder = OperatingSystem.builder().description("test");
-        ImageBuilder builder = new ImageBuilder().id("1").operatingSystem(osBuilder.build()).description("test");
+        ImageBuilder builder = new ImageBuilder().id("1").operatingSystem(osBuilder.build()).status(
+                 org.jclouds.compute.domain.Image.Status.AVAILABLE).description("test");
         OsFamily family = OsFamily.WINDOWS;
 
         rpi.reviseParsedImage(from, builder, family, osBuilder);

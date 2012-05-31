@@ -32,6 +32,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.domain.Image;
@@ -52,7 +53,7 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "EucalyptusPartnerCloudReviseParsedImageTest")
 public class EucalyptusPartnerCloudReviseParsedImageTest {
 
    public void testParseEucalyptusImage() {
@@ -74,7 +75,9 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                   .location(defaultLocation)
                   .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen")).build().toString());
+                              "paravirtual", "hypervisor", "xen"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build().toString());
+      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             Iterables.get(result, 1).toString(),
@@ -90,7 +93,9 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                   .location(defaultLocation)
                   .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen")).build().toString());
+                              "paravirtual", "hypervisor", "xen"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build().toString());
+      assertEquals(Iterables.get(result, 1).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             Iterables.get(result, 2).toString(),
@@ -106,7 +111,9 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                   .location(defaultLocation)
                   .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen")).build().toString());
+                              "paravirtual", "hypervisor", "xen"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build().toString());
+      assertEquals(Iterables.get(result, 2).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
    }
 
@@ -120,8 +127,9 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                .getInstance(Json.class));
 
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
-      EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
-               Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+      EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
+                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
                         .ofInstance(defaultLocation), new EucalyptusPartnerCloudReviseParsedImage(map));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }

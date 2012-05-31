@@ -39,6 +39,7 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
@@ -55,7 +56,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", singleThreaded = true)
+@Test(groups = "unit", singleThreaded = true, testName = "TemplateBuilderImplTest")
 public class TemplateBuilderImplTest {
    Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
 
@@ -797,6 +798,7 @@ public class TemplateBuilderImplTest {
                         .name("Ubuntu 11.04 x64")
                         .description("Ubuntu 11.04 x64")
                         .location(region)
+                        .status(Status.AVAILABLE)
                         .operatingSystem(
                               OperatingSystem.builder().name("Ubuntu 11.04 x64").description("Ubuntu 11.04 x64")
                                     .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build(),
@@ -805,6 +807,7 @@ public class TemplateBuilderImplTest {
                         .name("Ubuntu 11.04 64-bit")
                         .description("Ubuntu 11.04 64-bit")
                         .location(region)
+                        .status(Status.AVAILABLE)
                         .operatingSystem(
                               OperatingSystem.builder().name("Ubuntu 11.04 64-bit").description("Ubuntu 11.04 64-bit")
                                     .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build()));

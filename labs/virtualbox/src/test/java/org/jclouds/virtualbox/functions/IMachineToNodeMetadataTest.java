@@ -29,6 +29,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
@@ -67,7 +68,8 @@ public class IMachineToNodeMetadataTest {
 
       replay(vm, nat, natEng, hostOnly, machineUtils);
 
-      NodeMetadata node = new IMachineToNodeMetadata(machineUtils).apply(vm);
+      NodeMetadata node = new IMachineToNodeMetadata(VirtualBoxComputeServiceContextModule.toPortableNodeStatus,
+               machineUtils).apply(vm);
 
       assertEquals(MASTER_NAME, node.getName());
       assertEquals(1, node.getPrivateAddresses().size());
@@ -105,7 +107,8 @@ public class IMachineToNodeMetadataTest {
 
       replay(vm, nat, natEng, hostOnly, machineUtils);
 
-      NodeMetadata node = new IMachineToNodeMetadata(machineUtils).apply(vm);
+      NodeMetadata node = new IMachineToNodeMetadata(VirtualBoxComputeServiceContextModule.toPortableNodeStatus,
+               machineUtils).apply(vm);
 
       assertEquals(name, node.getName());
       assertEquals(group, node.getGroup());

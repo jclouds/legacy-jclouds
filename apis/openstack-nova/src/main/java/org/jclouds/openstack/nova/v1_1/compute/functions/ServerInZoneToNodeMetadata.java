@@ -49,6 +49,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.util.InetAddresses2;
@@ -69,16 +70,18 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
+   
+   protected Map<Status, org.jclouds.compute.domain.NodeMetadata.Status> toPortableNodeStatus;
    protected final Supplier<Map<String, Location>> locationIndex;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
    protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   public ServerInZoneToNodeMetadata(Supplier<Map<String, Location>> locationIndex,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
-         GroupNamingConvention.Factory namingConvention) {
+   public ServerInZoneToNodeMetadata(Map<Server.Status, NodeMetadata.Status> toPortableNodeStatus,
+            Supplier<Map<String, Location>> locationIndex, @Memoized Supplier<Set<? extends Image>> images,
+            @Memoized Supplier<Set<? extends Hardware>> hardwares, GroupNamingConvention.Factory namingConvention) {
+      this.toPortableNodeStatus = checkNotNull(toPortableNodeStatus, "toPortableNodeStatus");
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.locationIndex = checkNotNull(locationIndex, "locationIndex");
       this.images = checkNotNull(images, "images");
@@ -103,7 +106,7 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.imageId(ZoneAndId.fromZoneAndId(serverInZone.getZone(), from.getImage().getId()).slashEncode());
       builder.operatingSystem(findOperatingSystemForServerOrNull(serverInZone));
       builder.hardware(findHardwareForServerOrNull(serverInZone));
-      builder.status(from.getStatus().getNodeStatus());
+      builder.status(toPortableNodeStatus.get(from.getStatus()));
       builder.publicAddresses(filter(
             transform(filter(from.getAddresses().values(), Predicates.not(isPrivateAddress)),
                   AddressToStringTransformationFunction.INSTANCE), isInet4Address));

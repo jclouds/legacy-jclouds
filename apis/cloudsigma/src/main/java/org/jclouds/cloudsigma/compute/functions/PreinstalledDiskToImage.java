@@ -26,6 +26,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.domain.Location;
 
@@ -61,6 +62,6 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
       return new ImageBuilder().ids(drive.getUuid())
             .userMetadata(ImmutableMap.<String, String> of("size", drive.getSize() / 1024 / 1024 / 1024 + ""))
             .location(locationSupplier.get()).name(drive.getName()).description(description)
-            .operatingSystem(builder.build()).version("").build();
+            .operatingSystem(builder.build()).status(Status.AVAILABLE).version("").build();
    }
 }

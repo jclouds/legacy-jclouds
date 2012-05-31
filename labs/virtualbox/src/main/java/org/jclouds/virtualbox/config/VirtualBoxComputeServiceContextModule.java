@@ -33,7 +33,6 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
@@ -174,23 +173,64 @@ public class VirtualBoxComputeServiceContextModule extends
    }
 
    @VisibleForTesting
-   public static final Map<MachineState, Status> machineToNodeStatus = ImmutableMap
-            .<MachineState, Status> builder().put(MachineState.Running, Status.RUNNING)
-            .put(MachineState.PoweredOff, Status.SUSPENDED)
-            .put(MachineState.DeletingSnapshot, Status.PENDING)
-            .put(MachineState.DeletingSnapshotOnline, Status.PENDING)
-            .put(MachineState.DeletingSnapshotPaused, Status.PENDING)
-            .put(MachineState.FaultTolerantSyncing, Status.PENDING)
-            .put(MachineState.LiveSnapshotting, Status.PENDING)
-            .put(MachineState.SettingUp, Status.PENDING)
-            .put(MachineState.Starting, Status.PENDING)
-            .put(MachineState.Stopping, Status.PENDING)
-            .put(MachineState.Restoring, Status.PENDING)
+   public static final Map<MachineState, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
+            .<MachineState, NodeMetadata.Status> builder().put(MachineState.Running, NodeMetadata.Status.RUNNING)
+            .put(MachineState.PoweredOff, NodeMetadata.Status.SUSPENDED)
+            .put(MachineState.DeletingSnapshot, NodeMetadata.Status.PENDING)
+            .put(MachineState.DeletingSnapshotOnline, NodeMetadata.Status.PENDING)
+            .put(MachineState.DeletingSnapshotPaused, NodeMetadata.Status.PENDING)
+            .put(MachineState.FaultTolerantSyncing, NodeMetadata.Status.PENDING)
+            .put(MachineState.LiveSnapshotting, NodeMetadata.Status.PENDING)
+            .put(MachineState.SettingUp, NodeMetadata.Status.PENDING)
+            .put(MachineState.Starting, NodeMetadata.Status.PENDING)
+            .put(MachineState.Stopping, NodeMetadata.Status.PENDING)
+            .put(MachineState.Restoring, NodeMetadata.Status.PENDING)
             // TODO What to map these states to?
-            .put(MachineState.FirstOnline, Status.PENDING).put(MachineState.FirstTransient, Status.PENDING)
-            .put(MachineState.LastOnline, Status.PENDING).put(MachineState.LastTransient, Status.PENDING)
-            .put(MachineState.Teleported, Status.PENDING).put(MachineState.TeleportingIn, Status.PENDING)
-            .put(MachineState.TeleportingPausedVM, Status.PENDING).put(MachineState.Aborted, Status.ERROR)
-            .put(MachineState.Stuck, Status.ERROR).put(MachineState.Null, Status.UNRECOGNIZED).build();
-
+            .put(MachineState.FirstOnline, NodeMetadata.Status.PENDING)
+            .put(MachineState.FirstTransient, NodeMetadata.Status.PENDING)
+            .put(MachineState.LastOnline, NodeMetadata.Status.PENDING)
+            .put(MachineState.LastTransient, NodeMetadata.Status.PENDING)
+            .put(MachineState.Teleported, NodeMetadata.Status.PENDING)
+            .put(MachineState.TeleportingIn, NodeMetadata.Status.PENDING)
+            .put(MachineState.TeleportingPausedVM, NodeMetadata.Status.PENDING)
+            .put(MachineState.Aborted, NodeMetadata.Status.ERROR)
+            .put(MachineState.Stuck, NodeMetadata.Status.ERROR)
+            .put(MachineState.Null, NodeMetadata.Status.TERMINATED).build();
+   
+   @Singleton
+   @Provides
+   protected Map<MachineState, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
+   }
+   
+   @VisibleForTesting
+   public static final Map<MachineState, Image.Status> toPortableImageStatus = ImmutableMap
+            .<MachineState, Image.Status> builder().put(MachineState.Running, Image.Status.PENDING)
+            .put(MachineState.PoweredOff, Image.Status.AVAILABLE)
+            .put(MachineState.DeletingSnapshot, Image.Status.PENDING)
+            .put(MachineState.DeletingSnapshotOnline, Image.Status.PENDING)
+            .put(MachineState.DeletingSnapshotPaused, Image.Status.PENDING)
+            .put(MachineState.FaultTolerantSyncing, Image.Status.PENDING)
+            .put(MachineState.LiveSnapshotting, Image.Status.PENDING)
+            .put(MachineState.SettingUp, Image.Status.PENDING)
+            .put(MachineState.Starting, Image.Status.PENDING)
+            .put(MachineState.Stopping, Image.Status.PENDING)
+            .put(MachineState.Restoring, Image.Status.PENDING)
+            // TODO What to map these states to?
+            .put(MachineState.FirstOnline, Image.Status.PENDING)
+            .put(MachineState.FirstTransient, Image.Status.PENDING)
+            .put(MachineState.LastOnline, Image.Status.PENDING)
+            .put(MachineState.LastTransient, Image.Status.PENDING)
+            .put(MachineState.Teleported, Image.Status.PENDING)
+            .put(MachineState.TeleportingIn, Image.Status.PENDING)
+            .put(MachineState.TeleportingPausedVM, Image.Status.PENDING)
+            .put(MachineState.Aborted, Image.Status.ERROR)
+            .put(MachineState.Stuck, Image.Status.ERROR)
+            .put(MachineState.Null, Image.Status.DELETED).build();
+   
+   @Singleton
+   @Provides
+   protected Map<MachineState, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
+   }
 }

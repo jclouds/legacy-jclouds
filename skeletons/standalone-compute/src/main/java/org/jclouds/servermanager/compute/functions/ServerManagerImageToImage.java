@@ -26,6 +26,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
@@ -55,6 +56,7 @@ public class ServerManagerImageToImage implements Function<org.jclouds.serverman
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from);
       }
+      builder.status(Status.AVAILABLE);
       return builder.build();
    }
 

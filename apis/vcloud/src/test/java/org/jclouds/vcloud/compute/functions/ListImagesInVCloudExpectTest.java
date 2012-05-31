@@ -81,8 +81,11 @@ public class ListImagesInVCloudExpectTest extends BaseVCloudComputeServiceExpect
                // TODO: this looks like a bug, as it says network interfaces
                .description("This is a special place-holder used for disconnected network interfaces.")
                .defaultCredentials(LoginCredentials.builder().identity("root").build())
+               .status(Image.Status.AVAILABLE)
                .location(vdcLocation).build();
       
       assertEquals(onlyImage, expectedImage);
+      assertEquals(onlyImage.getStatus(), Image.Status.AVAILABLE);
+
    }
 }

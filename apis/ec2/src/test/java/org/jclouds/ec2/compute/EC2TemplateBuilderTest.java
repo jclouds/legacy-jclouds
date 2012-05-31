@@ -79,6 +79,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Oleksiy Yarmula
  */
+@Test(testName = "EC2TemplateBuilderTest")
 public class EC2TemplateBuilderTest {
    Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
 
@@ -166,6 +167,7 @@ public class EC2TemplateBuilderTest {
       final Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
                .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
                .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", false))
+               .status(Image.Status.AVAILABLE)
                .build();
       Map<RegionAndName, Image> imageMap = ImmutableMap.of(
                new RegionAndName(image.getLocation().getId(), image.getProviderId()), image);
@@ -190,10 +192,12 @@ public class EC2TemplateBuilderTest {
                new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
                         .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
                         .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", false))
+                        .status(Image.Status.AVAILABLE)
                         .build(), 
                new ImageBuilder().providerId("normal-image").name("image").id("us-east-1/normal-image").location(location)
                         .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "paravirtual", "ubuntu", true))
                         .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", false))
+                        .status(Image.Status.AVAILABLE)
                         .build()));
       
       // weird compilation error means have to cast this - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=365818

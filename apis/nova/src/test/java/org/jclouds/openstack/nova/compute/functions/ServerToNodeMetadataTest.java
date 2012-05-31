@@ -64,7 +64,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.serverToNodeStatus;
+      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.toPortableNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
@@ -100,7 +100,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageFoundAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.serverToNodeStatus;
+      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.toPortableNodeStatus;
       org.jclouds.compute.domain.Image jcImage = NovaImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
@@ -125,7 +125,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageAndHardwareFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.serverToNodeStatus;
+      Map<ServerStatus, Status> serverStateToNodeStatus = NovaComputeServiceContextModule.toPortableNodeStatus;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(NovaImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();

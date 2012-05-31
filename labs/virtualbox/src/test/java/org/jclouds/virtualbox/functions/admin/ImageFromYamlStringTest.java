@@ -37,7 +37,7 @@ import com.google.common.collect.Iterables;
 /**
  * @author Andrea Turli
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ImageFromYamlStringTest")
 public class ImageFromYamlStringTest {
 
    public static final Image TEST1 = new ImageBuilder()
@@ -46,7 +46,8 @@ public class ImageFromYamlStringTest {
             .description("ubuntu 11.04 server (i386)")
             .operatingSystem(
                      OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("11.04")
-                              .arch("x86").build()).build();
+                              .arch("x86").build())
+            .status(Image.Status.AVAILABLE).build();
 
    Map<Image, YamlImage> images;
 

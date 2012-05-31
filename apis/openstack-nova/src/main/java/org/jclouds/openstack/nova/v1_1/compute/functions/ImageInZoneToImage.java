@@ -29,6 +29,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Location;
+import org.jclouds.openstack.nova.v1_1.domain.Image.Status;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 
 import com.google.common.base.Function;
@@ -40,12 +41,15 @@ import com.google.common.base.Supplier;
  * @author Matt Stephenson
  */
 public class ImageInZoneToImage implements Function<ImageInZone, Image> {
+   private final Map<Status, org.jclouds.compute.domain.Image.Status> toPortableImageStatus;
    private final Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs;
    private final Supplier<Map<String, Location>> locationIndex;
 
    @Inject
-   public ImageInZoneToImage(Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs,
+   public ImageInZoneToImage(Map<org.jclouds.openstack.nova.v1_1.domain.Image.Status, Image.Status> toPortableImageStatus, 
+            Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs,
             Supplier<Map<String, Location>> locationIndex) {
+      this.toPortableImageStatus = checkNotNull(toPortableImageStatus, "toPortableImageStatus");
       this.imageToOs = checkNotNull(imageToOs, "imageToOs");
       this.locationIndex = checkNotNull(locationIndex, "locationIndex");
    }
@@ -57,6 +61,6 @@ public class ImageInZoneToImage implements Function<ImageInZone, Image> {
       org.jclouds.openstack.nova.v1_1.domain.Image image = imageInZone.getImage();
       return new ImageBuilder().id(imageInZone.slashEncode()).providerId(image.getId()).name(image.getName())
                .userMetadata(image.getMetadata()).operatingSystem(imageToOs.apply(image)).description(image.getName())
-               .location(location).build();
+               .location(location).status(toPortableImageStatus.get(image.getStatus())).build();
    }
 }

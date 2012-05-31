@@ -27,10 +27,8 @@ import java.util.Set;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -42,34 +40,18 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    private static final long serialVersionUID = 7856744554191025307L;
 
    private final OperatingSystem operatingSystem;
+   private final Status status;
    private final String version;
    private final String description;
    private final LoginCredentials defaultCredentials;
 
-   /**
-    * <h4>will be removed in jclouds 1.4.0</h4>
-    */
-   @Deprecated
-   public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, String description,
-         @Nullable String version, @Nullable String adminPassword, @Nullable Credentials defaultCredentials) {
-      super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
-      this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
-      this.version = version;
-      this.description = checkNotNull(description, "description");
-      Builder builder = LoginCredentials.builder(defaultCredentials);
-      if (adminPassword != null) {
-         builder.authenticateSudo(true);
-         builder.password(adminPassword);
-      }
-      this.defaultCredentials = builder.build();
-   }
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, String description,
+         Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, Image.Status status, String description,
          @Nullable String version, @Nullable LoginCredentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
+      this.status = checkNotNull(status, "status");
       this.version = version;
       this.description = checkNotNull(description, "description");
       this.defaultCredentials = defaultCredentials;
@@ -83,6 +65,14 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       return operatingSystem;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Status getStatus() {
+      return status;
+   }
+   
    /**
     * {@inheritDoc}
     */
@@ -167,5 +157,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
          return false;
       return true;
    }
+
+
 
 }

@@ -212,7 +212,8 @@ public class VirtualGuestToNodeMetadataTest {
       @Override
       public Image getImage(VirtualGuest guest) {
          return new ImageBuilder().ids("123").description("mocked image")
-               .operatingSystem(OperatingSystem.builder().description("foo os").build()).build();
+               .operatingSystem(OperatingSystem.builder().description("foo os").build())
+               .status(Image.Status.AVAILABLE).build();
       }
    }
 }

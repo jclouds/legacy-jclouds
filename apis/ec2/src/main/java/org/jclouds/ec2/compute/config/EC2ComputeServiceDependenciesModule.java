@@ -54,10 +54,12 @@ import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
@@ -79,19 +81,36 @@ import com.google.inject.name.Names;
  */
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
-   public static final Map<InstanceState, Status> instanceToNodeStatus = ImmutableMap
-            .<InstanceState, Status> builder().put(InstanceState.PENDING, Status.PENDING).put(
-                     InstanceState.RUNNING, Status.RUNNING).put(InstanceState.SHUTTING_DOWN, Status.PENDING).put(
-                     InstanceState.TERMINATED, Status.TERMINATED).put(InstanceState.STOPPING, Status.PENDING)
-            .put(InstanceState.STOPPED, Status.SUSPENDED).put(InstanceState.UNRECOGNIZED, Status.UNRECOGNIZED)
+   public static final Map<InstanceState, Status> toPortableNodeStatus = ImmutableMap
+            .<InstanceState, Status> builder()
+            .put(InstanceState.PENDING, Status.PENDING)
+            .put(InstanceState.RUNNING, Status.RUNNING)
+            .put(InstanceState.SHUTTING_DOWN, Status.PENDING)
+            .put(InstanceState.TERMINATED, Status.TERMINATED)
+            .put(InstanceState.STOPPING, Status.PENDING)
+            .put(InstanceState.STOPPED, Status.SUSPENDED)
+            .put(InstanceState.UNRECOGNIZED, Status.UNRECOGNIZED)
             .build();
+   
+   @Singleton
+   @Provides
+   protected Map<InstanceState, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
+   }
+   
+   @VisibleForTesting
+   public static final Map<ImageState, Image.Status> toPortableImageStatus = ImmutableMap
+            .<ImageState, Image.Status> builder()
+            .put(ImageState.AVAILABLE, Image.Status.AVAILABLE)
+            .put(ImageState.DEREGISTERED, Image.Status.DELETED)
+            .put(ImageState.UNRECOGNIZED, Image.Status.UNRECOGNIZED).build();
 
    @Singleton
    @Provides
-   Map<InstanceState, Status> provideServerToNodeStatus() {
-      return instanceToNodeStatus;
+   protected Map<ImageState, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
    }
-
+   
    @Override
    protected void configure() {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);

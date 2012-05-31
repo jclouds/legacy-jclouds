@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
@@ -66,6 +67,7 @@ public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> 
          builder.name(from.getDescription());
          builder.description(from.getDescription());
          builder.operatingSystem(parseOs(from));
+         builder.status(Status.AVAILABLE);
          images.add(builder.build());
       }
       logger.debug("<< images(%d)", images.size());

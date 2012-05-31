@@ -142,7 +142,7 @@ public class YamlImage {
                   .version(arg0.os_version).is64Bit(arg0.os_64bit).arch(arg0.os_arch).build();
 
          return new ImageBuilder().id(arg0.id).name(arg0.name).description(arg0.description)
-                  .operatingSystem(operatingSystem).build();
+                  .operatingSystem(operatingSystem).status(Image.Status.AVAILABLE).build();
       }
    };
 

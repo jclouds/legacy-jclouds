@@ -149,7 +149,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
                String desc = String.format("stub %s %s", osVersions.getKey(), is64Bit);
                images.add(new ImageBuilder().ids(id++ + "").name(osVersions.getKey().name()).location(location.get())
                      .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
-                     .description(desc).build());
+                     .description(desc).status(Image.Status.AVAILABLE).build());
             }
          }
       return images.build();

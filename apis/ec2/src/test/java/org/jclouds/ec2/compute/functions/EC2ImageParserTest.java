@@ -32,6 +32,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.domain.Image;
@@ -51,26 +52,32 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "EC2ImageParserTest")
 public class EC2ImageParserTest {
 
    public void testParseAmznImage() {
 
       Set<org.jclouds.compute.domain.Image> result = convertImages("/amzn_images.xml");
+      for (org.jclouds.compute.domain.Image image : result)
+         assertEquals(image.getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(Iterables.get(result, 0), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).description("Amazon")
-               .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7").name("amzn-ami-0.9.7-beta.i386-ebs")
-                        .providerId("ami-82e4b5c7").location(defaultLocation).userMetadata(
-                        ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).build());
+               .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7").name(
+                        "amzn-ami-0.9.7-beta.i386-ebs").providerId("ami-82e4b5c7").location(defaultLocation)
+               .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).status(
+                        org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
 
       assertEquals(Iterables.get(result, 3), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml").is64Bit(true).build())
-               .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new LoginCredentials("ec2-user", false)).id(
-                        "us-east-1/ami-f2e4b5b7").providerId("ami-f2e4b5b7").name("amzn-ami-0.9.7-beta.x86_64-S3").location(defaultLocation)
-                        .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).build());
+               .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new LoginCredentials("ec2-user", false))
+               .id("us-east-1/ami-f2e4b5b7").providerId("ami-f2e4b5b7").name("amzn-ami-0.9.7-beta.x86_64-S3").location(
+                        defaultLocation)
+               .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).status(
+                        org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      ;
    }
 
    static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description(
@@ -83,8 +90,9 @@ public class EC2ImageParserTest {
                .getInstance(Json.class));
 
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
-      EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
-               Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+      EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
+                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
                         .ofInstance(defaultLocation), new ReviseParsedImage.NoopReviseParsedImage());
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }

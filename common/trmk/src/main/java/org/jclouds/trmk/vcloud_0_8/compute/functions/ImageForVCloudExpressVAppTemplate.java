@@ -20,6 +20,8 @@ package org.jclouds.trmk.vcloud_0_8.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Image;
@@ -27,6 +29,7 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
+import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -35,6 +38,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate, Image> {
+   private final Map<Status, org.jclouds.compute.domain.Image.Status> toPortableImageStatus;
    private final FindLocationForResource findLocationForResource;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    private final Function<String, OperatingSystem> osParser;
@@ -42,8 +46,9 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate,
    private ReferenceType parent;
 
    @Inject
-   protected ImageForVCloudExpressVAppTemplate(FindLocationForResource findLocationForResource,
+   protected ImageForVCloudExpressVAppTemplate(Map<Status, Image.Status> toPortableImageStatus, FindLocationForResource findLocationForResource,
             PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider, Function<String, OperatingSystem> osParser) {
+      this.toPortableImageStatus = checkNotNull(toPortableImageStatus, "toPortableImageStatus");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
       this.osParser = osParser;
@@ -63,6 +68,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate,
       builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       builder.operatingSystem(osParser.apply(from.getName()));
+      builder.status(toPortableImageStatus.get(from.getStatus()));
       builder.defaultCredentials(credentialsProvider.apply(from));
       return builder.build();
    }

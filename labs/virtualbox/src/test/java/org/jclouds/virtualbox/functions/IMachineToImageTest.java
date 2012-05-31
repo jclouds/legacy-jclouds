@@ -34,17 +34,19 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
 import com.google.inject.Guice;
 
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "IMachineToImageTest")
 public class IMachineToImageTest {
 
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
@@ -67,10 +69,12 @@ public class IMachineToImageTest {
       expect(vm.getDescription()).andReturn("my-ubuntu-machine").anyTimes();
       expect(guestOsType.getDescription()).andReturn(linuxDescription).anyTimes();
       expect(guestOsType.getIs64Bit()).andReturn(true);
+      expect(vm.getState()).andReturn(MachineState.PoweredOff);
 
       replay(vbm, vBox, vm, guestOsType);
 
-      IMachineToImage fn = new IMachineToImage(Suppliers.ofInstance(vbm), map);
+      IMachineToImage fn = new IMachineToImage(VirtualBoxComputeServiceContextModule.toPortableImageStatus, Suppliers
+               .ofInstance(vbm), map);
 
       Image image = fn.apply(vm);
 
@@ -80,6 +84,7 @@ public class IMachineToImageTest {
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(image.getOperatingSystem().getVersion(), "10.04");
       assertEquals(image.getId(), "my-vm-id");
+      assertEquals(image.getStatus(), Image.Status.AVAILABLE);
 
    }
 
@@ -100,10 +105,12 @@ public class IMachineToImageTest {
       expect(vm.getDescription()).andReturn(vmDescription).anyTimes();
       expect(guestOsType.getDescription()).andReturn(guestOsDescription).anyTimes();
       expect(guestOsType.getIs64Bit()).andReturn(true);
+      expect(vm.getState()).andReturn(MachineState.Running);
 
       replay(vbm, vBox, vm, guestOsType);
 
-      IMachineToImage fn = new IMachineToImage(Suppliers.ofInstance(vbm), map);
+      IMachineToImage fn = new IMachineToImage(VirtualBoxComputeServiceContextModule.toPortableImageStatus, Suppliers
+               .ofInstance(vbm), map);
 
       Image image = fn.apply(vm);
 
@@ -113,6 +120,7 @@ public class IMachineToImageTest {
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(image.getOperatingSystem().getVersion(), "11.04");
       assertEquals(image.getId(), "my-vm-id");
+      assertEquals(image.getStatus(), Image.Status.PENDING);
 
    }
 
@@ -133,10 +141,12 @@ public class IMachineToImageTest {
       expect(guestOsType.getDescription()).andReturn(unknownOsDescription).anyTimes();
       expect(guestOsType.getIs64Bit()).andReturn(true);
       expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
+      expect(vm.getState()).andReturn(MachineState.PoweredOff);
 
       replay(vbm, vBox, vm, guestOsType);
 
-      IMachineToImage fn = new IMachineToImage(Suppliers.ofInstance(vbm), map);
+      IMachineToImage fn = new IMachineToImage(VirtualBoxComputeServiceContextModule.toPortableImageStatus, Suppliers
+               .ofInstance(vbm), map);
 
       Image image = fn.apply(vm);
 

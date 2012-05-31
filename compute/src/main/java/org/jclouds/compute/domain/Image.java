@@ -31,7 +31,32 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(ImageImpl.class)
-public interface Image extends ComputeMetadata {
+public interface Image extends ComputeMetadataIncludingStatus<Image.Status> {
+
+   public static enum Status {
+      /**
+       * The image is in transition
+       */
+      PENDING,
+      /**
+       * The image is visible, and in the process of being deleted.
+       */
+      DELETED,
+      /**
+       * The image is available.
+       */
+      AVAILABLE,
+      /**
+       * There is an error on the image
+       */
+      ERROR,
+      /**
+       * The state of the image is unrecognized.
+       */
+      UNRECOGNIZED;
+
+   }
+   
    /**
     * The operating system installed on this image
     */

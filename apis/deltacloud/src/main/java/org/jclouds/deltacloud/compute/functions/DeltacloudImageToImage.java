@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.Image.Status;
 
 import com.google.common.base.Function;
 
@@ -47,6 +48,7 @@ public class DeltacloudImageToImage implements Function<org.jclouds.deltacloud.d
       builder.name(from.getName());
       builder.description(from.getDescription());
       builder.operatingSystem(imageToOperatingSystem.apply(from));
+      builder.status(Status.AVAILABLE);
       return builder.build();
    }
 }

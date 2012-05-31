@@ -64,18 +64,50 @@ import com.google.inject.TypeLiteral;
 public class VCloudComputeServiceDependenciesModule extends AbstractModule {
 
    @VisibleForTesting
-   public static final Map<Status, NodeMetadata.Status> VAPPSTATUS_TO_NODESTATE = ImmutableMap.<Status, NodeMetadata.Status> builder().put(
-            Status.OFF, NodeMetadata.Status.SUSPENDED).put(Status.ON, NodeMetadata.Status.RUNNING).put(Status.RESOLVED, NodeMetadata.Status.PENDING)
-            .put(Status.ERROR, NodeMetadata.Status.ERROR).put(Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).put(Status.DEPLOYED,
-                     NodeMetadata.Status.PENDING).put(Status.INCONSISTENT, NodeMetadata.Status.PENDING).put(Status.UNKNOWN,
-                     NodeMetadata.Status.UNRECOGNIZED).put(Status.MIXED, NodeMetadata.Status.PENDING).put(Status.WAITING_FOR_INPUT,
-                     NodeMetadata.Status.PENDING).put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED).put(Status.UNRESOLVED,
-                     NodeMetadata.Status.PENDING).build();
+   public static final Map<Status, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
+            .<Status, NodeMetadata.Status> builder()
+            .put(Status.OFF, NodeMetadata.Status.SUSPENDED)
+            .put(Status.ON, NodeMetadata.Status.RUNNING)
+            .put(Status.RESOLVED, NodeMetadata.Status.PENDING)
+            .put(Status.MIXED, NodeMetadata.Status.PENDING)
+            .put(Status.UNKNOWN, NodeMetadata.Status.UNRECOGNIZED)
+            .put(Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED)
+            .put(Status.DEPLOYED, NodeMetadata.Status.PENDING)
+            .put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED)
+            .put(Status.WAITING_FOR_INPUT, NodeMetadata.Status.PENDING)
+            .put(Status.INCONSISTENT, NodeMetadata.Status.PENDING)
+            .put(Status.ERROR, NodeMetadata.Status.ERROR)
+            .put(Status.UNRESOLVED, NodeMetadata.Status.PENDING).build();
 
    @Singleton
    @Provides
-   protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {
-      return VAPPSTATUS_TO_NODESTATE;
+   protected Map<Status, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
+   }
+   
+   @VisibleForTesting
+   public static final Map<Status, Image.Status> toPortableImageStatus = ImmutableMap
+            .<Status, Image.Status> builder()
+            .put(Status.RESOLVED, Image.Status.AVAILABLE)
+            .put(Status.OFF, Image.Status.AVAILABLE)
+            .put(Status.MIXED, Image.Status.PENDING)
+            .put(Status.UNKNOWN, Image.Status.UNRECOGNIZED)
+            .put(Status.UNRECOGNIZED, Image.Status.UNRECOGNIZED)
+            .put(Status.DEPLOYED, Image.Status.PENDING)
+            .put(Status.PENDING_DESCRIPTOR, Image.Status.PENDING)
+            .put(Status.COPYING, Image.Status.PENDING)
+            .put(Status.PENDING_CONTENTS, Image.Status.PENDING)
+            .put(Status.QUARANTINED, Image.Status.PENDING)
+            .put(Status.QUARANTINE_EXPIRED, Image.Status.ERROR)
+            .put(Status.REJECTED, Image.Status.ERROR)
+            .put(Status.TRANSFER_TIMEOUT, Image.Status.ERROR)
+            .put(Status.ERROR, Image.Status.ERROR)
+            .put(Status.UNRESOLVED, Image.Status.PENDING).build();
+
+   @Singleton
+   @Provides
+   protected Map<Status, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
    }
 
    @SuppressWarnings("unchecked")

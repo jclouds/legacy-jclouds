@@ -101,7 +101,7 @@ public class VAppToNodeMetadataTest {
          @Singleton
          @Provides
          protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {
-            return VCloudComputeServiceDependenciesModule.VAPPSTATUS_TO_NODESTATE;
+            return VCloudComputeServiceDependenciesModule.toPortableNodeStatus;
          }
 
       });

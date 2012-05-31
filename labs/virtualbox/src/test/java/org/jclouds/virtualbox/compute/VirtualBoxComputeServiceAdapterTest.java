@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IGuestOSType;
@@ -79,7 +80,8 @@ public class VirtualBoxComputeServiceAdapterTest {
 
       replay(manager, vBox, clonedMachine, imageMachine, osType);
 
-      Function<IMachine, Image> iMachineToImage = new IMachineToImage(Suppliers.ofInstance(manager), osMap);
+      Function<IMachine, Image> iMachineToImage = new IMachineToImage(
+               VirtualBoxComputeServiceContextModule.toPortableImageStatus, Suppliers.ofInstance(manager), osMap);
 //      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), iMachineToImage, new ImageFromYamlString(), new Supplier<String>() {
 //
 //			@Override

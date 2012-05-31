@@ -32,6 +32,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.domain.Image;
@@ -52,7 +53,7 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "AWSEC2ImageParserTest")
 public class AWSEC2ImageParserTest {
    public void testParseAlesticCanonicalImage() {
 
@@ -73,7 +74,9 @@ public class AWSEC2ImageParserTest {
                      "rootDeviceType", "instance-store",
                      "virtualizationType", "paravirtual",
                      "hypervisor", "xen"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE)
                   .build());
+      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             Iterables.get(result, 4),
@@ -84,7 +87,9 @@ public class AWSEC2ImageParserTest {
                               .build()).description("alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml")
                   .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-c0fa1ea9")
                   .providerId("ami-c0fa1ea9").location(defaultLocation).version("20080905")
-                  .userMetadata(ImmutableMap.of("owner", "063491364108", "rootDeviceType", "instance-store")).build());
+                  .userMetadata(ImmutableMap.of("owner", "063491364108", "rootDeviceType", "instance-store"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(Iterables.get(result, 4).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             Iterables.get(result, 6),
@@ -102,7 +107,8 @@ public class AWSEC2ImageParserTest {
                      "rootDeviceType", "ebs",
                      "virtualizationType", "paravirtual",
                      "hypervisor", "xen"))
-                  .build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(Iterables.get(result, 6).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
    }
 
@@ -120,7 +126,8 @@ public class AWSEC2ImageParserTest {
                   .description("vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml")
                   .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-870de2ee")
                   .providerId("ami-870de2ee").location(defaultLocation).version("5622")
-                  .userMetadata(ImmutableMap.of("owner", "133804938231", "rootDeviceType", "instance-store")).build());
+                  .userMetadata(ImmutableMap.of("owner", "133804938231", "rootDeviceType", "instance-store"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
 
    }
 
@@ -143,7 +150,8 @@ public class AWSEC2ImageParserTest {
                      "rootDeviceType", "ebs",
                      "virtualizationType", "hvm",
                      "hypervisor", "xen"))
-                  .build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
    }
 
@@ -160,15 +168,17 @@ public class AWSEC2ImageParserTest {
                               .build()).description("rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml")
                   .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-ccb35ea5")
                   .providerId("ami-ccb35ea5").location(defaultLocation).version("4.4.10")
-                  .userMetadata(ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store")).build());
+                  .userMetadata(ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             new Gson().toJson(Iterables.get(result, 1)),
-            "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"name\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"paravirtual\",\"hypervisor\":\"xen\"}}");
+            "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"status\":\"AVAILABLE\",\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"name\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"paravirtual\",\"hypervisor\":\"xen\"}}");
 
       assertEquals(
             new Gson().toJson(Iterables.get(result, 2)),
-            "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"name\":\"RightImage Windows_2003_i386_v5.4.3\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"hvm\",\"hypervisor\":\"xen\"}}");
+            "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"status\":\"AVAILABLE\",\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"name\":\"RightImage Windows_2003_i386_v5.4.3\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"hvm\",\"hypervisor\":\"xen\"}}");
    }
 
    public void testParseAmznImage() {
@@ -190,7 +200,8 @@ public class AWSEC2ImageParserTest {
                      "rootDeviceType", "ebs",
                      "virtualizationType", "paravirtual",
                      "hypervisor", "xen"))
-                  .build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             Iterables.get(result, 3),
@@ -208,7 +219,9 @@ public class AWSEC2ImageParserTest {
                      "rootDeviceType", "ebs",
                      "virtualizationType", "paravirtual",
                      "hypervisor", "xen"))
-                  .build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(Iterables.get(result, 3).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
+
    }
 
    static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
@@ -221,9 +234,10 @@ public class AWSEC2ImageParserTest {
             .getInstance(Json.class));
 
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
-      EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
-            Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)),
-            Suppliers.ofInstance(defaultLocation), new AWSEC2ReviseParsedImage(map));
+      EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
+                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+                        .ofInstance(defaultLocation), new AWSEC2ReviseParsedImage(map));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }
 }

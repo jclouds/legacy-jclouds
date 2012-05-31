@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
@@ -62,19 +61,7 @@ public class Server extends Resource {
     */
    public static enum Status {
 
-      ACTIVE(NodeMetadata.Status.RUNNING), BUILD(NodeMetadata.Status.PENDING), REBUILD(NodeMetadata.Status.PENDING), SUSPENDED(
-               NodeMetadata.Status.SUSPENDED), RESIZE(NodeMetadata.Status.PENDING), VERIFY_RESIZE(
-               NodeMetadata.Status.PENDING), REVERT_RESIZE(NodeMetadata.Status.PENDING), PASSWORD(
-               NodeMetadata.Status.PENDING), REBOOT(NodeMetadata.Status.PENDING), HARD_REBOOT(
-               NodeMetadata.Status.PENDING), DELETED(NodeMetadata.Status.TERMINATED), UNKNOWN(
-               NodeMetadata.Status.UNRECOGNIZED), ERROR(NodeMetadata.Status.ERROR), UNRECOGNIZED(
-               NodeMetadata.Status.UNRECOGNIZED), PAUSED(NodeMetadata.Status.SUSPENDED);
-
-      protected final NodeMetadata.Status nodeState;
-
-      Status(NodeMetadata.Status nodeState) {
-         this.nodeState = nodeState;
-      }
+      ACTIVE, BUILD, REBUILD, SUSPENDED, PAUSED, RESIZE, VERIFY_RESIZE, REVERT_RESIZE, PASSWORD, REBOOT, HARD_REBOOT, DELETED, UNKNOWN, ERROR, UNRECOGNIZED;
 
       public String value() {
          return name();
@@ -86,10 +73,6 @@ public class Server extends Resource {
          } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }
-      }
-
-      public NodeMetadata.Status getNodeStatus() {
-         return nodeState;
       }
    }
 

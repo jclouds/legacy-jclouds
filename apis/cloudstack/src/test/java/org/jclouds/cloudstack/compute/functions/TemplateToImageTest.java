@@ -27,6 +27,7 @@ import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.parse.ListTemplatesResponseTest;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
 
@@ -51,20 +52,21 @@ public class TemplateToImageTest {
    // location free image
    static Image one = new ImageBuilder().id("2").providerId("2").name("CentOS 5.3(64-bit) no GUI (XenServer)")
          .operatingSystem(TemplateToOperatingSystemTest.one).description("CentOS 5.3(64-bit) no GUI (XenServer)")
-         .build();
+         .status(Status.AVAILABLE).build();
    // location free image
    static Image two = new ImageBuilder().id("4").providerId("4").name("CentOS 5.5(64-bit) no GUI (KVM)")
-         .operatingSystem(TemplateToOperatingSystemTest.two).description("CentOS 5.5(64-bit) no GUI (KVM)").build();
+         .operatingSystem(TemplateToOperatingSystemTest.two).description("CentOS 5.5(64-bit) no GUI (KVM)")
+         .status(Status.AVAILABLE).build();
    static Image three = new ImageBuilder().id("203").providerId("203").name("Windows 7 KVM")
          .operatingSystem(TemplateToOperatingSystemTest.three).description("Windows 7 KVM")
-         .location(ZoneToLocationTest.two).build();
+         .location(ZoneToLocationTest.two).status(Status.AVAILABLE).build();
    // location free image
    static Image four = new ImageBuilder().id("7").providerId("7").name("CentOS 5.3(64-bit) no GUI (vSphere)")
          .operatingSystem(TemplateToOperatingSystemTest.four).description("CentOS 5.3(64-bit) no GUI (vSphere)")
-         .build();
+         .status(Status.AVAILABLE).build();
    static Image five = new ImageBuilder().id("241").providerId("241").name("kvmdev4")
          .operatingSystem(TemplateToOperatingSystemTest.five).description("v5.6.28_Dev4")
-         .location(ZoneToLocationTest.two).build();
+         .location(ZoneToLocationTest.two).status(Status.AVAILABLE).build();
 
    @Test
    public void test() {

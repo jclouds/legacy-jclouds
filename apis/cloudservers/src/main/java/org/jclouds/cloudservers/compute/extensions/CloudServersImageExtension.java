@@ -52,7 +52,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * CloudServers implementation of {@link ImageExtension}
  * 
  * @author David Alves
- * 
+ * @see <a href="http://docs.rackspace.com/servers/api/v1.0/cs-devguide/content/Images-d1e4062.html">docs</a>
  */
 @Singleton
 public class CloudServersImageExtension implements ImageExtension {

@@ -32,7 +32,7 @@ public class TerremarkVCloudComputeServiceContextModuleTest {
    public void testAllStatusCovered() {
 
       for (Status state : EnumSet.allOf(Status.class)) {
-         assert TerremarkVCloudComputeServiceContextModule.VAPPSTATUS_TO_NODESTATE.containsKey(state) : state;
+         assert TerremarkVCloudComputeServiceContextModule.toPortableNodeStatus.containsKey(state) : state;
       }
 
    }

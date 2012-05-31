@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils;
@@ -43,6 +44,7 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.domain.Image.Architecture;
+import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.logging.Logger;
 
@@ -60,17 +62,21 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
+   
+   private final Map<ImageState, Status> toPortableImageStatus;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Supplier<Set<? extends Location>> locations;
    private final Supplier<Location> defaultLocation;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
    private final ReviseParsedImage reviseParsedImage;
 
+
    @Inject
-   public EC2ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
+   public EC2ImageParser(Map<ImageState, Image.Status> toPortableImageStatus,
+            PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
             Map<OsFamily, Map<String, String>> osVersionMap, @Memoized Supplier<Set<? extends Location>> locations,
             Supplier<Location> defaultLocation, ReviseParsedImage reviseParsedImage) {
+      this.toPortableImageStatus = checkNotNull(toPortableImageStatus, "toPortableImageStatus");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
@@ -120,6 +126,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
                   from.getRegion()).parent(defaultLocation.get()).build());
       }
       builder.operatingSystem(osBuilder.build());
+      builder.status(toPortableImageStatus.get(from.getImageState()));
       return builder.build();
    }
 

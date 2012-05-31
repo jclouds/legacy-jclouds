@@ -163,7 +163,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
    protected AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Set<org.jclouds.compute.domain.Image> images,
             Map<String, Credentials> credentialStore) {
-      Map<InstanceState, Status> instanceToNodeStatus = EC2ComputeServiceDependenciesModule.instanceToNodeStatus;
+      Map<InstanceState, Status> instanceToNodeStatus = EC2ComputeServiceDependenciesModule.toPortableNodeStatus;
 
       final Map<RegionAndName, ? extends Image> backing = ImagesToRegionAndIdMap.imagesToMap(images);
 

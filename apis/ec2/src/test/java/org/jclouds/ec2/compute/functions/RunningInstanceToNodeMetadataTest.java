@@ -68,7 +68,7 @@ public class RunningInstanceToNodeMetadataTest {
    public void testAllStatesCovered() {
 
       for (InstanceState status : InstanceState.values()) {
-         assert EC2ComputeServiceDependenciesModule.instanceToNodeStatus.containsKey(status) : status;
+         assert EC2ComputeServiceDependenciesModule.toPortableNodeStatus.containsKey(status) : status;
       }
 
    }
@@ -210,7 +210,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small().build()), ImmutableSet
                .of(provider), ImmutableMap.<String, Credentials> of(),
-               EC2ComputeServiceDependenciesModule.instanceToNodeStatus, instanceToImage);
+               EC2ComputeServiceDependenciesModule.toPortableNodeStatus, instanceToImage);
 
       RunningInstance server = firstInstanceFromResource("/describe_instances_running.xml");
 
@@ -245,7 +245,7 @@ public class RunningInstanceToNodeMetadataTest {
    protected RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, final Set<org.jclouds.compute.domain.Image> images,
             Map<String, Credentials> credentialStore) {
-      Map<InstanceState, Status> instanceToNodeStatus = EC2ComputeServiceDependenciesModule.instanceToNodeStatus;
+      Map<InstanceState, Status> instanceToNodeStatus = EC2ComputeServiceDependenciesModule.toPortableNodeStatus;
       
       CacheLoader<RegionAndName, Image> getRealImage = new CacheLoader<RegionAndName, Image>() {
 

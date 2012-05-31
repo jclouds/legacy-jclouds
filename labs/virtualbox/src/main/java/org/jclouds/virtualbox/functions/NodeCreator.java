@@ -177,7 +177,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
       nodeMetadataBuilder.id(clone.getName());
-      nodeMetadataBuilder.status(VirtualBoxComputeServiceContextModule.machineToNodeStatus.get(clone.getState()));
+      nodeMetadataBuilder.status(VirtualBoxComputeServiceContextModule.toPortableNodeStatus.get(clone.getState()));
       nodeMetadataBuilder.publicAddresses(ImmutableSet.of(machineUtils.getIpAddressFromHostOnlyNIC(clone.getName())));
       
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);

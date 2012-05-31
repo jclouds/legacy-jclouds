@@ -61,6 +61,7 @@ import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.compute.predicates.GetImageWhenImageInZoneHasActiveStatusPredicateWithResult;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
@@ -72,6 +73,7 @@ import org.jclouds.openstack.nova.v1_1.predicates.FindSecurityGroupWithNameAndRe
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -216,6 +218,46 @@ public class NovaComputeServiceContextModule extends
          }
       }, locations);
 
+   }
+
+   @VisibleForTesting
+   public static final Map<Server.Status, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
+            .<Server.Status, NodeMetadata.Status> builder().put(Server.Status.ACTIVE, NodeMetadata.Status.RUNNING)//
+            .put(Server.Status.SUSPENDED, NodeMetadata.Status.SUSPENDED)//
+            .put(Server.Status.DELETED, NodeMetadata.Status.TERMINATED)//
+            .put(Server.Status.PAUSED, NodeMetadata.Status.SUSPENDED)//
+            .put(Server.Status.RESIZE, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.VERIFY_RESIZE, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.REVERT_RESIZE, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.BUILD, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.PASSWORD, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.REBUILD, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.ERROR, NodeMetadata.Status.ERROR)//
+            .put(Server.Status.REBOOT, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.HARD_REBOOT, NodeMetadata.Status.PENDING)//
+            .put(Server.Status.UNKNOWN, NodeMetadata.Status.UNRECOGNIZED)//
+            .put(Server.Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).build();
+
+   @Singleton
+   @Provides
+   protected Map<Server.Status, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
+   }
+   
+   @VisibleForTesting
+   public static final Map<org.jclouds.openstack.nova.v1_1.domain.Image.Status, Image.Status> toPortableImageStatus = ImmutableMap
+            .<org.jclouds.openstack.nova.v1_1.domain.Image.Status, Image.Status> builder()
+            .put(org.jclouds.openstack.nova.v1_1.domain.Image.Status.ACTIVE, Image.Status.AVAILABLE)
+            .put(org.jclouds.openstack.nova.v1_1.domain.Image.Status.SAVING, Image.Status.PENDING)
+            .put(org.jclouds.openstack.nova.v1_1.domain.Image.Status.DELETED, Image.Status.DELETED)
+            .put(org.jclouds.openstack.nova.v1_1.domain.Image.Status.ERROR, Image.Status.ERROR)
+            .put(org.jclouds.openstack.nova.v1_1.domain.Image.Status.UNKNOWN, Image.Status.UNRECOGNIZED)
+            .put(org.jclouds.openstack.nova.v1_1.domain.Image.Status.UNRECOGNIZED, Image.Status.UNRECOGNIZED).build();
+
+   @Singleton
+   @Provides
+   protected Map<org.jclouds.openstack.nova.v1_1.domain.Image.Status, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
    }
    
    @Override

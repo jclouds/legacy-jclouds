@@ -39,6 +39,7 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
@@ -75,7 +76,7 @@ public class ServerInZoneToNodeMetadataTest {
             .location(zone).build();
       Image existingImage = new ImageBuilder().id("az-1.region-a.geo-1/FOOOOOOOO")
             .operatingSystem(OperatingSystem.builder().family(OsFamily.LINUX).description("foobuntu").build())
-            .providerId("FOOOOOOOO").description("foobuntu").location(zone).build();
+            .providerId("FOOOOOOOO").description("foobuntu").location(zone).status(Image.Status.AVAILABLE).build();
 
       checkHardwareAndImageStatus(null, existingHardware, "az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f6f006e54",
             null, existingImage);
@@ -88,7 +89,8 @@ public class ServerInZoneToNodeMetadataTest {
             .providerId("52415800-8b69-11e0-9b19-734f216543fd").location(zone).build();
       Image existingImage = new ImageBuilder().id("az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f6f006e54")
             .operatingSystem(OperatingSystem.builder().family(OsFamily.LINUX).description("foobuntu").build())
-            .providerId("52415800-8b69-11e0-9b19-734f6f006e54").description("foobuntu").location(zone).build();
+            .providerId("52415800-8b69-11e0-9b19-734f6f006e54").description("foobuntu").status(Image.Status.AVAILABLE)
+            .location(zone).build();
 
       checkHardwareAndImageStatus(existingHardware, existingHardware, existingImage.getId(),
             existingImage.getOperatingSystem(), existingImage);
@@ -105,9 +107,10 @@ public class ServerInZoneToNodeMetadataTest {
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
-      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex,
-            Suppliers.<Set<? extends Image>> ofInstance(images),
-            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(
+               NovaComputeServiceContextModule.toPortableNodeStatus, locationIndex, Suppliers
+                        .<Set<? extends Image>> ofInstance(images), Suppliers
+                        .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
 
@@ -127,7 +130,8 @@ public class ServerInZoneToNodeMetadataTest {
 
       assertEquals(convertedNodeMetadata.getHardware(), expectedHardware);
 
-      assertEquals(serverToConvert.getStatus().getNodeStatus(), convertedNodeMetadata.getStatus());
+      assertEquals(NovaComputeServiceContextModule.toPortableNodeStatus.get(serverToConvert.getStatus()),
+               convertedNodeMetadata.getStatus());
 
       assertNotNull(convertedNodeMetadata.getPrivateAddresses());
       assertEquals(convertedNodeMetadata.getPrivateAddresses(), ImmutableSet.of("10.176.42.16"));
@@ -151,9 +155,10 @@ public class ServerInZoneToNodeMetadataTest {
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
-      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex,
-            Suppliers.<Set<? extends Image>> ofInstance(images),
-            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(
+               NovaComputeServiceContextModule.toPortableNodeStatus, locationIndex, Suppliers
+                        .<Set<? extends Image>> ofInstance(images), Suppliers
+                        .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
 

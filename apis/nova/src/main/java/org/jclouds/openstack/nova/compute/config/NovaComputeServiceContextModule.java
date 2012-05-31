@@ -38,6 +38,7 @@ import org.jclouds.openstack.nova.compute.functions.NovaImageToOperatingSystem;
 import org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadata;
 import org.jclouds.openstack.nova.compute.strategy.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.domain.ImageStatus;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
 
@@ -80,7 +81,7 @@ public class NovaComputeServiceContextModule extends
    }
    
    @VisibleForTesting
-   public static final Map<ServerStatus, Status> serverToNodeStatus = ImmutableMap
+   public static final Map<ServerStatus, Status> toPortableNodeStatus = ImmutableMap
             .<ServerStatus, Status> builder().put(ServerStatus.ACTIVE, Status.RUNNING)//
             .put(ServerStatus.SUSPENDED, Status.SUSPENDED)//
             .put(ServerStatus.DELETED, Status.TERMINATED)//
@@ -100,8 +101,25 @@ public class NovaComputeServiceContextModule extends
 
    @Singleton
    @Provides
-   Map<ServerStatus, Status> provideServerToNodeStatus() {
-      return serverToNodeStatus;
+   Map<ServerStatus, Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
    }
+   
+   @VisibleForTesting
+   public static final Map<ImageStatus, Image.Status> toPortableImageStatus = ImmutableMap
+            .<ImageStatus, Image.Status> builder()
+            .put(ImageStatus.ACTIVE, Image.Status.AVAILABLE)
+            .put(ImageStatus.SAVING, Image.Status.PENDING)
+            .put(ImageStatus.PREPARING, Image.Status.PENDING)
+            .put(ImageStatus.QUEUED, Image.Status.PENDING)
+            .put(ImageStatus.FAILED, Image.Status.ERROR)
+            .put(ImageStatus.UNKNOWN, Image.Status.UNRECOGNIZED)
+            .put(ImageStatus.UNRECOGNIZED, Image.Status.UNRECOGNIZED).build();
 
+   @Singleton
+   @Provides
+   Map<ImageStatus, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
+   }
+   
 }
