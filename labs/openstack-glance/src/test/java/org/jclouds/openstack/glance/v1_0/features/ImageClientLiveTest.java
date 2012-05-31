@@ -23,13 +23,9 @@ import static org.jclouds.openstack.glance.v1_0.options.CreateImageOptions.Build
 import static org.jclouds.openstack.glance.v1_0.options.CreateImageOptions.Builder.diskFormat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
-import java.io.File;
 import java.util.Set;
 
-import org.jclouds.io.Payload;
-import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;
 import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
@@ -40,7 +36,6 @@ import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 /**
@@ -64,8 +59,8 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
 
    private void checkImage(Image image) {
       assert image.getId() != null : image;
-      assert image.getSize().isPresent() : image;
-      assert image.getChecksum().isPresent() : image;
+      assert image.getName() != null : image;
+      assert image.getLinks() != null : image;
    }
 
    @Test
@@ -85,7 +80,8 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
 
    private void checkImageDetails(ImageDetails image) {
       checkImage(image);
-      // TODO
+      assertTrue(image.getMinDisk() >= 0);
+      assertTrue(image.getMinRam() >= 0);
    }
 
    private void checkImageDetailsEqual(ImageDetails image, ImageDetails newDetails) {
