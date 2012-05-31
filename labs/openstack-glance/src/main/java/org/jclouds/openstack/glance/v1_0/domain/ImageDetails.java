@@ -246,6 +246,10 @@ public class ImageDetails extends Image {
       return this.location;
    }
 
+   public Optional<String> getOwner() {
+      return owner;
+   }
+   
    public Date getUpdatedAt() {
       return this.updatedAt;
    }

@@ -48,10 +48,27 @@ public class BaseListOptions extends BaseHttpRequestOptions {
     * Indicates where to begin listing. The list will only include objects that occur after the
     * offset. This is convenient for pagination: To get the next page of results use the last result
     * number of the current page + current page offset as the offset.
+    * <p/>
+    * This isn't supported by newer openstack API implementations
+    *
+    * @see #marker(String) for the new mechanism to set the page offset
     */
    public BaseListOptions startAt(long offset) {
       checkState(offset >= 0, "offset must be >= 0");
       queryParameters.put("offset", Long.toString(checkNotNull(offset, "offset")));
+      return this;
+   }
+
+   /**
+    * The marker parameter is the ID of the last item in the previous list
+    * (i.e. return the page of items after the marker).
+    * <p/>
+    * This is only supported by newer openstack API implementations
+    *
+    * @see #startAt for the old mechanism to set the page offset
+    */
+   public BaseListOptions marker(String marker) {
+      queryParameters.put("marker", checkNotNull(marker, "marker"));
       return this;
    }
 
@@ -81,7 +98,15 @@ public class BaseListOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see BaseListOptions#maxResults(long)
+       * @see BaseListOptions#marker
+       */
+      public static BaseListOptions marker(String marker) {
+         BaseListOptions options = new BaseListOptions();
+         return options.marker(marker);
+      }
+
+      /**
+       * @see BaseListOptions#maxResults
        */
       public static BaseListOptions maxResults(int maxKeys) {
          BaseListOptions options = new BaseListOptions();
