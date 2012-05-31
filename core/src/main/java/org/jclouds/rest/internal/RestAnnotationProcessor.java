@@ -472,8 +472,7 @@ public class RestAnnotationProcessor<T> {
          }
 
          Payload payload = null;
-         HttpRequestOptions options = findOptionsIn(method, args);
-         if (options != null) {
+         for(HttpRequestOptions options : findOptionsIn(method, args)) {
             injector.injectMembers(options);// TODO test case
             for (Entry<String, String> header : options.buildRequestHeaders().entries()) {
                headers.put(header.getKey(), Strings2.replaceTokens(header.getValue(), tokenValues.entries()));
@@ -1051,30 +1050,26 @@ public class RestAnnotationProcessor<T> {
    }
 
   //TODO: change to LoadingCache<ClassMethodArgs, HttpRequestOptions and move this logic to the CacheLoader.
-  private HttpRequestOptions findOptionsIn(Method method, Object... args) throws ExecutionException {
-      for (int index : methodToIndexesOfOptions.get(method)) {
+  private Set<HttpRequestOptions> findOptionsIn(Method method, Object... args) throws ExecutionException {
+     ImmutableSet.Builder<HttpRequestOptions> result = ImmutableSet.builder();
+     for (int index : methodToIndexesOfOptions.get(method)) {
          if (args.length >= index + 1) {// accomodate varargs
             if (args[index] instanceof Object[]) {
-               Object[] options = (Object[]) args[index];
-               if (options.length == 0) {
-               } else if (options.length == 1) {
-                  if (options[0] instanceof HttpRequestOptions) {
-                     HttpRequestOptions binder = (HttpRequestOptions) options[0];
-                     injector.injectMembers(binder);
-                     return binder;
-                  }
-               } else {
-                  if (options[0] instanceof HttpRequestOptions) {
-                     throw new IllegalArgumentException("we currently do not support multiple varargs options in: "
-                           + method.getName());
+               for (Object option : (Object[]) args[index]) {
+                  if (option instanceof HttpRequestOptions) {
+                     result.add((HttpRequestOptions) option);
                   }
                }
             } else {
-               return (HttpRequestOptions) args[index];
+               for (; index < args.length; index++) {
+                  if (args[index] instanceof HttpRequestOptions) {
+                     result.add((HttpRequestOptions) args[index]);
+                  }
+               }
             }
          }
       }
-      return null;
+      return result.build();
    }
 
    public Multimap<String, String> buildHeaders(Collection<Entry<String, String>> tokenValues, Method method,

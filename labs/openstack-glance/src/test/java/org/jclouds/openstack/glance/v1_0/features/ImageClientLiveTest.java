@@ -18,17 +18,29 @@
  */
 package org.jclouds.openstack.glance.v1_0.features;
 
+
+import static org.jclouds.openstack.glance.v1_0.options.CreateImageOptions.Builder.containerFormat;
+import static org.jclouds.openstack.glance.v1_0.options.CreateImageOptions.Builder.diskFormat;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;
+import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
 import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.internal.BaseGlanceClientLiveTest;
+import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
+import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
+ * @author Adam Lowe
  */
 @Test(groups = "live", testName = "ImageClientLiveTest")
 public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
@@ -37,7 +49,7 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
    public void testList() throws Exception {
       for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
          ImageClient client = glanceContext.getApi().getImageClientForRegion(zoneId);
-         Set<Image> response = client.list();
+         Set<Image> response = client.list(ListImageOptions.Builder.limit(100));
          assert null != response;
          for (Image image : response) {
             checkImage(image);
@@ -47,10 +59,8 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
 
    private void checkImage(Image image) {
       assert image.getId() != null : image;
-      assert image.getSize().isPresent() : image;
-      assert image.getChecksum().isPresent() : image;
-      assert image.getContainerFormat().isPresent() : image;
-      assert image.getContainerFormat().isPresent() : image;
+      assert image.getName() != null : image;
+      assert image.getLinks() != null : image;
    }
 
    @Test
@@ -69,13 +79,65 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
    }
 
    private void checkImageDetails(ImageDetails image) {
-      //TODO
+      checkImage(image);
+      assertTrue(image.getMinDisk() >= 0);
+      assertTrue(image.getMinRam() >= 0);
    }
 
    private void checkImageDetailsEqual(ImageDetails image, ImageDetails newDetails) {
       assertEquals(newDetails.getId(), image.getId());
       assertEquals(newDetails.getName(), image.getName());
       assertEquals(newDetails.getLinks(), image.getLinks());
+   }
+
+   @Test
+   public void testCreateUpdateAndDeleteImage() {
+      StringPayload imageData = new StringPayload("This isn't really an image!");
+      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
+         ImageClient client = glanceContext.getApi().getImageClientForRegion(zoneId);
+         ImageDetails details = client.create("jclouds-live-test", imageData, diskFormat(DiskFormat.RAW), containerFormat(ContainerFormat.BARE));
+         assertEquals(details.getName(), "jclouds-live-test");
+         assertEquals(details.getSize().get().longValue(), imageData.getRawContent().length());
+         
+         details = client.update(details.getId(), UpdateImageOptions.Builder.name("jclouds-live-test2"), UpdateImageOptions.Builder.minDisk(10));
+         assertEquals(details.getName(), "jclouds-live-test2");
+         assertEquals(details.getMinDisk(), 10);
+         
+         Image fromListing = Iterables.getOnlyElement(client.list(ListImageOptions.Builder.name("jclouds-live-test2"), ListImageOptions.Builder.limit(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
+         assertEquals(fromListing.getId(), details.getId());
+         assertEquals(fromListing.getSize(), details.getSize());
+
+         assertEquals(Iterables.getOnlyElement(client.listInDetail(ListImageOptions.Builder.name("jclouds-live-test2"))), details);
+
+         assertTrue(client.delete(details.getId()));
+         
+         assertTrue(client.list(ListImageOptions.Builder.name("jclouds-live-test2")).isEmpty());
+      }
+   }
+
+   @Test
+   public void testReserveUploadAndDeleteImage() {
+      StringPayload imageData = new StringPayload("This isn't an image!");
+      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
+         ImageClient client = glanceContext.getApi().getImageClientForRegion(zoneId);
+         ImageDetails details = client.reserve("jclouds-live-res-test", diskFormat(DiskFormat.RAW), containerFormat(ContainerFormat.BARE));
+         assertEquals(details.getName(), "jclouds-live-res-test");
+ 
+         details = client.upload(details.getId(), imageData, UpdateImageOptions.Builder.name("jclouds-live-res-test2"), UpdateImageOptions.Builder.minDisk(10));
+         assertEquals(details.getName(), "jclouds-live-res-test2");
+         assertEquals(details.getSize().get().longValue(), imageData.getRawContent().length());
+         assertEquals(details.getMinDisk(), 10);
+
+         Image fromListing = Iterables.getOnlyElement(client.list(ListImageOptions.Builder.name("jclouds-live-res-test2"), ListImageOptions.Builder.limit(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
+         assertEquals(fromListing.getId(), details.getId());
+         assertEquals(fromListing.getSize(), details.getSize());
+
+         assertEquals(Iterables.getOnlyElement(client.listInDetail(ListImageOptions.Builder.name("jclouds-live-res-test2"))), details);
+
+         assertTrue(client.delete(details.getId()));
+
+         assertTrue(client.list(ListImageOptions.Builder.name("jclouds-live-res-test2")).isEmpty());
+      }
    }
 
 }

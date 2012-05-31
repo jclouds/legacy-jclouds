@@ -81,7 +81,7 @@ public class BaseListOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see BaseListOptions#maxResults(long)
+       * @see BaseListOptions#maxResults
        */
       public static BaseListOptions maxResults(int maxKeys) {
          BaseListOptions options = new BaseListOptions();
