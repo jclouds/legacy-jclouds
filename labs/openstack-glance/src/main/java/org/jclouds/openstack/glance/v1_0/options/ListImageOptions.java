@@ -18,14 +18,14 @@
  */
 package org.jclouds.openstack.glance.v1_0.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.openstack.glance.v1_0.options.ImageField.*;
 
-import java.util.Date;
-
+import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;
 import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
 import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
-import org.jclouds.openstack.options.BaseListOptions;
 
 /**
  * <h2></h2>Usage</h2> The recommended way to instantiate a ListImageOptions object is to statically import
@@ -36,13 +36,33 @@ import org.jclouds.openstack.options.BaseListOptions;
  *
  *
  * // this will list the first 10 images with the name "name", minimum required disk of 5GB.
- * list = client.list(name("newName"), maxResults(10), minDisk(5));
+ * list = client.list(name("newName"), limit(10), minDisk(5));
  * <code>
  * 
  * @author Adam Lowe
  * @see <a href="http://glance.openstack.org/glanceapi.html"/>
  */
-public class ListImageOptions extends BaseListOptions {
+public class ListImageOptions extends BaseHttpRequestOptions {
+   public static final ListImageOptions NONE = new ListImageOptions();
+
+   /**
+    * Given a string value x, return object names greater in value than the specified marker.
+    */
+   public ListImageOptions marker(String marker) {
+      queryParameters.put("marker", checkNotNull(marker, "marker"));
+      return this;
+   }
+
+   /**
+    * For an integer value n, limits the number of results to n values.
+    */
+   public ListImageOptions limit(int limit) {
+      checkState(limit >= 0, "limit must be >= 0");
+      checkState(limit <= 10000, "limit must be <= 10000");
+      queryParameters.put("limit", Integer.toString(limit));
+      return this;
+   }
+
    /**
     * Return only those images having a matching name attribute
     */
@@ -228,24 +248,18 @@ public class ListImageOptions extends BaseListOptions {
       }
 
       /**
-       * @see BaseListOptions#maxResults
+       * @see ListImageOptions#limit
        */
-      public static ListImageOptions maxResults(int limit) {
-         return ListImageOptions.class.cast(new ListImageOptions().maxResults(limit));
+      public static ListImageOptions limit(int limit) {
+         return new ListImageOptions().limit(limit);
       }
 
       /**
-       * @see BaseListOptions#marker
+       * @see ListImageOptions#marker
        */
       public static ListImageOptions marker(String marker) {
-         return ListImageOptions.class.cast(new ListImageOptions().marker(marker));
-      }
-
-      /**
-       * @see BaseListOptions#changesSince
-       */
-      public static ListImageOptions changesSince(Date ifModifiedSince) {
-         return ListImageOptions.class.cast(new BaseListOptions().changesSince(ifModifiedSince));
+         ListImageOptions options = new ListImageOptions();
+         return options.marker(marker);
       }
    }
 }

@@ -49,7 +49,7 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
    public void testList() throws Exception {
       for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
          ImageClient client = glanceContext.getApi().getImageClientForRegion(zoneId);
-         Set<Image> response = client.list(ListImageOptions.Builder.maxResults(100));
+         Set<Image> response = client.list(ListImageOptions.Builder.limit(100));
          assert null != response;
          for (Image image : response) {
             checkImage(image);
@@ -103,7 +103,7 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
          assertEquals(details.getName(), "jclouds-live-test2");
          assertEquals(details.getMinDisk(), 10);
          
-         Image fromListing = Iterables.getOnlyElement(client.list(ListImageOptions.Builder.name("jclouds-live-test2"), ListImageOptions.Builder.maxResults(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
+         Image fromListing = Iterables.getOnlyElement(client.list(ListImageOptions.Builder.name("jclouds-live-test2"), ListImageOptions.Builder.limit(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
          assertEquals(fromListing.getId(), details.getId());
          assertEquals(fromListing.getSize(), details.getSize());
 
@@ -128,7 +128,7 @@ public class ImageClientLiveTest extends BaseGlanceClientLiveTest {
          assertEquals(details.getSize().get().longValue(), imageData.getRawContent().length());
          assertEquals(details.getMinDisk(), 10);
 
-         Image fromListing = Iterables.getOnlyElement(client.list(ListImageOptions.Builder.name("jclouds-live-res-test2"), ListImageOptions.Builder.maxResults(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
+         Image fromListing = Iterables.getOnlyElement(client.list(ListImageOptions.Builder.name("jclouds-live-res-test2"), ListImageOptions.Builder.limit(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
          assertEquals(fromListing.getId(), details.getId());
          assertEquals(fromListing.getSize(), details.getSize());
 
