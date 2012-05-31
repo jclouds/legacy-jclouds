@@ -204,7 +204,7 @@ public class BaseComputeService implements ComputeService {
 
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
             customizationResponses);
-      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "createNodesInGroup("
+      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, timeouts.nodeRunning, logger, "createNodesInGroup("
             + group + ")");
       Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.always(template.getOptions().getRunScript());
       badNodes = Maps2.transformKeys(badNodes, fn);
