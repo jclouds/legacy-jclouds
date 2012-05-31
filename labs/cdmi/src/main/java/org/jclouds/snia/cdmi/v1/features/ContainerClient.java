@@ -20,19 +20,23 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.PathParam;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.snia.cdmi.v1.domain.Container;
+import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 
 /**
  * Container Object Resource Operations
  * 
  * @see ContainerAsyncClient
- * @author Adrian Cole
+ * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerClient {
-
-   Container getContainer(String containerName);
+	Container createContainer(String containerName,CreateContainerOptions... options);
+    Container getContainer(String containerName);
+    void deleteContainer(String containerName);
 
 }
