@@ -209,7 +209,12 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             connection.setRequestProperty(header, value);
          }
       }
-      connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
+
+      String host = request.getEndpoint().getHost();
+      if(request.getEndpoint().getPort() != -1) {
+         host += ":" + request.getEndpoint().getPort();
+      }
+      connection.setRequestProperty(HttpHeaders.HOST, host);
       connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
 
       if (request.getPayload() != null) {
