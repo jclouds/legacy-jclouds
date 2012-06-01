@@ -65,7 +65,11 @@ public class BindAsHostPrefixIfConfigured implements Binder {
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       if (isVhostStyle) {
          request = bindAsHostPrefix.bindToRequest(request, payload);
-         return ModifyRequest.replaceHeader(request, HttpHeaders.HOST, request.getEndpoint().getHost());
+         String host = request.getEndpoint().getHost();
+         if (request.getEndpoint().getPort() != -1) {
+            host += ":" + request.getEndpoint().getPort();
+         }
+         return ModifyRequest.replaceHeader(request, HttpHeaders.HOST, host);
       } else {
          UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
          StringBuilder path = new StringBuilder(Strings2.urlEncode(request.getEndpoint().getPath(), S3AsyncClient.class
