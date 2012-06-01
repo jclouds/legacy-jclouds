@@ -85,8 +85,12 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
          }
 
          if (currentRequest.getFirstHeaderOrNull(HOST) != null && redirectionUrl.getHost() != null) {
+            String host = redirectionUrl.getHost();
+            if (redirectionUrl.getPort() != -1) {
+               host += ":" + redirectionUrl.getPort();
+            }
             command.setCurrentRequest(ModifyRequest.replaceHeader(currentRequest, HOST,
-                     singletonList(redirectionUrl.getHost())).toBuilder().endpoint(redirectionUrl).build());
+                  singletonList(host)).toBuilder().endpoint(redirectionUrl).build());
          } else {
             command.setCurrentRequest(currentRequest.toBuilder().endpoint(redirectionUrl).build());
          }
