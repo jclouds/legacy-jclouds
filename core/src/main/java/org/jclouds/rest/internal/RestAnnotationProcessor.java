@@ -409,7 +409,9 @@ public class RestAnnotationProcessor<T> {
       }
       this.caller = caller;
       try {
-         callerEndpoint = getEndpointFor(caller.getMethod(), caller.getArgs(), injector);
+         UriBuilder builder = uriBuilderProvider.get().uri(getEndpointFor(caller.getMethod(), caller.getArgs(), injector));
+         Multimap<String, String> tokenValues = addPathAndGetTokens(caller.getMethod().getDeclaringClass(), caller.getMethod(), caller.getArgs(), builder);
+         callerEndpoint = builder.buildFromEncodedMap(Maps2.convertUnsafe(tokenValues));
       } catch (IllegalStateException e) {
       } catch (ExecutionException e) {
          Throwables.propagate(e);
@@ -785,7 +787,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static URI addHostIfMissing(URI original, URI withHost) {
-      checkNotNull(withHost, "URI witHost cannot be null");
+      checkNotNull(withHost, "URI withHost cannot be null");
       checkArgument(withHost.getHost() != null, "URI withHost must have host:" + withHost);
 
       if (original == null)
