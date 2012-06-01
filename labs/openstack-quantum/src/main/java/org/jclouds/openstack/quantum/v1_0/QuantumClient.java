@@ -21,6 +21,9 @@ package org.jclouds.openstack.quantum.v1_0;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
@@ -59,5 +62,7 @@ public interface QuantumClient {
     * Provides synchronous access to Port features.
     */
    @Delegate
-   PortClient getPortClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   @Path("/networks/{net}")
+   PortClient getPortClientForRegionAndNetwork(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+                                               @PathParam("net") String networkId);
 }

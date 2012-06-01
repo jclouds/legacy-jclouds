@@ -55,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/networks")
+@Path("/ports")
 public interface PortAsyncClient {
 
    /**
@@ -63,93 +63,90 @@ public interface PortAsyncClient {
     */
    @GET
    @SelectJson("ports")
-   @Path("/{net}/ports")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Reference>> listReferences(@PathParam("net") String networkId);
+   ListenableFuture<Set<Reference>> listReferences();
 
    /**
     * @see PortClient#list
     */
    @GET
    @SelectJson("ports")
-   @Path("/{net}/ports/detail")
+   @Path("/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Port>> list(@PathParam("net") String networkId);
+   ListenableFuture<Set<Port>> list();
 
    /**
-    * @see PortClient#show
+    * @see PortClient#get
     */
    @GET
    @SelectJson("port")
-   @Path("/{net}/ports/{id}")
+   @Path("/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Port> show(@PathParam("net") String networkId, @PathParam("id") String id);
+   ListenableFuture<Port> get(@PathParam("id") String id);
 
    /**
-    * @see PortClient#showDetails
+    * @see PortClient#getDetails
     */
    @GET
    @SelectJson("port")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/{net}/ports/{id}/detail")
+   @Path("/{id}/detail")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PortDetails> showDetails(@PathParam("net") String networkId, @PathParam("id") String id);
+   ListenableFuture<PortDetails> getDetails(@PathParam("id") String id);
 
    /**
-    * @see PortClient#create(String) 
+    * @see PortClient#create()
     */
    @POST
    @SelectJson("port")
-   @Path("/{net}/ports")
-   ListenableFuture<Reference> create(@PathParam("net") String networkId);
+   ListenableFuture<Reference> create();
 
    /**
-    * @see PortClient#create(String, org.jclouds.openstack.quantum.v1_0.domain.Port.State) 
+    * @see PortClient#create(org.jclouds.openstack.quantum.v1_0.domain.Port.State) 
     */
    @POST
    @SelectJson("port")
-   @Path("/{net}/ports")
    @WrapWith("port")
-   ListenableFuture<Port> create(@PathParam("net") String networkId, @PayloadParam("state") Port.State state);
+   ListenableFuture<Port> create(@PayloadParam("state") Port.State state);
 
    /**
-    * @see PortClient#update
+    * @see PortClient#updateState
     */
    @PUT
-   @Path("/{net}/ports/{id}")
+   @Path("/{id}")
    @WrapWith("port")
-   ListenableFuture<Boolean> update(@PathParam("net") String networkId, @PathParam("id") String id, @PayloadParam("state") Port.State state);
+   ListenableFuture<Boolean> updateState(@PathParam("id") String id, @PayloadParam("state") Port.State state);
 
    /**
     * @see PortClient#delete
     */
    @DELETE
-   @Path("/{net}/ports/{id}")
-   ListenableFuture<Boolean> delete(@PathParam("net") String networkId, @PathParam("id") String id);
+   @Path("/{id}")
+   ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
    /**
     * @see PortClient#showAttachment
     */
    @GET
    @SelectJson("attachment")
-   @Path("/{net}/ports/{portId}/attachment")
+   @Path("/{id}/attachment")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)   
-   ListenableFuture<Attachment> showAttachment(@PathParam("net") String networkId, @PathParam("portId") String portId);
+   ListenableFuture<Attachment> showAttachment(@PathParam("id") String portId);
 
    /**
     * @see PortClient#plugAttachment
     */
    @PUT
-   @Path("/{net}/ports/{portId}/attachment")
+   @Path("/{id}/attachment")
    @WrapWith("attachment")
-   ListenableFuture<Boolean> plugAttachment(@PathParam("net") String networkId, @PathParam("portId") String portId,
+   ListenableFuture<Boolean> plugAttachment(@PathParam("id") String portId,
                                             @PayloadParam("id") String attachmentId);
 
    /**
     * @see PortClient#unplugAttachment
     */
    @DELETE
-   @Path("/{net}/ports/{portId}/attachment")
-   ListenableFuture<Boolean> unplugAttachment(@PathParam("net") String networkId, @PathParam("portId") String portId);
+   @Path("{id}/attachment")
+   ListenableFuture<Boolean> unplugAttachment(@PathParam("id") String portId);
 
 }

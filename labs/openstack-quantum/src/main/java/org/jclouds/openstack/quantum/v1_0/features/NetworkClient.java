@@ -54,12 +54,12 @@ public interface NetworkClient {
    /**
     * Returns the specific network.
     */
-   Network show(String id);
+   Network get(String id);
 
    /**
     * Returns the details of the specific network.
     */
-   NetworkDetails showDetails(String id);
+   NetworkDetails getDetails(String id);
 
    /**
     * Create a new network with the specified symbolic name
@@ -72,7 +72,7 @@ public interface NetworkClient {
     * @param id   the id of the Network to modify
     * @param name the new name for the Network
     */
-   Boolean update(String id, String name);
+   Boolean rename(String id, String name);
 
    /**
     * Deletes the specified network

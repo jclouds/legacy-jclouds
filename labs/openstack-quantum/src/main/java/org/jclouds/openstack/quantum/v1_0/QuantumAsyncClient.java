@@ -20,6 +20,9 @@ package org.jclouds.openstack.quantum.v1_0;
 
 import java.util.Set;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpoint;
@@ -57,5 +60,7 @@ public interface QuantumAsyncClient {
     * Provides asynchronous access to Port features.
     */
    @Delegate
-   PortAsyncClient getPortClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   @Path("/networks/{net}")
+   PortAsyncClient getPortClientForRegionAndNetwork(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+                                                    @PathParam("net") String networkId);
 }

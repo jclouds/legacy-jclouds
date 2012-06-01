@@ -53,9 +53,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports").build(),
             standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"id\": \"a6058a59-fa8c-46cc-bac8-08904e6ff0a5\"}]}", APPLICATION_JSON)).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
-      Set<Reference> nets = client.listReferences("1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
+      Set<Reference> nets = client.listReferences();
       assertEquals(nets, ImmutableSet.of(Reference.builder().id("a6058a59-fa8c-46cc-bac8-08904e6ff0a5").build()));
    }
 
@@ -64,9 +64,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
-      assertTrue(client.listReferences("1a104cf5-cb18-4d35-9407-2fd2646d9d0b").isEmpty());
+      assertTrue(client.listReferences().isEmpty());
    }
 
    public void testListReturns2xx() {
@@ -74,9 +74,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports/detail").build(),
             standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"state\": \"DOWN\", \"id\": \"814ae4bb-33d9-425f-8ee2-13a5c90b1465\"}]}", APPLICATION_JSON)).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
-      Set<Port> nets = client.list("1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
+      Set<Port> nets = client.list();
       assertEquals(nets, ImmutableSet.of(Port.builder().state(Port.State.DOWN).id("814ae4bb-33d9-425f-8ee2-13a5c90b1465").build()));
    }
 
@@ -85,9 +85,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports/detail").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
-      assertTrue(client.list("1a104cf5-cb18-4d35-9407-2fd2646d9d0b").isEmpty());
+      assertTrue(client.list().isEmpty());
    }
 
    public void testShowReturns2xx() {
@@ -95,9 +95,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/port.json", APPLICATION_JSON)).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      Port port = client.show("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "646c123b-871a-4124-9fa2-a94f04a582df");
+      Port port = client.get("646c123b-871a-4124-9fa2-a94f04a582df");
       assertEquals(port, new ParsePortTest().expected());
    }
 
@@ -106,9 +106,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      assertNull(client.show("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "646c123b-871a-4124-9fa2-a94f04a582df"));
+      assertNull(client.get("646c123b-871a-4124-9fa2-a94f04a582df"));
    }
 
    public void testShowDetailsReturns2xx() {
@@ -116,9 +116,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df/detail").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/port_details.json", APPLICATION_JSON)).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      PortDetails net = client.showDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "646c123b-871a-4124-9fa2-a94f04a582df");
+      PortDetails net = client.getDetails("646c123b-871a-4124-9fa2-a94f04a582df");
       assertEquals(net, new ParsePortDetailsTest().expected());
    }
 
@@ -127,9 +127,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df/detail").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      assertNull(client.showDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "646c123b-871a-4124-9fa2-a94f04a582df"));
+      assertNull(client.getDetails("646c123b-871a-4124-9fa2-a94f04a582df"));
    }
 
    public void testCreateReturns2xx() {
@@ -137,9 +137,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports").method("POST").build(),
             standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"port\":{\"id\":\"12345\"}}", APPLICATION_JSON)).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      Reference port = client.create("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
+      Reference port = client.create();
       assertEquals(port, Reference.builder().id("12345").build());
    }
 
@@ -149,9 +149,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports").method("POST").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      client.create("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
+      client.create();
    }
 
    public void testUpdateReturns2xx() {
@@ -160,9 +160,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"port\":{\"state\":\"ACTIVE\"}}", MediaType.APPLICATION_JSON)).build(),
             standardResponseBuilder(200).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      assertTrue(client.update("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777", Port.State.ACTIVE));
+      assertTrue(client.updateState("77777", Port.State.ACTIVE));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
@@ -172,9 +172,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"port\":{\"state\":\"ACTIVE\"}}", MediaType.APPLICATION_JSON)).build(),
             standardResponseBuilder(401).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      client.update("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777", Port.State.ACTIVE);
+      client.updateState("77777", Port.State.ACTIVE);
    }
 
    public void testShowAttachment() {
@@ -182,9 +182,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/attachment.json", APPLICATION_JSON)).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      Attachment attachment = client.showAttachment("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777");
+      Attachment attachment = client.showAttachment("77777");
       assertEquals(attachment, Attachment.builder().id("jclouds-live-test").build());
    }
 
@@ -193,9 +193,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      assertNull(client.showAttachment("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777"));
+      assertNull(client.showAttachment("77777"));
    }
 
    public void testPlugAttachment() {
@@ -205,9 +205,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             .payload(payloadFromStringWithContentType("{\"attachment\":{\"id\":\"jclouds-live-test\"}}", MediaType.APPLICATION_JSON))
                   .method("PUT").build(),
             standardResponseBuilder(200).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      assertTrue(client.plugAttachment("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777", "jclouds-live-test"));
+      assertTrue(client.plugAttachment("77777", "jclouds-live-test"));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
@@ -218,18 +218,18 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
                   .payload(payloadFromStringWithContentType("{\"attachment\":{\"id\":\"jclouds-live-test\"}}", MediaType.APPLICATION_JSON))
                   .method("PUT").build(),
             standardResponseBuilder(403).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      client.plugAttachment("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777", "jclouds-live-test");
+      client.plugAttachment("77777", "jclouds-live-test");
    }
    public void testUnplugAttachment() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").method("DELETE").build(),
             standardResponseBuilder(200).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      assertTrue(client.unplugAttachment("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777"));
+      assertTrue(client.unplugAttachment("77777"));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -238,9 +238,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").method("DELETE").build(),
             standardResponseBuilder(404).build())
-            .getPortClientForRegion("region-a.geo-1");
+            .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
-      client.unplugAttachment("16dba3bc-f3fa-4775-afdc-237e12c72f6a", "77777");
+      client.unplugAttachment("77777");
    }
    
 }

@@ -59,8 +59,8 @@ public class NetworkClientLiveTest extends BaseQuantumClientLiveTest {
          Reference net = client.create("jclouds-test");
          assertNotNull(net);
 
-         Network network = client.show(net.getId());
-         NetworkDetails details = client.showDetails(net.getId());
+         Network network = client.get(net.getId());
+         NetworkDetails details = client.getDetails(net.getId());
          
          for(Network checkme : ImmutableList.of(network, details)) {
             assertEquals(checkme.getId(), net.getId());
@@ -69,11 +69,11 @@ public class NetworkClientLiveTest extends BaseQuantumClientLiveTest {
          
          assertTrue(details.getPorts().isEmpty());
 
-         assertTrue(client.update(net.getId(), "jclouds-live-test"));
+         assertTrue(client.rename(net.getId(), "jclouds-live-test"));
          
          // Grab the updated metadata
-         network = client.show(net.getId());
-         details = client.showDetails(net.getId());
+         network = client.get(net.getId());
+         details = client.getDetails(net.getId());
 
          for(Network checkme : ImmutableList.of(network, details)) {
             assertEquals(checkme.getId(), net.getId());

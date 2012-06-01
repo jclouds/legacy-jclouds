@@ -96,7 +96,7 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/network.json", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
-      Network net = client.show("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
+      Network net = client.get("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
       assertEquals(net, new ParseNetworkTest().expected());
    }
 
@@ -107,7 +107,7 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
             standardResponseBuilder(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
-      assertNull(client.show("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
+      assertNull(client.get("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
    }
 
    public void testShowDetailsReturns2xx() {
@@ -117,7 +117,7 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/network_details.json", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
-      NetworkDetails net = client.showDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
+      NetworkDetails net = client.getDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
       assertEquals(net, new ParseNetworkDetailsTest().expected());
    }
 
@@ -128,7 +128,7 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
             standardResponseBuilder(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
-      assertNull(client.showDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
+      assertNull(client.getDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
    }
 
    public void testCreateReturns2xx() {
@@ -163,7 +163,7 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
             standardResponseBuilder(200).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
-      assertTrue(client.update("12345", "another-test"));
+      assertTrue(client.rename("12345", "another-test"));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -175,7 +175,7 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
             standardResponseBuilder(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
-      client.update("12345", "another-test");
+      client.rename("12345", "another-test");
    }
 
    public void testDeleteReturns2xx() {

@@ -46,11 +46,11 @@ public class PortClientLiveTest extends BaseQuantumClientLiveTest {
    public void testListPorts() {
       for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
          NetworkClient netClient = quantumContext.getApi().getNetworkClientForRegion(regionId);
-         PortClient portClient = quantumContext.getApi().getPortClientForRegion(regionId);
          Set<Reference> nets = netClient.listReferences();
          for(Reference net : nets) {
-            Set<Reference> portRefs = portClient.listReferences(net.getId());
-            Set<Port> ports = portClient.list(net.getId());
+            PortClient portClient = quantumContext.getApi().getPortClientForRegionAndNetwork(regionId, net.getId());
+            Set<Reference> portRefs = portClient.listReferences();
+            Set<Port> ports = portClient.list();
             
             assertEquals(portRefs.size(), ports.size());
             for (Port port : ports) {
@@ -63,16 +63,16 @@ public class PortClientLiveTest extends BaseQuantumClientLiveTest {
    public void testCreateUpdateAndDeletePort() {
       for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
          NetworkClient netClient = quantumContext.getApi().getNetworkClientForRegion(regionId);
-         PortClient portClient = quantumContext.getApi().getPortClientForRegion(regionId);
          Reference net = netClient.create("jclouds-port-test");
          assertNotNull(net);
-         
-         Reference portRef = portClient.create(net.getId());
+         PortClient portClient = quantumContext.getApi().getPortClientForRegionAndNetwork(regionId, net.getId());
+
+         Reference portRef = portClient.create();
          assertNotNull(portRef);
          
-         Port port = portClient.show(net.getId(), portRef.getId());
-         PortDetails portDetails = portClient.showDetails(net.getId(), portRef.getId());
-         NetworkDetails networkDetails = netClient.showDetails(net.getId());
+         Port port = portClient.get(portRef.getId());
+         PortDetails portDetails = portClient.getDetails(portRef.getId());
+         NetworkDetails networkDetails = netClient.getDetails(net.getId());
 
          assertEquals(port.getState(), portDetails.getState());
 
@@ -80,29 +80,29 @@ public class PortClientLiveTest extends BaseQuantumClientLiveTest {
             assertEquals(checkme.getId(), portRef.getId());
          }
 
-         assertTrue(portClient.update(net.getId(), portRef.getId(), Port.State.DOWN));
+         assertTrue(portClient.updateState(portRef.getId(), Port.State.DOWN));
          
-         port = portClient.show(net.getId(), portRef.getId());
-         portDetails = portClient.showDetails(net.getId(), portRef.getId());
+         port = portClient.get(portRef.getId());
+         portDetails = portClient.getDetails(portRef.getId());
 
          for(Port checkme : ImmutableList.of(port, portDetails)) {
             assertEquals(checkme.getId(), portRef.getId());
             assertEquals(checkme.getState(), Port.State.DOWN);
          }
          
-         assertTrue(portClient.plugAttachment(net.getId(), port.getId(), "jclouds-live-test"));
+         assertTrue(portClient.plugAttachment(port.getId(), "jclouds-live-test"));
 
-         Attachment attachment = portClient.showAttachment(net.getId(), port.getId());
-         portDetails = portClient.showDetails(net.getId(), portRef.getId());
+         Attachment attachment = portClient.showAttachment(port.getId());
+         portDetails = portClient.getDetails(portRef.getId());
 
          for(Attachment checkme : ImmutableList.of(attachment, portDetails.getAttachment())) {
             assertNotNull(checkme);
             assertEquals(checkme.getId(), "jclouds-live-test");
          }
          
-         assertTrue(portClient.unplugAttachment(net.getId(), port.getId()));
+         assertTrue(portClient.unplugAttachment(port.getId()));
 
-         assertTrue(portClient.delete(net.getId(), portRef.getId()));
+         assertTrue(portClient.delete(portRef.getId()));
          assertTrue(netClient.delete(net.getId()));
       }
    }
@@ -111,26 +111,27 @@ public class PortClientLiveTest extends BaseQuantumClientLiveTest {
    public void testAttachAndDetachPort() {
       for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
          NetworkClient netClient = quantumContext.getApi().getNetworkClientForRegion(regionId);
-         PortClient portClient = quantumContext.getApi().getPortClientForRegion(regionId);
          Reference net = netClient.create("jclouds-attach-test");
          assertNotNull(net);
 
-         Reference port = portClient.create(net.getId());
+         PortClient portClient = quantumContext.getApi().getPortClientForRegionAndNetwork(regionId, net.getId());
+
+         Reference port = portClient.create();
          assertNotNull(port);
 
-         assertTrue(portClient.plugAttachment(net.getId(), port.getId(), "jclouds-live-test"));
+         assertTrue(portClient.plugAttachment(port.getId(), "jclouds-live-test"));
 
-         Attachment attachment = portClient.showAttachment(net.getId(), port.getId());
-         PortDetails portDetails = portClient.showDetails(net.getId(), port.getId());
+         Attachment attachment = portClient.showAttachment(port.getId());
+         PortDetails portDetails = portClient.getDetails(port.getId());
 
          for(Attachment checkme : ImmutableList.of(attachment, portDetails.getAttachment())) {
             assertNotNull(checkme);
             assertEquals(checkme.getId(), "jclouds-live-test");
          }
 
-         assertTrue(portClient.unplugAttachment(net.getId(), port.getId()));
+         assertTrue(portClient.unplugAttachment(port.getId()));
 
-         assertTrue(portClient.delete(net.getId(), port.getId()));
+         assertTrue(portClient.delete(port.getId()));
          assertTrue(netClient.delete(net.getId()));
       }
    }

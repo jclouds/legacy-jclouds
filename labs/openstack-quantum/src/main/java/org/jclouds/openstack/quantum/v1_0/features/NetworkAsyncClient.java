@@ -76,22 +76,22 @@ public interface NetworkAsyncClient {
    ListenableFuture<Set<Network>> list();
 
    /**
-    * @see NetworkClient#show
+    * @see NetworkClient#get
     */
    @GET
    @SelectJson("network")
    @Path("/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Network> show(@PathParam("id") String id);
+   ListenableFuture<Network> get(@PathParam("id") String id);
 
    /**
-    * @see NetworkClient#showDetails
+    * @see NetworkClient#getDetails
     */
    @GET
    @SelectJson("network")
    @Path("/{id}/detail")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<NetworkDetails> showDetails(@PathParam("id") String id);
+   ListenableFuture<NetworkDetails> getDetails(@PathParam("id") String id);
 
    /**
     * @see NetworkClient#create
@@ -103,13 +103,13 @@ public interface NetworkAsyncClient {
    ListenableFuture<Reference> create(@PayloadParam("name") String name);
 
    /**
-    * @see NetworkClient#update
+    * @see NetworkClient#rename
     */
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @WrapWith("network")
-   ListenableFuture<Boolean> update(@PathParam("id") String id, @PayloadParam("name") String name);
+   ListenableFuture<Boolean> rename(@PathParam("id") String id, @PayloadParam("name") String name);
 
    /**
     * @see NetworkClient#delete

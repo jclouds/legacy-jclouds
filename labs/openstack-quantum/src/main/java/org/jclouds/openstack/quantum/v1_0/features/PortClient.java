@@ -44,55 +44,55 @@ public interface PortClient {
    /**
     * Returns the list of all ports currently defined in Quantum for the requested network
     */
-   Set<Reference> listReferences(String networkId);
+   Set<Reference> listReferences();
 
    /**
     * Returns the set of ports currently defined in Quantum for the requested network.
     */
-   Set<Port> list(String networkId);
+   Set<Port> list();
 
    /**
     * Returns a specific port.
     */
-   Port show(String networkId, String id);
+   Port get(String id);
 
    /**
     * Returns a specific port in detail.
     */
-   PortDetails showDetails(String networkId, String id);
+   PortDetails getDetails(String id);
 
    /**
     * Create a new port on the specified network
     */
-   Reference create(String networkId);
+   Reference create();
 
    /**
     * Create a new port on the specified network, with the requested state
     */
-   Reference create(String networkId, Port.State state);
+   Reference create(Port.State state);
 
    /**
     * Updates the state of a port
     */
-   Boolean update(String networkId, String id, Port.State state);
+   Boolean updateState(String id, Port.State state);
 
    /**
     * Deletes a port from a network
     */
-   Boolean delete(String networkId, String id);
+   Boolean delete(String id);
 
    /**
     * Returns the attachment for the specified port.
     */
-   Attachment showAttachment(String networkId, String portId);
+   Attachment showAttachment(String portId);
 
    /**
     * Plugs an attachment into the specified port
     */
-   Boolean plugAttachment(String networkId, String portId, String attachmentId);
+   Boolean plugAttachment(String portId, String attachmentId);
 
    /**
     *  Unplugs the attachment currently plugged into the specified port
     */
-   Boolean unplugAttachment(String networkId, String portId);
+   Boolean unplugAttachment(String portId);
 }
