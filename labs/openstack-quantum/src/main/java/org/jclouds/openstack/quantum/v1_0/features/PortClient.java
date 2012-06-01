@@ -74,12 +74,12 @@ public interface PortClient {
    /**
     * Updates the state of a port
     */
-   Boolean updateState(String id, Port.State state);
+   boolean updateState(String id, Port.State state);
 
    /**
     * Deletes a port from a network
     */
-   Boolean delete(String id);
+   boolean delete(String id);
 
    /**
     * Returns the attachment for the specified port.
@@ -89,10 +89,10 @@ public interface PortClient {
    /**
     * Plugs an attachment into the specified port
     */
-   Boolean plugAttachment(String portId, String attachmentId);
+   boolean plugAttachment(String portId, String attachmentId);
 
    /**
     *  Unplugs the attachment currently plugged into the specified port
     */
-   Boolean unplugAttachment(String portId);
+   boolean unplugAttachment(String portId);
 }

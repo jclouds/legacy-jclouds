@@ -67,15 +67,15 @@ public interface NetworkClient {
    Reference create(String name);
 
    /**
-    * Updates the symbolic name of a network
+    * Adjusts the symbolic name of a network
     *
     * @param id   the id of the Network to modify
     * @param name the new name for the Network
     */
-   Boolean rename(String id, String name);
+   boolean rename(String id, String name);
 
    /**
     * Deletes the specified network
     */
-   Boolean delete(String id);
+   boolean delete(String id);
 }
