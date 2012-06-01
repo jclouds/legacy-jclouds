@@ -223,6 +223,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @Delegate
       public Optional<Callee> getOptionalCallee(@EndpointParam URI endpoint);
+
+      @Delegate
+      @Path("/testing/testing/{wibble}")
+      public Callee getCalleeWithPath(@EndpointParam URI endpoint, @PathParam("wibble") String wibble);
    }
 
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
@@ -253,6 +257,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @Delegate
       public Optional<AsyncCallee> getOptionalCallee(@EndpointParam URI endpoint);
+
+      @Delegate
+      @Path("/testing/testing/{wibble}")
+      public AsyncCallee getCalleeWithPath(@EndpointParam URI endpoint, @PathParam("wibble") String wibble);
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException,
@@ -328,6 +336,30 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
 
+   }
+
+   public void testAsyncDelegateWithPathParamIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
+         ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
+
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/testing/testing/thepathparam/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      });
+
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      child.getInstance(AsyncCaller.class).getCalleeWithPath(URI.create("http://howdyboys"), "thepathparam").onePath("foo").get();
+
+      assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPathOptionalPresent()

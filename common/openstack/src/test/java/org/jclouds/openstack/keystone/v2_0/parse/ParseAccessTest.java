@@ -95,8 +95,19 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                 .tenantId("3456")
                                 .publicURL(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
                                 .region("az-3.region-a.geo-1")
-                                .versionId("1.1").build()).build()
-                     ).build();
+                                .versionId("1.1").build()).build(),
+
+            Service.builder().name("Quantum Service").type("network").endpoints(
+                  Endpoint.builder()
+                        .tenantId("3456")
+                        .publicURL(URI.create("https://csnode.jclouds.org:9696/v1.0/tenants/3456"))
+                        .internalURL(URI.create("https://csnode.jclouds.org:9696/v1.0/tenants/3456"))
+                        .adminURL(URI.create("https://csnode.jclouds.org:9696/v1.0"))
+                        .region("region-a.geo-1")
+                        .versionId("1.0").build()
+                     ).build())
+            
+            .build();
    }
 
 }
