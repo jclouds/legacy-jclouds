@@ -84,7 +84,7 @@ _see sidebar for links to Release Notes, Maven Sites and Javadocs_
 * [Load Balancer Design](/documentation/reference/load-balancer-design)
 * [Logging in jclouds](/documentation/reference/jclouds-logging)
 * [VMWare Integration Approach & Design](/documentation/reference/vmware-integration-design)
-* [Supported Providers](/documentation/reference/supported-providers)
+* [Supported Providers](/documentation/reference/Supported-providers)
 * [Apps that use JClouds](/documentation/reference/apps-that-use-jclouds)
 * [Using Provider Metadata](/documentation/reference/using-provider-metadata)
 
