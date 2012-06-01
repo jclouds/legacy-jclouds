@@ -45,4 +45,8 @@ public interface ServiceType {
     * Identity Service (Keystone)
     */
    public static final String IDENTITY = "identity";
+   /**
+    * Network Service (Quantum)
+    */
+   public static final String NETWORK = "network";
 }
