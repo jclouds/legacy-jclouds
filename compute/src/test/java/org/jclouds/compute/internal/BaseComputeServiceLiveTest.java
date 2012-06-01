@@ -53,6 +53,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
@@ -170,15 +171,16 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       client = view.getComputeService();
    }
 
-   // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
+         Properties overrides = setupProperties();
+         overrides.setProperty(provider + ".identity", "MOMMA");
+         overrides.setProperty(provider + ".credential", "MIA");
          context = newBuilder()
-               .credentials("MOMMA", "MIA")
                .modules(ImmutableSet.of(getLoggingModule(), credentialStoreModule))
-               .overrides(setupProperties()).build(ComputeServiceContext.class);
+               .overrides(overrides).build(ComputeServiceContext.class);
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
