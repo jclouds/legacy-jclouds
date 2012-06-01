@@ -47,5 +47,6 @@
        <module>openstack-glance</module>
        <module>joyent-sdc</module>
        <module>openstack-keystone</module>
+       <module>openstack-quantum</module>
     </modules>
 </project>
