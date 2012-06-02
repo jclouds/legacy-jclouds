@@ -31,6 +31,63 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class Template implements Comparable<Template> {
+   public static enum Status {
+
+      /**
+       * status of download is not known. Example - When the job for downloading doesn't exist
+       * during progress check.
+       */
+      UNKNOWN,
+      /**
+       * the download has been cancelled/aborted.
+       */
+      ABANDONED,
+      /**
+       * the download has reached an error state. Example - there is not route to ssvm agent
+       */
+      DOWNLOAD_ERROR,
+      /**
+       * the download hasn't started.
+       */
+      NOT_DOWNLOADED,
+      /**
+       * the download is in progress
+       */
+      DOWNLOAD_IN_PROGRESS,
+      /**
+       * the resource has been downloaded on secondary storage.
+       */
+      DOWNLOADED,
+
+      // These states are specifically used for extraction of resources out of CS(ironically shown
+      // as download template in the UI, API - extractTemplate ). Some of the generic states (like
+      // abandoned, unknown) above are used for the extraction tasks as well.
+      /**
+       * the resource has been uploaded
+       */
+      UPLOADED,
+      /**
+       * the resource upload work hasn't started yet
+       */
+      NOT_UPLOADED,
+      /**
+       * the resource upload has reached error.
+       */
+      UPLOAD_ERROR,
+      /**
+       * the resource upload is in progress.
+       */
+      UPLOAD_IN_PROGRESS, UNRECOGNIZED;
+
+      public static Status fromValue(String state) {
+         try {
+            return valueOf(checkNotNull(state, "state"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+
+   }
    public static Builder builder() {
       return new Builder();
    }
@@ -48,7 +105,7 @@ public class Template implements Comparable<Template> {
       private String OSTypeId;
       private String name;
       private Type type;
-      private String status;
+      private Status status;
       private Format format;
       private String hypervisor;
       private Long size;
@@ -129,7 +186,7 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
-      public Builder status(String status) {
+      public Builder status(Status status) {
          this.status = status;
          return this;
       }
@@ -287,7 +344,7 @@ public class Template implements Comparable<Template> {
    @SerializedName("templatetype")
    private Type type;
    //TODO: this should be a type
-   private String status;
+   private Status status;
    private Format format;
    private String hypervisor;
    private Long size;
@@ -326,7 +383,7 @@ public class Template implements Comparable<Template> {
 
 
    public Template(String id, String displayText, String domain, String domainId, String account, String accountId,
-                   String zone, String zoneId, String oSType, String oSTypeId, String name, Type type, String status, Format format,
+                   String zone, String zoneId, String oSType, String oSTypeId, String name, Type type, Status status, Format format,
                    String hypervisor, Long size, Date created, Date removed, boolean crossZones, boolean bootable,
                    boolean extractable, boolean featured, boolean ispublic, boolean ready, boolean passwordEnabled, String jobId,
                    String jobStatus, String checksum, String hostId, String hostName, String sourceTemplateId,
@@ -451,9 +508,9 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * @return
+    * @return status of the template
     */
-   public String getStatus() {
+   public Status getStatus() {
       return status;
    }
 
