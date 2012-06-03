@@ -54,6 +54,9 @@
         <test.twitter.build-version></test.twitter.build-version>
         <test.twitter.identity>FIXME</test.twitter.identity>
         <test.twitter.credential>FIXME</test.twitter.credential>
+
+        <jclouds.osgi.export>org.jclouds.twitter*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
     <dependencies>
         <dependency>
@@ -112,20 +115,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.twitter*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

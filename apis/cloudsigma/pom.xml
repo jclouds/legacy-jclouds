@@ -42,6 +42,14 @@
     <test.cloudsigma.image-id>f3c7c665-cd54-4a78-8fd2-7ec2f028cf29</test.cloudsigma.image-id>
     <test.cloudsigma.image.login-user></test.cloudsigma.image.login-user>
     <test.cloudsigma.image.authenticate-sudo></test.cloudsigma.image.authenticate-sudo>
+
+      <jclouds.osgi.export>org.jclouds.cloudsigma*;version="${project.version}"</jclouds.osgi.export>
+      <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+      </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -111,26 +119,5 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.cloudsigma*;version="${project.version}"</Export-Package>
-            <Import-Package>
-              org.jclouds.compute.internal;version="${project.version}",
-              org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds*;version="${project.version}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -43,6 +43,9 @@
     <test.virtualbox.image-id>test-ubuntu-11.10-i386</test.virtualbox.image-id>
     <test.virtualbox.image.login-user>toor:password</test.virtualbox.image.login-user>
     <test.virtualbox.image.authenticate-sudo>true</test.virtualbox.image.authenticate-sudo>
+
+    <jclouds.osgi.export>org.jclouds.virtualbox*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -154,21 +157,5 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.virtualbox*;version="${project.version}"</Export-Package>
-            <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

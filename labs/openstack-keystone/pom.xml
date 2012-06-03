@@ -42,6 +42,13 @@
     <test.openstack-keystone.identity>FIXME_IDENTITY</test.openstack-keystone.identity>
     <test.openstack-keystone.credential>FIXME_CREDENTIALS</test.openstack-keystone.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
+
+    <jclouds.osgi.export>org.jclouds.openstack.keystone.v2_0*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -110,25 +117,5 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.keystone.v2_0*;version="${project.version}"</Export-Package>
-            <Import-Package>            
-                        org.jclouds.rest.internal;version="${project.version}",
-                        org.jclouds*;version="${project.version}",
-                                *
-                        </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

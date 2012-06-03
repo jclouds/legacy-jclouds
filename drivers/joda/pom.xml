@@ -33,6 +33,10 @@
     <description>jclouds joda DateService Module</description>
     <packaging>bundle</packaging>
 
+    <properties>
+       <jclouds.osgi.export>org.jclouds.date.joda*;version="${project.version}"</jclouds.osgi.export>
+       <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+    </properties>
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
         <repository>
@@ -64,22 +68,6 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration> 
-                    <instructions>      
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.date.joda*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>     
-                </configuration>
-            </plugin>   
-        </plugins>
-    </build>
 
 </project>
 

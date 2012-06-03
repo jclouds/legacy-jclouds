@@ -50,6 +50,9 @@
         <test.ssh.username />
         <test.ssh.password />
         <test.ssh.keyfile />
+
+        <jclouds.osgi.export>org.jclouds.sshj*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -98,21 +101,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration> 
-                    <instructions>      
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.sshj*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>     
-                </configuration>
-            </plugin>   
-        </plugins>
-    </build>
     <profiles>
         <profile>
             <id>live</id>
