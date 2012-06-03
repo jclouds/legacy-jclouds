@@ -344,7 +344,7 @@
                         <ignoredResource>test.jks</ignoredResource>
                         <ignoredResource>CreateInternetService-options-test.xml</ignoredResource>
                     </ignoredResources>
-                    <failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
+                    <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
                 </configuration>
                 <executions>
                     <execution>
