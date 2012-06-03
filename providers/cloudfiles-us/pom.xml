@@ -40,6 +40,9 @@
         <test.cloudfiles-us.build-version></test.cloudfiles-us.build-version>
         <test.cloudfiles-us.identity>${test.rackspace-us.identity}</test.cloudfiles-us.identity>
         <test.cloudfiles-us.credential>${test.rackspace-us.credential}</test.cloudfiles-us.credential>
+
+        <jclouds.osgi.export>org.jclouds.rackspace.cloudfiles*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -126,22 +129,6 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.rackspace.cloudfiles*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 

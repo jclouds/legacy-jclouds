@@ -41,6 +41,13 @@
         <test.aws-s3.identity>${test.aws.identity}</test.aws-s3.identity>
         <test.aws-s3.credential>${test.aws.credential}</test.aws-s3.credential>
         <test.blobstore.container-count>25</test.blobstore.container-count>
+
+        <jclouds.osgi.export>org.jclouds.aws.s3*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds*;version="${project.version}",
+          org.jclouds.http.options;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <!-- temporary -->
@@ -141,26 +148,6 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.aws.s3*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds*;version="${project.version}",
-                            org.jclouds.http.options;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 

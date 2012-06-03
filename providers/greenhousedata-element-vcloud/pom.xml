@@ -42,6 +42,14 @@
         <test.greenhousedata-element-vcloud.image-id></test.greenhousedata-element-vcloud.image-id>
         <test.greenhousedata-element-vcloud.image.login-user></test.greenhousedata-element-vcloud.image.login-user>
         <test.greenhousedata-element-vcloud.image.authenticate-sudo></test.greenhousedata-element-vcloud.image.authenticate-sudo>
+
+        <jclouds.osgi.export>org.jclouds.greenhousedata.element.vcloud*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -119,27 +127,6 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.greenhousedata.element.vcloud*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 

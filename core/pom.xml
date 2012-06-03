@@ -38,6 +38,11 @@
         <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
+    <properties>
+        <jclouds.osgi.import>*</jclouds.osgi.import>
+        <jclouds.osgi.export>org.jclouds*;version=${project.version};-noimport:=true</jclouds.osgi.export>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>net.oauth.core</groupId>
@@ -124,17 +129,6 @@
                         <exclude>META-INF/services/</exclude>
                         <exclude>org/jclouds/providers/ProvidersTest.class</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds*;version=${project.version}</Export-Package>
-                        <DynamicImport-Package>org.jclouds.*</DynamicImport-Package>
-                    </instructions>
                 </configuration>
             </plugin>
         </plugins>

@@ -39,6 +39,9 @@
     <test.atmos.build-version></test.atmos.build-version>
     <test.atmos.identity>FIXME</test.atmos.identity>
     <test.atmos.credential>FIXME</test.atmos.credential>
+
+    <jclouds.osgi.import>*</jclouds.osgi.import>
+    <jclouds.osgi.export>org.jclouds.atmos*;version="${project.version}";-noimport:=true</jclouds.osgi.export>
   </properties>
 
   <dependencies>
@@ -108,21 +111,5 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.atmos*;version="${project.version}"</Export-Package>
-            <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   
 </project>

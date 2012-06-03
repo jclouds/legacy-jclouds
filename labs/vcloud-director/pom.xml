@@ -48,6 +48,14 @@
     <test.vcloud-director.network-id></test.vcloud-director.network-id>
     <test.vcloud-director.vdc-id></test.vcloud-director.vdc-id>
     <test.vcloud-director.user-id></test.vcloud-director.user-id>
+
+    <jclouds.osgi.export>org.jclouds.vcloud.director.v1_5*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -135,26 +143,5 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.vcloud.director.v1_5*;version="${project.version}"</Export-Package>
-            <Import-Package>            
-                        org.jclouds.compute.internal;version="${project.version}",
-                        org.jclouds.rest.internal;version="${project.version}",
-                        org.jclouds*;version="${project.version}",
-                        *
-                        </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

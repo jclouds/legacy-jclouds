@@ -43,6 +43,13 @@
         <test.savvis-symphonyvpdc.vdc-email>FIXME</test.savvis-symphonyvpdc.vdc-email>
         <test.savvis-symphonyvpdc.loginUser>FIXME</test.savvis-symphonyvpdc.loginUser>
         <test.savvis-symphonyvpdc.loginPassword>FIXME</test.savvis-symphonyvpdc.loginPassword>
+        <jclouds.osgi.export>org.jclouds.savvis.vpdc*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
     <dependencies>
         <dependency>
@@ -118,25 +125,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.savvis.vpdc*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -38,7 +38,10 @@
         <test.hpcloud-objectstorage.api-version>1.0</test.hpcloud-objectstorage.api-version>
         <test.hpcloud-objectstorage.build-version></test.hpcloud-objectstorage.build-version>
         <test.hpcloud-objectstorage.identity>FIXME_IDENTITY</test.hpcloud-objectstorage.identity>
-        <test.hpcloud-objectstorage.credential>FIXME_CREDENTIAL</test.hpcloud-objectstorage.credential>        
+        <test.hpcloud-objectstorage.credential>FIXME_CREDENTIAL</test.hpcloud-objectstorage.credential>
+
+        <jclouds.osgi.export>org.jclouds.hpcloud.objectstorage*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -143,22 +146,6 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.hpcloud.objectstorage*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 
