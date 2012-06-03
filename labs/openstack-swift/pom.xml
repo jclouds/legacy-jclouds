@@ -44,6 +44,14 @@
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
     <jclouds.blobstore.httpstream.url>FIXME_HTTPURL</jclouds.blobstore.httpstream.url>
     <jclouds.blobstore.httpstream.md5>FIXME_HTTPMD5</jclouds.blobstore.httpstream.md5>
+
+    <jclouds.osgi.export>org.jclouds.openstack.swift.v1*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.blobstore.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -127,25 +135,5 @@
     </profile>
   </profiles>
 
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.swift.v1*;version="${project.version}"</Export-Package>
-            <Import-Package>            
-                        org.jclouds.blobstore.internal;version="${project.version}",
-                        org.jclouds.rest.internal;version="${project.version}",
-                        org.jclouds*;version="${project.version}",
-                                *
-                        </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
