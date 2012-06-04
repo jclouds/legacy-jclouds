@@ -17,9 +17,9 @@
  * under the License.
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +64,7 @@ public class AllocateAndAddFloatingIpToNode implements
    private final LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache;
 
    @Inject
-   public AllocateAndAddFloatingIpToNode(@Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+   public AllocateAndAddFloatingIpToNode(@Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             NovaClient novaClient, @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache) {
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
       this.novaClient = checkNotNull(novaClient, "novaClient");

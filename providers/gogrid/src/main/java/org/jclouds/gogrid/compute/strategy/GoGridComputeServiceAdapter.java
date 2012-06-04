@@ -21,7 +21,6 @@ package org.jclouds.gogrid.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.security.SecureRandom;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -143,13 +142,16 @@ public class GoGridComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public Server getNode(String id) {
-      try {
-         return Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(checkNotNull(id, "id"))));
-      } catch (NoSuchElementException e) {
-         return null;
-      }
+      return Iterables.getOnlyElement(client.getServerServices().getServersById(Long.valueOf(checkNotNull(id, "id"))),
+               null);
    }
 
+   @Override
+   public ServerImage getImage(String id) {
+      return Iterables.getOnlyElement(client.getImageServices().getImagesById(Long.valueOf(checkNotNull(id, "id"))),
+               null);
+   }
+   
    @Override
    public void destroyNode(String id) {
       client.getServerServices().deleteById(new Long(id));

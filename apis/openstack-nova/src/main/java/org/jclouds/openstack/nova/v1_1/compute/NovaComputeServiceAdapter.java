@@ -199,6 +199,13 @@ public class NovaComputeServiceAdapter implements
    }
 
    @Override
+   public ImageInZone getImage(String id) {
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      Image image = novaClient.getImageClientForZone(zoneAndId.getZone()).getImage(zoneAndId.getId());
+      return image == null ? null : new ImageInZone(image, zoneAndId.getZone());
+   }
+
+   @Override
    public void destroyNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
       if (novaClient.getFloatingIPExtensionForZone(zoneAndId.getZone()).isPresent()) {

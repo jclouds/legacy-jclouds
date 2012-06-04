@@ -25,6 +25,8 @@ import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_LOGIN_US
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_INITIAL_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_MAX_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.OS_VERSION_MAP_JSON;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_AVAILABLE;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_DELETED;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
@@ -32,6 +34,7 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_O
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE;
 
 import java.security.SecureRandom;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -113,7 +116,7 @@ public interface ComputeServiceConstants {
 
    @Singleton
    public static class NamingConvention {
-      
+
       @Inject(optional = true)
       public final Supplier<String> randomSuffix = new Supplier<String>() {
          final SecureRandom random = new SecureRandom();
@@ -124,7 +127,7 @@ public interface ComputeServiceConstants {
          }
       };
    }
-   
+
    @Singleton
    public static class InitStatusProperties {
       @Inject(optional = true)
@@ -166,6 +169,21 @@ public interface ComputeServiceConstants {
       @Inject(optional = true)
       @Named(TIMEOUT_PORT_OPEN)
       public long portOpen = 600 * 1000;
+      
+      /**
+       * current value of {@link ComputeServiceProperties#TIMEOUT_IMAGE_DELETED} defaults to 30
+       * seconds.
+       */
+      @Inject(optional = true)
+      @Named(TIMEOUT_IMAGE_DELETED)
+      public long imageDeleted = TimeUnit.SECONDS.toMillis(30);
 
+      /**
+       * current value of {@link ComputeServiceProperties#TIMEOUT_IMAGE_AVAILABLE} defaults to 45
+       * minutes.
+       */
+      @Inject(optional = true)
+      @Named(TIMEOUT_IMAGE_AVAILABLE)
+      public long imageAvailable = TimeUnit.MINUTES.toMillis(45);
    }
 }

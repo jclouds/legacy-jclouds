@@ -22,6 +22,7 @@ import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
@@ -29,6 +30,7 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
 import org.jclouds.ec2.compute.strategy.EC2DestroyNodeStrategy;
+import org.jclouds.ec2.compute.strategy.EC2GetImageStrategy;
 import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
 import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.ec2.compute.strategy.EC2RebootNodeStrategy;
@@ -67,6 +69,11 @@ public class EC2BindComputeStrategiesByClass extends BindComputeStrategiesByClas
    @Override
    protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
       return EC2GetNodeMetadataStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends GetImageStrategy> defineGetImageStrategy() {
+      return EC2GetImageStrategy.class;
    }
 
    @Override

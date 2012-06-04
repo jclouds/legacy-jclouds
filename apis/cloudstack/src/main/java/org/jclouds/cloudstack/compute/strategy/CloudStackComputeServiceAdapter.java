@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
+import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.id;
 import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 
 import java.util.List;
@@ -133,7 +136,7 @@ public class CloudStackComputeServiceAdapter implements
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
       checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s",zone.getNetworkType());
-      DeployVirtualMachineOptions options = DeployVirtualMachineOptions.Builder.displayName(name).name(name);
+      DeployVirtualMachineOptions options = displayName(name).name(name);
       OptionsConverter optionsConverter = optionsConverters.get(zone.getNetworkType());
       options = optionsConverter.apply(templateOptions, networks, zoneId, options);
 
@@ -196,6 +199,11 @@ public class CloudStackComputeServiceAdapter implements
       // TODO: we may need to filter these further
       // we may also want to see if we can work with ssh keys
       return filter(client.getTemplateClient().listTemplates(), isReady());
+   }
+
+   @Override
+   public Template getImage(String id) {
+      return get(client.getTemplateClient().listTemplates(id(id)), 0, null);
    }
 
    @Override

@@ -33,6 +33,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeService;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
+import org.jclouds.trmk.vcloud_0_8.compute.functions.ImageForVCloudExpressVAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ParseOsFromVAppTemplateName;
@@ -42,6 +43,7 @@ import org.jclouds.trmk.vcloud_0_8.compute.strategy.ParseVAppTemplateDescription
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -103,17 +105,15 @@ public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServi
       bind(SecureRandom.class).toInstance(new SecureRandom());
       install(new TerremarkBindComputeStrategiesByClass());
       install(new TerremarkBindComputeSuppliersByClass());
-      bindVAppConverter();
+      bind(new TypeLiteral<Function<VApp, NodeMetadata>>() {
+      }).to(VAppToNodeMetadata.class);
+      bind(new TypeLiteral<Function<VAppTemplate, Image>>() {
+      }).to(ImageForVCloudExpressVAppTemplate.class);
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });
       bind(new TypeLiteral<Function<String, OperatingSystem>>() {
       }).to(ParseOsFromVAppTemplateName.class);
-   }
-
-   protected void bindVAppConverter() {
-      bind(new TypeLiteral<Function<VApp, NodeMetadata>>() {
-      }).to(VAppToNodeMetadata.class);
    }
 
    @Provides

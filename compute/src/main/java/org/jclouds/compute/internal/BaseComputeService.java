@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.jclouds.compute.internal;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -27,6 +26,9 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
@@ -72,6 +74,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -119,6 +122,7 @@ public class BaseComputeService implements ComputeService {
    private final Supplier<Set<? extends Image>> images;
    private final Supplier<Set<? extends Hardware>> hardwareProfiles;
    private final Supplier<Set<? extends Location>> locations;
+   private final GetImageStrategy getImageStrategy;
    private final ListNodesStrategy listNodesStrategy;
    private final GetNodeMetadataStrategy getNodeMetadataStrategy;
    private final CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy;
@@ -141,26 +145,29 @@ public class BaseComputeService implements ComputeService {
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
-         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
-         RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
-         Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-         Optional<ImageExtension> imageExtension) {
+            @Memoized Supplier<Set<? extends Image>> images,
+            @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetImageStrategy getImageStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
+            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
+            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy resumeNodeStrategy,
+            SuspendNodeStrategy suspendNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider,
+            @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_TERMINATED) Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+            @Named(TIMEOUT_NODE_SUSPENDED) Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+            RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
+            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Optional<ImageExtension> imageExtension) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
       this.hardwareProfiles = checkNotNull(hardwareProfiles, "hardwareProfiles");
       this.locations = checkNotNull(locations, "locations");
-      this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
       this.getNodeMetadataStrategy = checkNotNull(getNodeMetadataStrategy, "getNodeMetadataStrategy");
+      this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
+      this.getImageStrategy = checkNotNull(getImageStrategy, "getImageStrategy");
       this.runNodesAndAddToSetStrategy = checkNotNull(runNodesAndAddToSetStrategy, "runNodesAndAddToSetStrategy");
       this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
       this.resumeNodeStrategy = checkNotNull(resumeNodeStrategy, "resumeNodeStrategy");
@@ -388,6 +395,15 @@ public class BaseComputeService implements ComputeService {
    public NodeMetadata getNodeMetadata(String id) {
       checkNotNull(id, "id");
       return getNodeMetadataStrategy.getNode(id);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Image getImage(String id) {
+      checkNotNull(id, "id");
+      return getImageStrategy.getImage(id);
    }
 
    /**

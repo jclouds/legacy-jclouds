@@ -17,8 +17,10 @@
  * under the License.
  */
 package org.jclouds.openstack.nova.v1_1.compute;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +48,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -88,28 +91,29 @@ public class NovaComputeService extends BaseComputeService {
 
    @Inject
    protected NovaComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
-         RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
-         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaClient novaClient,
-         LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap,
-         LoadingCache<ZoneAndName, KeyPair> keyPairCache,
-         Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId,
-         GroupNamingConvention.Factory namingConvention, Optional<ImageExtension> imageExtension) {
-      super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
-               stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
-               nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials,
-               timeouts, executor, imageExtension);
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetImageStrategy getImageStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
+            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
+            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy startNodeStrategy,
+            SuspendNodeStrategy stopNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider,
+            @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_TERMINATED) Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+            @Named(TIMEOUT_NODE_SUSPENDED) Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+            RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
+            PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaClient novaClient,
+            LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap,
+            LoadingCache<ZoneAndName, KeyPair> keyPairCache,
+            Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId,
+            GroupNamingConvention.Factory namingConvention, Optional<ImageExtension> imageExtension) {
+      super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy,
+               getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
+               startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
+               nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
+               persistNodeCredentials, timeouts, executor, imageExtension);
       this.novaClient = checkNotNull(novaClient, "novaClient");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");

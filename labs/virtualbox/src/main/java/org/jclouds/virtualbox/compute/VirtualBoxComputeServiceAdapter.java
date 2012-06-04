@@ -186,6 +186,14 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
          throw Throwables.propagate(e);
       }
    }
+   
+   @Override
+   public Image getImage(String vmName) {
+      IMachine image = getNode(vmName);
+      if (image == null)
+         return null;
+      return imachineToImage.apply(image);
+   }
 
    @Override
    public synchronized void destroyNode(String vmName) {

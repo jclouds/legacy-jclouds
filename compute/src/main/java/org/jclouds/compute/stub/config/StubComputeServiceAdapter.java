@@ -42,6 +42,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.all.JustProvider;
@@ -51,6 +52,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
@@ -156,7 +158,12 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
          }
       return images.build();
    }
-
+   
+   @Override
+   public Image getImage(String id) {
+      return Iterables.find(listImages(), ImagePredicates.idEquals(id), null);
+   }
+   
    @Override
    public Iterable<NodeMetadata> listNodes() {
       return nodes.values();
@@ -230,4 +237,5 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       setStateOnNode(Status.PENDING, node);
       setStateOnNodeAfterDelay(Status.SUSPENDED, node, 50);
    }
+
 }

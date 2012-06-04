@@ -17,10 +17,10 @@
  * under the License.
  */
 package org.jclouds.ec2.compute.strategy;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.all;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.ec2.compute.util.EC2ComputeUtils.getZoneFromLocationOrNull;
 
 import java.util.Map;
@@ -57,9 +57,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * creates futures that correlate to
@@ -102,7 +102,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             EC2Client client,
             @Named("ELASTICIP")
             LoadingCache<RegionAndName, String> elasticIpCache, 
-            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,

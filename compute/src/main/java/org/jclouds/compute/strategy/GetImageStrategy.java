@@ -16,22 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rimuhosting.miro.compute.config;
+package org.jclouds.compute.strategy;
 
-import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
-import org.testng.annotations.Test;
+import org.jclouds.compute.domain.Image;
 
 /**
+ * returns all details associated to the image below.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class RimuHostingComputeServiceContextModuleTest {
+public interface GetImageStrategy {
 
-   public void testAllStatusCovered() {
+   Image getImage(String id);
 
-      for (RunningState state : RunningState.values()) {
-         assert RimuHostingComputeServiceDependenciesModule.runningStateToNodeStatus.containsKey(state) : state;
-      }
-
-   }
 }

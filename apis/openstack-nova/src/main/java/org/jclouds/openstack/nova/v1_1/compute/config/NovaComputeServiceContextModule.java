@@ -182,7 +182,7 @@ public class NovaComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   @Named("SECURITY")
+   @Named(TIMEOUT_SECURITYGROUP_PRESENT)
    protected Predicate<AtomicReference<ZoneAndName>> securityGroupEventualConsistencyDelay(
             FindSecurityGroupWithNameAndReturnTrue in,
             @Named(TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {

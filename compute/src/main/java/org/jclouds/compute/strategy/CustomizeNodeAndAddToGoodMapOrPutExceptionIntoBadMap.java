@@ -17,11 +17,11 @@
  * under the License.
  */
 package org.jclouds.compute.strategy;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getRootCause;
 import static java.lang.String.format;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
@@ -88,7 +88,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
          OpenSocketFinder openSocketFinder, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
@@ -110,7 +110,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
+         @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
          OpenSocketFinder openSocketFinder, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,

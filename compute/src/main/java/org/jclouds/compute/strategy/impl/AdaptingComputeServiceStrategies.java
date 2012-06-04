@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
@@ -40,6 +41,7 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
@@ -61,8 +63,9 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeWithGroupEncodedIntoName,
-         DestroyNodeStrategy, GetNodeMetadataStrategy, ListNodesStrategy, RebootNodeStrategy, ResumeNodeStrategy,
-         SuspendNodeStrategy {
+         DestroyNodeStrategy, GetNodeMetadataStrategy, GetImageStrategy, ListNodesStrategy, RebootNodeStrategy,
+         ResumeNodeStrategy, SuspendNodeStrategy {
+   
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -71,17 +74,20 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    private final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
    private final ComputeServiceAdapter<N, H, I, L> client;
    private final Function<N, NodeMetadata> nodeMetadataAdapter;
+   private final Function<I, Image> imageAdapter;
 
    @Inject
    public AdaptingComputeServiceStrategies(Map<String, Credentials> credentialStore,
             PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate,
-            ComputeServiceAdapter<N, H, I, L> client, Function<N, NodeMetadata> nodeMetadataAdapter) {
+            ComputeServiceAdapter<N, H, I, L> client, Function<N, NodeMetadata> nodeMetadataAdapter,
+            Function<I, Image> imageAdapter) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.prioritizeCredentialsFromTemplate = checkNotNull(prioritizeCredentialsFromTemplate,
                "prioritizeCredentialsFromTemplate");
       this.client = checkNotNull(client, "client");
       this.nodeMetadataAdapter = Functions.compose(addLoginCredentials, checkNotNull(nodeMetadataAdapter,
                "nodeMetadataAdapter"));
+      this.imageAdapter = checkNotNull(imageAdapter, "imageAdapter");
    }
 
    private final Function<NodeMetadata, NodeMetadata> addLoginCredentials = new Function<NodeMetadata, NodeMetadata>() {
@@ -108,7 +114,15 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
       return Iterables.filter(Iterables.transform(client.listNodes(), nodeMetadataAdapter), filter);
    }
-
+   
+   @Override
+   public Image getImage(String id) {
+      I image = client.getImage(checkNotNull(id, "id"));
+      if (image == null)
+         return null;
+      return imageAdapter.apply(image);
+   }
+   
    @Override
    public NodeMetadata getNode(String id) {
       N node = client.getNode(checkNotNull(id, "id"));

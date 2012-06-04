@@ -16,39 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rimuhosting.miro.compute.strategy;
+package org.jclouds.trmk.vcloud_0_8.compute.strategy;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.strategy.GetImageStrategy;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+public class TerremarkVCloudGetImageStrategy implements GetImageStrategy {
 
-   private final RimuHostingClient client;
-   private final Function<Server, NodeMetadata> serverToNodeMetadata;
+   protected final TerremarkVCloudClient client;
+   protected final Function<VAppTemplate, Image> vAppToImage;
 
    @Inject
-   protected RimuHostingGetNodeMetadataStrategy(RimuHostingClient client,
-            Function<Server, NodeMetadata> serverToNodeMetadata) {
-      this.client = client;
-      this.serverToNodeMetadata = serverToNodeMetadata;
+   protected TerremarkVCloudGetImageStrategy(TerremarkVCloudClient client, Function<VAppTemplate, Image> vAppToImage) {
+      this.client = checkNotNull(client, "client");
+      this.vAppToImage = vAppToImage;
    }
 
    @Override
-   public NodeMetadata getNode(String id) {
-      long serverId = Long.parseLong(id);
-      Server server = client.getServer(serverId);
-      return server == null ? null : serverToNodeMetadata.apply(server);
+   public Image getImage(String in) {
+      URI id = URI.create(in);
+      VAppTemplate from = client.getVAppTemplate(id);
+      if (from == null)
+         return null;
+      return vAppToImage.apply(from);
    }
+
 }

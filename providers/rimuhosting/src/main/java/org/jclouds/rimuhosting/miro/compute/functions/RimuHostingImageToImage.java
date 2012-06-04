@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rimuhosting.miro.compute.suppliers;
+package org.jclouds.rimuhosting.miro.compute.functions;
 
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -34,45 +32,30 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.rimuhosting.miro.RimuHostingClient;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> {
-   public static final Pattern RIMU_PATTERN = Pattern.compile("([a-zA-Z]+) ?([0-9.]+) .*");
-   private final RimuHostingClient sync;
-
-   @Inject
-   RimuHostingImageSupplier(RimuHostingClient sync) {
-      this.sync = sync;
-   }
-
+public class RimuHostingImageToImage implements Function<org.jclouds.rimuhosting.miro.domain.Image, Image> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
+   private Logger logger = Logger.NULL;
 
-   @Override
-   public Set<? extends Image> get() {
-      final Set<Image> images = Sets.newHashSet();
-      logger.debug(">> providing images");
-      for (org.jclouds.rimuhosting.miro.domain.Image from : sync.getImageList()) {
-         ImageBuilder builder = new ImageBuilder();
-         builder.ids(from.getId() + "");
-         builder.name(from.getDescription());
-         builder.description(from.getDescription());
-         builder.operatingSystem(parseOs(from));
-         builder.status(Status.AVAILABLE);
-         images.add(builder.build());
-      }
-      logger.debug("<< images(%d)", images.size());
-      return images;
+   public Image apply(org.jclouds.rimuhosting.miro.domain.Image from) {
+      ImageBuilder builder = new ImageBuilder();
+      builder.ids(from.getId() + "");
+      builder.name(from.getDescription());
+      builder.description(from.getDescription());
+      builder.operatingSystem(parseOs(from));
+      builder.status(Status.AVAILABLE);
+      return builder.build();
    }
+
+   public static final Pattern RIMU_PATTERN = Pattern.compile("([a-zA-Z]+) ?([0-9.]+) .*");
 
    protected OperatingSystem parseOs(final org.jclouds.rimuhosting.miro.domain.Image from) {
       OsFamily osFamily = null;

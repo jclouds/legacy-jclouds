@@ -70,6 +70,12 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    }
    
    @Override
+   public Image getImage(String id) {
+      int imageId = Integer.parseInt(id);
+      return client.getImage(imageId);
+   }
+   
+   @Override
    public Iterable<Server> listNodes() {
       return client.listServers();
    }

@@ -202,6 +202,11 @@ public class ElasticStackComputeServiceAdapter implements
    @Override
    public ServerInfo getNode(String id) {
       return client.getServerInfo(id);
+   }   
+   
+   @Override
+   public DriveInfo getImage(String id) {
+      return client.getDriveInfo(id);
    }
 
    @Override

@@ -74,7 +74,9 @@ public interface ComputeService {
     * differently. However, it is a good indicator of relative speed within a cloud. memory is
     * measured in megabytes and disks in gigabytes.
     * 
-    * @return a map of hardware profiles by ID, conceding that in some clouds the "id" is not used.
+    * <h3>note</h3>
+    * 
+    * This is a cached collection
     */
    Set<? extends Hardware> listHardwareProfiles();
 
@@ -82,10 +84,22 @@ public interface ComputeService {
     * Images define the operating system and metadata related to a node. In some clouds, Images are
     * bound to a specific region, and their identifiers are different across these regions. For this
     * reason, you should consider matching image requirements like operating system family with
-    * TemplateBuilder as opposed to choosing an image explicitly. The getImages() command returns a
-    * map of images by id.
+    * TemplateBuilder as opposed to choosing an image explicitly.
+    * 
+    * <h3>note</h3>
+    * 
+    * This is a cached collection
     */
    Set<? extends Image> listImages();
+   
+   /**
+    * Find an image by its id.
+    * 
+    * <h3>note</h3>
+    * 
+    * This is an uncached call to the backend service
+    */
+   Image getImage(String id);
 
    /**
     * all nodes available to the current user by id. If possible, the returned set will include
@@ -98,6 +112,10 @@ public interface ComputeService {
     * which is typically region or zone. A region is a general area, like eu-west, where a zone is
     * similar to a datacenter. If a location has a parent, that implies it is within that location.
     * For example a location can be a rack, whose parent is likely to be a zone.
+    * 
+    * <h3>note</h3>
+    * 
+    * This is a cached collection
     */
    Set<? extends Location> listAssignableLocations();
 

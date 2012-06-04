@@ -162,7 +162,13 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       URI id = URI.create(in);
       return client.getVAppClient().getVApp(id);
    }
-
+   
+   @Override
+   public VAppTemplate getImage(String in) {
+      URI id = URI.create(in);
+      return client.getVAppTemplateClient().getVAppTemplate(id);
+   }
+   
    @Override
    public void destroyNode(String id) {
       URI vappId = URI.create(checkNotNull(id, "node.id"));

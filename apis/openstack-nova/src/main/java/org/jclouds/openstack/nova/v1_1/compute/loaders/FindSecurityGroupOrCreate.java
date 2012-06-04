@@ -17,9 +17,9 @@
  * under the License.
  */
 package org.jclouds.openstack.nova.v1_1.compute.loaders;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,7 +45,7 @@ public class FindSecurityGroupOrCreate extends CacheLoader<ZoneAndName, Security
 
    @Inject
    public FindSecurityGroupOrCreate(
-            @Named("SECURITY") Predicate<AtomicReference<ZoneAndName>> returnSecurityGroupExistsInZone,
+            @Named(TIMEOUT_SECURITYGROUP_PRESENT) Predicate<AtomicReference<ZoneAndName>> returnSecurityGroupExistsInZone,
             Function<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone> groupCreator) {
       this.returnSecurityGroupExistsInZone = checkNotNull(returnSecurityGroupExistsInZone,
                "returnSecurityGroupExistsInZone");

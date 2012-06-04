@@ -207,6 +207,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), InstallJDK.fromOpenJDK());
    }
 
+   public void testImageById() {
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
+      assertEquals(view.getComputeService().getImage(defaultTemplate.getImage().getId()), defaultTemplate.getImage());
+   }
+   
    // since surefire and eclipse don't otherwise guarantee the order, we are
    // starting this one alphabetically before create2nodes..
    @Test(enabled = true, dependsOnMethods = { "testCompareSizes" })

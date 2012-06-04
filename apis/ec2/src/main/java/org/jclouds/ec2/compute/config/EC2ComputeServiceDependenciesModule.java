@@ -42,6 +42,7 @@ import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
@@ -127,6 +128,8 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
       bind(WindowsLoginCredentialsFromEncryptedData.class);
+      bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
+      }).to(EC2ImageParser.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
       bind(new TypeLiteral<PredicateWithResult<String, Image>>() {

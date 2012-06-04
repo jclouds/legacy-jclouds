@@ -18,8 +18,9 @@
  */
 package org.jclouds.compute.config;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.domain.TemplateBuilderSpec;
-
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 
 /**
  * 
@@ -29,31 +30,51 @@ public interface ComputeServiceProperties {
    public static final String RESOURCENAME_PREFIX = "jclouds.compute.resourcename-prefix";
    public static final String RESOURCENAME_DELIMITER = "jclouds.compute.resourcename-delimiter";
 
-   public static final String TIMEOUT_NODE_TERMINATED = "jclouds.compute.timeout.node-terminated";
    public static final String TIMEOUT_NODE_RUNNING = "jclouds.compute.timeout.node-running";
    public static final String TIMEOUT_NODE_SUSPENDED = "jclouds.compute.timeout.node-suspended";
+   public static final String TIMEOUT_NODE_TERMINATED = "jclouds.compute.timeout.node-terminated";
+
    public static final String TIMEOUT_SCRIPT_COMPLETE = "jclouds.compute.timeout.script-complete";
    public static final String TIMEOUT_PORT_OPEN = "jclouds.compute.timeout.port-open";
-   
+
    public static final String INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
    public static final String INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
+
+   /**
+    * time in milliseconds to wait for an image to finish creating.
+    * 
+    * Override {@link Timeouts#imageAvailable default} by setting this property using
+    * {@link ContextBuilder#overrides}
+    */
+   public static final String TIMEOUT_IMAGE_AVAILABLE = "jclouds.compute.timeout.image-available";
    
    /**
-    * overrides the default specified in the subclass of {@link BaseComputeServiceContextModule#provideTemplate}
+    * time in milliseconds to wait for an image to delete.
+    * 
+    * Override {@link Timeouts#imageDeleted default} by setting this property using
+    * {@link ContextBuilder#overrides}
+    */
+   public static final String TIMEOUT_IMAGE_DELETED = "jclouds.compute.timeout.image-deleted";
+
+   /**
+    * overrides the default specified in the subclass of
+    * {@link BaseComputeServiceContextModule#provideTemplate}
+    * 
     * @see TemplateBuilderSpec
     */
    public static final String TEMPLATE = "jclouds.template";
-   
+
    /**
-    * overrides the image specified in the subclass of {@link BaseComputeServiceContextModule#provideTemplate}
+    * overrides the image specified in the subclass of
+    * {@link BaseComputeServiceContextModule#provideTemplate}
     */
    public static final String IMAGE_ID = "jclouds.image-id";
 
    /**
-    * username and, if colon delimited, password of the default user on the image that is or can become root
+    * username and, if colon delimited, password of the default user on the image that is or can
+    * become root
     * <p/>
-    * ex. {@code ubuntu}
-    * ex. {@code toor:password}
+    * ex. {@code ubuntu} ex. {@code toor:password}
     */
    public static final String IMAGE_LOGIN_USER = "jclouds.image.login-user";
 
@@ -63,8 +84,8 @@ public interface ComputeServiceProperties {
    public static final String IMAGE_AUTHENTICATE_SUDO = "jclouds.image.authenticate-sudo";
 
    /**
-    * comma-separated nodes that we shouldn't attempt to list as they are dead
-    * in the provider for some reason.
+    * comma-separated nodes that we shouldn't attempt to list as they are dead in the provider for
+    * some reason.
     */
    public static final String BLACKLIST_NODES = "jclouds.compute.blacklist-nodes";
 
