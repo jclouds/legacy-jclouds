@@ -98,7 +98,14 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.theoryinpractise</groupId>
+        <artifactId>clojure-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
       <id>live</id>
