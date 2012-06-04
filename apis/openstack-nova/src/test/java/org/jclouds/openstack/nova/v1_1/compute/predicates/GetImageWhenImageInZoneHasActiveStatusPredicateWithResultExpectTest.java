@@ -19,8 +19,8 @@
 
 package org.jclouds.openstack.nova.v1_1.compute.predicates;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 

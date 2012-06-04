@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox.compute;
 
-import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertTrue;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 import static org.testng.Assert.assertEquals;
 

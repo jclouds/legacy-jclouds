@@ -18,8 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 

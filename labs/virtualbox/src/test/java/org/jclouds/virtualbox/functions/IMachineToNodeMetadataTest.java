@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;

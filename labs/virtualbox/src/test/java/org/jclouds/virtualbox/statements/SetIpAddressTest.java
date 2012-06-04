@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox.statements;
 
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.virtualbox.domain.NetworkAdapter;

@@ -18,10 +18,14 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import junit.framework.Assert;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
@@ -37,15 +41,12 @@ import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchClientLiveTest;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.predicates.RetryablePredicate;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Jeremy Whitlock, Adrian Cole

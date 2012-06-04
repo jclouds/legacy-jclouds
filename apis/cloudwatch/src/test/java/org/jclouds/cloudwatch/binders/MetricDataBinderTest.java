@@ -21,12 +21,12 @@ package org.jclouds.cloudwatch.binders;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import junit.framework.Assert;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.StatisticValues;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.http.HttpRequest;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.net.URI;

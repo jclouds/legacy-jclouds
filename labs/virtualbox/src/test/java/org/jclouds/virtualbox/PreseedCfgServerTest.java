@@ -18,7 +18,7 @@
  */
 package org.jclouds.virtualbox;
 
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URL;

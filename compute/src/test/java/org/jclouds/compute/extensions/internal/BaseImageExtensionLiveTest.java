@@ -19,8 +19,8 @@
 
 package org.jclouds.compute.extensions.internal;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -96,7 +96,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
 
       Optional<ImageExtension> imageExtension = computeService.getImageExtension();
 
-      assertTrue("image extension was not present", imageExtension.isPresent());
+      assertTrue(imageExtension.isPresent(), "image extension was not present");
 
       Template template = getNodeTemplate();
 
@@ -152,7 +152,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
       ComputeService computeService = view.getComputeService();
 
       Optional<ImageExtension> imageExtension = computeService.getImageExtension();
-      assertTrue("image extension was not present", imageExtension.isPresent());
+      assertTrue(imageExtension.isPresent(), "image extension was not present");
 
       Optional<? extends Image> optImage = getImage();
 

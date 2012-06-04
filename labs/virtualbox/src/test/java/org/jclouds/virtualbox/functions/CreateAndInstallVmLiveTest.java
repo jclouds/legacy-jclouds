@@ -20,7 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkState;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertTrue;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 

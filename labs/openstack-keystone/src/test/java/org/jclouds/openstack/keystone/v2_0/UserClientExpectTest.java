@@ -19,9 +19,9 @@
 package org.jclouds.openstack.keystone.v2_0;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Set;

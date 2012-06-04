@@ -22,7 +22,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
-import junit.framework.Assert;
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
@@ -30,6 +29,7 @@ import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
