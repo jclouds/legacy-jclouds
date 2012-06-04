@@ -124,9 +124,11 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
          if (type != null)
             builder.type(SpotInstanceRequest.Type.fromValue(type));
       } else if (qName.equals("state")) {
-         String state = currentOrNull(currentText);
-         if (state != null)
-            builder.state(SpotInstanceRequest.State.fromValue(state));
+         String rawState = currentOrNull(currentText);
+         if (rawState != null) {
+            builder.rawState(rawState);
+            builder.state(SpotInstanceRequest.State.fromValue(rawState));
+         }
       } else if (qName.equals("createTime")) {
          String createTime = currentOrNull(currentText);
          if (createTime != null)

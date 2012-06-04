@@ -158,7 +158,9 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
       } else if (equalsOrSuffix(qName, "instanceId")) {
          builder.instanceId(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "name")) {
-         builder.instanceState(InstanceState.fromValue(currentOrNull(currentText)));
+         String rawState = currentOrNull(currentText);
+         builder.rawState(rawState);
+         builder.instanceState(InstanceState.fromValue(rawState));
       } else if (equalsOrSuffix(qName, "instanceType")) {
          builder.instanceType(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "ipAddress")) {

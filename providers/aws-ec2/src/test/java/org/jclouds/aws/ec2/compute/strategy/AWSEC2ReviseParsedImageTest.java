@@ -103,7 +103,7 @@ public class AWSEC2ReviseParsedImageTest {
         Map<String, Image.EbsBlockDevice> ebsBlockDevices = Collections.emptyMap();
         VirtualizationType virtualizationType = VirtualizationType.HVM;
         Hypervisor hypervisor = Hypervisor.XEN;
-        Image from = new Image(region, architecture, imageName, description, imageId, imageOwnerId + "/" + imageName, imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor);
+        Image from = new Image(region, architecture, imageName, description, imageId, imageOwnerId + "/" + imageName, imageOwnerId, imageState, "available", imageType, isPublic, productCodes, kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor);
         return from;
     }
 }

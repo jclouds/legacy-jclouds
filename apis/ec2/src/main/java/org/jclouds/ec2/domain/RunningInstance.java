@@ -50,6 +50,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       protected String imageId;
       protected String instanceId;
       protected InstanceState instanceState;
+      protected String rawState;
       protected String instanceType;
       protected String ipAddress;
       protected String kernelId;
@@ -106,7 +107,12 @@ public class RunningInstance implements Comparable<RunningInstance> {
          this.instanceState = instanceState;
          return this;
       }
-
+      
+      public Builder rawState(String rawState) {
+         this.rawState = rawState;
+         return this;
+      }
+      
       public Builder instanceType(String instanceType) {
          this.instanceType = instanceType;
          return this;
@@ -190,9 +196,9 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
       public RunningInstance build() {
          return new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
-                  instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
-                  platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
-                  ebsBlockDevices);
+                  rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
+                  virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
+                  rootDeviceName, ebsBlockDevices);
       }
 
       public String getDnsName() {
@@ -221,6 +227,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    protected final String imageId;
    protected final String instanceId;
    protected final InstanceState instanceState;
+   protected final String rawState;
    protected final String instanceType;
    @Nullable
    protected final String ipAddress;
@@ -251,7 +258,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    protected RunningInstance(String region, Iterable<String> groupIds, @Nullable String amiLaunchIndex,
-            @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState,
+            @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
             String instanceType, @Nullable String ipAddress, @Nullable String kernelId, @Nullable String keyName,
             Date launchTime, String availabilityZone, String virtualizationType, @Nullable String platform,
             @Nullable String privateDnsName, @Nullable String privateIpAddress, @Nullable String ramdiskId,
@@ -263,6 +270,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.imageId = imageId; // nullable on runinstances.
       this.instanceId = checkNotNull(instanceId, "instanceId");
       this.instanceState = checkNotNull(instanceState, "instanceState");
+      this.rawState = checkNotNull(rawState, "rawState");
       this.instanceType = checkNotNull(instanceType, "instanceType");
       this.ipAddress = ipAddress;
       this.kernelId = kernelId;
@@ -327,7 +335,14 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public InstanceState getInstanceState() {
       return instanceState;
    }
-
+   
+   /**
+    * The current state of the instance, as returned literally from the input XML
+    */
+   public String getRawState() {
+      return rawState;
+   }
+   
    /**
     * The instance type.
     */
@@ -577,7 +592,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    @Override
    public String toString() {
       return "[region=" + region + ", availabilityZone=" + availabilityZone + ", instanceId=" + instanceId
-               + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
+               + ", instanceState=" + rawState + ", instanceType=" + instanceType + ", virtualizationType="
                + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
                + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
                + keyName + ", groupIds=" + groupIds  + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="

@@ -47,6 +47,7 @@ public class Image implements Comparable<Image> {
    private final String imageLocation;
    private final String imageOwnerId;
    private final ImageState imageState;
+   private final String rawState;
    private final ImageType imageType;
    private final boolean isPublic;
    @Nullable
@@ -73,10 +74,11 @@ public class Image implements Comparable<Image> {
    }
 
    public Image(String region, Architecture architecture, @Nullable String name, @Nullable String description,
-            String imageId, String imageLocation, String imageOwnerId, ImageState imageState, ImageType imageType,
-            boolean isPublic, Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
-            @Nullable String ramdiskId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, EbsBlockDevice> ebsBlockDevices, VirtualizationType virtualizationType, Hypervisor hypervisor) {
+            String imageId, String imageLocation, String imageOwnerId, ImageState imageState, String rawState,
+            ImageType imageType, boolean isPublic, Iterable<String> productCodes, @Nullable String kernelId,
+            @Nullable String platform, @Nullable String ramdiskId, RootDeviceType rootDeviceType,
+            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices,
+            VirtualizationType virtualizationType, Hypervisor hypervisor) {
       this.region = checkNotNull(region, "region");
       this.architecture = architecture;
       this.imageId = checkNotNull(imageId, "imageId");
@@ -86,6 +88,7 @@ public class Image implements Comparable<Image> {
       this.imageLocation = checkNotNull(imageLocation, "imageLocation");
       this.imageOwnerId = checkNotNull(imageOwnerId, "imageOwnerId");
       this.imageState = checkNotNull(imageState, "imageState");
+      this.rawState = checkNotNull(rawState, "rawState");
       this.imageType = checkNotNull(imageType, "imageType");
       this.isPublic = isPublic;
       this.kernelId = kernelId;
@@ -261,6 +264,13 @@ public class Image implements Comparable<Image> {
    }
 
    /**
+    * raw form of {@link #getImageState()} as taken directly from the api response xml document/
+    */
+   public String getRawState() {
+      return rawState;
+   }
+
+   /**
     * The type of image (machine, kernel, or ramdisk).
     */
    public ImageType getImageType() {
@@ -345,7 +355,6 @@ public class Image implements Comparable<Image> {
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((imageLocation == null) ? 0 : imageLocation.hashCode());
       result = prime * result + ((imageOwnerId == null) ? 0 : imageOwnerId.hashCode());
-      result = prime * result + ((imageState == null) ? 0 : imageState.hashCode());
       result = prime * result + ((imageType == null) ? 0 : imageType.hashCode());
       result = prime * result + (isPublic ? 1231 : 1237);
       result = prime * result + ((kernelId == null) ? 0 : kernelId.hashCode());
@@ -399,11 +408,6 @@ public class Image implements Comparable<Image> {
          if (other.imageOwnerId != null)
             return false;
       } else if (!imageOwnerId.equals(other.imageOwnerId))
-         return false;
-      if (imageState == null) {
-         if (other.imageState != null)
-            return false;
-      } else if (!imageState.equals(other.imageState))
          return false;
       if (imageType == null) {
          if (other.imageType != null)
@@ -469,7 +473,7 @@ public class Image implements Comparable<Image> {
    public String toString() {
       return "Image [architecture=" + architecture + ", description=" + description + ", ebsBlockDevices="
                + ebsBlockDevices + ", imageId=" + imageId + ", imageLocation=" + imageLocation + ", imageOwnerId="
-               + imageOwnerId + ", imageState=" + imageState + ", imageType=" + imageType + ", isPublic=" + isPublic
+               + imageOwnerId + ", imageState=" + rawState + ", imageType=" + imageType + ", isPublic=" + isPublic
                + ", kernelId=" + kernelId + ", name=" + name + ", platform=" + platform + ", productCodes="
                + productCodes + ", ramdiskId=" + ramdiskId + ", region=" + region + ", rootDeviceName="
                + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", virtualizationType=" + virtualizationType

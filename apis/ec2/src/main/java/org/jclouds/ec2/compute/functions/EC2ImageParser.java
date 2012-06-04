@@ -127,6 +127,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
       }
       builder.operatingSystem(osBuilder.build());
       builder.status(toPortableImageStatus.get(from.getImageState()));
+      builder.backendStatus(from.getRawState());
       return builder.build();
    }
 

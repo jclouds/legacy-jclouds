@@ -76,6 +76,7 @@ public class NovaReviseParsedImageTest {
                   .providerId("ami-000004d6")
                   .location(defaultLocation)
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE)
+                  .backendStatus("available")
                   .userMetadata(
                         ImmutableMap.of("owner", "", "rootDeviceType", "instance-store", "virtualizationType",
                               "paravirtual", "hypervisor", "xen")).build().toString());

@@ -88,6 +88,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                .instanceId("i-911444f0")
                .imageId("ami-63be790a")
                .instanceState(InstanceState.RUNNING)
+               .rawState("running")
                .privateDnsName("ip-10-212-81-7.ec2.internal")
                .dnsName("ec2-174-129-173-155.compute-1.amazonaws.com")
                .keyName("jclouds#zkclustertest#23")
@@ -113,6 +114,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                         .instanceId("i-931444f2")
                         .imageId("ami-63be790a")
                         .instanceState(InstanceState.RUNNING)
+                        .rawState("running")
                         .privateDnsName("ip-10-212-185-8.ec2.internal")
                         .dnsName("ec2-50-19-207-248.compute-1.amazonaws.com")
                         .keyName("jclouds#zkclustertest#23")
@@ -136,6 +138,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
             parser.apply(Iterables.get(contents, 0)).toString(),
             new NodeMetadataBuilder()
                   .status(Status.RUNNING)
+                  .backendStatus("running")
                   .group("zkclustertest")
                   .name("foo")
                   .hostname("ip-10-212-81-7")
@@ -147,9 +150,10 @@ public class AWSRunningInstanceToNodeMetadataTest {
                   .tags(ImmutableSet.of("Empty"))
                   .userMetadata(ImmutableMap.of("Name", "foo")).build().toString());
       assertEquals(
-              parser.apply(Iterables.get(contents, 1)), 
+              parser.apply(Iterables.get(contents, 1)).toString(), 
               new NodeMetadataBuilder()
                   .status(Status.RUNNING)
+                  .backendStatus("running")
                   .group("zkclustertest")
                   .hostname("ip-10-212-185-8")
                   .privateAddresses(ImmutableSet.of("10.212.185.8"))
@@ -157,7 +161,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                   .imageId("us-east-1/ami-63be790a")
                   .id("us-east-1/i-931444f2")
                   .providerId("i-931444f2")
-                  .build());
+                  .build().toString());
    }
 
    protected AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,

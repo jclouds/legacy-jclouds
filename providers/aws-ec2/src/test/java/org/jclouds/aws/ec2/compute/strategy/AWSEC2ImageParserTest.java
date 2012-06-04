@@ -75,6 +75,7 @@ public class AWSEC2ImageParserTest {
                      "virtualizationType", "paravirtual",
                      "hypervisor", "xen"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE)
+                  .backendStatus("available")
                   .build());
       assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
@@ -88,7 +89,7 @@ public class AWSEC2ImageParserTest {
                   .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-c0fa1ea9")
                   .providerId("ami-c0fa1ea9").location(defaultLocation).version("20080905")
                   .userMetadata(ImmutableMap.of("owner", "063491364108", "rootDeviceType", "instance-store"))
-                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
       assertEquals(Iterables.get(result, 4).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
@@ -107,7 +108,7 @@ public class AWSEC2ImageParserTest {
                      "rootDeviceType", "ebs",
                      "virtualizationType", "paravirtual",
                      "hypervisor", "xen"))
-                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
       assertEquals(Iterables.get(result, 6).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
    }
@@ -169,16 +170,16 @@ public class AWSEC2ImageParserTest {
                   .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-ccb35ea5")
                   .providerId("ami-ccb35ea5").location(defaultLocation).version("4.4.10")
                   .userMetadata(ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store"))
-                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
       assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
             new Gson().toJson(Iterables.get(result, 1)),
-            "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"status\":\"AVAILABLE\",\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"name\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"paravirtual\",\"hypervisor\":\"xen\"}}");
+            "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"status\":\"AVAILABLE\",\"backendStatus\":\"available\",\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-c19db6b5\",\"name\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"paravirtual\",\"hypervisor\":\"xen\"}}");
 
       assertEquals(
             new Gson().toJson(Iterables.get(result, 2)),
-            "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"status\":\"AVAILABLE\",\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"name\":\"RightImage Windows_2003_i386_v5.4.3\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"hvm\",\"hypervisor\":\"xen\"}}");
+            "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"status\":\"AVAILABLE\",\"backendStatus\":\"available\",\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"authenticateSudo\":false,\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"tags\":[],\"providerId\":\"ami-710c2605\",\"name\":\"RightImage Windows_2003_i386_v5.4.3\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\",\"iso3166Codes\":[],\"metadata\":{}},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\",\"virtualizationType\":\"hvm\",\"hypervisor\":\"xen\"}}");
    }
 
    public void testParseAmznImage() {

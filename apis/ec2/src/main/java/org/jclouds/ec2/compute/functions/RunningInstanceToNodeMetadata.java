@@ -115,6 +115,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          builder.hostname(instance.getPrivateDnsName().replaceAll("\\..*", ""));
       addCredentialsForInstance(builder, instance);
       builder.status(instanceToNodeStatus.get(instance.getInstanceState()));
+      builder.backendStatus(instance.getRawState());
 
       // collect all ip addresses into one bundle in case the api mistakenly put a private address
       // into the public address field

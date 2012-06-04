@@ -76,7 +76,7 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                   .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
                               "paravirtual", "hypervisor", "xen"))
-                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build().toString());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());
       assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
@@ -94,7 +94,7 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                   .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
                               "paravirtual", "hypervisor", "xen"))
-                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build().toString());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());
       assertEquals(Iterables.get(result, 1).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
@@ -112,7 +112,7 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
                   .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
                               "paravirtual", "hypervisor", "xen"))
-                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build().toString());
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());
       assertEquals(Iterables.get(result, 2).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
    }

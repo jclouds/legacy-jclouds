@@ -65,20 +65,20 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                .of("default"), ImmutableSet.of(
 
       new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("0")
-               .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).instanceType(
-                        InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
+               .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
                .availabilityZone("us-east-1b").build(),
 
       new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1")
-               .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).instanceType(
-                        InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
+               .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
                .availabilityZone("us-east-1b").build(),
 
       new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2")
-               .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).instanceType(
-                        InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
+               .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
                .availabilityZone("us-east-1b").build())
 
@@ -87,7 +87,7 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       RunInstancesResponseHandler handler = injector.getInstance(RunInstancesResponseHandler.class);
       addDefaultRegionToHandler(handler);
       Reservation<? extends RunningInstance> result = factory.create(handler).parse(is);
-      assertEquals(result, expected);
+      assertEquals(result.toString(), expected.toString());
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
