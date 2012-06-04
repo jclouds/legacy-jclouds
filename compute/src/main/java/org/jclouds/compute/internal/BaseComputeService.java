@@ -29,6 +29,7 @@ import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
@@ -578,7 +579,7 @@ public class BaseComputeService implements ComputeService {
          throw new NoSuchElementException(id);
       if (node.getStatus() != Status.RUNNING)
          throw new IllegalStateException("node " + id
-               + " needs to be running before executing a script on it. current state: " + node.getStatus());
+               + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);
       node = updateNodeWithCredentialsIfPresent(node, options);
       ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
@@ -597,7 +598,7 @@ public class BaseComputeService implements ComputeService {
          throw new NoSuchElementException(id);
       if (node.getStatus() != Status.RUNNING)
          throw new IllegalStateException("node " + id
-               + " needs to be running before executing a script on it. current state: " + node.getStatus());
+               + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);
       final NodeMetadata node1 = updateNodeWithCredentialsIfPresent(node, options);
       ListenableFuture<ExecResponse> response = runScriptOnNodeFactory.submit(node1, runScript, options);

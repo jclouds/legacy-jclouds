@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getRootCause;
 import static java.lang.String.format;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
 import java.util.Set;
@@ -141,12 +142,12 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
                      throw new IllegalStateException(
                            format(
                                  "node(%s) didn't achieve the status running, so we couldn't customize; aborting prematurely after %d seconds with final status: %s",
-                                 originalId, timeWaited / 1000, node.get().getStatus()));
+                                 originalId, timeWaited / 1000, formatStatus(node.get())));
                   } else {
                      throw new IllegalStateException(
                            format(
                                  "node(%s) didn't achieve the status running within %d seconds, so we couldn't customize; final status: %s",
-                                 originalId, timeouts.nodeRunning / 1000, node.get().getStatus()));
+                                 originalId, timeouts.nodeRunning / 1000, formatStatus(node.get())));
                   }
                }
             } catch (IllegalStateException e) {

@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.stub.config;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -211,7 +213,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       if (node.getStatus() == Status.RUNNING)
          return;
       if (node.getStatus() != Status.SUSPENDED)
-         throw new IllegalStateException("to resume a node, it must be in suspended status, not: " + node.getStatus());
+         throw new IllegalStateException("to resume a node, it must be in suspended status, not: " + formatStatus(node));
       setStateOnNode(Status.PENDING, node);
       setStateOnNodeAfterDelay(Status.RUNNING, node, 50);
    }
@@ -224,7 +226,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       if (node.getStatus() == Status.SUSPENDED)
          return;
       if (node.getStatus() != Status.RUNNING)
-         throw new IllegalStateException("to suspend a node, it must be in running status, not: " + node.getStatus());
+         throw new IllegalStateException("to suspend a node, it must be in running status, not: " + formatStatus(node));
       setStateOnNode(Status.PENDING, node);
       setStateOnNodeAfterDelay(Status.SUSPENDED, node, 50);
    }

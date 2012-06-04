@@ -38,6 +38,7 @@ import com.google.common.collect.Sets;
  */
 public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    private Status status;
+   private String backendStatus;
    private Set<String> publicAddresses = Sets.newLinkedHashSet();
    private Set<String> privateAddresses = Sets.newLinkedHashSet();
    @Nullable
@@ -65,6 +66,11 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
   
    public NodeMetadataBuilder status(Status status) {
       this.status = checkNotNull(status, "status");
+      return this;
+   }
+   
+   public NodeMetadataBuilder backendStatus(@Nullable String backendStatus) {
+      this.backendStatus = backendStatus;
       return this;
    }
    
@@ -162,15 +168,16 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    @Override
    public NodeMetadata build() {
       return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tags, group, hardware, imageId,
-               os, status, loginPort, publicAddresses, privateAddresses,  credentials, hostname);
+               os, status, backendStatus, loginPort, publicAddresses, privateAddresses, credentials, hostname);
    }
 
    public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
       return new NodeMetadataBuilder().providerId(node.getProviderId()).name(node.getName()).id(node.getId()).location(
                node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tags(node.getTags()).group(
                node.getGroup()).hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(
-               node.getOperatingSystem()).status(node.getStatus()).loginPort(node.getLoginPort()).publicAddresses(
-               node.getPublicAddresses()).privateAddresses(node.getPrivateAddresses()).credentials(node.getCredentials()).hostname(node.getHostname());
+               node.getOperatingSystem()).status(node.getStatus()).backendStatus(node.getBackendStatus()).loginPort(
+               node.getLoginPort()).publicAddresses(node.getPublicAddresses()).privateAddresses(
+               node.getPrivateAddresses()).credentials(node.getCredentials()).hostname(node.getHostname());
    }
 
 }

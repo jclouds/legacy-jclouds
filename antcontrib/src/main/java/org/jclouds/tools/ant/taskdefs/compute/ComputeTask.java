@@ -18,6 +18,7 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.buildComputeMap;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.createTemplateFromElement;
@@ -253,8 +254,7 @@ public class ComputeTask extends Task {
       NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node) : computeService
                .getNodeMetadata(node.getId());
       log(String.format("   node id=%s, name=%s, group=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, hardware=%s",
-               metadata.getProviderId(), metadata.getName(), metadata.getGroup(), metadata.getLocation(), metadata
-                        .getState(), ComputeTaskUtils.ipOrEmptyString(metadata.getPublicAddresses()),
+               metadata.getProviderId(), metadata.getName(), metadata.getGroup(), metadata.getLocation(), formatStatus(metadata), ComputeTaskUtils.ipOrEmptyString(metadata.getPublicAddresses()),
                ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getHardware()));
    }
 

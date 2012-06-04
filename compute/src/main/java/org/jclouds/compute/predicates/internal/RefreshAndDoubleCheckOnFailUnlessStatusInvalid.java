@@ -19,6 +19,7 @@
 package org.jclouds.compute.predicates.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,10 +67,10 @@ public abstract class RefreshAndDoubleCheckOnFailUnlessStatusInvalid<S extends E
    public boolean checkStatus(C resource) {
       if (resource == null)
          return false;
-      logger.trace("%s: looking for resource state %s: currently: %s", resource.getId(), intended, resource.getStatus());
+      logger.trace("%s: looking for resource state %s: currently: %s", resource.getId(), intended, formatStatus(resource));
       if (invalids.contains(resource.getStatus()))
          throw new IllegalStateException("resource " + resource.getId() + " in location " + resource.getLocation()
-                  + " is in invalid status " + resource.getStatus());
+                  + " is in invalid status " + formatStatus(resource));
       return resource.getStatus() == intended;
    }
 

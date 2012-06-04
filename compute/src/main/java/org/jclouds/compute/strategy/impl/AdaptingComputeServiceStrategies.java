@@ -20,6 +20,7 @@ package org.jclouds.compute.strategy.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
 
@@ -127,7 +128,8 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    }
 
    private void checkStateAvailable(NodeMetadata node) {
-      checkState(node != null && node.getStatus() != Status.TERMINATED, "node %s terminated or unavailable!", node);
+      checkState(node != null && node.getStatus() != Status.TERMINATED,
+               "node %s terminated or unavailable! current status: %s", node, formatStatus(node));
    }
 
    @Override

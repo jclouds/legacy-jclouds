@@ -84,8 +84,12 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
       if (o == null || getClass() != o.getClass())
          return false;
       ComputeMetadataImpl that = ComputeMetadataImpl.class.cast(o);
-      return super.equals(that) &&
-            equal(this.id, that.id);
+      return super.equals(that) && equal(this.id, that.id);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), id);
    }
 
    protected ToStringHelper string() {

@@ -19,6 +19,7 @@
 package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.net.URI;
 import java.util.Map;
@@ -31,6 +32,9 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * @author Adrian Cole
  */
@@ -41,17 +45,19 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
 
    private final OperatingSystem operatingSystem;
    private final Status status;
+   private final String backendStatus;
    private final String version;
    private final String description;
    private final LoginCredentials defaultCredentials;
 
-
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, Image.Status status, String description,
-         @Nullable String version, @Nullable LoginCredentials defaultCredentials) {
+            Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, Image.Status status,
+            @Nullable String backendStatus, String description, @Nullable String version,
+            @Nullable LoginCredentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
       this.status = checkNotNull(status, "status");
+      this.backendStatus = backendStatus;
       this.version = version;
       this.description = checkNotNull(description, "description");
       this.defaultCredentials = defaultCredentials;
@@ -72,7 +78,15 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    public Status getStatus() {
       return status;
    }
-   
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getBackendStatus() {
+      return backendStatus;
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -104,60 +118,17 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    @Deprecated
    public String getAdminPassword() {
       return (defaultCredentials != null && defaultCredentials.shouldAuthenticateSudo()) ? defaultCredentials
-            .getPassword() : null;
+               .getPassword() : null;
    }
 
-   @Override
-   public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", operatingSystem=" + operatingSystem + ", description="
-            + description + ", version=" + version + ", location=" + getLocation() + ", loginUser="
-            + ((defaultCredentials != null) ? defaultCredentials.identity : null) + ", userMetadata="
-            + getUserMetadata() + ", tags=" + tags + "]";
+   // equals and toString from super are sufficient to establish identity equivalence
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("id", getId()).add("providerId", getProviderId()).add("name", getName())
+               .add("os", getOperatingSystem()).add("description", getDescription()).add("version", getVersion()).add(
+                        "location", getLocation()).add("status", formatStatus(this)).add("loginUser",
+                        ((defaultCredentials != null) ? defaultCredentials.identity : null)).add("tags", getTags())
+               .add("userMetadata", getUserMetadata());
    }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((defaultCredentials == null) ? 0 : defaultCredentials.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
-      result = prime * result + ((version == null) ? 0 : version.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ImageImpl other = (ImageImpl) obj;
-      if (defaultCredentials == null) {
-         if (other.defaultCredentials != null)
-            return false;
-      } else if (!defaultCredentials.equals(other.defaultCredentials))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (operatingSystem == null) {
-         if (other.operatingSystem != null)
-            return false;
-      } else if (!operatingSystem.equals(other.operatingSystem))
-         return false;
-      if (version == null) {
-         if (other.version != null)
-            return false;
-      } else if (!version.equals(other.version))
-         return false;
-      return true;
-   }
-
-
 
 }

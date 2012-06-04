@@ -35,6 +35,7 @@ import org.jclouds.javax.annotation.Nullable;
 public class ImageBuilder extends ComputeMetadataBuilder {
    private OperatingSystem operatingSystem;
    private Status status;
+   private String backendStatus;
    private String version;
    private String description;
    private LoginCredentials defaultLoginCredentials;
@@ -50,6 +51,11 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    
    public ImageBuilder status(Status status) {
       this.status = checkNotNull(status, "status");
+      return this;
+   }
+   
+   public ImageBuilder backendStatus(@Nullable String backendStatus) {
+      this.backendStatus = backendStatus;
       return this;
    }
    
@@ -110,15 +116,15 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    @Override
    public Image build() {
       return new ImageImpl(providerId, name, id, location, uri, userMetadata, tags, operatingSystem, status,
-               description, version, defaultLoginCredentials);
+               backendStatus, description, version, defaultLoginCredentials);
    }
 
    public static ImageBuilder fromImage(Image image) {
-      return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId())
-            .location(image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata())
-            .tags(image.getTags()).version(image.getVersion()).description(image.getDescription())
-            .operatingSystem(image.getOperatingSystem()).status(image.getStatus())
-            .defaultCredentials(image.getDefaultCredentials());
+      return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId()).location(
+               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).tags(image.getTags())
+               .version(image.getVersion()).description(image.getDescription()).operatingSystem(
+                        image.getOperatingSystem()).status(image.getStatus()).backendStatus(image.getBackendStatus())
+               .defaultCredentials(image.getDefaultCredentials());
    }
 
 }

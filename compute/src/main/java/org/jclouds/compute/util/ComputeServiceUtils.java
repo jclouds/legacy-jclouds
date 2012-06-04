@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeMetadataIncludingStatus;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -58,6 +59,16 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 public class ComputeServiceUtils {
+   
+   /**
+    * status as a string which optionally includes the backend status
+    */
+   public static String formatStatus(ComputeMetadataIncludingStatus<?> resource) {
+      if (resource.getBackendStatus() == null)
+         return resource.getStatus().toString();
+      return String.format("%s[%s]", resource.getStatus(), resource.getBackendStatus());
+   }
+   
    public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("(.+)-[0-9a-f]+");
 
    /**

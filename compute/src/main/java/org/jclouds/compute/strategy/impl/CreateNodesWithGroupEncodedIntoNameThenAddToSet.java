@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 import static org.jclouds.concurrent.Futures.compose;
 
 import java.util.Map;
@@ -79,7 +80,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
          logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)", template.getLocation().getId(),
                   name, template.getImage().getProviderId(), template.getHardware().getProviderId());
          node = addNodeWithGroupStrategy.createNodeWithGroupEncodedIntoName(group, name, template);
-         logger.debug("<< %s node(%s)", node.getStatus(), node.getId());
+         logger.debug("<< %s node(%s)", formatStatus(node), node.getId());
          return new AtomicReference<NodeMetadata>(node);
       }
 

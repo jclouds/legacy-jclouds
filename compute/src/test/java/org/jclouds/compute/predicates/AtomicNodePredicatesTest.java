@@ -134,6 +134,7 @@ public class AtomicNodePredicatesTest {
    @Test
    public void testNodeRunningReturnsTrueWhenRunning() {
       expect(node.getStatus()).andReturn(Status.RUNNING).atLeastOnce();
+      expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node);
       replay(computeService);
 
@@ -146,6 +147,7 @@ public class AtomicNodePredicatesTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnTerminated() {
       expect(node.getStatus()).andReturn(Status.TERMINATED).atLeastOnce();
+      expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node);
       replay(computeService);
 
@@ -158,6 +160,7 @@ public class AtomicNodePredicatesTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnError() {
       expect(node.getStatus()).andReturn(Status.ERROR).atLeastOnce();
+      expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node);
       replay(computeService);
 

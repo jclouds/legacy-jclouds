@@ -18,15 +18,26 @@
  */
 package org.jclouds.compute.domain;
 
+import org.jclouds.javax.annotation.Nullable;
+
 /**
  * @author Adrian Cole
  */
 public interface ComputeMetadataIncludingStatus<S extends Enum<S>> extends ComputeMetadata {
-   
+
    /**
-    * status of the resource
+    * portable status of the resource
+    * 
     * @since 1.5
     */
    public S getStatus();
 
+   /**
+    * status of the resource, as supplied literally from the backend api.
+    * 
+    * @return status or null, if the backend api has no concept of status
+    * @since 1.5
+    */
+   @Nullable
+   public String getBackendStatus();
 }

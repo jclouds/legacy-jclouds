@@ -18,14 +18,22 @@
  */
 package org.jclouds.compute.util;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
-import static org.jclouds.compute.util.ComputeServiceUtils.*;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.ComputeMetadataIncludingStatus;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -45,8 +53,31 @@ import com.google.inject.Guice;
  * @author Adrian Cole
  * 
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ComputeServiceUtilsTest")
 public class ComputeServiceUtilsTest {
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testFormatStatusWithBackendStatus() {
+      ComputeMetadataIncludingStatus<Image.Status> resource = createMock(ComputeMetadataIncludingStatus.class);
+      expect(resource.getStatus()).andReturn(Image.Status.PENDING);
+      expect(resource.getBackendStatus()).andReturn("queued").anyTimes();
+      replay(resource);
+      assertEquals(formatStatus(resource), "PENDING[queued]");
+      verify(resource);
+   }
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testFormatStatusWithoutBackendStatus() {
+      ComputeMetadataIncludingStatus<Image.Status> resource = createMock(ComputeMetadataIncludingStatus.class);
+      expect(resource.getStatus()).andReturn(Image.Status.PENDING);
+      expect(resource.getBackendStatus()).andReturn(null).anyTimes();
+      replay(resource);
+      assertEquals(formatStatus(resource), "PENDING");
+      verify(resource);
+   }
+   
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
          .getInstance(Json.class));

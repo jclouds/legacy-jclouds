@@ -19,6 +19,7 @@
 package org.jclouds.compute.predicates.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -57,8 +58,7 @@ public abstract class TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse<S extends 
    public boolean checkStatus(C resource) {
       if (resource == null)
          return true;
-      logger.trace("%s: looking for resource status %s: currently: %s", resource.getId(), deletedStatus, resource
-               .getStatus());
+      logger.trace("%s: looking for resource status %s: currently: %s", resource.getId(), deletedStatus, formatStatus(resource));
       return resource.getStatus() == deletedStatus;
    }
 
