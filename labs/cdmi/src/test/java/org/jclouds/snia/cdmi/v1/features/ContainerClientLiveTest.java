@@ -41,37 +41,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "ContainerClientLiveTest")
 public class ContainerClientLiveTest extends BaseCDMIClientLiveTest {
-/*
-   @Test
-   public void testGetContainer() throws Exception {
-//	  String pContainerName = "NaginContainer1335695552671"; 
-	  String pContainerName = System.getProperty("test.cdmi.containerName","MyContainer"); 
-      ContainerClient client = cdmiContext.getApi().getContainerClient();
-      Container container = client.getContainer(pContainerName);
-      assertNotNull(container);
-      assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
-      assertNotNull(container.getObjectID());
-      assertNotNull(container.getObjectName());
-      assertEquals(container.getObjectName(),pContainerName+"/");
-      assertNotNull(container.getChildren());
-      assertNotNull(container.getMetadata());
-      System.out.println(container.getMetadata());
-      Iterator<String> keys = container.getMetadata().keySet().iterator();
-      while ( keys.hasNext() ){
-    	String key = keys.next();
-    	JsonBall value = container.getMetadata().get(key);
-        System.out.println( key + ":" + value );
-        if(key.matches("cdmi_acl")) {
-        	System.out.println("cdmi_acl here");
-        	String[] cdmi_acl_array = value.toString().split("[[{}]]");
-        	for(int i = 0; i < cdmi_acl_array.length; i++) {
-        		System.out.println(  cdmi_acl_array[i] );        		
-        	}
-        	
-        }
-      }
-   }
-   */
    @Test
    public void testCreateContainer() throws Exception {
 	   String pContainerName = "MyContainer"+System.currentTimeMillis();

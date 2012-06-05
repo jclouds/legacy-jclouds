@@ -151,7 +151,6 @@ public class Container extends CDMIObject {
 						if (!(cdmi_acl_array[i].startsWith("[")
 								|| cdmi_acl_array[i].startsWith("]") || cdmi_acl_array[i]
 								.startsWith(","))) {
-							// System.out.println( cdmi_acl_array[i] );
 							HashMap<String, String> aclMap = new HashMap<String, String>();
 							String[] cdmi_acl_member = cdmi_acl_array[i]
 									.split(",");
