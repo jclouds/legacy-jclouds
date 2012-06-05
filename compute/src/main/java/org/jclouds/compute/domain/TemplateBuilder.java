@@ -143,6 +143,12 @@ public interface TemplateBuilder {
 
    /**
     * Configure this template to have an image description that matches the supplied condition
+    * 
+    * ex. 
+    * 
+    * <pre>
+    * builder.imageMatches(ImagePredicates.userMetadataContains("author", "sue"));
+    * </pre>
     */
    TemplateBuilder imageMatches(Predicate<Image> condition);
 
