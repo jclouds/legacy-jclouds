@@ -304,7 +304,7 @@ public class BaseComputeService implements ComputeService {
             }
          }
 
-      }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
+      }, timeouts.nodeTerminated, 1000, TimeUnit.MILLISECONDS);
       
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node));
       if (successful)
