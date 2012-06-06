@@ -121,3 +121,5 @@ title: A List of applications that use jclouds
   * [Nimble Servers](http://www.nimbleservers.com/)
     * Nimble Servers uses jclouds to provision servers on public clouds in response to user demand
 
+  * [MaestroDev](http://www.maestrodev.com/)
+    * MaestroDev uses jclouds to start and provision servers on public/private clouds as part of the source code to production workflow, for building, testing or deployment
