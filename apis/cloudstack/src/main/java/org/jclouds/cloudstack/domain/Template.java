@@ -62,6 +62,7 @@ public class Template implements Comparable<Template> {
       // These states are specifically used for extraction of resources out of CS(ironically shown
       // as download template in the UI, API - extractTemplate ). Some of the generic states (like
       // abandoned, unknown) above are used for the extraction tasks as well.
+
       /**
        * the resource has been uploaded
        */
@@ -80,6 +81,9 @@ public class Template implements Comparable<Template> {
       UPLOAD_IN_PROGRESS, UNRECOGNIZED;
 
       public static Status fromValue(String state) {
+         if (state.equals("Download Complete")) {
+            return DOWNLOADED;
+         }
          try {
             return valueOf(checkNotNull(state, "state"));
          } catch (IllegalArgumentException e) {
