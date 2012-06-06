@@ -55,7 +55,7 @@ public class GlobalDomainClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateUpdateDeleteDomain() {
-      assert globalAdminEnabled;
+      skipIfNotDomainAdmin();
 
       Domain domain = null;
       try {

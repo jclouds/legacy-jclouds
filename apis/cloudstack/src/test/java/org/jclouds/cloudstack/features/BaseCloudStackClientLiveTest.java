@@ -57,6 +57,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.SkipException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
@@ -268,6 +269,18 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
                String.format("Expecting an user with type %s. Got: %s", type.toString(), currentUser.toString()));
       }
       return currentUser;
+   }
+
+   protected void skipIfNotDomainAdmin() {
+      if (!domainAdminEnabled) {
+         throw new SkipException("Test cannot run without domain admin identity and credentials");
+      }
+   }
+
+   protected void skipIfNotGlobalAdmin() {
+      if (!globalAdminEnabled) {
+         throw new SkipException("Test cannot run without global admin identity and credentials");
+      }
    }
 
    @AfterGroups(groups = "live")

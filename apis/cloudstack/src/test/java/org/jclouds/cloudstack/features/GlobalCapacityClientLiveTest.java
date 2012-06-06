@@ -36,7 +36,7 @@ public class GlobalCapacityClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testListCapacity() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       final Set<Capacity> response = globalAdminClient.getCapacityClient().listCapacity();
       assert null != response;

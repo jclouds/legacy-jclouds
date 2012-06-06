@@ -71,8 +71,7 @@ public class CloudStackErrorHandler implements HttpErrorHandler {
             break;
          case 409:
          case 431:
-            if (command.getCurrentRequest().getRequestLine().indexOf("delete") != -1
-                  && message.indexOf("does not exist") != -1) {
+            if (message.contains("does not exist")) {
                exception = new ResourceNotFoundException(message, exception);
             } else {
                exception = new IllegalStateException(message, exception);

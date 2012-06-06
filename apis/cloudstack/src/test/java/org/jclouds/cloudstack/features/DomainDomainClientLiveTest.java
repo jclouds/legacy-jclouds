@@ -43,7 +43,7 @@ public class DomainDomainClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testListDomains() {
-      assert domainAdminEnabled;
+      skipIfNotDomainAdmin();
 
       Set<Domain> allDomains = domainAdminClient.getDomainClient().listDomains();
 
@@ -63,7 +63,7 @@ public class DomainDomainClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testListDomainChildren() {
-      assert domainAdminEnabled;
+      skipIfNotDomainAdmin();
 
       Set<Domain> allDomains = domainAdminClient.getDomainClient().listDomains();
       Domain root = find(allDomains, withName("ROOT"));

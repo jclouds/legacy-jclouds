@@ -39,7 +39,7 @@ public class GlobalStoragePoolClientLiveTest extends BaseCloudStackClientLiveTes
 
    @Test(groups = "live", enabled = true)
    public void testListStoragePools() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       Set<StoragePool> result = globalAdminClient.getStoragePoolClient().listStoragePools();
       assertNotNull(result);

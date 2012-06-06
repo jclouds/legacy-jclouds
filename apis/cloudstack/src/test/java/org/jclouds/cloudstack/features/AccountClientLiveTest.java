@@ -49,7 +49,7 @@ public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
          assert user.getName() != null : user;
          assert user.getAccountType().equals(account.getType()) : user;
          assert user.getDomain().equals(account.getDomain()) : user;
-         assert user.getDomainId() == account.getDomainId() : user;
+         assert user.getDomainId().equals(account.getDomainId()) : user;
          assert user.getApiKey() != null : user;
          assert user.getCreated() != null : user;
          assert user.getEmail() != null : user;
