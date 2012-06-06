@@ -70,5 +70,7 @@
         <module>softlayer</module>
         <module>ninefold-compute</module>
         <module>hpcloud-objectstorage-lvs</module>
+        <module>greenqloud-compute</module>
+        <module>greenqloud-storage</module>
     </modules>
 </project>
