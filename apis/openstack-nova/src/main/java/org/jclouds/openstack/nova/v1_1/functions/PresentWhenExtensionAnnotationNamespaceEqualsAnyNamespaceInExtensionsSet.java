@@ -94,8 +94,8 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
 
    @Override
    public Optional<Object> apply(ClassMethodArgsAndReturnVal input) {
-      Optional<org.jclouds.openstack.services.Extension> ext = Optional.fromNullable(input.getClazz().getAnnotation(
-            org.jclouds.openstack.services.Extension.class));
+      Optional<org.jclouds.openstack.v2_0.services.Extension> ext = Optional.fromNullable(input.getClazz().getAnnotation(
+            org.jclouds.openstack.v2_0.services.Extension.class));
       if (ext.isPresent()) {
          checkState(input.getArgs() != null && input.getArgs().length == 1, "expecting an arg %s", input);
          URI namespace = URI.create(ext.get().namespace());

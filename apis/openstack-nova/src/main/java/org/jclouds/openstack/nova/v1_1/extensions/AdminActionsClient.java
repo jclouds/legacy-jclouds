@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.BackupType;
 import org.jclouds.openstack.nova.v1_1.options.CreateBackupOfServerOptions;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 
 /**
  * Provide additional actions for servers:

@@ -25,7 +25,7 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.utils.ModifyRequest;
-import org.jclouds.openstack.Authentication;
+import org.jclouds.openstack.internal.Authentication;
 import org.jclouds.openstack.reference.AuthHeaders;
 
 import com.google.common.base.Supplier;

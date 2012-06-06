@@ -30,7 +30,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.quantum.v1_0.domain.Network;
 import org.jclouds.openstack.quantum.v1_0.domain.NetworkDetails;
 import org.jclouds.openstack.quantum.v1_0.domain.Reference;

@@ -21,7 +21,7 @@ package org.jclouds.openstack.nova.v1_1.domain;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
 

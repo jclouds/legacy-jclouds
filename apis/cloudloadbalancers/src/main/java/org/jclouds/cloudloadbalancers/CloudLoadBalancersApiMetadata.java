@@ -25,7 +25,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
 import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -75,7 +74,7 @@ public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
          .identityName("Username")
          .credentialName("API Key")
          .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html"))
-         .version(OpenStackAuthAsyncClient.VERSION)
+         .version("1.0")
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
          .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
          .view(TypeToken.of(LoadBalancerServiceContext.class))

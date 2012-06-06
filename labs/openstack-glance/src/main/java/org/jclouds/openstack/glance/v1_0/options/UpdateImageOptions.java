@@ -18,7 +18,19 @@
  */
 package org.jclouds.openstack.glance.v1_0.options;
 
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.*;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.CHECKSUM;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.CONTAINER_FORMAT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.DISK_FORMAT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.IS_PUBLIC;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.LOCATION;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.MIN_DISK;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.MIN_RAM;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.NAME;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.OWNER;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.PROPERTY;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.PROTECTED;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.SIZE;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.STORE;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;

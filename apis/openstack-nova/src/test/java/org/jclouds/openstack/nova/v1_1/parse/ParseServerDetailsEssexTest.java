@@ -27,14 +27,14 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.domain.ServerExtendedStatus;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
+import org.jclouds.openstack.v2_0.domain.Link;
+import org.jclouds.openstack.v2_0.domain.Resource;
+import org.jclouds.openstack.v2_0.domain.Link.Relation;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 

@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.util.Multimaps2;
 
 import com.google.common.base.Optional;

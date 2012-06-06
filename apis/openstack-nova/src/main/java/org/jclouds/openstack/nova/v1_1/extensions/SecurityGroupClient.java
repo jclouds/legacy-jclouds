@@ -25,8 +25,8 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.Ingress;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 
 /**
  * Provides synchronous access to Security Groups.

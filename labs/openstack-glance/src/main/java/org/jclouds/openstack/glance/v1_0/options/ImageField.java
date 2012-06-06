@@ -18,13 +18,6 @@
  */
 package org.jclouds.openstack.glance.v1_0.options;
 
-import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-
-import org.jclouds.util.Strings2;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Strings;
 
 /**
  * Fields used in Glance options

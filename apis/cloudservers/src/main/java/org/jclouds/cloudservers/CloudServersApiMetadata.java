@@ -25,7 +25,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceContextModule;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -74,7 +73,7 @@ public class CloudServersApiMetadata extends BaseRestApiMetadata {
          .identityName("Username")
          .credentialName("API Key")
          .documentation(URI.create("http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide/content/ch01.html"))
-         .version(OpenStackAuthAsyncClient.VERSION)
+         .version("1.0")
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
          .defaultProperties(CloudServersApiMetadata.defaultProperties())
          .view(TypeToken.of(ComputeServiceContext.class))

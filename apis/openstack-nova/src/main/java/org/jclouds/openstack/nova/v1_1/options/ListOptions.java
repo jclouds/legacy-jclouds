@@ -20,7 +20,7 @@ package org.jclouds.openstack.nova.v1_1.options;
 
 import java.util.Date;
 
-import org.jclouds.openstack.options.BaseListOptions;
+import org.jclouds.openstack.v2_0.options.BaseListOptions;
 
 /**
  * Options used to control the amount of detail in the request.

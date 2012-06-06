@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.openstack.nova.v1_1.domain.QuotaClass;
-import org.jclouds.openstack.nova.v1_1.domain.Quotas;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

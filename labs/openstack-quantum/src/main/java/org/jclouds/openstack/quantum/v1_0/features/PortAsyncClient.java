@@ -29,7 +29,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.quantum.v1_0.domain.Attachment;
 import org.jclouds.openstack.quantum.v1_0.domain.Port;
 import org.jclouds.openstack.quantum.v1_0.domain.PortDetails;

@@ -53,8 +53,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jclouds.common</groupId>
-      <artifactId>openstack-common</artifactId>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -70,8 +70,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.common</groupId>
-      <artifactId>openstack-common</artifactId>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>

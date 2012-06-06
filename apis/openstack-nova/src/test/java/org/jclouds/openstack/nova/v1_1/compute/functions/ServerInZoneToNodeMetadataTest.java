@@ -37,12 +37,12 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
+import org.jclouds.openstack.v2_0.domain.Link;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

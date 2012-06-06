@@ -47,6 +47,7 @@
        <module>elasticstack</module>
        <module>atmos</module>
        <module>nova</module>
+       <module>openstack-keystone</module>
        <module>openstack-nova</module>
        <module>openstack-nova-ec2</module>
        <module>cloudwatch</module>

@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.v1_1;
 
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.VERSION;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
@@ -28,10 +29,9 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -74,7 +74,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       
       properties.setProperty(SERVICE_TYPE, ServiceType.COMPUTE);
       // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
+      properties.setProperty(VERSION, "2.0");
       
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "false");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");

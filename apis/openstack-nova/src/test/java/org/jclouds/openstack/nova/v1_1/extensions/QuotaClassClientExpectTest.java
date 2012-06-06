@@ -29,7 +29,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.domain.QuotaClass;
-import org.jclouds.openstack.nova.v1_1.domain.Quotas;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;

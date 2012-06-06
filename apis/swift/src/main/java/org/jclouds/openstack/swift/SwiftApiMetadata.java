@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.RestContext;
@@ -81,7 +80,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          .identityName("tenantId:user")
          .credentialName("password")
          .documentation(URI.create("http://api.openstack.org/"))
-         .version(OpenStackAuthAsyncClient.VERSION)
+         .version("1.0")
          .defaultProperties(SwiftApiMetadata.defaultProperties())
          .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(SwiftRestClientModule.class, SwiftBlobStoreContextModule.class));

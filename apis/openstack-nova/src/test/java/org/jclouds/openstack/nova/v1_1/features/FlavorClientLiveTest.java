@@ -23,9 +23,9 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.testng.annotations.Test;
 
 /**

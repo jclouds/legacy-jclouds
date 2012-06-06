@@ -21,11 +21,10 @@ package org.jclouds.openstack.nova.v1_1.extensions;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.QuotaClass;
-import org.jclouds.openstack.nova.v1_1.domain.Quotas;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 import org.jclouds.rest.annotations.RequestFilters;
 
 /**
