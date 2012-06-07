@@ -18,10 +18,8 @@
  */
 package org.jclouds.cloudservers_nova.us;
 
-import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
-import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
-import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 
 import java.net.URI;
 import java.util.Properties;
@@ -67,11 +65,8 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
+      properties.setProperty(TEMPLATE, "imageId=DFW/3afe97b2-26dc-49c5-a2cc-a2fc8d80c001");
 
-      // deallocating ip addresses can take a while
-      properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
-      properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
-      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
       return properties;
    }
    
@@ -90,7 +85,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
          .homepage(URI.create("http://www.rackspace.com/cloud/nextgen"))
          .console(URI.create("https://mycloud.rackspace.com"))
          .linkedServices("cloudservers-nova-us", "cloudfiles-swift-us")
-         .iso3166Codes("US-IL", "US-TX")
+         .iso3166Codes("US-TX")
          .endpoint("https://identity.api.rackspacecloud.com")
          .defaultProperties(CloudServersUSProviderMetadata.defaultProperties());
       }
