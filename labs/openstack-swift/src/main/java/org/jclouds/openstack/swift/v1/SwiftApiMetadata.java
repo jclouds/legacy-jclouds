@@ -18,13 +18,16 @@
  */
 package org.jclouds.openstack.swift.v1;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForRegions;
 import org.jclouds.openstack.swift.v1.config.SwiftRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
@@ -64,6 +67,8 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
+
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
       return properties;
@@ -81,7 +86,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(SwiftApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SwiftRestClientModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForRegions.class, SwiftRestClientModule.class));
       }
       
       @Override

@@ -38,7 +38,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.assistedinject.Assisted;
 
 @Singleton
-public class LocationIdToURIFromAccessForTypeAndVersionSupplier implements Supplier<Map<String, Supplier<URI>>> {
+public class LocationIdToURIFromAccessForTypeAndVersion implements Supplier<Map<String, Supplier<URI>>> {
    protected final Supplier<Access> access;
    protected final EndpointToSupplierURI endpointToSupplierURI;
    protected final Function<Endpoint, String> endpointToLocationId;
@@ -46,7 +46,7 @@ public class LocationIdToURIFromAccessForTypeAndVersionSupplier implements Suppl
    protected final String apiVersion;
 
    @Inject
-   public LocationIdToURIFromAccessForTypeAndVersionSupplier(Supplier<Access> access,
+   public LocationIdToURIFromAccessForTypeAndVersion(Supplier<Access> access,
             EndpointToSupplierURI endpointToSupplierURI, Function<Endpoint, String> endpointToLocationId,
             @Assisted("apiType") String apiType, @Assisted("apiVersion") String apiVersion) {
       this.access = access;
@@ -70,8 +70,8 @@ public class LocationIdToURIFromAccessForTypeAndVersionSupplier implements Suppl
 
          });
       } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("apiType %s not found in catalog %s", apiType,
-               accessResponse.getServiceCatalog()));
+         throw new NoSuchElementException(String.format("apiType %s not found in catalog %s", apiType, accessResponse
+                  .getServiceCatalog()));
       }
       Map<String, Endpoint> locationIdToEndpoint = Maps.uniqueIndex(Iterables.filter(service.getEndpoints(),
                new Predicate<Endpoint>() {

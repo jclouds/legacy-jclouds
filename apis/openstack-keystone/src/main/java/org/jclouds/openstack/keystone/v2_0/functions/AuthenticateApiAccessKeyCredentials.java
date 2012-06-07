@@ -21,17 +21,17 @@ package org.jclouds.openstack.keystone.v2_0.functions;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.domain.Credentials;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialType;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
-import org.jclouds.rest.AuthorizationException;
+import org.jclouds.openstack.keystone.v2_0.functions.internal.BaseAuthenticator;
 
-import com.google.common.base.Function;
-
+@CredentialType(CredentialTypes.API_ACCESS_KEY_CREDENTIALS)
 @Singleton
-public class AuthenticateApiAccessKeyCredentials implements Function<Credentials, Access> {
-   private final AuthenticationClient client;
+public class AuthenticateApiAccessKeyCredentials extends BaseAuthenticator<ApiAccessKeyCredentials> {
+   protected final AuthenticationClient client;
 
    @Inject
    public AuthenticateApiAccessKeyCredentials(AuthenticationClient client) {
@@ -39,25 +39,18 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
    }
 
    @Override
-   public Access apply(Credentials input) {
-      if (input.identity.indexOf(':') == -1) {
-         throw new AuthorizationException(String.format("Identity %s does not match format tenantName:accessKey",
-               input.identity), null);
-      }
+   protected Access authenticateWithTenantNameOrNull(String tenantId, ApiAccessKeyCredentials apiAccessKeyCredentials) {
+      return client.authenticateWithTenantNameAndCredentials(tenantId, apiAccessKeyCredentials);
+   }
 
-      String tenantId = input.identity.substring(0, input.identity.indexOf(':'));
-      String usernameOrAccessKey = input.identity.substring(input.identity.indexOf(':') + 1);
-      String passwordOrSecretKey = input.credential;
+   @Override
+   protected Access authenticateWithTenantId(String tenantId, ApiAccessKeyCredentials apiAccessKeyCredentials) {
+      return client.authenticateWithTenantIdAndCredentials(tenantId, apiAccessKeyCredentials);
+   }
 
-      ApiAccessKeyCredentials apiAccessKeyCredentials = ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(
-            usernameOrAccessKey, passwordOrSecretKey);
-      Access access;
-      if (tenantId.matches("^[0-9]+$")) {
-         access = client.authenticateWithTenantIdAndCredentials(tenantId, apiAccessKeyCredentials);
-      } else {
-         access = client.authenticateWithTenantNameAndCredentials(tenantId, apiAccessKeyCredentials);
-      }
-      return access;
+   @Override
+   public ApiAccessKeyCredentials createCredentials(String identity, String credential) {
+      return ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(identity, credential);
    }
 
    @Override

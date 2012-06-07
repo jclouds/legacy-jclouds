@@ -36,7 +36,7 @@ public interface KeystoneProperties {
     * <li>passwordCredentials</li>
     * </ul>
     * 
-    * @see CredentialType
+    * @see CredentialTypes
     * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Client_Operations.html"
     *      />
     */

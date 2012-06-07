@@ -53,6 +53,7 @@ public class Role implements Comparable<Role> {
    public static class Builder {
       protected String id;
       protected String name;
+      protected String description;
       protected String serviceId;
       protected String tenantId;
 
@@ -71,7 +72,15 @@ public class Role implements Comparable<Role> {
          this.name = checkNotNull(name, "name");
          return this;
       }
-
+      
+      /**
+       * @see Role#getDescription()
+       */
+      public Builder description(String description) {
+         this.description = checkNotNull(description, "description");
+         return this;
+      }
+      
       /**
        * @see Role#getServiceId()
        */
@@ -89,11 +98,11 @@ public class Role implements Comparable<Role> {
       }
 
       public Role build() {
-         return new Role(id, name, serviceId, tenantId);
+         return new Role(id, name, description, serviceId, tenantId);
       }
 
       public Builder fromRole(Role from) {
-         return id(from.getId()).name(from.getName()).serviceId(from.getServiceId()).tenantId(from.getTenantId());
+         return id(from.getId()).name(from.getName()).description(from.getName()).serviceId(from.getServiceId()).tenantId(from.getTenantId());
       }
    }
    
@@ -105,15 +114,17 @@ public class Role implements Comparable<Role> {
    
    protected String id;
    protected String name;
+   protected String description;
    protected String serviceId;
    // renamed half-way through
    @Deprecated
    protected String tenantName;
    protected String tenantId;
 
-   protected Role(String id, String name, @Nullable String serviceId, @Nullable String tenantId) {
+   protected Role(String id, String name, @Nullable String description, @Nullable String serviceId, @Nullable String tenantId) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
+      this.description = description;
       this.serviceId = serviceId;
       this.tenantId = tenantId;
    }
@@ -132,6 +143,14 @@ public class Role implements Comparable<Role> {
     */
    public String getName() {
       return name;
+   }
+   
+   /**
+    * @return the description of the role
+    */
+   @Nullable
+   public String getDescription() {
+      return description;
    }
 
    /**
@@ -171,7 +190,7 @@ public class Role implements Comparable<Role> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("serviceId", serviceId).add("tenantId", getTenantId())
+      return toStringHelper("").add("id", id).add("name", name).add("description", description).add("serviceId", serviceId).add("tenantId", getTenantId())
                .toString();
    }
    

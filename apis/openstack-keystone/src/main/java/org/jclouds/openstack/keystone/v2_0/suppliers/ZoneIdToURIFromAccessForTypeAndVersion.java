@@ -21,25 +21,31 @@ package org.jclouds.openstack.keystone.v2_0.suppliers;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.EndpointToRegion;
-import org.jclouds.openstack.keystone.v2_0.functions.EndpointToSupplierAdminURI;
+import org.jclouds.openstack.keystone.v2_0.functions.EndpointToSupplierURI;
 
 import com.google.common.base.Supplier;
 import com.google.inject.assistedinject.Assisted;
 
 @Singleton
-public class RegionIdToAdminURIFromAccessForTypeAndVersionSupplier extends
-         LocationIdToURIFromAccessForTypeAndVersionSupplier implements RegionIdToAdminURISupplier {
+public class ZoneIdToURIFromAccessForTypeAndVersion extends LocationIdToURIFromAccessForTypeAndVersion implements
+         ZoneIdToURISupplier {
+
    @Inject
-   public RegionIdToAdminURIFromAccessForTypeAndVersionSupplier(Supplier<Access> access,
-                                                                EndpointToSupplierAdminURI endpointToSupplierURI, EndpointToRegion endpointToRegion,
-                                                                @Assisted("apiType") String apiType, @Assisted("apiVersion") String apiVersion) {
-      super(access, endpointToSupplierURI, endpointToRegion, apiType, apiVersion);
+   public ZoneIdToURIFromAccessForTypeAndVersion(
+            Supplier<Access> access,
+            // NOTE that in some services, the region is in fact the zone. temporarily, we need
+            // to use the region field, in this case.
+            EndpointToSupplierURI endpointToSupplierURI, EndpointToRegion endpointToZone,
+            @Assisted("apiType") String apiType, @Nullable @Assisted("apiVersion") String apiVersion) {
+      super(access, endpointToSupplierURI, endpointToZone, apiType, apiVersion);
    }
 
    @Override
    public String toString() {
-      return "regionIdToAdminURIFromAccessForTypeAndVersion(" + apiType + ", " + apiVersion + ")";
+      return "zoneIdToURIFromAccessForTypeAndVersion(" + apiType + ", " + apiVersion + ")";
    }
 }

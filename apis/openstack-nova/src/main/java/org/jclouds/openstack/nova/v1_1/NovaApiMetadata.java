@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.VERSION;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
@@ -29,6 +30,8 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForZones;
 import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -73,6 +76,8 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       
       properties.setProperty(SERVICE_TYPE, ServiceType.COMPUTE);
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
+      
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(VERSION, "2.0");
       
@@ -95,7 +100,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(NovaApiMetadata.defaultProperties())
          .view(TypeToken.of(ComputeServiceContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, NovaComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForZones.class, NovaRestClientModule.class, NovaComputeServiceContextModule.class));
       }
       
       @Override

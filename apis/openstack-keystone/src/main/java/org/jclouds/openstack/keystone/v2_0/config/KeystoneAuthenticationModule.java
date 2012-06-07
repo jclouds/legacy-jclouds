@@ -18,9 +18,11 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -45,10 +47,10 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
 import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
-import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersionSupplier;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
-import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersionSupplier;
-import org.jclouds.openstack.keystone.v2_0.suppliers.ZoneIdToURIFromAccessForTypeAndVersionSupplier;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersion;
+import org.jclouds.openstack.keystone.v2_0.suppliers.ZoneIdToURIFromAccessForTypeAndVersion;
 import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.base.Function;
@@ -56,8 +58,10 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -76,18 +80,24 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    protected KeystoneAuthenticationModule(Module locationModule) {
       this.locationModule = locationModule;
    }
-
-   public static Module forRegions() {
-      return new KeystoneAuthenticationModule(new RegionModule());
+   
+   public static class KeystoneAuthenticationModuleForRegions extends KeystoneAuthenticationModule {
+      public KeystoneAuthenticationModuleForRegions() {
+         super(new RegionModule());
+      }
    }
 
+   public static Module forRegions() {
+      return new KeystoneAuthenticationModuleForRegions();
+   }
+   
    public static class RegionModule extends AbstractModule {
       @Override
       protected void configure() {
          install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
-                  RegionIdToURIFromAccessForTypeAndVersionSupplier.class).build(RegionIdToURISupplier.Factory.class));
+                  RegionIdToURIFromAccessForTypeAndVersion.class).build(RegionIdToURISupplier.Factory.class));
          install(new FactoryModuleBuilder().implement(RegionIdToAdminURISupplier.class,
-               RegionIdToAdminURIFromAccessForTypeAndVersionSupplier.class).build(RegionIdToAdminURISupplier.Factory.class));
+                  RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
          // dynamically build the region list as opposed to from properties
          bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class);
       }
@@ -101,14 +111,15 @@ public class KeystoneAuthenticationModule extends AbstractModule {
                RegionIdToURISupplier.Factory factory) {
          return factory.createForApiTypeAndVersion(serviceType, apiVersion);
       }
-      
-      // supply the region to id to AdminURL map from keystone, based on the servicetype and api version in
+
+      // supply the region to id to AdminURL map from keystone, based on the servicetype and api
+      // version in
       // config
       @Provides
       @Singleton
       protected RegionIdToAdminURISupplier provideRegionIdToAdminURISupplierForApiVersion(
-            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
-            RegionIdToAdminURISupplier.Factory factory) {
+               @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+               RegionIdToAdminURISupplier.Factory factory) {
          return factory.createForApiTypeAndVersion(serviceType, apiVersion);
       }
 
@@ -118,7 +129,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       @Override
       protected void configure() {
          install(new FactoryModuleBuilder().implement(ZoneIdToURISupplier.class,
-                  ZoneIdToURIFromAccessForTypeAndVersionSupplier.class).build(ZoneIdToURISupplier.Factory.class));
+                  ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
          // dynamically build the zone list as opposed to from properties
          bind(ZoneIdsSupplier.class).to(ZoneIdsFromZoneIdToURIKeySet.class);
       }
@@ -135,18 +146,27 @@ public class KeystoneAuthenticationModule extends AbstractModule {
 
    }
 
+   public static class KeystoneAuthenticationModuleForZones extends KeystoneAuthenticationModule {
+      public KeystoneAuthenticationModuleForZones() {
+         super(new ZoneModule());
+      }
+   }
+
    public static Module forZones() {
-      return new KeystoneAuthenticationModule(new ZoneModule());
+      return new KeystoneAuthenticationModuleForZones();
    }
 
    @Override
    protected void configure() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
-      bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
-      // ServiceClient is used directly for filters and retry handlers, so let's bind it
+      bindAuthenticationClient();
+      install(locationModule);
+   }
+
+   protected void bindAuthenticationClient() {
+      // AuthenticationClient is used directly for filters and retry handlers, so let's bind it
       // explicitly
       bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
-      install(locationModule);
    }
 
    /**
@@ -164,41 +184,25 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       };
    }
 
+   @Provides
    @Singleton
-   static class CredentialTypeFromPropertyOrDefault implements javax.inject.Provider<CredentialType> {
-      /**
-       * use optional injection to supply a default value for credential type. so that we don't have
-       * to set a default property.
-       */
-      @Inject(optional = true)
-      @Named(KeystoneProperties.CREDENTIAL_TYPE)
-      String credentialType = CredentialType.PASSWORD_CREDENTIALS.toString();
-
-      @Override
-      public CredentialType get() {
-         return CredentialType.fromValue(credentialType);
-      }
+   protected Map<String, Function<Credentials, Access>> authenticationMethods(Injector i) {
+      Builder<Function<Credentials, Access>> fns = ImmutableSet.<Function<Credentials, Access>> builder();
+      fns.add(i.getInstance(AuthenticatePasswordCredentials.class));
+      fns.add(i.getInstance(AuthenticateApiAccessKeyCredentials.class));
+      return CredentialTypes.indexByCredentialType(fns.build());
    }
 
    @Provides
    @Singleton
-   protected Function<Credentials, Access> authenticationMethodForCredentialType(CredentialType credentialType,
-            AuthenticatePasswordCredentials authenticatePasswordCredentials,
-            AuthenticateApiAccessKeyCredentials authenticateApiAccessKeyCredentials) {
-      Function<Credentials, Access> authMethod;
-      switch (credentialType) {
-         case PASSWORD_CREDENTIALS:
-            authMethod = authenticatePasswordCredentials;
-            break;
-         case API_ACCESS_KEY_CREDENTIALS:
-            authMethod = authenticateApiAccessKeyCredentials;
-            break;
-         default:
-            throw new IllegalArgumentException("credential type not supported: " + credentialType);
-      }
+   protected Function<Credentials, Access> authenticationMethodForCredentialType(
+            @Named(KeystoneProperties.CREDENTIAL_TYPE) String credentialType,
+            Map<String, Function<Credentials, Access>> authenticationMethods) {
+      checkArgument(authenticationMethods.containsKey(credentialType), "credential type %s not in supported list: %s",
+               credentialType, authenticationMethods.keySet());
       // regardless of how we authenticate, we should retry if there is a timeout exception logging
       // in.
-      return new RetryOnTimeOutExceptionFunction<Credentials, Access>(authMethod);
+      return new RetryOnTimeOutExceptionFunction<Credentials, Access>(authenticationMethods.get(credentialType));
    }
 
    // TODO: what is the timeout of the session token? modify default accordingly

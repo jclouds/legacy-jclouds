@@ -26,15 +26,19 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
-import org.jclouds.openstack.keystone.v2_0.features.AdminAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.AdminClient;
-import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.ServiceClient;
+import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.features.TenantClient;
+import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.features.TokenClient;
+import org.jclouds.openstack.keystone.v2_0.features.UserAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.features.UserClient;
 import org.jclouds.openstack.keystone.v2_0.handlers.KeystoneErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.util.Modules;
 
 /**
  * Configures the Keystone connection.
@@ -42,15 +46,22 @@ import com.google.common.collect.ImmutableMap;
  * @author Adam Lowe
  */
 @ConfiguresRestClient
-public class KeystoneRestClientModule extends RestClientModule<KeystoneClient, KeystoneAsyncClient> {
+public class KeystoneRestClientModule<S extends KeystoneClient, A extends KeystoneAsyncClient> extends RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(ServiceClient.class, ServiceAsyncClient.class)
-         .put(AdminClient.class, AdminAsyncClient.class)
+         .put(TokenClient.class, TokenAsyncClient.class)
+         .put(UserClient.class, UserAsyncClient.class)
+         .put(TenantClient.class, TenantAsyncClient.class)
          .build();
-
+   
+   @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
-      super(DELEGATE_MAP);
+      super((TypeToken) TypeToken.of(KeystoneClient.class), (TypeToken) TypeToken.of(KeystoneAsyncClient.class), DELEGATE_MAP);
+   }
+
+   protected KeystoneRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
+            Map<Class<?>, Class<?>> sync2Async) {
+      super(syncClientType, asyncClientType, sync2Async);
    }
 
    @Override
@@ -61,13 +72,10 @@ public class KeystoneRestClientModule extends RestClientModule<KeystoneClient, K
 
    @Override
    protected void installLocations() {
-      // TODO: select this from KeystoneProperties.VERSION; note you select from
-      // a guice provided property, so it will have to come from somewhere else, maybe we move
-      // this to the the ContextBuilder
-      install(KeystoneAuthenticationModule.forRegions());
+      install(new KeystoneAuthenticationModule(Modules.EMPTY_MODULE));
       super.installLocations();
    }
-
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(KeystoneErrorHandler.class);

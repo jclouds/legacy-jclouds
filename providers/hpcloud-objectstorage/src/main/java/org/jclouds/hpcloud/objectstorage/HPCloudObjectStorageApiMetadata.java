@@ -28,7 +28,9 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForRegions;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.SwiftApiMetadata;
 import org.jclouds.rest.RestContext;
@@ -73,7 +75,7 @@ public class HPCloudObjectStorageApiMetadata extends BaseRestApiMetadata {
       properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
-      properties.setProperty(CREDENTIAL_TYPE, "apiAccessKeyCredentials");
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
       return properties;
    }
 
@@ -89,7 +91,7 @@ public class HPCloudObjectStorageApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
          .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
          .view(TypeToken.of(BlobStoreContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(HPCloudObjectStorageRestClientModule.class, HPCloudObjectStorageBlobStoreContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForRegions.class, HPCloudObjectStorageRestClientModule.class, HPCloudObjectStorageBlobStoreContextModule.class));
       }
 
       @Override

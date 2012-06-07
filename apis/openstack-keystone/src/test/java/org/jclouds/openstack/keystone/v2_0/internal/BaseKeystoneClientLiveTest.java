@@ -38,13 +38,13 @@ import com.google.common.reflect.TypeToken;
  * @author Adam Lowe
  */
 @Test(groups = "live")
-public class BaseKeystoneClientLiveTest extends BaseContextLiveTest<RestContext<KeystoneClient, KeystoneAsyncClient>> {
+public class BaseKeystoneClientLiveTest extends BaseContextLiveTest<RestContext<? extends KeystoneClient,? extends  KeystoneAsyncClient>> {
 
    public BaseKeystoneClientLiveTest() {
       provider = "openstack-keystone";
    }
 
-   protected RestContext<KeystoneClient, KeystoneAsyncClient> keystoneContext;
+   protected RestContext<? extends KeystoneClient,? extends  KeystoneAsyncClient> keystoneContext;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -67,7 +67,7 @@ public class BaseKeystoneClientLiveTest extends BaseContextLiveTest<RestContext<
    }
 
    @Override
-   protected TypeToken<RestContext<KeystoneClient, KeystoneAsyncClient>> contextType() {
+   protected TypeToken<RestContext<? extends KeystoneClient,? extends  KeystoneAsyncClient>> contextType() {
       return KeystoneApiMetadata.CONTEXT_TOKEN;
    }
 

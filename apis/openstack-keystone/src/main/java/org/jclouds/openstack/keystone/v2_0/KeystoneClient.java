@@ -18,20 +18,14 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpoint;
-import org.jclouds.openstack.keystone.v2_0.features.AdminClient;
-import org.jclouds.openstack.keystone.v2_0.features.ServiceClient;
-import org.jclouds.openstack.keystone.v2_0.functions.RegionToAdminEndpointURI;
+import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.features.TenantClient;
+import org.jclouds.openstack.keystone.v2_0.features.TokenClient;
+import org.jclouds.openstack.keystone.v2_0.features.UserClient;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
-
-import com.google.inject.Provides;
 
 /**
  * Provides access to Openstack keystone resources via their REST API.
@@ -39,22 +33,34 @@ import com.google.inject.Provides;
  *
  * @author Adam Lowe
  * @see <a href="http://keystone.openstack.org/" />
+ * @see KeystoneAsyncClient
  */
 @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
 public interface KeystoneClient {
+
    /**
-    * @return the Region codes configured
+    * Discover API version information, links to documentation (PDF, HTML, WADL), and supported media types
+    *
+    * @return the requested information
     */
-   @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   ApiMetadata getApiMetadata();
 
-   /** Provides synchronous access to Identity user-accessible features */
+   /** 
+    * Provides synchronous access to Token features 
+    */
    @Delegate
-   ServiceClient getServiceClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   TokenClient getTokenClient();
 
-   /** Provides synchronous access to the KeyStone Admin API */
+   /** 
+    * Provides synchronous access to User features 
+    */
    @Delegate
-   AdminClient getAdminClientForRegion(@EndpointParam(parser = RegionToAdminEndpointURI.class) @Nullable String region);
+   UserClient getUserClient();
+   
 
+   /** 
+    * Provides synchronous access to Tenant features 
+    */
+   @Delegate
+   TenantClient getTenantClient();
 }

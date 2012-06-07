@@ -28,9 +28,9 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ReturnRegionTest")
-public class ReturnRegionTest {
-   private final ReturnRegion fn = new ReturnRegion();
+@Test(groups = "unit", testName = "ReturnRegionOrProviderTest")
+public class ReturnRegionOrProviderTest {
+   private final ReturnRegionOrProvider fn = new ReturnRegionOrProvider("openstack-keystone");
 
    public void testRegionNotNullReturnsRegion() {
       assertEquals(
@@ -39,15 +39,11 @@ public class ReturnRegionTest {
                         .build()), "LON");
    }
 
-   public void testRegionNullNiceNPE() {
-      try {
-         fn.apply(Endpoint.builder().versionId("1.0").publicURL(
-                  URI.create("https://cdn3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953"))
-                  .build());
-         assert false;
-      } catch (NullPointerException e) {
-         assertEquals(e.getMessage(), "region");
-      }
+   public void testRegionNullReturnsProvider() {
+      assertEquals(
+               fn.apply(Endpoint.builder().versionId("1.0").publicURL(
+                        URI.create("https://cdn3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953"))
+                        .build()), "openstack-keystone");
    }
 
 }

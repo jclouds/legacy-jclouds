@@ -18,43 +18,75 @@
  */
 package org.jclouds.openstack.keystone.v2_0.features;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.domain.Role;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
+import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * Tests UserClient
- *
+ * 
  * @author Adam Lowe
  */
-@Test(groups = "live", testName = "UserClientLiveTest")
+@Test(groups = "live", testName = "UserClientLiveTest", singleThreaded = true)
 public class UserClientLiveTest extends BaseKeystoneClientLiveTest {
 
-   public void testGetApiMetaData() {
-      for (String regionId : keystoneContext.getApi().getConfiguredRegions()) {
-         ApiMetadata result = keystoneContext.getApi().getServiceClientForRegion(regionId).getApiMetadata();
-         assertNotNull(result);
-         assertNotNull(result.getId());
-         assertNotNull(result.getStatus());
-         assertNotNull(result.getUpdated());
+   public void testUsers() {
+
+      UserClient client = keystoneContext.getApi().getUserClient();
+      Set<User> users = client.list();
+      assertNotNull(users);
+      assertFalse(users.isEmpty());
+      for (User user : users) {
+         User aUser = client.get(user.getId());
+         assertEquals(aUser, user);
       }
+
    }
 
-   public void testListTenants() {
-      for (String regionId : keystoneContext.getApi().getConfiguredRegions()) {
-         Set<Tenant> result = keystoneContext.getApi().getServiceClientForRegion(regionId).listTenants();
-         assertNotNull(result);
-         assertFalse(result.isEmpty());
+   public void testUserRolesOnTenant() {
 
-         for (Tenant tenant : result) {
-            assertNotNull(tenant.getId());
+      UserClient client = keystoneContext.getApi().getUserClient();
+      Set<User> users = client.list();
+      Set<Tenant> tenants = keystoneContext.getApi().getTenantClient().list();
+
+      for (User user : users) {
+         for (Tenant tenant : tenants) {
+            Set<Role> roles = client.listRolesOfUserOnTenant(user.getId(), tenant.getId());
+            for (Role role : roles) {
+               assertNotNull(role.getId());
+            }
          }
       }
+
+   }
+
+   public void testListRolesOfUser() {
+
+      UserClient client = keystoneContext.getApi().getUserClient();
+      for (User user : client.list()) {
+         Set<Role> roles = client.listRolesOfUser(user.getId());
+         for (Role role : roles) {
+            assertNotNull(role.getId());
+         }
+      }
+
+   }
+
+   public void testUsersByName() {
+
+      UserClient client = keystoneContext.getApi().getUserClient();
+      for (User user : client.list()) {
+         User aUser = client.getByName(user.getName());
+         assertEquals(aUser, user);
+      }
+
    }
 }

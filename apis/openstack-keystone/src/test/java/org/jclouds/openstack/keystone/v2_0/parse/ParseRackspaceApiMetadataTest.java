@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -33,30 +33,31 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * @author Adam Lowe
+ * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ParseApiMetadataTest")
-public class ParseApiMetadataTest extends BaseItemParserTest<ApiMetadata> {
+public class ParseRackspaceApiMetadataTest extends BaseItemParserTest<ApiMetadata> {
 
    @Override
    public String resource() {
-      return "/apiMetadataResponse.json";
+      return "/raxVersion.json";
    }
 
+   // http://docs.openstack.org/api/openstack-identity-service/2.0/content/Versions-d1e472.html
    @Override
    @SelectJson("version")
    @Consumes(MediaType.APPLICATION_JSON)
    public ApiMetadata expected() {
       return ApiMetadata.builder().id("v2.0")
-            .links(ImmutableSet.of(Link.builder().relation(Link.Relation.SELF).href(URI.create("http://172.16.89.140:5000/v2.0/")).build(),
-                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("text/html").href(URI.create("http://docs.openstack.org/api/openstack-identity-service/2.0/content/")).build(),
-                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/pdf").href(URI.create("http://docs.openstack.org/api/openstack-identity-service/2.0/identity-dev-guide-2.0.pdf")).build()
+            .links(ImmutableSet.of(Link.builder().relation(Link.Relation.SELF).href(URI.create("https://identity.api.rackspacecloud.com/v2.0")).build(),
+                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/pdf").href(URI.create("http://docs.rackspacecloud.com/auth/api/v2.0/auth-client-devguide-latest.pdf")).build(),
+                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/vnd.sun.wadl+xml").href(URI.create("http://docs.rackspacecloud.com/auth/api/v2.0/auth.wadl")).build()
             ))
-            .status("beta")
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-19T00:00:00Z"))
+            .status("BETA")
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-01-21T11:33:21-06:00"))
             .mediaTypes(ImmutableSet.of(
-                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/json").type("application/vnd.openstack.identity-v2.0+json").build(),
-                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/xml").type("application/vnd.openstack.identity-v2.0+xml").build()
+                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/xml").type("application/vnd.openstack.identity+xml;version=2.0").build(),
+                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/json").type("application/vnd.openstack.identity+json;version=2.0").build()
             ))
             .build();
    }

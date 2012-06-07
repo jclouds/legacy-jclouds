@@ -22,21 +22,19 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
-import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
-import org.jclouds.openstack.keystone.v2_0.domain.MediaType;
-import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
+import org.jclouds.openstack.keystone.v2_0.domain.Role;
+import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestClientExpectTest;
-import org.jclouds.openstack.v2_0.domain.Link;
+import org.jclouds.rest.AuthorizationException;
+import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -44,53 +42,128 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adam Lowe
  */
+@Test(testName = "UserClientExpectTest")
 public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<KeystoneClient> {
 
-   public void testGetApiMetaData() {
-      ServiceClient client = requestsSendResponses(
+   public void testListUsers() {
+      UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            HttpRequest.builder().method("GET").endpoint(URI.create(endpoint + "/v2.0/")).
-            headers(ImmutableMultimap.of("Accept", APPLICATION_JSON)).build(),
-            HttpResponse.builder().statusCode(200).
-                  payload(payloadFromResourceWithContentType("/api_metadata.json", APPLICATION_JSON)).build())
-            .getServiceClientForRegion("region-a.geo-1");
-      ApiMetadata metadata = client.getApiMetadata();
-      assertNotNull(metadata);
-      assertEquals(metadata.getId(), "v2.0");
+            standardRequestBuilder(endpoint + "/v2.0/users").build(),
+            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
+            .getUserClient();
+      Set<User> users = client.list();
+      assertNotNull(users);
+      assertFalse(users.isEmpty());
 
-      ApiMetadata expected = ApiMetadata.builder().id("v2.0")
-            .links(ImmutableSet.of(Link.builder().relation(Link.Relation.SELF).href(URI.create("http://172.16.89.140:5000/v2.0/")).build(),
-                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("text/html").href(URI.create("http://docs.openstack.org/api/openstack-identity-service/2.0/content/")).build(),
-                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/pdf").href(URI.create("http://docs.openstack.org/api/openstack-identity-service/2.0/identity-dev-guide-2.0.pdf")).build()
-            ))
-            .status("beta")
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-19T00:00:00Z"))
-            .mediaTypes(ImmutableSet.of(
-                  MediaType.builder().base("application/json").type("application/vnd.openstack.identity-v2.0+json").build(),
-                  MediaType.builder().base("application/xml").type("application/vnd.openstack.identity-v2.0+xml").build()
-            ))
-            .build();
-
-      assertEquals(metadata, expected);
-   }
-
-   public void testListTenants() {
-      ServiceClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            HttpRequest.builder().method("GET").endpoint(URI.create(endpoint + "/v2.0/tenants")).
-                  headers(ImmutableMultimap.of("Accept", APPLICATION_JSON, "X-Auth-Token", authToken)).build(),
-            HttpResponse.builder().statusCode(200).
-                  payload(payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
-            .getServiceClientForRegion("region-a.geo-1");
-      Set<Tenant> tenants = client.listTenants();
-      assertNotNull(tenants);
-      assertFalse(tenants.isEmpty());
-
-      Set<Tenant> expected = ImmutableSet.of(
-            Tenant.builder().name("demo").id("05d1dc7af71646deba64cfc17b81bec0").build(),
-            Tenant.builder().name("admin").id("7aa2e17ec29f44d193c48feaba0852cc").build()
+      Set<User> expected = ImmutableSet.of(
+            User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build(),
+            User.builder().name("glance").id("3f6c1c9ba993495ead7d2eb2192e284f").build(),
+            User.builder().name("demo").id("667b2e1420604df8b67cd8ea57d4ee64").build(),
+            User.builder().name("admin").id("2b9b606181634ae9ac86fd95a8bc2cde").build()
       );
 
-      assertEquals(tenants, expected);
+      assertEquals(users, expected);
    }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testListUsersFailNotAuth() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users").build(),
+            standardResponseBuilder(401).build()).getUserClient();
+      client.list();
+   }
+
+   public void testGetUser() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/e021dfd758eb44a89f1c57c8ef3be8e2").build(),
+            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_details.json", APPLICATION_JSON)).build())
+            .getUserClient();
+      User user = client.get("e021dfd758eb44a89f1c57c8ef3be8e2");
+      assertNotNull(user);
+      assertEquals(user, User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build());
+   }
+
+   public void testGetUserFailNotFound() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/f021dfd758eb44a89f1c57c8ef3be8e2").build(),
+            standardResponseBuilder(404).build()).getUserClient();
+      assertNull(client.get("f021dfd758eb44a89f1c57c8ef3be8e2"));
+   }
+
+   public void testGetUserByName() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users?name=nova").build(),
+            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_details.json", APPLICATION_JSON)).build())
+            .getUserClient();
+      User user = client.getByName("nova");
+      assertNotNull(user);
+      assertEquals(user, User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build());
+   }
+
+   public void testGetUserByNameFailNotFound() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users?name=fred").build(),
+            standardResponseBuilder(404).build()).getUserClient();
+      assertNull(client.getByName("fred"));
+   }
+   
+   public void testListRolesOfUser() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
+            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_role_list.json", APPLICATION_JSON)).build())
+            .getUserClient();
+      Set<Role> roles = client.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
+      assertNotNull(roles);
+      assertFalse(roles.isEmpty());
+      assertEquals(roles, ImmutableSet.of(
+            Role.builder().id("79cada5c02814b57a52e0eed4dd388cb").name("admin").build()
+      ));
+   }
+
+   public void testListRolesOfUserFailNotFound() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/4f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
+            standardResponseBuilder(404).build()).getUserClient();
+      assertTrue(client.listRolesOfUser("4f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
+   }
+
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testListRolesOfUserFailNotImplemented() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/5f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
+            standardResponseBuilder(501).build()).getUserClient();
+      assertTrue(client.listRolesOfUser("5f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
+   }
+
+   public void testListRolesOfUserInTenant() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
+            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_tenant_role_list.json", APPLICATION_JSON)).build())
+            .getUserClient();
+      Set<Role> roles = client.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
+      assertNotNull(roles);
+      assertFalse(roles.isEmpty());
+      assertEquals(roles, ImmutableSet.of(
+         Role.builder().id("31c451195aac49b386039341e2c92a16").name("KeystoneServiceAdmin").build(),
+         Role.builder().id("79cada5c02814b57a52e0eed4dd388cb").name("admin").build(),
+         Role.builder().id("6ea17ddd37a6447794cb0e164d4db894").name("KeystoneAdmin").build()));
+   }
+
+   public void testListRolesOfUserInTenantFailNotFound() {
+      UserClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
+            standardResponseBuilder(404).build()).getUserClient();
+      assertTrue(client.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
+   }
+   
 }

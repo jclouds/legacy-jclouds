@@ -18,29 +18,25 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.google.common.base.CaseFormat;
+import javax.inject.Qualifier;
 
 /**
- * Configuration properties and constants used in Keystone connections.
- * 
+ * @see CredentialTypes
  * @author Adrian Cole
+ * 
  */
-public enum CredentialType {
-
-   API_ACCESS_KEY_CREDENTIALS,
-
-   PASSWORD_CREDENTIALS;
-
-   @Override
-   public String toString() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
-   }
-
-   public static CredentialType fromValue(String credentialType) {
-      return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(credentialType,
-               "credentialType")));
-   }
-
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface CredentialType {
+   /**
+    * @see CredentialTypes
+    * 
+    */
+   String value();
 }

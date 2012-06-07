@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.glance.v1_0;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
 import java.net.URI;
@@ -25,7 +26,9 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.glance.v1_0.config.GlanceRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForRegions;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -64,6 +67,8 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.IMAGE);
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
+
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
       return properties;
@@ -81,7 +86,7 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(GlanceApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(GlanceRestClientModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForRegions.class, GlanceRestClientModule.class));
       }
       
       @Override

@@ -21,12 +21,15 @@ package org.jclouds.openstack.keystone.v2_0.suppliers;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 
 import javax.inject.Singleton;
 
+import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.parse.ParseAccessTest;
+import org.jclouds.openstack.keystone.v2_0.parse.ParseRackspaceAccessTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -36,19 +39,23 @@ import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ZoneIdToURIFromAccessForTypeAndVersionSupplierTest")
-public class ZoneIdToURIFromAccessForTypeAndVersionSupplierTest {
+public class ZoneIdToURIFromAccessForTypeAndVersionTest {
    private final ZoneIdToURISupplier.Factory factory = Guice.createInjector(new AbstractModule() {
 
       @Override
       protected void configure() {
+         bindConstant().annotatedWith(Provider.class).to("rackspace");
+         bind(new TypeLiteral<Supplier<URI>>() {
+         }).annotatedWith(Provider.class).toInstance(Suppliers.ofInstance(URI.create("https://identity")));         
          install(new FactoryModuleBuilder().implement(ZoneIdToURISupplier.class,
-                  ZoneIdToURIFromAccessForTypeAndVersionSupplier.class).build(ZoneIdToURISupplier.Factory.class));
+                  ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
       }
 
       @SuppressWarnings("unused")
@@ -67,5 +74,41 @@ public class ZoneIdToURIFromAccessForTypeAndVersionSupplierTest {
                                                         "az-2.region-a.geo-1", URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"),
                                                         "az-3.region-a.geo-1", URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456")));
    }
+   
+   private final ZoneIdToURISupplier.Factory raxFactory = Guice.createInjector(new AbstractModule() {
 
+      @Override
+      protected void configure() {
+         bindConstant().annotatedWith(Provider.class).to("rackspace");
+         bind(new TypeLiteral<Supplier<URI>>() {
+         }).annotatedWith(Provider.class).toInstance(Suppliers.ofInstance(URI.create("https://identity")));        
+         install(new FactoryModuleBuilder().implement(ZoneIdToURISupplier.class,
+                  ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      public Supplier<Access> provide() {
+         return Suppliers.ofInstance(new ParseRackspaceAccessTest().expected());
+      }
+   }).getInstance(ZoneIdToURISupplier.Factory.class);
+
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testWhenNotInList() {
+      assertEquals(Maps.transformValues(raxFactory.createForApiTypeAndVersion("goo", "1.0").get(), Suppliers
+               .<URI> supplierFunction()), ImmutableMap.of("rackspace", URI
+               .create("https://servers.api.rackspacecloud.com/v1.0/40806637803162")));
+   }
+
+   public void testProviderWhenNoZones() {
+      assertEquals(Maps.transformValues(raxFactory.createForApiTypeAndVersion("compute", "1.0").get(), Suppliers
+               .<URI> supplierFunction()), ImmutableMap.of("rackspace", URI.create("https://servers.api.rackspacecloud.com/v1.0/40806637803162")));
+   }
+   
+   public void testOkWithNoVersions() {
+      assertEquals(Maps.transformValues(raxFactory.createForApiTypeAndVersion("rax:database", null).get(), Suppliers
+               .<URI> supplierFunction()), ImmutableMap.of("DFW", URI.create("https://dfw.databases.api.rackspacecloud.com/v1.0/40806637803162"),
+                                                           "ORD", URI.create("https://ord.databases.api.rackspacecloud.com/v1.0/40806637803162")));
+   }
 }

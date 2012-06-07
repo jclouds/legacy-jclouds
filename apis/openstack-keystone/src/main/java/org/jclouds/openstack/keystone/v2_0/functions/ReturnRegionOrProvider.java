@@ -20,15 +20,23 @@ package org.jclouds.openstack.keystone.v2_0.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.location.Provider;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 
 @Singleton
-public class ReturnRegion implements EndpointToRegion {
+public class ReturnRegionOrProvider implements EndpointToRegion {
+   private String provider;
+
+   @Inject
+   ReturnRegionOrProvider(@Provider String provider) {
+      this.provider = checkNotNull(provider, "provider");
+   }
 
    @Override
    public String apply(Endpoint input) {
-      return checkNotNull(input.getRegion(), "no region for endpoint %s", input);
+      return input.getRegion() != null ? input.getRegion() : provider;
    }
 }

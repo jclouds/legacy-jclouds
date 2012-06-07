@@ -29,14 +29,15 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
-import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
-import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialType;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /**
@@ -57,11 +58,9 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
    }
 
    protected void addCredentialsInArgsOrNull(GeneratedHttpRequest<?> gRequest, Builder<String, Object> builder) {
-      for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof PasswordCredentials) {
-            builder.put("passwordCredentials", PasswordCredentials.class.cast(arg));
-         } else if (arg instanceof ApiAccessKeyCredentials) {
-            builder.put("apiAccessKeyCredentials", ApiAccessKeyCredentials.class.cast(arg));
+      for (Object arg : Iterables.filter(gRequest.getArgs(), Predicates.notNull())) {
+         if (arg.getClass().isAnnotationPresent(CredentialType.class)) {
+            builder.put(arg.getClass().getAnnotation(CredentialType.class).value(), arg);
          }
       }
    }

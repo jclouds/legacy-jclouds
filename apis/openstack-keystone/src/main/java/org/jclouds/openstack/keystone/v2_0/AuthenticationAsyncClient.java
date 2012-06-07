@@ -23,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.keystone.v2_0.binders.BindAuthToJsonPayload;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
@@ -53,7 +54,7 @@ public interface AuthenticationAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@PayloadParam("tenantName") String tenantName,
+   ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@Nullable @PayloadParam("tenantName") String tenantName,
             PasswordCredentials passwordCredentials);
    
    /**
@@ -64,7 +65,7 @@ public interface AuthenticationAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateWithTenantIdAndCredentials(@PayloadParam("tenantId") String tenantId,
+   ListenableFuture<Access> authenticateWithTenantIdAndCredentials(@Nullable @PayloadParam("tenantId") String tenantId,
             PasswordCredentials passwordCredentials);
 
    /**
@@ -77,7 +78,7 @@ public interface AuthenticationAsyncClient {
    @MapBinder(BindAuthToJsonPayload.class)
    // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
    // still use tenantName
-   ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@PayloadParam("tenantName") String tenantName,
+   ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@Nullable @PayloadParam("tenantName") String tenantName,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
    
    /**
@@ -88,6 +89,6 @@ public interface AuthenticationAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateWithTenantIdAndCredentials(@PayloadParam("tenantId") String tenantId,
+   ListenableFuture<Access> authenticateWithTenantIdAndCredentials(@Nullable @PayloadParam("tenantId") String tenantId,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
 }

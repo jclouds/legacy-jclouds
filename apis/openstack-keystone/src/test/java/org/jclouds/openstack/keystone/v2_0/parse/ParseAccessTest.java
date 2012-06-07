@@ -85,17 +85,23 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                 .tenantId("3456")
                                 .publicURL(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
                                 .region("az-1.region-a.geo-1")
-                                .versionId("1.1").build(),
+                                .versionId("1.1")
+                                .versionInfo(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/"))
+                                .versionList(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com")).build(),
                         Endpoint.builder()
                                 .tenantId("3456")
                                 .publicURL(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
                                 .region("az-2.region-a.geo-1")
-                                .versionId("1.1").build(),
+                                .versionId("1.1")
+                                .versionInfo(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/"))
+                                .versionList(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com")).build(),
                         Endpoint.builder()
                                 .tenantId("3456")
                                 .publicURL(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
                                 .region("az-3.region-a.geo-1")
-                                .versionId("1.1").build()).build(),
+                                .versionId("1.1")
+                                .versionInfo(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/"))
+                                .versionList(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com")).build()).build(),
 
             Service.builder().name("Quantum Service").type("network").endpoints(
                   Endpoint.builder()

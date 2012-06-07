@@ -18,21 +18,22 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import java.util.Set;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Constants;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpoint;
-import org.jclouds.openstack.keystone.v2_0.features.AdminAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.functions.RegionToAdminEndpointURI;
+import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.features.UserAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import com.google.inject.Provides;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to Openstack keystone resources via their REST API.
@@ -42,20 +43,34 @@ import com.google.inject.Provides;
  * @see <a href="http://keystone.openstack.org/" />
  * @see KeystoneClient
  */
-@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
 public interface KeystoneAsyncClient {
+
    /**
-    * @return the Region codes configured
+    * @see KeystoneClient#getApiMetadata()
     */
-   @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @GET
+   @SelectJson("version")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/v{" + Constants.PROPERTY_API_VERSION + "}/")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ApiMetadata> getApiMetadata();
 
-   /** Provides asynchronous access to Identity user-accessible features */
+   /**
+    * @see KeystoneClient#getTokenClient()
+    */
    @Delegate
-   ServiceAsyncClient getServiceClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   TokenAsyncClient getTokenClient();
 
-   /** Provides asynchronous access to the KeyStone Admin API */
+   /**
+    * @see KeystoneClient#getUserClient()
+    */
    @Delegate
-   AdminAsyncClient getAdminClientForRegion(@EndpointParam(parser = RegionToAdminEndpointURI.class) @Nullable String region);
+   UserAsyncClient getUserClient();
+   
+
+   /**
+    * @see KeystoneClient#getTenantClient()
+    */
+   @Delegate
+   TenantAsyncClient getTenantClient();
 }

@@ -57,6 +57,8 @@ public class Endpoint implements Comparable<Endpoint> {
       protected URI internalURL;
       protected URI adminURL;
       protected String tenantId;
+      protected URI versionInfo;
+      protected URI versionList;
 
       /**
        * @see Endpoint#getVersionId()
@@ -105,14 +107,31 @@ public class Endpoint implements Comparable<Endpoint> {
          this.tenantId = tenantId;
          return this;
       }
-
+      
+      /**
+       * @see Endpoint#getVersionInfo()
+       */
+      public Builder versionInfo(URI versionInfo) {
+         this.versionInfo = checkNotNull(versionInfo, "versionInfo");
+         return this;
+      }
+      
+      /**
+       * @see Endpoint#getVersionList()
+       */
+      public Builder versionList(URI versionList) {
+         this.versionList = checkNotNull(versionList, "versionList");
+         return this;
+      }
+      
       public Endpoint build() {
-         return new Endpoint(versionId, region, publicURL, internalURL, adminURL, tenantId);
+         return new Endpoint(versionId, region, publicURL, internalURL, adminURL, tenantId, versionInfo, versionList);
       }
 
       public Builder fromEndpoint(Endpoint from) {
          return versionId(from.getVersionId()).region(from.getRegion()).publicURL(from.getPublicURL()).internalURL(
-                  from.getInternalURL()).tenantId(from.getTenantId());
+                  from.getInternalURL()).tenantId(from.getTenantId()).versionInfo(from.getVersionInfo()).versionList(
+                  from.getVersionList());
       }
    }
    
@@ -130,35 +149,41 @@ public class Endpoint implements Comparable<Endpoint> {
    protected URI publicURL;
    protected URI internalURL;
    protected URI adminURL;
+   protected URI versionInfo;
+   protected URI versionList;
    
    // renamed half-way through
    @Deprecated
    protected String tenantName;
    protected String tenantId;
 
-   protected Endpoint(String versionId, String region, @Nullable URI publicURL, @Nullable URI internalURL,
-            @Nullable URI adminURL, @Nullable String tenantId) {
-      this.versionId = checkNotNull(versionId, "versionId");
-      this.region = checkNotNull(region, "region");
+   protected Endpoint(@Nullable String versionId, @Nullable String region, @Nullable URI publicURL, @Nullable URI internalURL,
+            @Nullable URI adminURL, @Nullable String tenantId, @Nullable URI versionInfo, @Nullable URI versionList) {
+      this.versionId = versionId;
+      this.region = region;
       this.publicURL = publicURL;
       this.internalURL = internalURL;
       this.adminURL = adminURL;
       this.tenantId = tenantId;
+      this.versionInfo = versionInfo;
+      this.versionList = versionList;
    }
 
    /**
-    * When provversionIding an ID, it is assumed that the endpoint exists in the current OpenStack
+    * When providing an ID, it is assumed that the endpoint exists in the current OpenStack
     * deployment
     * 
-    * @return the versionId of the endpoint in the current OpenStack deployment
+    * @return the versionId of the endpoint in the current OpenStack deployment, or null if not specified
     */
+   @Nullable
    public String getVersionId() {
       return versionId != null ? versionId : id;
    }
 
    /**
-    * @return the region of the endpoint
+    * @return the region of the endpoint, or null if not specified
     */
+   @Nullable 
    public String getRegion() {
       return region;
    }
@@ -195,6 +220,20 @@ public class Endpoint implements Comparable<Endpoint> {
       return tenantId != null ? tenantId : tenantName;
    }
 
+   /**
+    */
+   @Nullable
+   public URI getVersionInfo() {
+      return versionInfo;
+   }
+
+   /**
+    */
+   @Nullable
+   public URI getVersionList() {
+      return versionList;
+   }
+   
    @Override
    public boolean equals(Object object) {
       if (this == object) {
@@ -216,8 +255,9 @@ public class Endpoint implements Comparable<Endpoint> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("versionId", getVersionId()).add("region", region).add("publicURL", publicURL).add("internalURL",
-               internalURL).add("adminURL", adminURL).add("tenantId", getTenantId()).toString();
+      return toStringHelper("").add("versionId", getVersionId()).add("region", region).add("publicURL", publicURL).add(
+               "internalURL", internalURL).add("adminURL", adminURL).add("tenantId", getTenantId()).add("versionInfo",
+               versionInfo).add("versionList", versionList).toString();
    }
 
    @Override

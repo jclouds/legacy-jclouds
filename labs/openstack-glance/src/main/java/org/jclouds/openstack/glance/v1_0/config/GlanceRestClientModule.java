@@ -31,7 +31,6 @@ import org.jclouds.openstack.glance.v1_0.GlanceClient;
 import org.jclouds.openstack.glance.v1_0.features.ImageAsyncClient;
 import org.jclouds.openstack.glance.v1_0.features.ImageClient;
 import org.jclouds.openstack.glance.v1_0.handlers.GlanceErrorHandler;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -57,17 +56,6 @@ public class GlanceRestClientModule extends RestClientModule<GlanceClient, Glanc
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
-   }
-
-   @Override
-   protected void installLocations() {
-      // TODO: select this from KeystoneProperties.VERSION; note you select from
-      // a guice provided
-      // property, so it will have to come from somewhere else, maybe we move
-      // this to the the
-      // ContextBuilder
-      install(KeystoneAuthenticationModule.forRegions());
-      super.installLocations();
    }
 
    @Override

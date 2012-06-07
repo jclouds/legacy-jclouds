@@ -23,6 +23,9 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.openstack.keystone.v2_0.config.CredentialType;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+
 import com.google.common.base.Objects;
 
 /**
@@ -32,6 +35,7 @@ import com.google.common.base.Objects;
  *      />
  * @author Adrian Cole
  */
+@CredentialType(CredentialTypes.API_ACCESS_KEY_CREDENTIALS)
 public class ApiAccessKeyCredentials {
    public static Builder builder() {
       return new Builder();

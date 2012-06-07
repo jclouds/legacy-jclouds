@@ -22,30 +22,39 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 
 /**
- * Provides synchronous access to the KeyStone Service API.
+ * Provides synchronous access to the KeyStone Tenant API.
  * <p/>
- *
+ * 
  * @author Adam Lowe
- * @see ServiceAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
+ * @see TenantAsyncClient
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Tenant_Operations.html"
  *      />
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ServiceClient {
-
-   /**
-    * Discover API version information, links to documentation (PDF, HTML, WADL), and supported media types
-    *
-    * @return the requested information
-    */
-   ApiMetadata getApiMetadata();
+public interface TenantClient {
 
    /**
     * The operation returns a list of tenants which the current token provides access to.
     */
-   Set<Tenant> listTenants();
+   Set<Tenant> list();
+
+   /**
+    * Retrieve information about a tenant, by tenant ID
+    * 
+    * @return the information about the tenant
+    */
+   Tenant get(String tenantId);
+
+   /**
+    * Retrieve information about a tenant, by tenant name
+    * <p/>
+    * NOTE: currently not working in openstack ( https://bugs.launchpad.net/keystone/+bug/956687 )
+    * 
+    * @return the information about the tenant
+    */
+   Tenant getByName(String tenantName);
 }

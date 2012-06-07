@@ -18,13 +18,16 @@
  */
 package org.jclouds.openstack.quantum.v1_0;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForRegions;
 import org.jclouds.openstack.quantum.v1_0.config.QuantumRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
@@ -63,6 +66,8 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.NETWORK);
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
+
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
       return properties;
@@ -80,7 +85,7 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(QuantumApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(QuantumRestClientModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForRegions.class, QuantumRestClientModule.class));
       }
       
       @Override

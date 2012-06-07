@@ -31,7 +31,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
@@ -126,12 +125,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    @Override
    protected void installLocations() {
       super.installLocations();
-      // TODO: select this from KeystoneProperties.VERSION; note you select from
-      // a guice provided
-      // property, so it will have to come from somewhere else, maybe we move
-      // this to the the
-      // ContextBuilder
-      install(KeystoneAuthenticationModule.forZones());
       bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 

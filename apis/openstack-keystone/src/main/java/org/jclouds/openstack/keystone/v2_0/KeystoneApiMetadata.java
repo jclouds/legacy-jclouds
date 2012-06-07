@@ -18,12 +18,14 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -44,19 +46,18 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<KeystoneClient, KeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<KeystoneClient, KeystoneAsyncClient>>() {
-
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 3030344682235783904L;
+   
+   public static final TypeToken<RestContext<? extends KeystoneClient,? extends  KeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends KeystoneClient,? extends  KeystoneAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override
    public Builder toBuilder() {
-      return new Builder().fromApiMetadata(this);
+      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
    public KeystoneApiMetadata() {
-      this(new Builder());
+      this(new Builder(KeystoneClient.class, KeystoneAsyncClient.class));
    }
 
    protected KeystoneApiMetadata(Builder builder) {
@@ -67,14 +68,15 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
       properties.put(SERVICE_TYPE, ServiceType.IDENTITY);
       return properties;
    }
 
    public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder() {
-         super(KeystoneClient.class, KeystoneAsyncClient.class);
+      protected Builder(Class<?> api, Class<?> asyncApi) {
+         super(api, asyncApi);
           id("openstack-keystone")
          .name("OpenStack Keystone Essex+ API")
          .identityName("tenantId:user")

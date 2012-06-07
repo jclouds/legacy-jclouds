@@ -23,9 +23,11 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
+import org.jclouds.Constants;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -38,28 +40,21 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Service via their REST API.
+ * Provides asynchronous access to Tenant via their REST API.
  * <p/>
  * 
- * @see ServiceClient
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
+ * @see TenantClient
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Tenant_Operations.html"
  *      />
  * @author Adam Lowe
  */
-@SkipEncoding({ '/', '=' })
-public interface ServiceAsyncClient {
-   /**
-    * @see ServiceClient#getApiMetadata()
-    */
-   @GET
-   @SelectJson("version")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ApiMetadata> getApiMetadata();
+@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
+@SkipEncoding( { '/', '=' })
+public interface TenantAsyncClient {
 
    /**
-    * @see ServiceClient#listTenants()
+    * @see TenantClient#list()
     */
    @GET
    @SelectJson("tenants")
@@ -67,5 +62,24 @@ public interface ServiceAsyncClient {
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Tenant>> listTenants();
+   ListenableFuture<Set<Tenant>> list();
+
+   /** @see TenantClient#get(String) */
+   @GET
+   @SelectJson("tenant")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tenants/{tenantId}")
+   @RequestFilters(AuthenticateRequest.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Tenant> get(@PathParam("tenantId") String tenantId);
+
+   /** @see TenantClient#getByName(String) */
+   @GET
+   @SelectJson("tenant")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tenants")
+   @RequestFilters(AuthenticateRequest.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Tenant> getByName(@QueryParam("name") String tenantName);
+
 }

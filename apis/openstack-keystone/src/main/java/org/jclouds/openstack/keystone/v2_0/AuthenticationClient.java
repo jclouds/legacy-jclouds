@@ -21,6 +21,7 @@ package org.jclouds.openstack.keystone.v2_0;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
@@ -42,26 +43,26 @@ public interface AuthenticationClient {
     * 
     * @return access with token
     */
-   Access authenticateWithTenantNameAndCredentials(String tenantId, PasswordCredentials passwordCredentials);
+   Access authenticateWithTenantNameAndCredentials(@Nullable String tenantId, PasswordCredentials passwordCredentials);
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantIdAndCredentials(String tenantId, PasswordCredentials passwordCredentials);
+   Access authenticateWithTenantIdAndCredentials(@Nullable String tenantId, PasswordCredentials passwordCredentials);
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantNameAndCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
+   Access authenticateWithTenantNameAndCredentials(@Nullable String tenantId, ApiAccessKeyCredentials passwordCredentials);
    
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantIdAndCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
+   Access authenticateWithTenantIdAndCredentials(@Nullable String tenantId, ApiAccessKeyCredentials passwordCredentials);
 }

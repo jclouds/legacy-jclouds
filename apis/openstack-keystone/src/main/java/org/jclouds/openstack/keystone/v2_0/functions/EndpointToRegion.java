@@ -23,7 +23,7 @@ import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;
 
-@ImplementedBy(ReturnRegion.class)
+@ImplementedBy(ReturnRegionOrProvider.class)
 public interface EndpointToRegion extends Function<Endpoint, String> {
 
 }
