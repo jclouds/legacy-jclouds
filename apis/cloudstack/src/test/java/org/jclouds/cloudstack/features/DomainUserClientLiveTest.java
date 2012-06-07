@@ -60,8 +60,7 @@ public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testEnableDisableUser() {
-      skipIfNotDomainAdmin();
-      skipIfNotDomainAdmin();
+      skipIfNotGlobalAdmin();
 
       Account testAccount = null;
       User testUser = null;

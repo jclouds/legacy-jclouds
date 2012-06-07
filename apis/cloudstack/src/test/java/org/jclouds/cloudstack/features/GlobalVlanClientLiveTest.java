@@ -56,6 +56,7 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private VlanIPRange range;
 
+   @Test
    public void testListVlanIPRanges() throws Exception {
       skipIfNotGlobalAdmin();
 
@@ -83,7 +84,10 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
    public void testCreateVlanIPRange() {
+      skipIfNotGlobalAdmin();
+
       final Zone zone = Iterables.find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
       final NetworkOffering offering = find(client.getOfferingClient().listNetworkOfferings(),
          NetworkOfferingPredicates.supportsGuestVirtualNetworks());

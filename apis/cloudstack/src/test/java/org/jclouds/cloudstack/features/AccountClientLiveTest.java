@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "AccountClientLiveTest")
 public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
+   @Test
    public void testListAccounts() throws Exception {
       for (Account securityAccount : client.getAccountClient().listAccounts())
          checkAccount(securityAccount);
@@ -50,7 +51,6 @@ public class AccountClientLiveTest extends BaseCloudStackClientLiveTest {
          assert user.getAccountType().equals(account.getType()) : user;
          assert user.getDomain().equals(account.getDomain()) : user;
          assert user.getDomainId().equals(account.getDomainId()) : user;
-         assert user.getApiKey() != null : user;
          assert user.getCreated() != null : user;
          assert user.getEmail() != null : user;
          assert user.getLastName() != null : user;

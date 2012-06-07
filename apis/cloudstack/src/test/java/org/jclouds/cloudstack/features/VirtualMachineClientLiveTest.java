@@ -179,6 +179,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       return vm;
    }
 
+   @Test
    public void testCreateVirtualMachine() throws Exception {
       String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
       vm = createVirtualMachine(client, templateId, jobComplete, virtualMachineRunning);
