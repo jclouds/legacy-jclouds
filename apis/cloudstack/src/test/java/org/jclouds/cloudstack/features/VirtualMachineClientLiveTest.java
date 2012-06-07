@@ -336,6 +336,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       super.tearDown();
    }
 
+   @Test
    public void testListVirtualMachines() throws Exception {
       Set<VirtualMachine> response = client.getVirtualMachineClient().listVirtualMachines();
       assert null != response;

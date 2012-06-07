@@ -34,15 +34,16 @@ public enum GuestIPType {
     * network. Dhcp role is played by domain router.
     */
    VIRTUAL,
+
    /**
     * traffic directly to the network and VMs created here are assigned an IP
     * directly from the network as configured
     */
    DIRECT,
 
-       /**
-        * Not sure what exactly these *are* yet, but I know they exist in CS3.
-        */
+   /**
+    * TODO: add comments to explain the meaning (cs3 only)
+    */
    SHARED,
    ISOLATED,
 

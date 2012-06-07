@@ -110,8 +110,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
             return network != null && network.getState().equals("Implemented");
          }
       });
-      assertEquals(Iterables.size(networks), 1);
-      Network network = Iterables.getOnlyElement(networks, null);
+      assertTrue(Iterables.size(networks) >= 1);
+      Network network = Iterables.get(networks, 0);
       assertNotNull(network);
 
       // Create a VM and stop it
