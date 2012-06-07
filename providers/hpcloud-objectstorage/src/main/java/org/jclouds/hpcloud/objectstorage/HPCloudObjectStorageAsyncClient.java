@@ -33,7 +33,7 @@ import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
 import org.jclouds.hpcloud.objectstorage.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.hpcloud.objectstorage.options.CreateContainerOptions;
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;

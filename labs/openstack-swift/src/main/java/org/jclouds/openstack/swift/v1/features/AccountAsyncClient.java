@@ -26,7 +26,7 @@ import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.v1.domain.AccountMetadata;
 import org.jclouds.openstack.swift.v1.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.v1.functions.ParseAccountMetadataResponseFromHeaders;

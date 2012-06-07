@@ -30,14 +30,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.functions.ParseImageIdFromLocationHeader;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;

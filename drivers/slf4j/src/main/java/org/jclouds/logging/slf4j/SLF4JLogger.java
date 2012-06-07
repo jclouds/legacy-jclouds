@@ -22,12 +22,17 @@ import org.jclouds.logging.BaseLogger;
 import org.jclouds.logging.Logger;
 
 /**
- * {@link org.apache.slf4j.Logger} implementation of {@link Logger}.
+ * {@link org.slf4j.LoggerFactory} implementation of {@link Logger}.
  * 
  * @author Adrian Cole
  * 
  */
 public class SLF4JLogger extends BaseLogger {
+   static {
+      // force initialization to avoid http://www.slf4j.org/codes.html#substituteLogger messages
+      org.slf4j.LoggerFactory.getILoggerFactory();
+   }
+   
    private final org.slf4j.Logger logger;
    private final String category;
 

@@ -39,7 +39,7 @@ import org.jclouds.hpcloud.objectstorage.functions.ParseContainerCDNMetadataFrom
 import org.jclouds.hpcloud.objectstorage.options.ListCDNContainerOptions;
 import org.jclouds.hpcloud.objectstorage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;

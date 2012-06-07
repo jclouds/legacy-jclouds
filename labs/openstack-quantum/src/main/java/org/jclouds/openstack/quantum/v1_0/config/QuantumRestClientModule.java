@@ -26,7 +26,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.quantum.v1_0.QuantumAsyncClient;
 import org.jclouds.openstack.quantum.v1_0.QuantumClient;
 import org.jclouds.openstack.quantum.v1_0.features.NetworkAsyncClient;
@@ -60,17 +59,6 @@ public class QuantumRestClientModule extends RestClientModule<QuantumClient, Qua
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
-   }
-
-   @Override
-   protected void installLocations() {
-      // TODO: select this from KeystoneProperties.VERSION; note you select from
-      // a guice provided
-      // property, so it will have to come from somewhere else, maybe we move
-      // this to the the
-      // ContextBuilder
-      install(KeystoneAuthenticationModule.forRegions());
-      super.installLocations();
    }
 
    @Override

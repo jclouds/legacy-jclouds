@@ -18,10 +18,10 @@
  */
 package org.jclouds.openstack.quantum.v1_0.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A Quantum network

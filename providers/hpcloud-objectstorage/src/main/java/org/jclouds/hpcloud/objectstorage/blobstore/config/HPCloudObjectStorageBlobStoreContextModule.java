@@ -28,16 +28,20 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageAsyncBlobStore;
+import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.HPCloudObjectStorageObjectToBlobMetadata;
 import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
-import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 
@@ -98,9 +102,11 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
    
    @Override
    protected void configure() {
-      super.configure();
-      bind(SwiftBlobStore.class).to(HPCloudObjectStorageBlobStore.class);
-      bind(SwiftAsyncBlobStore.class).to(HPCloudObjectStorageAsyncBlobStore.class);
+      install(new BlobStoreMapModule());
+      bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+      bind(AsyncBlobStore.class).to(HPCloudObjectStorageAsyncBlobStore.class);
+      bind(BlobStore.class).to(HPCloudObjectStorageBlobStore.class);
       bind(ObjectToBlobMetadata.class).to(HPCloudObjectStorageObjectToBlobMetadata.class);
+      bind(BlobRequestSigner.class).to(HPCloudObjectStorageBlobRequestSigner.class);
    }
 }

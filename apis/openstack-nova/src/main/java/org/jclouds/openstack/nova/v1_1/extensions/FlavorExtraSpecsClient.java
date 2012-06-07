@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 import org.jclouds.rest.annotations.RequestFilters;
 
 /**

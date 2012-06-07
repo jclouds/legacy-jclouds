@@ -22,12 +22,12 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.ServerCreated;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
+import org.jclouds.openstack.v2_0.domain.Resource;
 
 /**
  * Provides synchronous access to Server.

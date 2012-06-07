@@ -35,12 +35,12 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
-import org.jclouds.openstack.Authentication;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
-import org.jclouds.openstack.OpenStackAuthClient;
 import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
 import org.jclouds.openstack.handlers.RetryOnRenew;
+import org.jclouds.openstack.internal.Authentication;
+import org.jclouds.openstack.internal.OpenStackAuthAsyncClient;
+import org.jclouds.openstack.internal.OpenStackAuthClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;

@@ -28,6 +28,8 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.hpcloud.compute.config.HPCloudComputeServiceContextModule;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForZones;
 import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
 import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
@@ -68,7 +70,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
       // deallocating ip addresses can take a while
       properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
 
-      properties.setProperty(CREDENTIAL_TYPE, "apiAccessKeyCredentials");
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
       properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,locationId=az-2.region-a.geo-1");
@@ -83,7 +85,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
          .apiMetadata(new NovaApiMetadata().toBuilder()
                   .identityName("tenantName:accessKey")
                   .credentialName("secretKey")
-                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, HPCloudComputeServiceContextModule.class))
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForZones.class,NovaRestClientModule.class, HPCloudComputeServiceContextModule.class))
                   .build())
          .homepage(URI.create("http://hpcloud.com"))
          .console(URI.create("https://manage.hpcloud.com/compute"))

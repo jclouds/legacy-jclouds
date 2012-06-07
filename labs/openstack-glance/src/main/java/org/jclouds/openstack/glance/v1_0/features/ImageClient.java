@@ -25,12 +25,11 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
 import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.options.CreateImageOptions;
-import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
+import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
 
 /**
  * Image Services

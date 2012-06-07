@@ -21,11 +21,11 @@ package org.jclouds.openstack.nova.v1_1.extensions;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerWithSecurityGroups;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 

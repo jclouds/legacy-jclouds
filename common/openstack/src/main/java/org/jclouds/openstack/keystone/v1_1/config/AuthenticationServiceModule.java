@@ -34,7 +34,7 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.openstack.Authentication;
+import org.jclouds.openstack.internal.Authentication;
 import org.jclouds.openstack.keystone.v1_1.AuthenticationAsyncClient;
 import org.jclouds.openstack.keystone.v1_1.AuthenticationClient;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;

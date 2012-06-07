@@ -38,7 +38,6 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
@@ -71,13 +70,6 @@ public class HPCloudObjectStorageRestClientModule extends
       install(new SwiftObjectModule());
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
-   }
-
-   @Override
-   protected void installLocations() {
-      super.installLocations();
-      // TODO: select this from KeystoneProperties.VERSION;
-      install(KeystoneAuthenticationModule.forRegions());
    }
 
    @Override

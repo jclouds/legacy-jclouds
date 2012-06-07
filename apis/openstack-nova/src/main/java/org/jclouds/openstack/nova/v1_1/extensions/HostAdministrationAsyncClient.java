@@ -28,7 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.Host;
 import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
 import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.MaintenanceModeDisabledResponseParser;
@@ -38,8 +38,8 @@ import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.Power
 import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.PowerIsStartupResponseParser;
 import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.StatusDisabledResponseParser;
 import org.jclouds.openstack.nova.v1_1.functions.FieldValueResponseParsers.StatusEnabledResponseParser;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.RequestFilters;

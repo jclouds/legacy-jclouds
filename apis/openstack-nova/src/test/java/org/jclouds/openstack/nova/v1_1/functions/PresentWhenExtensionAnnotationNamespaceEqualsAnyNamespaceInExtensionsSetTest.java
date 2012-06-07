@@ -12,7 +12,7 @@ import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
 import org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.annotations.Delegate;
 import org.testng.annotations.Test;
 
@@ -40,7 +40,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
             new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-08-08T00:00:00+00:00")).description(
             "Keypair Support").build();
 
-   @org.jclouds.openstack.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
+   @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
    static interface KeyPairIPAsyncClient {
 
    }
@@ -50,7 +50,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
             new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-06-16T00:00:00+00:00")).description(
             "Floating IPs support").build();
 
-   @org.jclouds.openstack.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
+   @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
    static interface FloatingIPAsyncClient {
 
    }

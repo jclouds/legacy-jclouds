@@ -28,7 +28,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.TestOpenStackAuthenticationModule;
+import org.jclouds.openstack.internal.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;

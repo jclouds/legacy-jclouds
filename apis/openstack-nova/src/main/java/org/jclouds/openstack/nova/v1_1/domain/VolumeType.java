@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.Map;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.SerializedName;
 

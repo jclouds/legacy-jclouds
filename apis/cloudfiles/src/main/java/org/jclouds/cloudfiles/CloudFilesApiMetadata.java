@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.cloudfiles.config.CloudFilesRestClientModule;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -81,7 +80,7 @@ public class CloudFilesApiMetadata extends BaseRestApiMetadata {
          .identityName("Username")
          .credentialName("API Key")
          .documentation(URI.create("http://docs.rackspacecloud.com/files/api/v1/cfdevguide_d5/content/ch01.html"))
-         .version(OpenStackAuthAsyncClient.VERSION)
+         .version("1.0")
          .defaultProperties(CloudFilesApiMetadata.defaultProperties())
          .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudFilesRestClientModule.class, CloudFilesBlobStoreContextModule.class));

@@ -31,11 +31,37 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
-import org.jclouds.openstack.nova.v1_1.extensions.*;
+import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.AdminActionsClient;
+import org.jclouds.openstack.nova.v1_1.extensions.FlavorExtraSpecsAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.FlavorExtraSpecsClient;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
+import org.jclouds.openstack.nova.v1_1.extensions.HostAggregateAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.HostAggregateClient;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
+import org.jclouds.openstack.nova.v1_1.extensions.QuotaAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.QuotaClassAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.QuotaClassClient;
+import org.jclouds.openstack.nova.v1_1.extensions.QuotaClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.ServerWithSecurityGroupsClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VirtualInterfaceClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VolumeAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VolumeClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VolumeTypeAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VolumeTypeClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
@@ -99,12 +125,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    @Override
    protected void installLocations() {
       super.installLocations();
-      // TODO: select this from KeystoneProperties.VERSION; note you select from
-      // a guice provided
-      // property, so it will have to come from somewhere else, maybe we move
-      // this to the the
-      // ContextBuilder
-      install(KeystoneAuthenticationModule.forZones());
       bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 

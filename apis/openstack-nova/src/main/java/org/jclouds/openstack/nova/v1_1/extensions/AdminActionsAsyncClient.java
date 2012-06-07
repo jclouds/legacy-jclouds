@@ -25,12 +25,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.BackupType;
 import org.jclouds.openstack.nova.v1_1.functions.ParseImageIdFromLocationHeader;
 import org.jclouds.openstack.nova.v1_1.options.CreateBackupOfServerOptions;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;

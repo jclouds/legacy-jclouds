@@ -35,7 +35,18 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <jclouds.osgi.export>org.jclouds.openstack*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.export>org.jclouds.openstack.config*;version="${project.version}",
+          org.jclouds.openstack.domain*;version="${project.version}"
+          org.jclouds.openstack.filters*;version="${project.version}"
+          org.jclouds.openstack.functions*;version="${project.version}"
+          org.jclouds.openstack.handlers*;version="${project.version}"
+          org.jclouds.openstack.internal*;version="${project.version}"
+          org.jclouds.openstack.keystone.v1_1*;version="${project.version}"
+          org.jclouds.openstack.options*;version="${project.version}"
+          org.jclouds.openstack.predicates*;version="${project.version}"
+          org.jclouds.openstack.reference*;version="${project.version}"
+          org.jclouds.openstack.services*;version="${project.version}"
+        </jclouds.osgi.export>
         <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
      </properties>
 

@@ -27,8 +27,8 @@ import org.jclouds.openstack.nova.v1_1.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v1_1.domain.VolumeSnapshot;
 import org.jclouds.openstack.nova.v1_1.options.CreateVolumeOptions;
 import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
-import org.jclouds.openstack.services.Extension;
-import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Extension;
 
 /**
  * Provides synchronous access to Volumes.
