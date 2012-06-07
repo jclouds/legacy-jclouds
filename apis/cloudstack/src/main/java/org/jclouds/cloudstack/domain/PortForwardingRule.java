@@ -55,7 +55,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
                   // Rules in this state can not be sent to network elements.
       ADD,        // Add means the rule has been created and has gone through network rule conflict detection.
       ACTIVE,     // Rule has been sent to the network elements and reported to be active.
-      DELETEING,  // Revoke means this rule has been revoked. If this rule has been sent to the
+      DELETING,  // Revoke means this rule has been revoked. If this rule has been sent to the
                   // network elements, the rule will be deleted from database.
       UNKNOWN;
 
