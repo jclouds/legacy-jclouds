@@ -27,9 +27,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.v2_0.services.Identity;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
@@ -49,7 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adam Lowe
  */
-@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
+@org.jclouds.rest.annotations.Endpoint(Identity.class)
 @SkipEncoding( { '/', '=' })
 public interface TenantAsyncClient {
 

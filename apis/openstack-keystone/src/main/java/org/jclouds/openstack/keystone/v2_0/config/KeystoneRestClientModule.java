@@ -18,7 +18,11 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
+import java.net.URI;
 import java.util.Map;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
@@ -26,19 +30,33 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
+import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.features.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.features.TenantClient;
 import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.features.TokenClient;
 import org.jclouds.openstack.keystone.v2_0.features.UserAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.features.UserClient;
+import org.jclouds.openstack.keystone.v2_0.functions.PresentWhenAdminURLExistsForIdentityService;
 import org.jclouds.openstack.keystone.v2_0.handlers.KeystoneErrorHandler;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersion;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
+import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.services.Identity;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.functions.ImplicitOptionalConverter;
 
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.util.Modules;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Configures the Keystone connection.
@@ -46,17 +64,19 @@ import com.google.inject.util.Modules;
  * @author Adam Lowe
  */
 @ConfiguresRestClient
-public class KeystoneRestClientModule<S extends KeystoneClient, A extends KeystoneAsyncClient> extends RestClientModule<S, A> {
+public class KeystoneRestClientModule<S extends KeystoneClient, A extends KeystoneAsyncClient> extends
+         RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(TokenClient.class, TokenAsyncClient.class)
-         .put(UserClient.class, UserAsyncClient.class)
-         .put(TenantClient.class, TenantAsyncClient.class)
-         .build();
-   
+            .put(ServiceClient.class, ServiceAsyncClient.class)
+            .put(TokenClient.class, TokenAsyncClient.class)
+            .put(UserClient.class, UserAsyncClient.class)
+            .put(TenantClient.class, TenantAsyncClient.class).build();
+
    @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
-      super((TypeToken) TypeToken.of(KeystoneClient.class), (TypeToken) TypeToken.of(KeystoneAsyncClient.class), DELEGATE_MAP);
+      super((TypeToken) TypeToken.of(KeystoneClient.class), (TypeToken) TypeToken.of(KeystoneAsyncClient.class),
+               DELEGATE_MAP);
    }
 
    protected KeystoneRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
@@ -72,10 +92,36 @@ public class KeystoneRestClientModule<S extends KeystoneClient, A extends Keysto
 
    @Override
    protected void installLocations() {
-      install(new KeystoneAuthenticationModule(Modules.EMPTY_MODULE));
+      install(new KeystoneAuthenticationModule(new KeystoneAdminURLModule()));
       super.installLocations();
    }
-   
+
+   public static class KeystoneAdminURLModule extends AbstractModule {
+
+      @Override
+      protected void configure() {
+         bind(ImplicitOptionalConverter.class).to(PresentWhenAdminURLExistsForIdentityService.class); 
+         install(new FactoryModuleBuilder().implement(RegionIdToAdminURISupplier.class,
+                  RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
+      }
+
+      // return any identity url.
+      @Provides
+      @Singleton
+      @Identity
+      protected Supplier<URI> provideStorageUrl(RegionIdToAdminURISupplier.Factory factory,
+               @Named(KeystoneProperties.VERSION) String version) {
+         return Suppliers.compose(new Function<Map<String, Supplier<URI>>, URI>() {
+
+            //TODO: throw a nice error when there's nothing here
+            @Override
+            public URI apply(Map<String, Supplier<URI>> input) {
+               return Iterables.getLast(input.values()).get();
+            }
+         }, factory.createForApiTypeAndVersion(ServiceType.IDENTITY, version));
+      }
+   }
+
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(KeystoneErrorHandler.class);

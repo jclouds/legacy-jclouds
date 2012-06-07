@@ -36,26 +36,22 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests parsing and Guice wiring of TenantClient
+ * Tests parsing and Guice wiring of ServiceClient
  * 
  * @author Adam Lowe
  */
-@Test(testName = "TenantClientExpectTest")
-public class TenantClientExpectTest extends BaseKeystoneRestClientExpectTest<KeystoneClient> {
+@Test(testName = "ServiceClientExpectTest")
+public class ServiceClientExpectTest extends BaseKeystoneRestClientExpectTest<KeystoneClient> {
 
-   public TenantClientExpectTest(){
-      endpoint = "https://csnode.jclouds.org:35357";
-   }
-   
    public void testListTenants() {
-      TenantClient client = requestsSendResponses(
+      ServiceClient client = requestsSendResponses(
                keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants").build(),
                standardResponseBuilder(200).payload(
                         payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
-               .getTenantClient().get();
-      Set<Tenant> tenants = client.list();
+               .getServiceClient();
+      Set<Tenant> tenants = client.listTenants();
       assertNotNull(tenants);
       assertFalse(tenants.isEmpty());
 
@@ -66,51 +62,51 @@ public class TenantClientExpectTest extends BaseKeystoneRestClientExpectTest<Key
    }
 
    public void testListTenantsFailNotFound() {
-      TenantClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      ServiceClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants").build(), standardResponseBuilder(404).build())
-               .getTenantClient().get();
-      assertTrue(client.list().isEmpty());
+               .getServiceClient();
+      assertTrue(client.listTenants().isEmpty());
    }
 
    public void testGetTenant() {
-      TenantClient client = requestsSendResponses(
+      ServiceClient client = requestsSendResponses(
                keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants/013ba41150a14830bec85ffe93353bcc").build(),
                standardResponseBuilder(200).payload(
                         payloadFromResourceWithContentType("/tenant_details.json", APPLICATION_JSON)).build())
-               .getTenantClient().get();
-      Tenant tenant = client.get("013ba41150a14830bec85ffe93353bcc");
+               .getServiceClient();
+      Tenant tenant = client.getTenant("013ba41150a14830bec85ffe93353bcc");
       assertNotNull(tenant);
       assertEquals(tenant, Tenant.builder().id("013ba41150a14830bec85ffe93353bcc").name("admin").build());
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testListTenantsFailNotAuthorized() {
-      TenantClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      ServiceClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants/013ba41150a14830bec85ffe93353bcc").build(),
-               standardResponseBuilder(401).build()).getTenantClient().get();
-      client.get("013ba41150a14830bec85ffe93353bcc");
+               standardResponseBuilder(401).build()).getServiceClient();
+      client.getTenant("013ba41150a14830bec85ffe93353bcc");
    }
 
    public void testGetTenantByName() {
-      TenantClient client = requestsSendResponses(
+      ServiceClient client = requestsSendResponses(
                keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants?name=admin").build(),
                standardResponseBuilder(200).payload(
                         payloadFromResourceWithContentType("/tenant_details.json", APPLICATION_JSON)).build())
-               .getTenantClient().get();
-      Tenant tenant = client.getByName("admin");
+               .getServiceClient();
+      Tenant tenant = client.getTenantByName("admin");
       assertNotNull(tenant);
       assertEquals(tenant, Tenant.builder().id("013ba41150a14830bec85ffe93353bcc").name("admin").build());
    }
 
    public void testGetTenantByNameFailNotFound() {
-      TenantClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      ServiceClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants?name=admin").build(),
-               standardResponseBuilder(404).build()).getTenantClient().get();
-      assertNull(client.getByName("admin"));
+               standardResponseBuilder(404).build()).getServiceClient();
+      assertNull(client.getTenantByName("admin"));
    }
 
 }
