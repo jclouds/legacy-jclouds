@@ -76,7 +76,7 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getImage().getName(), "Ubuntu 11.10");
-      assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "ubuntu");
+      assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "root");
       assertEquals(defaultTemplate.getLocation().getId(), "DFW");
       assertEquals(defaultTemplate.getImage().getLocation().getId(), "DFW");
       assertEquals(defaultTemplate.getHardware().getLocation().getId(), "DFW");

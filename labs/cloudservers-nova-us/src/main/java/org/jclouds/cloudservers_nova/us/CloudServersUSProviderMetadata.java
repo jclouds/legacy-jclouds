@@ -65,7 +65,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
-      properties.setProperty(TEMPLATE, "imageId=DFW/3afe97b2-26dc-49c5-a2cc-a2fc8d80c001");
+      properties.setProperty(TEMPLATE, "imageId=DFW/3afe97b2-26dc-49c5-a2cc-a2fc8d80c001,loginUser=root");
 
       return properties;
    }
