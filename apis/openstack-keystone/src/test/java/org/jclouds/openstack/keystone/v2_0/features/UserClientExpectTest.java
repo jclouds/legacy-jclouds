@@ -44,13 +44,17 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(testName = "UserClientExpectTest")
 public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<KeystoneClient> {
-
+   
+   public UserClientExpectTest(){
+      endpoint = "https://csnode.jclouds.org:35357";
+   }
+   
    public void testListUsers() {
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
-            .getUserClient();
+            .getUserClient().get();
       Set<User> users = client.list();
       assertNotNull(users);
       assertFalse(users.isEmpty());
@@ -70,7 +74,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users").build(),
-            standardResponseBuilder(401).build()).getUserClient();
+            standardResponseBuilder(401).build()).getUserClient().get();
       client.list();
    }
 
@@ -79,7 +83,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/e021dfd758eb44a89f1c57c8ef3be8e2").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_details.json", APPLICATION_JSON)).build())
-            .getUserClient();
+            .getUserClient().get();
       User user = client.get("e021dfd758eb44a89f1c57c8ef3be8e2");
       assertNotNull(user);
       assertEquals(user, User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build());
@@ -89,7 +93,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/f021dfd758eb44a89f1c57c8ef3be8e2").build(),
-            standardResponseBuilder(404).build()).getUserClient();
+            standardResponseBuilder(404).build()).getUserClient().get();
       assertNull(client.get("f021dfd758eb44a89f1c57c8ef3be8e2"));
    }
 
@@ -98,7 +102,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users?name=nova").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_details.json", APPLICATION_JSON)).build())
-            .getUserClient();
+            .getUserClient().get();
       User user = client.getByName("nova");
       assertNotNull(user);
       assertEquals(user, User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build());
@@ -108,7 +112,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users?name=fred").build(),
-            standardResponseBuilder(404).build()).getUserClient();
+            standardResponseBuilder(404).build()).getUserClient().get();
       assertNull(client.getByName("fred"));
    }
    
@@ -117,7 +121,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_role_list.json", APPLICATION_JSON)).build())
-            .getUserClient();
+            .getUserClient().get();
       Set<Role> roles = client.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
       assertNotNull(roles);
       assertFalse(roles.isEmpty());
@@ -130,7 +134,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/4f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
-            standardResponseBuilder(404).build()).getUserClient();
+            standardResponseBuilder(404).build()).getUserClient().get();
       assertTrue(client.listRolesOfUser("4f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
    }
 
@@ -139,7 +143,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/5f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
-            standardResponseBuilder(501).build()).getUserClient();
+            standardResponseBuilder(501).build()).getUserClient().get();
       assertTrue(client.listRolesOfUser("5f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
    }
 
@@ -148,7 +152,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_tenant_role_list.json", APPLICATION_JSON)).build())
-            .getUserClient();
+            .getUserClient().get();
       Set<Role> roles = client.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
       assertNotNull(roles);
       assertFalse(roles.isEmpty());
@@ -162,7 +166,7 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
       UserClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             standardRequestBuilder(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
-            standardResponseBuilder(404).build()).getUserClient();
+            standardResponseBuilder(404).build()).getUserClient().get();
       assertTrue(client.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
    }
    

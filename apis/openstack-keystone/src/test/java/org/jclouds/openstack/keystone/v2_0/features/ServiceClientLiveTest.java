@@ -29,23 +29,23 @@ import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests TenantClient
+ * Tests ServiceClient
  * 
  * @author Adam Lowe
  */
-@Test(groups = "live", testName = "TenantClientLiveTest")
-public class TenantClientLiveTest extends BaseKeystoneClientLiveTest {
+@Test(groups = "live", testName = "ServiceClientLiveTest")
+public class ServiceClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testTenants() {
-      TenantClient client = keystoneContext.getApi().getTenantClient().get();
-      Set<Tenant> result = client.list();
+      ServiceClient client = keystoneContext.getApi().getServiceClient();
+      Set<Tenant> result = client.listTenants();
       assertNotNull(result);
       assertFalse(result.isEmpty());
 
       for (Tenant tenant : result) {
          assertNotNull(tenant.getId());
 
-         Tenant aTenant = client.get(tenant.getId());
+         Tenant aTenant = client.getTenant(tenant.getId());
          assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
          assertEquals(aTenant, tenant);
@@ -54,10 +54,10 @@ public class TenantClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testTenantsByName() {
 
-      TenantClient client = keystoneContext.getApi().getTenantClient().get();
+      ServiceClient client = keystoneContext.getApi().getServiceClient();
 
-      for (Tenant tenant : client.list()) {
-         Tenant aTenant = client.getByName(tenant.getName());
+      for (Tenant tenant : client.listTenants()) {
+         Tenant aTenant = client.getTenantByName(tenant.getName());
          assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
          assertEquals(aTenant, tenant);

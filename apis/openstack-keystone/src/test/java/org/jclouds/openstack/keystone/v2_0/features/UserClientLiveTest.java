@@ -40,7 +40,7 @@ public class UserClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testUsers() {
 
-      UserClient client = keystoneContext.getApi().getUserClient();
+      UserClient client = keystoneContext.getApi().getUserClient().get();
       Set<User> users = client.list();
       assertNotNull(users);
       assertFalse(users.isEmpty());
@@ -53,9 +53,9 @@ public class UserClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testUserRolesOnTenant() {
 
-      UserClient client = keystoneContext.getApi().getUserClient();
+      UserClient client = keystoneContext.getApi().getUserClient().get();
       Set<User> users = client.list();
-      Set<Tenant> tenants = keystoneContext.getApi().getTenantClient().list();
+      Set<Tenant> tenants = keystoneContext.getApi().getTenantClient().get().list();
 
       for (User user : users) {
          for (Tenant tenant : tenants) {
@@ -70,7 +70,7 @@ public class UserClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testListRolesOfUser() {
 
-      UserClient client = keystoneContext.getApi().getUserClient();
+      UserClient client = keystoneContext.getApi().getUserClient().get();
       for (User user : client.list()) {
          Set<Role> roles = client.listRolesOfUser(user.getId());
          for (Role role : roles) {
@@ -82,7 +82,7 @@ public class UserClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testUsersByName() {
 
-      UserClient client = keystoneContext.getApi().getUserClient();
+      UserClient client = keystoneContext.getApi().getUserClient().get();
       for (User user : client.list()) {
          User aUser = client.getByName(user.getName());
          assertEquals(aUser, user);

@@ -22,10 +22,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.features.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.features.TenantClient;
 import org.jclouds.openstack.keystone.v2_0.features.TokenClient;
 import org.jclouds.openstack.keystone.v2_0.features.UserClient;
 import org.jclouds.rest.annotations.Delegate;
+
+import com.google.common.base.Optional;
 
 /**
  * Provides access to Openstack keystone resources via their REST API.
@@ -44,23 +47,29 @@ public interface KeystoneClient {
     * @return the requested information
     */
    ApiMetadata getApiMetadata();
+   
+   /** 
+    * Provides synchronous access to Token features 
+    */
+   @Delegate
+   ServiceClient getServiceClient();
 
    /** 
     * Provides synchronous access to Token features 
     */
    @Delegate
-   TokenClient getTokenClient();
+   Optional<TokenClient> getTokenClient();
 
    /** 
     * Provides synchronous access to User features 
     */
    @Delegate
-   UserClient getUserClient();
+   Optional<UserClient> getUserClient();
    
 
    /** 
     * Provides synchronous access to Tenant features 
     */
    @Delegate
-   TenantClient getTenantClient();
+   Optional<TenantClient> getTenantClient();
 }

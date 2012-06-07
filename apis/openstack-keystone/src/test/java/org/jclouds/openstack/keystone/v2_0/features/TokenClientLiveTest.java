@@ -58,7 +58,7 @@ public class TokenClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testToken() {
 
-      TokenClient client = keystoneContext.getApi().getTokenClient();
+      TokenClient client = keystoneContext.getApi().getTokenClient().get();
       assertTrue(client.isValid(token));
       Token result = client.get(token);
       assertNotNull(result);
@@ -74,7 +74,7 @@ public class TokenClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testInvalidToken() {
 
-      TokenClient client = keystoneContext.getApi().getTokenClient();
+      TokenClient client = keystoneContext.getApi().getTokenClient().get();
       assertFalse(client.isValid("thisisnotarealtoken!"));
       assertNull(client.get("thisisnotarealtoken!"));
 
@@ -82,7 +82,7 @@ public class TokenClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testTokenEndpoints() {
 
-      TokenClient client = keystoneContext.getApi().getTokenClient();
+      TokenClient client = keystoneContext.getApi().getTokenClient().get();
       Set<Endpoint> endpoints = client.listEndpointsForToken(token);
       assertNotNull(endpoints);
       assertFalse(endpoints.isEmpty());
@@ -91,7 +91,7 @@ public class TokenClientLiveTest extends BaseKeystoneClientLiveTest {
 
    public void testInvalidTokenEndpoints() {
 
-      TokenClient client = keystoneContext.getApi().getTokenClient();
+      TokenClient client = keystoneContext.getApi().getTokenClient().get();
       assertTrue(client.listEndpointsForToken("thisisnotarealtoken!").isEmpty());
 
    }

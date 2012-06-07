@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Constants;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.features.UserAsyncClient;
@@ -33,6 +34,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -54,23 +56,29 @@ public interface KeystoneAsyncClient {
    @Path("/v{" + Constants.PROPERTY_API_VERSION + "}/")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ApiMetadata> getApiMetadata();
+   
+   /**
+    * @see KeystoneClient#getServiceClient()
+    */
+   @Delegate
+   ServiceAsyncClient getServiceClient();
 
    /**
     * @see KeystoneClient#getTokenClient()
     */
    @Delegate
-   TokenAsyncClient getTokenClient();
+   Optional<TokenAsyncClient> getTokenClient();
 
    /**
     * @see KeystoneClient#getUserClient()
     */
    @Delegate
-   UserAsyncClient getUserClient();
+   Optional<UserAsyncClient> getUserClient();
    
 
    /**
     * @see KeystoneClient#getTenantClient()
     */
    @Delegate
-   TenantAsyncClient getTenantClient();
+   Optional<TenantAsyncClient> getTenantClient();
 }

@@ -22,73 +22,64 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
-import org.jclouds.openstack.keystone.v2_0.domain.Token;
-import org.jclouds.openstack.keystone.v2_0.domain.User;
+import org.jclouds.Constants;
+import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.v2_0.services.Identity;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Token via their REST API.
+ * Provides asynchronous access to Service via their REST API.
  * <p/>
- *
- * @see TokenClient
+ * 
+ * @see ServiceClient
  * @see <a href=
- *       "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Token_Operations.html"
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adam Lowe
  */
-@SkipEncoding({ '/', '=' })
-@org.jclouds.rest.annotations.Endpoint(Identity.class)
-public interface TokenAsyncClient {
+@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
+@SkipEncoding( { '/', '=' })
+public interface ServiceAsyncClient {
 
-   
-   /** @see TokenClient#get(String) */
+   /**
+    * @see ServiceClient#listTenants()
+    */
    @GET
-   @SelectJson("token")
+   @SelectJson("tenants")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tokens/{token}")
-   @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Token> get(@PathParam("token") String token);
-
-   /** @see TokenClient#getUserOfToken(String) */
-   @GET
-   @SelectJson("user")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tokens/{token}")
-   @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> getUserOfToken(@PathParam("token") String token);
-
-   /** @see TokenClient#isValid(String) */
-   @HEAD
-   @Path("/tokens/{token}")
-   @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> isValid(@PathParam("token") String token);
-
-   /** @see TokenClient#listEndpointsForToken(String) */
-   @GET
-   @SelectJson("endpoints")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tokens/{token}/endpoints")
+   @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Endpoint>> listEndpointsForToken(@PathParam("token") String token);
+   ListenableFuture<Set<Tenant>> listTenants();
+
+   /** @see ServiceClient#getTenant(String) */
+   @GET
+   @SelectJson("tenant")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tenants/{tenantId}")
+   @RequestFilters(AuthenticateRequest.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Tenant> getTenant(@PathParam("tenantId") String tenantId);
+
+   /** @see ServiceClient#getTenantByName(String) */
+   @GET
+   @SelectJson("tenant")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tenants")
+   @RequestFilters(AuthenticateRequest.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Tenant> getTenantByName(@QueryParam("name") String tenantName);
 
 }
