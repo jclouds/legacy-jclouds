@@ -41,20 +41,4 @@ public interface ServiceClient {
     * The operation returns a list of tenants which the current token provides access to.
     */
    Set<Tenant> listTenants();
-
-   /**
-    * Retrieve information about a tenant, by tenant ID
-    * 
-    * @return the information about the tenant
-    */
-   Tenant getTenant(String tenantId);
-
-   /**
-    * Retrieve information about a tenant, by tenant name
-    * <p/>
-    * NOTE: currently not working in openstack ( https://bugs.launchpad.net/keystone/+bug/956687 )
-    * 
-    * @return the information about the tenant
-    */
-   Tenant getTenantByName(String tenantName);
 }
