@@ -24,10 +24,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jclouds.scriptbuilder.BasicFunctionLoader;
-import org.jclouds.scriptbuilder.FunctionLoader;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.functionloader.CurrentFunctionLoader;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -43,8 +42,6 @@ import com.google.common.collect.Iterables;
 public class Utils {
 
    public static final LowerCamelToUpperUnderscore FUNCTION_LOWER_CAMEL_TO_UPPER_UNDERSCORE = new LowerCamelToUpperUnderscore();
-
-   public static FunctionLoader functionLoader = new BasicFunctionLoader();
 
    public static final class LowerCamelToUpperUnderscore implements Function<String, String> {
       @Override
@@ -134,7 +131,7 @@ public class Utils {
    }
 
    public static String writeFunctionFromResource(String function, OsFamily family) {
-         String toReturn = functionLoader.loadFunction(function,family);
+         String toReturn = CurrentFunctionLoader.get().loadFunction(function,family);
          String lf = ShellToken.LF.to(family);
          return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
    }

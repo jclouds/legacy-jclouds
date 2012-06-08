@@ -16,21 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder;
+package org.jclouds.scriptbuilder.functionloader;
 
-import org.jclouds.scriptbuilder.domain.OsFamily;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class FunctionNotFoundException extends RuntimeException {
-  /**
-   * The serialVersionUID
-   */
-  private static final long serialVersionUID = 1L;
+/**
+ * Means to access the current {@link FunctionLoader} instance;
+ */
+public class CurrentFunctionLoader {
 
-  public FunctionNotFoundException(String functionName, OsFamily family) {
-    super("function: " + functionName + " not found for famiy: " + family);
-  }
+   private static final AtomicReference<FunctionLoader> ref = new AtomicReference<FunctionLoader>(
+            BasicFunctionLoader.INSTANCE);
 
-  public FunctionNotFoundException(String functionName, OsFamily family, Throwable cause) {
-    super("function: " + functionName + " not found for famiy: " + family, cause);
-  }
+   public static FunctionLoader get() {
+      return ref.get();
+   }
+
+   public static FunctionLoader set(FunctionLoader loader) {
+      return ref.getAndSet(loader);
+   }
+
+   public static FunctionLoader reset() {
+      return ref.getAndSet(BasicFunctionLoader.INSTANCE);
+   }
+
 }

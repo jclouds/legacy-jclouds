@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder;
+package org.jclouds.scriptbuilder.functionloader;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
@@ -30,22 +30,27 @@ import java.io.IOException;
 /**
  * A {@link FunctionLoader} implementation which loads the target function from the classpath.
  */
-public class BasicFunctionLoader implements FunctionLoader {
+public enum BasicFunctionLoader implements FunctionLoader {
+   INSTANCE;
 
-  /**
-   * Loads a function from the classpath using the current or the Thread Context Class Loader.
-   * @param function The function name to load.
-   * @param family   This operating system family of the function.
-   * @return         The function as {@link String}
-   * @throws FunctionNotFoundException
-   */
-  @Override
-  public String loadFunction(String function, OsFamily family) throws FunctionNotFoundException {
-    try {
-      return CharStreams.toString(Resources.newReaderSupplier(ClassLoadingUtils.loadResource(BasicFunctionLoader.class, String
-              .format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
-    } catch (IOException e) {
-      throw new FunctionNotFoundException(function, family, e);
-    }
-  }
+   /**
+    * Loads a function from the classpath using the current or the Thread Context Class Loader.
+    * 
+    * @param function
+    *           The function name to load.
+    * @param family
+    *           This operating system family of the function.
+    * @return The function as {@link String}
+    * @throws FunctionNotFoundException
+    */
+   @Override
+   public String loadFunction(String function, OsFamily family) throws FunctionNotFoundException {
+      try {
+         return CharStreams.toString(Resources.newReaderSupplier(ClassLoadingUtils.loadResource(
+                  BasicFunctionLoader.class, String.format("/functions/%s.%s", function, ShellToken.SH.to(family))),
+                  Charsets.UTF_8));
+      } catch (IOException e) {
+         throw new FunctionNotFoundException(function, family, e);
+      }
+   }
 }

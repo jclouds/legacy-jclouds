@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder;
+package org.jclouds.scriptbuilder.functionloader;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 
