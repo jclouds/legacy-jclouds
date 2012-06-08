@@ -335,7 +335,7 @@ public class CloudStackComputeServiceAdapter implements
             .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId()));
 
          for (FirewallRule rule : firewallRules) {
-            if (!FirewallRule.State.fromValue("DELETING").equals(rule.getState())) {
+            if (rule.getState() != FirewallRule.State.DELETING) {
                ipAddresses.add(rule.getIpAddressId());
                client.getFirewallClient().deleteFirewallRule(rule.getId());
                logger.debug(">> deleting FirewallRule(%s)", rule.getId());
