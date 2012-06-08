@@ -23,8 +23,6 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Constants;
@@ -35,7 +33,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -63,23 +60,4 @@ public interface ServiceAsyncClient {
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Tenant>> listTenants();
-
-   /** @see ServiceClient#getTenant(String) */
-   @GET
-   @SelectJson("tenant")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tenants/{tenantId}")
-   @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Tenant> getTenant(@PathParam("tenantId") String tenantId);
-
-   /** @see ServiceClient#getTenantByName(String) */
-   @GET
-   @SelectJson("tenant")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tenants")
-   @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Tenant> getTenantByName(@QueryParam("name") String tenantName);
-
 }

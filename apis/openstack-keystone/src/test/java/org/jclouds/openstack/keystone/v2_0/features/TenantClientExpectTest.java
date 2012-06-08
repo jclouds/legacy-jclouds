@@ -65,6 +65,23 @@ public class TenantClientExpectTest extends BaseKeystoneRestClientExpectTest<Key
       assertEquals(tenants, expected);
    }
 
+   public void testListTenantsATT() {
+      TenantClient client = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword,
+            responseWithKeystoneAccess,
+            standardRequestBuilder(endpoint + "/v2.0/tenants").build(),
+            standardResponseBuilder(200).payload(
+                  payloadFromResourceWithContentType("/tenant_list_att.json", APPLICATION_JSON)).build())
+            .getTenantClient().get();
+      Set<Tenant> tenants = client.list();
+      assertNotNull(tenants);
+      assertFalse(tenants.isEmpty());
+
+      Set<Tenant> expected = ImmutableSet.of(Tenant.builder().name("this-is-a-test").id("14").description("None").build());
+
+      assertEquals(tenants, expected);
+   }
+   
    public void testListTenantsFailNotFound() {
       TenantClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
                standardRequestBuilder(endpoint + "/v2.0/tenants").build(), standardResponseBuilder(404).build())
