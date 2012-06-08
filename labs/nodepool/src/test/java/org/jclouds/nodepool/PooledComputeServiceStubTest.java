@@ -18,11 +18,10 @@
  */
 package org.jclouds.nodepool;
 
-import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.StubComputeServiceIntegrationTest;
+import org.jclouds.nodepool.internal.EagerPooledComputeService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
@@ -49,10 +48,9 @@ public class PooledComputeServiceStubTest extends StubComputeServiceIntegrationT
    @Override
    protected void initializeContext() {
       super.initializeContext();
-      ComputeServiceContext pooledCtx = ContextBuilder.newBuilder("pooled").build(ComputeServiceContext.class);
-
-      // pool = new EagerFixedSizePooledComputeService(client,
-      // client.templateBuilder().any().build());
+      pool = new EagerPooledComputeService(client, "pool", 10, 5, true, client.templateBuilder().any().build(), client
+               .getContext().utils().getUserExecutor());
+      client = pool;
       try {
          ((PooledComputeService) client).startPool();
       } catch (RunNodesException e) {
