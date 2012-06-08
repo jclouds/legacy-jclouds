@@ -18,25 +18,22 @@
  */
 package org.jclouds.scriptbuilder.util;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jclouds.scriptbuilder.BasicFunctionLoader;
+import org.jclouds.scriptbuilder.FunctionLoader;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
-import org.jclouds.util.ClassLoadingUtils;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
 
 /**
  * Utilities used to build init scripts.
@@ -46,6 +43,8 @@ import com.google.common.io.Resources;
 public class Utils {
 
    public static final LowerCamelToUpperUnderscore FUNCTION_LOWER_CAMEL_TO_UPPER_UNDERSCORE = new LowerCamelToUpperUnderscore();
+
+   public static FunctionLoader functionLoader = new BasicFunctionLoader();
 
    public static final class LowerCamelToUpperUnderscore implements Function<String, String> {
       @Override
@@ -135,30 +134,12 @@ public class Utils {
    }
 
    public static String writeFunctionFromResource(String function, OsFamily family) {
-      try {
-         String toReturn = CharStreams.toString(Resources.newReaderSupplier(ClassLoadingUtils.loadResource(Utils.class, String
-                 .format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
+         String toReturn = functionLoader.loadFunction(function,family);
          String lf = ShellToken.LF.to(family);
          return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
-      } catch (IOException e) {
-         throw new FunctionNotFoundException(function, family, e);
-      }
    }
 
-   public static class FunctionNotFoundException extends RuntimeException {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 1L;
-
-      public FunctionNotFoundException(String functionName, OsFamily family) {
-         super("function: " + functionName + " not found for famiy: " + family);
-      }
-
-      public FunctionNotFoundException(String functionName, OsFamily family, Throwable cause) {
-         super("function: " + functionName + " not found for famiy: " + family, cause);
-      }
-   }
-
-   public static String writeFunction(String function, String source) {
+  public static String writeFunction(String function, String source) {
       return String.format("{fncl}%s{fncr}%s{fnce}", function, source.replaceAll("^", "   "));
    }
 

@@ -35,6 +35,7 @@
     <properties>
         <jclouds.test.listener />
 
+        <jclouds.osgi.activator>org.jclouds.scriptbuilder.osgi.Activator</jclouds.osgi.activator>
         <jclouds.osgi.export>org.jclouds.scriptbuilder*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
@@ -51,6 +52,12 @@
             <artifactId>bcprov-jdk16</artifactId>
             <version>1.46</version>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -565,6 +565,7 @@ pageTracker._trackPageview();
                         <Import-Package>${jclouds.osgi.import}</Import-Package>
                         <DynamicImport-Package>${jclouds.osgi.dynamic}</DynamicImport-Package>
                         <Fragment-Host>${jclouds.osgi.fragment}</Fragment-Host>
+                        <Bundle-Activator>${jclouds.osgi.activator}</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
