@@ -19,7 +19,6 @@
 package org.jclouds.openstack.keystone.v2_0.parse;
 
 import java.net.URI;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
@@ -34,20 +33,18 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.TypeAdapterFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
 /**
- * @author Adrian Cole
+ * @author Adam Lowe
  */
-@Test(groups = "unit", testName = "ParseApiMetadataTest")
-public class ParseRackspaceApiMetadataTest extends BaseItemParserTest<ApiMetadata> {
+@Test(groups = "unit", testName = "ParseDevstackApiMetadataTest")
+public class ParseDevstackApiMetadataTest extends BaseItemParserTest<ApiMetadata> {
 
    @Override
    public String resource() {
-      return "/raxVersion.json";
+      return "/devstackVersion.json";
    }
 
    // http://docs.openstack.org/api/openstack-identity-service/2.0/content/Versions-d1e472.html
@@ -56,15 +53,15 @@ public class ParseRackspaceApiMetadataTest extends BaseItemParserTest<ApiMetadat
    @Consumes(MediaType.APPLICATION_JSON)
    public ApiMetadata expected() {
       return ApiMetadata.builder().id("v2.0")
-            .links(ImmutableSet.of(Link.builder().relation(Link.Relation.SELF).href(URI.create("https://identity.api.rackspacecloud.com/v2.0")).build(),
-                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/pdf").href(URI.create("http://docs.rackspacecloud.com/auth/api/v2.0/auth-client-devguide-latest.pdf")).build(),
-                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/vnd.sun.wadl+xml").href(URI.create("http://docs.rackspacecloud.com/auth/api/v2.0/auth.wadl")).build()
+            .links(ImmutableSet.of(Link.builder().relation(Link.Relation.SELF).href(URI.create("http://172.16.89.167:5000/v2.0/")).build(),
+                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("text/html").href(URI.create("http://docs.openstack.org/api/openstack-identity-service/2.0/content/")).build(),
+                  Link.builder().relation(Link.Relation.DESCRIBEDBY).type("application/pdf").href(URI.create("http://docs.openstack.org/api/openstack-identity-service/2.0/identity-dev-guide-2.0.pdf")).build()
             ))
-            .status("BETA")
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-01-21T11:33:21-06:00"))
+            .status("beta")
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-19T00:00:00+00:00"))
             .mediaTypes(ImmutableSet.of(
-                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/xml").type("application/vnd.openstack.identity+xml;version=2.0").build(),
-                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/json").type("application/vnd.openstack.identity+json;version=2.0").build()
+                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/json").type("application/vnd.openstack.identity-v2.0+json").build(),
+                  org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/xml").type("application/vnd.openstack.identity-v2.0+xml").build()
             ))
             .build();
    }
