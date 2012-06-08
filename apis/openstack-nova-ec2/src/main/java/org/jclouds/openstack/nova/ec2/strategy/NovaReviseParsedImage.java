@@ -27,7 +27,7 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
-import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v2_0.domain.Image;
 
 import com.google.common.base.Function;
 

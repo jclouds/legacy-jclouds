@@ -20,13 +20,13 @@ package org.jclouds.trystack.nova;
 
 import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
-import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
+import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
-import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
+import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
+import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.trystack.nova.config.TryStackNovaServiceContextModule;

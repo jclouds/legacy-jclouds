@@ -5,12 +5,12 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jclouds.location.Zone;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
-import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
+import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceAdapter;
+import org.jclouds.openstack.nova.v2_0.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
+import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
+import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ImageInZone;
+import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;

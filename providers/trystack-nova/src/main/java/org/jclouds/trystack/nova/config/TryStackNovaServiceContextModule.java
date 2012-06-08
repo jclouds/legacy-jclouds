@@ -18,8 +18,8 @@
  */
 package org.jclouds.trystack.nova.config;
 
-import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
+import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceAdapter;
+import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.trystack.nova.TryStackNovaServiceAdapter;
 
 /**

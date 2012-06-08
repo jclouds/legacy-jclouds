@@ -26,9 +26,9 @@ import java.util.Properties;
 
 import org.jclouds.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule.CloudIdentityAuthenticationModuleForZones;
-import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
-import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
-import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
+import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
+import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextModule;
+import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 

@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudservers_nova.us.features;
 
-import org.jclouds.openstack.nova.v1_1.features.ServerClientLiveTest;
+import org.jclouds.openstack.nova.v2_0.features.ServerClientLiveTest;
 import org.testng.annotations.Test;
 
 /**

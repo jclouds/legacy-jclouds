@@ -24,7 +24,7 @@ import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.openstack.nova.ec2.loaders.NovaCreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.ec2.strategy.NovaReviseParsedImage;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v2_0.compute.functions.ImageToOperatingSystem;
 
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
@@ -38,7 +38,7 @@ public class NovaEC2ComputeServiceContextModule extends EC2ComputeServiceContext
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem>>() {
+      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v2_0.domain.Image, OperatingSystem>>() {
       }).to(ImageToOperatingSystem.class);
       bind(ReviseParsedImage.class).to(NovaReviseParsedImage.class);
       bind(CreateSecurityGroupIfNeeded.class).to(NovaCreateSecurityGroupIfNeeded.class);

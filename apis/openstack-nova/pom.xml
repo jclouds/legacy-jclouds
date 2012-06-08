@@ -47,7 +47,7 @@
     <test.jclouds.openstack-nova.auto-allocate-floating-ips>false</test.jclouds.openstack-nova.auto-allocate-floating-ips>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
 
-    <jclouds.osgi.export>org.jclouds.openstack.nova.v1_1*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.export>org.jclouds.openstack.nova.v2_0*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
       org.jclouds.rest.internal;version="${project.version}",
