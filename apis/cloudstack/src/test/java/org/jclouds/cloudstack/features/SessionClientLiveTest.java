@@ -44,11 +44,12 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateContextUsingUserAndPasswordAuthentication() {
-      String endpoint = cloudStackContext.getProviderMetadata().getEndpoint();
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
+      String endpoint = cloudStackContext.getProviderMetadata().getEndpoint();
       Account testAccount = null;
       User testUser = null;
+
       String prefix = this.prefix + "-session";
       try {
          testAccount = createTestAccount(globalAdminClient, prefix);

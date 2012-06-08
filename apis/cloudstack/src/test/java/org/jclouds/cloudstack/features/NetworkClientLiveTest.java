@@ -65,6 +65,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
    public void testCreateGuestVirtualNetwork() {
       if (!networksSupported)
          return;
@@ -94,13 +95,12 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
    public void testCreateVLANNetwork() {
+      skipIfNotDomainAdmin();
       if (!networksSupported)
          return;
-      if (!domainAdminEnabled) {
-         Logger.getAnonymousLogger().log(Level.SEVERE, "domainAdmin credentials not present, skipping test");
-         return;
-      }
+
       final NetworkOffering offering;
       try {
          offering = get(
@@ -130,6 +130,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
    public void testListNetworks() throws Exception {
       if (!networksSupported)
          return;

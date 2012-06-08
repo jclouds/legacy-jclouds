@@ -88,6 +88,19 @@ public interface FirewallAsyncClient {
          @QueryParam("protocol") FirewallRule.Protocol protocol, CreateFirewallRuleOptions... options);
 
    /**
+    * @see FirewallClient#createFirewallRuleForIpProtocolAndPort
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createFirewallRule")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> createFirewallRuleForIpProtocolAndPort(@QueryParam("ipaddressid") String ipAddressId,
+                                                                            @QueryParam("protocol") FirewallRule.Protocol protocol,
+                                                                            @QueryParam("startPort") int startPort,
+                                                                                @QueryParam("endPort") int endPort);
+                                                                            
+
+   /**
     * @see FirewallClient#deleteFirewallRule
     */
    @GET

@@ -42,6 +42,8 @@ public class GlobalUsageClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testListUsage() {
+      skipIfNotGlobalAdmin();
+
       Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
       Date end = c.getTime();
       c.add(Calendar.MONTH, -1);

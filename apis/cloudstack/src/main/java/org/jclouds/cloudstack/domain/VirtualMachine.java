@@ -71,6 +71,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       private Long networkKbsWrite;
       private String password;
       private boolean passwordEnabled;
+      private String publicIP;
+      private String publicIPId;
       private String rootDeviceId;
       private String rootDeviceType;
       private String serviceOfferingId;
@@ -225,6 +227,16 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
+      public Builder publicIP(String publicIP) {
+         this.publicIP = publicIP;
+         return this;
+      }
+
+      public Builder publicIPId(String publicIPId) {
+         this.publicIPId = publicIPId;
+         return this;
+      }
+
       public Builder rootDeviceId(String rootDeviceId) {
          this.rootDeviceId = rootDeviceId;
          return this;
@@ -294,7 +306,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return new VirtualMachine(id, account, cpuCount, cpuSpeed, cpuUsed, displayName, created, domain, domainId,
                usesVirtualNetwork, group, groupId, guestOSId, HAEnabled, hostId, hostname, IPAddress, ISODisplayText,
                ISOId, ISOName, jobId, jobStatus, memory, name, networkKbsRead, networkKbsWrite, password,
-               passwordEnabled, rootDeviceId, rootDeviceType, securityGroups, serviceOfferingId, serviceOfferingName,
+                                   passwordEnabled, publicIP, publicIPId, rootDeviceId, rootDeviceType, securityGroups, serviceOfferingId, serviceOfferingName,
                state, templateDisplayText, templateId, templateName, zoneId, zoneName, nics, hypervisor);
       }
    }
@@ -366,6 +378,10 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    private String password;
    @SerializedName("passwordenabled")
    private boolean passwordEnabled;
+   @SerializedName("publicip")
+   private String publicIP;
+   @SerializedName("publicipid")
+   private String publicIPId;
    @SerializedName("rootdeviceid")
    private String rootDeviceId;
    @SerializedName("rootdevicetype")
@@ -395,7 +411,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          Date created, String domain, String domainId, boolean usesVirtualNetwork, String group, String groupId,
          String guestOSId, boolean hAEnabled, String hostId, String hostname, String iPAddress, String iSODisplayText,
          String iSOId, String iSOName, String jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
-         Long networkKbsWrite, String password, boolean passwordEnabled, String rootDeviceId, String rootDeviceType,
+                         Long networkKbsWrite, String password, boolean passwordEnabled, String publicIP, String publicIPId, String rootDeviceId, String rootDeviceType,
          Set<SecurityGroup> securityGroups, String serviceOfferingId, String serviceOfferingName, State state,
          String templateDisplayText, String templateId, String templateName, String zoneId, String zoneName, Set<NIC> nics,
          String hypervisor) {
@@ -428,6 +444,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       this.networkKbsWrite = networkKbsWrite;
       this.password = password;
       this.passwordEnabled = passwordEnabled;
+      this.publicIP = publicIP;
+      this.publicIPId = publicIPId;
       this.rootDeviceId = rootDeviceId;
       this.rootDeviceType = rootDeviceType;
       this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
@@ -660,6 +678,20 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    }
 
    /**
+    * @return public IP of this virtual machine
+    */
+   public String getPublicIP() {
+      return publicIP;
+   }
+
+   /**
+    * @return ID of the public IP of this virtual machine
+    */
+   public String getPublicIPId() {
+      return publicIPId;
+   }
+
+   /**
     * @return device ID of the root volume
     */
    public String getRootDeviceId() {
@@ -786,6 +818,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       if (!Objects.equal(networkKbsWrite, that.networkKbsWrite)) return false;
       if (!Objects.equal(password, that.password)) return false;
       if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
+      if (!Objects.equal(publicIP, that.publicIP)) return false;
+      if (!Objects.equal(publicIPId, that.publicIPId)) return false;
       if (!Objects.equal(rootDeviceId, that.rootDeviceId)) return false;
       if (!Objects.equal(rootDeviceType, that.rootDeviceType)) return false;
       if (!Objects.equal(securityGroups, that.securityGroups)) return false;
@@ -809,7 +843,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
                                domain, domainId, usesVirtualNetwork, group, groupId, guestOSId,
                                HAEnabled, hostId, hostname, IPAddress, ISODisplayText, ISOId,
                                ISOName, jobId, jobStatus, memory, name, networkKbsRead,
-                               networkKbsWrite, password, passwordEnabled, rootDeviceId,
+                               networkKbsWrite, password, passwordEnabled, publicIP, publicIPId, rootDeviceId,
                                rootDeviceType, securityGroups, serviceOfferingId,
                                serviceOfferingName, state, templateDisplayText, templateId,
                                templateName, zoneId, zoneName, nics, hypervisor);
@@ -846,6 +880,8 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
             ", networkKbsWrite=" + networkKbsWrite +
             ", password='" + password + '\'' +
             ", passwordEnabled=" + passwordEnabled +
+            ", publicIP='" + publicIP + '\'' +
+            ", publicIPId='" + publicIPId + '\'' +
             ", rootDeviceId=" + rootDeviceId +
             ", rootDeviceType='" + rootDeviceType + '\'' +
             ", serviceOfferingId=" + serviceOfferingId +

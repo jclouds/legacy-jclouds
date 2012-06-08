@@ -90,7 +90,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert template.getZone() != null : template;
          assert template.getZoneId() != null : template;
          assert (template.getStatus() == null ||
-            template.getStatus().equals("Download Complete")) : template;
+            template.getStatus() == Template.Status.DOWNLOADED) : template;
          assert template.getType() != null && template.getType() != Template.Type.UNRECOGNIZED : template;
          assert template.getHypervisor() != null : template;
          assert template.getDomain() != null : template;
@@ -110,8 +110,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
             return network != null && network.getState().equals("Implemented");
          }
       });
-      assertEquals(Iterables.size(networks), 1);
-      Network network = Iterables.getOnlyElement(networks, null);
+      assertTrue(Iterables.size(networks) >= 1);
+      Network network = Iterables.get(networks, 0);
       assertNotNull(network);
 
       // Create a VM and stop it
@@ -160,7 +160,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       networks = Iterables.filter(networks, new Predicate<Network>() {
          @Override
          public boolean apply(@Nullable Network network) {
-            return network != null && network.getState().equals("Implemented");
+            return network != null && network.getName().equals("Virtual Network");
          }
       });
       assertEquals(Iterables.size(networks), 1);
@@ -184,7 +184,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
             if (template == null) return false;
             Template t2 = client.getTemplateClient().getTemplateInZone(template.getId(), zoneId);
             Logger.CONSOLE.info("%s", t2.getStatus());
-            return "Download Complete".equals(t2.getStatus());
+            return t2.getStatus() == Template.Status.DOWNLOADED;
          }
       };
       assertTrue(new RetryablePredicate<Template>(templateReadyPredicate, 60000).apply(registeredTemplate));
