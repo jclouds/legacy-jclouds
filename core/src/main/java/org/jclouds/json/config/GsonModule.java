@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -42,10 +43,12 @@ import org.jclouds.json.internal.OptionalTypeAdapterFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.JsonReaderInternalAccess;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -83,6 +86,10 @@ public class GsonModule extends AbstractModule {
 
       for (Map.Entry<Type, Object> binding : bindings.getBindings().entrySet()) {
          builder.registerTypeAdapter(binding.getKey(), binding.getValue());
+      }
+
+      for (TypeAdapterFactory factory : bindings.getFactories()) {
+         builder.registerTypeAdapterFactory(factory);
       }
 
       return builder.create();
@@ -246,14 +253,24 @@ public class GsonModule extends AbstractModule {
    @Singleton
    public static class JsonAdapterBindings {
       private final Map<Type, Object> bindings = Maps.newHashMap();
+      private final Set<TypeAdapterFactory> factories = Sets.newHashSet();
 
       @com.google.inject.Inject(optional = true)
       public void setBindings(Map<Type, Object> bindings) {
          this.bindings.putAll(bindings);
       }
 
+      @com.google.inject.Inject(optional = true)
+      public void setFactories(Set<TypeAdapterFactory> factories) {
+         this.factories.addAll(factories);
+      }
+
       public Map<Type, Object> getBindings() {
          return bindings;
+      }
+
+      public Set<TypeAdapterFactory> getFactories() {
+         return factories;
       }
    }
 
