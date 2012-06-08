@@ -21,6 +21,9 @@ package org.jclouds.cloudstack.compute;
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.inject.name.Names.bindProperties;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import org.jclouds.cloudstack.domain.FirewallRule;
+import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
+import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
@@ -33,7 +36,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
-import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
@@ -113,6 +115,10 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             bind(new TypeLiteral<Map<NetworkType, ? extends OptionsConverter>>() {}).
                toInstance(new CloudStackComputeServiceContextModule().optionsConverters());
             bind(String.class).annotatedWith(Names.named(PROPERTY_SESSION_INTERVAL)).toInstance("60");
+            bind(new TypeLiteral<CacheLoader<String, Set<IPForwardingRule>>>() {
+            }).to(GetIPForwardingRulesByVirtualMachine.class);
+            bind(new TypeLiteral<CacheLoader<String, Set<FirewallRule>>>() {
+            }).to(GetFirewallRulesByVirtualMachine.class);
             bind(new TypeLiteral<CacheLoader<String, Zone>>() {}).
                to(ZoneIdToZone.class);
             bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {}).
@@ -127,12 +133,19 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             return new RetryablePredicate<String>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRuleByVirtualMachine(
-               GetIPForwardingRulesByVirtualMachine getIPForwardingRule) {
-            return CacheBuilder.newBuilder().build(getIPForwardingRule);
+         protected LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
+               GetIPForwardingRulesByVirtualMachine getIPForwardingRules) {
+            return CacheBuilder.newBuilder().build(getIPForwardingRules);
+         }
+
+
+         @Provides
+         @Singleton
+         protected LoadingCache<String, Set<FirewallRule>> getFirewallRulesByVirtualMachine(
+            GetFirewallRulesByVirtualMachine getFirewallRules) {
+            return CacheBuilder.newBuilder().build(getFirewallRules);
          }
       };
       adapter = Guice.createInjector(module, new SLF4JLoggingModule()).getInstance(
@@ -176,9 +189,9 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          client.getNATClient().getIPForwardingRulesForVirtualMachine(vm.getNode().getId()), null);
 
       String address = rule != null ? rule.getIPAddress() : vm.getNode().getIPAddress();
-      
+
       loginCredentials = prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials());
-      
+
       assert InetAddresses.isInetAddress(address) : vm;
       HostAndPort socket = HostAndPort.fromParts(address, 22);
       checkSSH(socket);

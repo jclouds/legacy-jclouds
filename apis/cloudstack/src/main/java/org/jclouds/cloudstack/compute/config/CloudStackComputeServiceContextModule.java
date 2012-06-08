@@ -52,6 +52,8 @@ import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.GuestOSClient;
+import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
+import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.ZoneIdToZone;
 import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
@@ -188,52 +190,12 @@ public class CloudStackComputeServiceContextModule extends
       return CacheBuilder.newBuilder().build(getIPForwardingRules);
    }
 
-   @Singleton
-   public static class GetIPForwardingRulesByVirtualMachine extends CacheLoader<String, Set<IPForwardingRule>> {
-      private final CloudStackClient client;
-
-      @Inject
-      public GetIPForwardingRulesByVirtualMachine(CloudStackClient client) {
-         this.client = checkNotNull(client, "client");
-      }
-
-      /**
-       * @throws ResourceNotFoundException
-       *            when there is no ip forwarding rule available for the VM
-       */
-      @Override
-      public Set<IPForwardingRule> load(String input) {
-         Set<IPForwardingRule> rules = client.getNATClient().getIPForwardingRulesForVirtualMachine(input);
-         return rules != null ? rules : ImmutableSet.<IPForwardingRule>of();
-      }
-   }
 
    @Provides
    @Singleton
    protected LoadingCache<String, Set<FirewallRule>> getFirewallRulesByVirtualMachine(
       CacheLoader<String, Set<FirewallRule>> getFirewallRules) {
       return CacheBuilder.newBuilder().build(getFirewallRules);
-   }
-
-   @Singleton
-   public static class GetFirewallRulesByVirtualMachine extends CacheLoader<String, Set<FirewallRule>> {
-      private final CloudStackClient client;
-
-      @Inject
-      public GetFirewallRulesByVirtualMachine(CloudStackClient client) {
-         this.client = checkNotNull(client, "client");
-      }
-
-      /**
-       * @throws ResourceNotFoundException
-       *            when there is no ip forwarding rule available for the VM
-       */
-      @Override
-      public Set<FirewallRule> load(String input) {
-          String publicIPId = client.getVirtualMachineClient().getVirtualMachine(input).getPublicIPId();
-          Set<FirewallRule> rules = client.getFirewallClient().listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(publicIPId));
-         return rules != null ? rules : ImmutableSet.<FirewallRule>of();
-      }
    }
 
    @Provides

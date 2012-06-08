@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
