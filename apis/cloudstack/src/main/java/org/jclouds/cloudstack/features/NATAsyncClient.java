@@ -83,7 +83,6 @@ public interface NATAsyncClient {
    @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForIPAddress(@QueryParam("ipaddressid") String id);
 
    /**
@@ -93,7 +92,6 @@ public interface NATAsyncClient {
    @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForVirtualMachine(@QueryParam("virtualmachineid") String id);
 
    /**
@@ -133,7 +131,6 @@ public interface NATAsyncClient {
    @QueryParams(keys = "command", values = "disableStaticNat")
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<String> disableStaticNATOnPublicIP(@QueryParam("ipaddressid") String IPAddressId);
 
 }
