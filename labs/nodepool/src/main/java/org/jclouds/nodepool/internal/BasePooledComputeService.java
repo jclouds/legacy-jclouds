@@ -60,30 +60,6 @@ public abstract class BasePooledComputeService implements PooledComputeService {
       return createNodesInGroup(group, count);
    }
 
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            String runScript) throws RunScriptOnNodesException {
-      return null;
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            Statement runScript) throws RunScriptOnNodesException {
-      return null;
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      return null;
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            Statement runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      return null;
-   }
-
    // set of direct delegation methods
 
    @Override

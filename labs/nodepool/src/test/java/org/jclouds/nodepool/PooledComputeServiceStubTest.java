@@ -19,7 +19,6 @@
 package org.jclouds.nodepool;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.StubComputeServiceIntegrationTest;
 import org.jclouds.nodepool.internal.EagerPooledComputeService;
 import org.testng.annotations.AfterClass;
@@ -52,8 +51,8 @@ public class PooledComputeServiceStubTest extends StubComputeServiceIntegrationT
                .getContext().utils().getUserExecutor());
       client = pool;
       try {
-         ((PooledComputeService) client).startPool();
-      } catch (RunNodesException e) {
+         pool.startPool().get();
+      } catch (Exception e) {
          Throwables.propagate(e);
       }
    }
