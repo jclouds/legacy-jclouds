@@ -30,6 +30,7 @@ import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.ec2.xml.BooleanValueHandler;
 import org.jclouds.ec2.xml.DescribeInstancesResponseHandler;
+import org.jclouds.ec2.xml.GetConsoleOutputResponseHandler;
 import org.jclouds.ec2.xml.InstanceInitiatedShutdownBehaviorHandler;
 import org.jclouds.ec2.xml.InstanceStateChangeHandler;
 import org.jclouds.ec2.xml.InstanceTypeHandler;
@@ -483,6 +484,23 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   public void testGetConsoleOutputForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InstanceAsyncClient.class.getMethod("getConsoleOutputForInstanceInRegion", String.class, String.class);
+      HttpRequest request = processor.createRequest(method, null, "1");
+
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request,
+               "Action=GetConsoleOutput&InstanceId=1",
+               "application/x-www-form-urlencoded", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, GetConsoleOutputResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);

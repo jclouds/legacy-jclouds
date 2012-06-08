@@ -41,6 +41,7 @@ import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.ec2.xml.BooleanValueHandler;
 import org.jclouds.ec2.xml.DescribeInstancesResponseHandler;
+import org.jclouds.ec2.xml.GetConsoleOutputResponseHandler;
 import org.jclouds.ec2.xml.InstanceInitiatedShutdownBehaviorHandler;
 import org.jclouds.ec2.xml.InstanceStateChangeHandler;
 import org.jclouds.ec2.xml.InstanceTypeHandler;
@@ -323,4 +324,14 @@ public interface InstanceAsyncClient {
          @FormParam("InstanceId") String instanceId,
          @BinderParam(BindBlockDeviceMappingToIndexedFormParams.class) Map<String, BlockDevice> blockDeviceMapping);
 
+   /**
+    * @see InstanceClient#getConsoleOutputForInstanceInRegion(String, String)
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION }, values = { "GetConsoleOutput" })
+   @XMLResponseParser(GetConsoleOutputResponseHandler.class)
+   ListenableFuture<String> getConsoleOutputForInstanceInRegion(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         @FormParam("InstanceId") String instanceId);
 }
