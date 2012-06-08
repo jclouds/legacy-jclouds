@@ -40,7 +40,7 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testListHosts() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       Set<Host> hosts = globalAdminClient.getHostClient().listHosts();
       assert hosts.size() > 0 : hosts;
@@ -68,7 +68,7 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testListClusters() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       Set<Cluster> clusters = globalAdminClient.getHostClient().listClusters();
       assert clusters.size() > 0 : clusters;

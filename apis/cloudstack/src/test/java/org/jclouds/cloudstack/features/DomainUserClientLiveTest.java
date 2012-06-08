@@ -40,7 +40,7 @@ public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testListUsers() {
-      assert domainAdminEnabled;
+      skipIfNotDomainAdmin();
 
       Set<User> users = domainAdminClient.getUserClient().listUsers();
 
@@ -60,7 +60,7 @@ public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testEnableDisableUser() {
-      assert globalAdminEnabled && domainAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Account testAccount = null;
       User testUser = null;

@@ -92,7 +92,38 @@ public class NetworkPredicates {
          return isVirtualNetwork.toString();
       }
    }
+    
+   public static enum IsSharedNetwork implements Predicate<Network> {
+      INSTANCE;
 
+      @Override
+      public boolean apply(Network arg0) {
+         boolean network = isSharedNetwork.apply(checkNotNull(arg0, "network").getGuestIPType());
+         return network;
+      }
+
+      @Override
+      public String toString() {
+         return isSharedNetwork.toString();
+      }
+   }
+
+   public static enum IsIsolatedNetwork implements Predicate<Network> {
+      INSTANCE;
+
+      @Override
+      public boolean apply(Network arg0) {
+         boolean network = isIsolatedNetwork.apply(checkNotNull(arg0, "network").getGuestIPType());
+         return network;
+      }
+
+      @Override
+      public String toString() {
+         return isIsolatedNetwork.toString();
+      }
+   }
+
+    
    private static class DefaultNetworkInZone implements Predicate<Network> {
       private final String zoneId;
 
@@ -170,6 +201,10 @@ public class NetworkPredicates {
 
    public static Predicate<GuestIPType> isVirtualNetwork = new GuestIPTypeIs(GuestIPType.VIRTUAL);
 
+   public static Predicate<GuestIPType> isIsolatedNetwork = new GuestIPTypeIs(GuestIPType.ISOLATED);
+
+   public static Predicate<GuestIPType> isSharedNetwork = new GuestIPTypeIs(GuestIPType.SHARED);
+
    /**
     * 
     * @return true, if the network supports static NAT.
@@ -200,6 +235,22 @@ public class NetworkPredicates {
     */
    public static Predicate<Network> isVirtualNetwork() {
       return IsVirtualNetwork.INSTANCE;
+   }
+
+   /**
+    *
+    * @return true, if the network is an isolated network.
+    */
+   public static Predicate<Network> isIsolatedNetwork() {
+      return IsIsolatedNetwork.INSTANCE;
+   }
+
+   /**
+    *
+    * @return true, if the network is a shared network.
+    */
+   public static Predicate<Network> isSharedNetwork() {
+      return IsSharedNetwork.INSTANCE;
    }
 
    /**

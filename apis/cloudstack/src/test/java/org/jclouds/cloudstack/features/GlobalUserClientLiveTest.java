@@ -50,7 +50,7 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateUser() {
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Account testAccount = createTestAccount(globalAdminClient, prefix);
       User testUser = null;

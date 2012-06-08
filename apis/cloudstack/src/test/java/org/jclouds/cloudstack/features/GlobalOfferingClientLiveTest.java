@@ -50,7 +50,7 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testCreateServiceOffering() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       String name = prefix + "-test-create-service-offering";
       String displayText = name + "-display";
@@ -90,7 +90,7 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testCreateDiskOffering() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       String name = prefix + "-test-create-disk-offering";
       String displayText = name + "-display";
@@ -127,7 +127,7 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(groups = "live", enabled = true)
    public void testUpdateNetworkOffering() throws Exception {
-      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+      skipIfNotGlobalAdmin();
 
       NetworkOffering offering = getFirst(globalAdminClient.getOfferingClient().listNetworkOfferings(), null);
       assertNotNull(offering, "Unable to test, no network offering found.");

@@ -42,7 +42,7 @@ public class GlobalAccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateAndRemoveAccount() {
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Account account = null;
       try {
