@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,11 +18,58 @@
  */
 package org.jclouds.nodepool;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
+import org.jclouds.nodepool.internal.EagerPooledComputeService;
 
-public interface PooledComputeService extends ComputeService {
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.ImplementedBy;
 
-   void startPool() throws RunNodesException;
+/**
+ * A {@link ComputeService} wrapper that uses a pool of pre-loaded nodes to speed up creation times.
+ * 
+ * This interface extends the ComputeService with a backing pool of nodes, configured during
+ * construction. The {@link #startPool()} and {@link #close()} methods are used to create and
+ * destroy the pool and its associated nodes.
+ * 
+ * @author Andrew Kennedy
+ * @author Gustavo Morozowski
+ * @author David Alves
+ * 
+ * @see <a href="https://github.com/jclouds/jclouds/wiki/NodePool-Notes">NodePool Notes</a>
+ * @see PooledComputeServiceConstants
+ * @since 1.5.0
+ */
+@ImplementedBy(EagerPooledComputeService.class)
+public interface PooledComputeService extends ComputeService, Closeable {
+
+   /**
+    * Starts the pool, may or may not start the actual nodes, depending on the implementation, i.e.
+    * the returned Set may be empty.
+    */
+   ListenableFuture<Void> startPool() throws RunNodesException;
+
+   /**
+    * Returns true of the pool has been started by calling the {@link #startPool()} method.
+    */
+   boolean isStarted();
+
+   /**
+    * Returns the number of ready (pre-allocated) nodes in the pool.
+    */
+   int getReady();
+
+   /**
+    * Returns the maximum size of the pool.
+    */
+   int size();
+
+   /**
+    * Close the pool and destroy all associated nodes.
+    */
+   void close() throws IOException;
 
 }
