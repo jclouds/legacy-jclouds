@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
+import static org.jclouds.util.Suppliers2.getLastValueInMap;
+
 import java.net.URI;
 import java.util.Map;
 
@@ -48,11 +50,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -111,14 +110,7 @@ public class KeystoneRestClientModule<S extends KeystoneClient, A extends Keysto
       @Identity
       protected Supplier<URI> provideStorageUrl(RegionIdToAdminURISupplier.Factory factory,
                @Named(KeystoneProperties.VERSION) String version) {
-         return Suppliers.compose(new Function<Map<String, Supplier<URI>>, URI>() {
-
-            //TODO: throw a nice error when there's nothing here
-            @Override
-            public URI apply(Map<String, Supplier<URI>> input) {
-               return Iterables.getLast(input.values()).get();
-            }
-         }, factory.createForApiTypeAndVersion(ServiceType.IDENTITY, version));
+         return getLastValueInMap(factory.createForApiTypeAndVersion(ServiceType.IDENTITY, version));
       }
    }
 

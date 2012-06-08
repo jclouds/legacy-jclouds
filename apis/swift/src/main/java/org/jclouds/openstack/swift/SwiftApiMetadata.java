@@ -20,14 +20,20 @@ package org.jclouds.openstack.swift;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
+import org.jclouds.openstack.swift.config.SwiftRestClientModule.StorageEndpointModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -36,29 +42,25 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for Rackspace Cloud Files API
+ * Implementation of {@link ApiMetadata} for OpenStack Swift
  * 
  * @author Adrian Cole
  */
 public class SwiftApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
-
+   
    public static final TypeToken<RestContext<SwiftClient, SwiftAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftClient, SwiftAsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
-   private static Builder builder() {
-      return new Builder();
-   }
-
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
    public SwiftApiMetadata() {
-      this(builder());
+      this(new Builder(SwiftClient.class, SwiftAsyncClient.class));
    }
 
    protected SwiftApiMetadata(Builder builder) {
@@ -67,14 +69,18 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
+      // TODO: this doesn't actually do anything yet.
+      properties.setProperty(KeystoneProperties.VERSION, "2.0");
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
       properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       return properties;
    }
 
    public static class Builder extends BaseRestApiMetadata.Builder {
-      protected Builder() {
-         super(SwiftClient.class, SwiftAsyncClient.class);
+      protected Builder(Class<?> syncClient, Class<?> asyncClient){
+         super(syncClient, asyncClient);
          id("swift")
          .name("OpenStack Swift Pre-Diablo API")
          .identityName("tenantId:user")
@@ -83,7 +89,8 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultProperties(SwiftApiMetadata.defaultProperties())
          .view(TypeToken.of(BlobStoreContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SwiftRestClientModule.class, SwiftBlobStoreContextModule.class));
+         .context(CONTEXT_TOKEN)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(StorageEndpointModule.class, SwiftRestClientModule.class, SwiftBlobStoreContextModule.class));
       }
 
       @Override

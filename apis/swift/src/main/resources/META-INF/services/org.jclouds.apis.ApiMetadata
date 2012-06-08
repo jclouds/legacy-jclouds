@@ -1,1 +1,2 @@
 org.jclouds.openstack.swift.SwiftApiMetadata
+org.jclouds.openstack.swift.SwiftKeystoneApiMetadata

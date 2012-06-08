@@ -16,28 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.blobstore.integration;
+package org.jclouds.openstack.swift;
 
-import java.util.Properties;
-
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.testng.annotations.Test;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
+ * Functionality that's in Swift, and not in CloudFiles.
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
-public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-   @Override
-   protected Properties setupProperties() {
-      Properties props = super.setupProperties();
-      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
-      return props;
-   }
-   
-   public SwiftBlobSignerLiveTest() {
-      provider = System.getProperty("test.swift.provider", "swift");
-   }
+@SkipEncoding('/')
+@RequestFilters(AuthenticateRequest.class)
+@Endpoint(Storage.class)
+public interface SwiftKeystoneAsyncClient extends CommonSwiftAsyncClient {
+
 }

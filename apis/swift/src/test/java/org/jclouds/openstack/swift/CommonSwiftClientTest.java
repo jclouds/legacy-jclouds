@@ -22,19 +22,24 @@ import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
+import java.net.URI;
 import java.util.Properties;
 
 import javax.inject.Singleton;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
 import org.jclouds.openstack.internal.TestOpenStackAuthenticationModule;
-import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
+import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -47,47 +52,34 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SwiftClientTest")
 public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsyncClient> {
-   
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>>() {
       };
    }
-   
+
    @Override
    protected void checkFilters(HttpRequest request) {
    }
 
-   @Override
-   protected Module createModule() {
-      return new TestSwiftRestClientModule();
-   }
-
-   @ConfiguresRestClient
-   protected static class TestSwiftRestClientModule extends
-            BaseSwiftRestClientModule<SwiftClient, SwiftAsyncClient> {
-      private TestSwiftRestClientModule() {
-         super(new TestOpenStackAuthenticationModule());
-      }
-      @Provides
-      @Singleton
-      CommonSwiftClient provideCommonSwiftClient(SwiftClient in) {
-         return in;
-      }
-
-      @Provides
-      @Singleton
-      CommonSwiftAsyncClient provideCommonSwiftClient(SwiftAsyncClient in) {
-         return in;
-      }
-   }
-
    protected String provider = "swift";
 
-   protected ApiMetadata createApiMetadata() {
-      return new SwiftApiMetadata();
+   public static class StorageEndpointModule extends TestOpenStackAuthenticationModule {
+      @Provides
+      @Singleton
+      @Storage
+      protected Supplier<URI> provideStorageUrl(URIFromAuthenticationResponseForService.Factory factory) {
+         return factory.create(AuthHeaders.STORAGE_URL);
+      }
    }
-   
+
+   protected ApiMetadata createApiMetadata() {
+      return new SwiftApiMetadata().toBuilder().defaultModules(
+               ImmutableSet.<Class<? extends Module>> of(StorageEndpointModule.class, SwiftRestClientModule.class,
+                        SwiftBlobStoreContextModule.class)).build();
+   }
+
    @Override
    protected Properties setupProperties() {
       Properties properties = new Properties();

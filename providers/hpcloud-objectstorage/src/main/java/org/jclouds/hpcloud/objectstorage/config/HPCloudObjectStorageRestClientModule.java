@@ -31,26 +31,18 @@ import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.hpcloud.services.HPExtensionServiceType;
-import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.annotation.Redirection;
-import org.jclouds.http.annotation.ServerError;
-import org.jclouds.json.config.GsonModule.DateAdapter;
-import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
-import org.jclouds.openstack.swift.Storage;
-import org.jclouds.openstack.swift.config.SwiftObjectModule;
-import org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse;
+import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * 
@@ -58,37 +50,18 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 public class HPCloudObjectStorageRestClientModule extends
-         RestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
+         SwiftRestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder().put(
             HPCloudCDNClient.class, HPCloudCDNAsyncClient.class).build();
 
    public HPCloudObjectStorageRestClientModule() {
-      super(DELEGATE_MAP);
+      super(TypeToken.of(HPCloudObjectStorageClient.class), TypeToken.of(HPCloudObjectStorageAsyncClient.class),
+               DELEGATE_MAP);
    }
 
-   protected void configure() {
-      install(new SwiftObjectModule());
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      super.configure();
-   }
-
-   @Override
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseSwiftErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseSwiftErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseSwiftErrorFromHttpResponse.class);
-   }
-
-   @Provides
-   @Singleton
-   CommonSwiftClient provideCommonSwiftClient(HPCloudObjectStorageClient in) {
-      return in;
-   }
-
-   @Provides
-   @Singleton
-   CommonSwiftAsyncClient provideCommonSwiftClient(HPCloudObjectStorageAsyncClient in) {
-      return in;
+   protected void bindResolvedClientsToCommonSwift() {
+      bind(CommonSwiftClient.class).to(HPCloudObjectStorageClient.class).in(Scopes.SINGLETON);
+      bind(CommonSwiftAsyncClient.class).to(HPCloudObjectStorageAsyncClient.class).in(Scopes.SINGLETON);
    }
 
    @Provides
@@ -97,12 +70,4 @@ public class HPCloudObjectStorageRestClientModule extends
    protected Supplier<URI> provideCDNUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
       return getLastValueInMap(factory.createForApiTypeAndVersion(HPExtensionServiceType.CDN, apiVersion));
    }
-
-   @Provides
-   @Singleton
-   @Storage
-   protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-      return getLastValueInMap(factory.createForApiTypeAndVersion(ServiceType.OBJECT_STORE, apiVersion));
-   }
-
 }

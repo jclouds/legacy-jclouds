@@ -25,12 +25,14 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.*;
+import java.util.Properties;
 
 /**
  * 
@@ -39,12 +41,20 @@ import java.io.*;
  */
 @Test(groups = "live")
 public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      return props;
+   }
+   
    private InputSupplier<InputStream> oneHundredOneConstitutions;
    private byte[] oneHundredOneConstitutionsMD5;
 
    public SwiftBlobIntegrationLiveTest() {
-      provider = "swift";
+      provider = System.getProperty("test.swift.provider", "swift");
    }
+
    @Override
    @Test(enabled = false)
    public void testGetTwoRanges() {

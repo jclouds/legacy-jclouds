@@ -16,28 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.blobstore.integration;
+package org.jclouds.openstack.swift;
 
-import java.util.Properties;
-
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
-public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-   @Override
-   protected Properties setupProperties() {
-      Properties props = super.setupProperties();
-      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
-      return props;
-   }
-   
-   public SwiftBlobSignerLiveTest() {
-      provider = System.getProperty("test.swift.provider", "swift");
+@Test(groups = "unit", testName = "SwiftKeystoneApiMetadataTest")
+public class SwiftKeystoneApiMetadataTest extends BaseBlobStoreApiMetadataTest {
+
+   public SwiftKeystoneApiMetadataTest() {
+      super(new SwiftKeystoneApiMetadata());
    }
 }

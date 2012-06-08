@@ -46,7 +46,6 @@ public class HPCloudObjectStorageBlobStoreExpectTest extends BaseHPCloudObjectSt
         Set<? extends Location> locations = clientWhenLocationsExist.listAssignableLocations();
         assertNotNull(locations);
         assertEquals(locations.size(), 1);
-        // TODO: does this location make sense?
-        assertEquals(locations.iterator().next().getId(), "hpcloud-objectstorage");
+        assertEquals(locations.iterator().next().getId(), "region-a.geo-1");
     }
 }

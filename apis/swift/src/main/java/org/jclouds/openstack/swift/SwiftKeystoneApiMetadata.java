@@ -16,17 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage;
+package org.jclouds.openstack.swift;
 
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
-import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
-import org.jclouds.openstack.swift.SwiftApiMetadata;
+import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
+import org.jclouds.openstack.swift.config.SwiftKeystoneRestClientModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.rest.RestContext;
 
@@ -34,16 +32,16 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 /**
- * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage
+ * Implementation of {@link ApiMetadata} for OpenStack Swift authenticated with KeyStone
  * 
- * @author Jeremy Daggett
+ * @author Adrian Cole
  */
-public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
+public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 820062881469203616L;
    
-   public static final TypeToken<RestContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>>() {
+   public static final TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -56,11 +54,11 @@ public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
       return builder().fromApiMetadata(this);
    }
 
-   public HPCloudObjectStorageApiMetadata() {
+   public SwiftKeystoneApiMetadata() {
       this(builder());
    }
 
-   protected HPCloudObjectStorageApiMetadata(Builder builder) {
+   protected SwiftKeystoneApiMetadata(Builder builder) {
       super(builder);
    }
 
@@ -72,20 +70,15 @@ public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
 
    public static class Builder extends SwiftApiMetadata.Builder {
       protected Builder(){
-         super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
-         id("hpcloud-objectstorage")
-         .name("HP Cloud Services Object Storage API")
-         .identityName("tenantName:accessKey")
-         .credentialName("secretKey")
-         .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
-         .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
+         super(SwiftKeystoneClient.class, SwiftKeystoneAsyncClient.class);
+         id("swift-keystone")
          .context(CONTEXT_TOKEN)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, HPCloudObjectStorageRestClientModule.class, HPCloudObjectStorageBlobStoreContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, SwiftKeystoneRestClientModule.class, SwiftBlobStoreContextModule.class));
       }
 
       @Override
-      public HPCloudObjectStorageApiMetadata build() {
-         return new HPCloudObjectStorageApiMetadata(this);
+      public SwiftKeystoneApiMetadata build() {
+         return new SwiftKeystoneApiMetadata(this);
       }
 
       @Override

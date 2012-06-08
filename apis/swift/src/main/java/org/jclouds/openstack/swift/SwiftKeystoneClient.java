@@ -16,28 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.blobstore.integration;
+package org.jclouds.openstack.swift;
 
-import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.testng.annotations.Test;
+import org.jclouds.concurrent.Timeout;
 
 /**
+ * Functionality that's in Swift, and not in CloudFiles.
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
-public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-   @Override
-   protected Properties setupProperties() {
-      Properties props = super.setupProperties();
-      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
-      return props;
-   }
-   
-   public SwiftBlobSignerLiveTest() {
-      provider = System.getProperty("test.swift.provider", "swift");
-   }
+@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+public interface SwiftKeystoneClient extends CommonSwiftClient {
+
 }
