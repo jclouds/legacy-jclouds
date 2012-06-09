@@ -33,16 +33,15 @@ import org.jclouds.Constants;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.events.StatementOnNodeCompletion;
 import org.jclouds.compute.events.StatementOnNodeFailure;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.InitScript;
-import org.jclouds.ssh.SshClient;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
+import com.google.common.base.Predicates;
 import com.google.common.eventbus.EventBus;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.AbstractFuture;
@@ -51,12 +50,11 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * A future that works in tandem with a task that was invoked by
- * {@link InitScript}
+ * A future that works in tandem with a task that was invoked by {@link InitScript}
  * 
  * @author Adrian Cole
  */
-public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFuture<ExecResponse> {
+public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFuture<ExecResponse> implements Runnable {
 
    public static interface Factory {
       BlockUntilInitScriptStatusIsZeroThenReturnOutput create(SudoAwareInitManager commandRunner);
@@ -74,86 +72,98 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
       return commandRunner;
    }
 
-   private final RetryablePredicate<String> notRunningAnymore;
+   private Predicate<String> notRunningAnymore;
 
    @Inject
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput(
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, EventBus eventBus,
-         ComputeServiceConstants.InitStatusProperties properties, final ScriptStatusReturnsZero stateRunning,
-         @Assisted final SudoAwareInitManager commandRunner) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, EventBus eventBus,
+            ComputeServiceConstants.InitStatusProperties properties, @Assisted SudoAwareInitManager commandRunner) {
+      this(userThreads, eventBus, Predicates.<String> alwaysTrue(), commandRunner);
+      // this is mutable only until we can determine how to decouple "this" from here
+      notRunningAnymore = new LoopUntilTrueOrThrowCancellationException(new ExitStatusOfCommandGreaterThanZero(
+               commandRunner), properties.initStatusMaxPeriod, properties.initStatusInitialPeriod, this);
+   }
 
-      long retryMaxWait = TimeUnit.DAYS.toMillis(365); // arbitrarily high
-                                                       // value, but
-                                                       // Long.MAX_VALUE doesn't
-                                                       // work!
-      long retryInitialPeriod = properties.initStatusInitialPeriod;
-      long retryMaxPeriod = properties.initStatusMaxPeriod;
-
+   @VisibleForTesting
+   public BlockUntilInitScriptStatusIsZeroThenReturnOutput(ExecutorService userThreads, EventBus eventBus,
+            Predicate<String> notRunningAnymore, SudoAwareInitManager commandRunner) {
       this.commandRunner = checkNotNull(commandRunner, "commandRunner");
       this.userThreads = checkNotNull(userThreads, "userThreads");
       this.eventBus = checkNotNull(eventBus, "eventBus");
-      this.notRunningAnymore = new RetryablePredicate<String>(new Predicate<String>() {
-
-         @Override
-         public boolean apply(String arg0) {
-            return commandRunner.runAction(arg0).getOutput().trim().equals("");
-         }
-      }, retryMaxWait, retryInitialPeriod, retryMaxPeriod, TimeUnit.MILLISECONDS) {
-         /**
-          * make sure we stop the retry loop if someone cancelled the future,
-          * this keeps threads from being consumed on dead tasks
-          */
-         @Override
-         protected boolean atOrAfter(Date end) {
-            if (isCancelled())
-               Throwables.propagate(new CancellationException("cancelled"));
-            return super.atOrAfter(end);
-         }
-      };
+      this.notRunningAnymore = checkNotNull(notRunningAnymore, "notRunningAnymore");
    }
 
-   /**
-    * in case login credentials or user changes at runtime.
-    */
-   public void setSshClient(SshClient client) {
+   @VisibleForTesting
+   static class ExitStatusOfCommandGreaterThanZero implements Predicate<String> {
+      private final SudoAwareInitManager commandRunner;
+
+      ExitStatusOfCommandGreaterThanZero(SudoAwareInitManager commandRunner) {
+         this.commandRunner = commandRunner;
+      }
+
+      @Override
+      public boolean apply(String input) {
+         return commandRunner.runAction(input).getExitStatus() > 0;
+      }
 
    }
 
+   @VisibleForTesting
+   static class LoopUntilTrueOrThrowCancellationException extends RetryablePredicate<String> {
+
+      private final AbstractFuture<ExecResponse> futureWhichMightBeCancelled;
+
+      public LoopUntilTrueOrThrowCancellationException(Predicate<String> predicate, long period, long maxPeriod,
+               AbstractFuture<ExecResponse> futureWhichMightBeCancelled) {
+         // arbitrarily high value, but Long.MAX_VALUE doesn't work!
+         super(predicate, TimeUnit.DAYS.toMillis(365), period, maxPeriod, TimeUnit.MILLISECONDS);
+         this.futureWhichMightBeCancelled = futureWhichMightBeCancelled;
+      }
+
+      /**
+       * make sure we stop the retry loop if someone cancelled the future, this keeps threads from
+       * being consumed on dead tasks
+       */
+      @Override
+      protected boolean atOrAfter(Date end) {
+         if (futureWhichMightBeCancelled.isCancelled())
+            throw new CancellationException(futureWhichMightBeCancelled + " is cancelled");
+         return super.atOrAfter(end);
+      }
+   }
+
    /**
-    * Submits a thread that will either set the result of the future or the
-    * exception that took place
+    * Submits a thread that will either set the result of the future or the exception that took
+    * place
     */
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput init() {
-      userThreads.submit(new Runnable() {
-         @Override
-         public void run() {
-            try {
-               notRunningAnymore.apply("status");
-               String stdout = commandRunner.runAction("stdout").getOutput();
-               String stderr = commandRunner.runAction("stderr").getOutput();
-               Integer exitStatus = Ints.tryParse(commandRunner.runAction("exitstatus").getOutput().trim());
-               ExecResponse exec = new ExecResponse(stdout, stderr, exitStatus == null ? -1 : exitStatus);
-               if (exitStatus == null) {
-                  Integer pid = Ints.tryParse(commandRunner.runAction("status").getOutput().trim());
-                  throw new ScriptStillRunningException(String.format("%s still running: pid(%s), last status: %s",
-                        BlockUntilInitScriptStatusIsZeroThenReturnOutput.this, pid, exec),
-                        BlockUntilInitScriptStatusIsZeroThenReturnOutput.this);
-               }
-               logger.debug("<< complete(%s) status(%s)", commandRunner.getStatement().getInstanceName(), exitStatus);
-               set(exec);
-            } catch (CancellationException e) {
-            } catch (Exception e) {
-               setException(e);
-            }
-         }
-      });
+      userThreads.submit(this);
       return this;
+   }
+
+   @Override
+   public void run() {
+      try {
+         ExecResponse exec = null;
+         do {
+            notRunningAnymore.apply("status");
+            String stdout = commandRunner.runAction("stdout").getOutput();
+            String stderr = commandRunner.runAction("stderr").getOutput();
+            Integer exitStatus = Ints.tryParse(commandRunner.runAction("exitstatus").getOutput().trim());
+            exec = new ExecResponse(stdout, stderr, exitStatus == null ? -1 : exitStatus);
+         } while (!isCancelled() && exec.getExitStatus() == -1);
+         logger.debug("<< complete(%s) status(%s)", commandRunner.getStatement().getInstanceName(), exec
+                  .getExitStatus());
+         set(exec);
+      } catch (Exception e) {
+         setException(e);
+      }
    }
 
    @Override
    protected boolean set(ExecResponse value) {
       eventBus.post(new StatementOnNodeCompletion(getCommandRunner().getStatement(), getCommandRunner().getNode(),
-            value));
+               value));
       return super.set(value);
    }
 
@@ -162,8 +172,8 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
       logger.debug("<< cancelled(%s)", commandRunner.getStatement().getInstanceName());
       ExecResponse returnVal = commandRunner.refreshAndRunAction("stop");
       CancellationException e = new CancellationException(String.format(
-            "cancelled %s on node: %s; stop command had exit status: %s", getCommandRunner().getStatement()
-                  .getInstanceName(), getCommandRunner().getNode().getId(), returnVal));
+               "cancelled %s on node: %s; stop command had exit status: %s", getCommandRunner().getStatement()
+                        .getInstanceName(), getCommandRunner().getNode().getId(), returnVal));
       eventBus.post(new StatementOnNodeFailure(getCommandRunner().getStatement(), getCommandRunner().getNode(), e));
       super.interruptTask();
    }
@@ -185,13 +195,13 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
       if (!o.getClass().equals(getClass()))
          return false;
       BlockUntilInitScriptStatusIsZeroThenReturnOutput that = BlockUntilInitScriptStatusIsZeroThenReturnOutput.class
-            .cast(o);
+               .cast(o);
       return Objects.equal(this.commandRunner, that.commandRunner);
    }
 
    @Override
    public ExecResponse get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException,
-         ExecutionException {
+            ExecutionException {
       try {
          return super.get(timeout, unit);
       } catch (TimeoutException e) {

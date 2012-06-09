@@ -25,10 +25,6 @@ import static org.easymock.EasyMock.verify;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.easymock.IAnswer;
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -40,7 +36,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.predicates.RetryablePredicateTest;
 import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -48,7 +43,6 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
@@ -107,37 +101,6 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    }
 
    public void testDefault() {
-      runDefaults(null, 1);
-   }
-   
-   @Test
-   public void testRepeatedlyChecksIfInitScriptCompleted() {
-      final List<Long> callTimes = new ArrayList<Long>();
-      final int succeedOnAttempt = 3;
-      final Stopwatch stopwatch = new Stopwatch();
-      stopwatch.start();
-      
-      IAnswer<ExecResponse> answerForScriptStatus = new IAnswer<ExecResponse>() {
-         private int count = 0;
-         @Override
-         public ExecResponse answer() throws Throwable {
-            callTimes.add(stopwatch.elapsedMillis());
-            String stdout = (++count < succeedOnAttempt) ? "someresult" : ""; 
-            return new ExecResponse(stdout, "", 1);
-         }
-      };
-
-      runDefaults(answerForScriptStatus, succeedOnAttempt);
-      
-      // Expect checking-status to be called repeatedly, until process had finished
-      RetryablePredicateTest.assertCallTimes(callTimes, 0, 500, (int)(500+(500*1.5)));
-   }
-   
-   /**
-    * @param answerForScriptStatus Answer to use for `jclouds-script-0 status`, or null for default of succeed immediately
-    * @param timesForScriptStatus  Num times to expect call for `jclouds-script-0 status`; ignored if answer is null
-    */
-   private void runDefaults(IAnswer<ExecResponse> answerForScriptStatus, int timesForScriptStatus) {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING)
             .credentials(LoginCredentials.builder().user("tester").password("testpassword!").build()).build();
@@ -163,11 +126,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
       expect(sshClient.exec("sudo /tmp/init-jclouds-script-0 start")).andReturn(new ExecResponse("", "", 0));
 
       // signal the command completed
-      if (answerForScriptStatus == null) {
-         expect(sshClient.exec("/tmp/init-jclouds-script-0 status")).andReturn(new ExecResponse("", "", 1)).times(1);
-      } else {
-         expect(sshClient.exec("/tmp/init-jclouds-script-0 status")).andAnswer(answerForScriptStatus).times(timesForScriptStatus);
-      }
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 status")).andReturn(new ExecResponse("", "", 1)).times(1);
       expect(sshClient.exec("/tmp/init-jclouds-script-0 stdout")).andReturn(new ExecResponse("out", "", 0));
       expect(sshClient.exec("/tmp/init-jclouds-script-0 stderr")).andReturn(new ExecResponse("err", "", 0));
       expect(sshClient.exec("/tmp/init-jclouds-script-0 exitstatus")).andReturn(new ExecResponse("0", "", 0));
@@ -240,6 +199,60 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
       verify(sshClient);
    }
 
+   /**
+    * in a couple versions of ubuntu on aws-ec2, status returneds no pid (ex. empty stdout w/exit code 1) transiently. sadly, we need to doublecheck status before assuming it has failed.
+    * 
+    */
+   public void testDoublecheckStatusInCaseTransientlyWrong() {
+      Statement command = exec("doFoo");
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+            new LoginCredentials("tester", "testpassword!", null, true)).build();
+
+      SshClient sshClient = createMock(SshClient.class);
+
+      InitScript init = InitScript.builder().name("jclouds-script-0").home("/tmp/jclouds-script-0").run(command)
+            .build();
+
+      sshClient.connect();
+      sshClient.put("/tmp/init-jclouds-script-0", init.render(OsFamily.UNIX));
+      expect(sshClient.getUsername()).andReturn("tester").atLeastOnce();
+      expect(sshClient.getHostAddress()).andReturn("somewhere.example.com").atLeastOnce();
+
+      // setup script as default user
+      expect(sshClient.exec("chmod 755 /tmp/init-jclouds-script-0")).andReturn(new ExecResponse("", "", 0));
+      expect(sshClient.exec("ln -fs /tmp/init-jclouds-script-0 jclouds-script-0")).andReturn(
+               new ExecResponse("", "", 0));
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 init")).andReturn(new ExecResponse("", "", 0));
+
+      // since there's an adminPassword we must pass this in
+      expect(sshClient.exec("echo 'testpassword!'|sudo -S /tmp/init-jclouds-script-0 start")).andReturn(new ExecResponse("", "", 0));
+
+      // signal the command completed
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 status")).andReturn(new ExecResponse("8001", "", 0));
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 status")).andReturn(new ExecResponse("", "", 1));
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 stdout")).andReturn(new ExecResponse("out", "", 0));
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 stderr")).andReturn(new ExecResponse("err", "", 0));
+      expect(sshClient.exec("/tmp/init-jclouds-script-0 exitstatus")).andReturn(new ExecResponse("0", "", 0));
+
+      sshClient.disconnect();
+      replay(sshClient);
+
+      RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete testMe = new RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete(
+               statusFactory, timeouts, Functions.forMap(ImmutableMap.of(node, sshClient)),
+               eventBus, InitScriptConfigurationForTasks.create().appendIncrementingNumberToAnonymousTaskNames(), node, command,
+               new RunScriptOptions());
+
+      assertEquals(testMe.getInitFile(), "/tmp/init-jclouds-script-0");
+      assertEquals(testMe.getNode(), node);
+      assertEquals(testMe.getStatement(), init);
+
+      testMe.init();
+      
+      assertEquals(testMe.call(), new ExecResponse("out", "err", 0));
+      
+      verify(sshClient);
+   }
+   
    public void testNotRoot() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
