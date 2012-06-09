@@ -209,7 +209,7 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
                               .put("init", newStatementList(call("default"), call(instanceName), init, createRunScript))
                               .put("status",
                                     newStatementList(call("default"), findPid("{varl}INSTANCE_NAME{varr}"),
-                                          interpret("echo [{varl}FOUND_PID{varr}]{lf}")))
+                                          interpret("echo {varl}FOUND_PID{varr}{lf}")))
                               .put("stop",
                                     newStatementList(call("default"), findPid("{varl}INSTANCE_NAME{varr}"), kill()))
                               .put("start",
