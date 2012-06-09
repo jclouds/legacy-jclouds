@@ -92,7 +92,7 @@ public class InitBuilder extends ScriptBuilder {
                                           createRunScript))
                               .put("status",
                                     newStatementList(call("default"), findPid("{varl}INSTANCE_NAME{varr}"),
-                                          interpret("echo [{varl}FOUND_PID{varr}]{lf}")))
+                                          interpret("echo {varl}FOUND_PID{varr}{lf}")))
                               .put("stop",
                                     newStatementList(call("default"), findPid("{varl}INSTANCE_NAME{varr}"), kill()))
                               .put("start",
