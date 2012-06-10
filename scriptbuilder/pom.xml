@@ -35,7 +35,7 @@
     <properties>
         <jclouds.test.listener />
 
-        <jclouds.osgi.activator>org.jclouds.scriptbuilder.osgi.Activator</jclouds.osgi.activator>
+        <jclouds.osgi.activator>org.jclouds.scriptbuilder.functionloader.osgi.Activator</jclouds.osgi.activator>
         <jclouds.osgi.export>org.jclouds.scriptbuilder*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
