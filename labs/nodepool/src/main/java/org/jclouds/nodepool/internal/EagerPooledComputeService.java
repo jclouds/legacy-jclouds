@@ -1,8 +1,6 @@
 package org.jclouds.nodepool.internal;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.removeIf;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_BACKING_GROUP_PROPERTY;
@@ -13,12 +11,10 @@ import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_REMOVE
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -30,30 +26,22 @@ import javax.inject.Named;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.RunScriptOnNodesException;
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
 import org.jclouds.nodepool.PooledComputeService;
-import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * An eager {@link PooledComputeService}. Eagerly build and maitains a pool of nodes. It's only
+ * An eager {@link PooledComputeService}. Eagerly builds and maintains a pool of nodes. It's only
  * "started" after min nodes are allocated and available.
  * 
  * @author David Alves
@@ -65,21 +53,19 @@ public class EagerPooledComputeService extends BasePooledComputeService {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final AtomicBoolean started = new AtomicBoolean(false);
    private final int maxSize;
    private final boolean reuseDestroyed;
    private final int minSize;
    private final Template template;
    private final ExecutorService executor;
 
-   // assignments of nodes to group names
-   private Multimap<String, NodeMetadata> assignments = HashMultimap.create();
-
    // set of available nodes
    private Set<NodeMetadata> available = Sets.newHashSet();
 
    // lock associated with changes to the pool since they happen asynchronously
    private final Lock lock = new ReentrantLock();
+
+   // all the nodes in the pool (associated or not)
    private final Set<NodeMetadata> poolNodes = Sets.newLinkedHashSet();
 
    @Inject
@@ -95,11 +81,6 @@ public class EagerPooledComputeService extends BasePooledComputeService {
       this.reuseDestroyed = readdDestroyed;
       this.template = backingTemplate == null ? backingComputeService.templateBuilder().build() : backingTemplate;
       this.executor = executor;
-   }
-
-   @Override
-   public ListenableFuture<Void> startPool() throws RunNodesException {
-      return increasePoolSize(minSize);
    }
 
    @Override
@@ -140,185 +121,6 @@ public class EagerPooledComputeService extends BasePooledComputeService {
 
    }
 
-   @Override
-   public void rebootNodesMatching(final Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
-      transform(filterAssignmentsBasedOnUserPredicate(filter),
-               new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
-                  @Override
-                  public NodeMetadata apply(Entry<String, NodeMetadata> input) {
-                     backingComputeService.rebootNode(input.getValue().getId());
-                     return null;
-                  }
-               });
-   }
-
-   @Override
-   public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
-      transform(filterAssignmentsBasedOnUserPredicate(filter),
-               new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
-                  @Override
-                  public NodeMetadata apply(Entry<String, NodeMetadata> input) {
-                     backingComputeService.resumeNode(input.getValue().getId());
-                     return null;
-                  }
-               });
-   }
-
-   @Override
-   public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
-      transform(filterAssignmentsBasedOnUserPredicate(filter),
-               new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
-                  @Override
-                  public NodeMetadata apply(Entry<String, NodeMetadata> input) {
-                     backingComputeService.suspendNode(input.getValue().getId());
-                     return null;
-                  }
-               });
-   }
-
-   @Override
-   public Set<? extends ComputeMetadata> listNodes() {
-      checkState(started.get(), "pool is not started");
-      return Sets.newHashSet(transform(assignments.entries(),
-               new Function<Map.Entry<String, NodeMetadata>, PoolNodeMetadata>() {
-                  @Override
-                  public PoolNodeMetadata apply(Map.Entry<String, NodeMetadata> input) {
-                     return new PoolNodeMetadata(input.getValue(), input.getKey());
-                  }
-               }));
-   }
-
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   @Override
-   public Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate filter) {
-      checkState(started.get(), "pool is not started");
-      return Sets.newHashSet(transform(filterAssignmentsBasedOnUserPredicate(filter),
-               new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
-                  @Override
-                  public NodeMetadata apply(Entry<String, NodeMetadata> input) {
-                     return new PoolNodeMetadata(input.getValue(), input.getKey());
-                  }
-               }));
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            String runScript) throws RunScriptOnNodesException {
-      checkState(started.get(), "pool is not started");
-      return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
-               transformUserPredicateSpecificIdPredicate(filter), runScript));
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            Statement runScript) throws RunScriptOnNodesException {
-      checkState(started.get(), "pool is not started");
-      return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
-               transformUserPredicateSpecificIdPredicate(filter), runScript));
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      checkState(started.get(), "pool is not started");
-      return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
-               transformUserPredicateSpecificIdPredicate(filter), runScript, options));
-   }
-
-   @Override
-   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            Statement runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      checkState(started.get(), "pool is not started");
-      return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
-               transformUserPredicateSpecificIdPredicate(filter), runScript, options));
-   }
-
-   @Override
-   public NodeMetadata getNodeMetadata(String id) {
-      checkState(started.get(), "pool is not started");
-      Map.Entry<String, NodeMetadata> assigmentEntry = findAssigmentEntry(id);
-      return new PoolNodeMetadata(assigmentEntry.getValue(), assigmentEntry.getKey());
-   }
-
-   @Override
-   public void close() {
-      // lock just to make sure we have the correct pool size
-      if (started.compareAndSet(true, false)) {
-         logger.info("Closing pooled compute service with {} nodes", size());
-         available.clear();
-         assignments.clear();
-         backingComputeService.destroyNodesMatching(NodePredicates.inGroup(poolGroupName));
-      }
-   }
-
-   @Override
-   public boolean isStarted() {
-      return started.get();
-   }
-
-   @Override
-   public int getReady() {
-      return poolNodes.size();
-   }
-
-   @Override
-   public int size() {
-      return maxSize;
-   }
-
-   // TODO this is crazy expensive. really need a reverse lookup setup
-   private Map<? extends NodeMetadata, ExecResponse> transformBackendExecutionMapIntoFrontend(
-            Map<? extends NodeMetadata, ExecResponse> backendMap) {
-      Map<NodeMetadata, ExecResponse> frontendMap = Maps.newHashMapWithExpectedSize(backendMap.size());
-      for (Map.Entry<? extends NodeMetadata, ExecResponse> entry : backendMap.entrySet()) {
-         Map.Entry<String, NodeMetadata> assignmentEntry = findAssigmentEntry(entry.getKey().getId());
-         frontendMap.put(new PoolNodeMetadata(assignmentEntry.getValue(), assignmentEntry.getKey()), entry.getValue());
-      }
-      return frontendMap;
-   }
-
-   private Predicate<NodeMetadata> transformUserPredicateSpecificIdPredicate(Predicate<NodeMetadata> filter) {
-      Iterable<Map.Entry<String, NodeMetadata>> relevantAssginemnts = filterAssignmentsBasedOnUserPredicate(filter);
-      final Set<String> ids = Sets.newHashSet();
-      for (Map.Entry<String, NodeMetadata> assignment : relevantAssginemnts) {
-         ids.add(assignment.getValue().getId());
-      }
-      return new Predicate<NodeMetadata>() {
-         @Override
-         public boolean apply(NodeMetadata input) {
-            return ids.contains(input.getId());
-         }
-
-      };
-   }
-
-   /**
-    * Because a lot of predicates are based on group info we need that to check wether the predicate
-    * matches.
-    */
-   private Iterable<Map.Entry<String, NodeMetadata>> filterAssignmentsBasedOnUserPredicate(
-            final Predicate<NodeMetadata> userFilter) {
-      return filter(assignments.entries(), new Predicate<Map.Entry<String, NodeMetadata>>() {
-         @Override
-         public boolean apply(Entry<String, NodeMetadata> input) {
-            return userFilter.apply(new PoolNodeMetadata(input.getValue(), input.getKey()));
-         }
-      });
-   }
-
-   private Map.Entry<String, NodeMetadata> findAssigmentEntry(final String id) {
-      // TODO reverse lookup data structure would be faster but will pools be that big ?
-      return find(assignments.entries(), new Predicate<Map.Entry<String, NodeMetadata>>() {
-         @Override
-         public boolean apply(Entry<String, NodeMetadata> entry) {
-            return entry.getValue().getId().equals(id);
-         }
-      });
-   }
-
    /**
     * Adds nodes to the pool, using the pool's group name. Lock the pool so that no-one tries to
     * increase/decrease until we're finished but we'll return from the method well before the pool
@@ -326,8 +128,8 @@ public class EagerPooledComputeService extends BasePooledComputeService {
     */
    private ListenableFuture<Void> increasePoolSize(final int size) {
       lock.lock();
-      logger.debug("Increasing pool size, current: %s min; %s max: %s increasing to: %s", available.size(), minSize,
-               maxSize, size);
+      logger.debug(">> increasing pool size,  available: %s total: %s min; %s max: %s increasing to: %s",
+               available.size(), poolNodes.size(), minSize, maxSize, size);
       return Futures.makeListenable(executor.submit(new Callable<Void>() {
          @Override
          public Void call() throws Exception {
@@ -335,10 +137,11 @@ public class EagerPooledComputeService extends BasePooledComputeService {
                Set<? extends NodeMetadata> original = backingComputeService.createNodesInGroup(poolGroupName, size,
                         template);
                poolNodes.addAll(original);
-               logger.debug("Pool size increased, current: %s min; %s max: %s increasing to: %s", available.size(),
-                        minSize, maxSize, size);
+               available.addAll(original);
+               logger.debug("<< pool size increased, available: %s total: %s min; %s max: %s increasing to: %s",
+                        available.size(), poolNodes.size(), minSize, maxSize, size);
                if (started.compareAndSet(false, true)) {
-                  logger.info("Pool started, current: %s min; %s max: %s", available.size(), minSize, maxSize);
+                  logger.info("pool started, status: %s min; %s max: %s", available.size(), minSize, maxSize);
                }
                return null;
             } finally {
@@ -354,19 +157,12 @@ public class EagerPooledComputeService extends BasePooledComputeService {
     * the pool size by one.
     */
    private NodeMetadata unassignNode(final String nodeId) {
-      Map.Entry<String, NodeMetadata> assignmentEntry = find(assignments.entries(),
-               new Predicate<Map.Entry<String, NodeMetadata>>() {
-                  @Override
-                  public boolean apply(Entry<String, NodeMetadata> entry) {
-                     return entry.getValue().getId().equals(nodeId);
-                  }
-               });
-
-      assignments.remove(assignmentEntry.getKey(), assignmentEntry.getValue());
+      Map.Entry<String, NodeMetadata> entry = findAssigmentEntry(nodeId);
+      assignments.remove(entry.getKey(), entry.getValue());
       // if we're reusing destroyed simply add to the available nodes
       if (reuseDestroyed) {
-         available.add(assignmentEntry.getValue());
-         return assignmentEntry.getValue();
+         available.add(entry.getValue());
+         return entry.getValue();
       }
       // if not we need to destroy the backing node
       lock.lock();
@@ -384,21 +180,22 @@ public class EagerPooledComputeService extends BasePooledComputeService {
       } finally {
          lock.unlock();
       }
-      return assignmentEntry.getValue();
+      return entry.getValue();
    }
 
    /**
     * Used to assign size pool nodes to a group. If not enough nodes are available we check if we
-    * can increase the pool and if that is enough, otherwise we complain.
+    * can increase the pool if that is enough, otherwise we complain.
     */
    private Set<? extends NodeMetadata> assignPoolNodes(String groupName, int size) throws InterruptedException,
             ExecutionException {
       if (available.size() < size) {
-         if (available.size() + maxSize - poolNodes.size() > size) {
+         if (poolNodes.size() + size > maxSize) {
             // TODO think of a better exception
             throw new IllegalStateException(
-                     "not enough nodes available  and cannot add enough nodes to pool [Current: " + available.size()
-                              + " Min: " + minSize + " Max: " + maxSize + " Requested: " + size + "]");
+                     "not enough nodes available  and cannot add enough nodes to pool [available: " + available.size()
+                              + " total: " + poolNodes.size() + " min: " + minSize + " max: " + maxSize
+                              + " requested: " + size + "]");
          }
          increasePoolSize(size - available.size()).get();
       }
@@ -411,6 +208,37 @@ public class EagerPooledComputeService extends BasePooledComputeService {
          groupNodes.add(new PoolNodeMetadata(node, groupName));
       }
       return groupNodes;
+   }
+
+   @Override
+   public ListenableFuture<Void> startPool() {
+      return increasePoolSize(minSize);
+   }
+
+   @Override
+   public void close() {
+      // lock just to make sure we have the correct pool size
+      if (started.compareAndSet(true, false)) {
+         logger.info("Closing pooled compute service with {} nodes", size());
+         available.clear();
+         assignments.clear();
+         backingComputeService.destroyNodesMatching(NodePredicates.inGroup(poolGroupName));
+      }
+   }
+
+   @Override
+   public int ready() {
+      return available.size();
+   }
+
+   @Override
+   public int size() {
+      return poolNodes.size();
+   }
+
+   @Override
+   public int maxSize() {
+      return maxSize;
    }
 
 }

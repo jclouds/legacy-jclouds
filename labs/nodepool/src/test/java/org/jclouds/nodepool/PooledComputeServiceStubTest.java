@@ -18,7 +18,6 @@
  */
 package org.jclouds.nodepool;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.StubComputeServiceIntegrationTest;
 import org.jclouds.nodepool.internal.EagerPooledComputeService;
 import org.testng.annotations.AfterClass;
@@ -35,7 +34,7 @@ import com.google.common.base.Throwables;
  * @author Andrew Kennedy
  * @see AppTest
  */
-@Test(singleThreaded = true, testName = "PooledComputeServiceStubTest")
+@Test(singleThreaded = true, testName = "PooledComputeServiceStubTest", enabled = false)
 public class PooledComputeServiceStubTest extends StubComputeServiceIntegrationTest {
 
    protected PooledComputeService pool;
@@ -57,7 +56,7 @@ public class PooledComputeServiceStubTest extends StubComputeServiceIntegrationT
       }
    }
 
-   @AfterClass(groups = { "integration", "live" })
+   @AfterClass
    @Override
    protected void tearDownContext() {
       try {

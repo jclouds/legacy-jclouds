@@ -1,71 +1,71 @@
 <?xml version="1.0"?>
 <configuration scan="false">
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>target/test-data/jclouds.log</file>
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>target/test-data/jclouds.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
-        </layout>
-    </appender>
+    <encoder>
+      <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
+    </encoder>
+  </appender>
 
-    <appender name="WIREFILE" class="ch.qos.logback.core.FileAppender">
-        <file>target/test-data/jclouds-wire.log</file>
+  <appender name="WIREFILE" class="ch.qos.logback.core.FileAppender">
+    <file>target/test-data/jclouds-wire.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
-        </layout>
-    </appender>
+    <encoder>
+      <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
+    </encoder>
+  </appender>
 
-    <appender name="COMPUTEFILE" class="ch.qos.logback.core.FileAppender">
-        <file>target/test-data/jclouds-compute.log</file>
+  <appender name="COMPUTEFILE" class="ch.qos.logback.core.FileAppender">
+    <file>target/test-data/jclouds-compute.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
-        </layout>
-    </appender>
-    
-    <appender name="SSHFILE" class="ch.qos.logback.core.FileAppender">
-        <file>target/test-data/jclouds-ssh.log</file>
+    <encoder>
+      <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
+    </encoder>
+  </appender>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
-        </layout>
-    </appender>
-    
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <Pattern>%-4r [%thread] %-5level - %msg%n</Pattern>
-        </encoder>
-    </appender>
+  <appender name="SSHFILE" class="ch.qos.logback.core.FileAppender">
+    <file>target/test-data/jclouds-ssh.log</file>
 
-    <root>
-        <level value="DEBUG" />
-        <appender-ref ref="CONSOLE" />
-    </root>
+    <encoder>
+      <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
+    </encoder>
+  </appender>
 
-    <logger name="org.jclouds">
-        <level value="DEBUG" />
-        <appender-ref ref="FILE" />
-    </logger>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <Pattern>%-4r [%thread] %-5level - %msg%n</Pattern>
+    </encoder>
+  </appender>
 
-    <logger name="jclouds.wire">
-        <level value="DEBUG" />
-        <appender-ref ref="WIREFILE" />
-    </logger>
+  <root>
+    <level value="DEBUG" />
+    <appender-ref ref="CONSOLE" />
+  </root>
 
-    <logger name="jclouds.headers">
-        <level value="DEBUG" />
-        <appender-ref ref="WIREFILE" />
-    </logger>
+  <logger name="org.jclouds">
+    <level value="DEBUG" />
+    <appender-ref ref="FILE" />
+  </logger>
 
-    <logger name="jclouds.compute">
-        <level value="DEBUG" />
-        <appender-ref ref="COMPUTEFILE" />
-    </logger>
-    
-    <logger name="jclouds.ssh">
-        <level value="DEBUG" />
-        <appender-ref ref="SSHFILE" />
-    </logger>
+  <logger name="jclouds.wire">
+    <level value="DEBUG" />
+    <appender-ref ref="WIREFILE" />
+  </logger>
+
+  <logger name="jclouds.headers">
+    <level value="DEBUG" />
+    <appender-ref ref="WIREFILE" />
+  </logger>
+
+  <logger name="jclouds.compute">
+    <level value="DEBUG" />
+    <appender-ref ref="COMPUTEFILE" />
+  </logger>
+
+  <logger name="jclouds.ssh">
+    <level value="DEBUG" />
+    <appender-ref ref="SSHFILE" />
+  </logger>
 
 </configuration>

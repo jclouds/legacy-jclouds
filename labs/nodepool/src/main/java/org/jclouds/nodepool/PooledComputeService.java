@@ -22,7 +22,6 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.RunNodesException;
 import org.jclouds.nodepool.internal.EagerPooledComputeService;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -50,7 +49,7 @@ public interface PooledComputeService extends ComputeService, Closeable {
     * Starts the pool, may or may not start the actual nodes, depending on the implementation, i.e.
     * the returned Set may be empty.
     */
-   ListenableFuture<Void> startPool() throws RunNodesException;
+   ListenableFuture<Void> startPool();
 
    /**
     * Returns true of the pool has been started by calling the {@link #startPool()} method.
@@ -60,12 +59,17 @@ public interface PooledComputeService extends ComputeService, Closeable {
    /**
     * Returns the number of ready (pre-allocated) nodes in the pool.
     */
-   int getReady();
+   int ready();
 
    /**
-    * Returns the maximum size of the pool.
+    * Returns the current size of the pool (nodes allocated on the backing compute service)
     */
    int size();
+
+   /**
+    * Returns the maximum amout of node the pool will allocate in the backing compute service.
+    */
+   int maxSize();
 
    /**
     * Close the pool and destroy all associated nodes.
