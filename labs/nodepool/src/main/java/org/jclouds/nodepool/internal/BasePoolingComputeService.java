@@ -25,7 +25,7 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.nodepool.PooledComputeService;
+import org.jclouds.nodepool.PoolingComputeService;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Function;
@@ -38,13 +38,13 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * A base class for {@link PooledComputeService}, takes care of keeping (not changing assignments)
+ * A base class for {@link PoolingComputeService}, takes care of keeping (not changing assignments)
  * and of everything that does not change the pool.
  * 
  * @author David Alves
  * 
  */
-public abstract class BasePooledComputeService implements PooledComputeService {
+public abstract class BasePoolingComputeService implements PoolingComputeService {
 
    protected final ComputeService backingComputeService;
    protected final String poolGroupName;
@@ -54,7 +54,7 @@ public abstract class BasePooledComputeService implements PooledComputeService {
 
    protected final AtomicBoolean started = new AtomicBoolean(false);
 
-   public BasePooledComputeService(ComputeService backingComputeService, String poolGroupNamePrefix) {
+   public BasePoolingComputeService(ComputeService backingComputeService, String poolGroupNamePrefix) {
       this.backingComputeService = backingComputeService;
       this.poolGroupName = poolGroupNamePrefix;
    }

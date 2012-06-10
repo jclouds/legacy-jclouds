@@ -19,14 +19,14 @@
 package org.jclouds.nodepool;
 
 import org.jclouds.compute.StubComputeServiceIntegrationTest;
-import org.jclouds.nodepool.internal.EagerPooledComputeService;
+import org.jclouds.nodepool.internal.EagerPoolingComputeService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
 
 /**
- * This tests the operation of the {@link PooledComputeService} implementation using the jclouds
+ * This tests the operation of the {@link PoolingComputeService} implementation using the jclouds
  * stub provider as the backing {@link ComputeService}.
  * 
  * TODO live tests backed by actual cloud providers
@@ -35,18 +35,18 @@ import com.google.common.base.Throwables;
  * @see AppTest
  */
 @Test(singleThreaded = true, testName = "PooledComputeServiceStubTest", enabled = false)
-public class PooledComputeServiceStubTest extends StubComputeServiceIntegrationTest {
+public class PoolingComputeServiceStubTest extends StubComputeServiceIntegrationTest {
 
-   protected PooledComputeService pool;
+   protected PoolingComputeService pool;
 
-   public PooledComputeServiceStubTest() {
+   public PoolingComputeServiceStubTest() {
       provider = "stub";
    }
 
    @Override
    protected void initializeContext() {
       super.initializeContext();
-      pool = new EagerPooledComputeService(client, "pool", 10, 5, true, client.templateBuilder().any().build(), client
+      pool = new EagerPoolingComputeService(client, "pool", 10, 5, true, client.templateBuilder().any().build(), client
                .getContext().utils().getUserExecutor());
       client = pool;
       try {

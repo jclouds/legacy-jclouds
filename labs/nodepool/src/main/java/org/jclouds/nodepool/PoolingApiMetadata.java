@@ -1,9 +1,9 @@
 package org.jclouds.nodepool;
 
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_BACKING_GROUP_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_MAX_SIZE_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_MIN_SIZE_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_REMOVE_DESTROYED_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_BACKING_GROUP_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_MAX_SIZE_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_MIN_SIZE_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_REMOVE_DESTROYED_PROPERTY;
 
 import java.net.URI;
 import java.util.Properties;
@@ -12,7 +12,7 @@ import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
-public class PooledApiMetadata extends BaseApiMetadata {
+public class PoolingApiMetadata extends BaseApiMetadata {
 
    public static Builder builder() {
       return new Builder();
@@ -23,11 +23,11 @@ public class PooledApiMetadata extends BaseApiMetadata {
       return Builder.class.cast(builder().fromApiMetadata(this));
    }
 
-   public PooledApiMetadata() {
+   public PoolingApiMetadata() {
       super(builder());
    }
 
-   protected PooledApiMetadata(Builder builder) {
+   protected PoolingApiMetadata(Builder builder) {
       super(builder);
    }
 
@@ -45,12 +45,12 @@ public class PooledApiMetadata extends BaseApiMetadata {
          id("pooled").name("node pool provider wrapper").identityName("Unused").defaultIdentity("pooled")
                   .defaultCredential("poll").defaultEndpoint("pooled")
                   .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
-                  .view(ComputeServiceContext.class).defaultProperties(PooledApiMetadata.defaultProperties());
+                  .view(ComputeServiceContext.class).defaultProperties(PoolingApiMetadata.defaultProperties());
       }
 
       @Override
-      public PooledApiMetadata build() {
-         return new PooledApiMetadata(this);
+      public PoolingApiMetadata build() {
+         return new PoolingApiMetadata(this);
       }
 
    }

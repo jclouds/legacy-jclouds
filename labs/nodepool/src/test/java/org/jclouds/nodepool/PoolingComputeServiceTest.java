@@ -9,21 +9,21 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.nodepool.internal.EagerPooledComputeService;
+import org.jclouds.nodepool.internal.EagerPoolingComputeService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 @Test(groups = "unit", testName = "PooledComputeServiceStubTest")
-public class PooledComputeServiceTest {
+public class PoolingComputeServiceTest {
 
-   private EagerPooledComputeService pooledComputeService;
+   private EagerPoolingComputeService pooledComputeService;
 
    @BeforeClass
    public void setUp() {
       ComputeServiceContext stubCtx = ContextBuilder.newBuilder("stub").buildView(ComputeServiceContext.class);
-      this.pooledComputeService = new EagerPooledComputeService(stubCtx.getComputeService(), "pool", 10, 5, true,
+      this.pooledComputeService = new EagerPoolingComputeService(stubCtx.getComputeService(), "pool", 10, 5, true,
                stubCtx.getComputeService().templateBuilder().build(), stubCtx.utils().getUserExecutor());
    }
 

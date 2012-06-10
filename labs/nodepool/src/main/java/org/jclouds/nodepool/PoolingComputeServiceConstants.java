@@ -19,9 +19,9 @@
 package org.jclouds.nodepool;
 
 /**
- * Constants for the {@link org.jclouds.nodepool.PooledComputeService}.
+ * Constants for the {@link org.jclouds.nodepool.PoolingComputeService}.
  */
-public interface PooledComputeServiceConstants {
+public interface PoolingComputeServiceConstants {
 
    /**
     * Property to set the name of the backing group used for pooled nodes.

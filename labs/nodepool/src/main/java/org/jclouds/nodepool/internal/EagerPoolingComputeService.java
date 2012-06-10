@@ -3,11 +3,11 @@ package org.jclouds.nodepool.internal;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.removeIf;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_BACKING_GROUP_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_BACKING_TEMPLATE_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_MAX_SIZE_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_MIN_SIZE_PROPERTY;
-import static org.jclouds.nodepool.PooledComputeServiceConstants.NODEPOOL_REMOVE_DESTROYED_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_BACKING_GROUP_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_BACKING_TEMPLATE_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_MAX_SIZE_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_MIN_SIZE_PROPERTY;
+import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_REMOVE_DESTROYED_PROPERTY;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
-import org.jclouds.nodepool.PooledComputeService;
+import org.jclouds.nodepool.PoolingComputeService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -41,13 +41,13 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * An eager {@link PooledComputeService}. Eagerly builds and maintains a pool of nodes. It's only
+ * An eager {@link PoolingComputeService}. Eagerly builds and maintains a pool of nodes. It's only
  * "started" after min nodes are allocated and available.
  * 
  * @author David Alves
  * 
  */
-public class EagerPooledComputeService extends BasePooledComputeService {
+public class EagerPoolingComputeService extends BasePoolingComputeService {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -69,7 +69,7 @@ public class EagerPooledComputeService extends BasePooledComputeService {
    private final Set<NodeMetadata> poolNodes = Sets.newLinkedHashSet();
 
    @Inject
-   public EagerPooledComputeService(ComputeService backingComputeService,
+   public EagerPoolingComputeService(ComputeService backingComputeService,
             @Named(NODEPOOL_BACKING_GROUP_PROPERTY) String poolGroupPrefix,
             @Named(NODEPOOL_MAX_SIZE_PROPERTY) int maxSize, @Named(NODEPOOL_MIN_SIZE_PROPERTY) int minSize,
             @Named(NODEPOOL_REMOVE_DESTROYED_PROPERTY) boolean readdDestroyed,
