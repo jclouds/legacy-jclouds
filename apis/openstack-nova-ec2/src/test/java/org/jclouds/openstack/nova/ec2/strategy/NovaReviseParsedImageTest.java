@@ -39,7 +39,7 @@ import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.xml.DescribeImagesResponseHandlerTest;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v2_0.compute.functions.ImageToOperatingSystem;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;

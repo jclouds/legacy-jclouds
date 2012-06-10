@@ -31,7 +31,7 @@ import org.jclouds.concurrent.Timeout;
  * Provides synchronous access to CloudStack IPForwardingRule features.
  * <p/>
  * 
- * @see IPForwardingRuleAsyncClient
+ * @see NATAsyncClient
  * @see <a
  *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"
  *      />

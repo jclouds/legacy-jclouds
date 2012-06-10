@@ -18,7 +18,7 @@
  */
 package org.jclouds.hpcloud.compute.features;
 
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClientLiveTest;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClientLiveTest;
 import org.testng.annotations.Test;
 
 /**

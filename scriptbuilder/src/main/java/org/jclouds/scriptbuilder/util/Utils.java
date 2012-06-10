@@ -18,7 +18,6 @@
  */
 package org.jclouds.scriptbuilder.util;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,16 +26,13 @@ import java.util.regex.Pattern;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
-import org.jclouds.util.ClassLoadingUtils;
+import org.jclouds.scriptbuilder.functionloader.CurrentFunctionLoader;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
 
 /**
  * Utilities used to build init scripts.
@@ -135,30 +131,12 @@ public class Utils {
    }
 
    public static String writeFunctionFromResource(String function, OsFamily family) {
-      try {
-         String toReturn = CharStreams.toString(Resources.newReaderSupplier(ClassLoadingUtils.loadResource(Utils.class, String
-                 .format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
+         String toReturn = CurrentFunctionLoader.get().loadFunction(function,family);
          String lf = ShellToken.LF.to(family);
          return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
-      } catch (IOException e) {
-         throw new FunctionNotFoundException(function, family, e);
-      }
    }
 
-   public static class FunctionNotFoundException extends RuntimeException {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 1L;
-
-      public FunctionNotFoundException(String functionName, OsFamily family) {
-         super("function: " + functionName + " not found for famiy: " + family);
-      }
-
-      public FunctionNotFoundException(String functionName, OsFamily family, Throwable cause) {
-         super("function: " + functionName + " not found for famiy: " + family, cause);
-      }
-   }
-
-   public static String writeFunction(String function, String source) {
+  public static String writeFunction(String function, String source) {
       return String.format("{fncl}%s{fncr}%s{fnce}", function, source.replaceAll("^", "   "));
    }
 

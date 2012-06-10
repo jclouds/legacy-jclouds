@@ -18,7 +18,7 @@
  */
 package org.jclouds.hpcloud.compute.compute;
 
-import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceLiveTest;
+import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
 /**

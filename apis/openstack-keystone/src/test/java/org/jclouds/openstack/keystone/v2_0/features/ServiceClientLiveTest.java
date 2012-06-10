@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.features;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
@@ -43,25 +42,7 @@ public class ServiceClientLiveTest extends BaseKeystoneClientLiveTest {
       assertFalse(result.isEmpty());
 
       for (Tenant tenant : result) {
-         assertNotNull(tenant.getId());
-
-         Tenant aTenant = client.getTenant(tenant.getId());
-         assertNotNull(aTenant, "get returned null for tenant: " + tenant);
-
-         assertEquals(aTenant, tenant);
+         assertNotNull(tenant.getId());        
       }
-   }
-
-   public void testTenantsByName() {
-
-      ServiceClient client = keystoneContext.getApi().getServiceClient();
-
-      for (Tenant tenant : client.listTenants()) {
-         Tenant aTenant = client.getTenantByName(tenant.getName());
-         assertNotNull(aTenant, "get returned null for tenant: " + tenant);
-
-         assertEquals(aTenant, tenant);
-      }
-
    }
 }

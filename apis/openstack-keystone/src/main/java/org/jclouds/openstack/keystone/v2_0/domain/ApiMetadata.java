@@ -106,30 +106,14 @@ public class ApiMetadata extends Resource {
    @Nullable
    private Date updated;
 
-
-   // dealing with the goofy structure with "values" holder noted here
-   // http://docs.openstack.org/api/openstack-identity-service/2.0/content/Versions-d1e472.html
-   // if they change this to not be a value holder, we'll probably need to write a custom
-   // deserializer.
-   private static class MediaTypesHolder {
-      private Set<MediaType> values = ImmutableSet.of();
-
-      private MediaTypesHolder() {
-      }
-
-      private MediaTypesHolder(Set<MediaType> mediaTypes) {
-         this.values = ImmutableSet.copyOf(checkNotNull(mediaTypes, "mediaTypes"));
-      }
-   }
-
    @SerializedName(value="media-types")
-   private MediaTypesHolder mediaTypes = new MediaTypesHolder();
+   private Set<MediaType> mediaTypes = Sets.newLinkedHashSet();
 
    protected ApiMetadata(Builder<?> builder) {
       super(builder);
       this.status = checkNotNull(builder.status, "status");
       this.updated = checkNotNull(builder.updated, "updated");
-      this.mediaTypes = new MediaTypesHolder(builder.mediaTypes);
+      this.mediaTypes = ImmutableSet.copyOf(builder.mediaTypes);
    }
 
    /**
@@ -147,12 +131,12 @@ public class ApiMetadata extends Resource {
    /**
     */
    public Set<MediaType> getMediaTypes() {
-      return Collections.unmodifiableSet(this.mediaTypes.values);
+      return Collections.unmodifiableSet(this.mediaTypes);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(status, updated, mediaTypes.values);
+      return Objects.hashCode(status, updated, mediaTypes);
    }
 
    @Override
@@ -162,14 +146,14 @@ public class ApiMetadata extends Resource {
       ApiMetadata that = ApiMetadata.class.cast(obj);
       return super.equals(that) && Objects.equal(this.status, that.status)
             && Objects.equal(this.updated, that.updated)
-            && Objects.equal(this.mediaTypes.values, that.mediaTypes.values);
+            && Objects.equal(this.mediaTypes, that.mediaTypes);
    }
 
    protected ToStringHelper string() {
       return super.string()
             .add("status", status)
             .add("updated", updated)
-            .add("mediaTypes", mediaTypes.values);
+            .add("mediaTypes", mediaTypes);
    }
 
 }

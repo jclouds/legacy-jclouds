@@ -10,7 +10,7 @@ function forget {
    mkdir -p $LOG_DIR
    findPid $INSTANCE_NAME
    [ -n "$FOUND_PID" -a -f $LOG_DIR/stdout.log ] && {
-      echo $INSTANCE_NAME already running pid [$FOUND_PID]
+      echo $INSTANCE_NAME already running pid $FOUND_PID
       return 1;
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &

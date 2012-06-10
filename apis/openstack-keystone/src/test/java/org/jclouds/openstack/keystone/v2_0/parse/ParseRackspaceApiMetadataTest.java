@@ -19,18 +19,25 @@
 package org.jclouds.openstack.keystone.v2_0.parse;
 
 import java.net.URI;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.TypeAdapterFactory;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -60,5 +67,10 @@ public class ParseRackspaceApiMetadataTest extends BaseItemParserTest<ApiMetadat
                   org.jclouds.openstack.keystone.v2_0.domain.MediaType.builder().base("application/json").type("application/vnd.openstack.identity+json;version=2.0").build()
             ))
             .build();
+   }
+
+   @Override
+   protected Injector injector() {
+      return Guice.createInjector(new GsonModule(), new KeystoneParserModule());
    }
 }

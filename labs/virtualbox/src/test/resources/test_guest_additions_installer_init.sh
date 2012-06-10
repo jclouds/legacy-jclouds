@@ -43,7 +43,7 @@ function forget {
    mkdir -p $LOG_DIR
    findPid $INSTANCE_NAME
    [ -n "$FOUND_PID" -a -f $LOG_DIR/stdout.log ] && {
-      echo $INSTANCE_NAME already running pid [$FOUND_PID]
+      echo $INSTANCE_NAME already running pid $FOUND_PID
       return 1;
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &
@@ -176,7 +176,7 @@ END_OF_JCLOUDS_SCRIPT
 status)
    default || exit 1
    findPid $INSTANCE_NAME || exit 1
-   echo [$FOUND_PID]
+   echo $FOUND_PID
    ;;
 stop)
    default || exit 1

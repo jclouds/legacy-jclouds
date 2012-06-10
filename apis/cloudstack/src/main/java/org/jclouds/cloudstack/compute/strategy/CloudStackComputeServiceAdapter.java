@@ -77,11 +77,10 @@ import com.google.common.primitives.Ints;
 /**
  * defines the connection between the {@link CloudStackClient} implementation
  * and the jclouds {@link ComputeService}
- * 
  */
 @Singleton
 public class CloudStackComputeServiceAdapter implements
-      ComputeServiceAdapter<VirtualMachine, ServiceOffering, Template, Zone> {
+   ComputeServiceAdapter<VirtualMachine, ServiceOffering, Template, Zone> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -101,19 +100,20 @@ public class CloudStackComputeServiceAdapter implements
 
    @Inject
    public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<String> jobComplete,
-         @Memoized Supplier<Map<String, Network>> networkSupplier,
-         BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
-         StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
-         CreatePortForwardingRulesForIP setupPortForwardingRulesForIP,
+                                          @Memoized Supplier<Map<String, Network>> networkSupplier,
+                                          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
+                                          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
+                                          CreatePortForwardingRulesForIP setupPortForwardingRulesForIP,
                                           CreateFirewallRulesForIP setupFirewallRulesForIP,
                                           LoadingCache<String, Set<IPForwardingRule>> vmToRules,
-         Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters,
-         Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
+                                          Map<String, Credentials> credentialStore,
+                                          Map<NetworkType, ? extends OptionsConverter> optionsConverters,
+                                          Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
       this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
-            "blockUntilJobCompletesAndReturnResult");
+         "blockUntilJobCompletesAndReturnResult");
       this.staticNATVMInNetwork = checkNotNull(staticNATVMInNetwork, "staticNATVMInNetwork");
       this.setupPortForwardingRulesForIP = checkNotNull(setupPortForwardingRulesForIP, "setupPortForwardingRulesForIP");
       this.setupFirewallRulesForIP = checkNotNull(setupFirewallRulesForIP, "setupFirewallRulesForIP");
@@ -125,12 +125,12 @@ public class CloudStackComputeServiceAdapter implements
 
    @Override
    public NodeAndInitialCredentials<VirtualMachine> createNodeWithGroupEncodedIntoName(String group, String name,
-         org.jclouds.compute.domain.Template template) {
+                                                                                       org.jclouds.compute.domain.Template template) {
       checkNotNull(template, "template was null");
       checkNotNull(template.getOptions(), "template options was null");
       checkArgument(template.getOptions().getClass().isAssignableFrom(CloudStackTemplateOptions.class),
-            "options class %s should have been assignable from CloudStackTemplateOptions", template.getOptions()
-                  .getClass());
+         "options class %s should have been assignable from CloudStackTemplateOptions", template.getOptions()
+         .getClass());
       Map<String, Network> networks = networkSupplier.get();
 
       final String zoneId = template.getLocation().getId();
@@ -143,7 +143,7 @@ public class CloudStackComputeServiceAdapter implements
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s",zone.getNetworkType());
+      checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s", zone.getNetworkType());
       DeployVirtualMachineOptions options = displayName(name).name(name);
       OptionsConverter optionsConverter = optionsConverters.get(zone.getNetworkType());
       options = optionsConverter.apply(templateOptions, networks, zoneId, options);
@@ -160,9 +160,9 @@ public class CloudStackComputeServiceAdapter implements
          options.keyPair(templateOptions.getKeyPair());
          if (templateOptions.getRunScript() != null) {
             checkArgument(
-                  credentialStore.containsKey("keypair#" + templateOptions.getKeyPair()),
-                  "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
-                  templateOptions.getKeyPair());
+               credentialStore.containsKey("keypair#" + templateOptions.getKeyPair()),
+               "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+               templateOptions.getKeyPair());
          }
       }
 
@@ -170,10 +170,10 @@ public class CloudStackComputeServiceAdapter implements
       String serviceOfferingId = template.getHardware().getId();
 
       logger.info("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,
-            zoneId, options);
+         zoneId, options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
-            templateId, options);
-      VirtualMachine vm = blockUntilJobCompletesAndReturnResult.<VirtualMachine> apply(job);
+         templateId, options);
+      VirtualMachine vm = blockUntilJobCompletesAndReturnResult.<VirtualMachine>apply(job);
       logger.debug("--- virtualmachine: %s", vm);
       LoginCredentials credentials = null;
       if (vm.isPasswordEnabled()) {
@@ -183,7 +183,7 @@ public class CloudStackComputeServiceAdapter implements
          credentials = LoginCredentials.fromCredentials(credentialStore.get("keypair#" + templateOptions.getKeyPair()));
       }
       if (templateOptions.shouldSetupStaticNat()) {
-          Capabilities capabilities = client.getConfigurationClient().listCapabilities();
+         Capabilities capabilities = client.getConfigurationClient().listCapabilities();
          // TODO: possibly not all network ids, do we want to do this
          for (String networkId : options.getNetworkIds()) {
             logger.debug(">> creating static NAT for virtualMachine(%s) in network(%s)", vm.getId(), networkId);
@@ -192,13 +192,13 @@ public class CloudStackComputeServiceAdapter implements
             vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
             List<Integer> ports = Ints.asList(templateOptions.getInboundPorts());
             if (capabilities.getCloudStackVersion().startsWith("2")) {
-                logger.debug(">> setting up IP forwarding for IPAddress(%s) rules(%s)", ip.getId(), ports);
-                Set<IPForwardingRule> rules = setupPortForwardingRulesForIP.apply(ip, ports);
-                logger.trace("<< setup %d IP forwarding rules on IPAddress(%s)", rules.size(), ip.getId());
+               logger.debug(">> setting up IP forwarding for IPAddress(%s) rules(%s)", ip.getId(), ports);
+               Set<IPForwardingRule> rules = setupPortForwardingRulesForIP.apply(ip, ports);
+               logger.trace("<< setup %d IP forwarding rules on IPAddress(%s)", rules.size(), ip.getId());
             } else {
-                logger.debug(">> setting up firewall rules for IPAddress(%s) rules(%s)", ip.getId(), ports);
-                Set<FirewallRule> rules = setupFirewallRulesForIP.apply(ip, ports);
-                logger.trace("<< setup %d firewall rules on IPAddress(%s)", rules.size(), ip.getId());
+               logger.debug(">> setting up firewall rules for IPAddress(%s) rules(%s)", ip.getId(), ports);
+               Set<FirewallRule> rules = setupFirewallRulesForIP.apply(ip, ports);
+               logger.trace("<< setup %d firewall rules on IPAddress(%s)", rules.size(), ip.getId());
             }
          }
       }
@@ -310,7 +310,7 @@ public class CloudStackComputeServiceAdapter implements
       Set<String> ipAddresses = Sets.newLinkedHashSet();
 
       Set<IPForwardingRule> forwardingRules = client.getNATClient().getIPForwardingRulesForVirtualMachine(
-            virtualMachineId);
+         virtualMachineId);
       for (IPForwardingRule rule : forwardingRules) {
          if (!"Deleting".equals(rule.getState())) {
             ipAddresses.add(rule.getIPAddressId());
@@ -331,16 +331,16 @@ public class CloudStackComputeServiceAdapter implements
 
       String publicIpId = client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId();
       if (publicIpId != null) {
-          Set<FirewallRule> firewallRules = client.getFirewallClient()
-              .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId()));
-          
-          for (FirewallRule rule : firewallRules) {
-              if (!FirewallRule.State.fromValue("DELETING").equals(rule.getState())) {
-                  ipAddresses.add(rule.getIpAddressId());
-                  client.getFirewallClient().deleteFirewallRule(rule.getId());
-                  logger.debug(">> deleting FirewallRule(%s)", rule.getId());
-              }
-          }
+         Set<FirewallRule> firewallRules = client.getFirewallClient()
+            .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId()));
+
+         for (FirewallRule rule : firewallRules) {
+            if (rule.getState() != FirewallRule.State.DELETING) {
+               ipAddresses.add(rule.getIpAddressId());
+               client.getFirewallClient().deleteFirewallRule(rule.getId());
+               logger.debug(">> deleting FirewallRule(%s)", rule.getId());
+            }
+         }
       }
       return ipAddresses;
    }
