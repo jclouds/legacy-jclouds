@@ -103,12 +103,14 @@ public class EagerPooledComputeService extends BasePooledComputeService {
    @Override
    public synchronized Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       checkState(started.get(), "pool is not started");
-      Iterable<Map.Entry<String, NodeMetadata>> poolNodesToUnassign = filterAssignmentsBasedOnUserPredicate(filter);
+      // copy the set of nodes to unassign because we'll be altering the assignments map.
+      Set<Map.Entry<String, NodeMetadata>> poolNodesToUnassign = Sets
+               .newHashSet(filterAssignmentsBasedOnUserPredicate(filter));
       // TODO this should be done in parallel since it can take quite a while, moreover the contract
       // for any destroy node action should probably be that the pool has at least minSize nodes
       // before it returns. need to think it through a bit better.
       for (Map.Entry<String, NodeMetadata> poolNode : poolNodesToUnassign) {
-         destroyNode(poolNode.getValue().getId());
+         unassignNode(poolNode.getValue().getId());
       }
       return Sets.newHashSet(transform(poolNodesToUnassign,
                new Function<Map.Entry<String, NodeMetadata>, PoolNodeMetadata>() {
