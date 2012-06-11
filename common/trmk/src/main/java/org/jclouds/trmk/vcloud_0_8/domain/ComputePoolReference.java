@@ -20,27 +20,28 @@ package org.jclouds.trmk.vcloud_0_8.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.net.URI;
+
 import com.google.common.base.Objects;
 
 /**
- * @author Seshu Pasam
+ * @author Adrian Cole
  */
-public class NetworkAdapter implements Comparable<NetworkAdapter> {
+public class ComputePoolReference implements Comparable<ComputePoolReference> {
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return builder().fromNetworkAdapter(this);
+      return builder().fromComputePoolReference(this);
    }
 
    public static class Builder {
-      private String macAddress;
+      private URI href;
       private String name;
-      private Subnet subnet;
 
-      public Builder macAddress(String macAddress) {
-         this.macAddress = macAddress;
+      public Builder href(URI href) {
+         this.href = href;
          return this;
       }
 
@@ -49,45 +50,34 @@ public class NetworkAdapter implements Comparable<NetworkAdapter> {
          return this;
       }
 
-      public Builder subnet(Subnet subnet) {
-         this.subnet = subnet;
-         return this;
+      public ComputePoolReference build() {
+         return new ComputePoolReference(href, name);
       }
 
-      public NetworkAdapter build() {
-         return new NetworkAdapter(macAddress, name, subnet);
-      }
-
-      public Builder fromNetworkAdapter(NetworkAdapter in) {
-         return macAddress(in.getMacAddress()).name(in.getName()).subnet(in.getSubnet());
+      public Builder fromComputePoolReference(ComputePoolReference in) {
+         return href(in.getHref()).name(in.getName());
       }
 
    }
 
-   private final String macAddress;
+   private final URI href;
    private final String name;
-   private final Subnet subnet;
 
-   public NetworkAdapter(String macAddress, String name, Subnet subnet) {
-      this.macAddress = macAddress;
+   public ComputePoolReference(URI href, String name) {
+      this.href = href;
       this.name = name;
-      this.subnet = subnet;
    }
 
-   public int compareTo(NetworkAdapter that) {
-      return (this == that) ? 0 : getMacAddress().compareTo(that.getMacAddress());
+   public int compareTo(ComputePoolReference that) {
+      return (this == that) ? 0 : getHref().compareTo(that.getHref());
    }
 
-   public String getMacAddress() {
-      return macAddress;
+   public URI getHref() {
+      return href;
    }
 
    public String getName() {
       return name;
-   }
-
-   public Subnet getSubnet() {
-      return subnet;
    }
 
    @Override
@@ -96,18 +86,17 @@ public class NetworkAdapter implements Comparable<NetworkAdapter> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      NetworkAdapter that = NetworkAdapter.class.cast(o);
-      return equal(this.macAddress, that.macAddress) && equal(this.name, that.name) && equal(this.subnet, that.subnet);
+      ComputePoolReference that = ComputePoolReference.class.cast(o);
+      return equal(this.href, that.href) && equal(this.name, that.name);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(macAddress, name, subnet);
+      return Objects.hashCode(href, name);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("macAddress", macAddress).add("name", name).add("subnet", subnet)
-               .toString();
+      return Objects.toStringHelper("").add("href", href).add("name", name).toString();
    }
 }

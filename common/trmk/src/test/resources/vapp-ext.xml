@@ -1,0 +1,21 @@
+<VApp xmlns="urn:tmrk:eCloudExtensions-2.8" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Id>392992</Id>
+    <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/vapp/392992</Href>
+    <Name>instance01</Name>
+    <Tags></Tags>
+    <LongName></LongName>
+    <NetworkAdapters>
+        <NetworkAdapter>
+            <MacAddress>00:50:56:95:12:96</MacAddress>
+            <Name>Network adapter 1</Name>
+            <Subnet>
+                <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/network/43781</Href>
+                <Name>10.122.213.192/27</Name>
+            </Subnet>
+        </NetworkAdapter>
+    </NetworkAdapters>
+    <ComputePoolReference>
+        <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/computePool/692</Href>
+        <Name>Resource Pool 692</Name>
+    </ComputePoolReference>
+</VApp>
