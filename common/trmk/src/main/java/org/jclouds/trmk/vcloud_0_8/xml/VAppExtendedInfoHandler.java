@@ -18,53 +18,39 @@
  */
 package org.jclouds.trmk.vcloud_0_8.xml;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
+import static org.jclouds.util.SaxUtils.currentOrNull;
 
-import javax.annotation.Resource;
+import java.net.URI;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.logging.Logger;
+import org.jclouds.trmk.vcloud_0_8.domain.ComputePoolReference;
 import org.jclouds.trmk.vcloud_0_8.domain.NetworkAdapter;
 import org.jclouds.trmk.vcloud_0_8.domain.Subnet;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppExtendedInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 
 /**
- * @author Seshu Pasam
+ * @author Seshu Pasam, Adrian Cole
  */
 public class VAppExtendedInfoHandler extends HandlerWithResult<VAppExtendedInfo> {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
 
-   private String id;
-   private URI href;
-   private String name;
-   private String longName;
-   private List<String> tags;
-   private List<NetworkAdapter> networkAdapters = Lists.newArrayList();
+   private VAppExtendedInfo.Builder builder = VAppExtendedInfo.builder();
+   private NetworkAdapter.Builder adapterBuilder = NetworkAdapter.builder();
+   private Subnet.Builder subnetBuilder = Subnet.builder();
+   private ComputePoolReference.Builder poolBuilder = ComputePoolReference.builder();
    private boolean inAdapters;
-   private String macAddress;
-   private String adapterName;
    private boolean inSubnet;
-   private Subnet subnet;
-   private URI subnetLocation;
-   private String subnetName;
-
-   protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
-   }
+   private boolean inComputePool;
 
    @Override
    public VAppExtendedInfo getResult() {
-      return new VAppExtendedInfo(id, href, name, tags, longName, networkAdapters);
+      return builder.build();
    }
 
    @Override
@@ -73,47 +59,55 @@ public class VAppExtendedInfoHandler extends HandlerWithResult<VAppExtendedInfo>
          inAdapters = true;
       } else if (qName.equals("Subnet")) {
          inSubnet = true;
+      } else if (qName.equals("ComputePoolReference")) {
+         inComputePool = true;
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      String current = currentOrNull();
+      String current = currentOrNull(currentText);
       if (current != null) {
          if (qName.equals("Id")) {
-            this.id = current;
+            builder.id(current);
          } else if (qName.equals("Tags")) {
-            this.tags = Arrays.asList(current.split(","));
+            builder.tags(ImmutableList.copyOf(Splitter.on(',').split(current)));
          } else if (qName.equals("LongName")) {
-            this.longName = current;
+            builder.longName(current);
          } else if (qName.equals("Href")) {
+            URI href = URI.create(current);
             if (inSubnet) {
-               this.subnetLocation = URI.create(current);
+               subnetBuilder.href(href);
+            } else if (inComputePool) {
+               poolBuilder.href(href);
             } else {
-               this.href = URI.create(current);
+               builder.href(href);
             }
          } else if (qName.equals("Name")) {
             if (inSubnet) {
-               this.subnetName = current;
+               subnetBuilder.name(current);
             } else if (inAdapters) {
-               this.adapterName = current;
+               adapterBuilder.name(current);
+            } else if (inComputePool) {
+               poolBuilder.name(current);
             } else {
-               this.name = current;
+               builder.name(current);
             }
-         } else if (qName.equals("NetworkAdapters")) {
-             inAdapters = false;
-         } else if (qName.equals("NetworkAdapter")) {
-             networkAdapters.add(new NetworkAdapter(macAddress, adapterName, subnet));
-             macAddress = null;
-             adapterName = null;
-             subnet = null;
          } else if (qName.equals("MacAddress")) {
-             macAddress = current;
-         } else if (qName.equals("Subnet")) {
-             subnet = new Subnet(subnetLocation, subnetName);
-             subnetLocation = null;
-             subnetName = null;
-             inSubnet = false;
+            adapterBuilder.macAddress(current);
          }
+      } else if (qName.equals("NetworkAdapters")) {
+         inAdapters = false;
+      } else if (qName.equals("NetworkAdapter")) {
+         builder.networkAdapter(adapterBuilder.build());
+         adapterBuilder = NetworkAdapter.builder();
+      } else if (qName.equals("Subnet")) {
+         adapterBuilder.subnet(subnetBuilder.build());
+         subnetBuilder = Subnet.builder();
+         inSubnet = false;
+      } else if (qName.equals("ComputePoolReference")) {
+         builder.computePoolReference(poolBuilder.build());
+         poolBuilder = ComputePoolReference.builder();
+         inComputePool = false;
       }
       currentText = new StringBuilder();
    }
