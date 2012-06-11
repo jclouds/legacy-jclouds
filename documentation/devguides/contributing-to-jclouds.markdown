@@ -8,7 +8,7 @@ title: Contributing to jclouds
 ## Creating and working with your fork
 
 ### setup your fork
-*  go to github,com and fork jclouds/jclouds
+*  go to [github](http://github.com) and fork [jclouds/jclouds](http://github.com/jclouds/jclouds)
 *  `git clone http://github.com/___YOUR_USER___/jclouds.git`
 *  if you are already a jclouds collaborator you can use git:// instead of http://
 *  `git remote add jclouds git://github.com/jclouds/jclouds.git`
