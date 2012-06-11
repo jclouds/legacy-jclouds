@@ -67,9 +67,4 @@ public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCreden
          return LoginCredentials.builder().user("root").build();
       }
    }
-
-   @Override
-   public Credentials execute(Object resourceToAuthenticate) {
-      return apply(resourceToAuthenticate);
-   }
 }

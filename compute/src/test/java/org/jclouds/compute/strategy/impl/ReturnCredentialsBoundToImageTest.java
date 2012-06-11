@@ -46,7 +46,7 @@ public class ReturnCredentialsBoundToImageTest {
 
       LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
       assertEquals(new ReturnCredentialsBoundToImage(creds, ImmutableMap.<String, Credentials> of(), ImmutableMap
-               .<OsFamily, LoginCredentials> of()).execute(image), creds);
+               .<OsFamily, LoginCredentials> of()).apply(image), creds);
 
       verify(image);
 
@@ -59,7 +59,7 @@ public class ReturnCredentialsBoundToImageTest {
 
       LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
       assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of("image#1", creds),
-               ImmutableMap.<OsFamily, LoginCredentials> of()).execute(image), creds);
+               ImmutableMap.<OsFamily, LoginCredentials> of()).apply(image), creds);
 
       verify(image);
 
@@ -74,7 +74,7 @@ public class ReturnCredentialsBoundToImageTest {
 
       Credentials creds = new Credentials("Administrator", null);
       assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of(), ImmutableMap.of(
-               OsFamily.WINDOWS, LoginCredentials.builder().user("Administrator").build())).execute(image), creds);
+               OsFamily.WINDOWS, LoginCredentials.builder().user("Administrator").build())).apply(image), creds);
 
       verify(image);
 
@@ -89,7 +89,7 @@ public class ReturnCredentialsBoundToImageTest {
 
       Credentials creds = new Credentials("root", null);
       assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of(), ImmutableMap
-               .<OsFamily, LoginCredentials> of()).execute(image), creds);
+               .<OsFamily, LoginCredentials> of()).apply(image), creds);
 
       verify(image);
 

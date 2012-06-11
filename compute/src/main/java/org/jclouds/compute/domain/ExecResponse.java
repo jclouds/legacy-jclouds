@@ -46,6 +46,8 @@ public class ExecResponse implements CustomizationResponse {
    }
 
    /**
+    * <h4>will be removed in jclouds 1.6.0</h4> <br/>
+    * 
     * @see #getExitStatus
     */
    @Deprecated
