@@ -41,6 +41,7 @@
     <properties>
         <jclouds.osgi.import>*</jclouds.osgi.import>
         <jclouds.osgi.export>org.jclouds*;version=${project.version};-noimport:=true</jclouds.osgi.export>
+        <jclouds.osgi.activator>org.jclouds.osgi.Activator</jclouds.osgi.activator>
     </properties>
 
     <dependencies>
@@ -105,6 +106,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

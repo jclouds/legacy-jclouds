@@ -560,6 +560,7 @@ pageTracker._trackPageview();
                 <configuration>
                     <obrRepository>NONE</obrRepository>
                     <instructions>
+                        <Bundle-Activator>${jclouds.osgi.activator}</Bundle-Activator>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>${jclouds.osgi.export}</Export-Package>
                         <Import-Package>${jclouds.osgi.import}</Import-Package>
