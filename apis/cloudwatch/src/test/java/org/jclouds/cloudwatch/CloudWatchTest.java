@@ -22,9 +22,13 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 
+import java.util.List;
+import java.util.Set;
+
 import org.easymock.EasyMock;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
+import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.testng.Assert;
@@ -32,12 +36,14 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code CloudWatch}.
  *
  * @author Jeremy Whitlock
  */
+@Test(testName = "CloudWatchTest")
 public class CloudWatchTest {
 
    /**
@@ -95,6 +101,39 @@ public class CloudWatchTest {
       EasyMock.replay(client, metricClient);
 
       Assert.assertEquals(2, Iterables.size(CloudWatch.listMetrics(client, "", options)));
+   }
+
+   /**
+    * Tests {@link CloudWatch#putMetricData(CloudWatchClient, String, Iterable, String)} where the set of metrics is
+    * greater than 10.
+    *
+    * @throws Exception if anything goes wrong
+    */
+   @Test
+   public void testPutMetricData() throws Exception {
+      CloudWatchClient client = createMock(CloudWatchClient.class);
+      MetricClient metricClient = createMock(MetricClient.class);
+      Set<MetricDatum> metrics = Sets.newLinkedHashSet();
+      String namespace = "JCLOUDS/Test";
+
+      for (int i = 0; i < 11; i++) {
+         metrics.add(MetricDatum.builder().metricName("foo").build());
+      }
+
+      // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
+      expect(client.getMetricClientForRegion(EasyMock.eq("")))
+            .andReturn(metricClient)
+            .atLeastOnce();
+      
+      for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
+         metricClient.putMetricData(slice, namespace);
+      }
+
+      EasyMock.replay(client, metricClient);
+
+      CloudWatch.putMetricData(client, "", metrics, namespace);
+
+      EasyMock.verify(metricClient);
    }
 
 }

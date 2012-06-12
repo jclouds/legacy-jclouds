@@ -18,19 +18,15 @@
  */
 package org.jclouds.cloudfiles;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.cloudfiles.config.CloudFilesRestClientModule;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.cloudfiles.config.CloudFilesRestClientModule.StorageAndCDNManagementEndpointModule;
+import org.jclouds.openstack.swift.SwiftApiMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -41,9 +37,10 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudFilesApiMetadata extends BaseRestApiMetadata {
+public class CloudFilesApiMetadata extends SwiftApiMetadata {
+   
    /** The serialVersionUID */
-   private static final long serialVersionUID = 820062881469203616L;
+   private static final long serialVersionUID = -1572520638079261710L;
    
    public static final TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
@@ -65,28 +62,25 @@ public class CloudFilesApiMetadata extends BaseRestApiMetadata {
    protected CloudFilesApiMetadata(Builder builder) {
       super(builder);
    }
-
+   
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
+      Properties properties = SwiftApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
-      protected Builder() {
+   public static class Builder extends SwiftApiMetadata.Builder {
+      protected Builder(){
          super(CloudFilesClient.class, CloudFilesAsyncClient.class);
          id("cloudfiles")
          .name("Rackspace Cloud Files API")
          .identityName("Username")
          .credentialName("API Key")
          .documentation(URI.create("http://docs.rackspacecloud.com/files/api/v1/cfdevguide_d5/content/ch01.html"))
-         .version(OpenStackAuthAsyncClient.VERSION)
          .defaultProperties(CloudFilesApiMetadata.defaultProperties())
-         .view(TypeToken.of(BlobStoreContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudFilesRestClientModule.class, CloudFilesBlobStoreContextModule.class));
+         .context(CONTEXT_TOKEN)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(StorageAndCDNManagementEndpointModule.class, CloudFilesRestClientModule.class, CloudFilesBlobStoreContextModule.class));
       }
-
+      
       @Override
       public CloudFilesApiMetadata build() {
          return new CloudFilesApiMetadata(this);
@@ -98,4 +92,5 @@ public class CloudFilesApiMetadata extends BaseRestApiMetadata {
          return this;
       }
    }
+
 }

@@ -47,8 +47,8 @@ import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Inject;
 
 ;
@@ -124,6 +124,19 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
       return client.listPredefinedOperatingSystems();
    }
 
+   // cheat until we have a getImage command
+   @Override
+   public CIMOperatingSystem getImage(final String id) {
+      return Iterables.find(listImages(), new Predicate<CIMOperatingSystem>() {
+
+         @Override
+         public boolean apply(CIMOperatingSystem input) {
+            return (input.getOsType().getCode() + "").equals(id);
+         }
+
+      }, null);
+   }
+   
    @Override
    public Iterable<VM> listNodes() {
       Builder<VM> builder = ImmutableSet.builder();

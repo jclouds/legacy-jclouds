@@ -33,7 +33,7 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.savvis.vpdc.domain.VM;
@@ -51,11 +51,11 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
 
-   public static final Map<VM.Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap
-            .<VM.Status, NodeState> builder().put(VM.Status.OFF, NodeState.SUSPENDED).put(VM.Status.ON,
-                     NodeState.RUNNING).put(VM.Status.RESOLVED, NodeState.PENDING).put(VM.Status.UNRECOGNIZED,
-                     NodeState.UNRECOGNIZED).put(VM.Status.UNKNOWN, NodeState.UNRECOGNIZED).put(VM.Status.SUSPENDED,
-                     NodeState.SUSPENDED).put(VM.Status.UNRESOLVED, NodeState.PENDING).build();
+   public static final Map<VM.Status, Status> VAPPSTATUS_TO_NODESTATE = ImmutableMap
+            .<VM.Status, Status> builder().put(VM.Status.OFF, Status.SUSPENDED).put(VM.Status.ON,
+                     Status.RUNNING).put(VM.Status.RESOLVED, Status.PENDING).put(VM.Status.UNRECOGNIZED,
+                     Status.UNRECOGNIZED).put(VM.Status.UNKNOWN, Status.UNRECOGNIZED).put(VM.Status.SUSPENDED,
+                     Status.SUSPENDED).put(VM.Status.UNRESOLVED, Status.PENDING).build();
 
    private final FindLocationForVM findLocationForVM;
    private final GroupNamingConvention nodeNamingConvention;
@@ -81,7 +81,7 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       }
       // TODO build from resource allocation section
       // builder.hardware(findHardwareForVM.apply(from));
-      builder.state(VAPPSTATUS_TO_NODESTATE.get(from.getStatus()));
+      builder.status(VAPPSTATUS_TO_NODESTATE.get(from.getStatus()));
       Set<String> addresses = Utils.getIpsFromVM(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));

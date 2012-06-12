@@ -18,9 +18,16 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import static com.google.common.collect.Iterables.find;
+import com.google.common.collect.Sets;
+import static com.google.common.collect.Sets.newHashSet;
+import java.util.NoSuchElementException;
+import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.name;
 import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.parentDomainId;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -43,55 +50,56 @@ public class DomainDomainClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testListDomains() {
-      assert domainAdminEnabled;
+      skipIfNotDomainAdmin();
 
-      Set<Domain> allDomains = domainAdminClient.getDomainClient().listDomains();
-
-      Domain root = find(allDomains, withName("ROOT"));
-      assertEquals(root, domainAdminClient.getDomainClient().getDomainById(root.getId()));
-      assertEquals(root.getLevel(), 0);
-      assertEquals(root.getParentDomainId(), 0);
-      assertNull(root.getParentDomainName());
-      if (allDomains.size() > 1) {
-         assertTrue(root.hasChild());
+      Set<Domain> domains = domainAdminClient.getDomainClient().listDomains();
+      for (Domain candidate : domains) {
+         checkDomain(candidate);
       }
+   }
 
-      for (Domain domain : allDomains) {
-         checkDomain(domain, allDomains);
+   private void checkDomain(Domain domain) {
+      assertNotNull(domain.getId());
+      if (domain.getLevel() == 0 /* global ROOT */) {
+         assertNull(domain.getParentDomainName());
+         assertNull(domain.getParentDomainId());
+      } else {
+         assertNotNull(domain.getParentDomainName());
+         assertNotNull(domain.getParentDomainId());
       }
    }
 
    @Test
    public void testListDomainChildren() {
-      assert domainAdminEnabled;
+      skipIfNotDomainAdmin();
 
-      Set<Domain> allDomains = domainAdminClient.getDomainClient().listDomains();
-      Domain root = find(allDomains, withName("ROOT"));
+      Set<Domain> domains = domainAdminClient.getDomainClient().listDomains();
+      Domain root = findRootOfVisibleTree(domains);
+      if (domains.size() > 1) {
+         assertTrue(root.hasChild());
+      }
 
       Set<Domain> children = domainAdminClient.getDomainClient()
          .listDomainChildren(parentDomainId(root.getId()).isRecursive(true));
-      assertEquals(allDomains.size() - 1, children.size());
-
-      for (Domain domain : children) {
-         checkDomain(domain, allDomains);
-      }
+      assertEquals(domains.size() - 1, children.size());
+      assertTrue(Sets.difference(domains, children).contains(root));
    }
 
-   private Predicate<Domain> withName(final String name) {
-      return new Predicate<Domain>() {
-         @Override
-         public boolean apply(@Nullable Domain domain) {
-            return domain != null && domain.getName().equals(name);
+   private Domain findRootOfVisibleTree(Set<Domain> domains) {
+      final Set<String> names = newHashSet(Iterables.transform(domains,
+         new Function<Domain, String>() {
+            @Override
+            public String apply(Domain domain) {
+               return domain.getName();
+            }
+         }));
+
+      for (Domain candidate : domains) {
+         if (candidate.getParentDomainId() == null ||
+            !names.contains(candidate.getParentDomainName())) {
+            return candidate;
          }
-      };
-   }
-
-   private void checkDomain(Domain domain, Set<Domain> allDomains) {
-      assert domain.getId() != null : domain;
-      if (domain.getParentDomainName() != null) {
-         Domain parent = find(allDomains, withName(domain.getParentDomainName()));
-         assertEquals(parent.getId(), domain.getParentDomainId());
-         assertTrue(parent.hasChild());
       }
+      throw new NoSuchElementException("No root node found in this tree");
    }
 }

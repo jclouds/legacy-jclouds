@@ -33,6 +33,21 @@
     <description>jclouds components to access compute providers</description>
     <packaging>bundle</packaging>
 
+    <properties>
+        <jclouds.osgi.import>
+          org.jclouds;version=${project.version},
+          org.jclouds*;version=${project.version},
+          *
+        </jclouds.osgi.import>
+        <jclouds.osgi.export>
+          org.jclouds.cim*;version=${project.version};-noimport:=true,
+          org.jclouds.compute*;version=${project.version};-noimport:=true,
+          org.jclouds.net*;version=${project.version};-noimport:=true,
+          org.jclouds.ovf*;version=${project.version};-noimport:=true,
+          org.jclouds.ssh*;version=${project.version};-noimport:=true
+        </jclouds.osgi.export>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -56,17 +71,10 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.net*;version="${project.version}",org.jclouds.compute*;version="${project.version}",org.jclouds.cim*;version="${project.version}",org.jclouds.ovf*;version="${project.version}",org.jclouds.ssh*;version="${project.version}"</Export-Package>
-                        <Import-Package>!org.jclouds.compute.*;org.jclouds*;version="${project.version}",*</Import-Package>
-                        <Fragment-Host>jclouds-core;bundle-version="[1.3,2)"</Fragment-Host>
-                    </instructions>
-                </configuration>
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>clojure-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
+
 </project>

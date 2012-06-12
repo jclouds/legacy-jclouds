@@ -18,12 +18,48 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain;
 
+import static com.google.common.base.Objects.equal;
+
 import java.net.URI;
+
+import com.google.common.base.Objects;
 
 /**
  * @author Seshu Pasam
  */
 public class Subnet implements Comparable<Subnet> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return builder().fromSubnet(this);
+   }
+
+   public static class Builder {
+      private URI href;
+      private String name;
+
+      public Builder href(URI href) {
+         this.href = href;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Subnet build() {
+         return new Subnet(href, name);
+      }
+
+      public Builder fromSubnet(Subnet in) {
+         return href(in.getHref()).name(in.getName());
+      }
+
+   }
+
    private final URI href;
    private final String name;
 
@@ -45,38 +81,22 @@ public class Subnet implements Comparable<Subnet> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((href == null) ? 0 : href.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Subnet that = Subnet.class.cast(o);
+      return equal(this.href, that.href) && equal(this.name, that.name);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Subnet other = (Subnet) obj;
-      if (href == null) {
-         if (other.href != null)
-            return false;
-      } else if (!href.equals(other.href))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(href, name);
    }
 
    @Override
    public String toString() {
-      return "[href=" + href + ", name=" + name + "]";
+      return Objects.toStringHelper("").add("href", href).add("name", name).toString();
    }
 }

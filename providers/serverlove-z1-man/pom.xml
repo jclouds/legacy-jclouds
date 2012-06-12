@@ -36,10 +36,17 @@
     <properties>
         <test.serverlove-z1-man.endpoint>https://api.z1-man.serverlove.com</test.serverlove-z1-man.endpoint>
         <test.serverlove-z1-man.api-version>1.0</test.serverlove-z1-man.api-version>
-        <test.serverlove-z1-man.build-version />
+        <test.serverlove-z1-man.build-version></test.serverlove-z1-man.build-version>
         <test.serverlove-z1-man.identity>FIXME_IDENTITY</test.serverlove-z1-man.identity>
         <test.serverlove-z1-man.credential>FIXME_CREDENTIAL</test.serverlove-z1-man.credential>
-        <test.serverlove-z1-man.image-id />
+        <test.serverlove-z1-man.image-id></test.serverlove-z1-man.image-id>
+        <jclouds.osgi.export>org.jclouds.serverlove*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -115,26 +122,5 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.serverlove*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

@@ -36,14 +36,22 @@
   <properties>
     <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
     <test.nova.api-version>1.1</test.nova.api-version>
-    <test.nova.build-version />
+    <test.nova.build-version></test.nova.build-version>
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
-    <test.nova.image-id />
-    <test.nova.image.login-user />
-    <test.nova.image.authenticate-sudo />
-    <test.ssh.keyfile.public />
-    <test.ssh.keyfile.private />
+    <test.nova.image-id></test.nova.image-id>
+    <test.nova.image.login-user></test.nova.image.login-user>
+    <test.nova.image.authenticate-sudo></test.nova.image.authenticate-sudo>
+    <test.ssh.keyfile.public></test.ssh.keyfile.public>
+    <test.ssh.keyfile.private></test.ssh.keyfile.private>
+
+    <jclouds.osgi.export>org.jclouds.openstack.nova*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -129,25 +137,5 @@
     </profile>
   </profiles>
 
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.nova*;version="${project.version}"</Export-Package>
-            <Import-Package>            
-       			org.jclouds.compute.internal;version="${project.version}",
-       			org.jclouds.rest.internal;version="${project.version}",
-       			org.jclouds*;version="${project.version}",
- 				*
-			</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -39,6 +39,9 @@
         <test.cloudloadbalancers-us.build-version />
         <test.cloudloadbalancers-us.identity>${test.rackspace-us.identity}</test.cloudloadbalancers-us.identity>
         <test.cloudloadbalancers-us.credential>${test.rackspace-us.credential}</test.cloudloadbalancers-us.credential>
+
+        <jclouds.osgi.export>org.jclouds.rackspace.cloudloadbalancers*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
     
     <dependencies>
@@ -124,19 +127,4 @@
         </profile>
     </profiles>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.rackspace.cloudloadbalancers*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

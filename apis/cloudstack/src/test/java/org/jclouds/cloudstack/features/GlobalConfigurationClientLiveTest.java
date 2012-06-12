@@ -45,7 +45,7 @@ public class GlobalConfigurationClientLiveTest extends BaseCloudStackClientLiveT
 
    @Test
    public void testListConfigurationEntries() {
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Set<ConfigurationEntry> entries = globalAdminClient
          .getConfigurationClient().listConfigurationEntries();
@@ -62,7 +62,7 @@ public class GlobalConfigurationClientLiveTest extends BaseCloudStackClientLiveT
 
    @Test
    public void testUpdateConfigurationEntry() {
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Set<ConfigurationEntry> entries = globalAdminClient
          .getConfigurationClient().listConfigurationEntries();

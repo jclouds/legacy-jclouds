@@ -36,9 +36,17 @@
     <properties>
         <test.rimuhosting.endpoint>https://api.rimuhosting.com/r</test.rimuhosting.endpoint>
         <test.rimuhosting.api-version>1.0</test.rimuhosting.api-version>
-        <test.rimuhosting.build-version />
+        <test.rimuhosting.build-version></test.rimuhosting.build-version>
         <test.rimuhosting.identity>FIXME</test.rimuhosting.identity>
-        <test.rimuhosting.image-id />
+        <test.rimuhosting.image-id></test.rimuhosting.image-id>
+
+        <jclouds.osgi.export>org.jclouds.rimuhosting.miro*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+      </jclouds.osgi.import>
     </properties>
     <dependencies>
         <dependency>
@@ -116,24 +124,4 @@
         </profile>
     </profiles>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.rimuhosting.miro*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -1,0 +1,128 @@
+{
+    "access": {
+        "token": {
+            "expires": "2012-01-18T21:35:59.050Z",
+            "id": "Auth_4f173437e4b013bee56d1007",
+            "tenant": {
+                "id": "40806637803162",
+                "name": "user@jclouds.org-default-tenant"
+            }
+        },
+        "user": {
+            "id": "36980896575174",
+            "name": "user@jclouds.org",
+            "roles": [
+                {
+                    "id": "00000000004022",
+                    "serviceId": "110",
+                    "name": "Admin",
+                    "tenantName": "40806637803162"
+                },
+                {
+                    "id": "00000000004024",
+                    "serviceId": "140",
+                    "name": "user",
+                    "tenantName": "40806637803162"
+                },
+                {
+                    "id": "00000000004004",
+                    "serviceId": "100",
+                    "name": "domainuser"
+                },
+                {
+                    "id": "00000000004016",
+                    "serviceId": "120",
+                    "name": "netadmin",
+                    "tenantName": "40806637803162"
+                }
+            ]
+        },
+        "serviceCatalog": [
+            {
+                "name": "Object Storage",
+                "type": "object-store",
+                "endpoints": [
+                    {
+                        "tenantName": "40806637803162",
+                        "adminURL": "https://objects.jclouds.org/v1.0/",
+                        "publicURL": "https://objects.jclouds.org/v1.0/40806637803162",
+                        "region": "region-a.geo-1",
+                        "id": "1.0"
+                    }
+                ]
+            },
+            {
+                "name": "Identity",
+                "type": "identity",
+                "endpoints": [
+                    {
+                        "adminURL": "https://csnode.jclouds.org:35357/v2.0/",
+                        "publicURL": "https://csnode.jclouds.org/v2.0/",
+                        "region": "region-a.geo-1",
+                        "id": "2.0",
+                        "versionId":"2.0",
+                        "list": "https://csnode.jclouds.org/extension"
+                    }
+                ]
+            },
+            {
+                "name": "Image Management",
+                "type": "image",
+                "endpoints": [
+                    {
+                        "tenantName": "40806637803162",
+                        "publicURL": "https://glance.jclouds.org:9292/v1.0",
+                        "region": "az-1.region-a.geo-1",
+                        "id": "1.0"
+                    }
+                ]
+            },
+    {
+      "name": "Compute",
+      "type": "compute",
+      "endpoints": [
+        {
+          "tenantId": "3456",
+          "publicURL": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/3456",
+          "publicURL2": "https:\/\/az-1.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-1.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "3456",
+          "publicURL": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/3456",
+          "publicURL2": "https:\/\/az-2.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-2.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "3456",
+          "publicURL": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/3456",
+          "publicURL2": "https:\/\/az-3.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-3.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com"
+        }
+      ]
+    },
+    {
+        "type": "network", 
+        "name": "Quantum Service",
+        "endpoints": [{
+            "tenantId": "3456",
+            "adminURL": "https://csnode.jclouds.org:9696/v1.0",
+            "region": "region-a.geo-1",
+            "versionId": "1.0",
+            "publicURL": "https://csnode.jclouds.org:9696/v1.0/tenants/3456",
+            "internalURL": "https://csnode.jclouds.org:9696/v1.0/tenants/3456"
+        }], 
+        "endpoints_links": []
+     }
+  ]
+}
+}

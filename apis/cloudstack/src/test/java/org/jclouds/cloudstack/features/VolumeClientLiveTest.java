@@ -246,7 +246,7 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    static Volume findVolumeWithId(final CloudStackClient client, final String id) {
       for (Volume v: client.getVolumeClient().listVolumes())
-         if (v.getId()==id) return v;
+         if (v.getId().equals(id)) return v;
       throw new NoSuchElementException("no volume with id "+id);
    }
 

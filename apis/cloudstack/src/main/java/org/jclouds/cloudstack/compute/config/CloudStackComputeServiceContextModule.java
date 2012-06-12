@@ -41,6 +41,7 @@ import org.jclouds.cloudstack.compute.strategy.AdvancedNetworkOptionsConverter;
 import org.jclouds.cloudstack.compute.strategy.BasicNetworkOptionsConverter;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkType;
@@ -51,8 +52,11 @@ import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.GuestOSClient;
+import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
+import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.ZoneIdToZone;
+import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
@@ -108,6 +112,8 @@ public class CloudStackComputeServiceContextModule extends
       install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
       bind(new TypeLiteral<CacheLoader<String, Set<IPForwardingRule>>>() {
       }).to(GetIPForwardingRulesByVirtualMachine.class);
+      bind(new TypeLiteral<CacheLoader<String, Set<FirewallRule>>>() {
+      }).to(GetFirewallRulesByVirtualMachine.class);
       bind(new TypeLiteral<CacheLoader<String, Zone>>() {
       }).to(ZoneIdToZone.class);
       bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {
@@ -184,24 +190,12 @@ public class CloudStackComputeServiceContextModule extends
       return CacheBuilder.newBuilder().build(getIPForwardingRules);
    }
 
+
+   @Provides
    @Singleton
-   public static class GetIPForwardingRulesByVirtualMachine extends CacheLoader<String, Set<IPForwardingRule>> {
-      private final CloudStackClient client;
-
-      @Inject
-      public GetIPForwardingRulesByVirtualMachine(CloudStackClient client) {
-         this.client = checkNotNull(client, "client");
-      }
-
-      /**
-       * @throws ResourceNotFoundException
-       *            when there is no ip forwarding rule available for the VM
-       */
-      @Override
-      public Set<IPForwardingRule> load(String input) {
-         Set<IPForwardingRule> rules = client.getNATClient().getIPForwardingRulesForVirtualMachine(input);
-         return rules != null ? rules : ImmutableSet.<IPForwardingRule>of();
-      }
+   protected LoadingCache<String, Set<FirewallRule>> getFirewallRulesByVirtualMachine(
+      CacheLoader<String, Set<FirewallRule>> getFirewallRules) {
+      return CacheBuilder.newBuilder().build(getFirewallRules);
    }
 
    @Provides

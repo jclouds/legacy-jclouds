@@ -29,7 +29,7 @@ import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Credentials;
@@ -88,6 +88,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                .instanceId("i-911444f0")
                .imageId("ami-63be790a")
                .instanceState(InstanceState.RUNNING)
+               .rawState("running")
                .privateDnsName("ip-10-212-81-7.ec2.internal")
                .dnsName("ec2-174-129-173-155.compute-1.amazonaws.com")
                .keyName("jclouds#zkclustertest#23")
@@ -113,6 +114,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                         .instanceId("i-931444f2")
                         .imageId("ami-63be790a")
                         .instanceState(InstanceState.RUNNING)
+                        .rawState("running")
                         .privateDnsName("ip-10-212-185-8.ec2.internal")
                         .dnsName("ec2-50-19-207-248.compute-1.amazonaws.com")
                         .keyName("jclouds#zkclustertest#23")
@@ -135,7 +137,8 @@ public class AWSRunningInstanceToNodeMetadataTest {
       assertEquals(
             parser.apply(Iterables.get(contents, 0)).toString(),
             new NodeMetadataBuilder()
-                  .state(NodeState.RUNNING)
+                  .status(Status.RUNNING)
+                  .backendStatus("running")
                   .group("zkclustertest")
                   .name("foo")
                   .hostname("ip-10-212-81-7")
@@ -147,9 +150,10 @@ public class AWSRunningInstanceToNodeMetadataTest {
                   .tags(ImmutableSet.of("Empty"))
                   .userMetadata(ImmutableMap.of("Name", "foo")).build().toString());
       assertEquals(
-              parser.apply(Iterables.get(contents, 1)), 
+              parser.apply(Iterables.get(contents, 1)).toString(), 
               new NodeMetadataBuilder()
-                  .state(NodeState.RUNNING)
+                  .status(Status.RUNNING)
+                  .backendStatus("running")
                   .group("zkclustertest")
                   .hostname("ip-10-212-185-8")
                   .privateAddresses(ImmutableSet.of("10.212.185.8"))
@@ -157,13 +161,13 @@ public class AWSRunningInstanceToNodeMetadataTest {
                   .imageId("us-east-1/ami-63be790a")
                   .id("us-east-1/i-931444f2")
                   .providerId("i-931444f2")
-                  .build());
+                  .build().toString());
    }
 
    protected AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Set<org.jclouds.compute.domain.Image> images,
             Map<String, Credentials> credentialStore) {
-      Map<InstanceState, NodeState> instanceToNodeState = EC2ComputeServiceDependenciesModule.instanceToNodeState;
+      Map<InstanceState, Status> instanceToNodeStatus = EC2ComputeServiceDependenciesModule.toPortableNodeStatus;
 
       final Map<RegionAndName, ? extends Image> backing = ImagesToRegionAndIdMap.imagesToMap(images);
 
@@ -177,12 +181,12 @@ public class AWSRunningInstanceToNodeMetadataTest {
       });
             
           
-      return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
+      return createNodeParser(hardware, locations, credentialStore, instanceToNodeStatus, instanceToImage);
    }
 
    private AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Map<String, Credentials> credentialStore,
-            Map<InstanceState, NodeState> instanceToNodeState, LoadingCache<RegionAndName, ? extends Image> instanceToImage) {
+            Map<InstanceState, Status> instanceToNodeStatus, LoadingCache<RegionAndName, ? extends Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -209,7 +213,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
       }).getInstance(GroupNamingConvention.Factory.class);
 
-      AWSRunningInstanceToNodeMetadata parser = new AWSRunningInstanceToNodeMetadata(instanceToNodeState,
+      AWSRunningInstanceToNodeMetadata parser = new AWSRunningInstanceToNodeMetadata(instanceToNodeStatus,
             credentialStore, Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(instanceToImage),
             locationSupplier, hardwareSupplier, namingConvention);
       return parser;

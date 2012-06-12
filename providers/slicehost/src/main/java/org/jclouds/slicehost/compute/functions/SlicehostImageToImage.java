@@ -46,6 +46,7 @@ public class SlicehostImageToImage implements Function<org.jclouds.slicehost.dom
       builder.name(from.getName());
       builder.description(from.getName());
       builder.operatingSystem(imageToOs.apply(from));
+      builder.status(Image.Status.AVAILABLE);
       Image image = builder.build();
       return image;
    }

@@ -28,7 +28,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.scriptbuilder.InitScript;
@@ -51,7 +51,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testWithoutInitThrowsIllegalStateException() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
                LoginCredentials.builder().user("tester").password("notalot").build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -67,7 +67,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
 
    public void testDefault() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
             LoginCredentials.builder().user("tester").password("notalot").build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -108,7 +108,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
 
    public void testWithSudoPassword() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
             LoginCredentials.builder().user("tester").password("notalot").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
@@ -150,7 +150,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
 
    public void testNotRoot() {
       Statement command = exec("doFoo");
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
             LoginCredentials.builder().user("tester").password("notalot").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);

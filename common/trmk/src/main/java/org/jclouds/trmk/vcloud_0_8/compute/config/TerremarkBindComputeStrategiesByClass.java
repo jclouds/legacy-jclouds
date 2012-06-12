@@ -22,6 +22,7 @@ import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
@@ -30,6 +31,7 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.StartVAppWithGroupEncodedIntoName;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.TerremarkVCloudDestroyNodeStrategy;
+import org.jclouds.trmk.vcloud_0_8.compute.strategy.TerremarkVCloudGetImageStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.TerremarkVCloudGetNodeMetadataStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.TerremarkVCloudLifeCycleStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.TerremarkVCloudListNodesStrategy;
@@ -47,6 +49,11 @@ public class TerremarkBindComputeStrategiesByClass extends BindComputeStrategies
    @Override
    protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
       return TerremarkVCloudGetNodeMetadataStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends GetImageStrategy> defineGetImageStrategy() {
+      return TerremarkVCloudGetImageStrategy.class;
    }
 
    @Override

@@ -27,9 +27,9 @@ import java.util.Set;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -88,7 +88,7 @@ public class NodeToNodeMetadataTest {
             .location(location)
             .userMetadata(ImmutableMap.of("Name", "foo"))
             .tags(ImmutableSet.of("vanilla"))
-            .state(NodeState.RUNNING)
+            .status(Status.RUNNING)
             .operatingSystem(
                   OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")
                         .build())

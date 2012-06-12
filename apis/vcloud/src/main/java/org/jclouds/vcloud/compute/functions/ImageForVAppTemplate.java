@@ -20,6 +20,8 @@ package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,6 +33,7 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Envelope;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -45,12 +48,15 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
+   private final Map<Status, Image.Status> toPortableImageStatus;
    private final Function<VAppTemplate, Envelope> templateToEnvelope;
    private final FindLocationForResource findLocationForResource;
 
+
    @Inject
-   protected ImageForVAppTemplate(Function<VAppTemplate, Envelope> templateToEnvelope,
+   protected ImageForVAppTemplate(Map<Status, Image.Status> toPortableImageStatus, Function<VAppTemplate, Envelope> templateToEnvelope,
             FindLocationForResource findLocationForResource) {
+      this.toPortableImageStatus = checkNotNull(toPortableImageStatus, "toPortableImageStatus");
       this.templateToEnvelope = checkNotNull(templateToEnvelope, "templateToEnvelope");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
    }
@@ -71,6 +77,7 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       }
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       builder.operatingSystem(CIMOperatingSystem.toComputeOs(ovf));
+      builder.status(toPortableImageStatus.get(from.getStatus()));
       return builder.build();
    }
 

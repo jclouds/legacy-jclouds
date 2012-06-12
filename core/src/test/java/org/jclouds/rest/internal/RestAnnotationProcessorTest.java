@@ -223,6 +223,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @Delegate
       public Optional<Callee> getOptionalCallee(@EndpointParam URI endpoint);
+
+      @Delegate
+      @Path("/testing/testing/{wibble}")
+      public Callee getCalleeWithPath(@EndpointParam URI endpoint, @PathParam("wibble") String wibble);
    }
 
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
@@ -253,6 +257,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @Delegate
       public Optional<AsyncCallee> getOptionalCallee(@EndpointParam URI endpoint);
+
+      @Delegate
+      @Path("/testing/testing/{wibble}")
+      public AsyncCallee getCalleeWithPath(@EndpointParam URI endpoint, @PathParam("wibble") String wibble);
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException,
@@ -328,6 +336,30 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
 
+   }
+
+   public void testAsyncDelegateWithPathParamIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
+         ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
+
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/testing/testing/thepathparam/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      });
+
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      child.getInstance(AsyncCaller.class).getCalleeWithPath(URI.create("http://howdyboys"), "thepathparam").onePath("foo").get();
+
+      assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPathOptionalPresent()
@@ -512,6 +544,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       public void varargs(HttpRequestOptions... options);
 
       @POST
+      public void varargsWithReq(String required, HttpRequestOptions... options);
+
+      @POST
       public void post(HttpRequestOptions options);
 
       @POST
@@ -530,6 +565,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "", "application/octet-stream", false);
    }
+   
+   private class TestHttpRequestOptions extends BaseHttpRequestOptions {
+      TestHttpRequestOptions payload(String payload) { this.payload = payload; return this; }
+      TestHttpRequestOptions headerParams(Multimap<String, String> headers) { this.headers.putAll(headers); return this; }
+      TestHttpRequestOptions queryParams(Multimap<String, String> params) { this.queryParameters.putAll(params); return this; }
+   }
 
    public void testHttpRequestOptionsPayloadParam() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPayloadParamVarargs.class.getMethod("post", Payload.class);
@@ -541,48 +582,51 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public void testHttpRequestWithOnlyContentType() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPayloadParamVarargs.class.getMethod("post", HttpRequestOptions.class);
-      verifyTestPostOptions(method);
-   }
-
-   public void testPayloadParamVarargs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPayloadParamVarargs.class.getMethod("varargs", Array.newInstance(HttpRequestOptions.class, 0)
-            .getClass());
-      verifyTestPostOptions(method);
-   }
-
-   private void verifyTestPostOptions(Method method) throws IOException {
-      HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method, new HttpRequestOptions() {
-
-         public Multimap<String, String> buildMatrixParameters() {
-            return LinkedHashMultimap.create();
-         }
-
-         public String buildPathSuffix() {
-            return null;
-         }
-
-         public Multimap<String, String> buildQueryParameters() {
-            return LinkedHashMultimap.create();
-         }
-
-         public Multimap<String, String> buildFormParameters() {
-            return LinkedHashMultimap.create();
-         }
-
-         public Multimap<String, String> buildRequestHeaders() {
-            return LinkedHashMultimap.create();
-         }
-
-         public String buildStringPayload() {
-            return "fooya";
-         }
-
-      });
+      HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method, new TestHttpRequestOptions().payload("fooya"));
       assertRequestLineEquals(request, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "fooya", "application/unknown", false);
    }
 
+   public void testHeaderAndQueryVarargs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPayloadParamVarargs.class.getMethod("varargs", Array.newInstance(HttpRequestOptions.class, 0)
+            .getClass());
+      HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method,
+            new TestHttpRequestOptions().payload("fooya"),
+            new TestHttpRequestOptions().headerParams(ImmutableMultimap.of("X-header-1", "fooya")),
+            new TestHttpRequestOptions().queryParams(ImmutableMultimap.of("key", "value")));
+      assertRequestLineEquals(request, "POST http://localhost:9999?key=value HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "X-header-1: fooya\n");
+      assertPayloadEquals(request, "fooya", "application/unknown", false);
+   }
+
+   public void testHeaderAndQueryVarargsPlusReq() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPayloadParamVarargs.class.getMethod("varargsWithReq", String.class, Array.newInstance(HttpRequestOptions.class, 0)
+            .getClass());
+      HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method, "required param",
+            new Object[]{ new TestHttpRequestOptions().payload("fooya"),
+            new TestHttpRequestOptions().headerParams(ImmutableMultimap.of("X-header-1", "fooya")),
+            new TestHttpRequestOptions().queryParams(ImmutableMultimap.of("key", "value"))});
+      assertRequestLineEquals(request, "POST http://localhost:9999?key=value HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "X-header-1: fooya\n");
+      assertPayloadEquals(request, "fooya", "application/unknown", false);
+   }
+
+   public void testDuplicateHeaderAndQueryVarargs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPayloadParamVarargs.class.getMethod("varargs", Array.newInstance(HttpRequestOptions.class, 0)
+            .getClass());
+      HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method,
+            new TestHttpRequestOptions().queryParams(ImmutableMultimap.of("key", "value")),
+            new TestHttpRequestOptions().payload("fooya"),
+            new TestHttpRequestOptions().headerParams(ImmutableMultimap.of("X-header-1", "fooya")),
+            new TestHttpRequestOptions().queryParams(ImmutableMultimap.of("key", "anothervalue")),
+            new TestHttpRequestOptions().headerParams(ImmutableMultimap.of("X-header-1", "fooya again!")),
+            new TestHttpRequestOptions().payload("last_payload_wins!"));
+      assertRequestLineEquals(request, "POST http://localhost:9999?key=value&key=anothervalue HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "X-header-1: fooya\nX-header-1: fooya again!\n");
+      assertPayloadEquals(request, "last_payload_wins!", "application/unknown", false);
+   }
+   
    public class TestCustomMethod {
       @FOO
       public void foo() {

@@ -35,14 +35,13 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates;
 
 import com.google.common.base.Function;
@@ -58,19 +57,19 @@ public class VmToNodeMetadata implements Function<Vm, NodeMetadata> {
 
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final Function<Vm, Hardware> hardwareForVm;
-   protected final Map<Status, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus;
    protected final Map<String, Credentials> credentialStore;
    protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   protected VmToNodeMetadata(Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
+   protected VmToNodeMetadata(Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus, Map<String, Credentials> credentialStore,
          FindLocationForResource findLocationForResourceInVDC, Function<Vm, Hardware> hardwareForVm,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.hardwareForVm = checkNotNull(hardwareForVm, "hardwareForVm");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
-      this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
+      this.vAppStatusToNodeStatus = checkNotNull(vAppStatusToNodeStatus, "vAppStatusToNodeStatus");
    }
 
    public NodeMetadata apply(Vm from) {
@@ -84,7 +83,7 @@ public class VmToNodeMetadata implements Function<Vm, NodeMetadata> {
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.operatingSystem(toComputeOs(from));
       builder.hardware(hardwareForVm.apply(from));
-      builder.state(vAppStatusToNodeState.get(from.getStatus()));
+      builder.status(vAppStatusToNodeStatus.get(from.getStatus()));
       Set<String> addresses = getIpsFromVm(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));

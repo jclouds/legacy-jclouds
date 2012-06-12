@@ -39,6 +39,9 @@
         <test.synaptic-storage.build-version />
         <test.synaptic-storage.identity>FIXME_IDENTITY</test.synaptic-storage.identity>
         <test.synaptic-storage.credential>FIXME_CREDENTIAL</test.synaptic-storage.credential>
+
+        <jclouds.osgi.export>org.jclouds.synaptic.storage*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -116,21 +119,5 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.synaptic.storage*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

@@ -39,9 +39,17 @@
     <test.bluelock-vcloud-zone01.build-version>1.5.0.464915</test.bluelock-vcloud-zone01.build-version>
     <test.bluelock-vcloud-zone01.identity>FIXME_IDENTITY</test.bluelock-vcloud-zone01.identity>
     <test.bluelock-vcloud-zone01.credential>FIXME_CREDENTIAL</test.bluelock-vcloud-zone01.credential>
-    <test.bluelock-vcloud-zone01.image-id />
-    <test.bluelock-vcloud-zone01.image.login-user />
-    <test.bluelock-vcloud-zone01.image.authenticate-sudo />
+    <test.bluelock-vcloud-zone01.image-id></test.bluelock-vcloud-zone01.image-id>
+    <test.bluelock-vcloud-zone01.image.login-user></test.bluelock-vcloud-zone01.image.login-user>
+    <test.bluelock-vcloud-zone01.image.authenticate-sudo></test.bluelock-vcloud-zone01.image.authenticate-sudo>
+
+    <jclouds.osgi.export>org.jclouds.bluelock.vcloud.zone01*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -120,26 +128,6 @@
     </profile>
   </profiles>
 
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.bluelock.vcloud.zone01*;version="${project.version}"</Export-Package>
-            <Import-Package>
-              org.jclouds.compute.internal;version="${project.version}",
-              org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds*;version="${project.version}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

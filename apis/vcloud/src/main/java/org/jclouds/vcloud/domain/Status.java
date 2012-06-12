@@ -137,7 +137,19 @@ public enum Status {
     * 
     * @since vcloud api 1.0
     */
-   QUARANTINE_EXPIRED;
+   QUARANTINE_EXPIRED, 
+   /**
+    * The {@link VAppTemplate} rejected
+    * 
+    * @since vcloud api 1.0
+    */
+   REJECTED, 
+   /**
+    * The {@link VAppTemplate} transfer timeout
+    * 
+    * @since vcloud api 1.0
+    */
+   TRANSFER_TIMEOUT;
 
    public String value() {
       switch (this) {
@@ -173,6 +185,10 @@ public enum Status {
             return "14";
          case QUARANTINE_EXPIRED:
             return "15";
+         case REJECTED:
+            return "16";
+         case TRANSFER_TIMEOUT:
+            return "17";
          default:
             return "7";
       }
@@ -220,6 +236,10 @@ public enum Status {
             return QUARANTINED;
          case 15:
             return QUARANTINE_EXPIRED;
+         case 16:
+            return REJECTED;
+         case 17:
+            return TRANSFER_TIMEOUT;
          default:
             return UNRECOGNIZED;
       }

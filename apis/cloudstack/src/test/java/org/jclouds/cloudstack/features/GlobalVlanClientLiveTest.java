@@ -56,11 +56,15 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private VlanIPRange range;
 
+   @Test
    public void testListVlanIPRanges() throws Exception {
+      skipIfNotGlobalAdmin();
+
       Set<VlanIPRange> response = globalAdminClient.getVlanClient().listVlanIPRanges();
       assert null != response;
       long rangeCount = response.size();
       assertTrue(rangeCount >= 0);
+
       for (VlanIPRange range : response) {
          VlanIPRange newDetails = Iterables.getOnlyElement(globalAdminClient.getVlanClient().listVlanIPRanges(
             ListVlanIPRangesOptions.Builder.id(range.getId())));
@@ -80,7 +84,10 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
    public void testCreateVlanIPRange() {
+      skipIfNotGlobalAdmin();
+
       final Zone zone = Iterables.find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
       final NetworkOffering offering = find(client.getOfferingClient().listNetworkOfferings(),
          NetworkOfferingPredicates.supportsGuestVirtualNetworks());
@@ -90,7 +97,7 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
          new Predicate<Network>() {
             @Override
             public boolean apply(Network network) {
-               return network.getNetworkOfferingId() == offering.getId();
+               return network.getNetworkOfferingId().equals(offering.getId());
             }
          });
 

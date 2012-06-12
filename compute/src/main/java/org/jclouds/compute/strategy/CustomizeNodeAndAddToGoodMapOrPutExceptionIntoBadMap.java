@@ -17,11 +17,12 @@
  * under the License.
  */
 package org.jclouds.compute.strategy;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getRootCause;
 import static java.lang.String.format;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,7 @@ import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
@@ -87,7 +88,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
          OpenSocketFinder openSocketFinder, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
@@ -109,7 +110,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
+         @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
          OpenSocketFinder openSocketFinder, Timeouts timeouts,
          Function<TemplateOptions, Statement> templateOptionsToStatement,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
@@ -140,17 +141,17 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
                   } else if (timeWaited < (timeouts.nodeRunning - earlyReturnGrace)) {
                      throw new IllegalStateException(
                            format(
-                                 "node(%s) didn't achieve the state running, so we couldn't customize; aborting prematurely after %d seconds with final state: %s",
-                                 originalId, timeWaited / 1000, node.get().getState()));
+                                 "node(%s) didn't achieve the status running, so we couldn't customize; aborting prematurely after %d seconds with final status: %s",
+                                 originalId, timeWaited / 1000, formatStatus(node.get())));
                   } else {
                      throw new IllegalStateException(
                            format(
-                                 "node(%s) didn't achieve the state running within %d seconds, so we couldn't customize; final state: %s",
-                                 originalId, timeouts.nodeRunning / 1000, node.get().getState()));
+                                 "node(%s) didn't achieve the status running within %d seconds, so we couldn't customize; final status: %s",
+                                 originalId, timeouts.nodeRunning / 1000, formatStatus(node.get())));
                   }
                }
             } catch (IllegalStateException e) {
-               if (node.get().getState() == NodeState.TERMINATED) {
+               if (node.get().getStatus() == Status.TERMINATED) {
                   throw new IllegalStateException(format("node(%s) terminated before we could customize", originalId));
                } else {
                   throw e;

@@ -18,13 +18,17 @@
  */
 package org.jclouds.cloudwatch;
 
-import com.google.common.collect.AbstractIterator;
+import java.util.Iterator;
+import java.util.List;
+
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
+import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 
-import java.util.Iterator;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Iterables;
 
 /**
  * Utilities for using CloudWatch.
@@ -58,10 +62,10 @@ public class CloudWatch {
                   while (true) {
                      if (iterator == null) {
                         lastOptions = ListMetricsOptions.builder()
-                                                        .dimensions(lastOptions.getDimensions())
-                                                        .metricName(lastOptions.getMetricName())
                                                         .namespace(lastOptions.getNamespace())
-                                                        .nextToken(response.getNextToken())
+                                                        .metricName(lastOptions.getMetricName())
+                                                        .dimensions(lastOptions.getDimensions())
+                                                        .nextToken(lastOptions.getNextToken())
                                                         .build();
                         response = metricClient.listMetrics(lastOptions);
                         iterator = response.iterator();
@@ -93,6 +97,23 @@ public class CloudWatch {
    public static Iterable<Metric> listMetrics(CloudWatchClient cloudWatchClient, String region,
             final ListMetricsOptions options) {
       return listMetrics(cloudWatchClient.getMetricClientForRegion(region), options);
+   }
+
+   /**
+    * Pushes metrics to CloudWatch.
+    *
+    * @param cloudWatchClient the {@link CloudWatchClient} to use for the request
+    * @param region the region to put the metrics in
+    * @param metrics the metrics to publish
+    * @param namespace the namespace to publish the metrics in
+    */
+   public static void putMetricData(CloudWatchClient cloudWatchClient, String region, Iterable<MetricDatum> metrics,
+            String namespace) {
+      MetricClient metricClient = cloudWatchClient.getMetricClientForRegion(region);
+
+      for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
+         metricClient.putMetricData(slice, namespace);
+      }
    }
 
 }

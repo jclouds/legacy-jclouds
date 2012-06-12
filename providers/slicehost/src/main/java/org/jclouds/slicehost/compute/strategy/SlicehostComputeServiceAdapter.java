@@ -64,7 +64,6 @@ public class SlicehostComputeServiceAdapter implements ComputeServiceAdapter<Sli
    @Override
    public Iterable<Flavor> listHardwareProfiles() {
       return client.listFlavors();
-
    }
 
    @Override
@@ -88,7 +87,13 @@ public class SlicehostComputeServiceAdapter implements ComputeServiceAdapter<Sli
       int serverId = Integer.parseInt(id);
       return client.getSlice(serverId);
    }
-
+   
+   @Override
+   public Image getImage(String id) {
+      int imageId = Integer.parseInt(id);
+      return client.getImage(imageId);
+   }
+   
    @Override
    public void destroyNode(String id) {
       int serverId = Integer.parseInt(id);

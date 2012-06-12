@@ -194,7 +194,20 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    public Set<OSTemplate> listImages() {
       return client.getServerClient().listTemplates();
    }
+   
+   // cheat until we have a getTemplate command
+   @Override
+   public OSTemplate getImage(final String id) {
+      return Iterables.find(listImages(), new Predicate<OSTemplate>(){
 
+         @Override
+         public boolean apply(OSTemplate input) {
+            return input.getName().equals(id);
+         }
+         
+      }, null);
+   }
+   
    @Override
    public Iterable<ServerDetails> listNodes() {
       return Iterables2.concreteCopy(transformParallel(client.getServerClient().listServers(), new Function<Server, Future<? extends ServerDetails>>() {

@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.domain.Server;
@@ -54,7 +54,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private final Map<ServerState, NodeState> serverStateToNodeState;
+   private final Map<ServerState, Status> serverStateToNodeStatus;
    private final Supplier<Set<? extends Image>> images;
    private final Supplier<Set<? extends Hardware>> hardwares;
    private final Supplier<Set<? extends Location>> locations;
@@ -91,12 +91,12 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    }
 
    @Inject
-   ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState,
+   ServerToNodeMetadata(Map<ServerState, Status> serverStateToNodeStatus,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
          @Memoized Supplier<Set<? extends Location>> locations,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
+      this.serverStateToNodeStatus = checkNotNull(serverStateToNodeStatus, "serverStateToNodeStatus");
       this.images = checkNotNull(images, "images");
       this.hardwares = checkNotNull(hardwares, "hardwares");
       this.locations = checkNotNull(locations, "locations");
@@ -117,7 +117,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       if (image != null)
          builder.operatingSystem(image.getOperatingSystem());
 
-      builder.state(serverStateToNodeState.get(from.getState()));
+      builder.status(serverStateToNodeStatus.get(from.getState()));
       builder.publicAddresses(ImmutableSet.of(from.getIp().getIp()));
       return builder.build();
    }

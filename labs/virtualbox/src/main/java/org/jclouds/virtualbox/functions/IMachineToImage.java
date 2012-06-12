@@ -32,10 +32,12 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
@@ -44,11 +46,13 @@ import com.google.common.base.Supplier;
 @Singleton
 public class IMachineToImage implements Function<IMachine, Image> {
 
+   private final Map<MachineState, Status> toPortableImageStatus;
    private final Supplier<VirtualBoxManager> virtualboxManager;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public IMachineToImage(Supplier<VirtualBoxManager> virtualboxManager, Map<OsFamily, Map<String, String>> osVersionMap) {
+   public IMachineToImage(Map<MachineState, Image.Status> toPortableImageStatus, Supplier<VirtualBoxManager> virtualboxManager, Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.toPortableImageStatus = checkNotNull(toPortableImageStatus, "toPortableImageStatus");
       this.virtualboxManager = checkNotNull(virtualboxManager, "virtualboxManager");
       this.osVersionMap = checkNotNull(osVersionMap, "osVersionMap");
    }
@@ -67,7 +71,7 @@ public class IMachineToImage implements Function<IMachine, Image> {
       return new ImageBuilder()
                .id(from.getName().substring(VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX.length(),
                         from.getName().length())).name(from.getName()).description(from.getDescription())
-               .operatingSystem(os).build();
+               .operatingSystem(os).status(toPortableImageStatus.get(from.getState())).build();
    }
 
 }

@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
@@ -54,10 +54,10 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMetadata> {
 
-   public static final Map<VirtualGuest.State, NodeState> serverStateToNodeState = ImmutableMap
-         .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.HALTED, NodeState.PENDING)
-         .put(VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
-         .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+   public static final Map<VirtualGuest.State, Status> serverStateToNodeStatus = ImmutableMap
+         .<VirtualGuest.State, Status> builder().put(VirtualGuest.State.HALTED, Status.PENDING)
+         .put(VirtualGuest.State.PAUSED, Status.SUSPENDED).put(VirtualGuest.State.RUNNING, Status.RUNNING)
+         .put(VirtualGuest.State.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
    private final FindLocationForVirtualGuest findLocationForVirtualGuest;
    private final GetHardwareForVirtualGuest getHardwareForVirtualGuest;
@@ -94,7 +94,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       if (hardware != null)
          builder.hardware(hardware);
 
-      builder.state(serverStateToNodeState.get(from.getPowerState().getKeyName()));
+      builder.status(serverStateToNodeStatus.get(from.getPowerState().getKeyName()));
 
       // These are null for 'bad' guest orders in the HALTED state.
       if (from.getPrimaryIpAddress() != null)

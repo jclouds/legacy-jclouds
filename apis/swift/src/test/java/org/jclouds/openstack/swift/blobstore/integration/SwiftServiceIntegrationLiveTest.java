@@ -18,7 +18,10 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
+import java.util.Properties;
+
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.annotations.Test;
 
 /**
@@ -26,7 +29,14 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      return props;
+   }
+   
    public SwiftServiceIntegrationLiveTest() {
-      provider = "swift";
+      provider = System.getProperty("test.swift.provider", "swift");
    }
 }

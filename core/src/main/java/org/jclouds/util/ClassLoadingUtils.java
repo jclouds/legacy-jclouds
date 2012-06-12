@@ -63,7 +63,6 @@ public class ClassLoadingUtils {
         URL url = null;
         if (contextClass != null) {
             url = Resources.getResource(contextClass, resourceName);
-
         }
         if (url == null && Thread.currentThread().getContextClassLoader() != null) {
             url = Thread.currentThread().getContextClassLoader().getResource(resourceName);

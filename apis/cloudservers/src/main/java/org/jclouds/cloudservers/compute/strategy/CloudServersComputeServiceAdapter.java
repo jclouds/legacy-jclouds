@@ -94,6 +94,12 @@ public class CloudServersComputeServiceAdapter implements ComputeServiceAdapter<
    public Server getNode(String id) {
       int serverId = Integer.parseInt(id);
       return client.getServer(serverId);
+   }   
+   
+   @Override
+   public Image getImage(String id) {
+      int imageId = Integer.parseInt(id);
+      return client.getImage(imageId);
    }
 
    @Override

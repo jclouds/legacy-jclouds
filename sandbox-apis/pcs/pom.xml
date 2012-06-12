@@ -50,6 +50,9 @@
         <test.pcs.build-version></test.pcs.build-version>
         <test.pcs.identity>FIXME</test.pcs.identity>
         <test.pcs.credential>FIXME</test.pcs.credential>
+
+        <jclouds.osgi.export>org.jclouds.mezeo.pcs*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
     <dependencies>
         <dependency>
@@ -120,21 +123,5 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.mezeo.pcs*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     
 </project>

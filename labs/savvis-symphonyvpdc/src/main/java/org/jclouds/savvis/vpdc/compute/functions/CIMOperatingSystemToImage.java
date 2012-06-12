@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.Image.Status;
 
 import com.google.common.base.Function;
 
@@ -39,6 +40,7 @@ public class CIMOperatingSystemToImage implements Function<CIMOperatingSystem, I
       builder.name(from.getName());
       builder.description(from.getDescription());
       builder.operatingSystem(from);
+      builder.status(Status.AVAILABLE);
       return builder.build();
    }
 

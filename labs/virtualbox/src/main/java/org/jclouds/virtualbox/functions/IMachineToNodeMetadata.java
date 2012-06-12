@@ -19,18 +19,18 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -58,10 +58,12 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    
+   private final Map<MachineState, Status> toPortableNodeStatus;
    private final MachineUtils machineUtils;
 
    @Inject
-   public IMachineToNodeMetadata(MachineUtils machineUtils) {
+   public IMachineToNodeMetadata(Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, MachineUtils machineUtils) {
+      this.toPortableNodeStatus = toPortableNodeStatus;
       this.machineUtils = machineUtils;
    }
    
@@ -90,10 +92,10 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       nodeMetadataBuilder.hostname(vm.getName());
 
       MachineState vmState = vm.getState();
-      NodeState nodeState = machineToNodeState.get(vmState);
+      NodeMetadata.Status nodeState = toPortableNodeStatus.get(vmState);
       if (nodeState == null)
-         nodeState = NodeState.UNRECOGNIZED;
-      nodeMetadataBuilder.state(nodeState);
+         nodeState = Status.UNRECOGNIZED;
+      nodeMetadataBuilder.status(nodeState);
 
       /*
       // nat adapter

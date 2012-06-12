@@ -39,6 +39,9 @@
     <test.s3.build-version />
     <test.s3.identity>${test.aws.identity}</test.s3.identity>
     <test.s3.credential>${test.aws.credential}</test.s3.credential>
+
+    <jclouds.osgi.export>org.jclouds.s3*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -120,22 +123,6 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.s3*;version="${project.version}"</Export-Package>
-            <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

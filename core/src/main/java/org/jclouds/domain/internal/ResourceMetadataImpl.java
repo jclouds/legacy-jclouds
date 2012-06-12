@@ -18,6 +18,7 @@
  */
 package org.jclouds.domain.internal;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
@@ -28,6 +29,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Maps;
 
 /**
@@ -110,52 +113,29 @@ public abstract class ResourceMetadataImpl<T extends Enum<T>> implements Resourc
    }
 
    @Override
-   public String toString() {
-      return "[type=" + getType() + ", providerId=" + providerId + ", name=" + name + ", location=" + location
-            + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      ResourceMetadataImpl<?> that = ResourceMetadataImpl.class.cast(o);
+      return equal(this.getType(), that.getType()) && equal(this.providerId, that.providerId)
+               && equal(this.name, that.name) && equal(this.location, that.location) && equal(this.uri, that.uri);
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((providerId == null) ? 0 : providerId.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-      return result;
+      return Objects.hashCode(getType(), providerId, name, location, uri);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ResourceMetadataImpl<?> other = (ResourceMetadataImpl<?>) obj;
-      if (providerId == null) {
-         if (other.providerId != null)
-            return false;
-      } else if (!providerId.equals(other.providerId))
-         return false;
-      if (location == null) {
-         if (other.location != null)
-            return false;
-      } else if (!location.equals(other.location))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (uri == null) {
-         if (other.uri != null)
-            return false;
-      } else if (!uri.equals(other.uri))
-         return false;
-      return true;
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("type", getType()).add("providerId", providerId).add("name", name).add(
+               "location", location).add("uri", uri).add("userMetadata", userMetadata);
    }
 
 }

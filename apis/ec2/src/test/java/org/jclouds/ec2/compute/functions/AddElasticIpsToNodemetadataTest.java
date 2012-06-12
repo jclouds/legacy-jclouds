@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.testng.annotations.Test;
 
@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", singleThreaded = true, testName = "AddElasticIpsToNodemetadataTest")
 public class AddElasticIpsToNodemetadataTest {
 
-   NodeMetadata node = new NodeMetadataBuilder().state(NodeState.RUNNING).group("zkclustertest").name("foo").hostname(
+   NodeMetadata node = new NodeMetadataBuilder().status(Status.RUNNING).group("zkclustertest").name("foo").hostname(
             "ip-10-212-81-7").privateAddresses(ImmutableSet.of("10.212.81.7")).publicAddresses(
             ImmutableSet.of("174.129.173.155")).imageId("us-east-1/ami-63be790a").id("us-east-1/i-911444f0")
             .providerId("i-911444f0").tags(ImmutableSet.of("Empty")).userMetadata(ImmutableMap.of("Name", "foo"))

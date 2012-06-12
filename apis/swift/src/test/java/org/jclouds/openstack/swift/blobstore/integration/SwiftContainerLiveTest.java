@@ -20,8 +20,10 @@ package org.jclouds.openstack.swift.blobstore.integration;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Properties;
 
 import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.annotations.Test;
 
 /**
@@ -29,8 +31,15 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "SwiftContainerLiveTest" )
 public class SwiftContainerLiveTest extends BaseContainerLiveTest {
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      return props;
+   }
+   
    public SwiftContainerLiveTest() {
-      provider = "swift";
+      provider = System.getProperty("test.swift.provider", "swift");
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.jclouds.compute.internal;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -27,8 +26,12 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
@@ -61,9 +64,9 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
@@ -71,6 +74,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -118,6 +122,7 @@ public class BaseComputeService implements ComputeService {
    private final Supplier<Set<? extends Image>> images;
    private final Supplier<Set<? extends Hardware>> hardwareProfiles;
    private final Supplier<Set<? extends Location>> locations;
+   private final GetImageStrategy getImageStrategy;
    private final ListNodesStrategy listNodesStrategy;
    private final GetNodeMetadataStrategy getNodeMetadataStrategy;
    private final CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy;
@@ -140,26 +145,29 @@ public class BaseComputeService implements ComputeService {
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
-         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
-         RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
-         Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-         Optional<ImageExtension> imageExtension) {
+            @Memoized Supplier<Set<? extends Image>> images,
+            @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetImageStrategy getImageStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
+            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
+            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy resumeNodeStrategy,
+            SuspendNodeStrategy suspendNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider,
+            @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_TERMINATED) Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+            @Named(TIMEOUT_NODE_SUSPENDED) Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+            RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
+            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Optional<ImageExtension> imageExtension) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
       this.hardwareProfiles = checkNotNull(hardwareProfiles, "hardwareProfiles");
       this.locations = checkNotNull(locations, "locations");
-      this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
       this.getNodeMetadataStrategy = checkNotNull(getNodeMetadataStrategy, "getNodeMetadataStrategy");
+      this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
+      this.getImageStrategy = checkNotNull(getImageStrategy, "getImageStrategy");
       this.runNodesAndAddToSetStrategy = checkNotNull(runNodesAndAddToSetStrategy, "runNodesAndAddToSetStrategy");
       this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
       this.resumeNodeStrategy = checkNotNull(resumeNodeStrategy, "resumeNodeStrategy");
@@ -296,7 +304,7 @@ public class BaseComputeService implements ComputeService {
             }
          }
 
-      }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
+      }, timeouts.nodeTerminated, 1000, TimeUnit.MILLISECONDS);
       
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node));
       if (successful)
@@ -387,6 +395,15 @@ public class BaseComputeService implements ComputeService {
    public NodeMetadata getNodeMetadata(String id) {
       checkNotNull(id, "id");
       return getNodeMetadataStrategy.getNode(id);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Image getImage(String id) {
+      checkNotNull(id, "id");
+      return getImageStrategy.getImage(id);
    }
 
    /**
@@ -576,9 +593,9 @@ public class BaseComputeService implements ComputeService {
       NodeMetadata node = this.getNodeMetadata(id);
       if (node == null)
          throw new NoSuchElementException(id);
-      if (node.getState() != NodeState.RUNNING)
+      if (node.getStatus() != Status.RUNNING)
          throw new IllegalStateException("node " + id
-               + " needs to be running before executing a script on it. current state: " + node.getState());
+               + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);
       node = updateNodeWithCredentialsIfPresent(node, options);
       ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
@@ -595,9 +612,9 @@ public class BaseComputeService implements ComputeService {
       NodeMetadata node = this.getNodeMetadata(id);
       if (node == null)
          throw new NoSuchElementException(id);
-      if (node.getState() != NodeState.RUNNING)
+      if (node.getStatus() != Status.RUNNING)
          throw new IllegalStateException("node " + id
-               + " needs to be running before executing a script on it. current state: " + node.getState());
+               + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);
       final NodeMetadata node1 = updateNodeWithCredentialsIfPresent(node, options);
       ListenableFuture<ExecResponse> response = runScriptOnNodeFactory.submit(node1, runScript, options);

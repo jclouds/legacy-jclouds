@@ -21,6 +21,7 @@ package org.jclouds.location.suppliers;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.suppliers.fromconfig.ZoneIdToURIFromConfigurationOrDefaultToProvider;
 
 import com.google.common.base.Supplier;
@@ -41,10 +42,10 @@ public interface ZoneIdToURISupplier extends Supplier<Map<String, Supplier<URI>>
        *           type of the api, according to the provider. ex. {@code compute} {@code
        *           object-store}
        * @param apiVersion
-       *           version of the api
+       *           version of the api, or null if not present
        * @return regions mapped to default uri
        */
       ZoneIdToURISupplier createForApiTypeAndVersion(@Assisted("apiType") String apiType,
-               @Assisted("apiVersion") String apiVersion);
+               @Nullable @Assisted("apiVersion") String apiVersion);
    }
 }

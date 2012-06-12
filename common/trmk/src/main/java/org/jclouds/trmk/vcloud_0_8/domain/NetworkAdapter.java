@@ -18,10 +18,52 @@
  */
 package org.jclouds.trmk.vcloud_0_8.domain;
 
+import static com.google.common.base.Objects.equal;
+
+import com.google.common.base.Objects;
+
 /**
  * @author Seshu Pasam
  */
 public class NetworkAdapter implements Comparable<NetworkAdapter> {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return builder().fromNetworkAdapter(this);
+   }
+
+   public static class Builder {
+      private String macAddress;
+      private String name;
+      private Subnet subnet;
+
+      public Builder macAddress(String macAddress) {
+         this.macAddress = macAddress;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder subnet(Subnet subnet) {
+         this.subnet = subnet;
+         return this;
+      }
+
+      public NetworkAdapter build() {
+         return new NetworkAdapter(macAddress, name, subnet);
+      }
+
+      public Builder fromNetworkAdapter(NetworkAdapter in) {
+         return macAddress(in.getMacAddress()).name(in.getName()).subnet(in.getSubnet());
+      }
+
+   }
+
    private final String macAddress;
    private final String name;
    private final Subnet subnet;
@@ -49,44 +91,23 @@ public class NetworkAdapter implements Comparable<NetworkAdapter> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((macAddress== null) ? 0 : macAddress.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      NetworkAdapter that = NetworkAdapter.class.cast(o);
+      return equal(this.macAddress, that.macAddress) && equal(this.name, that.name) && equal(this.subnet, that.subnet);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NetworkAdapter other = (NetworkAdapter) obj;
-      if (macAddress == null) {
-         if (other.macAddress != null)
-            return false;
-      } else if (!macAddress.equals(other.macAddress))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (subnet == null) {
-         if (other.subnet != null)
-            return false;
-      } else if (!subnet.equals(other.subnet))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(macAddress, name, subnet);
    }
 
    @Override
    public String toString() {
-      return "[MAC address=" + macAddress + ", name=" + name + ", subnet=" + subnet + "]";
+      return Objects.toStringHelper("").add("macAddress", macAddress).add("name", name).add("subnet", subnet)
+               .toString();
    }
 }

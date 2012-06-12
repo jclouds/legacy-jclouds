@@ -36,16 +36,19 @@
     <properties>
         <test.aws-elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.aws-elb.endpoint>
         <test.aws-elb.api-version>2010-07-01</test.aws-elb.api-version>
-        <test.aws-elb.build-version />
+        <test.aws-elb.build-version></test.aws-elb.build-version>
         <test.aws-elb.identity>${test.aws.identity}</test.aws-elb.identity>
         <test.aws-elb.credential>${test.aws.credential}</test.aws-elb.credential>
         <test.aws-elb.compute.provider>aws-ec2</test.aws-elb.compute.provider>
         <test.aws-elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-elb.compute.endpoint>
         <test.aws-elb.compute.api-version>2010-06-15</test.aws-elb.compute.api-version>
-        <test.aws-elb.compute.build-version />
+        <test.aws-elb.compute.build-version></test.aws-elb.compute.build-version>
         <test.aws-elb.compute.identity>${test.aws.identity}</test.aws-elb.compute.identity>
         <test.aws-elb.compute.credential>${test.aws.credential}</test.aws-elb.compute.credential>
-        <test.aws-elb.compute.image-id />
+        <test.aws-elb.compute.image-id></test.aws-elb.compute.image-id>
+
+      <jclouds.osgi.export>org.jclouds.aws.elb*;version="${project.version}"</jclouds.osgi.export>
+      <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -141,21 +144,5 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.aws.elb*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

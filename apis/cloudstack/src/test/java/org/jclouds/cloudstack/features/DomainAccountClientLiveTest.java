@@ -38,7 +38,7 @@ public class DomainAccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testEnableDisableAccount() {
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Account testAccount = null;
       try {

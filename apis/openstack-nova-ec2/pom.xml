@@ -36,12 +36,20 @@
   <properties>
     <test.openstack-nova-ec2.endpoint>http://localhost:8773/services/Cloud</test.openstack-nova-ec2.endpoint>
     <test.openstack-nova-ec2.api-version>2010-06-15</test.openstack-nova-ec2.api-version>
-    <test.openstack-nova-ec2.build-version />
+    <test.openstack-nova-ec2.build-version></test.openstack-nova-ec2.build-version>
     <test.openstack-nova-ec2.identity>FIXME_IDENTITY</test.openstack-nova-ec2.identity>
     <test.openstack-nova-ec2.credential>FIXME_CREDENTIAL</test.openstack-nova-ec2.credential>
-    <test.openstack-nova-ec2.image-id />
-    <test.openstack-nova-ec2.image.login-user />
-    <test.openstack-nova-ec2.image.authenticate-sudo />
+    <test.openstack-nova-ec2.image-id></test.openstack-nova-ec2.image-id>
+    <test.openstack-nova-ec2.image.login-user></test.openstack-nova-ec2.image.login-user>
+    <test.openstack-nova-ec2.image.authenticate-sudo></test.openstack-nova-ec2.image.authenticate-sudo>
+
+    <jclouds.osgi.export>org.jclouds.openstack.nova.ec2*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -124,27 +132,6 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.nova.ec2*;version="${project.version}"</Export-Package>
-            <Import-Package>
-              org.jclouds.compute.internal;version="${project.version}",
-              org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds*;version="${project.version}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

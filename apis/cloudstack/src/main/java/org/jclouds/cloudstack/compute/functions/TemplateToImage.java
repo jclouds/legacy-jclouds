@@ -31,6 +31,7 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
@@ -62,6 +63,8 @@ public class TemplateToImage implements Function<Template, Image> {
       if (!template.isCrossZones())
          builder.location(findLocationForTemplate.apply(template));
 
+      //TODO: implement status mapping!!!
+      builder.status(Status.AVAILABLE);
       return builder.build();
    }
 

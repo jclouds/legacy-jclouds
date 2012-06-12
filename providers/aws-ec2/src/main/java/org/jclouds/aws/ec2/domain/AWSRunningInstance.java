@@ -159,7 +159,12 @@ public class AWSRunningInstance extends RunningInstance {
       public Builder instanceState(InstanceState instanceState) {
          return Builder.class.cast(super.instanceState(instanceState));
       }
-
+      
+      @Override
+      public Builder rawState(String rawState) {
+         return Builder.class.cast(super.rawState(rawState));
+      }
+      
       @Override
       public Builder instanceType(String instanceType) {
          return Builder.class.cast(super.instanceType(instanceType));
@@ -248,7 +253,7 @@ public class AWSRunningInstance extends RunningInstance {
       @Override
       public AWSRunningInstance build() {
          return new AWSRunningInstance(region, securityGroupIdToNames, amiLaunchIndex, dnsName, imageId, instanceId,
-               instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
+               instanceState, rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
                spotInstanceRequestId, vpcId, hypervisor, tags);
@@ -271,15 +276,17 @@ public class AWSRunningInstance extends RunningInstance {
    private final Map<String, String> tags;
 
    protected AWSRunningInstance(String region, Map<String, String> securityGroupIdToNames, String amiLaunchIndex,
-         String dnsName, String imageId, String instanceId, InstanceState instanceState, String instanceType,
-         String ipAddress, String kernelId, String keyName, Date launchTime, String availabilityZone,
-         String virtualizationType, String platform, String privateDnsName, String privateIpAddress, String ramdiskId,
-         String reason, RootDeviceType rootDeviceType, String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices,
-         MonitoringState monitoringState, String placementGroup, Iterable<String> productCodes, String subnetId,
-         String spotInstanceRequestId, String vpcId, Hypervisor hypervisor, Map<String, String> tags) {
+            String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
+            String instanceType, String ipAddress, String kernelId, String keyName, Date launchTime,
+            String availabilityZone, String virtualizationType, String platform, String privateDnsName,
+            String privateIpAddress, String ramdiskId, String reason, RootDeviceType rootDeviceType,
+            String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices, MonitoringState monitoringState,
+            String placementGroup, Iterable<String> productCodes, String subnetId, String spotInstanceRequestId,
+            String vpcId, Hypervisor hypervisor, Map<String, String> tags) {
       super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
-            instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType, platform,
-            privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName, ebsBlockDevices);
+               rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
+               platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
+               ebsBlockDevices);
       this.monitoringState = checkNotNull(monitoringState, "monitoringState");
       this.placementGroup = placementGroup;
       this.productCodes = ImmutableSet.copyOf(checkNotNull(productCodes, "productCodes"));
@@ -417,7 +424,7 @@ public class AWSRunningInstance extends RunningInstance {
    @Override
    public String toString() {
       return "[region=" + region + ", availabilityZone=" + availabilityZone + ", instanceId=" + instanceId
-               + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
+               + ", instanceState=" + rawState + ", instanceType=" + instanceType + ", virtualizationType="
                + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
                + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
                + keyName + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="

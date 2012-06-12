@@ -27,6 +27,8 @@ import java.io.InputStream;
 
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest.State;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Type;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
@@ -81,8 +83,9 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
             .region("us-east-1")
             .id("sir-228e6406")
             .spotPrice(0.001f)
-            .type(SpotInstanceRequest.Type.ONE_TIME)
-            .state(SpotInstanceRequest.State.OPEN)
+            .type(Type.ONE_TIME)
+            .state(State.OPEN)
+            .rawState("open")
             .launchSpecification(
                   LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupIdToName("sg-83e1c4ea", "default")
                         .instanceType("m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true)
@@ -94,6 +97,9 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
       addDefaultRegionToHandler(handler);
       SpotInstanceRequest result = factory.create(handler).parse(is);
       assertEquals(result.toString(), expected.toString());
+      assertEquals(result.getState(), State.OPEN);
+      assertEquals(result.getRawState(), "open");
+
    }
 
    public void testApplyInputStream1() {
@@ -106,8 +112,9 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
             .id("sir-1ede0012")
             .instanceId("i-ef308e8e")
             .spotPrice(0.300000f)
-            .type(SpotInstanceRequest.Type.ONE_TIME)
-            .state(SpotInstanceRequest.State.ACTIVE)
+            .type(Type.ONE_TIME)
+            .state(State.ACTIVE)
+            .rawState("active")
             .launchedAvailabilityZone("us-east-1b")
             .launchSpecification(
                   LaunchSpecification.builder().imageId("ami-8e1fece7")
@@ -123,7 +130,9 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
       SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);
       addDefaultRegionToHandler(handler);
       SpotInstanceRequest result = factory.create(handler).parse(is);
-      assertEquals(result, expected);
+      assertEquals(result.toString(), expected.toString());
+      assertEquals(result.getState(), State.ACTIVE);
+      assertEquals(result.getRawState(), "active");
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {

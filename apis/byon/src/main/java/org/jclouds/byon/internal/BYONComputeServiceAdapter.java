@@ -45,7 +45,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-
 /**
  * 
  * @author Adrian Cole
@@ -118,6 +117,11 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       return node != null ? converter.apply(node) : null;
    }
 
+   @Override
+   public Image getImage(final String id) {
+      throw new UnsupportedOperationException();
+   }
+   
    @Override
    public void destroyNode(final String id) {
       throw new UnsupportedOperationException();

@@ -50,6 +50,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.Password;
@@ -64,8 +65,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * defines the connection between the {@link SoftLayerClient} implementation and
@@ -182,7 +183,20 @@ public class SoftLayerComputeServiceAdapter implements
    public Iterable<ProductItem> listImages() {
       return filter(productPackageSupplier.get().getItems(), categoryCode("os"));
    }
+   
+   // cheat until we have a getProductItem command
+   @Override
+   public ProductItem getImage(final String id) {
+      return Iterables.find(listImages(), new Predicate<ProductItem>(){
 
+         @Override
+         public boolean apply(ProductItem input) {
+            return ProductItemToImage.imageId().apply(input).equals(id);
+         }
+         
+      }, null);
+   }
+   
    @Override
    public Iterable<VirtualGuest> listNodes() {
       return Iterables.filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>() {

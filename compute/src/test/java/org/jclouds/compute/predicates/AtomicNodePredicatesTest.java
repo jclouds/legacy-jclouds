@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.LoginCredentials;
 import org.testng.Assert;
@@ -47,7 +47,7 @@ public class AtomicNodePredicatesTest {
 
    @Test
    public void testNoUpdatesAtomicReferenceOnPass() {
-      NodeMetadata running = new NodeMetadataBuilder().id("myid").state(NodeState.RUNNING).build();
+      NodeMetadata running = new NodeMetadataBuilder().id("myid").status(Status.RUNNING).build();
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
       replay(computeService);
@@ -63,7 +63,7 @@ public class AtomicNodePredicatesTest {
 
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckPending() {
-      NodeMetadata pending = new NodeMetadataBuilder().id("myid").state(NodeState.PENDING).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(Status.PENDING).build();
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
       expect(computeService.getNode("myid")).andReturn(pending);
@@ -82,11 +82,11 @@ public class AtomicNodePredicatesTest {
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckPendingAcceptsNewCredentials() {
       LoginCredentials creds = LoginCredentials.builder().user("user").password("password").build();
-      NodeMetadata newNode = new NodeMetadataBuilder().id("myid").state(NodeState.UNRECOGNIZED).credentials(creds).build();
+      NodeMetadata newNode = new NodeMetadataBuilder().id("myid").status(Status.UNRECOGNIZED).credentials(creds).build();
 
       LoginCredentials creds2 = LoginCredentials.builder().user("user").password("password2").build();
 
-      NodeMetadata pending = new NodeMetadataBuilder().id("myid").state(NodeState.PENDING).credentials(creds2).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(Status.PENDING).credentials(creds2).build();
       
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
@@ -104,8 +104,8 @@ public class AtomicNodePredicatesTest {
    
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckRunning() {
-      NodeMetadata running = new NodeMetadataBuilder().id("myid").state(NodeState.RUNNING).build();
-      NodeMetadata pending = new NodeMetadataBuilder().id("myid").state(NodeState.PENDING).build();
+      NodeMetadata running = new NodeMetadataBuilder().id("myid").status(Status.RUNNING).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(Status.PENDING).build();
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
       expect(computeService.getNode("myid")).andReturn(running);
@@ -133,7 +133,8 @@ public class AtomicNodePredicatesTest {
 
    @Test
    public void testNodeRunningReturnsTrueWhenRunning() {
-      expect(node.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
+      expect(node.getStatus()).andReturn(Status.RUNNING).atLeastOnce();
+      expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node);
       replay(computeService);
 
@@ -145,7 +146,8 @@ public class AtomicNodePredicatesTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnTerminated() {
-      expect(node.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
+      expect(node.getStatus()).andReturn(Status.TERMINATED).atLeastOnce();
+      expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node);
       replay(computeService);
 
@@ -157,7 +159,8 @@ public class AtomicNodePredicatesTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnError() {
-      expect(node.getState()).andReturn(NodeState.ERROR).atLeastOnce();
+      expect(node.getStatus()).andReturn(Status.ERROR).atLeastOnce();
+      expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node);
       replay(computeService);
 

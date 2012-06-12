@@ -42,6 +42,14 @@
         <test.eucalyptus-partnercloud-ec2.image-id />
         <!--  corresponds to image manifest and also virt + "-cluster" zone -->
         <test.eucalyptus-partnercloud-ec2.virtualization-type>kvm</test.eucalyptus-partnercloud-ec2.virtualization-type>
+
+        <jclouds.osgi.export>org.jclouds.epc*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -131,27 +139,6 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.epc*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 

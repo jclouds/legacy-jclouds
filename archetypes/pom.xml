@@ -30,6 +30,7 @@
     <artifactId>jclouds-archetypes</artifactId>
     <packaging>pom</packaging>
     <name>jclouds Maven archetypes</name>
+
     <modules>
         <module>rest-client-archetype</module>
         <module>compute-service-archetype</module>

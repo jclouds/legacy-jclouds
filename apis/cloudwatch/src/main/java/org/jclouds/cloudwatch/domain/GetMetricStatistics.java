@@ -18,14 +18,16 @@
  */
 package org.jclouds.cloudwatch.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -39,34 +41,32 @@ import com.google.common.collect.Sets;
 public class GetMetricStatistics {
 
    private final Set<Dimension> dimensions;
-   private final Date endTime;
+   private final Optional<Date> endTime;
    private final String metricName;
    private final String namespace;
    private final int period;
-   private final Date startTime;
+   private final Optional<Date> startTime;
    private final Set<Statistics> statistics;
-   private final Unit unit;
+   private final Optional<Unit> unit;
 
    /**
     * Private constructor to enforce using {@link Builder}.
     */
-   private GetMetricStatistics(@Nullable Set<Dimension> dimensions, Date endTime, String metricName,
-                                        String namespace, int period, Date startTime, Set<Statistics> statistics,
-                                        Unit unit) {
-      this.dimensions = dimensions;
-      this.endTime = endTime;
-      this.metricName = metricName;
-      this.namespace = namespace;
+   protected GetMetricStatistics(Set<Dimension> dimensions, Date endTime, String metricName, String namespace, int period,
+                               Date startTime, Set<Statistics> statistics, Unit unit) {
+      this.dimensions = ImmutableSet.<Dimension>copyOf(checkNotNull(dimensions, "dimensions"));
+      this.endTime = Optional.fromNullable(endTime);
+      this.metricName = checkNotNull(metricName, "metricName");
+      this.namespace = checkNotNull(namespace, "namespace");
       this.period = period;
-      this.startTime = startTime;
-      this.statistics = statistics;
-      this.unit = unit;
+      this.startTime = Optional.fromNullable(startTime);
+      this.statistics = ImmutableSet.<Statistics>copyOf(checkNotNull(statistics, "statistics"));
+      this.unit = Optional.fromNullable(unit);
    }
 
    /**
     * return the set of dimensions for this request
     */
-   @Nullable
    public Set<Dimension> getDimensions() {
       return dimensions;
    }
@@ -74,7 +74,7 @@ public class GetMetricStatistics {
    /**
     * return the end time for this request
     */
-   public Date getEndTime() {
+   public Optional<Date> getEndTime() {
       return endTime;
    }
 
@@ -102,7 +102,7 @@ public class GetMetricStatistics {
    /**
     * return the start time for this request
     */
-   public Date getStartTime() {
+   public Optional<Date> getStartTime() {
       return startTime;
    }
 
@@ -116,7 +116,7 @@ public class GetMetricStatistics {
    /**
     * return the unit for this request
     */
-   public Unit getUnit() {
+   public Optional<Unit> getUnit() {
       return unit;
    }
 
@@ -130,12 +130,14 @@ public class GetMetricStatistics {
 
    public static class Builder {
 
+      // this builder is set to be additive on dimension calls, so make this mutable
       private Set<Dimension> dimensions = Sets.newLinkedHashSet();
       private Date endTime;
       private String metricName;
       private String namespace;
-      private int period;
+      private int period = 60;
       private Date startTime;
+      // this builder is set to be additive on dimension calls, so make this mutable
       private Set<Statistics> statistics = Sets.newLinkedHashSet();
       private Unit unit;
 
@@ -146,143 +148,100 @@ public class GetMetricStatistics {
       public Builder() {}
 
       /**
-       * A list of dimensions describing qualities of the metric.  (Set can be 10 or less items.)
+       * A list of dimensions describing qualities of the metric.
        *
        * @param dimensions the dimensions describing the qualities of the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if this is invoked more than 10 times
        */
       public Builder dimensions(Set<Dimension> dimensions) {
-         if (dimensions != null) {
-            Preconditions.checkArgument(dimensions.size() <= 10, "dimensions can have 10 or fewer members.");
-            this.dimensions = dimensions;
-         }
+         this.dimensions.addAll(checkNotNull(dimensions, "dimensions"));
          return this;
       }
 
       /**
-       * A dimension describing qualities of the metric.  (Can be called multiple times up to a maximum of 10 times.)
+       * A dimension describing qualities of the metric.
        *
        * @param dimension the dimension describing the qualities of the metric
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if the number of dimensions would be greater than 10 after adding
        */
       public Builder dimension(Dimension dimension) {
-         if (dimension != null) {
-            Preconditions.checkArgument(dimensions.size() < 10, "dimension member maximum count of 10 exceeded.");
-            this.dimensions.add(dimension);
-         }
+         this.dimensions.add(checkNotNull(dimension, "dimension"));
          return this;
       }
 
       /**
        * The time stamp to use for determining the last datapoint to return. The value specified is exclusive so
-       * results will include datapoints up to the time stamp specified.  (Should be called once.  Subsequent calls
-       * will overwrite the previous value.)
+       * results will include datapoints up to the time stamp specified.
        *
        * @param endTime the timestamp to use for determining the last datapoint to return
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if endTime is null
        */
       public Builder endTime(Date endTime) {
-         Preconditions.checkNotNull(endTime, "endTime cannot be null.");
          this.endTime = endTime;
          return this;
       }
 
       /**
-       * The name of the metric.  (Should be called once.  Subsequent calls will overwrite the previous value.)
+       * The name of the metric.
        *
        * @param metricName the metric name to filter against
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if metricName is null
-       * @throws IllegalArgumentException if metricName is empty
        */
       public Builder metricName(String metricName) {
-         Preconditions.checkNotNull(metricName, "metricName cannot be null.");
-         Preconditions.checkArgument(metricName.length() > 1, "metricName must not be empty.");
          this.metricName = metricName;
          return this;
       }
 
       /**
-       * The namespace of the metric.  (Should be called once.  Subsequent calls will overwrite the previous value.
-       * See {@link org.jclouds.cloudwatch.domain.Namespaces} for the known list of namespaces.)
+       * The namespace of the metric.
        *
        * @param namespace the namespace to filter against
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if namespace is null
-       * @throws IllegalArgumentException if namespace is empty
        */
       public Builder namespace(String namespace) {
-         Preconditions.checkNotNull(namespace, "namespace cannot be null.");
-         Preconditions.checkArgument(namespace.length() > 1, "namespace must not be empty.");
          this.namespace = namespace;
          return this;
       }
 
       /**
-       * The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a
-       * multiple of 60. The default value is 60.  (Should be called once.  Subsequent calls will overwrite the
-       * previous value.)
+       * The granularity, in seconds, of the returned datapoints.
        *
        * @param period the granularity, in seconds, of the returned datapoints
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if period is null
-       * @throws IllegalArgumentException if period is less than 60 or not a multiple of 60
        */
       public Builder period(int period) {
-         Preconditions.checkNotNull(period, "period cannot be null.");
-         Preconditions.checkArgument(period >= 60 && period % 60 == 0, "period must be greater than 60 and as a " +
-               "multiple of 60.");
          this.period = period;
          return this;
       }
 
       /**
        * The time stamp to use for determining the first datapoint to return. The value specified is inclusive so
-       * results include datapoints with the time stamp specified.  (Should be called once.  Subsequent calls will
-       * overwrite the previous value.)
+       * results include datapoints with the time stamp specified.
        *
        * @param startTime The time stamp to use for determining the first datapoint to return
        *
        * @return this {@code Builder} object
-       *
-       * @throws NullPointerException if startTime is null
        */
       public Builder startTime(Date startTime) {
-         Preconditions.checkNotNull(startTime, "startTime cannot be null.");
          this.startTime = startTime;
          return this;
       }
 
       /**
-       * The metric statistics to return.  (Should be called once.  Subsequent calls will overwrite the previous
-       * value.)
+       * The metric statistics to return.
        *
        * @param statistics the metric statistics to return.
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if the number of statistics is greater than 5
-       * @throws NullPointerException if statistics is null
        */
       public Builder statistics(Set<Statistics> statistics) {
-         Preconditions.checkNotNull(statistics, "statistics cannot be null.");
-         Preconditions.checkArgument(statistics.size() <= 5, "statistics can have 5 or fewer members.");
-         this.statistics = statistics;
+         this.statistics.addAll(checkNotNull(statistics, "statistics"));
          return this;
       }
 
@@ -292,28 +251,20 @@ public class GetMetricStatistics {
        * @param statistic the metric statistic to return
        *
        * @return this {@code Builder} object
-       *
-       * @throws IllegalArgumentException if the number of statistics would be greater than 5 after adding
-       * @throws NullPointerException if statistic is null
        */
       public Builder statistic(Statistics statistic) {
-         Preconditions.checkNotNull(statistic, "statistic cannot be null.");
-         Preconditions.checkArgument(statistics.size() < 5, "statistics member maximum count of 5 exceeded.");
-         this.statistics.add(statistic);
+         this.statistics.add(checkNotNull(statistic, "statistic"));
          return this;
       }
 
        /**
-        * The unit for the metric.  (Should be called once.  Subsequent calls will overwrite the previous value.)
+        * The unit for the metric.
         *
         * @param unit the unit for the metric
         *
         * @return this {@code Builder} object
-        *
-        * @throws NullPointerException if unit is null
         */
       public Builder unit(Unit unit) {
-         Preconditions.checkNotNull(unit, "unit cannot be null.");
          this.unit = unit;
          return this;
       }
@@ -321,22 +272,12 @@ public class GetMetricStatistics {
       /**
        * Returns a newly-created {@code GetMetricStatisticsOptionsV2} based on the contents of
        * the {@code Builder}.
-       *
-       * @throws NullPointerException if any of the required fields are null
-       * @throws IllegalArgumentException if any of the provided fields don't meet required criteria
        */
       public GetMetricStatistics build() {
-         Preconditions.checkNotNull(endTime, "endTime cannot be null.");
-         Preconditions.checkNotNull(metricName, "metricName cannot be null.");
-         Preconditions.checkNotNull(namespace, "namespace cannot be null.");
-         Preconditions.checkNotNull(period, "period cannot be null.");
-         Preconditions.checkNotNull(startTime, "startTime cannot be null.");
-         Preconditions.checkNotNull(statistics, "statistics cannot be null.");
-         Preconditions.checkNotNull(unit, "unit cannot be null.");
-         Preconditions.checkArgument(statistics.size() >= 1, "statistics must have at least one member");
-
-         return new GetMetricStatistics(dimensions, endTime, metricName,namespace, period, startTime,  statistics, unit);
+         return new GetMetricStatistics(dimensions, endTime, metricName,namespace, period, startTime,  statistics,
+                                        unit);
       }
+
    }
 
 }

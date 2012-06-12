@@ -30,7 +30,7 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -42,6 +42,7 @@ import org.jclouds.gogrid.compute.strategy.GoGridComputeServiceAdapter;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerState;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -85,23 +86,37 @@ public class GoGridComputeServiceContextModule extends
    }
 
    @VisibleForTesting
-   static final Map<ServerState, NodeState> serverStateToNodeState = ImmutableMap.<ServerState, NodeState> builder()
-            .put(ServerState.ON, NodeState.RUNNING)//
-            .put(ServerState.STARTING, NodeState.PENDING)//
-            .put(ServerState.OFF, NodeState.SUSPENDED)//
-            .put(ServerState.STOPPING, NodeState.PENDING)//
-            .put(ServerState.RESTARTING, NodeState.PENDING)//
-            .put(ServerState.SAVING, NodeState.PENDING)//
-            .put(ServerState.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
-            .put(ServerState.RESTORING, NodeState.PENDING)//
-            .put(ServerState.UPDATING, NodeState.PENDING).build();
+   static final Map<ServerState, Status> toPortableNodeStatus = ImmutableMap.<ServerState, Status> builder()
+            .put(ServerState.ON, Status.RUNNING)
+            .put(ServerState.STARTING, Status.PENDING)
+            .put(ServerState.OFF, Status.SUSPENDED)
+            .put(ServerState.STOPPING, Status.PENDING)
+            .put(ServerState.RESTARTING, Status.PENDING)
+            .put(ServerState.SAVING, Status.PENDING)
+            .put(ServerState.UNRECOGNIZED, Status.UNRECOGNIZED)
+            .put(ServerState.RESTORING, Status.PENDING)
+            .put(ServerState.UPDATING, Status.PENDING).build();
 
    @Singleton
    @Provides
-   Map<ServerState, NodeState> provideServerToNodeState() {
-      return serverStateToNodeState;
+   Map<ServerState, Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
    }
+   
+   @VisibleForTesting
+   static final Map<ServerImageState, Image.Status> toPortableImageStatus = ImmutableMap
+            .<ServerImageState, Image.Status> builder()
+            .put(ServerImageState.AVAILABLE, Image.Status.AVAILABLE)
+            .put(ServerImageState.SAVING, Image.Status.PENDING)
+            .put(ServerImageState.TRASH, Image.Status.DELETED)
+            .put(ServerImageState.UNRECOGNIZED, Image.Status.UNRECOGNIZED).build();
 
+   @Singleton
+   @Provides
+   Map<ServerImageState, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
+   }
+   
    /**
     * Finds matches to required configurations. GoGrid's documentation only specifies how much RAM
     * one can get with different instance types. The # of cores and disk sizes are purely empyrical

@@ -90,6 +90,7 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
             .ids(imageId().apply(productItem))
             .description(description)
             .operatingSystem(os)
+            .status(Image.Status.AVAILABLE)
             .build();
    }
 

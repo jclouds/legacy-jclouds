@@ -18,6 +18,8 @@
  */
 package org.jclouds.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -27,12 +29,12 @@ import javax.inject.Inject;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.Image.ImageType;
-import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
@@ -72,6 +74,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    private String imageLocation;
    private String imageOwnerId;
    private ImageState imageState;
+   private String rawState;
    private ImageType imageType;
    private boolean isPublic;
    private String kernelId;
@@ -124,8 +127,9 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
       } else if (qName.equals("imageOwnerId")) {
          imageOwnerId = currentText.toString().trim();
       } else if (qName.equals("imageState")) {
-         imageState = ImageState.fromValue(currentText.toString().trim());
-         // eucalyptus
+         rawState = currentOrNull(currentText);
+         imageState = ImageState.fromValue(rawState);
+      // eucalyptus
       } else if (qName.equals("imageType") || qName.equals("type")) {
          imageType = ImageType.fromValue(currentText.toString().trim());
       } else if (qName.equals("isPublic")) {
@@ -169,8 +173,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
                if (region == null)
                   region = defaultRegion.get();
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
-                        imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
-                        rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor));
+                        imageOwnerId, imageState, rawState, imageType, isPublic, productCodes, kernelId, platform,
+                        ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
@@ -181,6 +185,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             this.imageLocation = null;
             this.imageOwnerId = null;
             this.imageState = null;
+            this.rawState = null;
             this.imageType = null;
             this.isPublic = false;
             this.kernelId = null;

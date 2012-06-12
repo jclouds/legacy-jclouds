@@ -31,9 +31,11 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -50,11 +52,14 @@ public class ServerImageToImage implements Function<ServerImage, Image> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
+   
+   private final Map<ServerImageState, Status> toPortableImageStatus;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   ServerImageToImage(Map<OsFamily, Map<String, String>> osVersionMap) {
+   ServerImageToImage(Map<ServerImageState, Image.Status> toPortableImageStatus,
+            Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.toPortableImageStatus = toPortableImageStatus;
       this.osVersionMap = osVersionMap;
    }
 
@@ -93,6 +98,7 @@ public class ServerImageToImage implements Function<ServerImage, Image> {
       builder.name(from.getFriendlyName());
       builder.description(from.getDescription());
       builder.operatingSystem(parseOs(from));
+      builder.status(toPortableImageStatus.get(from.getState()));
       return builder.build();
    }
 

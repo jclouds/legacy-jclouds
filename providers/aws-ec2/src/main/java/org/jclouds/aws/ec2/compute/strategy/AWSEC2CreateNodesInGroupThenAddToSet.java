@@ -17,10 +17,10 @@
  * under the License.
  */
 package org.jclouds.aws.ec2.compute.strategy;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
 
 import java.util.Map;
@@ -81,7 +81,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    protected AWSEC2CreateNodesInGroupThenAddToSet(
             AWSEC2Client client,
             @Named("ELASTICIP") LoadingCache<RegionAndName, String> elasticIpCache,
-            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             AWSEC2AsyncClient aclient,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
             Provider<TemplateBuilder> templateBuilderProvider,

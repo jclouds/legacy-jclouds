@@ -33,8 +33,8 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -51,7 +51,7 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    protected final Supplier<Location> location;
-   protected final Map<Slice.Status, NodeState> sliceToNodeState;
+   protected final Map<Slice.Status, Status> sliceToNodeStatus;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
    protected final GroupNamingConvention nodeNamingConvention;
@@ -86,12 +86,12 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    }
 
    @Inject
-   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState,
+   SliceToNodeMetadata(Map<Slice.Status, Status> sliceStateToNodeStatus,
             @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
             @Memoized Supplier<Set<? extends Hardware>> hardwares,
             GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
+      this.sliceToNodeStatus = checkNotNull(sliceStateToNodeStatus, "sliceStateToNodeStatus");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -108,7 +108,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));
-      builder.state(sliceToNodeState.get(from.getStatus()));
+      builder.status(sliceToNodeStatus.get(from.getStatus()));
       builder.publicAddresses(Iterables.filter(from.getAddresses(), new Predicate<String>() {
 
          @Override

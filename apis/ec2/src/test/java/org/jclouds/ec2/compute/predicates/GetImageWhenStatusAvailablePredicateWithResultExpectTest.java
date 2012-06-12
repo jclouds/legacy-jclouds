@@ -19,8 +19,8 @@
 
 package org.jclouds.ec2.compute.predicates;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Map;

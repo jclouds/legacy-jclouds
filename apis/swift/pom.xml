@@ -34,14 +34,33 @@
   <packaging>bundle</packaging>
 
   <properties>
+    <!-- swift or swift-keystone -->
+    <test.swift.provider>swift</test.swift.provider>
+
     <test.swift.endpoint>http://localhost:11000</test.swift.endpoint>
     <test.swift.api-version>1.0</test.swift.api-version>
     <test.swift.build-version />
     <test.swift.identity>test:tester</test.swift.identity>
     <test.swift.credential>testing</test.swift.credential>
+
+    <!-- keystone endpoint -->
+    <test.swift-keystone.endpoint>http://localhost:5000</test.swift-keystone.endpoint>
+    <test.swift-keystone.api-version>1.0</test.swift-keystone.api-version>
+    <test.swift-keystone.build-version></test.swift-keystone.build-version>
+    <test.swift-keystone.identity>FIXME_IDENTITY</test.swift-keystone.identity>
+    <test.swift-keystone.credential>FIXME_CREDENTIALS</test.swift-keystone.credential>
+    <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
+
+    <jclouds.osgi.export>org.jclouds.openstack.swift*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.jclouds.common</groupId>
       <artifactId>openstack-common</artifactId>
@@ -62,6 +81,13 @@
     <dependency>
       <groupId>org.jclouds.common</groupId>
       <artifactId>openstack-common</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
@@ -106,11 +132,18 @@
                   <systemPropertyVariables>
                     <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                     <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                    <test.swift.provider>${test.swift.provider}</test.swift.provider>
                     <test.swift.endpoint>${test.swift.endpoint}</test.swift.endpoint>
                     <test.swift.api-version>${test.swift.api-version}</test.swift.api-version>
                     <test.swift.build-version>${test.swift.build-version}</test.swift.build-version>
                     <test.swift.identity>${test.swift.identity}</test.swift.identity>
                     <test.swift.credential>${test.swift.credential}</test.swift.credential>
+                    <test.swift-keystone.endpoint>${test.swift-keystone.endpoint}</test.swift-keystone.endpoint>
+                    <test.swift-keystone.api-version>${test.swift-keystone.api-version}</test.swift-keystone.api-version>
+                    <test.swift-keystone.build-version>${test.swift-keystone.build-version}</test.swift-keystone.build-version>
+                    <test.swift-keystone.identity>${test.swift-keystone.identity}</test.swift-keystone.identity>
+                    <test.swift-keystone.credential>${test.swift-keystone.credential}</test.swift-keystone.credential>
+                    <test.jclouds.keystone.credential-type>${test.jclouds.keystone.credential-type}</test.jclouds.keystone.credential-type>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -120,22 +153,6 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.swift*;version="${project.version}"</Export-Package>
-            <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

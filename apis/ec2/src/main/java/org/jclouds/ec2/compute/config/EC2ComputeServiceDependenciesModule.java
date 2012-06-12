@@ -31,8 +31,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
@@ -42,6 +42,7 @@ import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
@@ -54,10 +55,12 @@ import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
@@ -79,19 +82,36 @@ import com.google.inject.name.Names;
  */
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
-   public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
-                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
-                     InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
-            .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+   public static final Map<InstanceState, Status> toPortableNodeStatus = ImmutableMap
+            .<InstanceState, Status> builder()
+            .put(InstanceState.PENDING, Status.PENDING)
+            .put(InstanceState.RUNNING, Status.RUNNING)
+            .put(InstanceState.SHUTTING_DOWN, Status.PENDING)
+            .put(InstanceState.TERMINATED, Status.TERMINATED)
+            .put(InstanceState.STOPPING, Status.PENDING)
+            .put(InstanceState.STOPPED, Status.SUSPENDED)
+            .put(InstanceState.UNRECOGNIZED, Status.UNRECOGNIZED)
             .build();
+   
+   @Singleton
+   @Provides
+   protected Map<InstanceState, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
+   }
+   
+   @VisibleForTesting
+   public static final Map<ImageState, Image.Status> toPortableImageStatus = ImmutableMap
+            .<ImageState, Image.Status> builder()
+            .put(ImageState.AVAILABLE, Image.Status.AVAILABLE)
+            .put(ImageState.DEREGISTERED, Image.Status.DELETED)
+            .put(ImageState.UNRECOGNIZED, Image.Status.UNRECOGNIZED).build();
 
    @Singleton
    @Provides
-   Map<InstanceState, NodeState> provideServerToNodeState() {
-      return instanceToNodeState;
+   protected Map<ImageState, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
    }
-
+   
    @Override
    protected void configure() {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
@@ -108,6 +128,8 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
       bind(WindowsLoginCredentialsFromEncryptedData.class);
+      bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
+      }).to(EC2ImageParser.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
       bind(new TypeLiteral<PredicateWithResult<String, Image>>() {

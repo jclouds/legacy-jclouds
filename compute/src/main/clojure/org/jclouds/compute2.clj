@@ -243,41 +243,41 @@ Here's an example of creating and running a small linux node in the group webser
   ([#^ComputeService compute pred command #^RunScriptOptions options]
     (.runScriptOnNodesMatching compute (to-predicate pred) command options)))
 
-(defmacro state-predicate [node state]
-  `(= (.getState ~node)
-    (. org.jclouds.compute.domain.NodeState ~state)))
+(defmacro status-predicate [node status]
+  `(= (.getStatus ~node)
+    (. org.jclouds.compute.domain.NodeMetadata$Status ~status)))
 
 (defn pending?
   "Predicate for the node being in transition"
   [#^NodeMetadata node]
-  (state-predicate node PENDING))
+  (status-predicate node PENDING))
 
 (defn running?
   "Predicate for the node being available for requests."
   [#^NodeMetadata node]
-  (state-predicate node RUNNING))
+  (status-predicate node RUNNING))
 
 (defn terminated?
   "Predicate for the node being halted."
   [#^NodeMetadata node]
   (or
     (= node nil)
-    (state-predicate node TERMINATED)))
+    (status-predicate node TERMINATED)))
 
 (defn suspended?
   "Predicate for the node being suspended."
   [#^NodeMetadata node]
-  (state-predicate node SUSPENDED))
+  (status-predicate node SUSPENDED))
 
-(defn error-state?
-  "Predicate for the node being in an error state."
+(defn error-status?
+  "Predicate for the node being in an error status."
   [#^NodeMetadata node]
-  (state-predicate node ERROR))
+  (status-predicate node ERROR))
 
-(defn unrecognized-state?
-  "Predicate for the node being in an unrecognized state."
+(defn unrecognized-status?
+  "Predicate for the node being in an unrecognized status."
   [#^NodeMetadata node]
-  (state-predicate node UNRECOGNIZED))
+  (status-predicate node UNRECOGNIZED))
 
 (defn in-group?
   "Returns a predicate fn which returns true if the node is in the given group, false otherwise"
@@ -317,7 +317,7 @@ Here's an example of creating and running a small linux node in the group webser
 (define-accessors Template image hardware location options)
 (define-accessors Image version os-family os-description architecture)
 (define-accessors Hardware processors ram volumes)
-(define-accessors NodeMetadata "node" credentials hardware state group)
+(define-accessors NodeMetadata "node" credentials hardware status group)
 
 (def
   ^{:doc "TemplateBuilder functions" :private true}

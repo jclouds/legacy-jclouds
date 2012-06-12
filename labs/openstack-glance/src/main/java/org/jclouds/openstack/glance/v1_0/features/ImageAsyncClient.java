@@ -22,22 +22,32 @@ import java.io.InputStream;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.io.Payload;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
 import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.functions.ParseImageDetailsFromHeaders;
+import org.jclouds.openstack.glance.v1_0.options.CreateImageOptions;
+import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
+import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -47,6 +57,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see ImageClient
  * @author Adrian Cole
+ * @author Adam Lowe
  * @see <a href="http://glance.openstack.org/glanceapi.html">api doc</a>
  * @see <a href="https://github.com/openstack/glance/blob/master/glance/api/v1/images.py">api src</a>
  */
@@ -62,7 +73,7 @@ public interface ImageAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Image>> list();
+   ListenableFuture<Set<Image>> list(ListImageOptions... options);
    
    /**
     * @see ImageClient#listInDetail
@@ -72,7 +83,7 @@ public interface ImageAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<ImageDetails>> listInDetail();
+   ListenableFuture<Set<ImageDetails>> listInDetail(ListImageOptions... options);
    
    /**
     * @see ImageClient#show
@@ -91,9 +102,49 @@ public interface ImageAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<InputStream> getAsStream(@PathParam("id") String id);
 
-//   POST /images -- Store image data and return metadata about the
-//   newly-stored image
-//   PUT /images/<ID> -- Update image metadata and/or upload image
-//   data for a previously-reserved image
-//   DELETE /images/<ID> -- Delete the image with id <ID>
+   /**
+    * @see ImageClient#create
+    */
+   @POST
+   @Path("/images")
+   @Produces(MediaType.APPLICATION_OCTET_STREAM)
+   @SelectJson("image")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ImageDetails> create(@HeaderParam("x-image-meta-name") String name, Payload payload, CreateImageOptions... options);
+
+   /**
+    * @see ImageClient#reserve
+    */
+   @POST
+   @Path("/images")
+   @SelectJson("image")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ImageDetails> reserve(@HeaderParam("x-image-meta-name") String name, CreateImageOptions... options);
+
+   /**
+    * @see ImageClient#upload
+    */
+   @PUT
+   @Path("/images/{id}")
+   @Produces(MediaType.APPLICATION_OCTET_STREAM)
+   @SelectJson("image")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ImageDetails> upload(@PathParam("id") String id, Payload imageData, UpdateImageOptions... options);
+
+   /**
+    * @see ImageClient#update
+    */
+   @PUT
+   @Path("/images/{id}")
+   @SelectJson("image")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ImageDetails> update(@PathParam("id") String id, UpdateImageOptions... options);
+
+   /**
+    * @see ImageClient#delete
+    */
+   @DELETE
+   @Path("/images/{id}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> delete(@PathParam("id") String id);
 }

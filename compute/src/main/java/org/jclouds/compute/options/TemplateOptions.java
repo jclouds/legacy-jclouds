@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -588,7 +588,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
     * 
     * @param blockUntilRunning
     *           (default true) whether to block until the nodes in this template
-    *           are in {@link NodeState#RUNNING} state
+    *           are in {@link Status#RUNNING} state
     */
    public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       this.blockUntilRunning = blockUntilRunning;

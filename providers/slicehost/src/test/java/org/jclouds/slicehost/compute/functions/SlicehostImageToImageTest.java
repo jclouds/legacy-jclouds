@@ -41,31 +41,38 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "SlicehostImageToImageTest")
 public class SlicehostImageToImageTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
    public void test() throws UnknownHostException {
+      Image toTest = convertImage();
       assertEquals(
-            convertImage(),
+            toTest,
             new ImageBuilder()
                   .name("CentOS 5.2")
                   .operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2")
-                              .is64Bit(true).build()).description("CentOS 5.2").ids("2").build());
+                              .is64Bit(true).build()).description("CentOS 5.2").ids("2")
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(toTest.getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
    }
 
    @Test
    public void test32() throws UnknownHostException {
+      Image toTest = convertImage("/test_get_image32.xml");
       assertEquals(
-            convertImage("/test_get_image32.xml"),
+               toTest,
             new ImageBuilder()
                   .name("Ubuntu 10.10 (maverick) 32-bit")
                   .operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("10.10")
                               .description("Ubuntu 10.10 (maverick) 32-bit").build())
-                  .description("Ubuntu 10.10 (maverick) 32-bit").ids("70").build());
+                  .description("Ubuntu 10.10 (maverick) 32-bit").ids("70")
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+      assertEquals(toTest.getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
+
    }
 
    public static Image convertImage() {

@@ -39,9 +39,17 @@
         <test.stratogen-vcloud-mycloud.build-version>1.5.0.464915</test.stratogen-vcloud-mycloud.build-version>
         <test.stratogen-vcloud-mycloud.identity>FIXME_IDENTITY</test.stratogen-vcloud-mycloud.identity>
         <test.stratogen-vcloud-mycloud.credential>FIXME_CREDENTIAL</test.stratogen-vcloud-mycloud.credential>
-        <test.stratogen-vcloud-mycloud.image-id />
-        <test.stratogen-vcloud-mycloud.image.login-user />
-        <test.stratogen-vcloud-mycloud.image.authenticate-sudo />
+        <test.stratogen-vcloud-mycloud.image-id></test.stratogen-vcloud-mycloud.image-id>
+        <test.stratogen-vcloud-mycloud.image.login-user></test.stratogen-vcloud-mycloud.image.login-user>
+        <test.stratogen-vcloud-mycloud.image.authenticate-sudo></test.stratogen-vcloud-mycloud.image.authenticate-sudo>
+
+        <jclouds.osgi.export>org.jclouds.stratogen.vcloud.mycloud*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -119,27 +127,6 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.stratogen.vcloud.mycloud*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 

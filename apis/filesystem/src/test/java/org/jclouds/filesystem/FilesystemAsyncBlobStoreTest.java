@@ -36,8 +36,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.ContextBuilder;
@@ -752,7 +750,7 @@ public class FilesystemAsyncBlobStoreTest {
         Blob blobRangeStartAt = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeStartAt);
         is = blobRangeStartAt.getPayload().getInput();
         try {
-            Assert.assertEquals("bcdefgh", IOUtils.toString(is));
+            assertEquals("bcdefgh", IOUtils.toString(is));
         } finally {
             Closeables.closeQuietly(is);
         }
@@ -762,7 +760,7 @@ public class FilesystemAsyncBlobStoreTest {
         Blob blobRangeTail = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeTail);
         is = blobRangeTail.getPayload().getInput();
         try {
-            Assert.assertEquals("fgh", IOUtils.toString(is));
+            assertEquals("fgh", IOUtils.toString(is));
         } finally {
             Closeables.closeQuietly(is);
         }
@@ -772,7 +770,7 @@ public class FilesystemAsyncBlobStoreTest {
         Blob blobFragment = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsFragment);
         is = blobFragment.getPayload().getInput();
         try {
-            Assert.assertEquals("efg", IOUtils.toString(is));
+            assertEquals("efg", IOUtils.toString(is));
         } finally {
             Closeables.closeQuietly(is);
         }

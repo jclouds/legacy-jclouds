@@ -91,7 +91,12 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          RetryablePredicate<String> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
       Set<Network> networks = client.getNetworkClient().listNetworks(isDefault(true));
       if (networks.size() > 0) {
-         Network network = get(networks, 0);
+         Network network = get(filter(networks, new Predicate<Network>() {
+            @Override
+            public boolean apply(@Nullable Network network) {
+               return network != null && network.getState().equals("Implemented");
+            }
+         }), 0);
          return createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
@@ -174,6 +179,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       return vm;
    }
 
+   @Test
    public void testCreateVirtualMachine() throws Exception {
       String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
       vm = createVirtualMachine(client, templateId, jobComplete, virtualMachineRunning);
@@ -185,7 +191,10 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       checkVm(vm);
    }
 
+   @Test
    public void testCreateVirtualMachineWithSpecificIp() throws Exception {
+      skipIfNotGlobalAdmin();
+
       String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
       Network network = null;
 
@@ -327,6 +336,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       super.tearDown();
    }
 
+   @Test
    public void testListVirtualMachines() throws Exception {
       Set<VirtualMachine> response = client.getVirtualMachineClient().listVirtualMachines();
       assert null != response;

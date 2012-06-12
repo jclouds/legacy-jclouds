@@ -20,15 +20,16 @@ package org.jclouds.virtualbox.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
 
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
@@ -103,7 +104,7 @@ public class HardcodeLocalhostAsNodeMetadataSupplier extends AbstractModule {
                                                                     .arch(System.getProperty("os.arch"))
                                                                     .version(System.getProperty("os.version"))
                                                                     .build())
-                                    .state(NodeState.RUNNING)
+                                    .status(Status.RUNNING)
                                     .location(new LocationBuilder().id(HOST_ID)
                                                                    .scope(LocationScope.HOST)
                                                                    .description(HOSTNAME)

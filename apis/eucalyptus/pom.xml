@@ -36,12 +36,20 @@
   <properties>
     <test.eucalyptus.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus.endpoint>
     <test.eucalyptus.api-version>2010-06-15</test.eucalyptus.api-version>
-    <test.eucalyptus.build-version />
+    <test.eucalyptus.build-version></test.eucalyptus.build-version>
     <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
     <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
-    <test.eucalyptus.image-id />
-    <test.eucalyptus.image.login-user />
-    <test.eucalyptus.image.authenticate-sudo />
+    <test.eucalyptus.image-id></test.eucalyptus.image-id>
+    <test.eucalyptus.image.login-user></test.eucalyptus.image.login-user>
+    <test.eucalyptus.image.authenticate-sudo></test.eucalyptus.image.authenticate-sudo>
+
+    <jclouds.osgi.export>org.jclouds.eucalyptus*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -119,27 +127,6 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.eucalyptus*;version="${project.version}"</Export-Package>
-            <Import-Package>
-              org.jclouds.compute.internal;version="${project.version}",
-              org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds*;version="${project.version}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

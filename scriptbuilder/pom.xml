@@ -31,9 +31,15 @@
     <name>jclouds script builder</name>
     <description>creates scripts that can be used to manage services</description>
     <packaging>bundle</packaging>
+
     <properties>
         <jclouds.test.listener />
+
+        <jclouds.osgi.activator>org.jclouds.scriptbuilder.functionloader.osgi.Activator</jclouds.osgi.activator>
+        <jclouds.osgi.export>org.jclouds.scriptbuilder*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
+
     <dependencies>
        <dependency>
             <groupId>${project.groupId}</groupId>
@@ -47,6 +53,12 @@
             <version>1.46</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -54,14 +66,20 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <!-- ensure activator is set -->
                 <configuration>
+                    <obrRepository>NONE</obrRepository>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.scriptbuilder*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
+                        <Export-Package>${jclouds.osgi.export}</Export-Package>
+                        <Import-Package>${jclouds.osgi.import}</Import-Package>
+                        <DynamicImport-Package>${jclouds.osgi.dynamic}</DynamicImport-Package>
+                        <Fragment-Host>${jclouds.osgi.fragment}</Fragment-Host>
+                        <Bundle-Activator>${jclouds.osgi.activator}</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

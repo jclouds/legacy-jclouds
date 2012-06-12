@@ -32,7 +32,6 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.util.ComputeServiceUtils;
@@ -57,12 +56,12 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp;
-   protected final Map<Status, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus;
    protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    protected VAppToNodeMetadata(TerremarkVCloudComputeClient computeClient, Map<String, Credentials> credentialStore,
-            Map<Status, NodeState> vAppStatusToNodeState, HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
+            Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus, HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
             FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images,
             GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
@@ -71,7 +70,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.computeClient = checkNotNull(computeClient, "computeClient");
-      this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
+      this.vAppStatusToNodeStatus = checkNotNull(vAppStatusToNodeStatus, "vAppStatusToNodeStatus");
    }
 
    @Override
@@ -97,7 +96,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
          builder.operatingSystem(osBuilder.build());
       }
       builder.hardware(hardwareForVCloudExpressVApp.apply(from));
-      builder.state(vAppStatusToNodeState.get(from.getStatus()));
+      builder.status(vAppStatusToNodeStatus.get(from.getStatus()));
       builder.publicAddresses(computeClient.getPublicAddresses(from.getHref()));
       builder.privateAddresses(computeClient.getPrivateAddresses(from.getHref()));
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));

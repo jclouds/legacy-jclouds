@@ -49,6 +49,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.ssh.SshException;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
@@ -81,6 +82,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 @Test(groups = "live", singleThreaded = true)
 public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient> extends BaseComputeServiceContextLiveTest {
@@ -804,4 +806,10 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
          }
       }
    }
+   
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
+   }
+
 }

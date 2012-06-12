@@ -36,12 +36,20 @@
   <properties>
     <test.vcloud.endpoint>FIXME</test.vcloud.endpoint>
     <test.vcloud.api-version>1.0</test.vcloud.api-version>
-    <test.vcloud.build-version />
+    <test.vcloud.build-version></test.vcloud.build-version>
     <test.vcloud.identity>FIXME</test.vcloud.identity>
     <test.vcloud.credential>FIXME</test.vcloud.credential>
-    <test.vcloud.image-id />
-    <test.vcloud.image.login-user />
-    <test.vcloud.image.authenticate-sudo />
+    <test.vcloud.image-id></test.vcloud.image-id>
+    <test.vcloud.image.login-user></test.vcloud.image.login-user>
+    <test.vcloud.image.authenticate-sudo></test.vcloud.image.authenticate-sudo>
+
+    <jclouds.osgi.export>org.jclouds.vcloud*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -123,25 +131,5 @@
     </profile>
   </profiles>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.vcloud*;version="${project.version}"</Export-Package>
-            <Import-Package>
-       			org.jclouds.compute.internal;version="${project.version}",
-       			org.jclouds.rest.internal;version="${project.version}",
-       			org.jclouds*;version="${project.version}",
- 				*
-			</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

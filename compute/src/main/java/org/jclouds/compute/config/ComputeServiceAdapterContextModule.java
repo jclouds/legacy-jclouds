@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
@@ -158,6 +159,12 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
    @Provides
    @Singleton
    protected GetNodeMetadataStrategy defineGetNodeMetadataStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected GetImageStrategy defineGetImageStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 

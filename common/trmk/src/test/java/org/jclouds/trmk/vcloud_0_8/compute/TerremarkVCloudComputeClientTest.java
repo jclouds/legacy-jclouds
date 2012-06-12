@@ -32,7 +32,7 @@ import java.util.Map;
 import javax.inject.Provider;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
@@ -86,7 +86,7 @@ public class TerremarkVCloudComputeClientTest {
       expect(client.powerOnVApp(vappLocation)).andReturn(task);
 
       Predicate<VApp> notFoundTester = createMock(Predicate.class);
-      Map<Status, NodeState> vAppStatusToNodeState = createMock(Map.class);
+      Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus = createMock(Map.class);
 
       TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,
             new Provider<String>() {
@@ -96,7 +96,7 @@ public class TerremarkVCloudComputeClientTest {
                   return "password";
                }
 
-            }, successTester, vAppStatusToNodeState, credentialStore, supplier);
+            }, successTester, vAppStatusToNodeStatus, credentialStore, supplier);
 
       replay(vdc);
       replay(template);
@@ -105,7 +105,7 @@ public class TerremarkVCloudComputeClientTest {
       replay(client);
       replay(successTester);
       replay(notFoundTester);
-      replay(vAppStatusToNodeState);
+      replay(vAppStatusToNodeStatus);
 
       NodeAndInitialCredentials<VApp> response = computeClient.startAndReturnCredentials(vdcURI, templateURI, "name", new InstantiateVAppTemplateOptions());
 
@@ -120,6 +120,6 @@ public class TerremarkVCloudComputeClientTest {
       verify(client);
       verify(successTester);
       verify(notFoundTester);
-      verify(vAppStatusToNodeState);
+      verify(vAppStatusToNodeStatus);
    }
 }

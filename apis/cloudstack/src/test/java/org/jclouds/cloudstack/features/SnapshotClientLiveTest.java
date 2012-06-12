@@ -147,7 +147,7 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
       return find(client.getSnapshotClient().listSnapshots(), new Predicate<Snapshot>() {
          @Override
          public boolean apply(Snapshot arg0) {
-            return arg0.getId() == id;
+            return arg0.getId().equals(id);
          }
       });
    }

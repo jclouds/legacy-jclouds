@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-import junit.framework.AssertionFailedError;
-
 import com.google.common.base.Predicate;
 
 /** A logger implementation for use in testing; all log messages are remembered, \
@@ -65,31 +63,31 @@ public class BufferLogger extends BaseLogger {
       return messages;
    }
    
-   /** throws AssertionFailedError if the log does not contain the indicated fragment;
+   /** throws AssertionError if the log does not contain the indicated fragment;
     * otherwise returns a record which does satisfy the constraint 
     */
    public Record assertLogContains(String fragment) {
       for (Record r: messages) {
          if (r.getMessage()!=null && r.getMessage().contains(fragment)) return r;
       }
-      throw new AssertionFailedError("log did not contain expected '"+fragment+"'");
+      throw new AssertionError("log did not contain expected '"+fragment+"'");
    }
    /** fails if log _does_ contain the indicated fragment */
    public void assertLogDoesntContain(String fragment) {
       for (Record r: messages) {
          if (r.getMessage()!=null && r.getMessage().contains(fragment)) 
-            throw new AssertionFailedError("log contained unexpected '"+fragment+"'");
+            throw new AssertionError("log contained unexpected '"+fragment+"'");
       }
    }
 
-   /** throws AssertionFailedError if the log does not contain the indicated fragment;
+   /** throws AssertionError if the log does not contain the indicated fragment;
     * otherwise returns a record which does satisfy the constraint 
     */
    public Record assertLogContains(Predicate<Record> test) {
       for (Record r: messages) {
          if (r.getMessage()!=null && test.apply(r)) return r;
       }
-      throw new AssertionFailedError("log did not contain any records satisfying expected predicate");      
+      throw new AssertionError("log did not contain any records satisfying expected predicate");      
    }
    
    @Override

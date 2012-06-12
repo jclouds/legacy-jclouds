@@ -38,7 +38,7 @@ public class GlobalZoneClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateUpdateDeleteZone() {
-      assert globalAdminEnabled;
+      skipIfNotGlobalAdmin();
 
       Zone zone = null;
       String zoneName = prefix + "-zone";

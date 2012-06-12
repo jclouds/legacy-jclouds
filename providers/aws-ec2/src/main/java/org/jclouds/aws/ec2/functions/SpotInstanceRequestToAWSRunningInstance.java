@@ -45,6 +45,7 @@ public class SpotInstanceRequestToAWSRunningInstance implements Function<SpotIns
       builder.spotInstanceRequestId(request.getId());
       builder.instanceId(request.getId());
       builder.instanceState(InstanceState.PENDING);
+      builder.rawState(request.getRawState());
       builder.region(request.getRegion());
       builder.tags(request.getTags());
       LaunchSpecification spec = request.getLaunchSpecification();

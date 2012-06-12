@@ -51,7 +51,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
                null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
-      Credentials creds = converter.execute(template);
+      Credentials creds = converter.apply(template);
       assertEquals(creds.identity, "vcloud");
       assertEquals(creds.credential, "$Ep455l0ud!2");
       verify(template);
@@ -66,7 +66,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
                null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
-      Credentials creds = converter.execute(template);
+      Credentials creds = converter.apply(template);
       assertEquals(creds.identity, "ecloud");
       assertEquals(creds.credential, "$Ep455l0ud!2");
       verify(template);
@@ -81,7 +81,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
                null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
-      Credentials creds = converter.execute(template);
+      Credentials creds = converter.apply(template);
       assertEquals(creds.identity, "vpncubed");
       assertEquals(creds.credential, "vpncubed");
       verify(template);
@@ -96,7 +96,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
                null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
-      Credentials creds = converter.execute(template);
+      Credentials creds = converter.apply(template);
       assertEquals(creds.identity, "ecloud");
       assertEquals(creds.credential, "TmrkCl0ud1s#1!");
       verify(template);
@@ -111,7 +111,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
                null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
-      Credentials creds = converter.execute(template);
+      Credentials creds = converter.apply(template);
       assertEquals(creds.identity, "Administrator");
       assertEquals(creds.credential, null);
       verify(template);

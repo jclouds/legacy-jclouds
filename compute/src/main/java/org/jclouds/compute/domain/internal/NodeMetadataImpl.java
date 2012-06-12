@@ -19,6 +19,7 @@
 package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.net.URI;
 import java.util.Map;
@@ -27,14 +28,13 @@ import java.util.Set;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -46,7 +46,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    /** The serialVersionUID */
    private static final long serialVersionUID = 7924307572338157887L;
 
-   private final NodeState state;
+   private final Status status;
+   private final String backendStatus;
    private final int loginPort;
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
@@ -63,51 +64,25 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Nullable
    private final String hostname;
 
-   /**
-    * <h4>will be removed in jclouds 1.4.0</h4>
-    */
-   @Deprecated
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
-         @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
-         Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
-         @Nullable Credentials credentials, String hostname) {
+            Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
+            @Nullable String imageId, @Nullable OperatingSystem os, Status status, @Nullable String backendStatus,
+            int loginPort, Iterable<String> publicAddresses, Iterable<String> privateAddresses,
+            @Nullable LoginCredentials credentials, String hostname) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
       this.group = group;
       this.hardware = hardware;
       this.imageId = imageId;
       this.os = os;
-      this.state = checkNotNull(state, "state");
-      this.loginPort = loginPort;
-      this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
-      this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
-      this.hostname = hostname;
-      Builder builder = LoginCredentials.builder(credentials);
-      if (adminPassword != null) {
-         builder.authenticateSudo(true);
-         builder.password(adminPassword);
-      }
-      this.credentials = builder.build();
-   }
-
-   public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
-         @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
-         Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable LoginCredentials credentials,
-         String hostname) {
-      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
-      this.group = group;
-      this.hardware = hardware;
-      this.imageId = imageId;
-      this.os = os;
-      this.state = checkNotNull(state, "state");
+      this.status = checkNotNull(status, "status");
+      this.backendStatus = backendStatus;
       this.loginPort = loginPort;
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
       this.credentials = credentials;
       this.hostname = hostname;
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -161,8 +136,25 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
-   public NodeState getState() {
-      return state;
+   @Deprecated
+   public org.jclouds.compute.domain.NodeState getState() {
+      return org.jclouds.compute.domain.NodeState.from(status);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Status getStatus() {
+      return status;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getBackendStatus() {
+      return backendStatus;
    }
 
    /**
@@ -197,78 +189,16 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       return hostname;
    }
 
-   @Override
-   public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getGroup() + ", name=" + getName()
-            + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-            + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort() + ", hostname="
-            + getHostname() + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
-            + ", hardware=" + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
-            + ", userMetadata=" + getUserMetadata() + ", tags=" + tags + "]";
-   }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + loginPort;
-      result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
-      result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
-      result = prime * result + ((group == null) ? 0 : group.hashCode());
-      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-      result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
-      result = prime * result + ((os == null) ? 0 : os.hashCode());
-      return result;
-   }
+   // equals and toString from super are sufficient to establish identity equivalence
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NodeMetadataImpl other = (NodeMetadataImpl) obj;
-      if (loginPort != other.loginPort)
-         return false;
-      if (privateAddresses == null) {
-         if (other.privateAddresses != null)
-            return false;
-      } else if (!privateAddresses.equals(other.privateAddresses))
-         return false;
-      if (publicAddresses == null) {
-         if (other.publicAddresses != null)
-            return false;
-      } else if (!publicAddresses.equals(other.publicAddresses))
-         return false;
-      if (hostname == null) {
-         if (other.hostname != null)
-            return false;
-      } else if (!hostname.equals(other.hostname))
-         return false;
-      if (group == null) {
-         if (other.group != null)
-            return false;
-      } else if (!group.equals(other.group))
-         return false;
-      if (imageId == null) {
-         if (other.imageId != null)
-            return false;
-      } else if (!imageId.equals(other.imageId))
-         return false;
-      if (hardware == null) {
-         if (other.hardware != null)
-            return false;
-      } else if (!hardware.equals(other.hardware))
-         return false;
-      if (os == null) {
-         if (other.os != null)
-            return false;
-      } else if (!os.equals(other.os))
-         return false;
-      return true;
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("id", getId()).add("providerId", getProviderId()).add("group", getGroup())
+               .add("name", getName()).add("location", getLocation()).add("uri", getUri()).add("imageId", getImageId())
+               .add("os", getOperatingSystem()).add("status", formatStatus(this)).add("loginPort", getLoginPort()).add(
+                        "hostname", getHostname()).add("privateAddresses", getPrivateAddresses()).add(
+                        "publicAddresses", getPublicAddresses()).add("hardware", getHardware()).add("loginUser",
+                        ((credentials != null) ? credentials.identity : null)).add("tags", getTags()).add(
+                        "userMetadata", getUserMetadata());
    }
-
 }

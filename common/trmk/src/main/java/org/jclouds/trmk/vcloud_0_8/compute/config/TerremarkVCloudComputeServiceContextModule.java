@@ -28,12 +28,12 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeService;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
+import org.jclouds.trmk.vcloud_0_8.compute.functions.ImageForVCloudExpressVAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ParseOsFromVAppTemplateName;
@@ -43,6 +43,7 @@ import org.jclouds.trmk.vcloud_0_8.compute.strategy.ParseVAppTemplateDescription
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -60,18 +61,37 @@ import com.google.inject.TypeLiteral;
 public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   public static final Map<Status, NodeState> VAPPSTATUS_TO_NODESTATE = ImmutableMap.<Status, NodeState> builder()
-         .put(Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING)
-         .put(Status.RESOLVED, NodeState.PENDING).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-         .put(Status.DEPLOYED, NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED)
-         .put(Status.UNRESOLVED, NodeState.PENDING).build();
+   public static final Map<Status, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
+            .<Status, NodeMetadata.Status> builder()
+            .put(Status.OFF, NodeMetadata.Status.SUSPENDED)
+            .put(Status.ON, NodeMetadata.Status.RUNNING)
+            .put(Status.RESOLVED, NodeMetadata.Status.PENDING)
+            .put(Status.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED)
+            .put(Status.DEPLOYED, NodeMetadata.Status.PENDING)
+            .put(Status.SUSPENDED, NodeMetadata.Status.SUSPENDED)
+            .put(Status.UNRESOLVED, NodeMetadata.Status.PENDING).build();
 
    @Singleton
    @Provides
-   protected Map<Status, NodeState> provideVAppStatusToNodeState() {
-      return VAPPSTATUS_TO_NODESTATE;
+   protected Map<Status, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
    }
+   
+   @VisibleForTesting
+   public static final Map<Status, Image.Status> toPortableImageStatus = ImmutableMap
+            .<Status, Image.Status> builder()
+            .put(Status.RESOLVED, Image.Status.AVAILABLE)
+            .put(Status.OFF, Image.Status.AVAILABLE)
+            .put(Status.UNRECOGNIZED, Image.Status.UNRECOGNIZED)
+            .put(Status.DEPLOYED, Image.Status.PENDING)
+            .put(Status.UNRESOLVED, Image.Status.PENDING).build();
 
+   @Singleton
+   @Provides
+   protected Map<Status, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
+   }
+   
    @Override
    protected void configure() {
       super.configure();
@@ -85,17 +105,15 @@ public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServi
       bind(SecureRandom.class).toInstance(new SecureRandom());
       install(new TerremarkBindComputeStrategiesByClass());
       install(new TerremarkBindComputeSuppliersByClass());
-      bindVAppConverter();
+      bind(new TypeLiteral<Function<VApp, NodeMetadata>>() {
+      }).to(VAppToNodeMetadata.class);
+      bind(new TypeLiteral<Function<VAppTemplate, Image>>() {
+      }).to(ImageForVCloudExpressVAppTemplate.class);
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });
       bind(new TypeLiteral<Function<String, OperatingSystem>>() {
       }).to(ParseOsFromVAppTemplateName.class);
-   }
-
-   protected void bindVAppConverter() {
-      bind(new TypeLiteral<Function<VApp, NodeMetadata>>() {
-      }).to(VAppToNodeMetadata.class);
    }
 
    @Provides

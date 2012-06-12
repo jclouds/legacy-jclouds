@@ -119,6 +119,11 @@ public class DeltacloudComputeServiceAdapter implements
    }
 
    @Override
+   public org.jclouds.deltacloud.domain.Image getImage(String id) {
+      return client.getImage(URI.create(checkNotNull(id, "id")));
+   }
+   
+   @Override
    public void destroyNode(String id) {
       Instance instance = getNode(id);
       for (Transition transition : findChainTo(Instance.State.FINISH, instance.getState(), client.getInstanceStates())) {

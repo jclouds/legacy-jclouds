@@ -27,77 +27,51 @@ import javax.inject.Singleton;
 import org.jclouds.cloudfiles.CDNManagement;
 import org.jclouds.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.cloudfiles.CloudFilesClient;
-import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.annotation.Redirection;
-import org.jclouds.http.annotation.ServerError;
-import org.jclouds.json.config.GsonModule.DateAdapter;
-import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.Storage;
-import org.jclouds.openstack.swift.config.SwiftObjectModule;
-import org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse;
+import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * 
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class CloudFilesRestClientModule extends RestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
-
-   @Provides
-   @Singleton
-   CommonSwiftClient provideCommonSwiftClient(CloudFilesClient in) {
-      return in;
+public class CloudFilesRestClientModule extends SwiftRestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
+   public CloudFilesRestClientModule() {
+      super(TypeToken.of(CloudFilesClient.class), TypeToken.of(CloudFilesAsyncClient.class), ImmutableMap
+               .<Class<?>, Class<?>> of());
    }
 
-   @Provides
-   @Singleton
-   CommonSwiftAsyncClient provideCommonSwiftClient(CloudFilesAsyncClient in) {
-      return in;
+   protected void bindResolvedClientsToCommonSwift() {
+      bind(CommonSwiftClient.class).to(CloudFilesClient.class).in(Scopes.SINGLETON);
+      bind(CommonSwiftAsyncClient.class).to(CloudFilesAsyncClient.class).in(Scopes.SINGLETON);
    }
 
-   @Override
-   protected void configure() {
-      install(new SwiftObjectModule());
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      super.configure();
-   }
+   public static class StorageAndCDNManagementEndpointModule extends AuthenticationServiceModule {
+      @Provides
+      @Singleton
+      @CDNManagement
+      protected Supplier<URI> provideCDNUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
+         return getLastValueInMap(factory.createForApiTypeAndVersion("cloudFilesCDN", apiVersion));
+      }
 
-   @Override
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseSwiftErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseSwiftErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseSwiftErrorFromHttpResponse.class);
-   }
-
-   @Override
-   protected void installLocations() {
-      super.installLocations();
-      install(new AuthenticationServiceModule());
-   }
-
-   @Provides
-   @Singleton
-   @CDNManagement
-   protected Supplier<URI> provideCDNUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-      return getLastValueInMap(factory.createForApiTypeAndVersion("cloudFilesCDN", apiVersion));
-   }
-
-   @Provides
-   @Singleton
-   @Storage
-   protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-      return getLastValueInMap(factory.createForApiTypeAndVersion("cloudFiles", apiVersion));
+      @Provides
+      @Singleton
+      @Storage
+      protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
+         return getLastValueInMap(factory.createForApiTypeAndVersion("cloudFiles", apiVersion));
+      }
    }
 
 }

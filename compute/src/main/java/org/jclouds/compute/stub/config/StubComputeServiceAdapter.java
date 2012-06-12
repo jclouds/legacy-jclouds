@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.stub.config;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -36,10 +38,11 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.all.JustProvider;
@@ -49,6 +52,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
@@ -84,13 +88,13 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       this.osToVersionMap = osToVersionMap;
    }
 
-   protected void setStateOnNode(NodeState state, NodeMetadata node) {
-      nodes.put(node.getId(), NodeMetadataBuilder.fromNodeMetadata(node).state(state).build());
+   protected void setStateOnNode(Status status, NodeMetadata node) {
+      nodes.put(node.getId(), NodeMetadataBuilder.fromNodeMetadata(node).status(status).build());
    }
 
-   protected void setStateOnNodeAfterDelay(final NodeState state, final NodeMetadata node, final long millis) {
+   protected void setStateOnNodeAfterDelay(final Status status, final NodeMetadata node, final long millis) {
       if (millis == 0l)
-         setStateOnNode(state, node);
+         setStateOnNode(status, node);
       else
          ioThreads.execute(new Runnable() {
 
@@ -101,7 +105,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
                } catch (InterruptedException e) {
                   Throwables.propagate(e);
                }
-               setStateOnNode(state, node);
+               setStateOnNode(status, node);
             }
 
          });
@@ -120,13 +124,13 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.location(location.get());
       builder.imageId(template.getImage().getId());
       builder.operatingSystem(template.getImage().getOperatingSystem());
-      builder.state(NodeState.PENDING);
+      builder.status(Status.PENDING);
       builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
       builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
       builder.credentials(LoginCredentials.builder().user("root").password(passwordPrefix + id).build());
       NodeMetadata node = builder.build();
       nodes.put(node.getId(), node);
-      setStateOnNodeAfterDelay(NodeState.RUNNING, node, 100);
+      setStateOnNodeAfterDelay(Status.RUNNING, node, 100);
       return new NodeWithInitialCredentials(node);
    }
 
@@ -149,12 +153,17 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
                String desc = String.format("stub %s %s", osVersions.getKey(), is64Bit);
                images.add(new ImageBuilder().ids(id++ + "").name(osVersions.getKey().name()).location(location.get())
                      .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
-                     .description(desc).build());
+                     .description(desc).status(Image.Status.AVAILABLE).build());
             }
          }
       return images.build();
    }
-
+   
+   @Override
+   public Image getImage(String id) {
+      return Iterables.find(listImages(), ImagePredicates.idEquals(id), null);
+   }
+   
    @Override
    public Iterable<NodeMetadata> listNodes() {
       return nodes.values();
@@ -176,8 +185,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       NodeMetadata node = nodes.get(id);
       if (node == null)
          return;
-      setStateOnNodeAfterDelay(NodeState.PENDING, node, 0);
-      setStateOnNodeAfterDelay(NodeState.TERMINATED, node, 50);
+      setStateOnNodeAfterDelay(Status.PENDING, node, 0);
+      setStateOnNodeAfterDelay(Status.TERMINATED, node, 50);
       ioThreads.execute(new Runnable() {
 
          @Override
@@ -199,8 +208,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       NodeMetadata node = nodes.get(id);
       if (node == null)
          throw new ResourceNotFoundException("node not found: " + id);
-      setStateOnNode(NodeState.PENDING, node);
-      setStateOnNodeAfterDelay(NodeState.RUNNING, node, 50);
+      setStateOnNode(Status.PENDING, node);
+      setStateOnNodeAfterDelay(Status.RUNNING, node, 50);
    }
 
    @Override
@@ -208,12 +217,12 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       NodeMetadata node = nodes.get(id);
       if (node == null)
          throw new ResourceNotFoundException("node not found: " + id);
-      if (node.getState() == NodeState.RUNNING)
+      if (node.getStatus() == Status.RUNNING)
          return;
-      if (node.getState() != NodeState.SUSPENDED)
-         throw new IllegalStateException("to resume a node, it must be in suspended state, not: " + node.getState());
-      setStateOnNode(NodeState.PENDING, node);
-      setStateOnNodeAfterDelay(NodeState.RUNNING, node, 50);
+      if (node.getStatus() != Status.SUSPENDED)
+         throw new IllegalStateException("to resume a node, it must be in suspended status, not: " + formatStatus(node));
+      setStateOnNode(Status.PENDING, node);
+      setStateOnNodeAfterDelay(Status.RUNNING, node, 50);
    }
 
    @Override
@@ -221,11 +230,12 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       NodeMetadata node = nodes.get(id);
       if (node == null)
          throw new ResourceNotFoundException("node not found: " + id);
-      if (node.getState() == NodeState.SUSPENDED)
+      if (node.getStatus() == Status.SUSPENDED)
          return;
-      if (node.getState() != NodeState.RUNNING)
-         throw new IllegalStateException("to suspend a node, it must be in running state, not: " + node.getState());
-      setStateOnNode(NodeState.PENDING, node);
-      setStateOnNodeAfterDelay(NodeState.SUSPENDED, node, 50);
+      if (node.getStatus() != Status.RUNNING)
+         throw new IllegalStateException("to suspend a node, it must be in running status, not: " + formatStatus(node));
+      setStateOnNode(Status.PENDING, node);
+      setStateOnNodeAfterDelay(Status.SUSPENDED, node, 50);
    }
+
 }

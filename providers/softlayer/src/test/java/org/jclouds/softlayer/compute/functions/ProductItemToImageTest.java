@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Jason King
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ProductItemToImageTest")
 public class ProductItemToImageTest {
    // Operating Systems available MAR 2012
    private static final List<String> operatingSystems = Arrays.asList(

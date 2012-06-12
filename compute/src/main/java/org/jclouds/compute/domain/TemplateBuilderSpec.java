@@ -184,7 +184,13 @@ public class TemplateBuilderSpec implements Serializable {
    
    /** Specification; used for toParseableString(). */
    // transient in case people using serializers don't want this to show up
-   protected transient final String specification;
+   protected transient String specification;
+   
+   protected TemplateBuilderSpec() {
+      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
+      // prohibited in GAE. This also implies fields are not final.
+      // see http://code.google.com/p/jclouds/issues/detail?spec=925
+   }
 
    protected TemplateBuilderSpec(String specification) {
       this.specification = specification;

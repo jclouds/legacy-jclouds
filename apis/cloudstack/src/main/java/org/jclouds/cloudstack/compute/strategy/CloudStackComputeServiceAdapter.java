@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
+import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.id;
 import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 
 import java.util.List;
@@ -37,6 +40,8 @@ import javax.inject.Singleton;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.Capabilities;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkType;
@@ -45,10 +50,12 @@ import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.functions.CreateFirewallRulesForIP;
 import org.jclouds.cloudstack.functions.CreatePortForwardingRulesForIP;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork.Factory;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
+import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
@@ -70,11 +77,10 @@ import com.google.common.primitives.Ints;
 /**
  * defines the connection between the {@link CloudStackClient} implementation
  * and the jclouds {@link ComputeService}
- * 
  */
 @Singleton
 public class CloudStackComputeServiceAdapter implements
-      ComputeServiceAdapter<VirtualMachine, ServiceOffering, Template, Zone> {
+   ComputeServiceAdapter<VirtualMachine, ServiceOffering, Template, Zone> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -86,6 +92,7 @@ public class CloudStackComputeServiceAdapter implements
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final Factory staticNATVMInNetwork;
    private final CreatePortForwardingRulesForIP setupPortForwardingRulesForIP;
+   private final CreateFirewallRulesForIP setupFirewallRulesForIP;
    private final LoadingCache<String, Set<IPForwardingRule>> vmToRules;
    private final Map<String, Credentials> credentialStore;
    private final Map<NetworkType, ? extends OptionsConverter> optionsConverters;
@@ -93,19 +100,23 @@ public class CloudStackComputeServiceAdapter implements
 
    @Inject
    public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<String> jobComplete,
-         @Memoized Supplier<Map<String, Network>> networkSupplier,
-         BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
-         StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
-         CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<String, Set<IPForwardingRule>> vmToRules,
-         Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters,
-         Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
+                                          @Memoized Supplier<Map<String, Network>> networkSupplier,
+                                          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
+                                          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
+                                          CreatePortForwardingRulesForIP setupPortForwardingRulesForIP,
+                                          CreateFirewallRulesForIP setupFirewallRulesForIP,
+                                          LoadingCache<String, Set<IPForwardingRule>> vmToRules,
+                                          Map<String, Credentials> credentialStore,
+                                          Map<NetworkType, ? extends OptionsConverter> optionsConverters,
+                                          Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
       this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
-            "blockUntilJobCompletesAndReturnResult");
+         "blockUntilJobCompletesAndReturnResult");
       this.staticNATVMInNetwork = checkNotNull(staticNATVMInNetwork, "staticNATVMInNetwork");
       this.setupPortForwardingRulesForIP = checkNotNull(setupPortForwardingRulesForIP, "setupPortForwardingRulesForIP");
+      this.setupFirewallRulesForIP = checkNotNull(setupFirewallRulesForIP, "setupFirewallRulesForIP");
       this.vmToRules = checkNotNull(vmToRules, "vmToRules");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.optionsConverters = optionsConverters;
@@ -114,12 +125,12 @@ public class CloudStackComputeServiceAdapter implements
 
    @Override
    public NodeAndInitialCredentials<VirtualMachine> createNodeWithGroupEncodedIntoName(String group, String name,
-         org.jclouds.compute.domain.Template template) {
+                                                                                       org.jclouds.compute.domain.Template template) {
       checkNotNull(template, "template was null");
       checkNotNull(template.getOptions(), "template options was null");
       checkArgument(template.getOptions().getClass().isAssignableFrom(CloudStackTemplateOptions.class),
-            "options class %s should have been assignable from CloudStackTemplateOptions", template.getOptions()
-                  .getClass());
+         "options class %s should have been assignable from CloudStackTemplateOptions", template.getOptions()
+         .getClass());
       Map<String, Network> networks = networkSupplier.get();
 
       final String zoneId = template.getLocation().getId();
@@ -132,8 +143,8 @@ public class CloudStackComputeServiceAdapter implements
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s",zone.getNetworkType());
-      DeployVirtualMachineOptions options = DeployVirtualMachineOptions.Builder.displayName(name).name(name);
+      checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s", zone.getNetworkType());
+      DeployVirtualMachineOptions options = displayName(name).name(name);
       OptionsConverter optionsConverter = optionsConverters.get(zone.getNetworkType());
       options = optionsConverter.apply(templateOptions, networks, zoneId, options);
 
@@ -149,9 +160,9 @@ public class CloudStackComputeServiceAdapter implements
          options.keyPair(templateOptions.getKeyPair());
          if (templateOptions.getRunScript() != null) {
             checkArgument(
-                  credentialStore.containsKey("keypair#" + templateOptions.getKeyPair()),
-                  "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
-                  templateOptions.getKeyPair());
+               credentialStore.containsKey("keypair#" + templateOptions.getKeyPair()),
+               "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
+               templateOptions.getKeyPair());
          }
       }
 
@@ -159,10 +170,11 @@ public class CloudStackComputeServiceAdapter implements
       String serviceOfferingId = template.getHardware().getId();
 
       logger.info("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,
-            zoneId, options);
+         zoneId, options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
-            templateId, options);
-      VirtualMachine vm = blockUntilJobCompletesAndReturnResult.<VirtualMachine> apply(job);
+         templateId, options);
+      VirtualMachine vm = blockUntilJobCompletesAndReturnResult.<VirtualMachine>apply(job);
+      logger.debug("--- virtualmachine: %s", vm);
       LoginCredentials credentials = null;
       if (vm.isPasswordEnabled()) {
          assert vm.getPassword() != null : vm;
@@ -171,15 +183,23 @@ public class CloudStackComputeServiceAdapter implements
          credentials = LoginCredentials.fromCredentials(credentialStore.get("keypair#" + templateOptions.getKeyPair()));
       }
       if (templateOptions.shouldSetupStaticNat()) {
+         Capabilities capabilities = client.getConfigurationClient().listCapabilities();
          // TODO: possibly not all network ids, do we want to do this
          for (String networkId : options.getNetworkIds()) {
             logger.debug(">> creating static NAT for virtualMachine(%s) in network(%s)", vm.getId(), networkId);
             PublicIPAddress ip = staticNATVMInNetwork.create(networks.get(networkId)).apply(vm);
             logger.trace("<< static NATed IPAddress(%s) to virtualMachine(%s)", ip.getId(), vm.getId());
+            vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
             List<Integer> ports = Ints.asList(templateOptions.getInboundPorts());
-            logger.debug(">> setting up IP forwarding for IPAddress(%s) rules(%s)", ip.getId(), ports);
-            Set<IPForwardingRule> rules = setupPortForwardingRulesForIP.apply(ip, ports);
-            logger.trace("<< setup %d IP forwarding rules on IPAddress(%s)", rules.size(), ip.getId());
+            if (capabilities.getCloudStackVersion().startsWith("2")) {
+               logger.debug(">> setting up IP forwarding for IPAddress(%s) rules(%s)", ip.getId(), ports);
+               Set<IPForwardingRule> rules = setupPortForwardingRulesForIP.apply(ip, ports);
+               logger.trace("<< setup %d IP forwarding rules on IPAddress(%s)", rules.size(), ip.getId());
+            } else {
+               logger.debug(">> setting up firewall rules for IPAddress(%s) rules(%s)", ip.getId(), ports);
+               Set<FirewallRule> rules = setupFirewallRulesForIP.apply(ip, ports);
+               logger.trace("<< setup %d firewall rules on IPAddress(%s)", rules.size(), ip.getId());
+            }
          }
       }
       return new NodeAndInitialCredentials<VirtualMachine>(vm, vm.getId() + "", credentials);
@@ -196,6 +216,11 @@ public class CloudStackComputeServiceAdapter implements
       // TODO: we may need to filter these further
       // we may also want to see if we can work with ssh keys
       return filter(client.getTemplateClient().listTemplates(), isReady());
+   }
+
+   @Override
+   public Template getImage(String id) {
+      return get(client.getTemplateClient().listTemplates(id(id)), 0, null);
    }
 
    @Override
@@ -233,10 +258,13 @@ public class CloudStackComputeServiceAdapter implements
       // 1) Delete IP forwarding rules associated with IP.
       Set<String> ipAddresses = deleteIPForwardingRulesForVMAndReturnDistinctIPs(virtualMachineId);
 
-      // 2) Disable static nat rule for the IP.
+      // 2) Delete firewall rules associated with IP.
+      ipAddresses.addAll(deleteFirewallRulesForVMAndReturnDistinctIPs(virtualMachineId));
+
+      // 3) Disable static nat rule for the IP.
       disableStaticNATOnIPAddresses(ipAddresses);
 
-      // 3) Only after 1 and 2 release the IP address.
+      // 4) Only after 1 and 2 release the IP address.
       disassociateIPAddresses(ipAddresses);
 
       destroyVirtualMachine(virtualMachineId);
@@ -282,7 +310,7 @@ public class CloudStackComputeServiceAdapter implements
       Set<String> ipAddresses = Sets.newLinkedHashSet();
 
       Set<IPForwardingRule> forwardingRules = client.getNATClient().getIPForwardingRulesForVirtualMachine(
-            virtualMachineId);
+         virtualMachineId);
       for (IPForwardingRule rule : forwardingRules) {
          if (!"Deleting".equals(rule.getState())) {
             ipAddresses.add(rule.getIPAddressId());
@@ -294,6 +322,26 @@ public class CloudStackComputeServiceAdapter implements
          }
       }
       awaitCompletion(jobsToTrack.build());
+      return ipAddresses;
+   }
+
+   public Set<String> deleteFirewallRulesForVMAndReturnDistinctIPs(String virtualMachineId) {
+      // immutable doesn't permit duplicates
+      Set<String> ipAddresses = Sets.newLinkedHashSet();
+
+      String publicIpId = client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId();
+      if (publicIpId != null) {
+         Set<FirewallRule> firewallRules = client.getFirewallClient()
+            .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(client.getVirtualMachineClient().getVirtualMachine(virtualMachineId).getPublicIPId()));
+
+         for (FirewallRule rule : firewallRules) {
+            if (rule.getState() != FirewallRule.State.DELETING) {
+               ipAddresses.add(rule.getIpAddressId());
+               client.getFirewallClient().deleteFirewallRule(rule.getId());
+               logger.debug(">> deleting FirewallRule(%s)", rule.getId());
+            }
+         }
+      }
       return ipAddresses;
    }
 

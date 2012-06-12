@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -33,7 +34,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
-
 public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
 
    @Resource
@@ -46,7 +46,7 @@ public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
 
    @Inject
    public ConcurrentOpenSocketFinder(SocketOpen socketTester, 
-            @Named("NODE_RUNNING") final Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_RUNNING) final Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
       this.socketTester = socketTester;
       this.nodeRunning = nodeRunning;

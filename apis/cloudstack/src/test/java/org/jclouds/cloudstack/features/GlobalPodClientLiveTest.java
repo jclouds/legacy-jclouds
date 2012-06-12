@@ -51,10 +51,13 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
    private Pod pod;
 
    public void testListPods() throws Exception {
+      skipIfNotGlobalAdmin();
+
       Set<Pod> response = globalAdminClient.getPodClient().listPods();
       assert null != response;
       long podCount = response.size();
       assertTrue(podCount >= 0);
+
       for (Pod pod : response) {
          Pod newDetails = Iterables.getOnlyElement(globalAdminClient.getPodClient().listPods(
             ListPodsOptions.Builder.id(pod.getId())));
@@ -74,7 +77,7 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreatePod() {
-      assertTrue(globalAdminEnabled, "Global admin credentials must be given");
+      skipIfNotGlobalAdmin();
 
       zone = globalAdminClient.getZoneClient().createZone(prefix + "-zone", NetworkType.BASIC, "8.8.8.8", "10.10.10.10");
       pod = globalAdminClient.getPodClient().createPod(prefix + "-pod", zone.getId(), "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",

@@ -1,0 +1,28 @@
+{
+    "version": {
+        "id": "v2.0",
+        "updated": "2012-01-21T11:33:21-06:00",
+        "status": "BETA",
+        "links": [{
+            "rel": "self",
+            "href": "https:\/\/identity.api.rackspacecloud.com\/v2.0"
+        }, {
+            "rel": "describedby",
+            "type": "application\/pdf",
+            "href": "http:\/\/docs.rackspacecloud.com\/auth\/api\/v2.0\/auth-client-devguide-latest.pdf"
+        }, {
+            "rel": "describedby",
+            "type": "application\/vnd.sun.wadl+xml",
+            "href": "http:\/\/docs.rackspacecloud.com\/auth\/api\/v2.0\/auth.wadl"
+        }],
+        "media-types": {
+            "values": [{
+                "base": "application\/xml",
+                "type": "application\/vnd.openstack.identity+xml;version=2.0"
+            }, {
+                "base": "application\/json",
+                "type": "application\/vnd.openstack.identity+json;version=2.0"
+            }]
+        }
+    }
+}

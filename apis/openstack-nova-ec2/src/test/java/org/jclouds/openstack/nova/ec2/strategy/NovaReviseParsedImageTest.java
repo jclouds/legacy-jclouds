@@ -32,13 +32,14 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.xml.DescribeImagesResponseHandlerTest;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v2_0.compute.functions.ImageToOperatingSystem;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
@@ -74,9 +75,12 @@ public class NovaReviseParsedImageTest {
                   .id("us-east-1/ami-000004d6")
                   .providerId("ami-000004d6")
                   .location(defaultLocation)
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE)
+                  .backendStatus("available")
                   .userMetadata(
                         ImmutableMap.of("owner", "", "rootDeviceType", "instance-store", "virtualizationType",
                               "paravirtual", "hypervisor", "xen")).build().toString());
+      assertEquals(Iterables.get(result, 4).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
    }
 
    static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description(
@@ -89,8 +93,9 @@ public class NovaReviseParsedImageTest {
                .getInstance(Json.class));
 
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
-      EC2ImageParser parser = new EC2ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
-               Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+      EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
+                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
                         .ofInstance(defaultLocation), new NovaReviseParsedImage(new ImageToOperatingSystem(map)));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }

@@ -18,35 +18,84 @@
  */
 package org.jclouds.compute.domain;
 
+import org.jclouds.compute.domain.NodeMetadata.Status;
+
 /**
- * Indicates the status of a node
+ * Indicates the status of a node.  Replaced by {@link Status}
  * 
  * @author Adrian Cole
+ * @see NodeMetadata#getStatus()
  */
+@Deprecated
 public enum NodeState {
    /**
     * The node is in transition
+    * 
+    * @see Status#PENDING
     */
    PENDING,
    /**
     * The node is visible, and in the process of being deleted.
+    * 
+    * @see Status#TERMINATED
     */
    TERMINATED,
    /**
     * The node is deployed, but suspended or stopped.
+    * 
+    * @see Status#SUSPENDED
     */
    SUSPENDED,
    /**
     * The node is available for requests
+    * 
+    * @see Status#RUNNING
     */
    RUNNING,
    /**
     * There is an error on the node
+    * 
+    * @see Status#ERROR
     */
    ERROR,
    /**
     * The state of the node is unrecognized.
+    * 
+    * @see Status#UNRECOGNIZED
     */
    UNRECOGNIZED;
 
+   public static NodeState from(Status in) {
+      switch (in) {
+         case PENDING:
+            return PENDING;
+         case TERMINATED:
+            return TERMINATED;
+         case SUSPENDED:
+            return SUSPENDED;
+         case RUNNING:
+            return RUNNING;
+         case ERROR:
+            return ERROR;
+         default:
+            return UNRECOGNIZED;
+      }
+   }
+
+   public Status toStatus() {
+      switch (this) {
+         case PENDING:
+            return Status.PENDING;
+         case TERMINATED:
+            return Status.TERMINATED;
+         case SUSPENDED:
+            return Status.SUSPENDED;
+         case RUNNING:
+            return Status.RUNNING;
+         case ERROR:
+            return Status.ERROR;
+         default:
+            return Status.UNRECOGNIZED;
+      }
+   }
 }

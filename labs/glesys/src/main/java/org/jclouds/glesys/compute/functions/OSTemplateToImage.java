@@ -27,6 +27,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.glesys.domain.OSTemplate;
 
@@ -52,6 +53,6 @@ public class OSTemplateToImage implements Function<OSTemplate, Image> {
       builder.name(template.getName()).description(template.getName()).is64Bit(parsed.is64Bit).version(parsed.version)
                .family(parsed.family);
       return new ImageBuilder().ids(template.getName()).name(template.getName()).description(template.getName())
-            .operatingSystem(builder.build()).build();
+            .operatingSystem(builder.build()).status(Status.AVAILABLE).build();
    }
 }

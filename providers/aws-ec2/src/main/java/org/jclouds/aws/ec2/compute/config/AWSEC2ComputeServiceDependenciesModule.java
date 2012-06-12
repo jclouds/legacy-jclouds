@@ -51,6 +51,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
@@ -98,6 +99,8 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
+      bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
+      }).to(EC2ImageParser.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
       bind(new TypeLiteral<PredicateWithResult<String, Image>>() {

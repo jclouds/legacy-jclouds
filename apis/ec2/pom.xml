@@ -36,12 +36,20 @@
   <properties>
     <test.ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.ec2.endpoint>
     <test.ec2.api-version>2010-06-15</test.ec2.api-version>
-    <test.ec2.build-version />
+    <test.ec2.build-version></test.ec2.build-version>
     <test.ec2.identity>${test.aws.identity}</test.ec2.identity>
     <test.ec2.credential>${test.aws.credential}</test.ec2.credential>
-    <test.ec2.image-id />
-    <test.ec2.image.login-user />
-    <test.ec2.image.authenticate-sudo />
+    <test.ec2.image-id></test.ec2.image-id>
+    <test.ec2.image.login-user></test.ec2.image.login-user>
+    <test.ec2.image.authenticate-sudo></test.ec2.image.authenticate-sudo>
+
+    <jclouds.osgi.export>org.jclouds.ec2*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>
+      org.jclouds.compute.internal;version="${project.version}",
+      org.jclouds.rest.internal;version="${project.version}",
+      org.jclouds*;version="${project.version}",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -90,7 +98,14 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.theoryinpractise</groupId>
+        <artifactId>clojure-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
       <id>live</id>
@@ -125,27 +140,6 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.ec2*;version="${project.version}"</Export-Package>
-            <Import-Package>
-              org.jclouds.compute.internal;version="${project.version}",
-              org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds*;version="${project.version}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

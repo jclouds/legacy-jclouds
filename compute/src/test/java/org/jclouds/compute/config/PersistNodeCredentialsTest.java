@@ -30,7 +30,7 @@ import org.jclouds.compute.config.PersistNodeCredentialsModule.RefreshCredential
 import org.jclouds.compute.config.PersistNodeCredentialsModule.RefreshCredentialsForNodeIfRanAdminAccess;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -72,7 +72,7 @@ public class PersistNodeCredentialsTest {
 
       replay(credstore);
 
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).build();
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).build();
       RefreshCredentialsForNodeIfRanAdminAccess fn = new PersistNodeCredentialsModule.RefreshCredentialsForNodeIfRanAdminAccess(
             credstore, null);
       assertEquals(node, fn.apply(node));
@@ -90,7 +90,7 @@ public class PersistNodeCredentialsTest {
 
       replay(credstore);
 
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(credentials).build();
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(credentials).build();
       RefreshCredentialsForNode fn = new PersistNodeCredentialsModule.RefreshCredentialsForNode(credstore, null);
       assertEquals(node, fn.apply(node));
 
@@ -111,7 +111,7 @@ public class PersistNodeCredentialsTest {
       replay(statement);
       replay(credstore);
 
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).build();
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).build();
       RefreshCredentialsForNodeIfRanAdminAccess fn = new PersistNodeCredentialsModule.RefreshCredentialsForNodeIfRanAdminAccess(
             credstore, statement);
       assertEquals(fn.apply(node).getCredentials(), credentials);
@@ -136,7 +136,7 @@ public class PersistNodeCredentialsTest {
       replay(statement);
       replay(credstore);
 
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).build();
+      NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).build();
       RefreshCredentialsForNode fn = new PersistNodeCredentialsModule.RefreshCredentialsForNode(credstore, statement);
       assertEquals(fn.apply(node).getCredentials(), credentials);
 

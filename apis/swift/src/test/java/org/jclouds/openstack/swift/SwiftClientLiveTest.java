@@ -24,15 +24,15 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<SwiftClient> {
+@Test(groups = "live", testName = "SwiftClientLiveTest")
+public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<CommonSwiftClient> {
    
    public SwiftClientLiveTest(){
-      provider = "swift";
+      provider = System.getProperty("test.swift.provider", "swift");
    }
    
    @Override
-   public SwiftClient getApi() {
+   public CommonSwiftClient getApi() {
       return view.unwrap(SwiftApiMetadata.CONTEXT_TOKEN).getApi();
    }
 

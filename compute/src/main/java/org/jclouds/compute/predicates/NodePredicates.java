@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
@@ -235,7 +235,7 @@ public class NodePredicates {
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
-            return group.equals(nodeMetadata.getGroup()) && nodeMetadata.getState() == NodeState.RUNNING;
+            return group.equals(nodeMetadata.getGroup()) && nodeMetadata.getStatus() == Status.RUNNING;
          }
 
          @Override
@@ -251,7 +251,7 @@ public class NodePredicates {
    public static final Predicate<NodeMetadata> RUNNING = new Predicate<NodeMetadata>() {
       @Override
       public boolean apply(NodeMetadata nodeMetadata) {
-         return nodeMetadata.getState() == NodeState.RUNNING;
+         return nodeMetadata.getStatus() == Status.RUNNING;
       }
 
       @Override
@@ -266,7 +266,7 @@ public class NodePredicates {
    public static final Predicate<NodeMetadata> TERMINATED = new Predicate<NodeMetadata>() {
       @Override
       public boolean apply(NodeMetadata nodeMetadata) {
-         return nodeMetadata.getState() == NodeState.TERMINATED;
+         return nodeMetadata.getStatus() == Status.TERMINATED;
       }
 
       @Override

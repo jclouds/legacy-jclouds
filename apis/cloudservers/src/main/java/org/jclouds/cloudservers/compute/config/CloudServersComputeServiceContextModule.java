@@ -30,6 +30,7 @@ import org.jclouds.cloudservers.compute.functions.ServerToNodeMetadata;
 import org.jclouds.cloudservers.compute.predicates.GetImageWhenStatusActivePredicateWithResult;
 import org.jclouds.cloudservers.compute.strategy.CloudServersComputeServiceAdapter;
 import org.jclouds.cloudservers.domain.Flavor;
+import org.jclouds.cloudservers.domain.ImageStatus;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.compute.ComputeServiceAdapter;
@@ -37,7 +38,6 @@ import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.internal.BaseComputeService;
@@ -93,36 +93,54 @@ public class CloudServersComputeServiceContextModule extends
    }
    
    @VisibleForTesting
-   public static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap
-            .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
-            .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
-            .put(ServerStatus.DELETED, NodeState.TERMINATED)//
-            .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.MOVE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.RESCUE, NodeState.PENDING)//
-            .put(ServerStatus.ERROR, NodeState.ERROR)//
-            .put(ServerStatus.BUILD, NodeState.PENDING)//
-            .put(ServerStatus.RESTORING, NodeState.PENDING)//
-            .put(ServerStatus.PASSWORD, NodeState.PENDING)//
-            .put(ServerStatus.REBUILD, NodeState.PENDING)//
-            .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
-            .put(ServerStatus.REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.UNKNOWN, NodeState.UNRECOGNIZED)//
-            .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+   public static final Map<ServerStatus, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
+            .<ServerStatus, NodeMetadata.Status> builder()
+            .put(ServerStatus.ACTIVE, NodeMetadata.Status.RUNNING)
+            .put(ServerStatus.SUSPENDED, NodeMetadata.Status.SUSPENDED)
+            .put(ServerStatus.DELETED, NodeMetadata.Status.TERMINATED)
+            .put(ServerStatus.QUEUE_RESIZE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.PREP_RESIZE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.RESIZE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.VERIFY_RESIZE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.QUEUE_MOVE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.PREP_MOVE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.MOVE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.VERIFY_MOVE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.RESCUE, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.ERROR, NodeMetadata.Status.ERROR)
+            .put(ServerStatus.BUILD, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.RESTORING, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.PASSWORD, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.REBUILD, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.DELETE_IP, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.SHARE_IP, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.REBOOT, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.HARD_REBOOT, NodeMetadata.Status.PENDING)
+            .put(ServerStatus.UNKNOWN, NodeMetadata.Status.UNRECOGNIZED)
+            .put(ServerStatus.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).build();
 
    @Singleton
    @Provides
-   Map<ServerStatus, NodeState> provideServerToNodeState() {
-      return serverToNodeState;
+   Map<ServerStatus, NodeMetadata.Status> toPortableNodeStatus() {
+      return toPortableNodeStatus;
+   }
+   
+   @VisibleForTesting
+   public static final Map<ImageStatus, Image.Status> toPortableImageStatus = ImmutableMap
+            .<ImageStatus, Image.Status> builder()
+            .put(ImageStatus.ACTIVE, Image.Status.AVAILABLE)
+            .put(ImageStatus.SAVING, Image.Status.PENDING)
+            .put(ImageStatus.PREPARING, Image.Status.PENDING)
+            .put(ImageStatus.QUEUED, Image.Status.PENDING)
+            .put(ImageStatus.FAILED, Image.Status.ERROR)
+            .put(ImageStatus.UNKNOWN, Image.Status.UNRECOGNIZED)
+            .put(ImageStatus.UNRECOGNIZED, Image.Status.UNRECOGNIZED).build();
+
+   @Singleton
+   @Provides
+   Map<ImageStatus, Image.Status> toPortableImageStatus() {
+      return toPortableImageStatus;
    }
    
    @Override

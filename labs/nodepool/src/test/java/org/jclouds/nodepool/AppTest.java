@@ -176,8 +176,8 @@ public class AppTest extends TestCase {
          if (NodeMetadata.class.isInstance(cm)) {
             String nodeGroup = ((NodeMetadata) cm).getGroup();
 
-            if (!((NodeMetadata) cm).getState().equals(NodeState.SUSPENDED)
-                  && !((NodeMetadata) cm).getState().equals(NodeState.TERMINATED)) {
+            if (!((NodeMetadata) cm).getState().equals(Status.SUSPENDED)
+                  && !((NodeMetadata) cm).getState().equals(Status.TERMINATED)) {
                nodeCount++;
             }
          }

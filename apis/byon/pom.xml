@@ -35,7 +35,14 @@
 
   <properties>
     <test.byon.endpoint>file://c:/test.txt</test.byon.endpoint>
-    <test.byon.sudo-password />
+    <test.byon.sudo-password></test.byon.sudo-password>
+      <jclouds.osgi.export>org.jclouds.byon*;version="${project.version}"</jclouds.osgi.export>
+      <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+      </jclouds.osgi.import>
   </properties>
   <dependencies>
     <dependency>
@@ -104,26 +111,5 @@
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>  
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.byon*;version="${project.version}"</Export-Package>
-            <Import-Package>
-              org.jclouds.compute.internal;version="${project.version}",
-              org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds*;version="${project.version}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

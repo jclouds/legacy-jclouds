@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceStateChange;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -573,4 +572,22 @@ public interface InstanceClient {
     */
    void setBlockDeviceMappingForInstanceInRegion(@Nullable String region,
          String instanceId, Map<String, BlockDevice> blockDeviceMapping);
+
+   /**
+    * Retrieves console output for the specified instance.
+    *
+    * Instance console output is buffered and posted shortly after instance boot, reboot, and termination. Amazon EC2 preserves
+    * the most recent 64 KB output which will be available for at least one hour after the most recent post.
+    *
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance
+    *           ID is tied to the Region.
+    * @param instanceId
+    *           which instance to retrieve console output for
+    * @return The console output
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-GetConsoleOutput.html">
+    *       ApiReference query GetConsoleOutput</a>
+    */
+   String getConsoleOutputForInstanceInRegion(@Nullable String region,
+         String instanceId);
 }

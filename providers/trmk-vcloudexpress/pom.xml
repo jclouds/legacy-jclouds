@@ -36,10 +36,18 @@
     <properties>
         <test.trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</test.trmk-vcloudexpress.endpoint>
         <test.trmk-vcloudexpress.api-version>0.8a-ext1.6</test.trmk-vcloudexpress.api-version>
-        <test.trmk-vcloudexpress.build-version />
+        <test.trmk-vcloudexpress.build-version></test.trmk-vcloudexpress.build-version>
         <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
         <test.trmk-vcloudexpress.credential>FIXME</test.trmk-vcloudexpress.credential>
-        <test.trmk-vcloudexpress.image-id />
+        <test.trmk-vcloudexpress.image-id></test.trmk-vcloudexpress.image-id>
+
+        <jclouds.osgi.export>org.jclouds.trmk.ecloud*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+          org.jclouds.compute.internal;version="${project.version}",
+          org.jclouds.rest.internal;version="${project.version}",
+          org.jclouds*;version="${project.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -116,26 +124,5 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.trmk.ecloud*;version="${project.version}"</Export-Package>
-                        <Import-Package>
-                            org.jclouds.compute.internal;version="${project.version}",
-                            org.jclouds.rest.internal;version="${project.version}",
-                            org.jclouds*;version="${project.version}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

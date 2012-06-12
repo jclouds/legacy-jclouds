@@ -89,7 +89,11 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
 
    @Override
    public ParseAuthenticationResponseFromHeaders setContext(HttpRequest request) {
-      return setHostToReplace(request.getEndpoint().getHost());
+      String host = request.getEndpoint().getHost();
+      if (request.getEndpoint().getPort() != -1) {
+         host += ":" + request.getEndpoint().getPort();
+      }
+      return setHostToReplace(host);
    }
 
    @VisibleForTesting

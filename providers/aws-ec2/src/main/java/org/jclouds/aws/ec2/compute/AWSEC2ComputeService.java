@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +60,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -98,14 +102,14 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    protected AWSEC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
             @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
             @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy,
+            GetImageStrategy getImageStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
             CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
             DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy startNodeStrategy,
             SuspendNodeStrategy stopNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider,
-            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
-            @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
+            @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named(TIMEOUT_NODE_TERMINATED) Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+            @Named(TIMEOUT_NODE_SUSPENDED) Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
@@ -116,7 +120,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient,
             Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention) {
-      super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
+      super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
                stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
                nodeSuspended, initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess, persistNodeCredentials,

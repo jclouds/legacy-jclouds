@@ -91,6 +91,12 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
       int serverId = Integer.parseInt(id);
       return client.getServer(serverId);
    }
+   
+   @Override
+   public Image getImage(String id) {
+      int imageId = Integer.parseInt(id);
+      return client.getImage(imageId);
+   }
 
    @Override
    public void destroyNode(String id) {

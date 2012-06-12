@@ -21,6 +21,7 @@ package org.jclouds.compute.config;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetImageStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
@@ -42,6 +43,7 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
       bindAddNodeWithTagStrategy(defineAddNodeWithTagStrategy());
       bindListNodesStrategy(defineListNodesStrategy());
       bindGetNodeMetadataStrategy(defineGetNodeMetadataStrategy());
+      bindGetImageStrategy(defineGetImageStrategy());
       bindRebootNodeStrategy(defineRebootNodeStrategy());
       bindStartNodeStrategy(defineStartNodeStrategy());
       bindStopNodeStrategy(defineStopNodeStrategy());
@@ -78,7 +80,11 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
    protected void bindGetNodeMetadataStrategy(Class<? extends GetNodeMetadataStrategy> clazz) {
       bind(GetNodeMetadataStrategy.class).to(clazz).in(Scopes.SINGLETON);
    }
-
+   
+   protected void bindGetImageStrategy(Class<? extends GetImageStrategy> clazz) {
+      bind(GetImageStrategy.class).to(clazz).in(Scopes.SINGLETON);
+   }
+   
    protected void bindListNodesStrategy(Class<? extends ListNodesStrategy> clazz) {
       bind(ListNodesStrategy.class).to(clazz).in(Scopes.SINGLETON);
    }
@@ -101,6 +107,8 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
    protected abstract Class<? extends SuspendNodeStrategy> defineStopNodeStrategy();
 
    protected abstract Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy();
+
+   protected abstract Class<? extends GetImageStrategy> defineGetImageStrategy();
 
    protected abstract Class<? extends ListNodesStrategy> defineListNodesStrategy();
 }

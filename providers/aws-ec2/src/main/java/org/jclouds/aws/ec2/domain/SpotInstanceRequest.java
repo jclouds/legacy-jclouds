@@ -53,6 +53,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       private String id;
       private float spotPrice;
       private State state;
+      private String rawState;
       private Type type;
       private Date validFrom;
       private Date validUntil;
@@ -72,6 +73,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          this.id = null;
          this.spotPrice = 0;
          this.state = null;
+         this.rawState = null;
          this.type = null;
          this.validFrom = null;
          this.validUntil = null;
@@ -153,7 +155,12 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
          this.state = state;
          return this;
       }
-
+      
+      public Builder rawState(String rawState) {
+         this.rawState = rawState;
+         return this;
+      }
+      
       public Builder type(Type type) {
          this.type = type;
          return this;
@@ -171,8 +178,8 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
 
       public SpotInstanceRequest build() {
          return new SpotInstanceRequest(region, availabilityZoneGroup, launchedAvailabilityZone, createTime, faultCode,
-               faultMessage, instanceId, launchGroup, launchSpecification, productDescription, id, spotPrice, state,
-               type, validFrom, validUntil, tags);
+                  faultMessage, instanceId, launchGroup, launchSpecification, productDescription, id, spotPrice, state,
+                  rawState, type, validFrom, validUntil, tags);
       }
    }
 
@@ -231,15 +238,16 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    private final String id;
    private final float spotPrice;
    private final State state;
+   private final String rawState;
    private final Type type;
    private final Date validFrom;
    private final Date validUntil;
    private final Map<String, String> tags;
 
    public SpotInstanceRequest(String region, String availabilityZoneGroup, @Nullable String launchedAvailabilityZone,
-         Date createTime, String faultCode, String faultMessage, String instanceId, String launchGroup,
-         LaunchSpecification launchSpecification, String productDescription, String id, float spotPrice, State state,
-         Type type, Date validFrom, Date validUntil, Map<String, String> tags) {
+            Date createTime, String faultCode, String faultMessage, String instanceId, String launchGroup,
+            LaunchSpecification launchSpecification, String productDescription, String id, float spotPrice,
+            State state, String rawState, Type type, Date validFrom, Date validUntil, Map<String, String> tags) {
       this.region = checkNotNull(region, "region");
       this.availabilityZoneGroup = availabilityZoneGroup;
       this.launchedAvailabilityZone = launchedAvailabilityZone;
@@ -253,6 +261,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       this.id = checkNotNull(id, "id");
       this.spotPrice = spotPrice;
       this.state = checkNotNull(state, "state");
+      this.rawState = checkNotNull(rawState, "rawState");
       this.type = checkNotNull(type, "type");
       this.validFrom = validFrom;
       this.validUntil = validUntil;
@@ -313,7 +322,11 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
    public State getState() {
       return state;
    }
-
+   
+   public String getRawState() {
+      return rawState;
+   }
+   
    public Type getType() {
       return type;
    }
@@ -451,7 +464,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
             + launchedAvailabilityZone + ", createTime=" + createTime + ", faultCode=" + faultCode + ", faultMessage="
             + faultMessage + ", instanceId=" + instanceId + ", launchGroup=" + launchGroup + ", launchSpecification="
             + launchSpecification + ", productDescription=" + productDescription + ", id=" + id + ", spotPrice="
-            + spotPrice + ", state=" + state + ", type=" + type + ", validFrom=" + validFrom + ", validUntil="
+            + spotPrice + ", state=" + rawState + ", type=" + type + ", validFrom=" + validFrom + ", validUntil="
             + validUntil + ", tags=" + tags + "]";
    }
 

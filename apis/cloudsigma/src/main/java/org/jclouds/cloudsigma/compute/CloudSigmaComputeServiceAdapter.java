@@ -210,7 +210,12 @@ public class CloudSigmaComputeServiceAdapter implements
    public ServerInfo getNode(String id) {
       return client.getServerInfo(id);
    }
-
+   
+   @Override
+   public DriveInfo getImage(String id) {
+      return client.getDriveInfo(id);
+   }
+   
    @Override
    public void destroyNode(String id) {
       ServerInfo server = getNode(id);

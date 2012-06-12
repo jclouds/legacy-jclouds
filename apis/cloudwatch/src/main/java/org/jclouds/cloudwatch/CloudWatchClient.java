@@ -18,10 +18,7 @@
  */
 package org.jclouds.cloudwatch;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import com.google.inject.Provides;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.features.MetricClient;
@@ -33,7 +30,9 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
-import com.google.inject.Provides;
+import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
@@ -90,7 +89,7 @@ public interface CloudWatchClient {
     *           The statistics to be returned for the given metric. ex. Average
     * @param options
     *          more filtering options (e.g. instance ID)
-    * @see MetricsClient#getMetricStatistics
+    * @see MetricClient#getMetricStatistics(org.jclouds.cloudwatch.domain.GetMetricStatistics)
     */
    @Deprecated
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,

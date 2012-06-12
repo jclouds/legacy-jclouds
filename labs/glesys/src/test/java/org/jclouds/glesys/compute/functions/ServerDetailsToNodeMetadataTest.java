@@ -25,11 +25,11 @@ import java.net.URI;
 
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.glesys.compute.internal.BaseGleSYSComputeServiceExpectTest;
 import org.jclouds.glesys.features.ServerClientExpectTest;
@@ -89,6 +89,6 @@ public class ServerDetailsToNodeMetadataTest extends BaseGleSYSComputeServiceExp
                         new HardwareBuilder().ids("xm3276891").ram(512)
                               .processors(ImmutableList.of(new Processor(1, 1.0)))
                               .volumes(ImmutableList.<Volume> of(new VolumeImpl(5f, true, true))).hypervisor("Xen")
-                              .build()).state(NodeState.RUNNING).build());
+                              .build()).status(Status.RUNNING).build());
    }
 }

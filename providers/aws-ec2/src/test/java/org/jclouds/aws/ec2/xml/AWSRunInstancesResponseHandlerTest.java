@@ -85,25 +85,22 @@ public class AWSRunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       Reservation<? extends AWSRunningInstance> expected = new Reservation<AWSRunningInstance>(defaultRegion,
             ImmutableSet.of("default"), ImmutableSet.of(
 
-                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("0")
-                        .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING)
-                        .instanceType(InstanceType.M1_SMALL).keyName("example-key-name")
-                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))
-                        .hypervisor(Hypervisor.XEN)
+               new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("0").imageId(
+                        "ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
                         .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build(),
 
-                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1")
-                        .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING)
-                        .instanceType(InstanceType.M1_SMALL).keyName("example-key-name")
-                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))
-                        .hypervisor(Hypervisor.XEN)
+               new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1").imageId(
+                        "ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
                         .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build(),
 
-                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2")
-                        .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING)
-                        .instanceType(InstanceType.M1_SMALL).keyName("example-key-name")
-                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))
-                        .hypervisor(Hypervisor.XEN)
+               new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2").imageId(
+                        "ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
                         .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
 
             , "AIDADH4IGTRXXKCD", null, "r-47a5402e");
