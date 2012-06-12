@@ -46,6 +46,10 @@ public interface View {
     * context. If the backend context is not assignable from the supplied type,
     * an {@link IllegalArgumentException} is thrown.
     * 
+    * ex.
+    * <pre>
+    * RestContext<NovaClient, NovaAsyncClient> backendApi = computeContext.unwrap(NovaApiMetadata.CONTEXT_TOKEN);
+    * </pre>
     * @param type
     *           the type of the context to be returned. The backend context must
     *           be assignable from this type.
