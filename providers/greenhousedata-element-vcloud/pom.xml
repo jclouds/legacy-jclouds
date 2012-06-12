@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.0-beta.2</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -39,9 +39,9 @@
         <test.greenhousedata-element-vcloud.build-version>1.5.0.464915</test.greenhousedata-element-vcloud.build-version>
         <test.greenhousedata-element-vcloud.identity>FIXME_IDENTITY</test.greenhousedata-element-vcloud.identity>
         <test.greenhousedata-element-vcloud.credential>FIXME_CREDENTIAL</test.greenhousedata-element-vcloud.credential>
-        <test.greenhousedata-element-vcloud.image-id></test.greenhousedata-element-vcloud.image-id>
-        <test.greenhousedata-element-vcloud.image.login-user></test.greenhousedata-element-vcloud.image.login-user>
-        <test.greenhousedata-element-vcloud.image.authenticate-sudo></test.greenhousedata-element-vcloud.image.authenticate-sudo>
+        <test.greenhousedata-element-vcloud.image-id />
+        <test.greenhousedata-element-vcloud.image.login-user />
+        <test.greenhousedata-element-vcloud.image.authenticate-sudo />
 
         <jclouds.osgi.export>org.jclouds.greenhousedata.element.vcloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

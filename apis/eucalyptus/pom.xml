@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-beta.2</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,12 +36,12 @@
   <properties>
     <test.eucalyptus.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus.endpoint>
     <test.eucalyptus.api-version>2010-06-15</test.eucalyptus.api-version>
-    <test.eucalyptus.build-version></test.eucalyptus.build-version>
+    <test.eucalyptus.build-version />
     <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
     <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
-    <test.eucalyptus.image-id></test.eucalyptus.image-id>
-    <test.eucalyptus.image.login-user></test.eucalyptus.image.login-user>
-    <test.eucalyptus.image.authenticate-sudo></test.eucalyptus.image.authenticate-sudo>
+    <test.eucalyptus.image-id />
+    <test.eucalyptus.image.login-user />
+    <test.eucalyptus.image.authenticate-sudo />
 
     <jclouds.osgi.export>org.jclouds.eucalyptus*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
