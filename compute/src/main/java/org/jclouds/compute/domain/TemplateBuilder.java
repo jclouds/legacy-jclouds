@@ -56,7 +56,7 @@ public interface TemplateBuilder {
    TemplateBuilder fromTemplate(Template image);
 
    /**
-    * Constructs a new {@code TemplateBuilderSpec} instance with the settings specified in {@code spec}.
+    * Configure and return this template, updating it with the populated values of the given {@code spec}.
     *
     * @since 1.5
     */
@@ -64,7 +64,7 @@ public interface TemplateBuilder {
    TemplateBuilder from(TemplateBuilderSpec spec);
    
    /**
-    * Constructs a new {@code TemplateBuilder} instance with the settings specified in {@code spec}.
+    * Configure and return this template, updating it with the populated values of the given {@code spec}.
     * This is especially useful for command-line configuration of a {@code TemplateBuilder}.
     *
     * @param spec a String in the format specified by {@link TemplateBuilderSpec}
