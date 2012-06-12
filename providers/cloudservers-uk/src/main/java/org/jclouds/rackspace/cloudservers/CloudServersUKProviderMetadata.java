@@ -65,6 +65,7 @@ public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
          id("cloudservers-uk")
          .name("Rackspace Cloud Servers UK")
          .apiMetadata(new CloudServersApiMetadata())
+         .endpoint("https://lon.auth.api.rackspacecloud.com")
          .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-servers"))
          .console(URI.create("https://lon.manage.rackspacecloud.com"))
          .linkedServices("cloudloadbalancers-uk", "cloudservers-uk", "cloudfiles-uk")
