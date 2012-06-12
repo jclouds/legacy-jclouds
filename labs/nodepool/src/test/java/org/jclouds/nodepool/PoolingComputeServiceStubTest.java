@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.StubComputeServiceIntegrationTest;
 import org.jclouds.nodepool.internal.EagerPoolingComputeService;
 import org.testng.annotations.AfterClass;
@@ -46,8 +47,8 @@ public class PoolingComputeServiceStubTest extends StubComputeServiceIntegration
    @Override
    protected void initializeContext() {
       super.initializeContext();
-      pool = new EagerPoolingComputeService(client, "pool", 10, 5, true, client.templateBuilder().any().build(), client
-               .getContext().utils().getUserExecutor());
+      pool = new EagerPoolingComputeService(client.getContext(), "pool", 10, 5, true, client.templateBuilder().any()
+               .build(), client.getContext().utils().getUserExecutor());
       client = pool;
       try {
          pool.startPool().get();

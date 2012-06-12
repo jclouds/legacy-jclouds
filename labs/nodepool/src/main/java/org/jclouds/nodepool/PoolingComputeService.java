@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.jclouds.compute.ComputeService;
+import org.jclouds.nodepool.config.PoolingComputeServiceProperties;
 import org.jclouds.nodepool.internal.EagerPoolingComputeService;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -39,7 +40,7 @@ import com.google.inject.ImplementedBy;
  * @author David Alves
  * 
  * @see <a href="https://github.com/jclouds/jclouds/wiki/NodePool-Notes">NodePool Notes</a>
- * @see PoolingComputeServiceConstants
+ * @see PoolingComputeServiceProperties
  * @since 1.5.0
  */
 @ImplementedBy(EagerPoolingComputeService.class)

@@ -16,12 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.nodepool;
+package org.jclouds.nodepool.config;
+
+import org.jclouds.nodepool.PoolingComputeService;
 
 /**
  * Constants for the {@link org.jclouds.nodepool.PoolingComputeService}.
  */
-public interface PoolingComputeServiceConstants {
+public interface PoolingComputeServiceProperties {
 
    /**
     * Property to set the name of the backing group used for pooled nodes.

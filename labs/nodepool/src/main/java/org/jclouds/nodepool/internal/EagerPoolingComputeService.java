@@ -3,12 +3,13 @@ package org.jclouds.nodepool.internal;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.removeIf;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_BACKING_GROUP_PROPERTY;
-import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_BACKING_TEMPLATE_PROPERTY;
-import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_MAX_SIZE_PROPERTY;
-import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_MIN_SIZE_PROPERTY;
-import static org.jclouds.nodepool.PoolingComputeServiceConstants.NODEPOOL_REMOVE_DESTROYED_PROPERTY;
+import static org.jclouds.nodepool.config.PoolingComputeServiceProperties.NODEPOOL_BACKING_GROUP_PROPERTY;
+import static org.jclouds.nodepool.config.PoolingComputeServiceProperties.NODEPOOL_BACKING_TEMPLATE_PROPERTY;
+import static org.jclouds.nodepool.config.PoolingComputeServiceProperties.NODEPOOL_MAX_SIZE_PROPERTY;
+import static org.jclouds.nodepool.config.PoolingComputeServiceProperties.NODEPOOL_MIN_SIZE_PROPERTY;
+import static org.jclouds.nodepool.config.PoolingComputeServiceProperties.NODEPOOL_REMOVE_DESTROYED_PROPERTY;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -24,9 +25,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -36,7 +39,7 @@ import org.jclouds.nodepool.PoolingComputeService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -56,7 +59,6 @@ public class EagerPoolingComputeService extends BasePoolingComputeService {
    private final int maxSize;
    private final boolean reuseDestroyed;
    private final int minSize;
-   private final Template template;
    private final ExecutorService executor;
 
    // set of available nodes
@@ -69,17 +71,16 @@ public class EagerPoolingComputeService extends BasePoolingComputeService {
    private final Set<NodeMetadata> poolNodes = Sets.newLinkedHashSet();
 
    @Inject
-   public EagerPoolingComputeService(ComputeService backingComputeService,
+   public EagerPoolingComputeService(ComputeServiceContext backingComputeServiceContext,
             @Named(NODEPOOL_BACKING_GROUP_PROPERTY) String poolGroupPrefix,
             @Named(NODEPOOL_MAX_SIZE_PROPERTY) int maxSize, @Named(NODEPOOL_MIN_SIZE_PROPERTY) int minSize,
             @Named(NODEPOOL_REMOVE_DESTROYED_PROPERTY) boolean readdDestroyed,
             @Nullable @Named(NODEPOOL_BACKING_TEMPLATE_PROPERTY) Template backingTemplate,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      super(backingComputeService, poolGroupPrefix);
+      super(backingComputeServiceContext, poolGroupPrefix, backingTemplate);
       this.maxSize = maxSize;
       this.minSize = minSize;
       this.reuseDestroyed = readdDestroyed;
-      this.template = backingTemplate == null ? backingComputeService.templateBuilder().build() : backingTemplate;
       this.executor = executor;
    }
 
@@ -89,8 +90,11 @@ public class EagerPoolingComputeService extends BasePoolingComputeService {
       try {
          return assignPoolNodes(group, count);
       } catch (Exception e) {
-         // TODO propagate a better exception?
-         throw Throwables.propagate(e);
+         Set<NodeMetadata> nodes = Collections.emptySet();
+         Map<String, Exception> executionExceptions = ImmutableMap.of("poolnode", e);
+         Map<NodeMetadata, Exception> failedNodes = ImmutableMap.of(
+                  new NodeMetadataBuilder().id("poolnode").status(Status.ERROR).build(), e);
+         throw new RunNodesException(group, count, template, nodes, executionExceptions, failedNodes);
       }
    }
 
@@ -113,11 +117,11 @@ public class EagerPoolingComputeService extends BasePoolingComputeService {
          unassignNode(poolNode.getValue().getId());
       }
       return Sets.newHashSet(transform(poolNodesToUnassign,
-               new Function<Map.Entry<String, NodeMetadata>, PoolNodeMetadata>() {
+               new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
                   @Override
-                  public PoolNodeMetadata apply(final Map.Entry<String, NodeMetadata> input) {
+                  public NodeMetadata apply(final Map.Entry<String, NodeMetadata> input) {
                      assignments.remove(input.getKey(), input.getValue());
-                     return new PoolNodeMetadata(input.getValue(), input.getKey());
+                     return toFrontendNodemetadata(input.getValue(), input.getKey());
                   }
                }));
 
@@ -201,13 +205,13 @@ public class EagerPoolingComputeService extends BasePoolingComputeService {
          }
          increasePoolSize(size - available.size()).get();
       }
-      Set<PoolNodeMetadata> groupNodes = Sets.newHashSet();
+      Set<NodeMetadata> groupNodes = Sets.newHashSet();
       Iterator<NodeMetadata> iter = available.iterator();
       for (int i = 0; i < size && iter.hasNext(); i++) {
          NodeMetadata node = iter.next();
          assignments.put(groupName, node);
          iter.remove();
-         groupNodes.add(new PoolNodeMetadata(node, groupName));
+         groupNodes.add(toFrontendNodemetadata(node, groupName));
       }
       return groupNodes;
    }

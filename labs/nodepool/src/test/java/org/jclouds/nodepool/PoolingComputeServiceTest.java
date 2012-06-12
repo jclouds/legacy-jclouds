@@ -23,8 +23,8 @@ public class PoolingComputeServiceTest {
    @BeforeClass
    public void setUp() {
       ComputeServiceContext stubCtx = ContextBuilder.newBuilder("stub").buildView(ComputeServiceContext.class);
-      this.pooledComputeService = new EagerPoolingComputeService(stubCtx.getComputeService(), "pool", 10, 5, true,
-               stubCtx.getComputeService().templateBuilder().build(), stubCtx.utils().getUserExecutor());
+      this.pooledComputeService = new EagerPoolingComputeService(stubCtx, "pool", 10, 5, true, stubCtx
+               .getComputeService().templateBuilder().build(), stubCtx.utils().getUserExecutor());
    }
 
    public void testStartPool() throws InterruptedException, ExecutionException {
@@ -50,7 +50,7 @@ public class PoolingComputeServiceTest {
       assertEquals(pooledComputeService.size(), 10);
    }
 
-   @Test(dependsOnMethods = "testAllocateUpToMaxNodes", groups = { "unit", "poolStarted" }, expectedExceptions = IllegalStateException.class)
+   @Test(dependsOnMethods = "testAllocateUpToMaxNodes", groups = { "unit", "poolStarted" }, expectedExceptions = RunNodesException.class)
    public void testAllocateMoreNodesFails() throws RunNodesException {
       this.pooledComputeService.createNodesInGroup("3", 5);
       System.out.println(this.pooledComputeService.size());
