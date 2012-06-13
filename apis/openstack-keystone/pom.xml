@@ -43,9 +43,7 @@
     <test.openstack-keystone.credential>FIXME_CREDENTIALS</test.openstack-keystone.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
 
-    <jclouds.osgi.export>org.jclouds.openstack.v2_0*;version="${project.version}",
-      org.jclouds.openstack.keystone.v2_0*;version="${project.version}" 
-    </jclouds.osgi.export>
+    <jclouds.osgi.export>org.jclouds.openstack*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.rest.internal;version="${project.version}",
       org.jclouds*;version="${project.version}",
