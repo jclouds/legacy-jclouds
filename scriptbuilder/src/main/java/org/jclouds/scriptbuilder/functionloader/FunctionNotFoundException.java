@@ -27,10 +27,10 @@ public class FunctionNotFoundException extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
   public FunctionNotFoundException(String functionName, OsFamily family) {
-    super("function: " + functionName + " not found for famiy: " + family);
+    super("function: " + functionName + " not found for family: " + family);
   }
 
   public FunctionNotFoundException(String functionName, OsFamily family, Throwable cause) {
-    super("function: " + functionName + " not found for famiy: " + family, cause);
+    super("function: " + functionName + " not found for family: " + family, cause);
   }
 }

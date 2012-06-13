@@ -107,7 +107,7 @@ public class NewServerData implements PostData {
     * stops them all fitting in 'neatly' (that's not a problem on the bigger-, non-low
     * contention-plans.
     */
-   @SerializedName("vps_paramters")
+   @SerializedName("vps_parameters")
    private ServerParameters serverParameters;
 
    @SerializedName("meta_data")

@@ -49,7 +49,7 @@ public class ProvidersTest {
 
       try {
          providerMetadata = Providers.withId("fake-id");
-         fail("Looking for a provider with an id that doesn't exist should " + "throw an exceptoin.");
+         fail("Looking for a provider with an id that doesn't exist should " + "throw an exception.");
       } catch (NoSuchElementException nsee) {
          ; // Expected
       }

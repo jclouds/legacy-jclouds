@@ -211,7 +211,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
       Job latestJobFetched = Iterables.getOnlyElement(client.getJobServices().getJobsById(latestJobId));
 
-      assert latestJob.equals(latestJobFetched) : "Job and its reprentation found by ID don't match";
+      assert latestJob.equals(latestJobFetched) : "Job and its representation found by ID don't match";
 
       long[] idsOfAllJobs = new long[jobs.size()];
       int i = 0;
