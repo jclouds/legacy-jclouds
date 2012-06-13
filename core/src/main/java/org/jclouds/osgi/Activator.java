@@ -44,6 +44,7 @@ public class Activator implements BundleActivator {
    */
   @Override
   public void start(BundleContext context) throws Exception {
+    bundleListener.start(context);
     context.addBundleListener(bundleListener);
   }
 
@@ -66,6 +67,7 @@ public class Activator implements BundleActivator {
    */
   @Override
   public void stop(BundleContext context) throws Exception {
+    bundleListener.stop(context);
     context.removeBundleListener(bundleListener);
     ProviderRegistry.clear();
     ApiRegistry.clear();

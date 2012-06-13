@@ -23,6 +23,7 @@ import org.jclouds.apis.ApiRegistry;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.ProviderRegistry;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
@@ -42,6 +43,31 @@ public class MetadataBundleListener implements BundleListener {
 
   private Map<Long, ProviderMetadata> providerMetadataMap = new HashMap<Long, ProviderMetadata>();
   private Map<Long, ApiMetadata> apiMetadataMap = new HashMap<Long, ApiMetadata>();
+
+
+  public void start(BundleContext bundleContext) {
+    bundleContext.addBundleListener(this);
+    for (Bundle bundle : bundleContext.getBundles()) {
+      if (bundle.getState() == Bundle.ACTIVE) {
+        ProviderMetadata providerMetadata = getProviderMetadata(bundle);
+        ApiMetadata apiMetadata = getApiMetadata(bundle);
+
+        if (providerMetadata != null) {
+          ProviderRegistry.registerProvider(providerMetadata);
+          providerMetadataMap.put(bundle.getBundleId(), providerMetadata);
+        }
+        if (apiMetadata != null) {
+          ApiRegistry.registerApi(apiMetadata);
+          apiMetadataMap.put(bundle.getBundleId(), apiMetadata);
+        }
+      }
+    }
+  }
+
+  public void stop(BundleContext bundleContext) {
+    providerMetadataMap.clear();
+    apiMetadataMap.clear();
+  }
 
   @Override
   public void bundleChanged(BundleEvent event) {
