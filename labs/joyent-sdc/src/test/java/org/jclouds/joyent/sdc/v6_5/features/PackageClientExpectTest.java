@@ -40,7 +40,7 @@ public class PackageClientExpectTest extends BaseSDCClientExpectTest {
    HttpRequest listPackages = HttpRequest
          .builder()
          .method("GET")
-         .endpoint(URI.create("https://api.joyentcloud.com/my/packages"))
+         .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/packages"))
          .headers(
                ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
                      .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
@@ -50,16 +50,16 @@ public class PackageClientExpectTest extends BaseSDCClientExpectTest {
       HttpResponse listPackagesResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/package_list.json")).build();
 
-      SDCClient clientWhenPackagesExists = requestSendsResponse(listPackages, listPackagesResponse);
+      SDCClient clientWhenPackagesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, listPackages, listPackagesResponse);
 
-      assertEquals(clientWhenPackagesExists.getPackageClient().listPackages(), new ParsePackageListTest().expected());
+      assertEquals(clientWhenPackagesExists.getPackageClientForDatacenter("us-sw-1").listPackages(), new ParsePackageListTest().expected());
    }
 
    public void testListPackagesWhenResponseIs404() {
       HttpResponse listPackagesResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listPackagesWhenNone = requestSendsResponse(listPackages, listPackagesResponse);
+      SDCClient listPackagesWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, listPackages, listPackagesResponse);
 
-      assertEquals(listPackagesWhenNone.getPackageClient().listPackages(), ImmutableSet.of());
+      assertEquals(listPackagesWhenNone.getPackageClientForDatacenter("us-sw-1").listPackages(), ImmutableSet.of());
    }
 }

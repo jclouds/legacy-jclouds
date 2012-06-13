@@ -18,12 +18,11 @@
  */
 package org.jclouds.joyent.sdc.v6_5.features;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
+import org.jclouds.joyent.sdc.v6_5.domain.Package;
 import org.jclouds.joyent.sdc.v6_5.internal.BaseSDCClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -33,16 +32,20 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "PackageClientLiveTest")
 public class PackageClientLiveTest extends BaseSDCClientLiveTest {
 
-   public void testListPackages() {
-      Set<org.jclouds.joyent.sdc.v6_5.domain.Package> packages = sdcContext.getApi().getPackageClient().listPackages();
-      assertNotNull(packages);
-      assertTrue(packages.size() > 0);
-   }
-
-   public void testGetPackage() {
-      final String name = "Small 1GB";
-      org.jclouds.joyent.sdc.v6_5.domain.Package packageSDC = sdcContext.getApi().getPackageClient().getPackage(name);
-      assertNotNull(packageSDC);
-      assertEquals(packageSDC.getName(), name);
+   @Test
+   public void testListAndGetPackages() throws Exception {
+      for (String datacenterId : sdcContext.getApi().getConfiguredDatacenters()) {
+         PackageClient client = sdcContext.getApi().getPackageClientForDatacenter(datacenterId);
+         Set<Package> response = client.listPackages();
+         assert null != response;
+         for (Package pkg : response) {
+            Package newDetails = client.getPackage(pkg.getName());
+            assertEquals(newDetails.getName(), pkg.getName());
+            assertEquals(newDetails.getMemorySizeMb(), pkg.getMemorySizeMb());
+            assertEquals(newDetails.getDiskSizeGb(), pkg.getDiskSizeGb());
+            assertEquals(newDetails.getSwapSizeMb(), pkg.getSwapSizeMb());
+            assertEquals(newDetails.isDefault(), pkg.isDefault());
+         }
+      }
    }
 }

@@ -50,8 +50,10 @@ import com.google.common.collect.ImmutableMap;
 @ConfiguresRestClient
 public class SDCRestClientModule extends RestClientModule<SDCClient, SDCAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(DatacenterClient.class, DatacenterAsyncClient.class).put(MachineClient.class, MachineAsyncClient.class)
-         .put(DatasetClient.class, DatasetAsyncClient.class).put(PackageClient.class, PackageAsyncClient.class).build();
+         .put(DatacenterClient.class, DatacenterAsyncClient.class)
+         .put(MachineClient.class, MachineAsyncClient.class)
+         .put(DatasetClient.class, DatasetAsyncClient.class)
+         .put(PackageClient.class, PackageAsyncClient.class).build();
 
    public SDCRestClientModule() {
       super(DELEGATE_MAP);
@@ -70,4 +72,5 @@ public class SDCRestClientModule extends RestClientModule<SDCClient, SDCAsyncCli
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(SDCErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(SDCErrorHandler.class);
    }
+   
 }

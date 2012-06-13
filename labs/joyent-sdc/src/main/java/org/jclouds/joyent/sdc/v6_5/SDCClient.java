@@ -18,14 +18,21 @@
  */
 package org.jclouds.joyent.sdc.v6_5;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatasetClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineClient;
 import org.jclouds.joyent.sdc.v6_5.features.PackageClient;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.inject.Provides;
 
 /**
  * Provides synchronous access to SDC.
@@ -39,6 +46,14 @@ import org.jclouds.rest.annotations.Delegate;
 public interface SDCClient {
 
    /**
+    * 
+    * @return the datacenter codes configured
+    */
+   @Provides
+   @Zone
+   Set<String> getConfiguredDatacenters();
+
+   /**
     * Provides synchronous access to Datacenter features.
     */
    @Delegate
@@ -48,17 +63,20 @@ public interface SDCClient {
     * Provides synchronous access to Machine features.
     */
    @Delegate
-   MachineClient getMachineClient();
+   MachineClient getMachineClientForDatacenter(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String datacenter);
 
    /**
     * Provides synchronous access to Dataset features.
     */
    @Delegate
-   DatasetClient getDatasetClient();
+   DatasetClient getDatasetClientForDatacenter(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String datacenter);
 
    /**
     * Provides synchronous access to Package features.
     */
    @Delegate
-   PackageClient getPackageClient();
+   PackageClient getPackageClientForDatacenter(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String datacenter);
 }

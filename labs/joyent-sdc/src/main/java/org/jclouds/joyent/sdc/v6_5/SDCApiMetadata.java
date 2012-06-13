@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.joyent.sdc.v6_5.config.DatacentersAreZonesModule;
 import org.jclouds.joyent.sdc.v6_5.config.SDCRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -66,10 +67,15 @@ public class SDCApiMetadata extends BaseRestApiMetadata {
 
       protected Builder() {
          super(SDCClient.class, SDCAsyncClient.class);
-         id("joyent-sdc").name("Joyent SDC API").identityName("username").credentialName("password")
-               .documentation(URI.create("http://sdc.joyent.org/sdcapi.html")).version("~6.5")
-               .defaultEndpoint("https://api.joyentcloud.com").defaultProperties(SDCApiMetadata.defaultProperties())
-               .defaultModules(ImmutableSet.<Class<? extends Module>> of(SDCRestClientModule.class));
+         id("joyent-sdc")
+         .name("Joyent SDC API")
+         .identityName("username")
+         .credentialName("password")
+         .documentation(URI.create("http://sdc.joyent.org/sdcapi.html"))
+         .version("~6.5")
+         .defaultEndpoint("https://api.joyentcloud.com")
+         .defaultProperties(SDCApiMetadata.defaultProperties())
+         .defaultModules(ImmutableSet.<Class<? extends Module>> of(DatacentersAreZonesModule.class, SDCRestClientModule.class));
       }
 
       @Override

@@ -19,8 +19,6 @@
 package org.jclouds.joyent.sdc.v6_5.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -34,16 +32,26 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "MachineClientLiveTest")
 public class MachineClientLiveTest extends BaseSDCClientLiveTest {
 
-   public void testListMachines() {
-      Set<Machine> machines = sdcContext.getApi().getMachineClient().listMachines();
-      assertNotNull(machines);
-      assertTrue(machines.size() > 0);
-   }
-
-   public void testGetMachine() {
-      final String id = "d73cb0b0-7d1f-44ef-8c40-e040eef0f726";
-      Machine machine = sdcContext.getApi().getMachineClient().getMachine(id);
-      assertNotNull(machine);
-      assertEquals(machine.getId(), id);
+   @Test
+   public void testListAndGetMachines() throws Exception {
+      for (String datacenterId : sdcContext.getApi().getConfiguredDatacenters()) {
+         MachineClient client = sdcContext.getApi().getMachineClientForDatacenter(datacenterId);
+         Set<Machine> response = client.listMachines();
+         assert null != response;
+         for (Machine machine : response) {
+            Machine newDetails = client.getMachine(machine.getId());
+            assertEquals(newDetails.getId(), machine.getId());
+            assertEquals(newDetails.getName(), machine.getName());
+            assertEquals(newDetails.getType(), machine.getType());
+            assertEquals(newDetails.getState(), machine.getState());
+            assertEquals(newDetails.getDataset(), machine.getDataset());
+            assertEquals(newDetails.getMemorySizeMb(), machine.getMemorySizeMb());
+            assertEquals(newDetails.getDiskSizeGb(), machine.getDiskSizeGb());
+            assertEquals(newDetails.getIps(), machine.getIps());
+            assertEquals(newDetails.getCreated(), machine.getCreated());
+            assertEquals(newDetails.getUpdated(), machine.getUpdated());
+            assertEquals(newDetails.getMetadata(), machine.getMetadata());
+         }
+      }
    }
 }

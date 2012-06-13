@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "DatasetClientExpectTest")
 public class DatasetClientExpectTest extends BaseSDCClientExpectTest {
    HttpRequest listDatasets = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://api.joyentcloud.com/my/datasets")).headers(
+            URI.create("https://us-sw-1.api.joyentcloud.com/my/datasets")).headers(
             ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept", "application/json")
                      .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
 
@@ -46,18 +46,18 @@ public class DatasetClientExpectTest extends BaseSDCClientExpectTest {
       HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/dataset_list.json")).build();
 
-      SDCClient clientWhenDatasetsExists = requestSendsResponse(listDatasets, listDatasetsResponse);
+      SDCClient clientWhenDatasetsExists = requestsSendResponses(getDatacenters, getDatacentersResponse, listDatasets, listDatasetsResponse);
 
-      assertEquals(clientWhenDatasetsExists.getDatasetClient().listDatasets().toString(), new ParseDatasetListTest()
+      assertEquals(clientWhenDatasetsExists.getDatasetClientForDatacenter("us-sw-1").listDatasets().toString(), new ParseDatasetListTest()
                .expected().toString());
    }
 
    public void testListDatasetsWhenResponseIs404() {
       HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listDatasetsWhenNone = requestSendsResponse(listDatasets, listDatasetsResponse);
+      SDCClient listDatasetsWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, listDatasets, listDatasetsResponse);
 
-      assertEquals(listDatasetsWhenNone.getDatasetClient().listDatasets(), ImmutableSet.of());
+      assertEquals(listDatasetsWhenNone.getDatasetClientForDatacenter("us-sw-1").listDatasets(), ImmutableSet.of());
    }
 
    // [id=e4cd7b9e-4330-11e1-81cf-3bb50a972bda, name=centos-6, type=VIRTUALMACHINE, version=1.0.1,

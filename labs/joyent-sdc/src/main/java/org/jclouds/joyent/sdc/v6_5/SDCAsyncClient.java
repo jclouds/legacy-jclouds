@@ -18,11 +18,19 @@
  */
 package org.jclouds.joyent.sdc.v6_5;
 
+import java.util.Set;
+
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatasetAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.PackageAsyncClient;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to SDC via their REST API.
@@ -33,7 +41,15 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface SDCAsyncClient {
-
+   
+   /**
+    * 
+    * @return the datacenter codes configured
+    */
+   @Provides
+   @Zone
+   Set<String> getConfiguredDatacenters();
+   
    /**
     * Provides asynchronous access to Datacenter features.
     */
@@ -44,17 +60,20 @@ public interface SDCAsyncClient {
     * Provides asynchronous access to Machine features.
     */
    @Delegate
-   MachineAsyncClient getMachineClient();
+   MachineAsyncClient getMachineClientForDatacenter(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String datacenter);
 
    /**
     * Provides asynchronous access to Dataset features.
     */
    @Delegate
-   DatasetAsyncClient getDatasetClient();
+   DatasetAsyncClient getDatasetClientForDatacenter(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String datacenter);
 
    /**
     * Provides asynchronous access to Package features.
     */
    @Delegate
-   PackageAsyncClient getPackageClient();
+   PackageAsyncClient getPackageClientForDatacenter(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String datacenter);
 }

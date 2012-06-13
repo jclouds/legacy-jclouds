@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "MachineClientExpectTest")
 public class MachineClientExpectTest extends BaseSDCClientExpectTest {
    HttpRequest listMachines = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://api.joyentcloud.com/my/machines")).headers(
+            URI.create("https://us-sw-1.api.joyentcloud.com/my/machines")).headers(
             ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept", "application/json")
                      .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
 
@@ -47,24 +47,24 @@ public class MachineClientExpectTest extends BaseSDCClientExpectTest {
       HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/machine_list.json")).build();
 
-      SDCClient clientWhenMachinesExists = requestSendsResponse(listMachines, listMachinesResponse);
+      SDCClient clientWhenMachinesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, listMachines, listMachinesResponse);
 
-      assertEquals(clientWhenMachinesExists.getMachineClient().listMachines(), new ParseMachineListTest().expected());
+      assertEquals(clientWhenMachinesExists.getMachineClientForDatacenter("us-sw-1").listMachines(), new ParseMachineListTest().expected());
    }
 
    public void testListMachinesWhenResponseIs404() {
       HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listMachinesWhenNone = requestSendsResponse(listMachines, listMachinesResponse);
+      SDCClient listMachinesWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, listMachines, listMachinesResponse);
 
-      assertEquals(listMachinesWhenNone.getMachineClient().listMachines(), ImmutableSet.of());
+      assertEquals(listMachinesWhenNone.getMachineClientForDatacenter("us-sw-1").listMachines(), ImmutableSet.of());
    }
 
    public void testCreateMachineWhenResponseIs202() throws Exception {
       HttpRequest createMachine = HttpRequest
                .builder()
                .method("POST")
-               .endpoint(URI.create("https://api.joyentcloud.com/my/machines"))
+               .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/machines"))
                .headers(
                         ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept",
                                  "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
@@ -77,9 +77,9 @@ public class MachineClientExpectTest extends BaseSDCClientExpectTest {
                .payload(payloadFromResourceWithContentType("/new_machine.json", "application/json; charset=UTF-8"))
                .build();
 
-      SDCClient clientWithNewMachine = requestSendsResponse(createMachine, createMachineResponse);
+      SDCClient clientWithNewMachine = requestsSendResponses(getDatacenters, getDatacentersResponse, createMachine, createMachineResponse);
 
-      assertEquals(clientWithNewMachine.getMachineClient().createMachine("testJClouds", "Small 1GB",
+      assertEquals(clientWithNewMachine.getMachineClientForDatacenter("us-sw-1").createMachine("testJClouds", "Small 1GB",
                "sdc:sdc:centos-5.7:1.2.1").toString(), new ParseCreatedMachineTest().expected().toString());
    }
 }
