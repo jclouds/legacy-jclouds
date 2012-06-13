@@ -33,6 +33,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 /**
  * @author Andrew Phillips
+ * @author Adrian Cole
  */
 public class JcloudsVersion {
     @VisibleForTesting
@@ -105,10 +106,10 @@ public class JcloudsVersion {
 
         String alphaOrBetaOrReleaseCandidateVersionIfPresent = versionMatcher.group(4);
         if (alphaOrBetaOrReleaseCandidateVersionIfPresent != null) {
-            Integer alphaOrReleaseCandidateVersion = Integer.valueOf(versionMatcher.group(5));
+            Integer alphaOrBetaOrReleaseCandidateVersion = Integer.valueOf(versionMatcher.group(5));
             if (alphaOrBetaOrReleaseCandidateVersionIfPresent.equals(ALPHA_VERSION_IDENTIFIER)) {
                 alpha = true;
-                alphaVersion = alphaOrReleaseCandidateVersion;
+                alphaVersion = alphaOrBetaOrReleaseCandidateVersion;
                 beta = false;
                 betaVersion = null;
                 releaseCandidate = false;
@@ -117,7 +118,7 @@ public class JcloudsVersion {
                 alpha = false;
                 alphaVersion = null;
                 beta = true;
-                betaVersion = alphaOrReleaseCandidateVersion;
+                betaVersion = alphaOrBetaOrReleaseCandidateVersion;
                 releaseCandidate = false;
                 releaseCandidateVersion = null;
             } else {
@@ -126,7 +127,7 @@ public class JcloudsVersion {
                 beta = false;
                 betaVersion = null;
                 releaseCandidate = true;
-                releaseCandidateVersion = alphaOrReleaseCandidateVersion;
+                releaseCandidateVersion = alphaOrBetaOrReleaseCandidateVersion;
             }
         } else {
             alpha = false;
