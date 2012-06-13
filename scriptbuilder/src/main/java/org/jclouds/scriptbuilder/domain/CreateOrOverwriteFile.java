@@ -42,8 +42,8 @@ public class CreateOrOverwriteFile extends AppendFile {
       }
 
       @Override
-      public Builder delimeter(String delimeter) {
-         return Builder.class.cast(super.delimeter(delimeter));
+      public Builder delimiter(String delimiter) {
+         return Builder.class.cast(super.delimiter(delimiter));
       }
 
       @Override
@@ -53,13 +53,13 @@ public class CreateOrOverwriteFile extends AppendFile {
 
       @Override
       public CreateOrOverwriteFile build() {
-         return new CreateOrOverwriteFile(path, lines, delimeter, expandVariables);
+         return new CreateOrOverwriteFile(path, lines, delimiter, expandVariables);
       }
 
    }
 
-   protected CreateOrOverwriteFile(String path, Iterable<String> lines, String delimeter, boolean expandVariables) {
-      super(path, lines, delimeter, expandVariables);
+   protected CreateOrOverwriteFile(String path, Iterable<String> lines, String delimiter, boolean expandVariables) {
+      super(path, lines, delimiter, expandVariables);
    }
 
    @Override
@@ -71,8 +71,8 @@ public class CreateOrOverwriteFile extends AppendFile {
    public StringBuilder startHereFile() {
       StringBuilder hereFile = new StringBuilder().append("cat > ").append(path);
       if (expandVariables)
-         return hereFile.append(" <<-").append(delimeter).append("\n");
-      return hereFile.append(" <<-'").append(delimeter).append("'\n");
+         return hereFile.append(" <<-").append(delimiter).append("\n");
+      return hereFile.append(" <<-'").append(delimiter).append("'\n");
    }
 
 }

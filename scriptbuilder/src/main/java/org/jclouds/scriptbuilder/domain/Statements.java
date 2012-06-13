@@ -65,24 +65,24 @@ public class Statements {
       return new Call(function, args);
    }
 
-   public static Statement appendFile(String path, String line, String delimeter) {
-      return AppendFile.builder().path(path).lines(ImmutableSet.of(line)).delimeter(delimeter).build();
+   public static Statement appendFile(String path, String line, String delimiter) {
+      return AppendFile.builder().path(path).lines(ImmutableSet.of(line)).delimiter(delimiter).build();
    }
 
    public static Statement appendFile(String path, Iterable<String> lines) {
       return AppendFile.builder().path(path).lines(lines).build();
    }
 
-   public static Statement appendFile(String path, Iterable<String> lines, String delimeter) {
-      return AppendFile.builder().path(path).lines(lines).delimeter(delimeter).build();
+   public static Statement appendFile(String path, Iterable<String> lines, String delimiter) {
+      return AppendFile.builder().path(path).lines(lines).delimiter(delimiter).build();
    }
 
    public static Statement createOrOverwriteFile(String path, Iterable<String> lines) {
       return CreateOrOverwriteFile.builder().path(path).lines(lines).build();
    }
 
-   public static Statement createOrOverwriteFile(String path, Iterable<String> lines, String delimeter) {
-      return CreateOrOverwriteFile.builder().path(path).lines(lines).delimeter(delimeter).build();
+   public static Statement createOrOverwriteFile(String path, Iterable<String> lines, String delimiter) {
+      return CreateOrOverwriteFile.builder().path(path).lines(lines).delimiter(delimiter).build();
    }
 
    /**

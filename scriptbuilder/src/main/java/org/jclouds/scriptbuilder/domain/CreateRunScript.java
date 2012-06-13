@@ -49,7 +49,7 @@ import com.google.common.collect.ImmutableList.Builder;
  * @author Adrian Cole
  */
 public class CreateRunScript extends StatementList {
-   public final static String DELIMETER = "END_OF_JCLOUDS_SCRIPT";
+   public final static String DELIMITER = "END_OF_JCLOUDS_SCRIPT";
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;
@@ -123,7 +123,7 @@ public class CreateRunScript extends StatementList {
       builder.append("# add runscript footer\n");
       Iterable<String> endScript = Splitter.on(ShellToken.LF.to(OsFamily.UNIX)).split(
             ShellToken.END_SCRIPT.to(OsFamily.UNIX));
-      builder.append(appendFile(runScript, endScript, DELIMETER).render(OsFamily.UNIX));
+      builder.append(appendFile(runScript, endScript, DELIMITER).render(OsFamily.UNIX));
    }
 
    private void addUnixRunScript(String runScript, StringBuilder builder) {
@@ -138,7 +138,7 @@ public class CreateRunScript extends StatementList {
          }
          userCommands.addAll(Splitter.on('\n').split(statement.render(OsFamily.UNIX)));
       }
-      builder.append(appendFile(runScript, userCommands.build(), DELIMETER).render(OsFamily.UNIX));
+      builder.append(appendFile(runScript, userCommands.build(), DELIMITER).render(OsFamily.UNIX));
    }
 
    private void addUnixRunScriptHeader(String runScript, StringBuilder builder) {
@@ -150,10 +150,10 @@ public class CreateRunScript extends StatementList {
       beginningOfFile.add(format("PROMPT_COMMAND='echo -ne \\\"\\033]0;%s\\007\\\"'", instanceName));
       beginningOfFile.add(Utils.writeZeroPath(OsFamily.UNIX));
       beginningOfFile.add(format("export INSTANCE_NAME='%s'", instanceName));
-      builder.append(createOrOverwriteFile(runScript, beginningOfFile.build(), DELIMETER).render(OsFamily.UNIX));
+      builder.append(createOrOverwriteFile(runScript, beginningOfFile.build(), DELIMITER).render(OsFamily.UNIX));
 
       // expanding variables here.
-      builder.append(AppendFile.builder().path(runScript).delimeter(DELIMETER).expandVariables(true)
+      builder.append(AppendFile.builder().path(runScript).delimiter(DELIMITER).expandVariables(true)
             .lines(Iterables.transform(exports, new Function<String, String>() {
 
                @Override
@@ -171,7 +171,7 @@ public class CreateRunScript extends StatementList {
       if (functionsToWrite.size() > 1) {
          StringBuilder functions = new StringBuilder();
          ScriptBuilder.writeFunctions(functionsToWrite, OsFamily.UNIX, functions);
-         builder.append(appendFile(runScript, functions.toString(), DELIMETER).render(OsFamily.UNIX));
+         builder.append(appendFile(runScript, functions.toString(), DELIMITER).render(OsFamily.UNIX));
       }
    }
 }

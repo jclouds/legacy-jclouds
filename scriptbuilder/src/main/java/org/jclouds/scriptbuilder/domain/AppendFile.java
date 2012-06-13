@@ -37,7 +37,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class AppendFile implements Statement {
-   public static final String DELIMETER = "END_OF_JCLOUDS_FILE";
+   public static final String DELIMITER = "END_OF_JCLOUDS_FILE";
 
    public static Builder builder() {
       return new Builder();
@@ -46,7 +46,7 @@ public class AppendFile implements Statement {
    public static class Builder {
       protected String path;
       protected Iterable<String> lines = ImmutableSet.of();
-      protected String delimeter = DELIMETER;
+      protected String delimiter = DELIMITER;
       protected boolean expandVariables;
 
       /**
@@ -66,10 +66,10 @@ public class AppendFile implements Statement {
       }
 
       /**
-       * @see AppendFile#getDelimeter()
+       * @see AppendFile#getDelimiter()
        */
-      public Builder delimeter(String delimeter) {
-         this.delimeter = delimeter;
+      public Builder delimiter(String delimiter) {
+         this.delimiter = delimiter;
          return this;
       }
 
@@ -82,19 +82,19 @@ public class AppendFile implements Statement {
       }
 
       public AppendFile build() {
-         return new AppendFile(path, lines, delimeter, expandVariables);
+         return new AppendFile(path, lines, delimiter, expandVariables);
       }
    }
 
    protected final String path;
    protected final Iterable<String> lines;
-   protected final String delimeter;
+   protected final String delimiter;
    protected final boolean expandVariables;
 
-   protected AppendFile(String path, Iterable<String> lines, String delimeter, boolean expandVariables) {
+   protected AppendFile(String path, Iterable<String> lines, String delimiter, boolean expandVariables) {
       this.path = checkNotNull(path, "PATH");
       this.lines = checkNotNull(lines, "lines");
-      this.delimeter = checkNotNull(delimeter, "delimeter");
+      this.delimiter = checkNotNull(delimiter, "delimiter");
       checkState(Iterables.size(lines) > 0, "you must pass something to execute");
       this.expandVariables = expandVariables;
    }
@@ -140,15 +140,15 @@ public class AppendFile implements Statement {
       for (String line : lines) {
          hereFile.append('\t').append(line).append("\n");
       }
-      hereFile.append(delimeter).append("\n");
+      hereFile.append(delimiter).append("\n");
       return hereFile.toString();
    }
 
    public StringBuilder startHereFile() {
       StringBuilder hereFile = new StringBuilder().append("cat >> ").append(path);
       if (expandVariables)
-         return hereFile.append(" <<-").append(delimeter).append("\n");
-      return hereFile.append(" <<-'").append(delimeter).append("'\n");
+         return hereFile.append(" <<-").append(delimiter).append("\n");
+      return hereFile.append(" <<-'").append(delimiter).append("'\n");
    }
 
    protected String appendLineToWindowsFile(String line, String path) {

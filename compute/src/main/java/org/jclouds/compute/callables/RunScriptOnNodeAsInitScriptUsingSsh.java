@@ -119,7 +119,7 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
             ssh.connect();
             ssh.exec("rm " + initFile);
             ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
-                  AppendFile.DELIMETER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
+                  AppendFile.DELIMITER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
          }
 
          ssh.exec("chmod 755 " + initFile);
