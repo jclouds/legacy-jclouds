@@ -50,5 +50,6 @@
        <module>rackspace-cloudidentity</module>
        <module>rackspace-cloudservers-us</module>
        <module>greenqloud-compute</module>
+       <module>greenqloud-storage</module>
     </modules>
 </project>
