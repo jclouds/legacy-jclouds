@@ -49,5 +49,6 @@
        <module>openstack-quantum</module>
        <module>rackspace-cloudidentity</module>
        <module>rackspace-cloudservers-us</module>
+       <module>greenqloud-compute</module>
     </modules>
 </project>
