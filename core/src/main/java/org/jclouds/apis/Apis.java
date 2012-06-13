@@ -69,7 +69,7 @@ public class Apis {
     * @return all available apis
     */
    public static Iterable<ApiMetadata> all() {
-      return fromServiceLoader();
+      return Iterables.concat(fromServiceLoader(), ApiRegistry.fromRegistry());
    }
 
    /**

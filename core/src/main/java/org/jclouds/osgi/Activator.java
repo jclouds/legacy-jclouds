@@ -18,13 +18,14 @@
  */
 package org.jclouds.osgi;
 
+import org.jclouds.apis.ApiRegistry;
 import org.jclouds.providers.ProviderRegistry;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
-  ProviderBundleListener bundleListener = new ProviderBundleListener();
+  MetadataBundleListener bundleListener = new MetadataBundleListener();
 
   /**
    * Called when this bundle is started so the Framework can perform the
@@ -67,5 +68,6 @@ public class Activator implements BundleActivator {
   public void stop(BundleContext context) throws Exception {
     context.removeBundleListener(bundleListener);
     ProviderRegistry.clear();
+    ApiRegistry.clear();
   }
 }
