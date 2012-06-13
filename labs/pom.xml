@@ -46,6 +46,7 @@
        <module>cdmi</module>
        <module>openstack-glance</module>
        <module>joyent-sdc</module>
+       <module>joyentcloud</module>
        <module>openstack-quantum</module>
        <module>rackspace-cloudidentity</module>
        <module>rackspace-cloudservers-us</module>
