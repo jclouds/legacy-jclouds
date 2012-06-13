@@ -39,7 +39,7 @@ import com.google.common.io.Resources;
 public class CreateRunScriptTest {
    Statement statement = createRunScript(
             "yahooprod",
-            ImmutableList.<String> of("javaHome"),
+            ImmutableList.<String> of("JAVA_HOME"),
             "{tmp}{fs}{uid}{fs}scripttest",
             ImmutableList
                      .<Statement> of(

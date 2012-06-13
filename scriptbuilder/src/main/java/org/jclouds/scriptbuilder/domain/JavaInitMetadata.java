@@ -40,7 +40,7 @@ public class JavaInitMetadata extends InitMetadata {
             String stopDir, String configDir, String dataDir, String logDir, String goldDir,
             String javaHome, String[] classpath, String mainClass, String[] opts, String[] args) {
       super(name, platformHome, endPoint, startDir, stopDir, configDir, dataDir, logDir, goldDir);
-      this.javaHome = checkNotNull(javaHome, "javaHome");
+      this.javaHome = checkNotNull(javaHome, "JAVA_HOME");
       this.classpath = checkNotNull(classpath, "classpath");
       this.mainClass = checkNotNull(mainClass, "mainClass");
       this.opts = checkNotNull(opts, "opts");

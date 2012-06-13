@@ -48,35 +48,56 @@ public class UtilsTest {
    }
    
    public void testWriteVariableExportersUNIX() {
-      assertEquals(Utils.writeVariableExporters(ImmutableMap.of("mavenOpts",
+      assertEquals(Utils.writeVariableExporters(ImmutableMap.of("MAVEN_OPTS",
                "-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError"), OsFamily.UNIX),
                "export MAVEN_OPTS=\"-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError\"\n");
    }
 
    public void testWriteVariableExportersWindows() {
-      assertEquals(Utils.writeVariableExporters(ImmutableMap.of("mavenOpts",
+      assertEquals(Utils.writeVariableExporters(ImmutableMap.of("MAVEN_OPTS",
                "-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError"), OsFamily.WINDOWS),
                "set MAVEN_OPTS=-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError\r\n");
    }
+   
+   public void testWriteVariableExportersNameReplaceUNIX() {
+      assertEquals(Utils.writeVariableExporters(ImmutableMap.of("LIBRARY_PATH", "{tmp}"), OsFamily.UNIX),
+               "export LD_LIBRARY_PATH=\"/tmp\"\n");
+   }
+
+   public void testWriteVariableExportersNameReplaceWindows() {
+      assertEquals(Utils.writeVariableExporters(ImmutableMap.of("LIBRARY_PATH", "{tmp}"), OsFamily.WINDOWS),
+               "set PATH=%TEMP%\r\n");
+   }
 
    public void testWritePositionalVarsUNIX() {
-      assertEquals(Utils.writePositionalVars(ImmutableList.of("host", "port"), OsFamily.UNIX),
+      assertEquals(Utils.writePositionalVars(ImmutableList.of("HOST", "PORT"), OsFamily.UNIX),
                "set HOST=$1\nshift\nset PORT=$1\nshift\n");
    }
 
    public void testWritePositionalVarsWindows() {
-      assertEquals(Utils.writePositionalVars(ImmutableList.of("host", "port"), OsFamily.WINDOWS),
+      assertEquals(Utils.writePositionalVars(ImmutableList.of("HOST", "PORT"), OsFamily.WINDOWS),
                "set HOST=%1\r\nshift\r\nset PORT=%1\r\nshift\r\n");
    }
 
    public void testWriteUnsetVariablesUNIX() {
-      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("host", "port"), OsFamily.UNIX),
+      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("HOST", "PORT"), OsFamily.UNIX),
                "unset HOST PORT\n");
    }
 
    public void testWriteUnsetVariablesWindows() {
-      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("host", "port"), OsFamily.WINDOWS),
+      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("HOST", "PORT"), OsFamily.WINDOWS),
                "set HOST=\r\nset PORT=\r\n");
+   }
+   
+
+   public void testWriteUnsetVariablesNameReplaceUNIX() {
+      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("LIBRARY_PATH"), OsFamily.UNIX),
+               "unset LD_LIBRARY_PATH\n");
+   }
+
+   public void testWriteUnsetVariablesNameReplaceWindows() {
+      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("LIBRARY_PATH"), OsFamily.WINDOWS),
+               "set PATH=\r\n");
    }
 
    public void testSingleCurlyBraceDoesntBreakLfTokenReplacement() {

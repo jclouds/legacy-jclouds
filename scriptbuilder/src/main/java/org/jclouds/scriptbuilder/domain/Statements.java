@@ -85,6 +85,10 @@ public class Statements {
       return CreateOrOverwriteFile.builder().path(path).lines(lines).delimeter(delimeter).build();
    }
 
+   /**
+    * @param exports
+    *            variable names to export in UPPER_UNDERSCORE case format
+    */
    public static CreateRunScript createRunScript(String instanceName, Iterable<String> exports, String pwd,
          Iterable<Statement> statements) {// TODO: convert so
       // that

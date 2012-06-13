@@ -70,7 +70,7 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
        * @see InitScript#getInstanceName()
        */
       public Builder name(String instanceName) {
-         this.instanceName = checkNotNull(instanceName, "instanceName");
+         this.instanceName = checkNotNull(instanceName, "INSTANCE_NAME");
          return this;
       }
 
@@ -78,7 +78,7 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
        * @see InitScript#getInstanceHome()
        */
       public Builder home(String instanceHome) {
-         this.instanceHome = checkNotNull(instanceHome, "instanceHome");
+         this.instanceHome = checkNotNull(instanceHome, "INSTANCE_HOME");
          return this;
       }
 
@@ -86,11 +86,12 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
        * @see InitScript#getLogDir()
        */
       public Builder logDir(String logDir) {
-         this.logDir = checkNotNull(logDir, "logDir");
+         this.logDir = checkNotNull(logDir, "LOG_DIR");
          return this;
       }
 
       /**
+       * @param exports keys are the variables to export in UPPER_UNDERSCORE case format
        * @see InitScript#getExportedVariables()
        */
       public Builder exportVariables(Map<String, String> exports) {
@@ -176,11 +177,14 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
    protected final StatementList run;
    protected final ScriptBuilder delegate;
 
+   /**
+    * @param exports keys are the variables to export in UPPER_UNDERSCORE case format
+    */
    protected InitScript(String instanceName, String instanceHome, String logDir, Map<String, String> exports,
          StatementList init, StatementList run) {
-      this.instanceName = checkNotNull(instanceName, "instanceName");
-      this.instanceHome = checkNotNull(instanceHome, "instanceHome");
-      this.logDir = checkNotNull(logDir, "logDir");
+      this.instanceName = checkNotNull(instanceName, "INSTANCE_NAME");
+      this.instanceHome = checkNotNull(instanceHome, "INSTANCE_HOME");
+      this.logDir = checkNotNull(logDir, "LOG_DIR");
       this.exports = ImmutableMap.<String, String> copyOf(checkNotNull(exports, "exports"));
       this.init = checkNotNull(init, "init");
       this.run = checkNotNull(run, "run");
@@ -188,10 +192,14 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
       this.delegate = makeInitScriptStatement(instanceName, instanceHome, logDir, exports, init, run);
    }
 
+   /**
+    * 
+    * @param exports keys are the variables to export in UPPER_UNDERSCORE case format
+    */
    public static ScriptBuilder makeInitScriptStatement(String instanceName, String instanceHome, String logDir,
          Map<String, String> exports, StatementList init, StatementList run) {
-      Map<String, String> defaultExports = ImmutableMap.of("instanceName", instanceName, "instanceHome", instanceHome,
-            "logDir", logDir);
+      Map<String, String> defaultExports = ImmutableMap.of("INSTANCE_NAME", instanceName, "INSTANCE_HOME", instanceHome,
+            "LOG_DIR", logDir);
       String exitStatusFile = format("%s/rc", logDir);
       run = new StatementList(ImmutableList.<Statement> builder().add(interpret("rm -f " + exitStatusFile))
             .add(interpret(format("trap 'echo $?>%s' 0 1 2 3 15", exitStatusFile))).addAll(run.delegate()).build());
@@ -303,7 +311,7 @@ public class InitScript extends ForwardingObject implements Statement, AcceptsSt
 
    @Override
    public String toString() {
-      return toStringHelper(this).add("instanceName", instanceName).toString();
+      return toStringHelper(this).add("INSTANCE_NAME", instanceName).toString();
    }
 
    @Override

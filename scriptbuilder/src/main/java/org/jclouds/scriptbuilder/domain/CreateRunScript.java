@@ -36,13 +36,12 @@ import org.jclouds.scriptbuilder.ExitInsteadOfReturn;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.util.Utils;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * Creates a run script
@@ -54,10 +53,14 @@ public class CreateRunScript extends StatementList {
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;
-
+   
+   /**
+    * @param exports
+    *            variable names to export in UPPER_UNDERSCORE case format
+    */
    public CreateRunScript(String instanceName, Iterable<String> exports, String pwd, Iterable<Statement> statements) {
       super(statements);
-      this.instanceName = checkNotNull(instanceName, "instanceName");
+      this.instanceName = checkNotNull(instanceName, "INSTANCE_NAME");
       this.exports = checkNotNull(exports, "exports");
       this.pwd = checkNotNull(pwd, "pwd").replaceAll("[/\\\\]", "{fs}");
    }
@@ -65,9 +68,13 @@ public class CreateRunScript extends StatementList {
    public static class AddExport implements Statement {
       final String export;
       final String value;
-
+      
+      /**
+       * @param export
+       *            variable name in UPPER_UNDERSCORE case format
+       */
       public AddExport(String export, String value) {
-         this.export = checkNotNull(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export), "export");
+         this.export = checkNotNull(export, "export");
          this.value = checkNotNull(value, "value");
       }
 
@@ -151,9 +158,8 @@ public class CreateRunScript extends StatementList {
 
                @Override
                public String apply(String export) {
-                  String variableNameInUpper = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export);
-                  return new StringBuilder().append("export ").append(variableNameInUpper).append("='$")
-                        .append(variableNameInUpper).append("'").toString();
+                  return new StringBuilder().append("export ").append(export).append("='$")
+                        .append(export).append("'").toString();
                }
             })).build().render(OsFamily.UNIX));
 

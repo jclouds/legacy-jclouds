@@ -92,7 +92,7 @@ public class AppendFile implements Statement {
    protected final boolean expandVariables;
 
    protected AppendFile(String path, Iterable<String> lines, String delimeter, boolean expandVariables) {
-      this.path = checkNotNull(path, "path");
+      this.path = checkNotNull(path, "PATH");
       this.lines = checkNotNull(lines, "lines");
       this.delimeter = checkNotNull(delimeter, "delimeter");
       checkState(Iterables.size(lines) > 0, "you must pass something to execute");

@@ -75,7 +75,7 @@ public class RunScriptData {
       return InitScript.builder()
                .name("jboss")
                .home(JBOSS_HOME)
-               .exportVariables(ImmutableMap.of("jbossHome", JBOSS_HOME))
+               .exportVariables(ImmutableMap.of("JBOSS_HOME", JBOSS_HOME))
                .init(appendFile(JBOSS_HOME + "/standalone/configuration/standalone-custom.xml", Splitter.on('\n').split(configuration)))
                .run(interpret(new StringBuilder().append("java ").append(' ')
                                  .append("-server -Xms128m -Xmx128m -XX:MaxPermSize=128m -Djava.net.preferIPv4Stack=true -XX:+UseFastAccessorMethods -XX:+TieredCompilation -Xverify:none -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000").append(' ')
