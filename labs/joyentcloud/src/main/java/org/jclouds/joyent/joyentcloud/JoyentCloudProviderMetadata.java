@@ -18,6 +18,10 @@
  */
 package org.jclouds.joyent.joyentcloud;
 
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -53,6 +57,11 @@ public class JoyentCloudProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
+      properties.setProperty(PROPERTY_ZONES, "us-east-1,us-west-1,us-sw-1,eu-ams-1");
+      properties.setProperty(PROPERTY_ZONE + ".us-east-1." + ISO3166_CODES, "US-VA");
+      properties.setProperty(PROPERTY_ZONE + ".us-west-1." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_ZONE + ".us-sw-1." + ISO3166_CODES, "US-NV");
+      properties.setProperty(PROPERTY_ZONE + ".eu-ams-1." + ISO3166_CODES, "NL-NH");
       return properties;
    }
 
@@ -64,7 +73,7 @@ public class JoyentCloudProviderMetadata extends BaseProviderMetadata {
          .apiMetadata(new SDCApiMetadata())
          .homepage(URI.create("http://www.joyent.com/products/smartdatacenter/"))
          .console(URI.create("https://my.joyentcloud.com/login"))
-         .iso3166Codes("TODO")
+         .iso3166Codes("US-VA", "US-CA", "US-NV", "NL-NH")
          .endpoint("https://api.joyentcloud.com")
          .defaultProperties(JoyentCloudProviderMetadata.defaultProperties());
       }

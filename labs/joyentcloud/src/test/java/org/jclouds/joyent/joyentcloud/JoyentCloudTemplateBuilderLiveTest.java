@@ -80,6 +80,6 @@ public class JoyentCloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveT
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("TODO");
+      return ImmutableSet.<String> of("US-VA", "US-CA", "US-NV", "NL-NH");
    }
 }
