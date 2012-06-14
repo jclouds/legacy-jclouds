@@ -31,7 +31,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.joyent.sdc.v6_5.domain.Machine;
-import org.jclouds.joyent.sdc.v6_5.options.CreateServerOptions;
+import org.jclouds.joyent.sdc.v6_5.options.CreateMachineOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
@@ -81,10 +81,10 @@ public interface MachineAsyncClient {
 	@POST
 	@Path("/my/machines")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@MapBinder(CreateServerOptions.class)
+	@MapBinder(CreateMachineOptions.class)
 	ListenableFuture<Machine> createMachine(@PayloadParam("name") String name,
 			@PayloadParam("package") String packageSDC,
-			@PayloadParam("dataset") String dataset,CreateServerOptions... options);
+			@PayloadParam("dataset") String dataset,CreateMachineOptions... options);
 
 	/**
 	 * @see MachineClient#stopMachine

@@ -16,34 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5.config;
+package org.jclouds.joyent.joyentcloud;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-
-import javax.inject.Singleton;
-
-import org.jclouds.joyent.sdc.v6_5.domain.Machine;
-import org.jclouds.joyent.sdc.v6_5.functions.internal.SDCTypeAdapters;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import org.jclouds.joyent.sdc.v6_5.compute.SDCComputeServiceLiveTest;
+import org.testng.annotations.Test;
 
 /**
+ * 
  * @author Adrian Cole
  */
-public class SDCParserModule extends AbstractModule {
+@Test(groups = "live", singleThreaded = true, testName = "JoyentCloudComputeServiceLiveTest")
+public class JoyentCloudComputeServiceLiveTest extends SDCComputeServiceLiveTest {
 
-   @Provides
-   @Singleton
-   public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Machine.State.class, new SDCTypeAdapters.MachineStateAdapter(), Type.class,
-            new SDCTypeAdapters.SDCTypeAdapter());
+   public JoyentCloudComputeServiceLiveTest() {
+      provider = "joyentcloud";
    }
-
-   @Override
-   protected void configure() {
-   }
-
 }

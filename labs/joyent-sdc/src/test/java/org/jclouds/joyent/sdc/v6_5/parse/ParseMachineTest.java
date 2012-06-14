@@ -51,7 +51,7 @@ public class ParseMachineTest extends BaseItemParserTest<Machine> {
       return Machine
             .builder()
             .id("94eba336-ecb7-49f5-8a27-52f5e4dd57a1")
-            .name("testJClouds")
+            .name("sample-e92")
             .type(Type.VIRTUALMACHINE)
             .state(Machine.State.STOPPED)
             .dataset("sdc:sdc:centos-5.7:1.2.1")

@@ -32,7 +32,7 @@ import com.google.gson.stream.JsonWriter;
  */
 public class SDCTypeAdapters {
 
-   public static class ServerStateAdapter extends TypeAdapter<Machine.State> {
+   public static class MachineStateAdapter extends TypeAdapter<Machine.State> {
       @Override
       public void write(JsonWriter writer, Machine.State value) throws IOException {
          writer.value(value.value());

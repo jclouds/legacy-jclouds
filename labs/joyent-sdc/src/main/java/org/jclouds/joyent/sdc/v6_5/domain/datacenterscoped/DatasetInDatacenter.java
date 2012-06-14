@@ -16,34 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5.config;
+package org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped;
 
-import java.lang.reflect.Type;
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Singleton;
-
-import org.jclouds.joyent.sdc.v6_5.domain.Machine;
-import org.jclouds.joyent.sdc.v6_5.functions.internal.SDCTypeAdapters;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import org.jclouds.joyent.sdc.v6_5.domain.Dataset;
 
 /**
  * @author Adrian Cole
  */
-public class SDCParserModule extends AbstractModule {
+public class DatasetInDatacenter extends DatacenterAndId {
+   protected final Dataset dataset;
 
-   @Provides
-   @Singleton
-   public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Machine.State.class, new SDCTypeAdapters.MachineStateAdapter(), Type.class,
-            new SDCTypeAdapters.SDCTypeAdapter());
+   public DatasetInDatacenter(Dataset dataset, String datacenterId) {
+      super(datacenterId, checkNotNull(dataset, "dataset").getId());
+      this.dataset = dataset;
    }
 
+   public Dataset getDataset() {
+      return dataset;
+   }
+
+   // superclass hashCode/equals are good enough, and help us use DatacenterAndId and DatasetInDatacenter
+   // interchangeably as Map keys
+
    @Override
-   protected void configure() {
+   public String toString() {
+      return "[dataset=" + dataset + ", datacenterId=" + datacenterId + "]";
    }
 
 }

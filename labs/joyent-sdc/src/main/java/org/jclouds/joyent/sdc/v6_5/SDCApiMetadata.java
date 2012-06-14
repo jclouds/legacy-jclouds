@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.joyent.sdc.v6_5.compute.config.SDCComputeServiceContextModule;
 import org.jclouds.joyent.sdc.v6_5.config.DatacentersAreZonesModule;
 import org.jclouds.joyent.sdc.v6_5.config.SDCRestClientModule;
 import org.jclouds.rest.RestContext;
@@ -75,7 +77,8 @@ public class SDCApiMetadata extends BaseRestApiMetadata {
          .version("~6.5")
          .defaultEndpoint("https://api.joyentcloud.com")
          .defaultProperties(SDCApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>> of(DatacentersAreZonesModule.class, SDCRestClientModule.class));
+         .view(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>> of(DatacentersAreZonesModule.class, SDCRestClientModule.class, SDCComputeServiceContextModule.class));
       }
 
       @Override

@@ -54,7 +54,7 @@ public class ParseMachineListTest extends BaseSetParserTest<Machine> {
             Machine
                   .builder()
                   .id("94eba336-ecb7-49f5-8a27-52f5e4dd57a1")
-                  .name("testJClouds")
+                  .name("sample-e92")
                   .type(Type.VIRTUALMACHINE)
                   .state(Machine.State.RUNNING)
                   .dataset("sdc:sdc:centos-5.7:1.2.1")
@@ -68,7 +68,7 @@ public class ParseMachineListTest extends BaseSetParserTest<Machine> {
                   .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-05-11T09:00:33+00:00"))
                   .build(),
 
-            Machine.builder().id("d73cb0b0-7d1f-44ef-8c40-e040eef0f726").name("testJClouds2").type(Type.SMARTMACHINE)
+            Machine.builder().id("d73cb0b0-7d1f-44ef-8c40-e040eef0f726").name("sample-e922").type(Type.SMARTMACHINE)
                   .state(Machine.State.RUNNING).dataset("sdc:sdc:smartosplus:3.1.0")
                   .ips(ImmutableSet.<String> builder().add("37.153.96.56").add("10.224.0.57").build())
                   .memorySizeMb(1024).diskSizeGb(61440).metadata(ImmutableMap.<String, String> of())

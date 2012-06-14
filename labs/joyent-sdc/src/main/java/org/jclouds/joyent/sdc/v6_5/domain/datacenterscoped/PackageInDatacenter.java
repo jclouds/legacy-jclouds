@@ -16,34 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5.config;
+package org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-
-import javax.inject.Singleton;
-
-import org.jclouds.joyent.sdc.v6_5.domain.Machine;
-import org.jclouds.joyent.sdc.v6_5.functions.internal.SDCTypeAdapters;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Adrian Cole
  */
-public class SDCParserModule extends AbstractModule {
+public class PackageInDatacenter extends DatacenterAndName {
+   protected final org.jclouds.joyent.sdc.v6_5.domain.Package pkg;
 
-   @Provides
-   @Singleton
-   public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Machine.State.class, new SDCTypeAdapters.MachineStateAdapter(), Type.class,
-            new SDCTypeAdapters.SDCTypeAdapter());
+   public PackageInDatacenter(org.jclouds.joyent.sdc.v6_5.domain.Package pkg, String datacenterId) {
+      super(datacenterId, checkNotNull(pkg, "pkg").getName());
+      this.pkg = pkg;
    }
 
+   public org.jclouds.joyent.sdc.v6_5.domain.Package getPackage() {
+      return pkg;
+   }
+
+   // superclass hashCode/equals are good enough, and help us use DatacenterAndId and PackageInDatacenter
+   // interchangeably as Map keys
+
    @Override
-   protected void configure() {
+   public String toString() {
+      return "[pkg=" + pkg + ", datacenterId=" + datacenterId + "]";
    }
 
 }

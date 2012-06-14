@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.joyent.sdc.v6_5.domain.Machine;
-import org.jclouds.joyent.sdc.v6_5.options.CreateServerOptions;
+import org.jclouds.joyent.sdc.v6_5.options.CreateMachineOptions;
 
 /**
  * Provides synchronous access to Machine.
@@ -39,7 +39,7 @@ public interface MachineClient {
    /**
     * Lists all machines we have on record for your account.
     * 
-    * @return an account's associated server objects.
+    * @return an account's associated machine objects.
     */
    Set<Machine> listMachines();
 
@@ -64,7 +64,7 @@ public interface MachineClient {
     *           optional parameters to be passed into the machine creation request
     * @return the newly created machine
     */
-   Machine createMachine(String name, String packageSDC, String dataset, CreateServerOptions... options);
+   Machine createMachine(String name, String packageSDC, String dataset, CreateMachineOptions... options);
 
    /**
     * Allows you to shut down a machine.

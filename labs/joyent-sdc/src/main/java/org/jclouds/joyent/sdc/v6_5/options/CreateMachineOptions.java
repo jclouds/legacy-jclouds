@@ -40,7 +40,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Gerald Pereira
  * 
  */
-public class CreateServerOptions implements MapBinder {
+public class CreateMachineOptions implements MapBinder {
    @Inject
    private BindToJsonPayload jsonBinder;
 
@@ -52,8 +52,8 @@ public class CreateServerOptions implements MapBinder {
       if (this == object) {
          return true;
       }
-      if (object instanceof CreateServerOptions) {
-         final CreateServerOptions other = CreateServerOptions.class.cast(object);
+      if (object instanceof CreateMachineOptions) {
+         final CreateMachineOptions other = CreateMachineOptions.class.cast(object);
          return equal(tag, tag) && equal(metadata, other.metadata);
       } else {
          return false;
@@ -97,7 +97,7 @@ public class CreateServerOptions implements MapBinder {
     * An arbitrary set of metadata key/value pairs can be set at provision time, but they must be
     * prefixed with "metadata."
     */
-   public CreateServerOptions metadata(Map<String, String> metadata) {
+   public CreateMachineOptions metadata(Map<String, String> metadata) {
       checkNotNull(metadata, "metadata");
       this.metadata = ImmutableMap.copyOf(metadata);
       return this;
@@ -106,7 +106,7 @@ public class CreateServerOptions implements MapBinder {
    /**
     * An arbitrary set of tags can be set at provision time, but they must be prefixed with "tag."
     */
-   public CreateServerOptions tag(Map<String, String> tag) {
+   public CreateMachineOptions tag(Map<String, String> tag) {
       checkNotNull(tag, "tag");
       this.tag = ImmutableMap.copyOf(tag);
       return this;
@@ -132,18 +132,18 @@ public class CreateServerOptions implements MapBinder {
    public static class Builder {
 
       /**
-       * @see CreateServerOptions#metadata(Map<String, String>)
+       * @see CreateMachineOptions#metadata(Map<String, String>)
        */
-      public static CreateServerOptions metadata(Map<String, String> metadata) {
-         CreateServerOptions options = new CreateServerOptions();
+      public static CreateMachineOptions metadata(Map<String, String> metadata) {
+         CreateMachineOptions options = new CreateMachineOptions();
          return options.metadata(metadata);
       }
 
       /**
-       * @see CreateServerOptions#tag(Map<String, String>)
+       * @see CreateMachineOptions#tag(Map<String, String>)
        */
-      public static CreateServerOptions tag(Map<String, String> tag) {
-         CreateServerOptions options = new CreateServerOptions();
+      public static CreateMachineOptions tag(Map<String, String> tag) {
+         CreateMachineOptions options = new CreateMachineOptions();
          return options.tag(tag);
       }
    }

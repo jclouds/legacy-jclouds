@@ -70,7 +70,7 @@ public class MachineClientExpectTest extends BaseSDCClientExpectTest {
                                  "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                .payload(
                         payloadFromStringWithContentType(
-                                 "{\"name\":\"testJClouds\",\"package\":\"Small 1GB\",\"dataset\":\"sdc:sdc:centos-5.7:1.2.1\"}",
+                                 "{\"name\":\"sample-e92\",\"package\":\"Small 1GB\",\"dataset\":\"sdc:sdc:centos-5.7:1.2.1\"}",
                                  "application/json")).build();
 
       HttpResponse createMachineResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
@@ -79,7 +79,7 @@ public class MachineClientExpectTest extends BaseSDCClientExpectTest {
 
       SDCClient clientWithNewMachine = requestsSendResponses(getDatacenters, getDatacentersResponse, createMachine, createMachineResponse);
 
-      assertEquals(clientWithNewMachine.getMachineClientForDatacenter("us-sw-1").createMachine("testJClouds", "Small 1GB",
+      assertEquals(clientWithNewMachine.getMachineClientForDatacenter("us-sw-1").createMachine("sample-e92", "Small 1GB",
                "sdc:sdc:centos-5.7:1.2.1").toString(), new ParseCreatedMachineTest().expected().toString());
    }
 }
