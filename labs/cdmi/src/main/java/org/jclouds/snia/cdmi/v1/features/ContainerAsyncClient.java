@@ -19,10 +19,15 @@
 package org.jclouds.snia.cdmi.v1.features;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+
 
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -33,6 +38,7 @@ import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
+import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -40,7 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Container Object Resource Operations
  * 
  * @see ContainerClient
- * @author Adrian Cole
+ * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding( { '/', '=' })
@@ -56,5 +62,26 @@ public interface ContainerAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/{containerName}/")
    ListenableFuture<Container> getContainer(@PathParam("containerName") String containerName);
+   
+   /**
+    * @see ContainerClient#createContainer
+    */
+   @PUT
+   @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+   @Produces( { ObjectTypes.CONTAINER})
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)   
+   @Path("/{containerName}/")
+   ListenableFuture<Container> createContainer(@PathParam("containerName") String containerName,
+   					CreateContainerOptions... options);
+
+   /**
+    * @see ContainerClient#createContainer()
+    */
+   @DELETE
+//   @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+   @Consumes( MediaType.APPLICATION_JSON )
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{containerName}/")
+   ListenableFuture<Void> deleteContainer(@PathParam("containerName") String containerName);
 
 }
