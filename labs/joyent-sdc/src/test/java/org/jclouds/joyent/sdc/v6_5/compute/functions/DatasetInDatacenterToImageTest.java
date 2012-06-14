@@ -72,6 +72,8 @@ public class DatasetInDatacenterToImageTest {
       assertEquals(convertedImage.getName(), datasetToConvert.getName());
       assertEquals(convertedImage.getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
       assertEquals(convertedImage.getOperatingSystem(), operatingSystem);
+      assertEquals(convertedImage.getDescription(), datasetToConvert.getUrn());
+      assertEquals(convertedImage.getVersion(), datasetToConvert.getVersion());
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
