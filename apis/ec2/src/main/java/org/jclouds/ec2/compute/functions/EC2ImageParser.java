@@ -32,10 +32,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils;
@@ -100,7 +100,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
 
       OperatingSystem.Builder osBuilder = OperatingSystem.builder();
       osBuilder.is64Bit(from.getArchitecture() == Architecture.X86_64);
-      OsFamily family = parseOsFamilyOrUnrecognized(from.getImageLocation());
+      OsFamily family = parseOsFamily(from);
       osBuilder.family(family);
       osBuilder.version(ComputeServiceUtils.parseVersionOrReturnEmptyString(family, from.getImageLocation(),
                osVersionMap));
@@ -131,4 +131,20 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
       return builder.build();
    }
 
+   /** 
+    * First treats windows as a special case: check if platform==windows.
+    * Then tries matching based on the image name.
+    * And then falls back to checking other types of platform.
+    */
+   private OsFamily parseOsFamily(org.jclouds.ec2.domain.Image from) {
+      if (from.getPlatform() != null && from.getPlatform().equalsIgnoreCase("windows")) {
+         return OsFamily.WINDOWS;
+      }
+      
+      OsFamily family = parseOsFamilyOrUnrecognized(from.getImageLocation());
+      if (family == OsFamily.UNRECOGNIZED && from.getPlatform() != null) {
+         family = parseOsFamilyOrUnrecognized(from.getPlatform());
+      }
+      return family;
+   }
 }
