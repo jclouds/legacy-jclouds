@@ -1,0 +1,17 @@
+<DescribeAvailabilityZonesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+    <requestId>22c5332d-c331-4310-b695-e21e76c3fdb0</requestId>
+    <availabilityZoneInfo>
+        <item>
+            <zoneName>ap-southeast-1a</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>ap-southeast-1</regionName>
+            <messageSet/>
+        </item>
+        <item>
+            <zoneName>ap-southeast-1b</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>ap-southeast-1</regionName>
+            <messageSet/>
+        </item>
+    </availabilityZoneInfo>
+</DescribeAvailabilityZonesResponse>

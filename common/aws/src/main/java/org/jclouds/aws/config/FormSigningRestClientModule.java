@@ -21,10 +21,8 @@ package org.jclouds.aws.config;
 import java.util.Date;
 import java.util.Map;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
@@ -53,9 +51,8 @@ public class FormSigningRestClientModule<S, A> extends AWSRestClientModule<S, A>
 
    @Provides
    @TimeStamp
-   protected String provideTimeStamp(final DateService dateService,
-            @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
-      return dateService.iso8601DateFormat(new Date(System.currentTimeMillis() + (expiration * 1000)));
+   protected String provideTimeStamp(final DateService dateService) {
+      return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()));
    }
 
    @Provides

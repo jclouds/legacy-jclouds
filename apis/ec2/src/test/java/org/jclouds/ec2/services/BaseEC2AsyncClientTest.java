@@ -67,7 +67,7 @@ import com.google.inject.Provides;
 public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    @RequiresHttp
    @ConfiguresRestClient
-   protected static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
+   public static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
 
       public StubEC2RestClientModule() {
          super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
@@ -87,7 +87,7 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
       }
       
       @Override
-      protected String provideTimeStamp(DateService dateService, int expiration) {
+      protected String provideTimeStamp(DateService dateService) {
          return "2009-11-08T15:54:08.897Z";
       }
 

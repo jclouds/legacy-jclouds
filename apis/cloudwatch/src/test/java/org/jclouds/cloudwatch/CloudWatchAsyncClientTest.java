@@ -28,9 +28,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Named;
-
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
@@ -114,8 +111,7 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
       }
 
       @Override
-      protected String provideTimeStamp(final DateService dateService,
-            @Named(Constants.PROPERTY_SESSION_INTERVAL) int expiration) {
+      protected String provideTimeStamp(final DateService dateService) {
          return "2009-11-08T15:54:08.897Z";
       }
    }

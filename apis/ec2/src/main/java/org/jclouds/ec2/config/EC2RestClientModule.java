@@ -20,7 +20,6 @@ package org.jclouds.ec2.config;
 
 import java.util.Map;
 
-
 import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
@@ -41,12 +40,16 @@ import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
 import org.jclouds.ec2.services.WindowsClient;
 import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
-import org.jclouds.ec2.suppliers.DescribeRegionsForConfiguredRegions;
+import org.jclouds.ec2.suppliers.DescribeRegionsForRegionURIs;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
+import org.jclouds.location.suppliers.RegionIdsSupplier;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
+import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
+import org.jclouds.location.suppliers.derived.ZoneIdToURIFromJoinOnRegionIdToURI;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromRegionIdToZoneIdsValues;
 import org.jclouds.rest.ConfiguresRestClient;
 
@@ -77,7 +80,13 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
    public static EC2RestClientModule<EC2Client, EC2AsyncClient> create() {
       return new EC2RestClientModule<EC2Client, EC2AsyncClient>(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
    }
-
+   
+	@SuppressWarnings("unchecked")
+	public EC2RestClientModule() {
+		super(Class.class.cast(EC2Client.class), Class.class
+				.cast(EC2AsyncClient.class), DELEGATE_MAP);
+	}
+   
    public EC2RestClientModule(Class<S> sync, Class<A> async, Map<Class<?>, Class<?>> delegateMap) {
       super(sync, async, delegateMap);
    }
@@ -86,7 +95,9 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
    protected void installLocations() {
       install(new LocationModule());
       bind(RegionIdToZoneIdsSupplier.class).to(DescribeAvailabilityZonesInRegion.class).in(Scopes.SINGLETON);
-      bind(RegionIdToURISupplier.class).to(DescribeRegionsForConfiguredRegions.class).in(Scopes.SINGLETON);
+      bind(RegionIdToURISupplier.class).to(DescribeRegionsForRegionURIs.class).in(Scopes.SINGLETON);
       bind(ZoneIdsSupplier.class).to(ZoneIdsFromRegionIdToZoneIdsValues.class).in(Scopes.SINGLETON);
+      bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class).in(Scopes.SINGLETON);
+      bind(ZoneIdToURISupplier.class).to(ZoneIdToURIFromJoinOnRegionIdToURI.class).in(Scopes.SINGLETON);
    }
 }

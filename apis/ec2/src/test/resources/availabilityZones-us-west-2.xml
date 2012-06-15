@@ -1,0 +1,23 @@
+<DescribeAvailabilityZonesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+    <requestId>e40c2bc4-7231-4df1-a604-202bb8333332</requestId>
+    <availabilityZoneInfo>
+        <item>
+            <zoneName>us-west-2a</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>us-west-2</regionName>
+            <messageSet/>
+        </item>
+        <item>
+            <zoneName>us-west-2b</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>us-west-2</regionName>
+            <messageSet/>
+        </item>
+        <item>
+            <zoneName>us-west-2c</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>us-west-2</regionName>
+            <messageSet/>
+        </item>
+    </availabilityZoneInfo>
+</DescribeAvailabilityZonesResponse>

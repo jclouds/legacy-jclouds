@@ -23,6 +23,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContext;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,8 +31,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,6 +69,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -413,6 +415,13 @@ public abstract class BaseRestClientExpectTest<S> {
 
       return createContext(contextSpec,
                ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getApi();
+   }
+   
+   public Injector createInjector(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+      RestContextSpec<S, ?> contextSpec = makeContextSpec();
+
+      return createContextBuilder(contextSpec,
+            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).buildInjector();
    }
 
    protected String identity = "identity";
