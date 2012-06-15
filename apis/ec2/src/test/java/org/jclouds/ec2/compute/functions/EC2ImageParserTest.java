@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -64,24 +64,48 @@ public class EC2ImageParserTest {
          assertEquals(image.getBackendStatus(), "available");
       }
       
-      assertEquals(Iterables.get(result, 0), new ImageBuilder().operatingSystem(
+      assertImageEquals(Iterables.get(result, 0), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).description("Amazon")
                .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7").name(
                         "amzn-ami-0.9.7-beta.i386-ebs").providerId("ami-82e4b5c7").location(defaultLocation)
                .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).status(
-                        Status.AVAILABLE).build());
+                        Status.AVAILABLE).backendStatus("available").build());
 
-      assertEquals(Iterables.get(result, 3), new ImageBuilder().operatingSystem(
+      assertImageEquals(Iterables.get(result, 3), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml").is64Bit(true).build())
                .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new LoginCredentials("ec2-user", false))
                .id("us-east-1/ami-f2e4b5b7").providerId("ami-f2e4b5b7").name("amzn-ami-0.9.7-beta.x86_64-S3").location(
                         defaultLocation)
                .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).status(
-                        Status.AVAILABLE).build());
+                        Status.AVAILABLE).backendStatus("available").build());
+      
+      assertImageEquals(Iterables.get(result, 4), new ImageBuilder().operatingSystem(
+               new OperatingSystem.Builder().family(OsFamily.WINDOWS).arch("hvm").version("2008").description(
+                        "amazon/NameGivesNoClue_Server-2008-R2_SP1-Language_Packs-64Bit-Base-2012.05.10")
+                        .is64Bit(true).build())
+               .description("Microsoft Windows Server 2008 R2 SP1 Datacenter 64-bit Multi-language AMI provided by Amazon")
+               .defaultCredentials(new LoginCredentials("root", false))
+               .id("us-east-1/ami-85457ff1").providerId("ami-85457ff1").name("NameGivesNoClue_Server-2008-R2_SP1-Language_Packs-64Bit-Base-2012.05.10")
+                        .location(defaultLocation)
+               .userMetadata(ImmutableMap.of("owner", "801119661308", "rootDeviceType", "ebs"))
+               .status(Status.AVAILABLE).backendStatus("available").build());
+      
    }
 
+   private void assertImageEquals(org.jclouds.compute.domain.Image actual, org.jclouds.compute.domain.Image expected) {
+      // Note that ImageImpl.equals does not compare operating system etc; there's an explicit comment:
+      // equals from super is sufficient to establish identity equivalence
+      assertEquals(actual, expected);
+      assertEquals(actual.getOperatingSystem(), expected.getOperatingSystem());
+      assertEquals(actual.getStatus(), expected.getStatus());
+      assertEquals(actual.getBackendStatus(), expected.getBackendStatus());
+      assertEquals(actual.getVersion(), expected.getVersion());
+      assertEquals(actual.getDescription(), expected.getDescription());
+      assertEquals(actual.getDefaultCredentials(), expected.getDefaultCredentials());
+   }
+   
    static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description(
             "us-east-1").build();
 
