@@ -82,5 +82,32 @@
             <blockDeviceMapping/>
             <virtualizationType>paravirtual</virtualizationType>
         </item>
+        <item>
+            <imageId>ami-85457ff1</imageId>
+            <imageLocation>amazon/NameGivesNoClue_Server-2008-R2_SP1-Language_Packs-64Bit-Base-2012.05.10</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>801119661308</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <platform>windows</platform>
+            <imageOwnerAlias>amazon</imageOwnerAlias>
+            <name>NameGivesNoClue_Server-2008-R2_SP1-Language_Packs-64Bit-Base-2012.05.10</name>
+            <description>Microsoft Windows Server 2008 R2 SP1 Datacenter 64-bit Multi-language AMI provided by Amazon</description>
+            <rootDeviceType>ebs</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <blockDeviceMapping>
+                <item>
+                    <deviceName>/dev/sda1</deviceName>
+                    <ebs>
+                        <snapshotId>snap-84a433ef</snapshotId>
+                        <volumeSize>30</volumeSize>
+                        <deleteOnTermination>true</deleteOnTermination>
+                    </ebs>
+                </item>
+            </blockDeviceMapping>
+            <virtualizationType>hvm</virtualizationType>
+            <hypervisor>xen</hypervisor>
+        </item>
     </imagesSet>
 </DescribeImagesResponse>
