@@ -19,6 +19,7 @@
 package org.jclouds.walrus;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 
@@ -36,6 +37,7 @@ public class WalrusPropertiesBuilder extends S3PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "Walrus-1.6");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://walrus.partner.eucalyptus.com:8773/services/Walrus");
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;

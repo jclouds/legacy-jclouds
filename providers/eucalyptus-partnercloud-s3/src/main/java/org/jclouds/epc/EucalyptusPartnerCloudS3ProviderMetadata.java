@@ -86,7 +86,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://partnercloud.eucalyptus.com:8443");
+      return URI.create("https://walrus.partner.eucalyptus.com");
    }
 
    /**

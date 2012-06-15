@@ -38,11 +38,11 @@ public class EucalyptusPartnerCloudWalrusPropertiesBuilder extends WalrusPropert
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_REGIONS, "walrus");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
-      properties.setProperty(PROPERTY_REGION + ".Walrus." + ISO3166_CODES, "US-CA");
-      properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
-      properties.setProperty(PROPERTY_REGION + "." + "Walrus" + "." + ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_REGION + ".walrus." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://walrus.partner.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_REGION + "." + "Walrus" + "." + ENDPOINT, "http://walrus.partner.eucalyptus.com:8773/services/Walrus");
       return properties;
    }
 

@@ -34,7 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.eucalyptus.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus.endpoint>
+    <test.eucalyptus.endpoint>http://partnercloud.eucalyptus.com:8773/services/Eucalyptus/</test.eucalyptus.endpoint>
     <test.eucalyptus.api-version>2010-06-15</test.eucalyptus.api-version>
     <test.eucalyptus.build-version />
     <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>

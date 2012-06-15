@@ -38,11 +38,10 @@ public class EucalyptusPartnerCloudPropertiesBuilder extends EucalyptusPropertie
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
+      properties.setProperty(PROPERTY_REGIONS, "eucalyptus");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
-      properties.setProperty(PROPERTY_REGION + ".Eucalyptus." + ISO3166_CODES, "US-CA");
-      properties.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", "kvm");
-      properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Eucalyptus");
+      properties.setProperty(PROPERTY_REGION + ".eucalyptus." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Eucalyptus/");
       return properties;
    }
 

@@ -86,7 +86,7 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://partnercloud.eucalyptus.com:8443");
+      return URI.create("https://eucalyptus.partner.eucalyptus.com");
    }
 
    /**

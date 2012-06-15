@@ -18,29 +18,15 @@
  */
 package org.jclouds.epc.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.epc.strategy.EucalyptusPartnerCloudReviseParsedImage;
-
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class EucalyptusPartnerCloudComputeServiceContextModule extends EC2ComputeServiceContextModule {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      String virt = injector.getInstance(Key.get(String.class, Names
-               .named("eucalyptus-partnercloud-ec2.virtualization-type")));
-      return template.osFamily(UBUNTU).locationId(virt + "-cluster");
-   }
 
    @Override
    protected void configure() {

@@ -134,7 +134,7 @@ public class EC2RestClientModuleExpectTest extends BaseEC2ExpectTest<Injector> {
       assertEquals(injector.getInstance(RegionToEndpointOrProviderIfNull.class).apply("us-west-2"),
             URI.create("https://ec2.us-west-2.amazonaws.com"));
    }
-   
+
    @Override
    public Injector createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       return createInjector(fn, module, props);
