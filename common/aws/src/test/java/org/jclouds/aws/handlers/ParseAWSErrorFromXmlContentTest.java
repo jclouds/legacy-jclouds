@@ -164,6 +164,12 @@ public class ParseAWSErrorFromXmlContentTest {
                "<Error><Code>AuthFailure</Code></Error>", AuthorizationException.class);
    }
 
+   @Test
+   public void test400WithCloudBridgeAuthFailureSetsAuthorizationException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+               "<Error><Code>Client.AuthFailure</Code></Error>", AuthorizationException.class);
+   }
+
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
             Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
