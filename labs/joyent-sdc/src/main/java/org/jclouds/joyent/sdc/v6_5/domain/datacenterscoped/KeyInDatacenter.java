@@ -20,29 +20,29 @@ package org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.joyent.sdc.v6_5.domain.Machine;
+import org.jclouds.joyent.sdc.v6_5.domain.Key;
 
 /**
  * @author Adrian Cole
  */
-public class MachineInDatacenter extends DatacenterAndId {
-   protected final Machine machine;
+public class KeyInDatacenter extends DatacenterAndName {
+   protected final Key key;
 
-   public MachineInDatacenter(Machine machine, String datacenterId) {
-      super(datacenterId, checkNotNull(machine, "machine").getId());
-      this.machine = machine;
+   public KeyInDatacenter(Key key, String datacenterId) {
+      super(datacenterId, checkNotNull(key, "key").getName());
+      this.key = key;
    }
 
-   public Machine get() {
-      return machine;
+   public Key get() {
+      return key;
    }
 
-   // superclass hashCode/equals are good enough, and help us use DatacenterAndId and MachineInDatacenter
+   // superclass hashCode/equals are good enough, and help us use DatacenterAndId and PackageInDatacenter
    // interchangeably as Map keys
 
    @Override
    public String toString() {
-      return "[machine=" + machine + ", datacenterId=" + datacenterId + "]";
+      return "[key=" + key + ", datacenterId=" + datacenterId + "]";
    }
 
 }

@@ -24,28 +24,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
-import javax.inject.Inject;
+import org.jclouds.http.options.BaseHttpRequestOptions;
+import org.jclouds.joyent.sdc.v6_5.features.PackageClient;
+import org.jclouds.util.Maps2;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.MapBinder;
-import org.jclouds.rest.binders.BindToJsonPayload;
-
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * 
- * @author Gerald Pereira
+ * @author Adrian Cole
  * 
  */
-public class CreateMachineOptions implements MapBinder {
-   @Inject
-   private BindToJsonPayload jsonBinder;
-
+public class CreateMachineOptions extends BaseHttpRequestOptions {
+   private String name;
+   private String pkg;
    private Map<String, String> metadata = ImmutableMap.of();
-   private Map<String, String> tag = ImmutableMap.of();
 
    @Override
    public boolean equals(Object object) {
@@ -54,7 +51,7 @@ public class CreateMachineOptions implements MapBinder {
       }
       if (object instanceof CreateMachineOptions) {
          final CreateMachineOptions other = CreateMachineOptions.class.cast(object);
-         return equal(tag, tag) && equal(metadata, other.metadata);
+         return equal(name, other.name) && equal(pkg, other.pkg) && equal(metadata, other.metadata);
       } else {
          return false;
       }
@@ -62,40 +59,51 @@ public class CreateMachineOptions implements MapBinder {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(tag, metadata);
-   }
-
-   protected ToStringHelper string() {
-      return toStringHelper("").add("metadata", metadata).add("tag", tag);
+      return Objects.hashCode(name, pkg, metadata);
    }
 
    @Override
    public String toString() {
-      return string().toString();
+      return toStringHelper("").add("name", name).add("package", name).add("metadata", metadata).toString();
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      return jsonBinder.bindToRequest(request, input);
-   }
+   public Multimap<String, String> buildQueryParameters() {
+      Multimap<String, String> params = super.buildQueryParameters();
+      if (name != null)
+         params.put("name", name);
+      if (pkg != null)
+         params.put("package", pkg);
+      params.putAll(Multimaps.forMap(Maps2.transformKeys(metadata, new Function<String, String>() {
 
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      MachineRequest machine = new MachineRequest(checkNotNull(postParams.get("name"), "name parameter not present")
-               .toString(), checkNotNull(postParams.get("package"), "package parameter not present").toString(),
-               checkNotNull(postParams.get("dataset"), "dataset parameter not present").toString());
+         @Override
+         public String apply(String input) {
+            return "metadata." + input;
+         }
 
-      if (metadata.size() > 0)
-         machine.metadata = metadata;
-      if (tag.size() > 0)
-         machine.tag = tag;
-
-      return bindToRequest(request, machine);
+      })));
+      return params;
    }
 
    /**
-    * An arbitrary set of metadata key/value pairs can be set at provision time, but they must be
-    * prefixed with "metadata."
+    * friendly name for this machine; default is a randomly generated name
+    */
+   public CreateMachineOptions name(String name) {
+      this.name = checkNotNull(name, "name");
+      return this;
+   }
+
+   /**
+    * Name of the package to use on provisioning; default is indicated in
+    * {@link PackageClient#list}
+    */
+   public CreateMachineOptions packageName(String packageName) {
+      this.pkg = checkNotNull(packageName, "packageName");
+      return this;
+   }
+
+   /**
+    * An arbitrary set of metadata key/value pairs.
     */
    public CreateMachineOptions metadata(Map<String, String> metadata) {
       checkNotNull(metadata, "metadata");
@@ -103,33 +111,23 @@ public class CreateMachineOptions implements MapBinder {
       return this;
    }
 
-   /**
-    * An arbitrary set of tags can be set at provision time, but they must be prefixed with "tag."
-    */
-   public CreateMachineOptions tag(Map<String, String> tag) {
-      checkNotNull(tag, "tag");
-      this.tag = ImmutableMap.copyOf(tag);
-      return this;
-   }
+   public static class Builder {
 
-   @SuppressWarnings("unused")
-   private class MachineRequest {
-      final String name;
-      @SerializedName("package")
-      final String packageSDC;
-      final String dataset;
-      Map<String, String> metadata;
-      Map<String, String> tag;
-
-      private MachineRequest(String name, String packageSDC, String dataset) {
-         this.name = name;
-         this.packageSDC = packageSDC;
-         this.dataset = dataset;
+      /**
+       * @see CreateMachineOptions#name
+       */
+      public static CreateMachineOptions name(String name) {
+         CreateMachineOptions options = new CreateMachineOptions();
+         return options.name(name);
       }
 
-   }
-
-   public static class Builder {
+      /**
+       * @see CreateMachineOptions#packageName
+       */
+      public static CreateMachineOptions packageName(String packageName) {
+         CreateMachineOptions options = new CreateMachineOptions();
+         return options.packageName(packageName);
+      }
 
       /**
        * @see CreateMachineOptions#metadata(Map<String, String>)
@@ -139,13 +137,6 @@ public class CreateMachineOptions implements MapBinder {
          return options.metadata(metadata);
       }
 
-      /**
-       * @see CreateMachineOptions#tag(Map<String, String>)
-       */
-      public static CreateMachineOptions tag(Map<String, String> tag) {
-         CreateMachineOptions options = new CreateMachineOptions();
-         return options.tag(tag);
-      }
    }
 
 }

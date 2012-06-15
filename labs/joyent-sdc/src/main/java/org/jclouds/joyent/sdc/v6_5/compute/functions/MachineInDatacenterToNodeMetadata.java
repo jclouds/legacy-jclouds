@@ -17,11 +17,12 @@
  * under the License.
  */
 package org.jclouds.joyent.sdc.v6_5.compute.functions;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.tryFind;
+import static com.google.common.collect.Maps.filterKeys;
 import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromCommaDelimitedValue;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 
@@ -46,12 +47,12 @@ import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatacenterAndId;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatacenterAndName;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.MachineInDatacenter;
+import org.jclouds.joyent.sdc.v6_5.reference.MetadataKeys;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 
 /**
@@ -87,7 +88,7 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
       Location zone = locationIndex.get().get(machineInDatacenter.getDatacenter());
       checkState(zone != null, "location %s not in locationIndex: %s", machineInDatacenter.getDatacenter(),
             locationIndex.get());
-      Machine from = machineInDatacenter.getMachine();
+      Machine from = machineInDatacenter.get();
 
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.id(machineInDatacenter.slashEncode());
@@ -95,14 +96,25 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
       builder.name(from.getName());
       builder.hostname(from.getName());
       builder.location(zone);
-      addMetadataAndParseTagsFromCommaDelimitedValue(builder, from.getMetadata());
+      addMetadataAndParseTagsFromCommaDelimitedValue(builder, filterKeys(from.getMetadata(), new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            // TODO make this more efficient
+            for (MetadataKeys key : MetadataKeys.values())
+               if (key.key().equals(input))
+                  return false;
+            return true;
+         }
+
+      }));
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
-      builder.imageId(DatacenterAndName.fromDatacenterAndName(machineInDatacenter.getDatacenter(), from.getDataset())
+      builder.imageId(DatacenterAndName.fromDatacenterAndName(machineInDatacenter.getDatacenter(), from.get())
             .slashEncode());
       builder.operatingSystem(findOperatingSystemForMachineOrNull(machineInDatacenter));
       builder.hardware(findHardwareForMachineOrNull(machineInDatacenter));
       builder.status(toPortableNodeStatus.get(from.getState()));
-      builder.publicAddresses(filter(from.getIps(), Predicates.not(InetAddresses2.IsPrivateIPAddress.INSTANCE)));
+      builder.publicAddresses(filter(from.getIps(), not(InetAddresses2.IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(from.getIps(), InetAddresses2.IsPrivateIPAddress.INSTANCE));
       return builder.build();
    }
@@ -111,16 +123,16 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
       return tryFind(hardwares.get(), new Predicate<Hardware>() {
          @Override
          public boolean apply(Hardware input) {
-            return input.getRam() == machineInDatacenter.getMachine().getMemorySizeMb()
-                  && getSpace(input) == machineInDatacenter.getMachine().getDiskSizeGb()
+            return input.getRam() == machineInDatacenter.get().getMemorySizeMb()
+                  && getSpace(input) == machineInDatacenter.get().getDiskSizeGb()
                   && input.getLocation().getId().equals(machineInDatacenter.getDatacenter());
          }
       }).orNull();
    }
 
    protected OperatingSystem findOperatingSystemForMachineOrNull(MachineInDatacenter machineInDatacenter) {
-      Image image = findObjectOfTypeForMachineOrNull(images.get(), "image", machineInDatacenter.getMachine()
-            .getDataset(), machineInDatacenter);
+      Image image = findObjectOfTypeForMachineOrNull(images.get(), "image", machineInDatacenter.get()
+            .get(), machineInDatacenter);
       return (image != null) ? image.getOperatingSystem() : null;
    }
 

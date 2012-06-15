@@ -24,10 +24,18 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.domain.JsonBall;
+import org.jclouds.joyent.sdc.v6_5.reference.MetadataKeys;
+import org.jclouds.json.Json;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -39,7 +47,7 @@ import com.google.gson.annotations.SerializedName;
 public class Machine implements Comparable<Machine> {
 
    public static enum State {
-      PUBLISHING, RUNNING, STOPPED, UNRECOGNIZED;
+      PROVISIONING, RUNNING, STOPPING, STOPPED, OFFLINE, DELETED, UNRECOGNIZED;
 
       public static State fromValue(String state) {
          try {
@@ -74,7 +82,7 @@ public class Machine implements Comparable<Machine> {
       private Set<String> ips;
       private Date created;
       private Date updated;
-      private Map<String, String> metadata = ImmutableMap.of();
+      private Map<String, JsonBall> metadata = ImmutableMap.of();
 
       public Builder id(String id) {
          this.id = id;
@@ -129,7 +137,7 @@ public class Machine implements Comparable<Machine> {
       /**
        * @see Machine#getMetadata()
        */
-      public Builder metadata(Map<String, String> metadata) {
+      public Builder metadata(Map<String, JsonBall> metadata) {
          this.metadata = metadata;
          return this;
       }
@@ -139,9 +147,9 @@ public class Machine implements Comparable<Machine> {
       }
 
       public Builder fromMachine(Machine in) {
-         return id(in.getId()).name(in.getName()).type(in.getType()).state(in.getState()).dataset(in.getDataset())
+         return id(in.getId()).name(in.getName()).type(in.getType()).state(in.getState()).dataset(in.get())
                .memorySizeMb(in.getMemorySizeMb()).diskSizeGb(in.getDiskSizeGb()).ips(in.getIps())
-               .metadata(in.getMetadata()).created(in.getCreated()).updated(in.getUpdated());
+               .metadata(in.metadata).created(in.getCreated()).updated(in.getUpdated());
       }
    }
 
@@ -169,7 +177,7 @@ public class Machine implements Comparable<Machine> {
    protected final Date updated;
 
    // metadata Object[String => String] Any "extra" metadata this machine has
-   private final Map<String, String> metadata;
+   private final Map<String, JsonBall> metadata;
 
    @Override
    public int compareTo(Machine other) {
@@ -177,7 +185,7 @@ public class Machine implements Comparable<Machine> {
    }
 
    public Machine(String id, String name, Type type, State state, String dataset, int memorySizeMb, int diskSizeGb,
-         Set<String> ips, Date created, Date updated, final Map<String, String> metadata) {
+         Set<String> ips, Date created, Date updated, final Map<String, JsonBall> metadata) {
       super();
       this.id = id;
       this.name = name;
@@ -208,7 +216,7 @@ public class Machine implements Comparable<Machine> {
       return state;
    }
 
-   public String getDataset() {
+   public String get() {
       return dataset;
    }
 
@@ -232,10 +240,39 @@ public class Machine implements Comparable<Machine> {
       return updated;
    }
 
-   public Map<String, String> getMetadata() {
-      return metadata;
+   /**
+    * If the value is a string, it will be quoted, as that's how json strings are represented. 
+    * 
+    * @return key to a json literal of the value
+    * @see MetadataKeys#valueType
+    * @see Json#fromJson
+    */
+   public Map<String, String> getMetadataAsJsonLiterals() {
+      return Maps.transformValues(metadata, Functions.toStringFunction());
    }
 
+   /**
+    * Note!! metadata can contain arbitrarily complex values.  If the value has structure, you should use {@link #getMetadataAsJsonLiterals}
+    * 
+    * @return metadata
+    */
+   public Map<String, String> getMetadata() {
+      return Maps.transformValues(metadata, Functions.compose(Functions.toStringFunction(), unquoteString));
+   }
+
+   @VisibleForTesting
+   static final Function<JsonBall, String> unquoteString = new Function<JsonBall, String>() {
+
+      @Override
+      public String apply(JsonBall input) {
+         String value = input.toString();
+         if (value.length() >= 2 && value.charAt(0) == '"' && value.charAt(input.length() - 1) == '"')
+            return value.substring(1, input.length() - 1);
+         return value;
+      }
+
+   };
+   
    @Override
    public boolean equals(Object object) {
       if (this == object) {

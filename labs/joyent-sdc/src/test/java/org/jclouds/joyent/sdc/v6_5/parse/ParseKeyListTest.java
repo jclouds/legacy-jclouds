@@ -18,52 +18,43 @@
  */
 package org.jclouds.joyent.sdc.v6_5.parse;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.domain.JsonBall;
 import org.jclouds.joyent.sdc.v6_5.config.SDCParserModule;
-import org.jclouds.joyent.sdc.v6_5.domain.Machine;
-import org.jclouds.joyent.sdc.v6_5.domain.Type;
-import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.joyent.sdc.v6_5.domain.Key;
+import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * @author Gerald Pereira
+ * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ParseMachineTest")
-public class ParseMachineTest extends BaseItemParserTest<Machine> {
+@Test(groups = "unit", testName = "ParseKeyListTest")
+public class ParseKeyListTest extends BaseSetParserTest<Key> {
 
    @Override
    public String resource() {
-      return "/machine.json";
+      return "/key_list.json";
    }
 
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
-   public Machine expected() {
-      return Machine
-            .builder()
-            .id("94eba336-ecb7-49f5-8a27-52f5e4dd57a1")
-            .name("sample-e92")
-            .type(Type.VIRTUALMACHINE)
-            .state(Machine.State.STOPPED)
-            .dataset("sdc:sdc:centos-5.7:1.2.1")
-            .ips(ImmutableSet.<String> builder().add("37.153.96.62").add("10.224.0.63").build())
-            .memorySizeMb(1024)
-            .diskSizeGb(61440)
-            .metadata(
-                  ImmutableMap.<String, JsonBall> builder()
-                        .put("root_authorized_keys", new JsonBall("ssh-rsa XXXXXX== test@xxxx.ovh.net\n")).build())
-            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-05-09T13:32:46+00:00"))
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-05-11T08:44:53+00:00")).build();
+   public Set<Key> expected() {
+      return ImmutableSet.of(
+            Key.builder()
+               .name("rsa")
+               .key("ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0A5Pf5Cq...")
+               .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-04-13T22:14:46+00:00"))
+               .build()
+      );
    }
 
    protected Injector injector() {

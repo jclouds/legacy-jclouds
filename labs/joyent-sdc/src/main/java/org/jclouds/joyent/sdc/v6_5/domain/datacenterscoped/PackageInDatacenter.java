@@ -31,7 +31,7 @@ public class PackageInDatacenter extends DatacenterAndName {
       this.pkg = pkg;
    }
 
-   public org.jclouds.joyent.sdc.v6_5.domain.Package getPackage() {
+   public org.jclouds.joyent.sdc.v6_5.domain.Package get() {
       return pkg;
    }
 

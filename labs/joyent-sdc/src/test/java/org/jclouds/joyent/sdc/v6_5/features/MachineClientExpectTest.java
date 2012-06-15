@@ -26,6 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.sdc.v6_5.SDCClient;
 import org.jclouds.joyent.sdc.v6_5.internal.BaseSDCClientExpectTest;
+import org.jclouds.joyent.sdc.v6_5.options.CreateMachineOptions;
 import org.jclouds.joyent.sdc.v6_5.parse.ParseCreatedMachineTest;
 import org.jclouds.joyent.sdc.v6_5.parse.ParseMachineListTest;
 import org.testng.annotations.Test;
@@ -38,48 +39,50 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "MachineClientExpectTest")
 public class MachineClientExpectTest extends BaseSDCClientExpectTest {
-   HttpRequest listMachines = HttpRequest.builder().method("GET").endpoint(
+   HttpRequest list = HttpRequest.builder().method("GET").endpoint(
             URI.create("https://us-sw-1.api.joyentcloud.com/my/machines")).headers(
             ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept", "application/json")
                      .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
 
    public void testListMachinesWhenResponseIs2xx() {
-      HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/machine_list.json")).build();
 
-      SDCClient clientWhenMachinesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, listMachines, listMachinesResponse);
+      SDCClient clientWhenMachinesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(clientWhenMachinesExists.getMachineClientForDatacenter("us-sw-1").listMachines(), new ParseMachineListTest().expected());
+      assertEquals(clientWhenMachinesExists.getMachineClientForDatacenter("us-sw-1").list(), new ParseMachineListTest().expected());
    }
 
    public void testListMachinesWhenResponseIs404() {
-      HttpResponse listMachinesResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listMachinesWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, listMachines, listMachinesResponse);
+      SDCClient listWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(listMachinesWhenNone.getMachineClientForDatacenter("us-sw-1").listMachines(), ImmutableSet.of());
+      assertEquals(listWhenNone.getMachineClientForDatacenter("us-sw-1").list(), ImmutableSet.of());
    }
 
    public void testCreateMachineWhenResponseIs202() throws Exception {
-      HttpRequest createMachine = HttpRequest
+      HttpRequest createWithDataset = HttpRequest
                .builder()
                .method("POST")
-               .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/machines"))
-               .headers(
-                        ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept",
-                                 "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-               .payload(
-                        payloadFromStringWithContentType(
-                                 "{\"name\":\"sample-e92\",\"package\":\"Small 1GB\",\"dataset\":\"sdc:sdc:centos-5.7:1.2.1\"}",
-                                 "application/json")).build();
+               .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/machines?dataset=sdc%3Asdc%3Acentos-5.7%3A1.2.1&name=sample-e92&package=Small%201GB"))
+               .headers(ImmutableMultimap.<String, String> builder()
+                        .put("X-Api-Version", "~6.5")
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+               .build();
 
-      HttpResponse createMachineResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+      HttpResponse createWithDatasetResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
                .payload(payloadFromResourceWithContentType("/new_machine.json", "application/json; charset=UTF-8"))
                .build();
 
-      SDCClient clientWithNewMachine = requestsSendResponses(getDatacenters, getDatacentersResponse, createMachine, createMachineResponse);
+      SDCClient clientWithNewMachine = requestsSendResponses(getDatacenters, getDatacentersResponse, createWithDataset, createWithDatasetResponse);
 
-      assertEquals(clientWithNewMachine.getMachineClientForDatacenter("us-sw-1").createMachine("sample-e92", "Small 1GB",
-               "sdc:sdc:centos-5.7:1.2.1").toString(), new ParseCreatedMachineTest().expected().toString());
+      assertEquals(
+            clientWithNewMachine
+                  .getMachineClientForDatacenter("us-sw-1")
+                  .createWithDataset("sdc:sdc:centos-5.7:1.2.1",
+                        CreateMachineOptions.Builder.name("sample-e92").packageName("Small 1GB")).toString(),
+            new ParseCreatedMachineTest().expected().toString());
    }
 }

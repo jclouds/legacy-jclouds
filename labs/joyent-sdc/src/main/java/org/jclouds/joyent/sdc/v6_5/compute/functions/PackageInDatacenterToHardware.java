@@ -55,7 +55,7 @@ public class PackageInDatacenterToHardware implements Function<PackageInDatacent
       Location location = locationIndex.get().get(pkgInDatacenter.getDatacenter());
       checkState(location != null, "location %s not in locationIndex: %s", pkgInDatacenter.getDatacenter(),
             locationIndex.get());
-      org.jclouds.joyent.sdc.v6_5.domain.Package pkg = pkgInDatacenter.getPackage();
+      org.jclouds.joyent.sdc.v6_5.domain.Package pkg = pkgInDatacenter.get();
       return new HardwareBuilder().id(pkgInDatacenter.slashEncode()).providerId(pkg.getName()).name(pkg.getName())
             .ram(pkg.getMemorySizeMb())
             // TODO: no api call to get processors.. either hard-code or

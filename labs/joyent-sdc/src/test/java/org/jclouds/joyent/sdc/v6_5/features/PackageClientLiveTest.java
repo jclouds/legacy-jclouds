@@ -36,10 +36,10 @@ public class PackageClientLiveTest extends BaseSDCClientLiveTest {
    public void testListAndGetPackages() throws Exception {
       for (String datacenterId : sdcContext.getApi().getConfiguredDatacenters()) {
          PackageClient client = sdcContext.getApi().getPackageClientForDatacenter(datacenterId);
-         Set<Package> response = client.listPackages();
+         Set<Package> response = client.list();
          assert null != response;
          for (Package pkg : response) {
-            Package newDetails = client.getPackage(pkg.getName());
+            Package newDetails = client.get(pkg.getName());
             assertEquals(newDetails.getName(), pkg.getName());
             assertEquals(newDetails.getMemorySizeMb(), pkg.getMemorySizeMb());
             assertEquals(newDetails.getDiskSizeGb(), pkg.getDiskSizeGb());

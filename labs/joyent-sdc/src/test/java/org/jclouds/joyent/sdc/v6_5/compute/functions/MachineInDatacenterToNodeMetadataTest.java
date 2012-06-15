@@ -135,8 +135,8 @@ public class MachineInDatacenterToNodeMetadataTest {
       assertEquals(convertedNodeMetadata.getPublicAddresses(), ImmutableSet.of("37.153.96.62"));
 
       assertNotNull(convertedNodeMetadata.getUserMetadata());
-      assertEquals(convertedNodeMetadata.getUserMetadata(),
-            ImmutableMap.<String, String> of("root_authorized_keys", "ssh-rsa XXXXXX== test@xxxx.ovh.net\n"));
+      // ensure filtered out root_authorized_keys!
+      assertEquals(convertedNodeMetadata.getUserMetadata(), ImmutableMap.<String, String> of());
    }
 
 }

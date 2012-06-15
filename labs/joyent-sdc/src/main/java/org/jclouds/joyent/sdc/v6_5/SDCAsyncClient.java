@@ -23,6 +23,7 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatasetAsyncClient;
+import org.jclouds.joyent.sdc.v6_5.features.KeyAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.features.PackageAsyncClient;
 import org.jclouds.location.Zone;
@@ -55,6 +56,12 @@ public interface SDCAsyncClient {
     */
    @Delegate
    DatacenterAsyncClient getDatacenterClient();
+
+   /**
+    * Provides asynchronous access to Key features.
+    */
+   @Delegate
+   KeyAsyncClient getKeyClient();
 
    /**
     * Provides asynchronous access to Machine features.

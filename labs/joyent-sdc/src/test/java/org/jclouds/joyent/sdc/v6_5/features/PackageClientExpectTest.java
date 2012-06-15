@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "PackageClientExpectTest")
 public class PackageClientExpectTest extends BaseSDCClientExpectTest {
-   HttpRequest listPackages = HttpRequest
+   HttpRequest list = HttpRequest
          .builder()
          .method("GET")
          .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/packages"))
@@ -47,19 +47,19 @@ public class PackageClientExpectTest extends BaseSDCClientExpectTest {
                      .build()).build();
 
    public void testListPackagesWhenResponseIs2xx() {
-      HttpResponse listPackagesResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/package_list.json")).build();
 
-      SDCClient clientWhenPackagesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, listPackages, listPackagesResponse);
+      SDCClient clientWhenPackagesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(clientWhenPackagesExists.getPackageClientForDatacenter("us-sw-1").listPackages(), new ParsePackageListTest().expected());
+      assertEquals(clientWhenPackagesExists.getPackageClientForDatacenter("us-sw-1").list(), new ParsePackageListTest().expected());
    }
 
    public void testListPackagesWhenResponseIs404() {
-      HttpResponse listPackagesResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listPackagesWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, listPackages, listPackagesResponse);
+      SDCClient listWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(listPackagesWhenNone.getPackageClientForDatacenter("us-sw-1").listPackages(), ImmutableSet.of());
+      assertEquals(listWhenNone.getPackageClientForDatacenter("us-sw-1").list(), ImmutableSet.of());
    }
 }

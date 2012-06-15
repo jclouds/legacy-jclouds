@@ -109,9 +109,12 @@ public class SDCComputeServiceContextModule extends
    @VisibleForTesting
    public static final Map<Machine.State, NodeMetadata.Status> toPortableNodeStatus = ImmutableMap
          .<Machine.State, NodeMetadata.Status> builder()
+         .put(Machine.State.PROVISIONING, NodeMetadata.Status.PENDING)
          .put(Machine.State.RUNNING, NodeMetadata.Status.RUNNING)
+         .put(Machine.State.STOPPING, NodeMetadata.Status.PENDING)
+         .put(Machine.State.OFFLINE, NodeMetadata.Status.PENDING)
          .put(Machine.State.STOPPED, NodeMetadata.Status.SUSPENDED)
-         .put(Machine.State.PUBLISHING, NodeMetadata.Status.PENDING)
+         .put(Machine.State.DELETED, NodeMetadata.Status.TERMINATED)
          .put(Machine.State.UNRECOGNIZED, NodeMetadata.Status.UNRECOGNIZED).build();
 
    @Singleton

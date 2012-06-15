@@ -37,27 +37,27 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "DatasetClientExpectTest")
 public class DatasetClientExpectTest extends BaseSDCClientExpectTest {
-   HttpRequest listDatasets = HttpRequest.builder().method("GET").endpoint(
+   HttpRequest list = HttpRequest.builder().method("GET").endpoint(
             URI.create("https://us-sw-1.api.joyentcloud.com/my/datasets")).headers(
             ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept", "application/json")
                      .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
 
    public void testListDatasetsWhenResponseIs2xx() {
-      HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/dataset_list.json")).build();
 
-      SDCClient clientWhenDatasetsExists = requestsSendResponses(getDatacenters, getDatacentersResponse, listDatasets, listDatasetsResponse);
+      SDCClient clientWhenDatasetsExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(clientWhenDatasetsExists.getDatasetClientForDatacenter("us-sw-1").listDatasets().toString(), new ParseDatasetListTest()
+      assertEquals(clientWhenDatasetsExists.getDatasetClientForDatacenter("us-sw-1").list().toString(), new ParseDatasetListTest()
                .expected().toString());
    }
 
    public void testListDatasetsWhenResponseIs404() {
-      HttpResponse listDatasetsResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listDatasetsWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, listDatasets, listDatasetsResponse);
+      SDCClient listWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(listDatasetsWhenNone.getDatasetClientForDatacenter("us-sw-1").listDatasets(), ImmutableSet.of());
+      assertEquals(listWhenNone.getDatasetClientForDatacenter("us-sw-1").list(), ImmutableSet.of());
    }
 
    // [id=e4cd7b9e-4330-11e1-81cf-3bb50a972bda, name=centos-6, type=VIRTUALMACHINE, version=1.0.1,

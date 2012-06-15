@@ -18,16 +18,16 @@
  */
 package org.jclouds.joyent.sdc.v6_5.internal;
 
-import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.joyent.sdc.v6_5.SDCApiMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.joyent.sdc.v6_5.SDCAsyncClient;
 import org.jclouds.joyent.sdc.v6_5.SDCClient;
 import org.jclouds.rest.RestContext;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SDCClient}
@@ -35,7 +35,7 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseSDCClientLiveTest extends BaseContextLiveTest<RestContext<SDCClient, SDCAsyncClient>> {
+public class BaseSDCClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public BaseSDCClientLiveTest() {
       provider = "joyent-sdc";
@@ -47,7 +47,7 @@ public class BaseSDCClientLiveTest extends BaseContextLiveTest<RestContext<SDCCl
    @Override
    public void setupContext() {
       super.setupContext();
-      sdcContext = context;
+      sdcContext = view.unwrap();
    }
 
    @AfterGroups(groups = "live")
@@ -57,8 +57,7 @@ public class BaseSDCClientLiveTest extends BaseContextLiveTest<RestContext<SDCCl
    }
 
    @Override
-   protected TypeToken<RestContext<SDCClient, SDCAsyncClient>> contextType() {
-      return SDCApiMetadata.CONTEXT_TOKEN;
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
-
 }

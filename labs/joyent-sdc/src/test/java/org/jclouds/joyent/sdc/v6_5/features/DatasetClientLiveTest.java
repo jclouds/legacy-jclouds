@@ -36,10 +36,10 @@ public class DatasetClientLiveTest extends BaseSDCClientLiveTest {
    public void testListAndGetDatasets() throws Exception {
       for (String datacenterId : sdcContext.getApi().getConfiguredDatacenters()) {
          DatasetClient client = sdcContext.getApi().getDatasetClientForDatacenter(datacenterId);
-         Set<Dataset> response = client.listDatasets();
+         Set<Dataset> response = client.list();
          assert null != response;
          for (Dataset dataset : response) {
-            Dataset newDetails = client.getDataset(dataset.getId());
+            Dataset newDetails = client.get(dataset.getId());
             assertEquals(newDetails.getId(), dataset.getId());
             assertEquals(newDetails.getName(), dataset.getName());
             assertEquals(newDetails.getType(), dataset.getType());

@@ -25,6 +25,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.joyent.sdc.v6_5.features.DatacenterClient;
 import org.jclouds.joyent.sdc.v6_5.features.DatasetClient;
+import org.jclouds.joyent.sdc.v6_5.features.KeyClient;
 import org.jclouds.joyent.sdc.v6_5.features.MachineClient;
 import org.jclouds.joyent.sdc.v6_5.features.PackageClient;
 import org.jclouds.location.Zone;
@@ -58,7 +59,13 @@ public interface SDCClient {
     */
    @Delegate
    DatacenterClient getDatacenterClient();
-
+   
+   /**
+    * Provides synchronous access to Key features.
+    */
+   @Delegate
+   KeyClient getKeyClient();
+   
    /**
     * Provides synchronous access to Machine features.
     */

@@ -33,7 +33,7 @@ public class DatasetInDatacenter extends DatacenterAndId {
       this.dataset = dataset;
    }
 
-   public Dataset getDataset() {
+   public Dataset get() {
       return dataset;
    }
 

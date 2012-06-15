@@ -20,6 +20,7 @@ package org.jclouds.joyent.sdc.v6_5.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 
 import java.util.Set;
 
@@ -77,16 +78,16 @@ public class SDCComputeServiceAdapter implements
       LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder();
 
       CreateMachineOptions options = new CreateMachineOptions();
-      // TODO: assign template.getOptions.metadata/tags
+      options.name(name);
+      options.packageName(template.getHardware().getProviderId());
+      options.metadata(metadataAndTagsAsCommaDelimitedValue(template.getOptions()));
 
       String datacenterId = template.getLocation().getId();
-      String datasetId = template.getImage().getProviderId();
-      String packageId = template.getHardware().getProviderId();
+      String datasetURN = template.getImage().getProviderId();
 
-      logger.debug(">> creating new machine datacenter(%s) name(%s) package(%s) dataset(%s) options(%s)", datacenterId,
-            name, packageId, datasetId, options);
-      Machine machine = sdcClient.getMachineClientForDatacenter(datacenterId).createMachine(name, packageId, datasetId,
+      logger.debug(">> creating new machine datacenter(%s) datasetURN(%s) options(%s)", datacenterId, datasetURN,
             options);
+      Machine machine = sdcClient.getMachineClientForDatacenter(datacenterId).createWithDataset(datasetURN, options);
 
       logger.trace("<< machine(%s)", machine.getId());
 
@@ -102,7 +103,7 @@ public class SDCComputeServiceAdapter implements
    public Iterable<PackageInDatacenter> listHardwareProfiles() {
       Builder<PackageInDatacenter> builder = ImmutableSet.builder();
       for (final String datacenterId : datacenterIds.get()) {
-         builder.addAll(transform(sdcClient.getPackageClientForDatacenter(datacenterId).listPackages(),
+         builder.addAll(transform(sdcClient.getPackageClientForDatacenter(datacenterId).list(),
                new Function<org.jclouds.joyent.sdc.v6_5.domain.Package, PackageInDatacenter>() {
 
                   @Override
@@ -119,7 +120,7 @@ public class SDCComputeServiceAdapter implements
    public Iterable<DatasetInDatacenter> listImages() {
       Builder<DatasetInDatacenter> builder = ImmutableSet.builder();
       for (final String datacenterId : datacenterIds.get()) {
-         builder.addAll(transform(sdcClient.getDatasetClientForDatacenter(datacenterId).listDatasets(),
+         builder.addAll(transform(sdcClient.getDatasetClientForDatacenter(datacenterId).list(),
                new Function<Dataset, DatasetInDatacenter>() {
 
                   @Override
@@ -136,7 +137,7 @@ public class SDCComputeServiceAdapter implements
    public Iterable<MachineInDatacenter> listNodes() {
       Builder<MachineInDatacenter> builder = ImmutableSet.builder();
       for (final String datacenterId : datacenterIds.get()) {
-         builder.addAll(transform(sdcClient.getMachineClientForDatacenter(datacenterId).listMachines(),
+         builder.addAll(transform(sdcClient.getMachineClientForDatacenter(datacenterId).list(),
                new Function<Machine, MachineInDatacenter>() {
 
                   @Override
@@ -158,7 +159,7 @@ public class SDCComputeServiceAdapter implements
    @Override
    public MachineInDatacenter getNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      Machine machine = sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).getMachine(
+      Machine machine = sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).get(
             datacenterAndId.getId());
       return machine == null ? null : new MachineInDatacenter(machine, datacenterAndId.getDatacenter());
    }
@@ -166,7 +167,7 @@ public class SDCComputeServiceAdapter implements
    @Override
    public DatasetInDatacenter getImage(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      Dataset dataset = sdcClient.getDatasetClientForDatacenter(datacenterAndId.getDatacenter()).getDataset(
+      Dataset dataset = sdcClient.getDatasetClientForDatacenter(datacenterAndId.getDatacenter()).get(
             datacenterAndId.getId());
       return dataset == null ? null : new DatasetInDatacenter(dataset, datacenterAndId.getDatacenter());
    }
@@ -174,26 +175,26 @@ public class SDCComputeServiceAdapter implements
    @Override
    public void destroyNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).deleteMachine(datacenterAndId.getId());
+      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).delete(datacenterAndId.getId());
    }
 
    @Override
    public void rebootNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).rebootMachine(datacenterAndId.getId());
+      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).reboot(datacenterAndId.getId());
    }
 
    @Override
    public void resumeNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).stopMachine(datacenterAndId.getId());
+      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).stop(datacenterAndId.getId());
 
    }
 
    @Override
    public void suspendNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).startMachine(datacenterAndId.getId());
+      sdcClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).start(datacenterAndId.getId());
 
    }
 

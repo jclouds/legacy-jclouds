@@ -56,7 +56,7 @@ public class DatasetInDatacenterToImage implements Function<DatasetInDatacenter,
       Location location = locationIndex.get().get(datasetInDatacenter.getDatacenter());
       checkState(location != null, "location %s not in locationIndex: %s", datasetInDatacenter.getDatacenter(),
             locationIndex.get());
-      Dataset dataset = datasetInDatacenter.getDataset();
+      Dataset dataset = datasetInDatacenter.get();
       return new ImageBuilder()
             .id(datasetInDatacenter.slashEncode())
             .providerId(dataset.getId())

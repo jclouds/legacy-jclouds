@@ -41,7 +41,7 @@ public interface MachineClient {
     * 
     * @return an account's associated machine objects.
     */
-   Set<Machine> listMachines();
+   Set<Machine> list();
 
    /**
     * Gets the details for an individual machine.
@@ -50,21 +50,47 @@ public interface MachineClient {
     *           the id of the machine
     * @return
     */
-   Machine getMachine(String id);
+   Machine get(String id);
 
    /**
+    * Allows you to provision a machine. Note that if you do not specify a
+    * package, you'll get the datacenter defaults for it. If
+    * you do not specify a name, CloudAPI will generate a random one for you.
+    * Your machine will initially be not available for login (SmartDataCenter
+    * must provision and boot it). You can poll {@link #get} for status. When the
+    * state field is equal to running, you can login.
     * 
-    * @param name
-    *           friendly name for this machine; default is a randomly generated name
-    * @param packageSDC
-    *           Name of the package to use on provisioning; default is indicated in ListPackages
-    * @param dataset
-    *           dataset URN; default is indicated in ListDatasets
-    * @param options
-    *           optional parameters to be passed into the machine creation request
+    * <p/>
+    * With regards to login, if the machine is of type smartmachine, you can use
+    * any of the SSH keys managed under the keys section of CloudAPI to login,
+    * as any POSIX user on the OS. You can add/remove them over time, and the
+    * machine will automatically work with that set.
+    * 
+    * <p/>
+    * If the the machine is a virtualmachine, and of a UNIX-derived OS (e.g.
+    * Linux), you must have keys uploaded before provisioning; that entire set
+    * of keys will be written out to /root/.ssh/authorized_keys, and you can ssh
+    * in using one of those. Changing the keys over time under your account will
+    * not affect the running virtual machine in any way; those keys are
+    * statically written at provisioning-time only, and you will need to
+    * manually manage them.
+    * 
+    * <p/>
+    * If the dataset you create a machine from is set to generate passwords for
+    * you, the username/password pairs will be returned in the metadata response
+    * as a nested object, like:
+    * 
+    * @param datasetURN urn of the dataset to install
+    * 
     * @return the newly created machine
     */
-   Machine createMachine(String name, String packageSDC, String dataset, CreateMachineOptions... options);
+   Machine createWithDataset(String datasetURN, CreateMachineOptions options);
+   
+   /**
+    * 
+    * @see #createWithDataset(CreateMachineOptions)
+    */
+   Machine createWithDataset(String datasetURN);
 
    /**
     * Allows you to shut down a machine.
@@ -72,7 +98,7 @@ public interface MachineClient {
     * @param id
     *           the id of the machine to stop
     */
-   void stopMachine(String id);
+   void stop(String id);
 
    /**
     * Allows you to boot up a machine.
@@ -80,7 +106,7 @@ public interface MachineClient {
     * @param id
     *           the id of the machine to start
     */
-   void startMachine(String id);
+   void start(String id);
 
    /**
     * Allows you to reboot a machine.
@@ -88,7 +114,7 @@ public interface MachineClient {
     * @param id
     *           the id of the machine to reboot
     */
-   void rebootMachine(String id);
+   void reboot(String id);
 
    /**
     * Allows you to resize a machine. (Works only for smart machines)
@@ -98,14 +124,15 @@ public interface MachineClient {
     * @param packageSDC
     *           the package to use for the machine
     */
-   void resizeMachine(String id, String packageSDC);
+   void resize(String id, String packageSDC);
 
    /**
-    * Allows you to delete a machine (the machine must be stopped before it can be deleted).
+    * Allows you to delete a machine (the machine must be stopped before it can
+    * be deleted).
     * 
     * @param id
     *           the id of the machine to delete
     */
-   void deleteMachine(String id);
+   void delete(String id);
 
 }

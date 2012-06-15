@@ -16,33 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped;
+package org.jclouds.joyent.joyentcloud.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.jclouds.joyent.sdc.v6_5.domain.Machine;
+import org.jclouds.joyent.sdc.v6_5.features.KeyClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-public class MachineInDatacenter extends DatacenterAndId {
-   protected final Machine machine;
-
-   public MachineInDatacenter(Machine machine, String datacenterId) {
-      super(datacenterId, checkNotNull(machine, "machine").getId());
-      this.machine = machine;
+@Test(groups = "live", testName = "JoyentCloudKeyClientLiveTest")
+public class JoyentCloudKeyClientLiveTest extends KeyClientLiveTest {
+   public JoyentCloudKeyClientLiveTest() {
+      provider = "joyentcloud";
    }
-
-   public Machine get() {
-      return machine;
-   }
-
-   // superclass hashCode/equals are good enough, and help us use DatacenterAndId and MachineInDatacenter
-   // interchangeably as Map keys
-
-   @Override
-   public String toString() {
-      return "[machine=" + machine + ", datacenterId=" + datacenterId + "]";
-   }
-
 }
