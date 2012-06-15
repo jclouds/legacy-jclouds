@@ -17,9 +17,7 @@
  * under the License.
  */
 package org.jclouds.eucalyptus;
-
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_OPEN;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
@@ -57,8 +55,8 @@ public class EucalyptusApiMetadata extends EC2ApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
-      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
+      // in version 3, lowecase 'e' version 2, uppercase 'E'
+      properties.setProperty(PROPERTY_REGIONS, "eucalyptus");
       properties.setProperty(TIMEOUT_PORT_OPEN, 5 * 60 * 1000 + "");
       return properties;
    }
@@ -67,7 +65,7 @@ public class EucalyptusApiMetadata extends EC2ApiMetadata {
       protected Builder(){
          super(EC2Client.class, EC2AsyncClient.class);
          id("eucalyptus")
-         .defaultEndpoint("http://173.205.188.130:8773/services/Eucalyptus")
+         .defaultEndpoint("http://partnercloud.eucalyptus.com:8773/services/Eucalyptus/")
          .name("Eucalyptus (EC2 clone) API")
          .defaultProperties(EucalyptusApiMetadata.defaultProperties());
       }

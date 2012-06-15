@@ -26,7 +26,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "EucalyptusPartnerCloudWalrusClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "EucalyptusPartnerCloudWalrusClientLiveTest")
 public class EucalyptusPartnerCloudWalrusClientLiveTest extends WalrusClientLiveTest {
-
+   public EucalyptusPartnerCloudWalrusClientLiveTest() {
+      provider = "eucalyptus-partnercloud-s3";
+   }
 }

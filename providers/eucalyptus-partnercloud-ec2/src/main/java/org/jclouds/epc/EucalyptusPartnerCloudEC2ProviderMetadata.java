@@ -18,7 +18,6 @@
  */
 package org.jclouds.epc;
 
-import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
@@ -65,10 +64,8 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
-      properties.setProperty(PROPERTY_REGION + ".Eucalyptus." + ISO3166_CODES, "US-CA");
-      properties.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", "kvm");
-      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,locationId=${eucalyptus-partnercloud-ec2.virtualization-type}-cluster");
+      properties.setProperty(PROPERTY_REGIONS, "eucalyptus");
+      properties.setProperty(PROPERTY_REGION + ".eucalyptus." + ISO3166_CODES, "US-CA");
       return properties;
    }
    
@@ -82,7 +79,7 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
                             .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2RestClientModule.class, EC2ResolveImagesModule.class, EucalyptusPartnerCloudComputeServiceContextModule.class))
                             .build())
          .homepage(URI.create("http://www.eucalyptus.com/partners"))
-         .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
+         .console(URI.create("https://eucalyptus.partner.eucalyptus.com"))
          .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
          .iso3166Codes("US-CA")
          .endpoint("http://partnercloud.eucalyptus.com:8773/services/Eucalyptus")

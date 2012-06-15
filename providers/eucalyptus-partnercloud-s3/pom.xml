@@ -34,7 +34,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.eucalyptus-partnercloud-s3.endpoint>http://partnercloud.eucalyptus.com:8773/services/Walrus</test.eucalyptus-partnercloud-s3.endpoint>
+        <test.eucalyptus-partnercloud-s3.endpoint>http://walrus.partner.eucalyptus.com:8773/services/Walrus</test.eucalyptus-partnercloud-s3.endpoint>
         <test.eucalyptus-partnercloud-s3.api-version>2006-03-01</test.eucalyptus-partnercloud-s3.api-version>
         <test.eucalyptus-partnercloud-s3.build-version></test.eucalyptus-partnercloud-s3.build-version>
         <test.eucalyptus-partnercloud-s3.identity>FIXME_IDENTITY</test.eucalyptus-partnercloud-s3.identity>

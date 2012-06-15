@@ -55,7 +55,7 @@ public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<M
          String pending = currentText.toString().trim();
          if (pending.indexOf("Walrus") == -1)
             regionEndpoint = URI.create(pending.startsWith("http") ? pending : String.format("https://%s", pending));
-      } else if (qName.equals("item") && region != null) {
+      } else if (qName.equals("item") && region != null && regionEndpoint != null) {
          regionEndpoints.put(region, regionEndpoint);
          this.region = null;
          this.regionEndpoint = null;

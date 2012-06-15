@@ -60,10 +60,10 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_REGIONS, "walrus");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
-      properties.setProperty(PROPERTY_REGION + ".Walrus." + ISO3166_CODES, "US-CA");
-      properties.setProperty(PROPERTY_REGION + "." + "Walrus" + "." + ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_REGION + ".walrus." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + "." + "walrus" + "." + ENDPOINT, "http://walrus.partner.eucalyptus.com:8773/services/Walrus");
       return properties;
    }
    
@@ -74,10 +74,10 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
          .name("Eucalyptus Partner Cloud (S3)")
          .apiMetadata(new WalrusApiMetadata())
          .homepage(URI.create("http://www.eucalyptus.com/partners"))
-         .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
+         .console(URI.create("https://walrus.partner.eucalyptus.com"))
          .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
          .iso3166Codes("US-CA")
-         .endpoint("http://partnercloud.eucalyptus.com:8773/services/Walrus")
+         .endpoint("http://walrus.partner.eucalyptus.com:8773/services/Walrus")
          .defaultProperties(EucalyptusPartnerCloudS3ProviderMetadata.defaultProperties());
       }
 
