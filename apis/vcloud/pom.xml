@@ -39,10 +39,7 @@
     <test.vcloud.build-version></test.vcloud.build-version>
     <test.vcloud.identity>FIXME</test.vcloud.identity>
     <test.vcloud.credential>FIXME</test.vcloud.credential>
-    <test.vcloud.image-id></test.vcloud.image-id>
-    <test.vcloud.image.login-user></test.vcloud.image.login-user>
-    <test.vcloud.image.authenticate-sudo></test.vcloud.image.authenticate-sudo>
-
+    <test.vcloud.template></test.vcloud.template>
     <jclouds.osgi.export>org.jclouds.vcloud*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -118,9 +115,7 @@
                     <test.vcloud.build-version>${test.vcloud.build-version}</test.vcloud.build-version>
                     <test.vcloud.identity>${test.vcloud.identity}</test.vcloud.identity>
                     <test.vcloud.credential>${test.vcloud.credential}</test.vcloud.credential>
-                    <test.vcloud.image-id>${test.vcloud.image-id}</test.vcloud.image-id>
-                    <test.vcloud.image.login-user>${test.vcloud.image.login-user}</test.vcloud.image.login-user>
-                    <test.vcloud.image.authenticate-sudo>${test.vcloud.image.authenticate-sudo}</test.vcloud.image.authenticate-sudo>
+                    <test.vcloud.template>${test.vcloud.template}</test.vcloud.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

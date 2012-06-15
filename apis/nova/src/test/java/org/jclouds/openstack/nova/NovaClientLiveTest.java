@@ -214,7 +214,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
       while (server == null) {
          String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
          try {
-            server = client.createServer(serverName, imageId, flavorId, withFile("/etc/jclouds.txt",
+            server = client.createServer(serverName, template.getImageId(), flavorId, withFile("/etc/jclouds.txt",
                      "nova".getBytes()).withMetadata(metadata));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();

@@ -56,7 +56,13 @@ public class ParseAWSErrorFromXmlContentTest {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
                "<Error><Code>Monster.NotFound</Code></Error>", ResourceNotFoundException.class);
    }
-
+   
+   @Test
+   public void test400WithCloudBridgeNotFoundSetsResourceNotFoundException() {
+      assertCodeMakes("POST", URI.create("https://api.greenqloud.com/"), 400, "",
+               "<Error><Code>Client.InvalidInstanceID.NotFound</Code></Error>", ResourceNotFoundException.class);
+   }
+   
    @Test
    public void test400WithInvalidIdIllegalArgumentException() {
       assertCodeMakes("POST", URI.create("https://ec2.us-east-1.amazonaws.com"), 400, "HTTP/1.1 400", "",
@@ -166,7 +172,7 @@ public class ParseAWSErrorFromXmlContentTest {
 
    @Test
    public void test400WithCloudBridgeAuthFailureSetsAuthorizationException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes("POST", URI.create("https://api.greenqloud.com/"), 400, "",
                "<Error><Code>Client.AuthFailure</Code></Error>", AuthorizationException.class);
    }
 

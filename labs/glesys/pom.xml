@@ -39,10 +39,7 @@
     <test.glesys.build-version></test.glesys.build-version>
     <test.glesys.identity>FIXME</test.glesys.identity>
     <test.glesys.credential>FIXME</test.glesys.credential>
-    <test.glesys.image-id></test.glesys.image-id>
-    <test.glesys.image.login-user></test.glesys.image.login-user>
-    <test.glesys.image.authenticate-sudo></test.glesys.image.authenticate-sudo>
-
+    <test.glesys.template></test.glesys.template>
     <jclouds.osgi.export>org.jclouds.glesys*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
@@ -102,9 +99,7 @@
                     <test.glesys.build-version>${test.glesys.build-version}</test.glesys.build-version>
                     <test.glesys.identity>${test.glesys.identity}</test.glesys.identity>
                     <test.glesys.credential>${test.glesys.credential}</test.glesys.credential>
-                    <test.glesys.image-id>${test.glesys.image-id}</test.glesys.image-id>
-                    <test.glesys.image.login-user>${test.glesys.image.login-user}</test.glesys.image.login-user>
-                    <test.glesys.image.authenticate-sudo>${test.glesys.image.authenticate-sudo}</test.glesys.image.authenticate-sudo>
+                    <test.glesys.template>${test.glesys.template}</test.glesys.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

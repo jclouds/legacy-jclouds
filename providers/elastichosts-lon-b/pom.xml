@@ -39,7 +39,7 @@
         <test.elastichosts-lon-b.build-version></test.elastichosts-lon-b.build-version>
         <test.elastichosts-lon-b.identity>FIXME_IDENTITY</test.elastichosts-lon-b.identity>
         <test.elastichosts-lon-b.credential>FIXME_CREDENTIAL</test.elastichosts-lon-b.credential>
-        <test.elastichosts-lon-b.image-id></test.elastichosts-lon-b.image-id>
+        <test.elastichosts-lon-b.template></test.elastichosts-lon-b.template>
 
         <jclouds.osgi.export>org.jclouds.elastichosts*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -113,7 +113,7 @@
                                         <test.elastichosts-lon-b.build-version>${test.elastichosts-lon-b.build-version}</test.elastichosts-lon-b.build-version>
                                         <test.elastichosts-lon-b.identity>${test.elastichosts-lon-b.identity}</test.elastichosts-lon-b.identity>
                                         <test.elastichosts-lon-b.credential>${test.elastichosts-lon-b.credential}</test.elastichosts-lon-b.credential>
-                                        <test.elastichosts-lon-b.image-id>${test.elastichosts-lon-b.image-id}</test.elastichosts-lon-b.image-id>
+                                        <test.elastichosts-lon-b.template>${test.elastichosts-lon-b.template}</test.elastichosts-lon-b.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

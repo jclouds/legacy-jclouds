@@ -45,7 +45,7 @@
         <test.aws-elb.compute.build-version></test.aws-elb.compute.build-version>
         <test.aws-elb.compute.identity>${test.aws.identity}</test.aws-elb.compute.identity>
         <test.aws-elb.compute.credential>${test.aws.credential}</test.aws-elb.compute.credential>
-        <test.aws-elb.compute.image-id></test.aws-elb.compute.image-id>
+        <test.aws-elb.compute.template></test.aws-elb.compute.template>
 
       <jclouds.osgi.export>org.jclouds.aws.elb*;version="${project.version}"</jclouds.osgi.export>
       <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
@@ -134,7 +134,7 @@
                                         <test.aws-elb.compute.api-version>${test.aws-elb.compute.api-version}</test.aws-elb.compute.api-version>
                                         <test.aws-elb.compute.identity>${test.aws-elb.compute.identity}</test.aws-elb.compute.identity>
                                         <test.aws-elb.compute.credential>${test.aws-elb.compute.credential}</test.aws-elb.compute.credential>
-                                        <test.aws-elb.compute.image-id>${test.aws-elb.compute.image-id}</test.aws-elb.compute.image-id>
+                                        <test.aws-elb.compute.template>${test.aws-elb.compute.template}</test.aws-elb.compute.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

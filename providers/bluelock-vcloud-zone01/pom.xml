@@ -39,10 +39,7 @@
     <test.bluelock-vcloud-zone01.build-version>1.5.0.464915</test.bluelock-vcloud-zone01.build-version>
     <test.bluelock-vcloud-zone01.identity>FIXME_IDENTITY</test.bluelock-vcloud-zone01.identity>
     <test.bluelock-vcloud-zone01.credential>FIXME_CREDENTIAL</test.bluelock-vcloud-zone01.credential>
-    <test.bluelock-vcloud-zone01.image-id></test.bluelock-vcloud-zone01.image-id>
-    <test.bluelock-vcloud-zone01.image.login-user></test.bluelock-vcloud-zone01.image.login-user>
-    <test.bluelock-vcloud-zone01.image.authenticate-sudo></test.bluelock-vcloud-zone01.image.authenticate-sudo>
-
+    <test.bluelock-vcloud-zone01.template></test.bluelock-vcloud-zone01.template>
     <jclouds.osgi.export>org.jclouds.bluelock.vcloud.zone01*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -115,9 +112,7 @@
                     <test.bluelock-vcloud-zone01.build-version>${test.bluelock-vcloud-zone01.build-version}</test.bluelock-vcloud-zone01.build-version>
                     <test.bluelock-vcloud-zone01.identity>${test.bluelock-vcloud-zone01.identity}</test.bluelock-vcloud-zone01.identity>
                     <test.bluelock-vcloud-zone01.credential>${test.bluelock-vcloud-zone01.credential}</test.bluelock-vcloud-zone01.credential>
-                    <test.bluelock-vcloud-zone01.image-id>${test.bluelock-vcloud-zone01.image-id}</test.bluelock-vcloud-zone01.image-id>
-                    <test.bluelock-vcloud-zone01.image.login-user>${test.bluelock-vcloud-zone01.image.login-user}</test.bluelock-vcloud-zone01.image.login-user>
-                    <test.bluelock-vcloud-zone01.image.authenticate-sudo>${test.bluelock-vcloud-zone01.image.authenticate-sudo}</test.bluelock-vcloud-zone01.image.authenticate-sudo>
+                    <test.bluelock-vcloud-zone01.template>${test.bluelock-vcloud-zone01.template}</test.bluelock-vcloud-zone01.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

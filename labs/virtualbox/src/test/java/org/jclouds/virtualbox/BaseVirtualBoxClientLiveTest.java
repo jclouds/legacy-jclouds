@@ -139,8 +139,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       Template template = view.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
 
-      imageId = template.getImage().getId();
-      masterVmName = VIRTUALBOX_IMAGE_PREFIX + imageId;
+      masterVmName = VIRTUALBOX_IMAGE_PREFIX + template.getImage().getId();
       isosDir = workingDir + File.separator + "isos";
 
       hostVersion = Iterables.get(Splitter.on('r').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
@@ -174,7 +173,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    }
 
    public MasterSpec getMasterSpecForTest() {
-      String masterName = "jclouds-image-0x0-" + imageId;
+      String masterName = "jclouds-image-0x0-" + template.getImageId();
 
       StorageController ideController = StorageController
                .builder()

@@ -53,10 +53,7 @@
     <test.deltacloud.build-version></test.deltacloud.build-version>
     <test.deltacloud.identity>mockuser</test.deltacloud.identity>
     <test.deltacloud.credential>mockpassword</test.deltacloud.credential>
-    <test.deltacloud.image-id></test.deltacloud.image-id>
-    <test.deltacloud.image.login-user></test.deltacloud.image.login-user>
-    <test.deltacloud.image.authenticate-sudo></test.deltacloud.image.authenticate-sudo>
-
+    <test.deltacloud.template></test.deltacloud.template>
     <jclouds.osgi.export>org.jclouds.deltacloud*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -120,9 +117,7 @@
                     <test.deltacloud.build-version>${test.deltacloud.build-version}</test.deltacloud.build-version>
                     <test.deltacloud.identity>${test.deltacloud.identity}</test.deltacloud.identity>
                     <test.deltacloud.credential>${test.deltacloud.credential}</test.deltacloud.credential>
-                    <test.deltacloud.image-id>${test.deltacloud.image-id}</test.deltacloud.image-id>
-                    <test.deltacloud.image.login-user>${test.deltacloud.image.login-user}</test.deltacloud.image.login-user>
-                    <test.deltacloud.image.authenticate-sudo>${test.deltacloud.image.authenticate-sudo}</test.deltacloud.image.authenticate-sudo>
+                    <test.deltacloud.template>${test.deltacloud.template}</test.deltacloud.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

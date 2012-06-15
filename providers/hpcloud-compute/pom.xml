@@ -39,10 +39,7 @@
     <test.hpcloud-compute.build-version></test.hpcloud-compute.build-version>
     <test.hpcloud-compute.identity>FIXME_IDENTITY</test.hpcloud-compute.identity>
     <test.hpcloud-compute.credential>FIXME_CREDENTIAL</test.hpcloud-compute.credential>
-    <test.hpcloud-compute.image-id></test.hpcloud-compute.image-id>
-    <test.hpcloud-compute.image.login-user></test.hpcloud-compute.image.login-user>
-    <test.hpcloud-compute.image.authenticate-sudo></test.hpcloud-compute.image.authenticate-sudo>
-
+    <test.hpcloud-compute.template></test.hpcloud-compute.template>
     <jclouds.osgi.export>org.jclouds.hpcloud.compute*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -122,9 +119,7 @@
                     <test.hpcloud-compute.build-version>${test.hpcloud-compute.build-version}</test.hpcloud-compute.build-version>
                     <test.hpcloud-compute.identity>${test.hpcloud-compute.identity}</test.hpcloud-compute.identity>
                     <test.hpcloud-compute.credential>${test.hpcloud-compute.credential}</test.hpcloud-compute.credential>
-                    <test.hpcloud-compute.image-id>${test.hpcloud-compute.image-id}</test.hpcloud-compute.image-id>
-                    <test.hpcloud-compute.image.login-user>${test.hpcloud-compute.image.login-user}</test.hpcloud-compute.image.login-user>
-                    <test.hpcloud-compute.image.authenticate-sudo>${test.hpcloud-compute.image.authenticate-sudo}</test.hpcloud-compute.image.authenticate-sudo>
+                    <test.hpcloud-compute.template>${test.hpcloud-compute.template}</test.hpcloud-compute.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

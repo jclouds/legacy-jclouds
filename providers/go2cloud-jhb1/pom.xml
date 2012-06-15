@@ -39,7 +39,7 @@
         <test.go2cloud-jhb1.build-version></test.go2cloud-jhb1.build-version>
         <test.go2cloud-jhb1.identity>FIXME_IDENTITY</test.go2cloud-jhb1.identity>
         <test.go2cloud-jhb1.credential>FIXME_CREDENTIAL</test.go2cloud-jhb1.credential>
-        <test.go2cloud-jhb1.image-id></test.go2cloud-jhb1.image-id>
+        <test.go2cloud-jhb1.template></test.go2cloud-jhb1.template>
 
         <jclouds.osgi.export>org.jclouds.go2cloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -113,7 +113,7 @@
                                         <test.go2cloud-jhb1.build-version>${test.go2cloud-jhb1.build-version}</test.go2cloud-jhb1.build-version>
                                         <test.go2cloud-jhb1.identity>${test.go2cloud-jhb1.identity}</test.go2cloud-jhb1.identity>
                                         <test.go2cloud-jhb1.credential>${test.go2cloud-jhb1.credential}</test.go2cloud-jhb1.credential>
-                                        <test.go2cloud-jhb1.image-id>${test.go2cloud-jhb1.image-id}</test.go2cloud-jhb1.image-id>
+                                        <test.go2cloud-jhb1.template>${test.go2cloud-jhb1.template}</test.go2cloud-jhb1.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

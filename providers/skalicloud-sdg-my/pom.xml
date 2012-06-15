@@ -39,7 +39,7 @@
         <test.skalicloud-sdg-my.build-version></test.skalicloud-sdg-my.build-version>
         <test.skalicloud-sdg-my.identity>FIXME_IDENTITY</test.skalicloud-sdg-my.identity>
         <test.skalicloud-sdg-my.credential>FIXME_CREDENTIAL</test.skalicloud-sdg-my.credential>
-        <test.skalicloud-sdg-my.image-id></test.skalicloud-sdg-my.image-id>
+        <test.skalicloud-sdg-my.template></test.skalicloud-sdg-my.template>
 
         <jclouds.osgi.export>org.jclouds.skalicloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -113,7 +113,7 @@
                                         <test.skalicloud-sdg-my.build-version>${test.skalicloud-sdg-my.build-version}</test.skalicloud-sdg-my.build-version>
                                         <test.skalicloud-sdg-my.identity>${test.skalicloud-sdg-my.identity}</test.skalicloud-sdg-my.identity>
                                         <test.skalicloud-sdg-my.credential>${test.skalicloud-sdg-my.credential}</test.skalicloud-sdg-my.credential>
-                                        <test.skalicloud-sdg-my.image-id>${test.skalicloud-sdg-my.image-id}</test.skalicloud-sdg-my.image-id>
+                                        <test.skalicloud-sdg-my.template>${test.skalicloud-sdg-my.template}</test.skalicloud-sdg-my.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

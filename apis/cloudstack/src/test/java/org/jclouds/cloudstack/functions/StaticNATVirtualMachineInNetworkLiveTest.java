@@ -64,7 +64,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       prefix += "nat";
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
-         String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
+         String defaultTemplate = template != null ? template.getImageId() : null;
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);

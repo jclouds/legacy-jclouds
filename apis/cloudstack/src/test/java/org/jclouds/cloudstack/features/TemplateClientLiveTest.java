@@ -115,8 +115,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotNull(network);
 
       // Create a VM and stop it
-      String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
-      vmForCreation = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, templateId, client, jobComplete, virtualMachineRunning);
+      String defaultTemplate = template != null ? template.getImageId() : null;
+      vmForCreation = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, defaultTemplate, client, jobComplete, virtualMachineRunning);
       assertTrue(jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
 
       // Work out the VM's volume

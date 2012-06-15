@@ -39,10 +39,7 @@
     <test.rackspace-cloudservers-us.build-version></test.rackspace-cloudservers-us.build-version>
     <test.rackspace-cloudservers-us.identity>${test.rackspace-us.identity}</test.rackspace-cloudservers-us.identity>
     <test.rackspace-cloudservers-us.credential>${test.rackspace-us.credential}</test.rackspace-cloudservers-us.credential>
-    <test.rackspace-cloudservers-us.image-id></test.rackspace-cloudservers-us.image-id>
-    <test.rackspace-cloudservers-us.image.login-user></test.rackspace-cloudservers-us.image.login-user>
-    <test.rackspace-cloudservers-us.image.authenticate-sudo></test.rackspace-cloudservers-us.image.authenticate-sudo>
-
+    <test.rackspace-cloudservers-us.template></test.rackspace-cloudservers-us.template>
     <jclouds.osgi.export>org.jclouds.rackspace.cloudservers.us*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -134,9 +131,7 @@
                     <test.rackspace-cloudservers-us.build-version>${test.rackspace-cloudservers-us.build-version}</test.rackspace-cloudservers-us.build-version>
                     <test.rackspace-cloudservers-us.identity>${test.rackspace-cloudservers-us.identity}</test.rackspace-cloudservers-us.identity>
                     <test.rackspace-cloudservers-us.credential>${test.rackspace-cloudservers-us.credential}</test.rackspace-cloudservers-us.credential>
-                    <test.rackspace-cloudservers-us.image-id>${test.rackspace-cloudservers-us.image-id}</test.rackspace-cloudservers-us.image-id>
-                    <test.rackspace-cloudservers-us.image.login-user>${test.rackspace-cloudservers-us.image.login-user}</test.rackspace-cloudservers-us.image.login-user>
-                    <test.rackspace-cloudservers-us.image.authenticate-sudo>${test.rackspace-cloudservers-us.image.authenticate-sudo}</test.rackspace-cloudservers-us.image.authenticate-sudo>
+                    <test.rackspace-cloudservers-us.template>${test.rackspace-cloudservers-us.template}</test.rackspace-cloudservers-us.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

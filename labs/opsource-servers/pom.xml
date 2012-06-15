@@ -39,9 +39,7 @@
     <test.opsource-servers.build-version></test.opsource-servers.build-version>
     <test.opsource-servers.identity>FIXME_USERNAME</test.opsource-servers.identity>
     <test.opsource-servers.credential>FIXME_PASSWORD</test.opsource-servers.credential>
-    <test.opsource-servers.image-id></test.opsource-servers.image-id>
-    <test.opsource-servers.image.login-user></test.opsource-servers.image.login-user>
-    <test.opsource-servers.image.authenticate-sudo></test.opsource-servers.image.authenticate-sudo>
+    <test.opsource-servers.template></test.opsource-servers.template>
     <jclouds.osgi.export>org.jclouds.vcloud.director.v1_5*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -107,9 +105,7 @@
                     <test.opsource-servers.build-version>${test.opsource-servers.build-version}</test.opsource-servers.build-version>
                     <test.opsource-servers.identity>${test.opsource-servers.identity}</test.opsource-servers.identity>
                     <test.opsource-servers.credential>${test.opsource-servers.credential}</test.opsource-servers.credential>
-                    <test.opsource-servers.image-id>${test.opsource-servers.image-id}</test.opsource-servers.image-id>
-                    <test.opsource-servers.image.login-user>${test.opsource-servers.image.login-user}</test.opsource-servers.image.login-user>
-                    <test.opsource-servers.image.authenticate-sudo>${test.opsource-servers.image.authenticate-sudo}</test.opsource-servers.image.authenticate-sudo>
+                    <test.opsource-servers.template>${test.opsource-servers.template}</test.opsource-servers.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

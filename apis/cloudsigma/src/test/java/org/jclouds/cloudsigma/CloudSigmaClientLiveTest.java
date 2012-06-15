@@ -57,7 +57,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HostAndPort;
@@ -84,6 +83,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    protected Predicate<HostAndPort> socketTester;
 
    protected Predicate<DriveInfo> driveNotClaimed;
+   protected String imageId;
    
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -97,7 +97,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
       socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
             TimeUnit.SECONDS);
 
-      if (Strings.emptyToNull(imageId) == null) {
+      if (template == null || template.getImageId() == null) {
          imageId = view.getComputeService().templateBuilder().build().getImage().getId();
       }
    }

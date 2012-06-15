@@ -92,7 +92,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVm() {
       if (networksDisabled)
          return;
-      String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
+      String defaultTemplate = template != null ? template.getImageId() : null;
       vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
             defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()),
             client, jobComplete, virtualMachineRunning);

@@ -39,10 +39,8 @@
     <test.eucalyptus.build-version></test.eucalyptus.build-version>
     <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
     <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
-    <test.eucalyptus.image-id></test.eucalyptus.image-id>
-    <test.eucalyptus.image.login-user></test.eucalyptus.image.login-user>
-    <test.eucalyptus.image.authenticate-sudo></test.eucalyptus.image.authenticate-sudo>
-
+    <test.eucalyptus.template></test.eucalyptus.template>
+    <test.eucalyptus.ebs-template></test.eucalyptus.ebs-template>
     <jclouds.osgi.export>org.jclouds.eucalyptus*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -115,9 +113,8 @@
                     <test.eucalyptus.build-version>${test.eucalyptus.build-version}</test.eucalyptus.build-version>
                     <test.eucalyptus.identity>${test.eucalyptus.identity}</test.eucalyptus.identity>
                     <test.eucalyptus.credential>${test.eucalyptus.credential}</test.eucalyptus.credential>
-                    <test.eucalyptus.image-id>${test.eucalyptus.image-id}</test.eucalyptus.image-id>
-                    <test.eucalyptus.image.login-user>${test.eucalyptus.image.login-user}</test.eucalyptus.image.login-user>
-                    <test.eucalyptus.image.authenticate-sudo>${test.eucalyptus.image.authenticate-sudo}</test.eucalyptus.image.authenticate-sudo>
+                    <test.eucalyptus.template>${test.eucalyptus.template}</test.eucalyptus.template>
+                    <test.eucalyptus.ebs-template>${test.eucalyptus.ebs-template}</test.eucalyptus.ebs-template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

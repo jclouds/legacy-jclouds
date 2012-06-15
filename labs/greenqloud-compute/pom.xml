@@ -39,7 +39,8 @@
         <test.greenqloud-compute.build-version></test.greenqloud-compute.build-version>
         <test.greenqloud-compute.identity>${test.greenqloud.identity}</test.greenqloud-compute.identity>
         <test.greenqloud-compute.credential>${test.greenqloud.credential}</test.greenqloud-compute.credential>
-        <test.greenqloud-compute.image-id></test.greenqloud-compute.image-id>
+        <test.greenqloud-compute.template></test.greenqloud-compute.template>
+        <test.greenqloud-compute.ebs-template>osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true</test.greenqloud-compute.ebs-template>
 
         <jclouds.osgi.export>org.jclouds.greenqloud.compute*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -114,7 +115,7 @@
                                         <test.greenqloud-compute.build-version>${test.greenqloud-compute.build-version}</test.greenqloud-compute.build-version>
                                         <test.greenqloud-compute.identity>${test.greenqloud-compute.identity}</test.greenqloud-compute.identity>
                                         <test.greenqloud-compute.credential>${test.greenqloud-compute.credential}</test.greenqloud-compute.credential>
-                                        <test.greenqloud-compute.image-id>${test.greenqloud-compute.image-id}</test.greenqloud-compute.image-id>
+                                        <test.greenqloud-compute.template>${test.greenqloud-compute.template}</test.greenqloud-compute.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

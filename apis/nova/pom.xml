@@ -39,9 +39,7 @@
     <test.nova.build-version></test.nova.build-version>
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
-    <test.nova.image-id></test.nova.image-id>
-    <test.nova.image.login-user></test.nova.image.login-user>
-    <test.nova.image.authenticate-sudo></test.nova.image.authenticate-sudo>
+    <test.nova.template></test.nova.template>
     <test.ssh.keyfile.public></test.ssh.keyfile.public>
     <test.ssh.keyfile.private></test.ssh.keyfile.private>
 
@@ -122,9 +120,7 @@
                     <test.nova.build-version>${test.nova.build-version}</test.nova.build-version>
                     <test.nova.identity>${test.nova.identity}</test.nova.identity>
                     <test.nova.credential>${test.nova.credential}</test.nova.credential>
-                    <test.nova.image-id>${test.nova.image-id}</test.nova.image-id>
-                    <test.nova.image.login-user>${test.nova.image.login-user}</test.nova.image.login-user>
-                    <test.nova.image.authenticate-sudo>${test.nova.image.authenticate-sudo}</test.nova.image.authenticate-sudo>
+                    <test.nova.template>${test.nova.template}</test.nova.template>
                     <test.ssh.keyfile.public>${test.ssh.keyfile.public}</test.ssh.keyfile.public>
                     <test.ssh.keyfile.private>${test.ssh.keyfile.private}</test.ssh.keyfile.private>
                   </systemPropertyVariables>

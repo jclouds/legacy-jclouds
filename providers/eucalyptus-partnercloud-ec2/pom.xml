@@ -39,7 +39,8 @@
         <test.eucalyptus-partnercloud-ec2.build-version></test.eucalyptus-partnercloud-ec2.build-version>
         <test.eucalyptus-partnercloud-ec2.identity>FIXME_IDENTITY</test.eucalyptus-partnercloud-ec2.identity>
         <test.eucalyptus-partnercloud-ec2.credential>FIXME_CREDENTIAL</test.eucalyptus-partnercloud-ec2.credential>
-        <test.eucalyptus-partnercloud-ec2.image-id></test.eucalyptus-partnercloud-ec2.image-id>
+        <test.eucalyptus-partnercloud-ec2.template></test.eucalyptus-partnercloud-ec2.template>
+        <test.eucalyptus-partnercloud-ec2.ebs-template></test.eucalyptus-partnercloud-ec2.ebs-template>
         <!--  corresponds to image manifest and also virt + "-cluster" zone -->
         <test.eucalyptus-partnercloud-ec2.virtualization-type>kvm</test.eucalyptus-partnercloud-ec2.virtualization-type>
 
@@ -128,7 +129,8 @@
                                         <test.eucalyptus-partnercloud-ec2.build-version>${test.eucalyptus-partnercloud-ec2.build-version}</test.eucalyptus-partnercloud-ec2.build-version>
                                         <test.eucalyptus-partnercloud-ec2.identity>${test.eucalyptus-partnercloud-ec2.identity}</test.eucalyptus-partnercloud-ec2.identity>
                                         <test.eucalyptus-partnercloud-ec2.credential>${test.eucalyptus-partnercloud-ec2.credential}</test.eucalyptus-partnercloud-ec2.credential>
-                                        <test.eucalyptus-partnercloud-ec2.image-id>${test.eucalyptus-partnercloud-ec2.image-id}</test.eucalyptus-partnercloud-ec2.image-id>
+                                        <test.eucalyptus-partnercloud-ec2.template>${test.eucalyptus-partnercloud-ec2.template}</test.eucalyptus-partnercloud-ec2.template>
+                                        <test.eucalyptus-partnercloud-ec2.ebs-template>${test.eucalyptus-partnercloud-ec2.ebs-template}</test.eucalyptus-partnercloud-ec2.ebs-template>
                                         <test.eucalyptus-partnercloud-ec2.virtualization-type>${test.eucalyptus-partnercloud-ec2.virtualization-type}</test.eucalyptus-partnercloud-ec2.virtualization-type>
                                     </systemPropertyVariables>
                                 </configuration>

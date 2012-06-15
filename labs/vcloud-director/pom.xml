@@ -39,9 +39,7 @@
     <test.vcloud-director.build-version>1.5.0.464915</test.vcloud-director.build-version>
     <test.vcloud-director.identity>FIXME_USERNAME_WHICH_MIGHT_BE_EMAIL@JClouds</test.vcloud-director.identity>
     <test.vcloud-director.credential>FIXME_PASSWORD</test.vcloud-director.credential>
-    <test.vcloud-director.image-id></test.vcloud-director.image-id>
-    <test.vcloud-director.image.login-user></test.vcloud-director.image.login-user>
-    <test.vcloud-director.image.authenticate-sudo></test.vcloud-director.image.authenticate-sudo>
+    <test.vcloud-director.template></test.vcloud-director.template>
     <test.vcloud-director.catalog-id></test.vcloud-director.catalog-id>
     <test.vcloud-director.media-id></test.vcloud-director.media-id>
     <test.vcloud-director.vapptemplate-id></test.vcloud-director.vapptemplate-id>
@@ -125,9 +123,7 @@
                     <test.vcloud-director.build-version>${test.vcloud-director.build-version}</test.vcloud-director.build-version>
                     <test.vcloud-director.identity>${test.vcloud-director.identity}</test.vcloud-director.identity>
                     <test.vcloud-director.credential>${test.vcloud-director.credential}</test.vcloud-director.credential>
-                    <test.vcloud-director.image-id>${test.vcloud-director.image-id}</test.vcloud-director.image-id>
-                    <test.vcloud-director.image.login-user>${test.vcloud-director.image.login-user}</test.vcloud-director.image.login-user>
-                    <test.vcloud-director.image.authenticate-sudo>${test.vcloud-director.image.authenticate-sudo}</test.vcloud-director.image.authenticate-sudo>
+                    <test.vcloud-director.template>${test.vcloud-director.template}</test.vcloud-director.template>
                     <test.vcloud-director.catalog-id>${test.vcloud-director.catalog-id}</test.vcloud-director.catalog-id>
                     <test.vcloud-director.media-id>${test.vcloud-director.media-id}</test.vcloud-director.media-id>
                     <test.vcloud-director.vapptemplate-id>${test.vcloud-director.vapptemplate-id}</test.vcloud-director.vapptemplate-id>

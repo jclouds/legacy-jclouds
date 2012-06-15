@@ -40,9 +40,7 @@
     <test.cloudservers.build-version></test.cloudservers.build-version>
     <test.cloudservers.identity>${test.rackspace.identity}</test.cloudservers.identity>
     <test.cloudservers.credential>${test.rackspace.credential}</test.cloudservers.credential>
-    <test.cloudservers.image-id></test.cloudservers.image-id>
-    <test.cloudservers.image.login-user></test.cloudservers.image.login-user>
-    <test.cloudservers.image.authenticate-sudo></test.cloudservers.image.authenticate-sudo>
+    <test.cloudservers.template></test.cloudservers.template>
     <jclouds.osgi.export>org.jclouds.cloudservers*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -120,10 +118,8 @@
                     <test.cloudstack.build-version>${test.cloudstack.build-version}</test.cloudstack.build-version>
                     <test.cloudstack.identity>${test.cloudstack.identity}</test.cloudstack.identity>
                     <test.cloudstack.credential>${test.cloudstack.credential}</test.cloudstack.credential>
-                    <test.cloudstack.image-id>${test.cloudstack.image-id}</test.cloudstack.image-id>
-		    <test.cloudstack.image.login-user>${test.cloudstack.image.login-user}</test.cloudstack.image.login-user>
-                    <test.cloudstack.image.authenticate-sudo>${test.cloudstack.image.authenticate-sudo}</test.cloudstack.image.authenticate-sudo>
-                  </systemPropertyVariables>
+                    <test.cloudstack.template>${test.cloudstack.template}</test.cloudstack.template>
+		                  </systemPropertyVariables>
                 </configuration>
               </execution>
             </executions>

@@ -71,14 +71,14 @@ public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderL
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
-      if (imageId == null) {
+      if (template == null) {
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
          assertEquals(defaultTemplate.getLocation().getId(), "1");
          assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
       } else {
-         assertEquals(defaultTemplate.getImage(), this.view.getComputeService().templateBuilder().imageId(imageId)
+         assertEquals(defaultTemplate.getImage(), this.view.getComputeService().templateBuilder().from(template)
                .build().getImage());
       }
    }

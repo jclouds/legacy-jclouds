@@ -39,10 +39,7 @@
     <test.cloudsigma-zrh.build-version></test.cloudsigma-zrh.build-version>
     <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
     <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
-    <test.cloudsigma-zrh.image-id></test.cloudsigma-zrh.image-id>
-    <test.cloudsigma-zrh.image.login-user></test.cloudsigma-zrh.image.login-user>
-    <test.cloudsigma-zrh.image.authenticate-sudo></test.cloudsigma-zrh.image.authenticate-sudo>
-
+    <test.cloudsigma-zrh.template></test.cloudsigma-zrh.template>
     <jclouds.osgi.export>org.jclouds.cloudsigma*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -115,9 +112,7 @@
                     <test.cloudsigma-zrh.build-version>${test.cloudsigma-zrh.build-version}</test.cloudsigma-zrh.build-version>
                     <test.cloudsigma-zrh.identity>${test.cloudsigma-zrh.identity}</test.cloudsigma-zrh.identity>
                     <test.cloudsigma-zrh.credential>${test.cloudsigma-zrh.credential}</test.cloudsigma-zrh.credential>
-                    <test.cloudsigma-zrh.image-id>${test.cloudsigma-zrh.image-id}</test.cloudsigma-zrh.image-id>
-                    <test.cloudsigma-zrh.image.login-user>${test.cloudsigma-zrh.image.login-user}</test.cloudsigma-zrh.image.login-user>
-                    <test.cloudsigma-zrh.image.authenticate-sudo>${test.cloudsigma-zrh.image.authenticate-sudo}</test.cloudsigma-zrh.image.authenticate-sudo>
+                    <test.cloudsigma-zrh.template>${test.cloudsigma-zrh.template}</test.cloudsigma-zrh.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

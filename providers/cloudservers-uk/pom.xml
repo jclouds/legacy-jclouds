@@ -39,10 +39,7 @@
     <test.cloudservers-uk.build-version></test.cloudservers-uk.build-version>
     <test.cloudservers-uk.identity>${test.rackspace-uk.identity}</test.cloudservers-uk.identity>
     <test.cloudservers-uk.credential>${test.rackspace-uk.credential}</test.cloudservers-uk.credential>
-    <test.cloudservers-uk.image-id></test.cloudservers-uk.image-id>
-    <test.cloudservers-uk.image.login-user></test.cloudservers-uk.image.login-user>
-    <test.cloudservers-uk.image.authenticate-sudo></test.cloudservers-uk.image.authenticate-sudo>
-
+    <test.cloudservers-uk.template></test.cloudservers-uk.template>
     <jclouds.osgi.export>org.jclouds.rackspace.cloudservers*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -120,9 +117,7 @@
                     <test.cloudservers-uk.build-version>${test.cloudservers-uk.build-version}</test.cloudservers-uk.build-version>
                     <test.cloudservers-uk.identity>${test.cloudservers-uk.identity}</test.cloudservers-uk.identity>
                     <test.cloudservers-uk.credential>${test.cloudservers-uk.credential}</test.cloudservers-uk.credential>
-                    <test.cloudservers-uk.image-id>${test.cloudservers-uk.image-id}</test.cloudservers-uk.image-id>
-                    <test.cloudservers-uk.image.login-user>${test.cloudservers-uk.image.login-user}</test.cloudservers-uk.image.login-user>
-                    <test.cloudservers-uk.image.authenticate-sudo>${test.cloudservers-uk.image.authenticate-sudo}</test.cloudservers-uk.image.authenticate-sudo>
+                    <test.cloudservers-uk.template>${test.cloudservers-uk.template}</test.cloudservers-uk.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

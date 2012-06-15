@@ -53,10 +53,7 @@
     <test.elasticstack.build-version></test.elasticstack.build-version>
     <test.elasticstack.identity>FIXME</test.elasticstack.identity>
     <test.elasticstack.credential>FIXME</test.elasticstack.credential>
-    <test.elasticstack.image-id>38df0986-4d85-4b76-b502-3878ffc80161</test.elasticstack.image-id>
-    <test.elasticstack.image.login-user></test.elasticstack.image.login-user>
-    <test.elasticstack.image.authenticate-sudo></test.elasticstack.image.authenticate-sudo>
-
+    <test.elasticstack.template>imageId=38df0986-4d85-4b76-b502-3878ffc80161</test.elasticstack.template>
     <jclouds.osgi.export>org.jclouds.elasticstack*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -120,9 +117,7 @@
                     <test.elasticstack.build-version>${test.elasticstack.build-version}</test.elasticstack.build-version>
                     <test.elasticstack.identity>${test.elasticstack.identity}</test.elasticstack.identity>
                     <test.elasticstack.credential>${test.elasticstack.credential}</test.elasticstack.credential>
-                    <test.elasticstack.image-id>${test.elasticstack.image-id}</test.elasticstack.image-id>
-                    <test.elasticstack.image.login-user>${test.elasticstack.image.login-user}</test.elasticstack.image.login-user>
-                    <test.elasticstack.image.authenticate-sudo>${test.elasticstack.image.authenticate-sudo}</test.elasticstack.image.authenticate-sudo>
+                    <test.elasticstack.template>${test.elasticstack.template}</test.elasticstack.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

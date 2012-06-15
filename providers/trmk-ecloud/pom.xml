@@ -40,7 +40,7 @@
         <test.trmk-ecloud.build-version></test.trmk-ecloud.build-version>
         <test.trmk-ecloud.identity>FIXME</test.trmk-ecloud.identity>
         <test.trmk-ecloud.credential>FIXME</test.trmk-ecloud.credential>
-        <test.trmk-ecloud.image-id></test.trmk-ecloud.image-id>
+        <test.trmk-ecloud.template></test.trmk-ecloud.template>
 
         <jclouds.osgi.export>org.jclouds.trmk.ecloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -116,7 +116,7 @@
                                         <test.trmk-ecloud.identity>${test.trmk-ecloud.identity}</test.trmk-ecloud.identity>
                                         <test.trmk-ecloud.credential>${test.trmk-ecloud.credential}</test.trmk-ecloud.credential>
                                         <test.trmk-ecloud.datacenter>${test.trmk-ecloud.datacenter}</test.trmk-ecloud.datacenter>
-                                        <test.trmk-ecloud.image-id>${test.trmk-ecloud.image-id}</test.trmk-ecloud.image-id>
+                                        <test.trmk-ecloud.template>${test.trmk-ecloud.template}</test.trmk-ecloud.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

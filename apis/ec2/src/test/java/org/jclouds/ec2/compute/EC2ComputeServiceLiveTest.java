@@ -29,8 +29,8 @@ import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilderSpec;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -41,7 +41,6 @@ import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
@@ -57,6 +56,7 @@ import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.InetAddresses2;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -73,6 +73,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true)
 public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
+   protected TemplateBuilderSpec ebsTemplate;
 
    public EC2ComputeServiceLiveTest() {
       provider = "ec2";
@@ -227,12 +229,24 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
    
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      String ebsSpec = setIfTestSystemPropertyPresent(overrides, provider + ".ebs-template");
+      if (ebsSpec != null)
+         ebsTemplate = TemplateBuilderSpec.parse(ebsSpec);
+      return overrides;
+   }
+
    /**
     * Note we cannot use the micro size as it has no ephemeral space.
     */
-   @Test(enabled = true)
+   @Test
    public void testMapEBS() throws Exception {
-
+      if (ebsTemplate == null) {
+         throw new SkipException("Test cannot run without the parameter test." + provider
+               + ".ebs-template; this property should be in the format defined in TemplateBuilderSpec");
+      }
       InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
@@ -242,8 +256,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       String group = this.group + "e";
       int volumeSize = 8;
       
-      final Template template = view.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-               .osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageDescriptionMatches(".*ebs.*").build();
+      final Template template = view.getComputeService().templateBuilder().from(ebsTemplate).build();
 
       Location zone = Iterables.find(view.getComputeService().listAssignableLocations(), new Predicate<Location>() {
 
