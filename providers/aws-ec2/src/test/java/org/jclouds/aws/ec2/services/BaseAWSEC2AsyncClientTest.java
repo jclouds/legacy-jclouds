@@ -64,7 +64,7 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends BaseAsyncClientTest<T
    protected static class StubAWSEC2RestClientModule extends AWSEC2RestClientModule {
 
       @Override
-      protected String provideTimeStamp(DateService dateService, int expiration) {
+      protected String provideTimeStamp(DateService dateService) {
          return "2009-11-08T15:54:08.897Z";
       }
 

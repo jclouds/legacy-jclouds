@@ -23,9 +23,6 @@ import static com.google.common.collect.Maps.transformValues;
 import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Named;
-
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
 import org.jclouds.date.DateService;
@@ -69,8 +66,7 @@ public class BaseCloudWatchExpectTest<T> extends BaseRestClientExpectTest<T> {
       }
 
       @Override
-      protected String provideTimeStamp(final DateService dateService,
-            @Named(Constants.PROPERTY_SESSION_INTERVAL) int expiration) {
+      protected String provideTimeStamp(final DateService dateService) {
          return "2009-11-08T15:54:08.897Z";
       }
    }

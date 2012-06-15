@@ -2,10 +2,8 @@ package org.jclouds.openstack.nova.ec2.internal;
 
 import java.net.URI;
 
-import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
@@ -45,8 +43,7 @@ public abstract class BaseNovaEC2RestClientExpectTest extends BaseRestClientExpe
    private static final class TestNovaEC2RestClientModule extends NovaEC2RestClientModule {
       @Override
       @Provides
-      protected String provideTimeStamp(final DateService dateService,
-               @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
+      protected String provideTimeStamp(DateService dateService) {
          return CONSTANT_DATE;
       }
    }
