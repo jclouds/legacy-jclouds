@@ -1,0 +1,17 @@
+<DescribeAvailabilityZonesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+    <requestId>d2e09bd5-b2ec-4c6b-aac9-6bf1fa217cb5</requestId>
+    <availabilityZoneInfo>
+        <item>
+            <zoneName>sa-east-1a</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>sa-east-1</regionName>
+            <messageSet/>
+        </item>
+        <item>
+            <zoneName>sa-east-1b</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>sa-east-1</regionName>
+            <messageSet/>
+        </item>
+    </availabilityZoneInfo>
+</DescribeAvailabilityZonesResponse>

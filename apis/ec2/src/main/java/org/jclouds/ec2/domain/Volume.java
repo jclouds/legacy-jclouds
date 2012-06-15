@@ -97,7 +97,7 @@ public class Volume implements Comparable<Volume> {
       private String availabilityZone;
       private Status status;
       private Date createTime;
-      private Set<Attachment> attachments;
+      private Set<Attachment> attachments = ImmutableSet.of();
 
       public Builder region(String region) {
          this.region = region;

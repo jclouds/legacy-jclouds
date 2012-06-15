@@ -30,6 +30,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.testng.annotations.Test;
 
@@ -127,9 +128,13 @@ public class EC2RestClientModuleExpectTest extends BaseEC2ExpectTest<Injector> {
    public void testZoneToEndpoint() {
       assertEquals(injector.getInstance(ZoneToEndpoint.class).apply("us-west-2a"),
             URI.create("https://ec2.us-west-2.amazonaws.com"));
-
    }
-
+   
+   public void testRegionToEndpointOrProviderIfNull() {
+      assertEquals(injector.getInstance(RegionToEndpointOrProviderIfNull.class).apply("us-west-2"),
+            URI.create("https://ec2.us-west-2.amazonaws.com"));
+   }
+   
    @Override
    public Injector createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       return createInjector(fn, module, props);

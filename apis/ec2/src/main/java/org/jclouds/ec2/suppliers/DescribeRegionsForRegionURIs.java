@@ -20,7 +20,6 @@ package org.jclouds.ec2.suppliers;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,29 +30,23 @@ import org.jclouds.location.Region;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.util.Suppliers2;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
 @Singleton
-public class DescribeRegionsForConfiguredRegions implements RegionIdToURISupplier {
+public class DescribeRegionsForRegionURIs implements RegionIdToURISupplier {
    private final AvailabilityZoneAndRegionClient client;
-   private final Supplier<Set<String>> regions;
 
    @Inject
-   public DescribeRegionsForConfiguredRegions(EC2Client client, @Region Supplier<Set<String>> regions) {
+   public DescribeRegionsForRegionURIs(EC2Client client) {
       this.client = client.getAvailabilityZoneAndRegionServices();
-      this.regions = regions;
    }
 
    @Singleton
    @Region
    @Override
    public Map<String, Supplier<URI>> get() {
-      Set<String> regionWhiteList = regions.get();
       Map<String, URI> regionToUris = client.describeRegions();
-      if (regionWhiteList.size() > 0)
-         regionToUris = Maps.filterKeys(regionToUris, Predicates.in(regionWhiteList));
       return Maps.transformValues(regionToUris, Suppliers2.<URI> ofInstanceFunction());
    }
 }
