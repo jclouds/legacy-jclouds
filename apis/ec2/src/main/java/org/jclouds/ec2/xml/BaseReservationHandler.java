@@ -72,7 +72,10 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected Builder builder;
 
    protected int itemDepth;
-   boolean inInstancesSet;
+   protected boolean inInstancesSet;
+   protected boolean inProductCodes;
+   protected boolean inGroupSet;
+
    // attachments
    private String volumeId;
    private Attachment.Status attachmentStatus;
@@ -88,12 +91,17 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
 
    private Set<RunningInstance> instances = Sets.newLinkedHashSet();
 
+
    public void startElement(String uri, String name, String qName, Attributes attrs) {
       if (equalsOrSuffix(qName, "item")) {
          itemDepth++;
       } else if (equalsOrSuffix(qName, "instancesSet")) {
          inInstancesSet = true;
-      }
+      } else if (equalsOrSuffix(qName, "productCodes")) {
+         inProductCodes = true;
+      } else if (equalsOrSuffix(qName, "groupSet")) {
+         inGroupSet = true;
+      } 
    }
 
    public void endElement(String uri, String name, String qName) {
@@ -102,6 +110,10 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          itemDepth--;
       } else if (equalsOrSuffix(qName, "instancesSet")) {
          inInstancesSet = false;
+      } else if (equalsOrSuffix(qName, "productCodes")) {
+         inProductCodes = false;
+      } else if (equalsOrSuffix(qName, "groupSet")) {
+         inGroupSet = false;
       } else if (equalsOrSuffix(qName, "groupId")) {
          groupIds.add(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "ownerId")) {
@@ -219,7 +231,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    }
 
    protected boolean endOfInstanceItem() {
-      return itemDepth <= 2 && inInstancesSet;
+      return itemDepth <= 2 && inInstancesSet && !inProductCodes && !inGroupSet;
    }
 
    public void characters(char ch[], int start, int length) {
