@@ -33,7 +33,7 @@ import org.jclouds.joyent.sdc.v6_5.domain.Key;
 import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 import org.jclouds.joyent.sdc.v6_5.internal.BaseSDCClientLiveTest;
 import org.jclouds.joyent.sdc.v6_5.options.CreateMachineOptions;
-import org.jclouds.joyent.sdc.v6_5.reference.MetadataKeys;
+import org.jclouds.joyent.sdc.v6_5.reference.Metadata;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
@@ -123,7 +123,7 @@ public class MachineClientLiveTest extends BaseSDCClientLiveTest {
 
       assertEquals(newMachine.getMetadata().get("foo").toString(), "bar");
       assertTrue(
-            newMachine.getMetadata().get(MetadataKeys.ROOT_AUTHORIZED_KEYS.key()).indexOf(key.get("public")) != -1,
+            newMachine.getMetadata().get(Metadata.ROOT_AUTHORIZED_KEYS.key()).indexOf(key.get("public")) != -1,
             newMachine + "; key: " + key.get("public"));
 
       assertTrue(machineRunning.apply(newMachine), newMachine.toString());

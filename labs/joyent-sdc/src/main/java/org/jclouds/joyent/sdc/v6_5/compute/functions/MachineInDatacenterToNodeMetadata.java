@@ -47,7 +47,7 @@ import org.jclouds.joyent.sdc.v6_5.domain.Machine;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatacenterAndId;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatacenterAndName;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.MachineInDatacenter;
-import org.jclouds.joyent.sdc.v6_5.reference.MetadataKeys;
+import org.jclouds.joyent.sdc.v6_5.reference.Metadata;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2;
 
@@ -101,7 +101,7 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
          @Override
          public boolean apply(String input) {
             // TODO make this more efficient
-            for (MetadataKeys key : MetadataKeys.values())
+            for (Metadata key : Metadata.values())
                if (key.key().equals(input))
                   return false;
             return true;
