@@ -26,7 +26,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.ec2.internal.BaseEC2ExpectTest;
-import org.jclouds.ec2.services.BaseEC2AsyncClientTest.StubEC2RestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.location.Region;
@@ -140,9 +139,5 @@ public class EC2RestClientModuleExpectTest extends BaseEC2ExpectTest<Injector> {
    public Injector createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       return createInjector(fn, module, props);
    }
-   
-   @Override
-   protected Module createModule() {
-      return new StubEC2RestClientModule();
-   }
+
 }

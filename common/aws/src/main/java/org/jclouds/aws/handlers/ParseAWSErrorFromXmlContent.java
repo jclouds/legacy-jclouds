@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.handlers;
 
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.IOException;
@@ -65,7 +66,9 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = null;
-         String message = null;
+         // it is important to always read fully and close streams
+         byte[] data = closeClientButKeepContentStream(response);
+         String message = data != null ? new String(data) : null;
          if (response.getPayload() != null) {
             String contentType = response.getPayload().getContentMetadata().getContentType();
             if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {
@@ -102,14 +105,14 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                exception = new UnsupportedOperationException(message, exception);
             else if ("AddressLimitExceeded".equals(errorCode))
                exception = new InsufficientResourcesException(message, exception);
-            else if (errorCode != null && (errorCode.endsWith("NotFound") || errorCode.endsWith(".Unknown")))
+            else if (errorCode != null && (errorCode.indexOf("NotFound") != -1 || errorCode.endsWith(".Unknown")))
                exception = new ResourceNotFoundException(message, exception);
             else if ("IncorrectState".equals(errorCode)
                      || (errorCode != null && (error.getCode().endsWith(".Duplicate") | error.getCode().endsWith(
                               ".InUse")))
                      || (message != null && (message.indexOf("already exists") != -1 || message.indexOf("is in use") != -1)))
                exception = new IllegalStateException(message, exception);
-            else if ("AuthFailure".equals(errorCode))
+            else if (errorCode != null && errorCode.indexOf("AuthFailure") != -1)
                exception = new AuthorizationException(message, exception);
             else if (message != null
                      && (message.indexOf("Invalid id") != -1 || message.indexOf("Failed to bind") != -1))

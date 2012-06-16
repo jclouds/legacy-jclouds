@@ -28,11 +28,16 @@ import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2ContextBuilder;
+import org.jclouds.ec2.EC2PropertiesBuilder;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextSpec;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
@@ -40,7 +45,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 
 public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected static final String CONSTANT_DATE = "2012-04-16T15:54:08.897Z";
@@ -82,18 +86,36 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
       }
       describeAvailabilityZonesRequestResponse = builder.build();
    }
-
+   
+   @RequiresHttp
    @ConfiguresRestClient
-   private static final class TestEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
+   public static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
+
+      public StubEC2RestClientModule() {
+         super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
+      }
+
       @Override
-      @Provides
       protected String provideTimeStamp(DateService dateService) {
          return CONSTANT_DATE;
       }
    }
-
+   
    @Override
    protected Module createModule() {
-      return new TestEC2RestClientModule();
+      return new StubEC2RestClientModule();
+   }
+   
+   protected String provider = "ec2";
+
+   /**
+    * this is only here as "ec2" is not in rest.properties
+    */
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @Override
+   public RestContextSpec<T, ?> makeContextSpec() {
+      return RestContextFactory.contextSpec(provider, "https://ec2.us-east-1.amazonaws.com", EC2AsyncClient.VERSION,
+            "", "", "identity", "credential", EC2Client.class, EC2AsyncClient.class,
+            (Class) EC2PropertiesBuilder.class, (Class) EC2ContextBuilder.class, ImmutableSet.<Module> of());
    }
 }
