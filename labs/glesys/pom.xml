@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-beta.3</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.glesys.endpoint>https://api.glesys.com</test.glesys.endpoint>
     <test.glesys.api-version>1</test.glesys.api-version>
-    <test.glesys.build-version></test.glesys.build-version>
+    <test.glesys.build-version />
     <test.glesys.identity>FIXME</test.glesys.identity>
     <test.glesys.credential>FIXME</test.glesys.credential>
-    <test.glesys.template></test.glesys.template>
+    <test.glesys.template />
     <jclouds.osgi.export>org.jclouds.glesys*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
