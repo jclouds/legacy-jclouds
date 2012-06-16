@@ -39,6 +39,13 @@ import com.google.common.collect.ImmutableMap;
 public class RegionToEndpointOrProviderIfNullTest {
 
    @Test
+   public void testWhenRegionNameIsSameAsProviderName() throws SecurityException, NoSuchMethodException {
+      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI
+               .create("http://leader")), Suppliers.<Map<String, Supplier<URI>>>ofInstance(ImmutableMap.of("leader", Suppliers.ofInstance(URI.create("http://leaderregion")))));
+      assertEquals(fn.apply("leader"), URI.create("http://leaderregion"));
+   }
+   
+   @Test
    public void testWhenFindsRegion() throws SecurityException, NoSuchMethodException {
       RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI
                .create("http://leader")), Suppliers.<Map<String, Supplier<URI>>>ofInstance(ImmutableMap.of("1", Suppliers.ofInstance(URI.create("http://1")))));
