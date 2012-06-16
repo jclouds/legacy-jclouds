@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.joyent.sdc.v6_5.reference.MetadataKeys;
+import org.jclouds.joyent.sdc.v6_5.reference.Metadata;
 import org.jclouds.json.Json;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -248,7 +248,7 @@ public class Machine implements Comparable<Machine> {
     * If the value is a string, it will be quoted, as that's how json strings are represented. 
     * 
     * @return key to a json literal of the value
-    * @see MetadataKeys#valueType
+    * @see Metadata#valueType
     * @see Json#fromJson
     */
    public Map<String, String> getMetadataAsJsonLiterals() {

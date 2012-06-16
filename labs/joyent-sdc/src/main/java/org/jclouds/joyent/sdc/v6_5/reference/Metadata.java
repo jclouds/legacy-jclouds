@@ -29,7 +29,7 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public enum MetadataKeys {
+public enum Metadata {
    ROOT_AUTHORIZED_KEYS(TypeToken.of(String.class).getType()),
    /**
     * If the dataset you create a machine from is set to generate passwords for
@@ -49,7 +49,7 @@ public enum MetadataKeys {
 
    private final Type valueType;
 
-   MetadataKeys(Type valueType) {
+   Metadata(Type valueType) {
       this.valueType = valueType;
    }
 
