@@ -124,13 +124,14 @@ public class SshKeys {
 
    /**
     * 
-    * @param used
+    * @param generator
     *           to generate RSA key pairs
+    * @param rand
+    *           for initializing {@code generator}
     * @return new 2048 bit keyPair
     * @see Crypto#rsaKeyPairGenerator()
     */
-   public static KeyPair generateRsaKeyPair(KeyPairGenerator generator) {
-      SecureRandom rand = new SecureRandom();
+   public static KeyPair generateRsaKeyPair(KeyPairGenerator generator, SecureRandom rand) {
       generator.initialize(2048, rand);
       return generator.genKeyPair();
    }
@@ -140,15 +141,15 @@ public class SshKeys {
     */
    public static Map<String, String> generate() {
       try {
-         return generate(KeyPairGenerator.getInstance("RSA"));
+         return generate(KeyPairGenerator.getInstance("RSA"), new SecureRandom());
       } catch (NoSuchAlgorithmException e) {
          propagate(e);
          return null;
       }
    }
 
-   public static Map<String, String> generate(KeyPairGenerator generator) {
-      KeyPair pair = generateRsaKeyPair(generator);
+   public static Map<String, String> generate(KeyPairGenerator generator, SecureRandom rand) {
+      KeyPair pair = generateRsaKeyPair(generator, rand);
       Builder<String, String> builder = ImmutableMap.builder();
       builder.put("public", encodeAsOpenSSH(RSAPublicKey.class.cast(pair.getPublic())));
       builder.put("private", encodeAsPem(RSAPrivateKey.class.cast(pair.getPrivate())));
