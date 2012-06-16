@@ -32,7 +32,7 @@ import com.google.gson.stream.JsonReader;
  * Data adapter for the date formats used by CloudStack.
  *
  * Essentially this is a workaround for the CloudStack getUsage() API call returning a
- * corrupted formn of ISO-8601 dates, which have an unexpected pair of apostrophes, like
+ * corrupted form of ISO-8601 dates, which have an unexpected pair of apostrophes, like
  * 2011-12-12'T'00:00:00+00:00
  *
  * @author Richard Downer

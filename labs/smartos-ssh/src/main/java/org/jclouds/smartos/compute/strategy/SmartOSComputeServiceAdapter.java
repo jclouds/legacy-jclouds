@@ -61,7 +61,7 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
    public NodeAndInitialCredentials<VM> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       VmSpecification specification = VmSpecification.builder().alias(name)
                .dataset(getHost().getDataSet(UUID.fromString(template.getImage().getProviderId())))
-               .nic(VmNIC.builder().simpleDCHPNic().build()).build();
+               .nic(VmNIC.builder().simpleDHCPNic().build()).build();
 
       VM from = getHost().createVM(specification);
 
@@ -74,7 +74,7 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
       List<VmSpecification> specificationList = new ArrayList<VmSpecification>();
 
       VmSpecification vs = VmSpecification.builder().alias("Standard Joyent VM")
-               .nic(VmNIC.builder().simpleDCHPNic().build()).build();
+               .nic(VmNIC.builder().simpleDHCPNic().build()).build();
 
       specificationList.add(vs);
 

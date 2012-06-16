@@ -22,7 +22,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Options for a clone.
- * TODO: test and add contructors.
+ * TODO: test and add constructors.
  * @author Ivan Meredith
  */
 public class CloneOptions implements PostData {

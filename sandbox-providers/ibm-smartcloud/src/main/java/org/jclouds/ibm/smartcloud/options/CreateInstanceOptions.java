@@ -59,7 +59,7 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
    /**
     * 
     * @param publicKeyName
-    *           The public key to use for accessing the created instancee
+    *           The public key to use for accessing the created instance
     */
    public CreateInstanceOptions authorizePublicKey(String publicKeyName) {
       checkNotNull(publicKeyName, "publicKeyName");

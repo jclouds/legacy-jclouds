@@ -167,7 +167,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
     * configuration change or update, the status of the load balancer will change to PENDING_UPDATE
     * to signify configuration changes are in progress but have not yet been finalized. Load
     * balancers in a SUSPENDED status are configured to reject traffic and will not forward requests
-    * to back-end nodess.
+    * to back-end nodes.
     */
    public static enum Status {
       /**

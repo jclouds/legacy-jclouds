@@ -29,7 +29,7 @@ public class VmNIC {
       public String netmask;
       public String gateway;
 
-      public Builder simpleDCHPNic() {
+      public Builder simpleDHCPNic() {
          tag = "admin";
          ip = "dhcp";
          return this;

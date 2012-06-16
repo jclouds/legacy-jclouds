@@ -107,16 +107,16 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
                   templateOptions);
       }
 
-      boolean keyPairExensionPresent = novaApi.getKeyPairExtensionForZone(zone).isPresent();
+      boolean keyPairExtensionPresent = novaApi.getKeyPairExtensionForZone(zone).isPresent();
       if (templateOptions.shouldGenerateKeyPair()) {
-         checkArgument(keyPairExensionPresent,
+         checkArgument(keyPairExtensionPresent,
                   "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
          KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, namingConvention.create()
                   .sharedNameForGroup(group)));
          keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
          templateOptions.keyPairName(keyPair.getName());
       } else if (templateOptions.getKeyPairName() != null) {
-         checkArgument(keyPairExensionPresent,
+         checkArgument(keyPairExtensionPresent,
                   "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
          if (templateOptions.getLoginPrivateKey() != null) {
             String pem = templateOptions.getLoginPrivateKey();
@@ -126,13 +126,13 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
          }
       }
 
-      boolean securityGroupExensionPresent = novaApi.getSecurityGroupExtensionForZone(zone).isPresent();
+      boolean securityGroupExtensionPresent = novaApi.getSecurityGroupExtensionForZone(zone).isPresent();
       List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
       if (templateOptions.getSecurityGroupNames().size() > 0) {
          checkArgument(novaApi.getSecurityGroupExtensionForZone(zone).isPresent(),
                   "Security groups are required by options, but the extension is not available! options: %s",
                   templateOptions);
-      } else if (securityGroupExensionPresent && inboundPorts.size() > 0) {
+      } else if (securityGroupExtensionPresent && inboundPorts.size() > 0) {
          String securityGroupName = namingConvention.create().sharedNameForGroup(group);
          try {
             securityGroupCache.get(new ZoneSecurityGroupNameAndPorts(zone, securityGroupName, inboundPorts));

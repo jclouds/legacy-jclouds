@@ -411,7 +411,7 @@ public class Server extends Resource {
    }
 
    /**
-    * @return keyName if extension is present and there is a valur for this server
+    * @return keyName if extension is present and there is a value for this server
     * @see KeyPairApi
     */
    @Nullable

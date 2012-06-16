@@ -102,7 +102,7 @@ public class GetPath {
          }
 
       } finally {
-         // Close connecton
+         // Close connection
          Closeables.closeQuietly(input);
       }
    }

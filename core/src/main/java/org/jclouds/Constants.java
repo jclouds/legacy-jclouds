@@ -160,7 +160,7 @@ public interface Constants {
    /**
     * Boolean property.
     * <p/>
-    * allow mismatch between hostname and ssl cerificate. Set to true in DNS_based services like
+    * allow mismatch between hostname and ssl certificate. Set to true in DNS_based services like
     * Amazon S3.
     */
    public static final String PROPERTY_RELAX_HOSTNAME = "jclouds.relax-hostname";

@@ -170,7 +170,7 @@ public interface TemplateClient {
    /**
     * Updates a template visibility permissions. A public template is visible to
     * all accounts within the same domain. A private template is visible only to
-    * the owner of the template. A priviledged template is a private template
+    * the owner of the template. A privileged template is a private template
     * with account permissions added. Only accounts specified under the template
     * permissions are visible to them.
     * 

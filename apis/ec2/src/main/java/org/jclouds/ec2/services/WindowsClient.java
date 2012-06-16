@@ -53,7 +53,7 @@ public interface WindowsClient {
     * @param bucket
     *           The bucket in which to store the AMI. You can specify a bucket
     *           that you already own or a new bucket that Amazon EC2 creates on
-    *           your behalf. If you specify a bucket that belongs to som eone
+    *           your behalf. If you specify a bucket that belongs to someone
     *           else, Amazon EC2 returns an error.
     * @param uploadPolicy
     *           An Amazon S3 upload policy that gives Amazon EC2 permission to

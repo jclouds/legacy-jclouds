@@ -124,8 +124,8 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 			String network) {
 		// RetrieveActiveBridgedInterfaces
 		List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory).apply(hostSupplier.get());
-		BridgedIf activeBrigedIf = checkNotNull(Iterables.get(activeBridgedInterfaces, 0), "activeBridgrdIf");
-		network = activeBrigedIf.getIpAddress();
+		BridgedIf activeBridgedIf = checkNotNull(Iterables.get(activeBridgedInterfaces, 0), "activeBridgedInterfaces");
+		network = activeBridgedIf.getIpAddress();
 		
 		// scan ip
 		RunScriptOnNode ipScanRunScript = scriptRunnerFactory.create(

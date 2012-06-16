@@ -296,7 +296,7 @@ public class MachineUtils {
    }
 
    public String getIpAddressFromHostOnlyNIC(String machineName) {
-      // TODO using a caching mechanism to avoid to call everytime this vboxmanage api call
+      // TODO using a caching mechanism to avoid to call every time this vboxmanage api call
       String currentIp = "", previousIp = "1.1.1.1";
       int attempt = 0, count = 0;
       while(count < 5) { 

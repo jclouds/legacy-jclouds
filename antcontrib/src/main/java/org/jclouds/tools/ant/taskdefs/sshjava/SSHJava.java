@@ -393,7 +393,7 @@ public class SSHJava extends Java {
    }
 
    /**
-    * All files transfered to the host will be relative to this. The java process itself will be at
+    * All files transferred to the host will be relative to this. The java process itself will be at
     * this path/{@code id}.
     */
    public void setRemotebase(File remotebase) {

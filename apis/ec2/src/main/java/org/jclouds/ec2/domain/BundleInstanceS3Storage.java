@@ -103,7 +103,7 @@ public class BundleInstanceS3Storage {
 
    @Override
    public String toString() {
-      return "[ccessKeyId=" + ccessKeyId + ", bucket=" + bucket + ", prefix=" + prefix + ", secreAccessKey="
+      return "[ccessKeyId=" + ccessKeyId + ", bucket=" + bucket + ", prefix=" + prefix + ", secretAccessKey="
             + secretAccessKey + ", uploadPolicy=" + uploadPolicy + ", uploadPolicySignature=" + uploadPolicySignature
             + "]";
    }

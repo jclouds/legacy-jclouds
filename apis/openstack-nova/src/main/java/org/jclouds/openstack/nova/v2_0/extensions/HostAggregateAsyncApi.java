@@ -87,7 +87,7 @@ public interface HostAggregateAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("aggregate")
    ListenableFuture<HostAggregate> createAggregate(@PayloadParam("name") String name,
-                                                   @PayloadParam("availability_zone") String availablityZone);
+                                                   @PayloadParam("availability_zone") String availabilityZone);
 
    /**
     * @see HostAggregateApi#updateName
