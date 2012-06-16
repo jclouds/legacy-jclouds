@@ -338,9 +338,9 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Set<ComputeMetadata> listNodes() {
-      logger.debug(">> listing nodes");
+      logger.trace(">> listing nodes");
       Set<ComputeMetadata> set = newLinkedHashSet(listNodesStrategy.listNodes());
-      logger.debug("<< list(%d)", set.size());
+      logger.trace("<< list(%d)", set.size());
       return set;
    }
 
@@ -350,9 +350,9 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate<ComputeMetadata> filter) {
       checkNotNull(filter, "filter");
-      logger.debug(">> listing node details matching(%s)", filter);
+      logger.trace(">> listing node details matching(%s)", filter);
       Set<NodeMetadata> set = newLinkedHashSet(listNodesStrategy.listDetailsOnNodesMatching(filter));
-      logger.debug("<< list(%d)", set.size());
+      logger.trace("<< list(%d)", set.size());
       return set;
    }
 

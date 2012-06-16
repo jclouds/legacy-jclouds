@@ -317,7 +317,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    }
 
-   protected Set<Integer> inboundPorts = ImmutableSet.of(22);
+   private final static Set<Integer> DEFAULT_INBOUND_PORTS = ImmutableSet.of(22);
+   
+   protected Set<Integer> inboundPorts = DEFAULT_INBOUND_PORTS;
 
    protected Statement script;
 
@@ -352,11 +354,24 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("inboundPorts", inboundPorts).add("scriptPresent", script != null)
-            .add("publicKeyPresent", publicKey != null).add("privateKeyPresent", privateKey != null).add("tags", tags)
-            .add("blockUntilRunning", blockUntilRunning).add("tags", tags).add("userMetadata", userMetadata);
+      ToStringHelper toString = super.string();
+      if (!DEFAULT_INBOUND_PORTS.equals(inboundPorts))
+         toString.add("inboundPorts", inboundPorts);
+      if (script != null)
+         toString.add("scriptPresent", true);
+      if (publicKey != null)
+         toString.add("publicKeyPresent", true);
+      if (privateKey != null)
+         toString.add("privateKeyPresent", true);
+      if (!blockUntilRunning)
+         toString.add("blockUntilRunning", blockUntilRunning);
+      if (tags.size() != 0)
+         toString.add("tags", tags);
+      if (userMetadata.size() != 0)
+         toString.add("userMetadata", userMetadata);
+      return toString;
    }
-   
+
    public int[] getInboundPorts() {
       return Ints.toArray(inboundPorts);
    }

@@ -81,7 +81,10 @@ public class SDCTemplateOptions extends TemplateOptions implements Cloneable {
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("generateKey", generateKey);
+      ToStringHelper toString = super.string();
+      if (generateKey)
+         toString.add("generateKey", generateKey);
+      return toString;
    }
 
    /**

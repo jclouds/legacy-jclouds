@@ -374,7 +374,7 @@ public class TemplateBuilderImplTest {
          // make sure big data is not in the exception message
          assertEquals(
                   e.getMessage(),
-                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=us-east-1/imageId, imagePredicate=null, imageVersion=null, location=[id=us-east-1, scope=REGION, description=us-east-1, parent=aws-ec2, iso3166Codes=[], metadata={}], minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null, hypervisor=null]");
+                  "no hardware profiles support images matching params: {imageId=us-east-1/imageId, locationId=us-east-1, os64Bit=false}");
          verify(image);
          verify(os);
          verify(defaultTemplate);
@@ -852,6 +852,8 @@ public class TemplateBuilderImplTest {
       TemplateBuilder templateBuilder = templateBuilderProvider.get().minRam(512).osFamily(OsFamily.UBUNTU)
             .hypervisorMatches("OpenVZ").osVersionMatches("1[10].[10][04]").os64Bit(true);
 
+      assertEquals(templateBuilder.toString(), "{minRam=512, minRam=512, osFamily=ubuntu, osVersion=1[10].[10][04], os64Bit=true, hypervisor=OpenVZ}");
+
       Template template = templateBuilder.build();
       assertEquals(template.getHardware().getHypervisor(), "OpenVZ");
       assertEquals(template.getImage().getId(), "Ubuntu 11.04 64-bit");
@@ -902,7 +904,9 @@ public class TemplateBuilderImplTest {
       };
 
       TemplateBuilder templateBuilder = templateBuilderProvider.get().hardwareId("m1.small").imageId("us-east-2/ami-ffff");
-      
+
+      assertEquals(templateBuilder.toString(), "{imageId=us-east-2/ami-ffff, hardwareId=m1.small}");
+
       Template template = templateBuilder.build();
       assertEquals(template.getLocation().getId(), "us-east-2");
 

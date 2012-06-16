@@ -19,7 +19,6 @@
 package org.jclouds.joyent.sdc.v6_5.options;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
@@ -30,6 +29,7 @@ import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -64,7 +64,11 @@ public class CreateMachineOptions extends BaseHttpRequestOptions {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("name", name).add("package", name).add("metadata", metadata).toString();
+      ToStringHelper toString = Objects.toStringHelper("").omitNullValues();
+      toString.add("name", name).add("package", name);
+      if (metadata.size() > 0)
+         toString.add("metadata", metadata);
+      return toString.toString();
    }
 
    @Override

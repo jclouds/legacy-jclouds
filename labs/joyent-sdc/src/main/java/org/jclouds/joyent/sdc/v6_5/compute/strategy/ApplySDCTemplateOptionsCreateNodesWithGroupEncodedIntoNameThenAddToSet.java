@@ -28,14 +28,12 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
@@ -57,7 +55,6 @@ public class ApplySDCTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddTo
          CreateNodesWithGroupEncodedIntoNameThenAddToSet {
 
    private final LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache;
-   private final Provider<TemplateBuilder> templateBuilderProvider;
 
    @Inject
    protected ApplySDCTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet(
@@ -66,11 +63,9 @@ public class ApplySDCTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddTo
             GroupNamingConvention.Factory namingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            Provider<TemplateBuilder> templateBuilderProvider,
             LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache) {
       super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
-      this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");
       this.keyCache = checkNotNull(keyCache, "keyCache");
    }
 
@@ -78,17 +73,7 @@ public class ApplySDCTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddTo
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
          Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
 
-      Template mutableTemplate;
-      // ensure we don't mutate the input template, fromTemplate ignores imageId
-      // so
-      // build directly from imageId if we have it
-      if (template.getImage() != null && template.getImage().getId() != null) {
-         mutableTemplate = templateBuilderProvider.get().imageId(template.getImage().getId()).fromTemplate(template)
-               .build();
-         // otherwise build from generic parameters
-      } else {
-         mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
-      }
+      Template mutableTemplate = template.clone();
 
       SDCTemplateOptions templateOptions = SDCTemplateOptions.class.cast(mutableTemplate.getOptions());
 

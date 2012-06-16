@@ -58,6 +58,8 @@ import org.jclouds.util.Lists2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
@@ -726,7 +728,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          String message = format("no hardware profiles match params: %s", hardwarePredicate);
          throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwaresThatAreCompatibleWithOurImages);
       }
-      logger.debug("<<   matched hardware(%s)", hardware.getId());
+      logger.trace("<<   matched hardware(%s)", hardware.getId());
       return hardware;
    }
 
@@ -995,11 +997,40 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Override
    public String toString() {
-      return "[biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName + ", imageDescription="
-            + imageDescription + ", imageId=" + imageId + ", imagePredicate=" + imagePredicate + ", imageVersion=" + imageVersion + ", location=" + location
-            + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName=" + osName
-            + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch + ", os64Bit="
-            + os64Bit + ", hardwareId=" + hardwareId + ", hypervisor=" + hypervisor + "]";
+      return string().toString();
+   }
+
+   /**
+    * @since 1.5
+    */
+   protected ToStringHelper string() {
+      ToStringHelper toString = Objects.toStringHelper("").omitNullValues();
+      if (biggest)
+         toString.add("biggest", biggest);
+      if (fastest)
+         toString.add("fastest", fastest);
+      toString.add("imageName", imageName);
+      toString.add("imageDescription", imageDescription);
+      toString.add("imageId", imageId);
+      toString.add("imagePredicate", imagePredicate);
+      toString.add("imageVersion", imageVersion);
+      if (location != null)
+         toString.add("locationId", location.getId());
+      if (minCores >0) //TODO: make non-primitive
+         toString.add("minCores", minCores);
+      if (minRam >0) //TODO: make non-primitive
+         toString.add("minRam", minRam);
+      if (minRam >0) //TODO: make non-primitive
+         toString.add("minRam", minRam);
+      toString.add("osFamily", osFamily);
+      toString.add("osName", osName);
+      toString.add("osDescription", osDescription);
+      toString.add("osVersion", osVersion);
+      toString.add("osArch", osArch);
+      toString.add("os64Bit", os64Bit);
+      toString.add("hardwareId", hardwareId);
+      toString.add("hypervisor", hypervisor);
+      return toString;
    }
 
    @Override

@@ -129,8 +129,8 @@ public class TemplateImpl implements Template {
     * {@inheritDoc}
     */
    @Override
-   protected Object clone() throws CloneNotSupportedException {
-      return new TemplateImpl(image, size, location, options);
+   public Template clone() {
+      return new TemplateImpl(image, size, location, options.clone());
    }
 
 }

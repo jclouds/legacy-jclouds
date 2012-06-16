@@ -103,9 +103,16 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("autoAssignFloatingIp", autoAssignFloatingIp)
-            .add("securityGroupNames", securityGroupNames).add("generateKeyPair", generateKeyPair)
-            .add("keyPairName", keyPairName).add("userData", userData);
+      ToStringHelper toString = super.string();
+      if (!autoAssignFloatingIp)
+         toString.add("autoAssignFloatingIp", autoAssignFloatingIp);
+      if (securityGroupNames.size() != 0)
+         toString.add("securityGroupNames", securityGroupNames);
+      if (generateKeyPair)
+         toString.add("generateKeyPair", generateKeyPair);
+      toString.add("keyPairName", keyPairName);
+      toString.add("userData", userData);
+      return toString;
    }
 
    public static final NovaTemplateOptions NONE = new NovaTemplateOptions();
