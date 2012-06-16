@@ -18,27 +18,40 @@
  */
 package org.jclouds.joyent.sdc.v6_5.compute.config;
 
+import static org.jclouds.joyent.sdc.v6_5.config.SDCProperties.AUTOGENERATE_KEYS;
+
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.joyent.sdc.v6_5.compute.SDCComputeService;
 import org.jclouds.joyent.sdc.v6_5.compute.SDCComputeServiceAdapter;
 import org.jclouds.joyent.sdc.v6_5.compute.functions.DatasetInDatacenterToImage;
 import org.jclouds.joyent.sdc.v6_5.compute.functions.DatasetToOperatingSystem;
 import org.jclouds.joyent.sdc.v6_5.compute.functions.MachineInDatacenterToNodeMetadata;
+import org.jclouds.joyent.sdc.v6_5.compute.functions.OrphanedGroupsByDatacenterId;
 import org.jclouds.joyent.sdc.v6_5.compute.functions.PackageInDatacenterToHardware;
+import org.jclouds.joyent.sdc.v6_5.compute.internal.KeyAndPrivateKey;
+import org.jclouds.joyent.sdc.v6_5.compute.loaders.CreateUniqueKey;
+import org.jclouds.joyent.sdc.v6_5.compute.options.SDCTemplateOptions;
+import org.jclouds.joyent.sdc.v6_5.compute.strategy.ApplySDCTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.joyent.sdc.v6_5.domain.Dataset;
 import org.jclouds.joyent.sdc.v6_5.domain.Machine;
+import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatacenterAndName;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatasetInDatacenter;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.MachineInDatacenter;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.PackageInDatacenter;
@@ -48,10 +61,16 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * Module for building a compute service context for SDC
@@ -82,9 +101,35 @@ public class SDCComputeServiceContextModule extends
 
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
+
+      // how to figure out if a group in a datacenter is no longer in use
+      bind(new TypeLiteral<Function<Set<? extends NodeMetadata>, Multimap<String, String>>>() {
+      }).to(OrphanedGroupsByDatacenterId.class);
+
+      bind(ComputeService.class).to(SDCComputeService.class);
+      bind(TemplateOptions.class).to(SDCTemplateOptions.class);
+
+      bind(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class).to(
+      ApplySDCTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet.class);
+      
+      bind(new TypeLiteral<CacheLoader<DatacenterAndName, KeyAndPrivateKey>>() {
+      }).to(CreateUniqueKey.class);
+   }
+   
+   @Override
+   protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
+      return options.as(SDCTemplateOptions.class)
+                    .generateKey(injector.getInstance(
+                          com.google.inject.Key.get(boolean.class, Names.named(AUTOGENERATE_KEYS))));
    }
 
+   @Provides
+   @Singleton
+   protected LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyMap(
+         CacheLoader<DatacenterAndName, KeyAndPrivateKey> in) {
+      return CacheBuilder.newBuilder().build(in);
+   }
    @Provides
    @Singleton
    protected Supplier<Map<String, Location>> createLocationIndexedById(
@@ -104,6 +149,12 @@ public class SDCComputeServiceContextModule extends
          }
       }, locations);
 
+   }
+   
+   @Provides
+   @Singleton
+   protected SecureRandom provideSecureRandom() {
+      return new SecureRandom();
    }
 
    @VisibleForTesting

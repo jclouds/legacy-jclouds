@@ -25,6 +25,7 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.joyent.sdc.v6_5.compute.config.SDCComputeServiceContextModule;
 import org.jclouds.joyent.sdc.v6_5.config.DatacentersAreZonesModule;
+import org.jclouds.joyent.sdc.v6_5.config.SDCProperties;
 import org.jclouds.joyent.sdc.v6_5.config.SDCRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -62,6 +63,7 @@ public class SDCApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(SDCProperties.AUTOGENERATE_KEYS, "true");
       return properties;
    }
 

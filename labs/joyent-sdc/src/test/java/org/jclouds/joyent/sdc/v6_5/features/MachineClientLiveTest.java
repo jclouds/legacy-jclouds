@@ -78,7 +78,7 @@ public class MachineClientLiveTest extends BaseSDCClientLiveTest {
       }
    }
 
-   private Map<String, String> keypair;
+   private Map<String, String> key;
    private String fingerprint;
    private RetryablePredicate<HostAndPort> socketTester;
    private Predicate<Machine> machineRunning;
@@ -91,9 +91,9 @@ public class MachineClientLiveTest extends BaseSDCClientLiveTest {
    @Override
    public void setupContext() {
       super.setupContext();
-      keypair = SshKeys.generate();
-      fingerprint = SshKeys.fingerprintPublicKey(keypair.get("public"));
-      sdcContext.getApi().getKeyClient().create(Key.builder().name(fingerprint).key(keypair.get("public")).build());
+      key = SshKeys.generate();
+      fingerprint = SshKeys.fingerprintPublicKey(key.get("public"));
+      sdcContext.getApi().getKeyClient().create(Key.builder().name(fingerprint).key(key.get("public")).build());
       client = sdcContext.getApi().getMachineClientForDatacenter(
             Iterables.get(sdcContext.getApi().getConfiguredDatacenters(), 0));
       socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
@@ -123,8 +123,8 @@ public class MachineClientLiveTest extends BaseSDCClientLiveTest {
 
       assertEquals(newMachine.getMetadata().get("foo").toString(), "bar");
       assertTrue(
-            newMachine.getMetadata().get(MetadataKeys.ROOT_AUTHORIZED_KEYS.key()).indexOf(keypair.get("public")) != -1,
-            newMachine + "; key: " + keypair.get("public"));
+            newMachine.getMetadata().get(MetadataKeys.ROOT_AUTHORIZED_KEYS.key()).indexOf(key.get("public")) != -1,
+            newMachine + "; key: " + key.get("public"));
 
       assertTrue(machineRunning.apply(newMachine), newMachine.toString());
       machine = client.get(newMachine.getId());
@@ -142,7 +142,7 @@ public class MachineClientLiveTest extends BaseSDCClientLiveTest {
       HostAndPort socket = HostAndPort.fromParts(publicAddress, 22);
       assertTrue(socketTester.apply(socket), socket.toString());
       SshClient client = context.utils().injector().getInstance(SshClient.Factory.class)
-            .create(socket, LoginCredentials.builder().user("root").privateKey(keypair.get("private")).build());
+            .create(socket, LoginCredentials.builder().user("root").privateKey(key.get("private")).build());
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

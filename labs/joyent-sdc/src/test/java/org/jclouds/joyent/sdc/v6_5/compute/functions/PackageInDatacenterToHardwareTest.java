@@ -43,8 +43,8 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(testName = "PackageInDatacenterToHardwareTest")
 public class PackageInDatacenterToHardwareTest {
-   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("openstack-sdc").description(
-            "openstack-sdc").build();
+   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("joyent-sdc").description(
+            "joyent-sdc").build();
    Location zone = new LocationBuilder().id("us-sw-1").description("us-sw-1").scope(
             LocationScope.ZONE).parent(provider).build();
    Supplier<Map<String, Location>> locationIndex = Suppliers.<Map<String, Location>> ofInstance(ImmutableMap

@@ -92,9 +92,11 @@ public class SDCComputeServiceAdapter implements
       logger.trace("<< machine(%s)", machine.getId());
 
       MachineInDatacenter machineInDatacenter = new MachineInDatacenter(machine, datacenterId);
-      // TODO: credentials or password
-      // if (!privateKey.isPresent())
-      // credentialsBuilder.password(lightweightMachine.getAdminPass());
+
+      //TODO machineInDatacenter.metadata for password
+      if (template.getOptions().getLoginPrivateKey() != null){
+         credentialsBuilder.privateKey(template.getOptions().getLoginPrivateKey());
+      }
       return new NodeAndInitialCredentials<MachineInDatacenter>(machineInDatacenter, machineInDatacenter.slashEncode(),
             credentialsBuilder.build());
    }

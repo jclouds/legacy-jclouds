@@ -28,7 +28,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * @author Adam Lowe
+ * @author Adrian Cole
  */
 public class SDCTypeAdapters {
 

@@ -70,6 +70,10 @@ public class Machine implements Comparable<Machine> {
    public static Builder builder() {
       return new Builder();
    }
+   
+   public Builder toBuilder() {
+      return new Builder().fromMachine(this);
+   }
 
    public static class Builder {
       private String id;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,19 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.sdc.v6_5.config;
+package org.jclouds.joyent.sdc.v6_5.predicates;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.joyent.sdc.v6_5.domain.Key;
+
+import com.google.common.base.Predicate;
 
 /**
- * Configuration properties and constants used in joyent SDC connections.
+ * Predicates handy when working with Keys
  * 
  * @author Adrian Cole
  */
-public class SDCProperties {
+
+public class KeyPredicates {
+
 
    /**
-    * Whenever a node is created, automatically generate keys for groups, as needed, also
-    * delete the key(s) when the last node in the group is destroyed.
+    * matches name of the given key pair
+    * 
+    * @param name
+    * @return predicate that matches name
     */
-   public static final String AUTOGENERATE_KEYS = "jclouds.joyent-sdc.autogenerate-keys";
+   public static Predicate<Key> nameMatches(final Predicate<String> name) {
+      checkNotNull(name, "name must be defined");
 
+      return new Predicate<Key>() {
+         @Override
+         public boolean apply(Key ext) {
+            return name.apply(ext.getName());
+         }
+
+         @Override
+         public String toString() {
+            return "nameMatches(" + name + ")";
+         }
+      };
+   }
+  
 }

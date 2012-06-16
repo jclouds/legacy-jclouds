@@ -44,7 +44,7 @@ public class DatacenterAndName {
       
    };
    
-   public final static Function<DatacenterAndName, String> ZONE_FUNCTION = new Function<DatacenterAndName, String>(){
+   public final static Function<DatacenterAndName, String> DATACENTER_FUNCTION = new Function<DatacenterAndName, String>(){
 
       @Override
       public String apply(DatacenterAndName input) {
