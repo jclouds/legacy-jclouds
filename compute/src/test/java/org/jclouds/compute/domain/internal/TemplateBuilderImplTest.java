@@ -63,6 +63,9 @@ public class TemplateBuilderImplTest {
    protected Location region = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description("us-east-1")
          .parent(provider).build();
    
+   protected Location region2 = new LocationBuilder().scope(LocationScope.REGION).id("us-east-2").description("us-east-2")
+         .parent(provider).build();
+   
    @SuppressWarnings("unchecked")
    public void testLocationPredicateWhenComputeMetadataIsNotLocationBound() {
       Image image = createMock(Image.class);
@@ -852,6 +855,56 @@ public class TemplateBuilderImplTest {
       Template template = templateBuilder.build();
       assertEquals(template.getHardware().getHypervisor(), "OpenVZ");
       assertEquals(template.getImage().getId(), "Ubuntu 11.04 64-bit");
+
+   }
+   
+
+   @Test
+   public void testImageLocationNonDefault() {
+
+      final Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+            .<Location> of(region));
+      final Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
+            .<Image> of(
+                  new ImageBuilder()
+                        .id("us-east-2/ami-ffff")
+                        .providerId("ami-ffff")
+                        .name("Ubuntu 11.04 x64")
+                        .description("Ubuntu 11.04 x64")
+                        .location(region2)
+                        .status(Status.AVAILABLE)
+                        .operatingSystem(
+                              OperatingSystem.builder().name("Ubuntu 11.04 x64").description("Ubuntu 11.04 x64")
+                                    .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build()));
+
+      final Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of(
+                  new HardwareBuilder()
+                        .ids("m1.small").ram(512)
+                        .processors(ImmutableList.of(new Processor(1, 1.0)))
+                        .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) 5, true, true))).build()));
+
+      final Provider<TemplateOptions> optionsProvider = new Provider<TemplateOptions>() {
+
+         @Override
+         public TemplateOptions get() {
+            return new TemplateOptions();
+         }
+
+      };
+      Provider<TemplateBuilder> templateBuilderProvider = new Provider<TemplateBuilder>() {
+
+         @Override
+         public TemplateBuilder get() {
+            return createTemplateBuilder(null, locations, images, hardwares, region, optionsProvider, this);
+         }
+
+      };
+
+      TemplateBuilder templateBuilder = templateBuilderProvider.get().hardwareId("m1.small").imageId("us-east-2/ami-ffff");
+      
+      Template template = templateBuilder.build();
+      assertEquals(template.getLocation().getId(), "us-east-2");
 
    }
 }
