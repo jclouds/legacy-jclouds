@@ -18,8 +18,6 @@
  */
 package org.jclouds.epc.compute;
 
-import java.util.Properties;
-
 import org.jclouds.eucalyptus.compute.EucalyptusComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
@@ -35,14 +33,4 @@ public class EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest extends Euca
       // security groups must be <30 characters
       group = "eu";
    }
-
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = super.setupProperties();
-      if (System.getProperties().containsKey("test.eucalyptus-partnercloud-ec2.virtualization-type"))
-         overrides.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", System
-                  .getProperty("test.eucalyptus-partnercloud-ec2.virtualization-type"));
-      return overrides;
-   }
-
 }

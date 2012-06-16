@@ -165,7 +165,7 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
             }
          });
       } catch (NoSuchElementException e) {
-         logger.debug("could not find %s with id(%s) for server(%s)", type, objectId, serverInZone);
+         logger.trace("could not find %s with id(%s) for server(%s)", type, objectId, serverInZone);
       }
       return null;
    }

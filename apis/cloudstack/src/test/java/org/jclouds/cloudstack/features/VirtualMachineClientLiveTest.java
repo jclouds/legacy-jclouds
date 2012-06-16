@@ -181,8 +181,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateVirtualMachine() throws Exception {
-      String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
-      vm = createVirtualMachine(client, templateId, jobComplete, virtualMachineRunning);
+      String defaultTemplate = template != null ? template.getImageId() : null;
+      vm = createVirtualMachine(client, defaultTemplate, jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null) {
          conditionallyCheckSSH();
       }
@@ -195,12 +195,12 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVirtualMachineWithSpecificIp() throws Exception {
       skipIfNotGlobalAdmin();
 
-      String templateId = (imageId != null && !"".equals(imageId)) ? imageId : null;
+      String defaultTemplate = template != null ? template.getImageId() : null;
       Network network = null;
 
       try {
          Template template = getOnlyElement(
-            client.getTemplateClient().listTemplates(ListTemplatesOptions.Builder.id(templateId)));
+            client.getTemplateClient().listTemplates(ListTemplatesOptions.Builder.id(defaultTemplate)));
          logger.info("Using template: " + template);
 
          Set<Network> allSafeNetworksInZone = adminClient.getNetworkClient().listNetworks(
@@ -252,7 +252,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          ipsToNetworks.put(ipAddress, network.getId());
 
          vm = createVirtualMachineInNetworkWithIp(
-            adminClient, templateId, ImmutableSet.of(requiredNetwork, network),
+            adminClient, defaultTemplate, ImmutableSet.of(requiredNetwork, network),
             ipsToNetworks, adminJobComplete, adminVirtualMachineRunning);
          logger.info("Created VM: " + vm);
 

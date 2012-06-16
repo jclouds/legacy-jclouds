@@ -59,8 +59,7 @@ public abstract class BaseEC2ComputeServiceExpectTest<T> extends BaseRestClientE
    private static final class TestEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
       @Override
       @Provides
-      protected String provideTimeStamp(final DateService dateService,
-               @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
+      protected String provideTimeStamp(DateService dateService) {
          return CONSTANT_DATE;
       }
    }

@@ -27,12 +27,15 @@ import org.jclouds.snia.cdmi.v1.domain.Container;
  * Container Object Resource Operations
  * 
  * @see ContainerAsyncClient
- * @author Adrian Cole
+ * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerClient {
+	Container createContainer(String containerName);
 
-   Container getContainer(String containerName);
+	Container getContainer(String containerName);
+
+	void deleteContainer(String containerName);
 
 }

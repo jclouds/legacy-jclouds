@@ -455,11 +455,23 @@ public class RunScriptOptions {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("loginUser", loginUser)
-            .add("loginPasswordPresent", (loginPassword != null))
-            .add("loginPrivateKeyPresent", (loginPrivateKey != null)).add("authenticateSudo", authenticateSudo)
-            .add("port:seconds", port + ":" + seconds).add("taskName", taskName).add("runAsRoot", runAsRoot)
-            .add("blockOnComplete", blockOnComplete).add("wrapInInitScript", wrapInInitScript);
+      ToStringHelper toString = Objects.toStringHelper("").omitNullValues();
+      toString.add("loginUser", loginUser);
+      if (loginPassword != null)
+         toString.add("loginPasswordPresent", true);
+      if (loginPrivateKey != null)
+         toString.add("loginPrivateKeyPresent", true);
+      toString.add("authenticateSudo", authenticateSudo);
+      if (port != -1 && seconds != -1) // TODO: not primitives
+         toString.add("blockOnPort:seconds", port + ":" + seconds);
+      toString.add("taskName", taskName);
+      if (!runAsRoot)
+         toString.add("runAsRoot", runAsRoot);
+      if (!blockOnComplete)
+         toString.add("blockOnComplete", blockOnComplete);
+      if (!wrapInInitScript)
+         toString.add("wrapInInitScript", wrapInInitScript);
+      return toString;
    }
 
 }

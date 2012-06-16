@@ -139,7 +139,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testListRootUsesDelimiter() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         String prefix = "rootdelimeter";
+         String prefix = "rootdelimiter";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
          PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName);

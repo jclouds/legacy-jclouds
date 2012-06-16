@@ -39,7 +39,7 @@ import com.google.common.io.Resources;
  */
 public class EnvBuilderTest {
 
-   EnvBuilder testScriptBuilder = new EnvBuilder().export("javaHome",
+   EnvBuilder testScriptBuilder = new EnvBuilder().export("JAVA_HOME",
             "/apps/jdk1.6");
 
    @Test
@@ -59,8 +59,8 @@ public class EnvBuilderTest {
    @Test
    public void testExport() {
       EnvBuilder builder = new EnvBuilder();
-      builder.export("javaHome", "/apps/jdk1.6");
-      assertEquals(builder.variables, ImmutableMap.of("javaHome", "/apps/jdk1.6"));
+      builder.export("JAVA_HOME", "/apps/jdk1.6");
+      assertEquals(builder.variables, ImmutableMap.of("JAVA_HOME", "/apps/jdk1.6"));
    }
 
    @Test

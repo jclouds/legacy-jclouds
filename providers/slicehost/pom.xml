@@ -36,9 +36,9 @@
     <properties>
         <test.slicehost.endpoint>https://api.slicehost.com</test.slicehost.endpoint>
         <test.slicehost.api-version>1.4.1.1</test.slicehost.api-version>
-        <test.slicehost.build-version />
+        <test.slicehost.build-version></test.slicehost.build-version>
         <test.slicehost.identity>FIXME</test.slicehost.identity>
-        <test.slicehost.image-id />
+        <test.slicehost.template></test.slicehost.template>
 
         <jclouds.osgi.export>org.jclouds.slicehost*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -105,7 +105,7 @@
                                         <test.slicehost.api-version>${test.slicehost.api-version}</test.slicehost.api-version>
                                         <test.slicehost.build-version>${test.slicehost.build-version}</test.slicehost.build-version>
                                         <test.slicehost.identity>${test.slicehost.identity}</test.slicehost.identity>
-                                        <test.slicehost.image-id>${test.slicehost.image-id}</test.slicehost.image-id>
+                                        <test.slicehost.template>${test.slicehost.template}</test.slicehost.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

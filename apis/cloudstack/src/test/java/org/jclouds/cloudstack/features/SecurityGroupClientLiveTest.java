@@ -171,7 +171,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMInSecurityGroup() throws Exception {
       if (!securityGroupsSupported)
          return;
-      String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
+      String defaultTemplate = template != null ? template.getImageId() : null;
       vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(),
             defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), group.getId(), client,
             jobComplete, virtualMachineRunning);
@@ -200,7 +200,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMWithoutSecurityGroupAssignsDefault() throws Exception {
       if (!securityGroupsSupported)
          return;
-      String defaultTemplate = (imageId != null && !"".equals(imageId)) ? imageId : null;
+      String defaultTemplate = template != null ? template.getImageId() : null;
       VirtualMachine newVm = VirtualMachineClientLiveTest.createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions.NONE,
             zone.getId(), defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), client,
             jobComplete, virtualMachineRunning);

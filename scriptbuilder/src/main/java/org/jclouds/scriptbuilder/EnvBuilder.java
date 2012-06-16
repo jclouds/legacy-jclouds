@@ -42,6 +42,8 @@ public class EnvBuilder {
 
    /**
     * Exports a variable inside the script
+    * 
+    * @param name name of the variable in UPPER_UNDERSCORE case format
     */
    public EnvBuilder export(String name, String value) {
       variables.put(checkNotNull(name, "name"), checkNotNull(value, "value"));
@@ -66,7 +68,7 @@ public class EnvBuilder {
       builder.append(Utils.writeComment(" Example usage to set a variable", osFamily));
       builder.append(Utils.writeComment("", osFamily));
       builder.append(Utils.writeComment(" "
-               + Utils.writeVariableExporters(ImmutableMap.of("mavenOpts", "-Xms64m -Xmx128m"),
+               + Utils.writeVariableExporters(ImmutableMap.of("MAVEN_OPTS", "-Xms64m -Xmx128m"),
                         osFamily), osFamily));
       builder.append(Utils.writeVariableExporters(variables, osFamily));
       builder.append(ShellToken.LF.to(osFamily));

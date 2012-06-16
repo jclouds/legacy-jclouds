@@ -22,7 +22,7 @@ public interface DatasetClient {
     * 
     * @return
     */
-   Set<Dataset> listDatasets();
+   Set<Dataset> list();
 
    /**
     * Gets an individual dataset by id.
@@ -31,5 +31,5 @@ public interface DatasetClient {
     *           the id of the dataset
     * @return
     */
-   Dataset getDataset(String id);
+   Dataset get(String id);
 }

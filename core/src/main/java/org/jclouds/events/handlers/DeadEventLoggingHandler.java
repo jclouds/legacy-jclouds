@@ -47,6 +47,6 @@ public class DeadEventLoggingHandler
      */
     @Subscribe
     public final void handleDeadEvent(DeadEvent deadEvent) {
-        logger.warn("detected dead event %s", deadEvent.getEvent());
+        logger.trace("detected dead event %s", deadEvent.getEvent());
     }
 }

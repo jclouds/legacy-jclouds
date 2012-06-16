@@ -37,29 +37,29 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "PackageClientExpectTest")
 public class PackageClientExpectTest extends BaseSDCClientExpectTest {
-   HttpRequest listPackages = HttpRequest
+   HttpRequest list = HttpRequest
          .builder()
          .method("GET")
-         .endpoint(URI.create("https://api.joyentcloud.com/my/packages"))
+         .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/packages"))
          .headers(
                ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
                      .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                      .build()).build();
 
    public void testListPackagesWhenResponseIs2xx() {
-      HttpResponse listPackagesResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/package_list.json")).build();
 
-      SDCClient clientWhenPackagesExists = requestSendsResponse(listPackages, listPackagesResponse);
+      SDCClient clientWhenPackagesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(clientWhenPackagesExists.getPackageClient().listPackages(), new ParsePackageListTest().expected());
+      assertEquals(clientWhenPackagesExists.getPackageClientForDatacenter("us-sw-1").list(), new ParsePackageListTest().expected());
    }
 
    public void testListPackagesWhenResponseIs404() {
-      HttpResponse listPackagesResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
-      SDCClient listPackagesWhenNone = requestSendsResponse(listPackages, listPackagesResponse);
+      SDCClient listWhenNone = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
-      assertEquals(listPackagesWhenNone.getPackageClient().listPackages(), ImmutableSet.of());
+      assertEquals(listWhenNone.getPackageClientForDatacenter("us-sw-1").list(), ImmutableSet.of());
    }
 }

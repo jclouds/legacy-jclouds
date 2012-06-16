@@ -29,6 +29,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.Reservation;
+import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -57,7 +58,7 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       assert dateService != null;
    }
 
-   public void testApplyInputStream() {
+   public void testEC2() {
 
       InputStream is = getClass().getResourceAsStream("/run_instances.xml");
 
@@ -83,6 +84,26 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                .availabilityZone("us-east-1b").build())
 
       , "AIDADH4IGTRXXKCD", null, "r-47a5402e");
+
+      RunInstancesResponseHandler handler = injector.getInstance(RunInstancesResponseHandler.class);
+      addDefaultRegionToHandler(handler);
+      Reservation<? extends RunningInstance> result = factory.create(handler).parse(is);
+      assertEquals(result.toString(), expected.toString());
+   }
+
+   public void testCloudBridge() {
+
+      InputStream is = getClass().getResourceAsStream("/run_instances_cloudbridge.xml");
+
+      Reservation<? extends RunningInstance> expected = new Reservation<RunningInstance>(defaultRegion, ImmutableSet
+               .of("default"), ImmutableSet.of(
+
+      new RunningInstance.Builder().region(defaultRegion).groupId("jclouds#greenqloud-computeblock").amiLaunchIndex("0")
+               .imageId("qmi-9ac92558").instanceId("i-01b0dac3").instanceState(InstanceState.PENDING).rawState(
+                        "pending").instanceType(InstanceType.M1_SMALL).keyName("jclouds#greenqloud-computeblock#35")
+                        .launchTime(dateService.iso8601DateParse("2012-06-15T19:06:35.000+00:00"))
+                        .rootDeviceType(RootDeviceType.EBS).availabilityZone("is-1a").build())
+      , "56eeacd9-c790-45c3-85f3-e4380b55e1d8<", null, "r-f847a6ca");
 
       RunInstancesResponseHandler handler = injector.getInstance(RunInstancesResponseHandler.class);
       addDefaultRegionToHandler(handler);

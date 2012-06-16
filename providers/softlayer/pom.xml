@@ -50,13 +50,10 @@
   <properties>
     <test.softlayer.endpoint>https://api.softlayer.com/rest</test.softlayer.endpoint>
     <test.softlayer.api-version>3</test.softlayer.api-version>
-    <test.softlayer.build-version />
+    <test.softlayer.build-version></test.softlayer.build-version>
     <test.softlayer.identity>FIXME</test.softlayer.identity>
     <test.softlayer.credential>FIXME</test.softlayer.credential>
-    <test.softlayer.image-id />
-    <test.softlayer.image.login-user />
-    <test.softlayer.image.authenticate-sudo />
-
+    <test.softlayer.template></test.softlayer.template>
     <jclouds.osgi.export>org.jclouds.softlayer*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -120,9 +117,7 @@
                     <test.softlayer.build-version>${test.softlayer.build-version}</test.softlayer.build-version>
                     <test.softlayer.identity>${test.softlayer.identity}</test.softlayer.identity>
                     <test.softlayer.credential>${test.softlayer.credential}</test.softlayer.credential>
-                    <test.softlayer.image-id>${test.softlayer.image-id}</test.softlayer.image-id>
-                    <test.softlayer.image.login-user>${test.softlayer.image.login-user}</test.softlayer.image.login-user>
-                    <test.softlayer.image.authenticate-sudo>${test.softlayer.image.authenticate-sudo}</test.softlayer.image.authenticate-sudo>
+                    <test.softlayer.template>${test.softlayer.template}</test.softlayer.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

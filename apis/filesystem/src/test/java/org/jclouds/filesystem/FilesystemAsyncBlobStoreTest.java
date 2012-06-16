@@ -858,7 +858,7 @@ public class FilesystemAsyncBlobStoreTest {
 
         // nothing expected
         if (null == expectedBlobKeys || 0 == expectedBlobKeys.size()) {
-            assertTrue(blobsRetrieved.isEmpty(), "Wrong blob number retrieved in the containter [" + containerName + "]");
+            assertTrue(blobsRetrieved.isEmpty(), "Wrong blob number retrieved in the container [" + containerName + "]");
             return;
         }
 
@@ -868,7 +868,7 @@ public class FilesystemAsyncBlobStoreTest {
             expectedBlobKeysCopy.add(value);
         }
         assertEquals(blobsRetrieved.size(), expectedBlobKeysCopy.size(),
-                "Wrong blob number retrieved in the containter [" + containerName + "]");
+                "Wrong blob number retrieved in the container [" + containerName + "]");
         for (StorageMetadata data : blobsRetrieved) {
             String blobName = data.getName();
             if (!expectedBlobKeysCopy.remove(blobName)) {

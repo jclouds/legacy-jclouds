@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.apis.BaseViewLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.TemplateBuilderSpec;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
@@ -41,9 +42,7 @@ import com.google.inject.util.Modules;
  */
 public abstract class BaseGenericComputeServiceContextLiveTest<W extends ComputeServiceContext> extends BaseViewLiveTest<W> {
 
-   protected String imageId;
-   protected String loginUser;
-   protected String authenticateSudo;
+   protected TemplateBuilderSpec template;
    protected LoginCredentials loginCredentials = LoginCredentials.builder().user("root").build();
 
    // isolate tests from eachother, as default credentialStore is static
@@ -53,19 +52,19 @@ public abstract class BaseGenericComputeServiceContextLiveTest<W extends Compute
    @Override
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
-      imageId = setIfTestSystemPropertyPresent(overrides, provider + ".image-id");
-      loginUser = setIfTestSystemPropertyPresent(overrides, provider + ".image.login-user");
-      authenticateSudo = setIfTestSystemPropertyPresent(overrides, provider + ".image.authenticate-sudo");
-
-      if (loginUser != null) {
-         Iterable<String> userPass = Splitter.on(':').split(loginUser);
-         Builder loginCredentialsBuilder = LoginCredentials.builder();
-         loginCredentialsBuilder.user(Iterables.get(userPass, 0));
-         if (Iterables.size(userPass) == 2)
-            loginCredentialsBuilder.password(Iterables.get(userPass, 1));
-         if (authenticateSudo != null)
-            loginCredentialsBuilder.authenticateSudo(Boolean.valueOf(authenticateSudo));
-         loginCredentials = loginCredentialsBuilder.build();
+      String spec = setIfTestSystemPropertyPresent(overrides, provider + ".template");
+      if (spec != null) {
+         template = TemplateBuilderSpec.parse(spec);
+         if (template.getLoginUser() != null) {
+            Iterable<String> userPass = Splitter.on(':').split(template.getLoginUser());
+            Builder loginCredentialsBuilder = LoginCredentials.builder();
+            loginCredentialsBuilder.user(Iterables.get(userPass, 0));
+            if (Iterables.size(userPass) == 2)
+               loginCredentialsBuilder.password(Iterables.get(userPass, 1));
+            if (template.getAuthenticateSudo() != null)
+               loginCredentialsBuilder.authenticateSudo(template.getAuthenticateSudo());
+            loginCredentials = loginCredentialsBuilder.build();
+         }
       }
       return overrides;
    }

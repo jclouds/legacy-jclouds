@@ -36,13 +36,11 @@
   <properties>
     <test.openstack-nova-ec2.endpoint>http://localhost:8773/services/Cloud</test.openstack-nova-ec2.endpoint>
     <test.openstack-nova-ec2.api-version>2010-06-15</test.openstack-nova-ec2.api-version>
-    <test.openstack-nova-ec2.build-version />
+    <test.openstack-nova-ec2.build-version></test.openstack-nova-ec2.build-version>
     <test.openstack-nova-ec2.identity>FIXME_IDENTITY</test.openstack-nova-ec2.identity>
     <test.openstack-nova-ec2.credential>FIXME_CREDENTIAL</test.openstack-nova-ec2.credential>
-    <test.openstack-nova-ec2.image-id />
-    <test.openstack-nova-ec2.image.login-user />
-    <test.openstack-nova-ec2.image.authenticate-sudo />
-
+    <test.openstack-nova-ec2.template></test.openstack-nova-ec2.template>
+    <test.openstack-nova-ec2.ebs-template></test.openstack-nova-ec2.ebs-template>
     <jclouds.osgi.export>org.jclouds.openstack.nova.ec2*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -120,9 +118,8 @@
                     <test.openstack-nova-ec2.build-version>${test.openstack-nova-ec2.build-version}</test.openstack-nova-ec2.build-version>
                     <test.openstack-nova-ec2.identity>${test.openstack-nova-ec2.identity}</test.openstack-nova-ec2.identity>
                     <test.openstack-nova-ec2.credential>${test.openstack-nova-ec2.credential}</test.openstack-nova-ec2.credential>
-                    <test.openstack-nova-ec2.image-id>${test.openstack-nova-ec2.image-id}</test.openstack-nova-ec2.image-id>
-                    <test.openstack-nova-ec2.image.login-user>${test.openstack-nova-ec2.image.login-user}</test.openstack-nova-ec2.image.login-user>
-                    <test.openstack-nova-ec2.image.authenticate-sudo>${test.openstack-nova-ec2.image.authenticate-sudo}</test.openstack-nova-ec2.image.authenticate-sudo>
+                    <test.openstack-nova-ec2.template>${test.openstack-nova-ec2.template}</test.openstack-nova-ec2.template>
+                    <test.openstack-nova-ec2.ebs-template>${test.openstack-nova-ec2.ebs-template}</test.openstack-nova-ec2.ebs-template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

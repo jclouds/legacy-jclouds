@@ -22,32 +22,20 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.sdc.v6_5.SDCClient;
 import org.jclouds.joyent.sdc.v6_5.internal.BaseSDCClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "DatacenterClientExpectTest")
 public class DatacenterClientExpectTest extends BaseSDCClientExpectTest {
-   HttpRequest getDatacenters = HttpRequest
-         .builder()
-         .method("GET")
-         .endpoint(URI.create("https://api.joyentcloud.com/my/datacenters"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
-                     .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-                     .build()).build();
 
    public void testGetDatacentersWhenResponseIs2xx() {
-      HttpResponse getDatacentersResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/datacenters.json")).build();
 
       SDCClient clientWhenDatacentersExists = requestSendsResponse(getDatacenters, getDatacentersResponse);
 

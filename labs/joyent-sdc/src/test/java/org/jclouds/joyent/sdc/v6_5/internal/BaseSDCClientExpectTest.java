@@ -18,7 +18,13 @@
  */
 package org.jclouds.joyent.sdc.v6_5.internal;
 
+import java.net.URI;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.sdc.v6_5.SDCClient;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Base class for writing KeyStone Rest Client Expect tests
@@ -26,5 +32,17 @@ import org.jclouds.joyent.sdc.v6_5.SDCClient;
  * @author Adrian Cole
  */
 public class BaseSDCClientExpectTest extends BaseSDCExpectTest<SDCClient> {
-
+   protected HttpRequest getDatacenters = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://api.joyentcloud.com/my/datacenters"))
+         .headers(
+               ImmutableMultimap.<String, String> builder()
+                  .put("X-Api-Version", "~6.5")
+                  .put("Accept", "application/json")
+                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                  .build()).build();
+   
+   protected HttpResponse getDatacentersResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/datacenters.json")).build();
 }

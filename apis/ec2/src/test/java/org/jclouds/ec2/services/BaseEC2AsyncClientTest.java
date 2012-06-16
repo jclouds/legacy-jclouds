@@ -79,7 +79,7 @@ public abstract class BaseEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
       }
       
       @Override
-      protected String provideTimeStamp(DateService dateService, int expiration) {
+      protected String provideTimeStamp(DateService dateService) {
          return "2009-11-08T15:54:08.897Z";
       }
 

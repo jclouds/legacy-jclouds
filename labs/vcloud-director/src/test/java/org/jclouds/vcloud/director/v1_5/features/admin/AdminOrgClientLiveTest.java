@@ -408,7 +408,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                      orgRef.getHref(), restorableSettings);
          } catch (Exception e) {
             if (exception != null) {
-               logger.warn(e, "Error reseting settings; rethrowing origina test exception...");
+               logger.warn(e, "Error resetting settings; rethrowing original test exception...");
                throw exception;
             } else {
                throw e;

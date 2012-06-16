@@ -24,6 +24,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.tryFind;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
@@ -57,6 +58,8 @@ import org.jclouds.util.Lists2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
@@ -403,27 +406,23 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    private Predicate<Hardware> buildHardwarePredicate() {
       List<Predicate<Hardware>> predicates = newArrayList();
-      if (hardwareId != null) {
-         predicates.add(hardwareIdPredicate);
-      } else {
-         if (location != null)
-            predicates.add(new Predicate<Hardware>() {
+      if (location != null)
+         predicates.add(new Predicate<Hardware>() {
 
-               @Override
-               public boolean apply(Hardware input) {
-                  return locationPredicate.apply(input);
-               }
+            @Override
+            public boolean apply(Hardware input) {
+               return locationPredicate.apply(input);
+            }
 
-               @Override
-               public String toString() {
-                  return locationPredicate.toString();
-               }
-            });
-         if (hypervisor != null)
-            predicates.add(hypervisorPredicate);
-         predicates.add(hardwareCoresPredicate);
-         predicates.add(hardwareRamPredicate);
-      }
+            @Override
+            public String toString() {
+               return locationPredicate.toString();
+            }
+         });
+      if (hypervisor != null)
+         predicates.add(hypervisorPredicate);
+      predicates.add(hardwareCoresPredicate);
+      predicates.add(hardwareRamPredicate);
 
       // looks verbose, but explicit <Hardware> type needed for this to compile
       // properly
@@ -612,35 +611,87 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
       Set<? extends Image> images = getImages();
+      Set<? extends Hardware> hardwaresToSearch = hardwares.get();
+
+      Image image = null;
+      if (imageId != null) {
+         image = findImageWithId(images);
+         if (currentLocationWiderThan(image.getLocation()))
+            this.location = image.getLocation();
+      }
+      
+      Hardware hardware = null;
+      if (hardwareId != null) {
+         hardware = findHardwareWithId(hardwaresToSearch);
+         if (currentLocationWiderThan(hardware.getLocation()))
+            this.location = hardware.getLocation();
+      }
+      
+      // if the user hasn't specified a location id, or an image or hardware
+      // with location, let's search scoped to the implicit one
       if (location == null)
          location = defaultLocation.get();
       
-      Predicate<Image> imagePredicate = buildImagePredicate();
-      Iterable<? extends Image> supportedImages = filter(images, imagePredicate);
-      if (size(supportedImages) == 0) {
-         if (imagePredicate == idPredicate) {
-            throwNoSuchElementExceptionAfterLoggingImageIds(format("%s not found", idPredicate), images);
-         } else {
-            throwNoSuchElementExceptionAfterLoggingImageIds(format("no image matched predicate: %s", imagePredicate),
-                     images);
-         }
+      if (image == null) {
+         Iterable<? extends Image> supportedImages = findSupportedImages(images);
+         if (hardware == null)
+            hardware = resolveHardware(hardwaresToSearch, supportedImages);
+         image = resolveImage(hardware, supportedImages);
+      } else {
+         if (hardware == null)
+            hardware = resolveHardware(hardwaresToSearch, ImmutableSet.of(image));
       }
 
-      Hardware hardware = resolveHardware(hardwareSorter(), supportedImages);
-      Image image = resolveImage(hardware, supportedImages);
-      logger.debug("<<   matched image(%s)", image.getId());
+      logger.debug("<<   matched image(%s) hardware(%s) location(%s)", image.getId(), hardware.getId(),
+            location.getId());
       return new TemplateImpl(image, hardware, location, options);
    }
 
-   protected void throwNoSuchElementExceptionAfterLoggingImageIds(String message, Iterable<? extends Image> images) {
+   private Iterable<? extends Image> findSupportedImages(Set<? extends Image> images) {
+      Predicate<Image> imagePredicate = buildImagePredicate();
+      Iterable<? extends Image> supportedImages = filter(images, imagePredicate);
+      if (size(supportedImages) == 0) {
+         throw throwNoSuchElementExceptionAfterLoggingImageIds(
+               format("no image matched predicate: %s", imagePredicate), images);
+      }
+      return supportedImages;
+   }
+
+   private Image findImageWithId(Set<? extends Image> images) {
+      Image image;
+      // TODO: switch to GetImageStrategy in version 1.5
+      image = tryFind(images, idPredicate).orNull();
+      if (image == null)
+         throwNoSuchElementExceptionAfterLoggingImageIds(format("%s not found", idPredicate), images);
+      return image;
+   }
+
+   private Hardware findHardwareWithId(Set<? extends Hardware> hardwaresToSearch) {
+      Hardware hardware;
+      // TODO: switch to GetHardwareStrategy in version 1.5
+      hardware = tryFind(hardwaresToSearch, hardwareIdPredicate).orNull();
+      if (hardware == null)
+         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(format("%s not found", hardwareIdPredicate),
+               hardwaresToSearch);
+      return hardware;
+   }
+
+   protected NoSuchElementException throwNoSuchElementExceptionAfterLoggingImageIds(String message, Iterable<? extends Image> images) {
       NoSuchElementException exception = new NoSuchElementException(message);
       if (logger.isTraceEnabled())
          logger.warn(exception, "image ids that didn't match: %s", transform(images, imageToId));
       throw exception;
    }
 
-   protected Hardware resolveHardware(Ordering<Hardware> hardwareOrdering, final Iterable<? extends Image> images) {
-      Set<? extends Hardware> hardwarel = hardwares.get();
+   protected NoSuchElementException throwNoSuchElementExceptionAfterLoggingHardwareIds(String message, Iterable<? extends Hardware> hardwares) {
+      NoSuchElementException exception = new NoSuchElementException(message);
+      if (logger.isTraceEnabled())
+         logger.warn(exception, "hardware ids that didn't match: %s", transform(hardwares, hardwareToId));
+      throw exception;
+   }
+   
+   protected Hardware resolveHardware(Set<? extends Hardware> hardwarel, final Iterable<? extends Image> images) {
+      Ordering<Hardware> hardwareOrdering = hardwareSorter();
       Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = ImmutableSet.of();
       try {
          hardwaresThatAreCompatibleWithOurImages = filter(hardwarel, new Predicate<Hardware>() {
@@ -667,11 +718,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
       if (size(hardwaresThatAreCompatibleWithOurImages) == 0) {
          String message = format("no hardware profiles support images matching params: %s", toString());
-         NoSuchElementException exception = new NoSuchElementException(message);
-         if (logger.isTraceEnabled())
-            logger.warn(exception, "hardware profiles %s\nimage ids %s", transform(hardwarel, hardwareToId), transform(
-                     images, imageToId));
-         throw exception;
+         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwaresThatAreCompatibleWithOurImages);
       }
       Predicate<Hardware> hardwarePredicate = buildHardwarePredicate();
       Hardware hardware;
@@ -679,13 +726,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          hardware = hardwareOrdering.max(filter(hardwaresThatAreCompatibleWithOurImages, hardwarePredicate));
       } catch (NoSuchElementException exception) {
          String message = format("no hardware profiles match params: %s", hardwarePredicate);
-         exception = new NoSuchElementException(message);
-         if (logger.isTraceEnabled())
-            logger.warn(exception, "hardware profiles %s", transform(hardwaresThatAreCompatibleWithOurImages,
-                     hardwareToId));
-         throw exception;
+         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwaresThatAreCompatibleWithOurImages);
       }
-      logger.debug("<<   matched hardware(%s)", hardware.getId());
+      logger.trace("<<   matched hardware(%s)", hardware.getId());
       return hardware;
    }
 
@@ -741,59 +784,55 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    private Predicate<Image> buildImagePredicate() {
       List<Predicate<Image>> predicates = newArrayList();
-      if (imageId != null) {
-         predicates.add(idPredicate);
-      } else {
-         if (location != null)
-            predicates.add(new Predicate<Image>() {
+      if (location != null)
+         predicates.add(new Predicate<Image>() {
 
-               @Override
-               public boolean apply(Image input) {
-                  return locationPredicate.apply(input);
-               }
+            @Override
+            public boolean apply(Image input) {
+               return locationPredicate.apply(input);
+            }
 
-               @Override
-               public String toString() {
-                  return locationPredicate.toString();
-               }
-            });
+            @Override
+            public String toString() {
+               return locationPredicate.toString();
+            }
+         });
 
-         final List<Predicate<OperatingSystem>> osPredicates = newArrayList();
-         if (osFamily != null)
-            osPredicates.add(osFamilyPredicate);
-         if (osName != null)
-            osPredicates.add(osNamePredicate);
-         if (osDescription != null)
-            osPredicates.add(osDescriptionPredicate);
-         if (osVersion != null)
-            osPredicates.add(osVersionPredicate);
-         if (os64Bit != null)
-            osPredicates.add(os64BitPredicate);
-         if (osArch != null)
-            osPredicates.add(osArchPredicate);
-         if (osPredicates.size() > 0)
-            predicates.add(new Predicate<Image>() {
+      final List<Predicate<OperatingSystem>> osPredicates = newArrayList();
+      if (osFamily != null)
+         osPredicates.add(osFamilyPredicate);
+      if (osName != null)
+         osPredicates.add(osNamePredicate);
+      if (osDescription != null)
+         osPredicates.add(osDescriptionPredicate);
+      if (osVersion != null)
+         osPredicates.add(osVersionPredicate);
+      if (os64Bit != null)
+         osPredicates.add(os64BitPredicate);
+      if (osArch != null)
+         osPredicates.add(osArchPredicate);
+      if (osPredicates.size() > 0)
+         predicates.add(new Predicate<Image>() {
 
-               @Override
-               public boolean apply(Image input) {
-                  return and(osPredicates).apply(input.getOperatingSystem());
-               }
+            @Override
+            public boolean apply(Image input) {
+               return and(osPredicates).apply(input.getOperatingSystem());
+            }
 
-               @Override
-               public String toString() {
-                  return and(osPredicates).toString();
-               }
+            @Override
+            public String toString() {
+               return and(osPredicates).toString();
+            }
 
-            });
-         if (imageVersion != null)
-            predicates.add(imageVersionPredicate);
-         if (imageName != null)
-            predicates.add(imageNamePredicate);
-         if (imageDescription != null)
-            predicates.add(imageDescriptionPredicate);
-         if (imagePredicate != null)
-            predicates.add(imagePredicate);
-      }
+         });
+      if (imageVersion != null)
+         predicates.add(imageVersionPredicate);
+      if (imageName != null)
+         predicates.add(imageNamePredicate);
+      if (imageDescription != null)
+         predicates.add(imageDescriptionPredicate);
+      if (imagePredicate != null)
+         predicates.add(imagePredicate);
 
       // looks verbose, but explicit <Image> type needed for this to compile
       // properly
@@ -958,11 +997,40 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Override
    public String toString() {
-      return "[biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName + ", imageDescription="
-            + imageDescription + ", imageId=" + imageId + ", imagePredicate=" + imagePredicate + ", imageVersion=" + imageVersion + ", location=" + location
-            + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName=" + osName
-            + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch + ", os64Bit="
-            + os64Bit + ", hardwareId=" + hardwareId + ", hypervisor=" + hypervisor + "]";
+      return string().toString();
+   }
+
+   /**
+    * @since 1.5
+    */
+   protected ToStringHelper string() {
+      ToStringHelper toString = Objects.toStringHelper("").omitNullValues();
+      if (biggest)
+         toString.add("biggest", biggest);
+      if (fastest)
+         toString.add("fastest", fastest);
+      toString.add("imageName", imageName);
+      toString.add("imageDescription", imageDescription);
+      toString.add("imageId", imageId);
+      toString.add("imagePredicate", imagePredicate);
+      toString.add("imageVersion", imageVersion);
+      if (location != null)
+         toString.add("locationId", location.getId());
+      if (minCores >0) //TODO: make non-primitive
+         toString.add("minCores", minCores);
+      if (minRam >0) //TODO: make non-primitive
+         toString.add("minRam", minRam);
+      if (minRam >0) //TODO: make non-primitive
+         toString.add("minRam", minRam);
+      toString.add("osFamily", osFamily);
+      toString.add("osName", osName);
+      toString.add("osDescription", osDescription);
+      toString.add("osVersion", osVersion);
+      toString.add("osArch", osArch);
+      toString.add("os64Bit", os64Bit);
+      toString.add("hardwareId", hardwareId);
+      toString.add("hypervisor", hypervisor);
+      return toString;
    }
 
    @Override

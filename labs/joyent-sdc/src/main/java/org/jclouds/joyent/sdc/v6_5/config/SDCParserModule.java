@@ -38,7 +38,7 @@ public class SDCParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Machine.State.class, new SDCTypeAdapters.ServerStateAdapter(), Type.class,
+      return ImmutableMap.<Type, Object> of(Machine.State.class, new SDCTypeAdapters.MachineStateAdapter(), Type.class,
             new SDCTypeAdapters.SDCTypeAdapter());
    }
 

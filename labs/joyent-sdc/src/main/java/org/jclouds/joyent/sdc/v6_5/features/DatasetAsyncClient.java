@@ -32,20 +32,20 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 public interface DatasetAsyncClient {
    /**
-    * @see DatasetClient#listMachines
+    * @see DatasetClient#list
     */
    @GET
    @Path("/my/datasets")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Dataset>> listDatasets();
+   ListenableFuture<Set<Dataset>> list();
 
    /**
-    * @see DatasetClient#getMachineDetails
+    * @see DatasetClient#get
     */
    @GET
    @Path("/my/datasets/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Dataset> getDataset(@PathParam("id") String id);
+   ListenableFuture<Dataset> get(@PathParam("id") String id);
 }

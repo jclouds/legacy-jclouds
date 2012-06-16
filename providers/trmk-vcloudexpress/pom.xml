@@ -36,10 +36,10 @@
     <properties>
         <test.trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</test.trmk-vcloudexpress.endpoint>
         <test.trmk-vcloudexpress.api-version>0.8a-ext1.6</test.trmk-vcloudexpress.api-version>
-        <test.trmk-vcloudexpress.build-version />
+        <test.trmk-vcloudexpress.build-version></test.trmk-vcloudexpress.build-version>
         <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
         <test.trmk-vcloudexpress.credential>FIXME</test.trmk-vcloudexpress.credential>
-        <test.trmk-vcloudexpress.image-id />
+        <test.trmk-vcloudexpress.template></test.trmk-vcloudexpress.template>
 
         <jclouds.osgi.export>org.jclouds.trmk.ecloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -114,7 +114,7 @@
                                         <test.trmk-vcloudexpress.build-version>${test.trmk-vcloudexpress.build-version}</test.trmk-vcloudexpress.build-version>
                                         <test.trmk-vcloudexpress.identity>${test.trmk-vcloudexpress.identity}</test.trmk-vcloudexpress.identity>
                                         <test.trmk-vcloudexpress.credential>${test.trmk-vcloudexpress.credential}</test.trmk-vcloudexpress.credential>
-                                        <test.trmk-vcloudexpress.image-id>${test.trmk-vcloudexpress.image-id}</test.trmk-vcloudexpress.image-id>
+                                        <test.trmk-vcloudexpress.template>${test.trmk-vcloudexpress.template}</test.trmk-vcloudexpress.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

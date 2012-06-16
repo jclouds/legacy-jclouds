@@ -90,7 +90,7 @@ public class SudoAwareInitManager {
       String command = (runAsRoot && Predicates.in(ImmutableSet.of("start", "stop", "run")).apply(action)) ? execScriptAsRoot(action)
             : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
-      if ("status".equals(action))
+      if (ImmutableSet.of("status", "stdout", "stderr").contains(action))
          logger.trace("<< %s(%d)", action, returnVal.getExitStatus());
       else if (computeLogger.isTraceEnabled())
          computeLogger.trace("<< %s[%s]", action, returnVal);
@@ -103,8 +103,8 @@ public class SudoAwareInitManager {
       String statement = String.format("[%s] as %s@%s", command.replace(
             node.getCredentials().getPassword() != null ? node.getCredentials().getPassword() : "XXXXX", "XXXXX"), ssh
             .getUsername(), ssh.getHostAddress());
-      if (command.endsWith("status"))
-         logger.trace(">> running " + statement);
+      if (command.endsWith("status") || command.endsWith("stdout") || command.endsWith("stderr"))
+         logger.trace(">> running %s", statement);
       else 
          computeLogger.debug(">> running " + statement);
       ExecResponse returnVal = ssh.exec(command);

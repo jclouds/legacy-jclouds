@@ -152,7 +152,7 @@ public class TemplateBuilderSpec implements Serializable {
          .put("authenticateSudo", new AuthenticateSudoParser())
          .put("locationId", new LocationIdParser())
          .build();
-   
+
    @VisibleForTesting
    String hardwareId;
    @VisibleForTesting
@@ -553,4 +553,63 @@ public class TemplateBuilderSpec implements Serializable {
       }
    }
    
+   public String getHardwareId() {
+      return hardwareId;
+   }
+
+   public Double getMinCores() {
+      return minCores;
+   }
+
+   public Integer getMinRam() {
+      return minRam;
+   }
+
+   public String getHypervisorMatches() {
+      return hypervisorMatches;
+   }
+
+   public String getImageId() {
+      return imageId;
+   }
+
+   public String getImageNameMatches() {
+      return imageNameMatches;
+   }
+
+   public OsFamily getOsFamily() {
+      return osFamily;
+   }
+
+   public String getOsVersionMatches() {
+      return osVersionMatches;
+   }
+
+   public Boolean getOs64Bit() {
+      return os64Bit;
+   }
+
+   public String getOsArchMatches() {
+      return osArchMatches;
+   }
+
+   public String getOsDescriptionMatches() {
+      return osDescriptionMatches;
+   }
+
+   public String getLoginUser() {
+      return loginUser;
+   }
+
+   public Boolean getAuthenticateSudo() {
+      return authenticateSudo;
+   }
+
+   public String getLocationId() {
+      return locationId;
+   }
+
+   public String getSpecification() {
+      return specification;
+   }
 }

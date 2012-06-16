@@ -21,7 +21,7 @@ public interface PackageClient {
     * 
     * @return
     */
-   Set<org.jclouds.joyent.sdc.v6_5.domain.Package> listPackages();
+   Set<org.jclouds.joyent.sdc.v6_5.domain.Package> list();
 
    /**
     * Gets an individual package by id.
@@ -30,5 +30,5 @@ public interface PackageClient {
     *           the name of the package
     * @return
     */
-   org.jclouds.joyent.sdc.v6_5.domain.Package getPackage(String name);
+   org.jclouds.joyent.sdc.v6_5.domain.Package get(String name);
 }

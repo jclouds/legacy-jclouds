@@ -36,10 +36,10 @@
     <properties>
         <test.gogrid.endpoint>https://api.gogrid.com/api</test.gogrid.endpoint>
         <test.gogrid.api-version>1.5</test.gogrid.api-version>
-        <test.gogrid.build-version />
+        <test.gogrid.build-version></test.gogrid.build-version>
         <test.gogrid.identity>FIXME</test.gogrid.identity>
         <test.gogrid.credential>FIXME</test.gogrid.credential>
-        <test.gogrid.image-id />
+        <test.gogrid.template></test.gogrid.template>
 
         <jclouds.osgi.export>org.jclouds.gogrid*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -106,7 +106,7 @@
                                         <test.gogrid.build-version>${test.gogrid.build-version}</test.gogrid.build-version>
                                         <test.gogrid.identity>${test.gogrid.identity}</test.gogrid.identity>
                                         <test.gogrid.credential>${test.gogrid.credential}</test.gogrid.credential>
-                                        <test.gogrid.image-id>${test.gogrid.image-id}</test.gogrid.image-id>
+                                        <test.gogrid.template>${test.gogrid.template}</test.gogrid.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

@@ -25,4 +25,10 @@ package org.jclouds.joyent.sdc.v6_5.config;
  */
 public class SDCProperties {
 
+   /**
+    * Whenever a node is created, automatically generate keys for groups, as needed, also
+    * delete the key(s) when the last node in the group is destroyed.
+    */
+   public static final String AUTOGENERATE_KEYS = "jclouds.joyent-sdc.autogenerate-keys";
+
 }

@@ -39,10 +39,7 @@
     <test.ninefold-compute.build-version />
     <test.ninefold-compute.identity>FIXME_IDENTITY</test.ninefold-compute.identity>
     <test.ninefold-compute.credential>FIXME_CREDENTIAL</test.ninefold-compute.credential>
-    <test.ninefold-compute.image-id>1215</test.ninefold-compute.image-id>
-    <test.ninefold-compute.image.login-user>user:Password01</test.ninefold-compute.image.login-user>
-    <test.ninefold-compute.image.authenticate-sudo>true</test.ninefold-compute.image.authenticate-sudo>
-
+    <test.ninefold-compute.template>imageId=1215,loginUser=user:Password01,authenticateSudo=true</test.ninefold-compute.template>
     <jclouds.osgi.export>org.jclouds.ninefold.compute*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -116,9 +113,7 @@
                     <test.ninefold-compute.build-version>${test.ninefold-compute.build-version}</test.ninefold-compute.build-version>
                     <test.ninefold-compute.identity>${test.ninefold-compute.identity}</test.ninefold-compute.identity>
                     <test.ninefold-compute.credential>${test.ninefold-compute.credential}</test.ninefold-compute.credential>
-                    <test.ninefold-compute.image-id>${test.ninefold-compute.image-id}</test.ninefold-compute.image-id>
-                    <test.ninefold-compute.image.login-user>${test.ninefold-compute.image.login-user}</test.ninefold-compute.image.login-user>
-                    <test.ninefold-compute.image.authenticate-sudo>${test.ninefold-compute.image.authenticate-sudo}</test.ninefold-compute.image.authenticate-sudo>
+                    <test.ninefold-compute.template>${test.ninefold-compute.template}</test.ninefold-compute.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

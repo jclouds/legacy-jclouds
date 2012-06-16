@@ -18,7 +18,6 @@
  */
 package org.jclouds.scriptbuilder.util;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -27,6 +26,7 @@ import java.util.regex.Pattern;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.functionloader.CurrentFunctionLoader;
+import org.jclouds.util.Maps2;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -41,27 +41,34 @@ import com.google.common.collect.Iterables;
  */
 public class Utils {
 
-   public static final LowerCamelToUpperUnderscore FUNCTION_LOWER_CAMEL_TO_UPPER_UNDERSCORE = new LowerCamelToUpperUnderscore();
+   /**
+    * 
+    * In {@link ShellToken}, the values whose names end in {@code _VARIABLE} designate variable
+    * names we know how to translate from one platform to another. For example
+    * {@link ShellToken#LIBRARY_PATH_VARIABLE} means that we can translate the variable named
+    * {@code LIBRARY_PATH} to the proper platform-specific name.
+    */
+   public static final class VariableNameForOsFamily implements Function<String, String> {
+      private final OsFamily family;
 
-   public static final class LowerCamelToUpperUnderscore implements Function<String, String> {
+      public VariableNameForOsFamily(OsFamily family) {
+         this.family = family;
+      }
+
       @Override
-      public String apply(String from) {
-         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, from);
+      public String apply(String input) {
+         String variableNameKey = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, input) + "Variable";
+         if (ShellToken.tokenValueMap(family).containsKey(variableNameKey))
+            return ShellToken.tokenValueMap(family).get(variableNameKey);
+         return input;
       }
    }
 
-   public static final UpperUnderscoreToLowerCamel FUNCTION_UPPER_UNDERSCORE_TO_LOWER_CAMEL = new UpperUnderscoreToLowerCamel();
-
-   public static final class UpperUnderscoreToLowerCamel implements Function<String, String> {
-      @Override
-      public String apply(String from) {
-         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, from);
-      }
-   }
-
-   /** matches any expression inside curly braces (where the expression does not including an open curly brace) */
+   /**
+    * matches any expression inside curly braces (where the expression does not including an open
+    * curly brace)
+    */
    private static final Pattern pattern = Pattern.compile("\\{([^\\{]+?)\\}");
-
 
    /**
     * replaces tokens that are expressed as <code>{token}</code>
@@ -96,32 +103,31 @@ public class Utils {
    /**
     * converts a map into variable exports relevant to the specified platform.
     * <p/>
-    * ex. if variablesInLowerCamelCase is "mavenOpts" -> "-Xms64m -Xmx256m" <br/>
+    * ex. if {@code keys} is the map: "MAVEN_OPTS" -> "-Xms64m -Xmx256m" <br/>
     * and family is UNIX<br/>
     * then writeVariableExporters returns literally {@code export MAVEN_OPTS="-Xms64m -Xmx256m"\n}
     * 
-    * @param variablesInLowerCamelCase
-    *           lower camel keys to values
+    * @param exports
+    *           keys are the variables to export in UPPER_UNDERSCORE case format
     * @param family
     *           operating system for formatting
+    * @see VariableNameForOsFamily
     */
-   public static String writeVariableExporters(Map<String, String> variablesInLowerCamelCase,
-            OsFamily family) {
-      return replaceTokens(writeVariableExporters(variablesInLowerCamelCase), ShellToken
-               .tokenValueMap(family));
+   public static String writeVariableExporters(Map<String, String> exports, final OsFamily family) {
+      exports = Maps2.transformKeys(exports, new VariableNameForOsFamily(family));
+      return replaceTokens(writeVariableExporters(exports), ShellToken.tokenValueMap(family));
    }
 
    /**
     * converts a map into variable exporters in shell intermediate language.
     * 
-    * @param variablesInLowerCamelCase
-    *           lower camel keys to values
+    * @param exports
+    *           keys are the variables to export in UPPER_UNDERSCORE case format
     */
-   public static String writeVariableExporters(Map<String, String> variablesInLowerCamelCase) {
+   public static String writeVariableExporters(Map<String, String> exports) {
       StringBuilder initializers = new StringBuilder();
-      for (Entry<String, String> entry : variablesInLowerCamelCase.entrySet()) {
-         String key = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, entry.getKey());
-         initializers.append(String.format("{export} %s={vq}%s{vq}{lf}", key, entry.getValue()));
+      for (Entry<String, String> entry : exports.entrySet()) {
+         initializers.append(String.format("{export} %s={vq}%s{vq}{lf}", entry.getKey(), entry.getValue()));
       }
       return initializers.toString();
    }
@@ -131,36 +137,34 @@ public class Utils {
    }
 
    public static String writeFunctionFromResource(String function, OsFamily family) {
-         String toReturn = CurrentFunctionLoader.get().loadFunction(function,family);
-         String lf = ShellToken.LF.to(family);
-         return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
+      String toReturn = CurrentFunctionLoader.get().loadFunction(function, family);
+      String lf = ShellToken.LF.to(family);
+      return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
    }
 
-  public static String writeFunction(String function, String source) {
+   public static String writeFunction(String function, String source) {
       return String.format("{fncl}%s{fncr}%s{fnce}", function, source.replaceAll("^", "   "));
    }
 
-   public static final Map<OsFamily, String> OS_TO_POSITIONAL_VAR_PATTERN = ImmutableMap.of(
-            OsFamily.UNIX, "set {key}=$1\nshift\n", OsFamily.WINDOWS, "set {key}=%1\r\nshift\r\n");
+   public static final Map<OsFamily, String> OS_TO_POSITIONAL_VAR_PATTERN = ImmutableMap.of(OsFamily.UNIX,
+            "set {key}=$1\nshift\n", OsFamily.WINDOWS, "set {key}=%1\r\nshift\r\n");
 
-   public static final Map<OsFamily, String> OS_TO_LOCAL_VAR_PATTERN = ImmutableMap.of(
-            OsFamily.UNIX, "set {key}=\"{value}\"\n", OsFamily.WINDOWS, "set {key}={value}\r\n");
+   public static final Map<OsFamily, String> OS_TO_LOCAL_VAR_PATTERN = ImmutableMap.of(OsFamily.UNIX,
+            "set {key}=\"{value}\"\n", OsFamily.WINDOWS, "set {key}={value}\r\n");
 
    /**
     * Writes an initialization statement for use inside a script or a function.
     * 
-    * @param positionalVariablesInLowerCamelCase
+    * @param positionalVariables
     *           - transfer the value of args into these statements. Note that there is no check to
     *           ensure that all source args are indeed present.
+    * 
     */
-   public static String writePositionalVars(List<String> positionalVariablesInLowerCamelCase,
-            OsFamily family) {
+   public static String writePositionalVars(Iterable<String> positionalVariables, OsFamily family) {
       StringBuilder initializers = new StringBuilder();
-      for (String variableInLowerCamelCase : positionalVariablesInLowerCamelCase) {
-         String key = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE,
-                  variableInLowerCamelCase);
-         initializers.append(replaceTokens(OS_TO_POSITIONAL_VAR_PATTERN.get(family), ImmutableMap
-                  .of("key", key)));
+      for (String positionalVariable : positionalVariables) {
+         initializers.append(replaceTokens(OS_TO_POSITIONAL_VAR_PATTERN.get(family), ImmutableMap.of("key",
+                  positionalVariable)));
       }
       return initializers.toString();
    }
@@ -168,22 +172,20 @@ public class Utils {
    /**
     * Ensures that variables come from a known source instead of bleeding in from a profile
     * 
-    * @param variablesInLowerCamelCase
+    * @param variablesToUnset
     *           - System variables to unset
+    * @see VariableNameForOsFamily
     */
-   public static String writeUnsetVariables(List<String> variablesInLowerCamelCase, OsFamily family) {
+   public static String writeUnsetVariables(Iterable<String> variablesToUnset, OsFamily family) {
+      variablesToUnset = Iterables.transform(variablesToUnset, new VariableNameForOsFamily(family));
       switch (family) {
          case UNIX:
-            return String.format("unset %s\n", Joiner.on(' ').join(
-                     Iterables.transform(variablesInLowerCamelCase,
-                              FUNCTION_LOWER_CAMEL_TO_UPPER_UNDERSCORE)));
+            return String.format("unset %s\n", Joiner.on(' ').join(variablesToUnset));
          case WINDOWS:
             StringBuilder initializers = new StringBuilder();
-            for (String variableInLowerCamelCase : variablesInLowerCamelCase) {
-               String key = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE,
-                        variableInLowerCamelCase);
-               initializers.append(replaceTokens(OS_TO_LOCAL_VAR_PATTERN.get(family), ImmutableMap
-                        .of("key", key, "value", "")));
+            for (String variableToUnset : variablesToUnset) {
+               initializers.append(replaceTokens(OS_TO_LOCAL_VAR_PATTERN.get(family), ImmutableMap.of("key",
+                        variableToUnset, "value", "")));
             }
             return initializers.toString();
          default:
@@ -193,8 +195,8 @@ public class Utils {
    }
 
    public static final Map<OsFamily, String> OS_TO_ZERO_PATH = ImmutableMap.of(OsFamily.WINDOWS,
-            "set PATH=c:\\windows\\;C:\\windows\\system32;c:\\windows\\system32\\wbem\r\n",
-            OsFamily.UNIX, "export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin\n");
+            "set PATH=c:\\windows\\;C:\\windows\\system32;c:\\windows\\system32\\wbem\r\n", OsFamily.UNIX,
+            "export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin\n");
 
    /**
     * @return line used to zero out the path of the script such that basic commands such as unix ps

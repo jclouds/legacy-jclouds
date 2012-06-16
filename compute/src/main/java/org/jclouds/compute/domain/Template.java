@@ -47,4 +47,11 @@ public interface Template extends Cloneable {
     * options for launching this template, like run scripts or inbound ports
     */
    TemplateOptions getOptions();
+   
+   /**
+    * clone this template
+    * 
+    * @see Object#clone
+    */
+   Template clone();
 }

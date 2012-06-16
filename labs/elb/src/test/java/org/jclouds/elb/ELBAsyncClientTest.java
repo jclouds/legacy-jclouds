@@ -23,9 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import javax.inject.Named;
-
-import org.jclouds.Constants;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
@@ -162,8 +159,7 @@ public class ELBAsyncClientTest extends BaseAsyncClientTest<ELBAsyncClient> {
       }
 
       @Override
-      protected String provideTimeStamp(final DateService dateService,
-            @Named(Constants.PROPERTY_SESSION_INTERVAL) int expiration) {
+      protected String provideTimeStamp(final DateService dateService) {
          return "2009-11-08T15:54:08.897Z";
       }
    }

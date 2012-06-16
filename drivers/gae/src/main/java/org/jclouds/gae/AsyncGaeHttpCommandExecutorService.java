@@ -96,7 +96,7 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
          request = filter.filter(request);
       }
       checkRequestHasContentLengthOrChunkedEncoding(request,
-            "After filtering, the request has niether chunked encoding nor content length: " + request);
+            "After filtering, the request has neither chunked encoding nor content length: " + request);
       logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
       wirePayloadIfEnabled(wire, request);
       HTTPRequest nativeRequest = convertToGaeRequest.apply(request);

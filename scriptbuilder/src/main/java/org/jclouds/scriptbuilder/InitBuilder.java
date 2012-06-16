@@ -67,10 +67,13 @@ public class InitBuilder extends ScriptBuilder {
       this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement> of(), statements);
    }
 
+   /**
+    * @param variables keys are the variables to export in UPPER_UNDERSCORE case format
+    */
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
          Iterable<Statement> initStatements, Iterable<Statement> statements) {
-      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
-            instanceHome, "logDir", logDir);
+      Map<String, String> defaultVariables = ImmutableMap.of("INSTANCE_NAME", instanceName, "INSTANCE_HOME",
+            instanceHome, "LOG_DIR", logDir);
       this.initStatement = new StatementList(initStatements);
       this.createRunScript = createRunScript(instanceName,// TODO: convert
             // so
@@ -79,9 +82,9 @@ public class InitBuilder extends ScriptBuilder {
             // can take from a
             // variable
             Iterables.concat(variables.keySet(), defaultVariables.keySet()), "{varl}INSTANCE_HOME{varr}", statements);
-      this.instanceName = checkNotNull(instanceName, "instanceName");
-      this.instanceHome = checkNotNull(instanceHome, "instanceHome");
-      this.logDir = checkNotNull(logDir, "logDir");
+      this.instanceName = checkNotNull(instanceName, "INSTANCE_NAME");
+      this.instanceHome = checkNotNull(instanceHome, "INSTANCE_HOME");
+      this.logDir = checkNotNull(logDir, "LOG_DIR");
 
       addEnvironmentVariableScope("default", defaultVariables)
             .addEnvironmentVariableScope(instanceName, variables)

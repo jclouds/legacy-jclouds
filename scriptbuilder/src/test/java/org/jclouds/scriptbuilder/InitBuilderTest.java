@@ -45,7 +45,7 @@ import com.google.common.io.Resources;
 @Deprecated
 public class InitBuilderTest {
 
-   InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
+   InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("TMP_DIR",
          "/mnt/tmp"), ImmutableList.<Statement> of(
          appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")),
          exec("find /")));
@@ -69,7 +69,7 @@ public class InitBuilderTest {
             new InitBuilder("mkebsboot",// name of the script
                   "/tmp",// working directory
                   "/tmp/logs",// location of stdout.log and stderr.log
-                  ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"),// variables
+                  ImmutableMap.of("IMAGE_DIR", "/mnt/tmp", "EBS_DEVICE", "/dev/sdh", "EBS_MOUNT_POINT", "/mnt/ebs"),// variables
                                                                                                                 // used
                                                                                                                 // inside
                                                                                                                 // of

@@ -31,20 +31,20 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 public interface PackageAsyncClient {
    /**
-    * @see PackageClient#listPackages
+    * @see PackageClient#list
     */
    @GET
    @Path("/my/packages")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<org.jclouds.joyent.sdc.v6_5.domain.Package>> listPackages();
+   ListenableFuture<Set<org.jclouds.joyent.sdc.v6_5.domain.Package>> list();
 
    /**
-    * @see PackageClient#getPackageDetails
+    * @see PackageClient#get
     */
    @GET
    @Path("/my/packages/{name}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<org.jclouds.joyent.sdc.v6_5.domain.Package> getPackage(@PathParam("name") String name);
+   ListenableFuture<org.jclouds.joyent.sdc.v6_5.domain.Package> get(@PathParam("name") String name);
 }

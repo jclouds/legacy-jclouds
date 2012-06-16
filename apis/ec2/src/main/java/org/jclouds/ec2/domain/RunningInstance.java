@@ -269,9 +269,9 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.dnsName = dnsName; // nullable on runinstances.
       this.imageId = imageId; // nullable on runinstances.
       this.instanceId = checkNotNull(instanceId, "instanceId");
-      this.instanceState = checkNotNull(instanceState, "instanceState");
-      this.rawState = checkNotNull(rawState, "rawState");
-      this.instanceType = checkNotNull(instanceType, "instanceType");
+      this.instanceState = checkNotNull(instanceState, "instanceState for %s/%s", region, instanceId);
+      this.rawState = checkNotNull(rawState, "rawState for %s/%s", region, instanceId);
+      this.instanceType = checkNotNull(instanceType, "instanceType for %s/%s", region, instanceId);
       this.ipAddress = ipAddress;
       this.kernelId = kernelId;
       this.keyName = keyName;
@@ -283,10 +283,10 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.privateIpAddress = privateIpAddress;// nullable on runinstances.
       this.ramdiskId = ramdiskId;
       this.reason = reason;
-      this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
+      this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType for %s/%s", region, instanceId);
       this.rootDeviceName = rootDeviceName;
-      this.ebsBlockDevices = ImmutableMap.copyOf(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
-      this.groupIds = ImmutableSet.copyOf(checkNotNull(groupIds, "groupIds"));
+      this.ebsBlockDevices = ImmutableMap.copyOf(checkNotNull(ebsBlockDevices, "ebsBlockDevices for %s/%s", region, instanceId));
+      this.groupIds = ImmutableSet.copyOf(checkNotNull(groupIds, "groupIds for %s/%s", region, instanceId));
    }
 
    /**

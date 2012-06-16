@@ -36,10 +36,10 @@
     <properties>
         <test.elastichosts-sat-p.endpoint>https://api.sat-p.elastichosts.com</test.elastichosts-sat-p.endpoint>
         <test.elastichosts-sat-p.api-version>2.0</test.elastichosts-sat-p.api-version>
-        <test.elastichosts-sat-p.build-version />
+        <test.elastichosts-sat-p.build-version></test.elastichosts-sat-p.build-version>
         <test.elastichosts-sat-p.identity>FIXME_IDENTITY</test.elastichosts-sat-p.identity>
         <test.elastichosts-sat-p.credential>FIXME_CREDENTIAL</test.elastichosts-sat-p.credential>
-        <test.elastichosts-sat-p.image-id />
+        <test.elastichosts-sat-p.template></test.elastichosts-sat-p.template>
 
         <jclouds.osgi.export>org.jclouds.elastichosts*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
@@ -113,7 +113,7 @@
                                         <test.elastichosts-sat-p.build-version>${test.elastichosts-sat-p.build-version}</test.elastichosts-sat-p.build-version>
                                         <test.elastichosts-sat-p.identity>${test.elastichosts-sat-p.identity}</test.elastichosts-sat-p.identity>
                                         <test.elastichosts-sat-p.credential>${test.elastichosts-sat-p.credential}</test.elastichosts-sat-p.credential>
-                                        <test.elastichosts-sat-p.image-id>${test.elastichosts-sat-p.image-id}</test.elastichosts-sat-p.image-id>
+                                        <test.elastichosts-sat-p.template>${test.elastichosts-sat-p.template}</test.elastichosts-sat-p.template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

@@ -225,7 +225,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                         }
                         String eTag = client.completeMultipartUpload(container, key, uploadId, etags);
                         logger.debug(String.format("multipart upload of %s to container %s with uploadId %s" +
-                        		" succeffully finished with %s retries", key, container, uploadId, errors.get()));
+                            " successfully finished with %s retries", key, container, uploadId, errors.get()));
                         return eTag;
                      } catch (Exception ex) {
                         RuntimeException rtex = Throwables2.getFirstThrowableOfType(ex, RuntimeException.class);

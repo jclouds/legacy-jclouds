@@ -36,13 +36,10 @@
   <properties>
     <test.trystack-nova.endpoint>https://nova-api.trystack.org:5443</test.trystack-nova.endpoint>
     <test.trystack-nova.api-version>1.1</test.trystack-nova.api-version>
-    <test.trystack-nova.build-version />
+    <test.trystack-nova.build-version></test.trystack-nova.build-version>
     <test.trystack-nova.identity>FIXME_IDENTITY</test.trystack-nova.identity>
     <test.trystack-nova.credential>FIXME_CREDENTIAL</test.trystack-nova.credential>
-    <test.trystack-nova.image-id />
-    <test.trystack-nova.image.login-user />
-    <test.trystack-nova.image.authenticate-sudo />
-
+    <test.trystack-nova.template></test.trystack-nova.template>
     <jclouds.osgi.export>org.jclouds.trystack.nova*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -122,9 +119,7 @@
                     <test.trystack-nova.build-version>${test.trystack-nova.build-version}</test.trystack-nova.build-version>
                     <test.trystack-nova.identity>${test.trystack-nova.identity}</test.trystack-nova.identity>
                     <test.trystack-nova.credential>${test.trystack-nova.credential}</test.trystack-nova.credential>
-                    <test.trystack-nova.image-id>${test.trystack-nova.image-id}</test.trystack-nova.image-id>
-                    <test.trystack-nova.image.login-user>${test.trystack-nova.image.login-user}</test.trystack-nova.image.login-user>
-                    <test.trystack-nova.image.authenticate-sudo>${test.trystack-nova.image.authenticate-sudo}</test.trystack-nova.image.authenticate-sudo>
+                    <test.trystack-nova.template>${test.trystack-nova.template}</test.trystack-nova.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

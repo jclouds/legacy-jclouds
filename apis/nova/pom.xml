@@ -36,14 +36,12 @@
   <properties>
     <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
     <test.nova.api-version>1.1</test.nova.api-version>
-    <test.nova.build-version />
+    <test.nova.build-version></test.nova.build-version>
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
-    <test.nova.image-id />
-    <test.nova.image.login-user />
-    <test.nova.image.authenticate-sudo />
-    <test.ssh.keyfile.public />
-    <test.ssh.keyfile.private />
+    <test.nova.template></test.nova.template>
+    <test.ssh.keyfile.public></test.ssh.keyfile.public>
+    <test.ssh.keyfile.private></test.ssh.keyfile.private>
 
     <jclouds.osgi.export>org.jclouds.openstack.nova*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
@@ -122,9 +120,7 @@
                     <test.nova.build-version>${test.nova.build-version}</test.nova.build-version>
                     <test.nova.identity>${test.nova.identity}</test.nova.identity>
                     <test.nova.credential>${test.nova.credential}</test.nova.credential>
-                    <test.nova.image-id>${test.nova.image-id}</test.nova.image-id>
-                    <test.nova.image.login-user>${test.nova.image.login-user}</test.nova.image.login-user>
-                    <test.nova.image.authenticate-sudo>${test.nova.image.authenticate-sudo}</test.nova.image.authenticate-sudo>
+                    <test.nova.template>${test.nova.template}</test.nova.template>
                     <test.ssh.keyfile.public>${test.ssh.keyfile.public}</test.ssh.keyfile.public>
                     <test.ssh.keyfile.private>${test.ssh.keyfile.private}</test.ssh.keyfile.private>
                   </systemPropertyVariables>

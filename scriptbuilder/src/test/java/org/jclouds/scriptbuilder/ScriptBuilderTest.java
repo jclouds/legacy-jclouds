@@ -49,8 +49,8 @@ import com.google.common.io.Resources;
 public class ScriptBuilderTest {
 
    ScriptBuilder testScriptBuilder = new ScriptBuilder()
-         .unsetEnvironmentVariable("runtime")
-         .addEnvironmentVariableScope("default", ImmutableMap.of("runtime", "Moo"))
+         .unsetEnvironmentVariable("RUNTIME")
+         .addEnvironmentVariableScope("default", ImmutableMap.of("RUNTIME", "Moo"))
          .addStatement(
                switchArg(1, ImmutableMap.of(
                      "start",
@@ -132,8 +132,8 @@ public class ScriptBuilderTest {
    @Test
    public void testExport() {
       ScriptBuilder builder = new ScriptBuilder();
-      builder.addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
-      assertEquals(builder.variableScopes, ImmutableMap.of("default", ImmutableMap.of("javaHome", "/apps/jdk1.6")));
+      builder.addEnvironmentVariableScope("default", ImmutableMap.of("JAVA_HOME", "/apps/jdk1.6"));
+      assertEquals(builder.variableScopes, ImmutableMap.of("default", ImmutableMap.of("JAVA_HOME", "/apps/jdk1.6")));
    }
 
    @Test

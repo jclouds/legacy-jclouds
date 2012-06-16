@@ -112,7 +112,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                               ".InUse")))
                      || (message != null && (message.indexOf("already exists") != -1 || message.indexOf("is in use") != -1)))
                exception = new IllegalStateException(message, exception);
-            else if ("AuthFailure".equals(errorCode))
+            else if (errorCode != null && errorCode.indexOf("AuthFailure") != -1)
                exception = new AuthorizationException(message, exception);
             else if (message != null
                      && (message.indexOf("Invalid id") != -1 || message.indexOf("Failed to bind") != -1))

@@ -47,7 +47,7 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -163,12 +163,14 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
 
    public static final String PREFIX = System.getProperty("user.name") + "ec2";
 
-   @AfterTest
-   public void shutdown() {
+   @Override
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       if (group != null) {
          client.getPlacementGroupServices().deletePlacementGroupInRegion(group.getRegion(), group.getName());
          assert deletedTester.apply(group) : group;
       }
+      super.tearDownContext();
    }
    
    @Override

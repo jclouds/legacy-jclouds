@@ -45,6 +45,7 @@ public class TemplateOptionsTest {
    public void testinstallPrivateKey() throws IOException {
       TemplateOptions options = new TemplateOptions();
       options.installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.toString(), "{privateKeyPresent=true}");
       assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
@@ -75,6 +76,7 @@ public class TemplateOptionsTest {
    public void testauthorizePublicKey() throws IOException {
       TemplateOptions options = new TemplateOptions();
       options.authorizePublicKey("ssh-rsa");
+      assertEquals(options.toString(), "{publicKeyPresent=true}");
       assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
@@ -105,6 +107,7 @@ public class TemplateOptionsTest {
    public void testblockOnPort() {
       TemplateOptions options = new TemplateOptions();
       options.blockOnPort(22, 30);
+      assertEquals(options.toString(), "{blockOnPort:seconds=22:30}");
       assertEquals(options.getPort(), 22);
       assertEquals(options.getSeconds(), 30);
 
@@ -148,6 +151,7 @@ public class TemplateOptionsTest {
    @Test
    public void testinboundPortsStatic() {
       TemplateOptions options = inboundPorts(22, 30);
+      assertEquals(options.toString(), "{inboundPorts=[22, 30]}");
       assertEquals(options.getInboundPorts()[0], 22);
       assertEquals(options.getInboundPorts()[1], 30);
    }
@@ -155,6 +159,7 @@ public class TemplateOptionsTest {
    @Test
    public void testblockUntilRunningDefault() {
       TemplateOptions options = new TemplateOptions();
+      assertEquals(options.toString(), "{}");
       assertEquals(options.shouldBlockUntilRunning(), true);
    }
 
@@ -162,6 +167,7 @@ public class TemplateOptionsTest {
    public void testblockUntilRunning() {
       TemplateOptions options = new TemplateOptions();
       options.blockUntilRunning(false);
+      assertEquals(options.toString(), "{blockUntilRunning=false}");
       assertEquals(options.shouldBlockUntilRunning(), false);
    }
 

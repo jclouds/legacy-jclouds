@@ -114,6 +114,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "TerminateInstances")
    @XMLResponseParser(InstanceStateChangeHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<? extends InstanceStateChange>> terminateInstancesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);

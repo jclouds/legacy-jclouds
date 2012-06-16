@@ -49,7 +49,7 @@ public class InitMetadata {
       this.stopDir = checkNotNull(stopDir, "stopDir");
       this.configDir = checkNotNull(configDir, "configDir");
       this.dataDir = checkNotNull(dataDir, "dataDir");
-      this.logDir = checkNotNull(logDir, "logDir");
+      this.logDir = checkNotNull(logDir, "LOG_DIR");
       this.goldDir = checkNotNull(goldDir, "goldDir");
    }
 

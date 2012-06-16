@@ -60,7 +60,7 @@ public abstract class BasePayload<V> implements Payload {
     */
    @Override
    public void writeTo(OutputStream outstream) throws IOException {
-      checkState(!written || isRepeatable(), "can only be writted to an outputstream once");
+      checkState(!written || isRepeatable(), "can only write to an outputStream once");
       written = true;
       InputStream in = getInput();
       try {

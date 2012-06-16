@@ -57,7 +57,7 @@ public class ScriptBuilder implements Statement, AcceptsStatementVisitor {
    Map<String, Map<String, String>> variableScopes = Maps.newLinkedHashMap();
 
    @VisibleForTesting
-   List<String> variablesToUnset = Lists.newArrayList("path", "javaHome", "libraryPath");
+   List<String> variablesToUnset = Lists.newArrayList("PATH", "JAVA_HOME", "LIBRARY_PATH");
 
    public ScriptBuilder addStatement(Statement statement) {
       statements.add(checkNotNull(statement, "statement"));
@@ -66,6 +66,7 @@ public class ScriptBuilder implements Statement, AcceptsStatementVisitor {
 
    /**
     * Unsets a variable to ensure it is set within the script.
+    * @param variable name in UPPER_UNDERSCORE case format
     */
    public ScriptBuilder unsetEnvironmentVariable(String name) {
       variablesToUnset.add(checkNotNull(name, "name"));
@@ -74,6 +75,8 @@ public class ScriptBuilder implements Statement, AcceptsStatementVisitor {
 
    /**
     * Exports a variable inside the script
+    * @param scopeName
+    * @param variables keys are the variables to export in UPPER_UNDERSCORE case format
     */
    public ScriptBuilder addEnvironmentVariableScope(String scopeName, Map<String, String> variables) {
       variableScopes.put(checkNotNull(scopeName, "scopeName"), checkNotNull(variables, "variables"));
@@ -112,22 +115,12 @@ public class ScriptBuilder implements Statement, AcceptsStatementVisitor {
       functions.put("abort", Utils.writeFunctionFromResource("abort", osFamily));
 
       for (Entry<String, Map<String, String>> entry : variableScopes.entrySet()) {
-         functions.put(entry.getKey(),
-               Utils.writeFunction(entry.getKey(), Utils.writeVariableExporters(entry.getValue())));
+         functions.put(entry.getKey(), Utils.writeFunction(entry.getKey(), Utils.writeVariableExporters(entry
+                  .getValue(), osFamily)));
       }
-      final Map<String, String> tokenValueMap = ShellToken.tokenValueMap(osFamily);
       StringBuilder builder = new StringBuilder();
       builder.append(ShellToken.BEGIN_SCRIPT.to(osFamily));
-      builder.append(Utils.writeUnsetVariables(
-            Lists.newArrayList(Iterables.transform(variablesToUnset, new Function<String, String>() {
-               @Override
-               public String apply(String from) {
-                  if (tokenValueMap.containsKey(from + "Variable"))
-                     return Utils.FUNCTION_UPPER_UNDERSCORE_TO_LOWER_CAMEL.apply(tokenValueMap.get(from + "Variable"));
-                  return from;
-               }
-
-            })), osFamily));
+      builder.append(Utils.writeUnsetVariables(variablesToUnset, osFamily));
       Map<String, String> functionsToWrite = resolveFunctionDependenciesForStatements(functions, statements, osFamily);
       writeFunctions(functionsToWrite, osFamily, builder);
       builder.append(Utils.writeZeroPath(osFamily));
