@@ -140,6 +140,7 @@ public class TemplateBuilderSpec implements Serializable {
          .put("hardwareId", new HardwareIdParser())
          .put("minCores", new MinCoresParser())
          .put("minRam", new MinRamParser())
+         .put("minDisk", new MinDiskParser())
          .put("hypervisorMatches", new HypervisorMatchesMatchesParser())
          .put("imageId", new ImageIdParser())
          .put("imageNameMatches", new ImageNameMatchesParser())
@@ -159,6 +160,8 @@ public class TemplateBuilderSpec implements Serializable {
    Double minCores;
    @VisibleForTesting
    Integer minRam;
+   @VisibleForTesting
+   Double minDisk;
    @VisibleForTesting
    String hypervisorMatches;
    @VisibleForTesting
@@ -237,6 +240,9 @@ public class TemplateBuilderSpec implements Serializable {
       }
       if (minRam != null) {
          builder.minRam(minRam);
+      }
+      if (minDisk != null) {
+         builder.minDisk(minDisk);
       }
       if (hypervisorMatches != null) {
          builder.hypervisorMatches(hypervisorMatches);
@@ -433,6 +439,16 @@ public class TemplateBuilderSpec implements Serializable {
          checkArgument(spec.minRam == null, "min ram was already set to ", spec.minRam);
          checkArgument(spec.hardwareId == null, "hardware id was already set to ", spec.hardwareId);
          spec.minRam = value;
+      }
+   }
+
+   /** Parse minDisk */
+   static class MinDiskParser extends DoubleParser {
+      @Override
+      protected void parseDouble(TemplateBuilderSpec spec, double value) {
+         checkArgument(spec.minDisk == null, "min disk was already set to ", spec.minDisk);
+         checkArgument(spec.hardwareId == null, "hardware id was already set to ", spec.hardwareId);
+         spec.minDisk = value;
       }
    }
    

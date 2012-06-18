@@ -53,6 +53,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -72,6 +73,7 @@ public class TemplateBuilderSpecTest {
       assertEquals(spec.hardwareId, "m1.small");
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -122,6 +124,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertEquals(32, spec.minCores.intValue());
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -164,6 +167,26 @@ public class TemplateBuilderSpecTest {
       assertTemplateBuilderEquivalence(templateBuilders.get().minRam(10), templateBuilders.get().from(spec));
    }
 
+   public void testParse_minDisk() {
+      TemplateBuilderSpec spec = parse("minDisk=10");
+      assertNull(spec.hardwareId);
+      assertNull(spec.minCores);
+      assertNull(spec.minRam);
+      assertEquals(spec.minDisk.doubleValue(), 10.0);
+      assertNull(spec.hypervisorMatches);
+      assertNull(spec.imageId);
+      assertNull(spec.imageNameMatches);
+      assertNull(spec.osFamily);
+      assertNull(spec.osVersionMatches);
+      assertNull(spec.os64Bit);
+      assertNull(spec.osArchMatches);
+      assertNull(spec.osDescriptionMatches);
+      assertNull(spec.loginUser);
+      assertNull(spec.authenticateSudo);
+      assertNull(spec.locationId);
+      assertTemplateBuilderEquivalence(templateBuilders.get().minRam(10), templateBuilders.get().from(spec));
+   }
+
    public void testParse_minRamRepeated() {
       try {
          parse("minRam=10, minRam=20");
@@ -178,6 +201,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertEquals(spec.hypervisorMatches, "OpenVZ");
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -206,6 +230,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertEquals(spec.imageId, "us-east-1/ami-fffffff");
       assertNull(spec.imageNameMatches);
@@ -275,6 +300,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertEquals(spec.imageNameMatches, ".*w/ None.*");
@@ -303,6 +329,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -332,6 +359,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -360,6 +388,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -388,6 +417,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -416,6 +446,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -444,6 +475,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -474,6 +506,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -505,6 +538,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
       assertNull(spec.hypervisorMatches);
@@ -536,6 +570,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
@@ -565,6 +600,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertNull(spec.minRam);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertEquals(spec.imageNameMatches, ".*w/ None.*");
@@ -585,6 +621,7 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.hardwareId);
       assertNull(spec.minCores);
       assertEquals(spec.minRam.intValue(), 10);
+      assertNull(spec.minDisk);
       assertNull(spec.hypervisorMatches);
       assertNull(spec.imageId);
       assertNull(spec.imageNameMatches);
