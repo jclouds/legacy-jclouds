@@ -20,3 +20,4 @@ title: Reference Index
 * [Apps that use jclouds](/documentation/reference/apps-that-use-jclouds)
 * [Using Provider Metadata](/documentation/reference/using-provider-metadata)
 * [Error Handling](/documentation/reference/error-handling)
+* [Running Script on SSH : Implementation](/documentation/reference/runscript-design)
