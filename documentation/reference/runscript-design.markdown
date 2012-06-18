@@ -1,3 +1,8 @@
+---
+layout: docs
+title: jclouds - Run a Script on SSH: Implementation
+---
+
 # Running a Script using SSH : implementation
 When runScript/submitScript are used, the execution currently follows the following path
 
