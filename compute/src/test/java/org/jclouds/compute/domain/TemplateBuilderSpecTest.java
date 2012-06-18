@@ -23,6 +23,7 @@ import static org.jclouds.compute.domain.TemplateBuilderSpec.parse;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideLoginCredentials;
 import static org.jclouds.compute.options.TemplateOptions.Builder.overrideLoginUser;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
@@ -185,6 +186,14 @@ public class TemplateBuilderSpecTest {
       assertNull(spec.authenticateSudo);
       assertNull(spec.locationId);
       assertTemplateBuilderEquivalence(templateBuilders.get().minRam(10), templateBuilders.get().from(spec));
+   }
+
+   public void testParse_minDiskIsNotEqual() {
+      TemplateBuilderSpec spec1 = parse("minDisk=10");
+      TemplateBuilderSpec spec2 = parse("minDisk=20");
+      assertTemplateBuilderEquivalence(templateBuilders.get().minDisk(10), templateBuilders.get().from(spec1));
+      assertTemplateBuilderEquivalence(templateBuilders.get().minDisk(20), templateBuilders.get().from(spec2));
+      assertNotEquals(spec1.minDisk, spec2.minDisk);
    }
 
    public void testParse_minRamRepeated() {
