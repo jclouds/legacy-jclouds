@@ -119,6 +119,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    protected int minRam;
    @VisibleForTesting
+   protected double minDisk;
+   @VisibleForTesting
    protected boolean biggest;
    @VisibleForTesting
    protected boolean fastest;
@@ -392,6 +394,18 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
    };
 
+   private final Predicate<Hardware> hardwareDiskPredicate = new Predicate<Hardware>() {
+      @Override
+      public boolean apply(Hardware input) {
+         return getSpace(input) >= TemplateBuilderImpl.this.minDisk;
+      }
+
+      @Override
+      public String toString() {
+         return "minDisk(" + minDisk + ")";
+      }
+   };
+
    private final Predicate<Hardware> hardwareRamPredicate = new Predicate<Hardware>() {
       @Override
       public boolean apply(Hardware input) {
@@ -480,6 +494,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          this.location = hardware.getLocation();
       this.minCores = getCores(hardware);
       this.minRam = hardware.getRam();
+      this.minDisk = getSpace(hardware);
       this.hypervisor = hardware.getHypervisor();
       return this;
    }
@@ -936,6 +951,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
+   public TemplateBuilder minDisk(double gigabytes) {
+      this.minDisk = gigabytes;
+      return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public TemplateBuilder osNameMatches(String osNameRegex) {
       this.osName = osNameRegex;
       return this;
@@ -984,7 +1008,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       return osFamily == null && location == null && imageId == null && hardwareId == null && hypervisor == null
             && osName == null && imagePredicate == null && osDescription == null && imageVersion == null
             && osVersion == null && osArch == null && os64Bit == null && imageName == null && imageDescription == null
-            && minCores == 0 && minRam == 0 && !biggest && !fastest;
+            && minCores == 0 && minRam == 0 && minDisk == 0 && !biggest && !fastest;
    }
 
    /**
@@ -1022,6 +1046,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          toString.add("minRam", minRam);
       if (minRam >0) //TODO: make non-primitive
          toString.add("minRam", minRam);
+      if (minDisk >0) //TODO: make non-primitive
+         toString.add("minDisk", minDisk);
       toString.add("osFamily", osFamily);
       toString.add("osName", osName);
       toString.add("osDescription", osDescription);
