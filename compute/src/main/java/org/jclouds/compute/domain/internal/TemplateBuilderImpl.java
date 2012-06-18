@@ -1046,6 +1046,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          toString.add("minRam", minRam);
       if (minRam >0) //TODO: make non-primitive
          toString.add("minRam", minRam);
+      if (minDisk >0) //TODO: make non-primitive
+         toString.add("minDisk", minDisk);
       toString.add("osFamily", osFamily);
       toString.add("osName", osName);
       toString.add("osDescription", osDescription);
