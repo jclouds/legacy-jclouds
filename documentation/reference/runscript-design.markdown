@@ -1,5 +1,5 @@
-* Running a Script using SSH : implementation
-When runScript/submitScript are used, the  code currently all goes in the following path
+# Running a Script using SSH : implementation
+When runScript/submitScript are used, the execution currently follows the following path
 
 ```
   RunScriptOnNode.Factory .runScript -> create submit -> submit
