@@ -14,4 +14,4 @@ If wrapInInitScript(true) option is set (the default is true), then we are setti
 
 The code that handles customizing the script for  running in the
 background is `RunScriptOnNodeAsInitScriptUsingSsh` particularly `RunScriptOnNodeAsInitScriptUsingSsh#createInitScript`
-The name of the script will be set as specified by  ` RunScriptOptions#getTaskName`.
+The name of the script will be set as specified by  `RunScriptOptions#getTaskName`.
