@@ -182,6 +182,11 @@ public interface TemplateBuilder {
    TemplateBuilder minRam(int megabytes);
 
    /**
+    * Configure this template with required minimum disk space in gigabytes
+    */
+   TemplateBuilder minDisk(double gigabytes);
+
+   /**
     * Generate an immutable template from the current builder.
     */
    Template build();
