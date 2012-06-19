@@ -79,7 +79,7 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
          super(QuantumClient.class, QuantumAsyncClient.class);
           id("openstack-quantum")
          .name("OpenStack Quantum API")
-         .identityName("tenantId:user")
+         .identityName("tenantName:user or user")
          .credentialName("password")
          .documentation(URI.create("http://docs.openstack.org/api/openstack-network/1.0/content/"))
          .version("1.0")
