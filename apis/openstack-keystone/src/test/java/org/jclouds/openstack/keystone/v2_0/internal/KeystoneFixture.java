@@ -57,11 +57,24 @@ public enum KeystoneFixture {
             .payload(
                      payloadFromStringWithContentType(
                               format(
+                                       "{\"auth\":{\"passwordCredentials\":{\"username\":\"%s\",\"password\":\"%s\"}}}",
+                                       username, password), "application/json")).build();
+   }
+  
+   public HttpRequest initialAuthWithUsernameAndPasswordAndTenantName(String username, String password){
+      return HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
+            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+            .payload(
+                     payloadFromStringWithContentType(
+                              format(
                                        "{\"auth\":{\"passwordCredentials\":{\"username\":\"%s\",\"password\":\"%s\"},\"tenantName\":\"%s\"}}",
                                        username, password, getTenantName()), "application/json")).build();
    }
   
-   public HttpRequest initialAuthWithAccessKeyAndSecretKey(String accessKey, String secretKey){
+   public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantName(String accessKey, String secretKey){
       return HttpRequest
             .builder()
             .method("POST")

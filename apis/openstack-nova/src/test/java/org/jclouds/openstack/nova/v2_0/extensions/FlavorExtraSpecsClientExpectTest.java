@@ -44,7 +44,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testGetAllExtraSpecs() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/9/os-extra_specs");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(200).payload(payloadFromResource("/volume_type_extra_specs.json")).build()
@@ -56,7 +56,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testGetAllExtraSpecsFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/9/os-extra_specs");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(404).build()
@@ -68,7 +68,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testSetAllExtraSpecs() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/9/os-extra_specs");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint)
                   .method("POST")
@@ -82,7 +82,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testSetExtraSpec() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/5/os-extra_specs/test1");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint)
                   .method("PUT")
@@ -96,7 +96,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testGetExtraSpec() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/5/os-extra_specs/test1");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"test1\":\"another value\"}", MediaType.APPLICATION_JSON)).build()
@@ -108,7 +108,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testGetExtraSpecFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/5/os-extra_specs/test1");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(404).build()
@@ -120,7 +120,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testDeleteExtraSpec() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/5/os-extra_specs/test1");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).method("DELETE").build(),
             standardResponseBuilder(200).build()
@@ -132,7 +132,7 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
    public void testDeleteExtraSpecFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/5/os-extra_specs/test1");
       FlavorExtraSpecsClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).method("DELETE").build(),
             standardResponseBuilder(404).build()

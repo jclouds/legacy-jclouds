@@ -46,7 +46,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
 
    public void testWhenNamespaceInExtensionsListFloatingIpPresent() throws Exception {
 
-      NovaAsyncClient clientWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse);
 
       assertEquals(clientWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -57,7 +57,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
    
    public void testWhenNamespaceNotInExtensionsListFloatingIpNotPresent() throws Exception {
 
-      NovaAsyncClient clientWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, unmatchedExtensionsOfNovaResponse);
 
       assertEquals(clientWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -78,7 +78,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_list.json")).build();
 
-      NovaAsyncClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listFloatingIPs, listFloatingIPsResponse);
 
       assertEquals(clientWhenFloatingIPsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -98,7 +98,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
 
       HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaAsyncClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listFloatingIPs, listFloatingIPsResponse);
 
       assertTrue(clientWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().listFloatingIPs().get()
@@ -117,7 +117,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_details.json")).build();
 
-      NovaAsyncClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getFloatingIP, getFloatingIPResponse);
 
       assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().getFloatingIP("1").get()
@@ -135,7 +135,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
 
       HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaAsyncClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getFloatingIP, getFloatingIPResponse);
 
       assertNull(clientWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().getFloatingIP("1").get());
@@ -154,7 +154,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_details.json")).build();
 
-      NovaAsyncClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
             allocateFloatingIPResponse);
 
@@ -175,7 +175,7 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
 
       HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaAsyncClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaAsyncClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
             allocateFloatingIPResponse);
 

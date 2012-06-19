@@ -51,7 +51,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    
    public void testList() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
@@ -69,7 +69,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
 
    public void testGet() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/xyz");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
@@ -87,7 +87,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    
    public void testEnableHost() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("PUT").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .payload(payloadFromStringWithContentType("{\"status\":\"enable\"}", MediaType.APPLICATION_JSON))
@@ -101,7 +101,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testEnableHostFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("PUT").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .payload(payloadFromStringWithContentType("{\"status\":\"enable\"}", MediaType.APPLICATION_JSON))
@@ -113,7 +113,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
 
    public void testEnableHostFailNotEnabled() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("PUT").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .payload(payloadFromStringWithContentType("{\"status\":\"enable\"}", MediaType.APPLICATION_JSON))
@@ -126,7 +126,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
 
    public void testDisableHost() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("PUT").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .payload(payloadFromStringWithContentType("{\"status\":\"disable\"}", MediaType.APPLICATION_JSON))
@@ -139,7 +139,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
 
    public void testStartMaintenance() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("PUT").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .payload(payloadFromStringWithContentType("{\"maintenance_mode\":\"enable\"}", MediaType.APPLICATION_JSON))
@@ -152,7 +152,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
 
    public void testStopMaintenance() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("PUT").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .payload(payloadFromStringWithContentType("{\"maintenance_mode\":\"disable\"}", MediaType.APPLICATION_JSON))
@@ -165,7 +165,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    
    public void testStartupHost() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu/startup");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
@@ -178,7 +178,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testStartupHostFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu/startup");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
@@ -188,7 +188,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
 
    public void testStartupHostFailWrongActionInProgress() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu/startup");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
@@ -200,7 +200,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    
    public void testShutdownHost() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu/shutdown");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
@@ -212,7 +212,7 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
    
    public void testRebootHost() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-hosts/ubuntu/reboot");
-      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      HostAdministrationClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),

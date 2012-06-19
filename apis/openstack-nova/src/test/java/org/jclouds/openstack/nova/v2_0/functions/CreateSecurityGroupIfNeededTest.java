@@ -57,7 +57,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.builder();
       
-      builder.put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess);
+      builder.put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess);
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
       int groupId = 2769;
 
@@ -135,7 +135,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.builder();
       
-      builder.put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess);
+      builder.put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess);
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
 
       HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(400)

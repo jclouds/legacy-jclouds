@@ -49,9 +49,9 @@ public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTes
 
    public BaseKeystoneRestClientExpectTest() {
       provider = "openstack-keystone";
-      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
+      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPasswordAndTenantName(identity,
                credential);
-      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
+      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantName(identity,
                credential);
 
       authToken = KeystoneFixture.INSTANCE.getAuthToken();

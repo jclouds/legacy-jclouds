@@ -39,9 +39,9 @@ public class BaseSwiftExpectTest<T> extends BaseRestClientExpectTest<T> {
 
    public BaseSwiftExpectTest() {
       provider = "openstack-swift";
-      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
+      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPasswordAndTenantName(identity,
             credential);
-      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
+      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantName(identity,
             credential);
       
       authToken = KeystoneFixture.INSTANCE.getAuthToken();

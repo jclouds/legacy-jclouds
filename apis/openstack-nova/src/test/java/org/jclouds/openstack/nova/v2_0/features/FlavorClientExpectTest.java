@@ -55,7 +55,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/flavor_list.json")).build();
 
-      NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
       assertEquals(clientWhenFlavorsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -75,7 +75,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
       assertTrue(clientWhenNoServersExist.getFlavorClientForZone("az-1.region-a.geo-1").listFlavors().isEmpty());
@@ -95,7 +95,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getFlavorResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/flavor_details.json")).build();
 
-      NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
       assertEquals(
@@ -115,7 +115,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getFlavorResponse = HttpResponse.builder().statusCode(404)
             .payload(payloadFromResource("/flavor_details.json")).build();
 
-      NovaClient clientWhenNoFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenNoFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
       assertNull(clientWhenNoFlavorsExist.getFlavorClientForZone("az-1.region-a.geo-1").getFlavor("123"));

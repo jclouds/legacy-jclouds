@@ -18,6 +18,10 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
+import static org.jclouds.openstack.keystone.v2_0.config.CredentialTypes.API_ACCESS_KEY_CREDENTIALS;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.REQUIRES_TENANT;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -53,6 +57,8 @@ public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
+      properties.setProperty(CREDENTIAL_TYPE, API_ACCESS_KEY_CREDENTIALS);
+      properties.setProperty(REQUIRES_TENANT, "true");
       return properties;
    }
    

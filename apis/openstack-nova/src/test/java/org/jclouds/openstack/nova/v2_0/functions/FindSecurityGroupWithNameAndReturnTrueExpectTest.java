@@ -54,7 +54,7 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaCl
       HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
                listSecurityGroupsResponse);
 
@@ -82,7 +82,7 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaCl
       HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
                listSecurityGroupsResponse);
 
