@@ -18,7 +18,7 @@ This page helps you get started with jclouds API with
 
 {% highlight java %}
 // Get a context with hpcloud that offers the portable BlobStore api
-BlobStoreContext context = new BlobStoreContextFactory().createContext("hpcloud-objectstorage", user, password);
+BlobStoreContext context = new BlobStoreContextFactory().createContext("hpcloud-objectstorage", "tenantName:accessKey", "secretKey");
 
 // Create a container in the default location
 context.getBlobStore().createContainerInLocation(null, container);
@@ -58,7 +58,7 @@ context.close();
 
 {% highlight java %}
 // Get a context with hpcloud-compute that offers the portable ComputeService API
-ComputeServiceContext ctx = new ComputeServiceContextFactory().createContext("hpcloud-compute", user, apiKey);
+ComputeServiceContext ctx = new ComputeServiceContextFactory().createContext("hpcloud-compute", "tenantName:accessKey", "secretKey");
 ComputeService cs = ctx.getComputeService();
 
 // List availability zones
