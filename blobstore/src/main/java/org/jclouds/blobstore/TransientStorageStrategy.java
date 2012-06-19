@@ -79,8 +79,9 @@ public class TransientStorageStrategy {
    }
 
    public void removeBlob(final String containerName, final String blobName) {
-      if (containerToBlobs.containsKey(containerName)) 
-         containerToBlobs.get(containerName).remove(blobName);
+      Map<String, Blob> map = containerToBlobs.get(containerName);
+      if (map != null)
+         map.remove(blobName);
    }
 
    public Iterable<String> getBlobKeysInsideContainer(final String containerName) {
