@@ -41,9 +41,9 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest")
-public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends BaseNovaClientExpectTest {
-   public AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest() {
-      identity = identityWithTenantId;
+public class AccessKeyAndSecretKeyAndTenantNamePropertyAuthenticationExpectTest extends BaseNovaClientExpectTest {
+   public AccessKeyAndSecretKeyAndTenantNamePropertyAuthenticationExpectTest() {
+      identity = "identity";
    }
 
    /**
@@ -53,7 +53,7 @@ public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends Ba
    protected Properties setupProperties() {
       Properties contextProperties = super.setupProperties();
       contextProperties.setProperty("jclouds.keystone.credential-type", "apiAccessKeyCredentials");
-      contextProperties.setProperty("jclouds.keystone.tenant-id", KeystoneFixture.INSTANCE.getTenantId());
+      contextProperties.setProperty("jclouds.keystone.tenant-name", KeystoneFixture.INSTANCE.getTenantName());
       return contextProperties;
    }
 
@@ -69,7 +69,7 @@ public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends Ba
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantId,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));

@@ -64,7 +64,7 @@ public class AccessKeyAndSecretKeyAuthenticationExpectTest extends BaseNovaClien
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));

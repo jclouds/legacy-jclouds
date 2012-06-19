@@ -36,9 +36,9 @@ public class BaseQuantumExpectTest<T> extends BaseRestClientExpectTest<T> {
 
    public BaseQuantumExpectTest() {
       provider = "openstack-quantum";
-      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
+      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPasswordAndTenantName(identity,
             credential);
-      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
+      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantName(identity,
             credential);
       
       authToken = KeystoneFixture.INSTANCE.getAuthToken();

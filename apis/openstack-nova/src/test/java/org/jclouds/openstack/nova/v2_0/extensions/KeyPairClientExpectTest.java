@@ -54,7 +54,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -74,7 +74,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
 
       assertTrue(clientWhenNoServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().listKeyPairs().isEmpty());
@@ -95,7 +95,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse createKeyPairResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_created.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
 
       assertEquals(clientWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().createKeyPair("testkeypair")
@@ -119,7 +119,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse createKeyPairResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_created.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
 
       assertEquals(
@@ -143,7 +143,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse deleteKeyPairResponse = HttpResponse.builder().statusCode(202).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteKeyPair, deleteKeyPairResponse);
 
       assertTrue(clientWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().deleteKeyPair("testkeypair"));

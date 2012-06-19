@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableMultimap;
  */
 public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
-   protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
+   protected HttpRequest keystoneAuthWithUsernameAndPasswordAndTenantName;
+   protected HttpRequest keystoneAuthWithAccessKeyAndSecretKeyAndTenantName;
    protected String authToken;
    protected HttpResponse responseWithKeystoneAccess;
    protected HttpRequest extensionsOfNovaRequest;
@@ -50,7 +51,9 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
       provider = "openstack-nova";
       keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
             credential);
-      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
+      keystoneAuthWithUsernameAndPasswordAndTenantName = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPasswordAndTenantName(identity,
+            credential);
+      keystoneAuthWithAccessKeyAndSecretKeyAndTenantName = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantName(identity,
             credential);
       keystoneAuthWithAccessKeyAndSecretKeyAndTenantId = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantId(identity,
               credential);

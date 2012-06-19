@@ -28,6 +28,8 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.BaseAuthenticator;
 
+import com.google.common.base.Optional;
+
 @CredentialType(CredentialTypes.PASSWORD_CREDENTIALS)
 @Singleton
 public class AuthenticatePasswordCredentials extends BaseAuthenticator<PasswordCredentials> {
@@ -39,13 +41,13 @@ public class AuthenticatePasswordCredentials extends BaseAuthenticator<PasswordC
    }
 
    @Override
-   protected Access authenticateWithTenantNameOrNull(String tenantId, PasswordCredentials apiAccessKeyCredentials) {
-      return client.authenticateWithTenantNameAndCredentials(tenantId, apiAccessKeyCredentials);
+   protected Access authenticateWithTenantName(Optional<String> tenantName, PasswordCredentials apiAccessKeyCredentials) {
+      return client.authenticateWithTenantNameAndCredentials(tenantName.orNull(), apiAccessKeyCredentials);
    }
 
    @Override
-   protected Access authenticateWithTenantId(String tenantId, PasswordCredentials apiAccessKeyCredentials) {
-      return client.authenticateWithTenantIdAndCredentials(tenantId, apiAccessKeyCredentials);
+   protected Access authenticateWithTenantId(Optional<String> tenantId, PasswordCredentials apiAccessKeyCredentials) {
+      return client.authenticateWithTenantIdAndCredentials(tenantId.orNull(), apiAccessKeyCredentials);
    }
 
    @Override

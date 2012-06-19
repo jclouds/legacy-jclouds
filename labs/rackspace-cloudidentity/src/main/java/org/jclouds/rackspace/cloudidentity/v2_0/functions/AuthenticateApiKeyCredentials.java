@@ -28,6 +28,8 @@ import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationClien
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.rackspace.cloudidentity.v2_0.domain.ApiKeyCredentials;
 
+import com.google.common.base.Optional;
+
 /**
  * 
  * @author Adrian Cole
@@ -45,13 +47,13 @@ public class AuthenticateApiKeyCredentials extends BaseAuthenticator<ApiKeyCrede
    }
 
    @Override
-   protected Access authenticateWithTenantNameOrNull(String tenantId, ApiKeyCredentials apiKeyCredentials) {
-      return client.authenticateWithTenantNameAndCredentials(tenantId, apiKeyCredentials);
+   protected Access authenticateWithTenantName(Optional<String> tenantId, ApiKeyCredentials apiKeyCredentials) {
+      return client.authenticateWithTenantNameAndCredentials(tenantId.orNull(), apiKeyCredentials);
    }
 
    @Override
-   protected Access authenticateWithTenantId(String tenantId, ApiKeyCredentials apiKeyCredentials) {
-      return client.authenticateWithTenantIdAndCredentials(tenantId, apiKeyCredentials);
+   protected Access authenticateWithTenantId(Optional<String> tenantId, ApiKeyCredentials apiKeyCredentials) {
+      return client.authenticateWithTenantIdAndCredentials(tenantId.orNull(), apiKeyCredentials);
    }
 
    @Override

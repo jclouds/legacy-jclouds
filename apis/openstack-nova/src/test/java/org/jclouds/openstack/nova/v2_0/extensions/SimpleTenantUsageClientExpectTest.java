@@ -52,7 +52,7 @@ public class SimpleTenantUsageClientExpectTest extends BaseNovaClientExpectTest 
 
    public void testList() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-simple-tenant-usage");
-      SimpleTenantUsageClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      SimpleTenantUsageClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
             .endpoint(endpoint).build(),
@@ -76,7 +76,7 @@ public class SimpleTenantUsageClientExpectTest extends BaseNovaClientExpectTest 
 
    public void testGet() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-simple-tenant-usage/test-1234");
-      SimpleTenantUsageClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      SimpleTenantUsageClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),

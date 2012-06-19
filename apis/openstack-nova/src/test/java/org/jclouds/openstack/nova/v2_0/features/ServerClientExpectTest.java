@@ -56,7 +56,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -76,7 +76,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().isEmpty());
@@ -98,7 +98,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
             .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
-      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, createServer, createServerResponse);
 
       assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241", "100").toString(),
@@ -123,7 +123,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
          .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
 
-      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, createServer, createServerResponse);
 
       assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241",
@@ -153,7 +153,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 					   ImmutableMultimap.<String, String> builder()
 					   .put("Location", "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId).build()).build();
 
-	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
 	            responseWithKeystoneAccess, createImage, createImageResponse);
 
 	   assertEquals(clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId),
@@ -177,7 +177,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
                .build();
 
 	   HttpResponse createImageResponse = HttpResponse.builder().statusCode(404).build();
-	   NovaClient clientWhenServerDoesNotExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+	   NovaClient clientWhenServerDoesNotExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
 	            responseWithKeystoneAccess, createImage, createImageResponse);
 
 	   try {

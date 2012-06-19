@@ -41,7 +41,7 @@ public class VirtualInterfaceClientExpectTest extends BaseNovaClientExpectTest {
    public void testListVirtualInterfaces() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/os-virtual-interfaces");
       VirtualInterfaceClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(200).payload(payloadFromResource("/virtual_interfaces_list.json")).build()
@@ -55,7 +55,7 @@ public class VirtualInterfaceClientExpectTest extends BaseNovaClientExpectTest {
    public void testListVirtualInterfacesFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/os-virtual-interfaces");
       VirtualInterfaceClient client = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(404).build()

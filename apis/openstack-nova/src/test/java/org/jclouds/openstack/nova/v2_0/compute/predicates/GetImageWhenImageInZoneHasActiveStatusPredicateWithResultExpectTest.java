@@ -50,7 +50,7 @@ public class GetImageWhenImageInZoneHasActiveStatusPredicateWithResultExpectTest
             .payload(payloadFromResource("/image_list_detail_imageextension.json")).build();
 
    private Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-            .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
+            .put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess)
             .put(listImagesDetail, listImagesDetailImageExtensionResponse).build();
 
    public void testReturnsFalseOnImageStatusSavingAndTrueOnActive() {

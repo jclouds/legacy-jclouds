@@ -28,6 +28,8 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.BaseAuthenticator;
 
+import com.google.common.base.Optional;
+
 @CredentialType(CredentialTypes.API_ACCESS_KEY_CREDENTIALS)
 @Singleton
 public class AuthenticateApiAccessKeyCredentials extends BaseAuthenticator<ApiAccessKeyCredentials> {
@@ -39,13 +41,13 @@ public class AuthenticateApiAccessKeyCredentials extends BaseAuthenticator<ApiAc
    }
 
    @Override
-   protected Access authenticateWithTenantNameOrNull(String tenantId, ApiAccessKeyCredentials apiAccessKeyCredentials) {
-      return client.authenticateWithTenantNameAndCredentials(tenantId, apiAccessKeyCredentials);
+   protected Access authenticateWithTenantName(Optional<String> tenantName, ApiAccessKeyCredentials apiAccessKeyCredentials) {
+      return client.authenticateWithTenantNameAndCredentials(tenantName.orNull(), apiAccessKeyCredentials);
    }
 
    @Override
-   protected Access authenticateWithTenantId(String tenantId, ApiAccessKeyCredentials apiAccessKeyCredentials) {
-      return client.authenticateWithTenantIdAndCredentials(tenantId, apiAccessKeyCredentials);
+   protected Access authenticateWithTenantId(Optional<String> tenantId, ApiAccessKeyCredentials apiAccessKeyCredentials) {
+      return client.authenticateWithTenantIdAndCredentials(tenantId.orNull(), apiAccessKeyCredentials);
    }
 
    @Override

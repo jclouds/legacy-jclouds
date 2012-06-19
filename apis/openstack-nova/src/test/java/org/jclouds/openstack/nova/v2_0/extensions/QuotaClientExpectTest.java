@@ -46,7 +46,7 @@ public class QuotaClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testGetQuotas() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-sets/demo");
-      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(200).payload(payloadFromResource("/quotas.json")).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
@@ -56,7 +56,7 @@ public class QuotaClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testGetQuotasFailsTenantNotFound() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-sets/demo");
-      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(404).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
@@ -65,7 +65,7 @@ public class QuotaClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testGetDefaultQuotas() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-sets/demo/defaults");
-      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(200).payload(payloadFromResource("/quotas.json")).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
@@ -75,7 +75,7 @@ public class QuotaClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testGetDefaultQuotasFailsTenantNotFound() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-sets/demo/defaults");
-      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardRequestBuilder(endpoint).build(),
             standardResponseBuilder(404).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
@@ -85,7 +85,7 @@ public class QuotaClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testUpdateQuotas() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-sets/demo");
-      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().endpoint(endpoint).method("PUT")
                   .headers(ImmutableMultimap.of("X-Auth-Token", authToken))
@@ -99,7 +99,7 @@ public class QuotaClientExpectTest extends BaseNovaClientExpectTest {
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testUpdateQuotasFailsNotFound() throws Exception {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-sets/demo");
-      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      QuotaClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().endpoint(endpoint).method("PUT")
                   .headers(ImmutableMultimap.of("X-Auth-Token", authToken))

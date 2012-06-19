@@ -58,7 +58,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    public void testListLocationsWhenResponseIs2xx() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-            .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
+            .put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess)
             .put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse)
             .put(listServers, listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
@@ -78,7 +78,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
    Map<HttpRequest, HttpResponse> defaultTemplateTryStack = ImmutableMap
          .<HttpRequest, HttpResponse> builder()
-         .put(keystoneAuthWithUsernameAndPassword,
+         .put(keystoneAuthWithUsernameAndPasswordAndTenantName,
                HttpResponse
                      .builder()
                      .statusCode(200)
@@ -132,7 +132,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.listNodes().isEmpty());

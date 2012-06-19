@@ -21,10 +21,12 @@ package org.jclouds.openstack.nova.v2_0;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.nova.v2_0.NovaClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseServerListTest;
 import org.testng.annotations.Test;
@@ -38,11 +40,18 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
-public class PasswordAuthenticationExpectTest extends BaseNovaClientExpectTest {
-   public PasswordAuthenticationExpectTest() {
-      identity = "identity";
+public class PasswordAuthenticationWithTenantNameExpectTest extends BaseNovaClientExpectTest {
+
+   /**
+    * this reflects the properties that a user would pass to createContext
+    */
+   @Override
+   protected Properties setupProperties() {
+      Properties contextProperties = super.setupProperties();
+      contextProperties.setProperty("jclouds.keystone.credential-type", "passwordCredentials");
+      return contextProperties;
    }
-   
+
    public void testListServersWhenResponseIs2xx() throws Exception {
       HttpRequest listServers = HttpRequest
             .builder()
@@ -55,7 +64,7 @@ public class PasswordAuthenticationExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
