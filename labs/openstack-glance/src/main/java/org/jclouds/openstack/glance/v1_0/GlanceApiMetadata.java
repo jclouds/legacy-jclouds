@@ -80,7 +80,7 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
          super(GlanceClient.class, GlanceAsyncClient.class);
           id("openstack-glance")
          .name("OpenStack Glance API")
-         .identityName("tenantId:user")
+         .identityName("tenantName:user or user")
          .credentialName("password")
          .documentation(URI.create("http://glance.openstack.org/glanceapi.html"))
          .version("1.0")

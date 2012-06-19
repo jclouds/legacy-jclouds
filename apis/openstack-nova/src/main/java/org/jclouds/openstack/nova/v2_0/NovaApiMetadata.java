@@ -93,7 +93,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
          super(NovaClient.class, NovaAsyncClient.class);
           id("openstack-nova")
          .name("OpenStack Nova Diablo+ API")
-         .identityName("tenantIdOrName:user")
+         .identityName("tenantName:user or user")
          .credentialName("password")
          .documentation(URI.create("http://api.openstack.org/"))
          .version("1.1")

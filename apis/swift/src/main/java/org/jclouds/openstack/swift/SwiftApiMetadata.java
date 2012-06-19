@@ -83,7 +83,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          super(syncClient, asyncClient);
          id("swift")
          .name("OpenStack Swift Pre-Diablo API")
-         .identityName("tenantId:user")
+         .identityName("tenantName:user or user")
          .credentialName("password")
          .documentation(URI.create("http://api.openstack.org/"))
          .version("1.0")
