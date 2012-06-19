@@ -1,6 +1,24 @@
+/*
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.jclouds.nodepool.internal;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.removeIf;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.nodepool.config.NodePoolComputeServiceProperties.BACKING_GROUP_PROPERTY;
@@ -13,35 +31,31 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
-import org.jclouds.nodepool.NodePoolComputeService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * An eager {@link NodePoolComputeService}. Eagerly builds and maintains a pool of nodes. It's only
@@ -59,7 +73,6 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
    private final int maxSize;
    private final boolean reuseDestroyed;
    private final int minSize;
-   private final ExecutorService executor;
 
    // set of available nodes
    private Set<NodeMetadata> available = Sets.newHashSet();
@@ -72,47 +85,46 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
 
    @Inject
    public EagerNodePoolComputeService(ComputeServiceContext backingComputeServiceContext,
-            @Named(BACKING_GROUP_PROPERTY) String poolGroupPrefix,
-            @Named(MAX_SIZE_PROPERTY) int maxSize, @Named(MIN_SIZE_PROPERTY) int minSize,
-            @Named(REMOVE_DESTROYED_PROPERTY) boolean readdDestroyed,
-            @Nullable @Named(BACKING_TEMPLATE_PROPERTY) Template backingTemplate,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(BACKING_GROUP_PROPERTY) String poolGroupPrefix, @Named(MAX_SIZE_PROPERTY) int maxSize,
+            @Named(MIN_SIZE_PROPERTY) int minSize, @Named(REMOVE_DESTROYED_PROPERTY) boolean readdDestroyed,
+            @Nullable @Named(BACKING_TEMPLATE_PROPERTY) Template backingTemplate) {
       super(backingComputeServiceContext, poolGroupPrefix, backingTemplate);
       this.maxSize = maxSize;
       this.minSize = minSize;
       this.reuseDestroyed = readdDestroyed;
-      this.executor = executor;
+   }
+
+   @PostConstruct
+   public void startPool() throws RunNodesException {
+      increasePoolSize(minSize);
    }
 
    @Override
    public synchronized Set<? extends NodeMetadata> createNodesInGroup(String group, int count) throws RunNodesException {
-      checkState(started.get(), "pool is not started");
       try {
          return assignPoolNodes(group, count);
       } catch (Exception e) {
          Set<NodeMetadata> nodes = Collections.emptySet();
          Map<String, Exception> executionExceptions = ImmutableMap.of("poolnode", e);
-         Map<NodeMetadata, Exception> failedNodes = ImmutableMap.of(new NodeMetadataBuilder().id("poolnode").status(
-                  Status.ERROR).build(), e);
+         Map<NodeMetadata, Exception> failedNodes = ImmutableMap.of(
+                  new NodeMetadataBuilder().id("poolnode").status(Status.ERROR).build(), e);
          throw new RunNodesException(group, count, template, nodes, executionExceptions, failedNodes);
       }
    }
 
    @Override
    public synchronized void destroyNode(String id) {
-      checkState(started.get(), "pool is not started");
       unassignNode(id);
    }
 
    @Override
    public synchronized Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
       // copy the set of nodes to unassign because we'll be altering the assignments map.
       Set<Map.Entry<String, NodeMetadata>> poolNodesToUnassign = Sets
                .newHashSet(filterAssignmentsBasedOnUserPredicate(filter));
       // TODO this should be done in parallel since it can take quite a while, moreover the contract
       // for any destroy node action should probably be that the pool has at least minSize nodes
-      // before it returns. need to think it through a bit better.
+      // before it returns.
       for (Map.Entry<String, NodeMetadata> poolNode : poolNodesToUnassign) {
          unassignNode(poolNode.getValue().getId());
       }
@@ -131,30 +143,23 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
     * Adds nodes to the pool, using the pool's group name. Lock the pool so that no-one tries to
     * increase/decrease until we're finished but we'll return from the method well before the pool
     * as enough nodes.
+    * 
+    * @throws RunNodesException
     */
-   private ListenableFuture<Void> increasePoolSize(final int size) {
+   private void increasePoolSize(final int size) throws RunNodesException {
       lock.lock();
-      logger.debug(">> increasing pool size,  available: %s total: %s min; %s max: %s increasing to: %s", available
-               .size(), poolNodes.size(), minSize, maxSize, size);
-      return Futures.makeListenable(executor.submit(new Callable<Void>() {
-         @Override
-         public Void call() throws Exception {
-            try {
-               Set<? extends NodeMetadata> original = backingComputeService.createNodesInGroup(poolGroupName, size,
-                        template);
-               poolNodes.addAll(original);
-               available.addAll(original);
-               logger.debug("<< pool size increased, available: %s total: %s min; %s max: %s increasing to: %s",
-                        available.size(), poolNodes.size(), minSize, maxSize, size);
-               if (started.compareAndSet(false, true)) {
-                  logger.info("pool started, status: %s min; %s max: %s", available.size(), minSize, maxSize);
-               }
-               return null;
-            } finally {
-               lock.unlock();
-            }
-         }
-      }), executor);
+      logger.debug(">> increasing pool size,  available: %s total: %s min; %s max: %s increasing to: %s",
+               available.size(), poolNodes.size(), minSize, maxSize, size);
+      try {
+         Set<? extends NodeMetadata> original = backingComputeService.createNodesInGroup(poolGroupName, size, template);
+         poolNodes.addAll(original);
+         available.addAll(original);
+         logger.debug("<< pool size increased, available: %s total: %s min; %s max: %s increasing to: %s",
+                  available.size(), poolNodes.size(), minSize, maxSize, size);
+         logger.info("pool started, status: %s min; %s max: %s", available.size(), minSize, maxSize);
+      } finally {
+         lock.unlock();
+      }
    }
 
    /**
@@ -181,7 +186,11 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
             }
          });
          if (poolNodes.size() < minSize) {
-            increasePoolSize(1);
+            try {
+               increasePoolSize(1);
+            } catch (RunNodesException e) {
+               throw Throwables.propagate(e);
+            }
          }
       } finally {
          lock.unlock();
@@ -192,9 +201,11 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
    /**
     * Used to assign size pool nodes to a group. If not enough nodes are available we check if we
     * can increase the pool if that is enough, otherwise we complain.
+    * 
+    * @throws RunNodesException
     */
    private Set<? extends NodeMetadata> assignPoolNodes(String groupName, int size) throws InterruptedException,
-            ExecutionException {
+            ExecutionException, RunNodesException {
       if (available.size() < size) {
          if (poolNodes.size() + size > maxSize) {
             // TODO think of a better exception
@@ -203,7 +214,7 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
                               + " total: " + poolNodes.size() + " min: " + minSize + " max: " + maxSize
                               + " requested: " + size + "]");
          }
-         increasePoolSize(size - available.size()).get();
+         increasePoolSize(size - available.size());
       }
       Set<NodeMetadata> groupNodes = Sets.newHashSet();
       Iterator<NodeMetadata> iter = available.iterator();
@@ -217,34 +228,49 @@ public class EagerNodePoolComputeService extends BaseNodePoolComputeService {
    }
 
    @Override
-   public ListenableFuture<Void> startPool() {
-      return increasePoolSize(minSize);
-   }
-
-   @Override
    public void close() {
       // lock just to make sure we have the correct pool size
-      if (started.compareAndSet(true, false)) {
-         logger.info("Closing pooled compute service with {} nodes", size());
+      lock.lock();
+      try {
+         logger.info("Closing pooled compute service with {} nodes", currentSize());
          available.clear();
          assignments.clear();
+         poolNodes.clear();
          backingComputeService.destroyNodesMatching(NodePredicates.inGroup(poolGroupName));
+      } catch (Exception e) {
+         lock.unlock();
       }
+
    }
 
    @Override
-   public int ready() {
+   public int allocationInProgressNodes() {
+      // TODO Auto-generated method stub
+      return 0;
+   }
+
+   @Override
+   public int idleNodes() {
       return available.size();
    }
 
-   @Override
-   public int size() {
-      return poolNodes.size();
+   public int maxNodes() {
+      return maxSize;
    }
 
    @Override
-   public int maxSize() {
-      return maxSize;
+   public int minNodes() {
+      return minSize;
+   }
+
+   @Override
+   public int usedNodes() {
+      return currentSize() - idleNodes();
+   }
+
+   @Override
+   public int currentSize() {
+      return poolNodes.size();
    }
 
 }

@@ -1,14 +1,31 @@
+/*
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jclouds.nodepool.internal;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 
+import java.io.Closeable;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -26,7 +43,6 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.nodepool.NodePoolComputeService;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Function;
@@ -48,7 +64,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author David Alves
  * 
  */
-public abstract class BaseNodePoolComputeService implements NodePoolComputeService {
+public abstract class BaseNodePoolComputeService implements ComputeService, Closeable {
 
    protected final ComputeService backingComputeService;
    protected final String poolGroupName;
@@ -59,8 +75,6 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
 
    // assignments of nodes to group names
    protected final Multimap<String, NodeMetadata> assignments = HashMultimap.create();
-
-   protected final AtomicBoolean started = new AtomicBoolean(false);
 
    public BaseNodePoolComputeService(ComputeServiceContext backingComputeServiceContext, String poolGroupNamePrefix,
             Template backingTemplate) {
@@ -92,14 +106,8 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
          }
       };
 
-   }
+   }// TODO this is n^2 expensive. s
 
-   @Override
-   public boolean isStarted() {
-      return started.get();
-   }
-
-   // TODO this is n^2 expensive. s
    private Map<? extends NodeMetadata, ExecResponse> transformBackendExecutionMapIntoFrontend(
             Map<? extends NodeMetadata, ExecResponse> backendMap) {
       Map<NodeMetadata, ExecResponse> frontendMap = Maps.newHashMapWithExpectedSize(backendMap.size());
@@ -141,7 +149,6 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
 
    @Override
    public NodeMetadata getNodeMetadata(String id) {
-      checkState(started.get(), "pool is not started");
       Map.Entry<String, NodeMetadata> assigmentEntry = findAssigmentEntry(id);
       return toFrontendNodemetadata(assigmentEntry.getValue(), assigmentEntry.getKey());
    }
@@ -161,7 +168,6 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      checkState(started.get(), "pool is not started");
       return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
                transformUserPredicateSpecificIdPredicate(filter), runScript, options));
    }
@@ -169,23 +175,20 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             Statement runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      checkState(started.get(), "pool is not started");
       return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
                transformUserPredicateSpecificIdPredicate(filter), runScript, options));
    }
 
    @Override
    public Set<? extends ComputeMetadata> listNodes() {
-      checkState(started.get(), "pool is not started");
       return listNodesDetailsMatching(Predicates.alwaysTrue());
    }
 
-   @SuppressWarnings( { "rawtypes", "unchecked" })
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate filter) {
-      checkState(started.get(), "pool is not started");
-      return FluentIterable.from(filterAssignmentsBasedOnUserPredicate(filter)).transform(
-               new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
+      return FluentIterable.from(filterAssignmentsBasedOnUserPredicate(filter))
+               .transform(new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
                   @Override
                   public NodeMetadata apply(Entry<String, NodeMetadata> input) {
                      return toFrontendNodemetadata(input.getValue(), input.getKey());
@@ -195,19 +198,16 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
 
    @Override
    public void rebootNodesMatching(final Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
       backingComputeService.rebootNodesMatching(transformUserPredicateSpecificIdPredicate(filter));
    }
 
    @Override
    public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
       backingComputeService.resumeNodesMatching(transformUserPredicateSpecificIdPredicate(filter));
    }
 
    @Override
    public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
-      checkState(started.get(), "pool is not started");
       backingComputeService.suspendNodesMatching(transformUserPredicateSpecificIdPredicate(filter));
    }
 
@@ -326,6 +326,18 @@ public abstract class BaseNodePoolComputeService implements NodePoolComputeServi
       }
       throw new NoSuchElementException(id);
    }
+
+   public abstract int idleNodes();
+
+   public abstract int maxNodes();
+
+   public abstract int minNodes();
+
+   public abstract int allocationInProgressNodes();
+
+   public abstract int usedNodes();
+
+   public abstract int currentSize();
 
    @Override
    public Optional<ImageExtension> getImageExtension() {

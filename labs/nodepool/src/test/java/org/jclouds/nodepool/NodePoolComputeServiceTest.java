@@ -13,8 +13,6 @@ import org.jclouds.nodepool.internal.EagerNodePoolComputeService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 @Test(groups = "unit", testName = "NodePoolComputeServiceTest")
 public class NodePoolComputeServiceTest {
 
@@ -24,49 +22,48 @@ public class NodePoolComputeServiceTest {
    public void setUp() {
       ComputeServiceContext stubCtx = ContextBuilder.newBuilder("stub").buildView(ComputeServiceContext.class);
       this.pooledComputeService = new EagerNodePoolComputeService(stubCtx, "pool", 10, 5, true, stubCtx
-               .getComputeService().templateBuilder().build(), stubCtx.utils().getUserExecutor());
+               .getComputeService().templateBuilder().build());
    }
 
-   public void testStartPool() throws InterruptedException, ExecutionException {
-      ListenableFuture<Void> future = this.pooledComputeService.startPool();
-      future.get();
-      assertEquals(pooledComputeService.ready(), 5);
-      assertEquals(pooledComputeService.size(), 5);
-      assertEquals(pooledComputeService.maxSize(), 10);
+   public void testStartPool() throws InterruptedException, ExecutionException, RunNodesException {
+      this.pooledComputeService.startPool();
+      assertEquals(pooledComputeService.idleNodes(), 5);
+      assertEquals(pooledComputeService.currentSize(), 5);
+      assertEquals(pooledComputeService.maxNodes(), 10);
    }
 
    @Test(dependsOnMethods = "testStartPool", groups = { "unit", "poolStarted" })
    public void testAllocateMinNodes() throws RunNodesException {
       this.pooledComputeService.createNodesInGroup("1", 5);
       // this pool is not supposed to add nodes past min until we request them
-      assertEquals(pooledComputeService.ready(), 0);
-      assertEquals(pooledComputeService.size(), 5);
+      assertEquals(pooledComputeService.idleNodes(), 0);
+      assertEquals(pooledComputeService.currentSize(), 5);
    }
 
    @Test(dependsOnMethods = "testAllocateMinNodes", groups = { "unit", "poolStarted" })
    public void testAllocateUpToMaxNodes() throws RunNodesException {
       this.pooledComputeService.createNodesInGroup("2", 5);
-      assertEquals(pooledComputeService.ready(), 0);
-      assertEquals(pooledComputeService.size(), 10);
+      assertEquals(pooledComputeService.idleNodes(), 0);
+      assertEquals(pooledComputeService.currentSize(), 10);
    }
 
    @Test(dependsOnMethods = "testAllocateUpToMaxNodes", groups = { "unit", "poolStarted" }, expectedExceptions = RunNodesException.class)
    public void testAllocateMoreNodesFails() throws RunNodesException {
       this.pooledComputeService.createNodesInGroup("3", 5);
-      System.out.println(this.pooledComputeService.size());
+      System.out.println(this.pooledComputeService.currentSize());
    }
 
    @Test(dependsOnMethods = "testAllocateUpToMaxNodes", groups = { "unit", "poolStarted" })
    public void testDeallocatingNodesAndReallocating() throws RunNodesException {
       this.pooledComputeService.destroyNodesMatching(NodePredicates.inGroup("2"));
-      assertEquals(pooledComputeService.ready(), 5);
+      assertEquals(pooledComputeService.idleNodes(), 5);
       this.pooledComputeService.createNodesInGroup("2", 5);
    }
 
    @Test(dependsOnGroups = "poolStarted")
    public void testClose() throws IOException {
       this.pooledComputeService.close();
-      assertEquals(0, pooledComputeService.ready());
+      assertEquals(pooledComputeService.currentSize(), 0);
    }
 
 }
