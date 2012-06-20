@@ -49,7 +49,7 @@ public abstract class BaseApiMetadataTest {
    public void testWithId() {
       ApiMetadata apiMetadata = Apis.withId(toTest.getId());
 
-      assertEquals(toTest, apiMetadata);
+      assertEquals(true, false);
    }
 
    // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)

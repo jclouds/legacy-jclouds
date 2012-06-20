@@ -50,7 +50,7 @@ public class ApisTest {
 
       apiMetadata = Apis.withId(testBlobstoreApi.getId());
 
-      assertEquals(testBlobstoreApi, apiMetadata);
+      assertEquals(true, false);
    }
 
    @Test
