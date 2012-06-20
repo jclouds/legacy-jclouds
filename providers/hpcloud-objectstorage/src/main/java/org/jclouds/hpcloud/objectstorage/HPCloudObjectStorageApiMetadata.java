@@ -19,6 +19,8 @@
 package org.jclouds.hpcloud.objectstorage;
 
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
 import java.net.URI;
 import java.util.Properties;
@@ -26,6 +28,9 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.SwiftApiMetadata;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.rest.RestContext;
@@ -66,6 +71,10 @@ public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = SwiftApiMetadata.defaultProperties();
+      properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
+      // TODO: this doesn't actually do anything yet.
+      properties.setProperty(KeystoneProperties.VERSION, "2.0");
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
       properties.remove(PROPERTY_REGIONS);
       return properties;
    }
