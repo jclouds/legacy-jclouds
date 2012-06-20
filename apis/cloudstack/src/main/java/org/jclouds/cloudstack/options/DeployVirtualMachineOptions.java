@@ -129,8 +129,8 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    public DeployVirtualMachineOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
       int count = 0;
       for (String ip : ipsToNetworks.keySet()) {
-         this.queryParameters.replaceValues(String.format("ipnetworklist[%d].ip", count), ImmutableSet.of(ip));
-         this.queryParameters.replaceValues(String.format("ipnetworklist[%d].networkid", count),
+         this.queryParameters.replaceValues(String.format("iptonetworklist[%d].ip", count), ImmutableSet.of(ip));
+         this.queryParameters.replaceValues(String.format("iptonetworklist[%d].networkid", count),
                ImmutableSet.of("" + ipsToNetworks.get(ip)));
          count += 1;
       }
