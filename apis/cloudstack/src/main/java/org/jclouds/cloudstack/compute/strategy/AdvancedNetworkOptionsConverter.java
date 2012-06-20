@@ -45,7 +45,7 @@ public class AdvancedNetworkOptionsConverter implements OptionsConverter {
       checkArgument(templateOptions.getSecurityGroupIds().isEmpty(), "security groups cannot be specified for locations (zones) that use advanced networking");
       if (templateOptions.getNetworkIds().size() > 0) {
          options.networkIds(templateOptions.getNetworkIds());
-      } else {
+      } else if (templateOptions.getIpsToNetworks().isEmpty()) {
          checkArgument(!networks.isEmpty(), "please setup a network for zone: " + zoneId);
          Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
          if(defaultNetworkInZone == null) {
