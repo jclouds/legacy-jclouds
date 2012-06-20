@@ -437,6 +437,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          predicates.add(hypervisorPredicate);
       predicates.add(hardwareCoresPredicate);
       predicates.add(hardwareRamPredicate);
+      predicates.add(hardwareDiskPredicate);
 
       // looks verbose, but explicit <Hardware> type needed for this to compile
       // properly
