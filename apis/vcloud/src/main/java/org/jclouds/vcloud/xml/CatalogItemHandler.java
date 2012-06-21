@@ -53,19 +53,19 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.equals("CatalogItem")) {
+      if (SaxUtils.equalsOrSuffix(qName, "CatalogItem")) {
          catalogItem = newReferenceType(attributes);
-      } else if (qName.equals("Entity")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, ("Entity"))) {
          entity = newReferenceType(attributes);
-      } else if (qName.equals("Property")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, ("Property"))) {
          key = attributes.get("key");
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Description")) {
+      if (SaxUtils.equalsOrSuffix(qName, ("Description"))) {
          description = currentOrNull();
-      } else if (qName.equals("Property")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, ("Property"))) {
          properties.put(key, currentOrNull());
          key = null;
       }

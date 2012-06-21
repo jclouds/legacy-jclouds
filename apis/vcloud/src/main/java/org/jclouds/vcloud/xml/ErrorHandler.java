@@ -40,7 +40,7 @@ public class ErrorHandler extends ParseSax.HandlerWithResult<VCloudError> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.equals("Error")) {
+      if (SaxUtils.equalsOrSuffix(qName, "Error")) {
          error = Utils.newError(attributes);
       }
    }
