@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CatalogItem xmlns="http://www.vmware.com/vcloud/v1" name="ubuntu10.10x64" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://myvdc.carrenza.net/api/v1.0/catalogItem/ecd4d3a0-0d12-4195-a6d2-14cdf9f925a3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 http://myvdc.carrenza.net/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.catalog+xml" href="https://myvdc.carrenza.net/api/v1.0/catalog/5d2c147a-d26d-487a-9a05-577ee175186b"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://myvdc.carrenza.net/api/v1.0/catalogItem/ecd4d3a0-0d12-4195-a6d2-14cdf9f925a3"/>
+    <Link rel="remove" href="https://myvdc.carrenza.net/api/v1.0/catalogItem/ecd4d3a0-0d12-4195-a6d2-14cdf9f925a3"/>
+    <Description> </Description>
+    <Entity type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="ubuntu10.10x64" href="https://myvdc.carrenza.net/api/v1.0/vAppTemplate/vappTemplate-123766ea-2b55-482c-8adf-735ab1952834"/>
+</CatalogItem>
