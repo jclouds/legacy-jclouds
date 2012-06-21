@@ -1,1 +1,0 @@
-GitHub Pages site for jclouds. See http://www.jclouds.org

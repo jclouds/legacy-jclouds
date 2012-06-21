@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Installing jclouds on Apache KarafKaraf,OSGi
 ---
 # Installing jclouds on Apache KarafKaraf,OSGi

@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Using jclouds to Manage VMWare vCloud
 ---
 #Using jclouds to Manage VMWare vCloud

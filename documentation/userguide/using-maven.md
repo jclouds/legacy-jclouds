@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Using jClouds with Apache Maven
 ---
 #Using jClouds with Apache Maven

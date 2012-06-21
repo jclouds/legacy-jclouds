@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: VMWare Integration Design & Approach
 ---
 # VMWare Integration Design & Approach

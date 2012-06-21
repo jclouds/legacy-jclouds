@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Using jclouds with Google App Engine
 ---
 # Using jclouds with Google App Engine

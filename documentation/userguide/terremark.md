@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Overview of the Terremark Compute Offerings
 ---
 # Overview of the Terremark Compute Offerings

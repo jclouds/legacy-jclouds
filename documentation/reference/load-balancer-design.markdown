@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Design of our Load Balancer Abstraction
 ---
 # Design of our Load Balancer Abstraction

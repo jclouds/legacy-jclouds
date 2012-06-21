@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: BlobStore Guide
 ---
 # BlobStore Guide

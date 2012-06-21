@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Frequently Asked Questions - JClouds EC2 integration
 ---
 # Frequently Asked Questions - JClouds EC2 integration

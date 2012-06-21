@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Rationale & Design
 ---
 # Rationale & Design

@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: User Guide- How to use the Compute API and tools
 ---
 # User Guide: How to use the Compute API and tools

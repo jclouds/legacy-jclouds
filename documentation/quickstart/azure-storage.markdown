@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Quick Start - Azure Storage Service
 ---
 

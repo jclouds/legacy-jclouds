@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Using jclouds ant task for Compute API Operations
 ---
 # Using jclouds ant task for Compute API Operations

@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Design of jclouds compute abstraction
 ---
 # Design of jclouds compute abstraction

@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Design and Usage of the InitBuilder components
 ---
 #Design and Usage of the InitBuilder components

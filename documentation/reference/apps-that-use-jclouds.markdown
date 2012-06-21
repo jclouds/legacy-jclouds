@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: A List of applications that use jclouds
 ---
 

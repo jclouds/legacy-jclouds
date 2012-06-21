@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Deploying jclouds to Apache Fleix OSGi container
 ---
 # Deploying jclouds to Apache Fleix OSGi container

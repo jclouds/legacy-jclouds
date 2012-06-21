@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: jclouds - Run a Script on SSH - Implementation
 ---
 

@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Discussion of a Pool provider Design
 ---
 # Discussion of a Pool provider Design

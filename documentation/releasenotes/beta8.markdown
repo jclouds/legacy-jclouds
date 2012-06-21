@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Release Notes Beta 8
 ---
 

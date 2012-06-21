@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: jclouds
 title: Google App Engine Sample Index
 ---
 
