@@ -33,8 +33,8 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -161,8 +161,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       }
 
       appendAmzHeaders(canonicalizedHeaders, buffer);
-      if (isVhostStyle)
-         appendBucketName(request, buffer);
+      appendBucketName(request, buffer);
       appendUriPath(request, buffer);
       if (signatureWire.enabled())
          signatureWire.output(buffer.toString());
@@ -232,19 +231,14 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    @VisibleForTesting
    void appendBucketName(HttpRequest req, StringBuilder toSign) {
-      checkArgument(req instanceof GeneratedHttpRequest<?>, "this should be a generated http request");
-      GeneratedHttpRequest<?> request = GeneratedHttpRequest.class.cast(req);
+      String bucketName = getBucketName(req);
 
-      String bucketName = null;
-
-      for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
-         if (any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]), ANNOTATIONTYPE_BUCKET)) {
-            bucketName = (String) request.getArgs().get(i);
-            break;
-         }
-      }
-
-      if (bucketName != null)
+      // If we have a payload/bucket/container that is not all lowercase, vhost-style URLs are not an option and must be
+      // automatically converted to their path-based equivalent.  This should only be possible for AWS-S3 since it is
+      // the only S3 implementation configured to allow uppercase payload/bucket/container names.
+      //
+      // http://code.google.com/p/jclouds/issues/detail?id=992
+      if (isVhostStyle && bucketName!= null && bucketName.equals(bucketName.toLowerCase()))
          toSign.append(servicePath).append(bucketName);
    }
 
@@ -271,4 +265,21 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
          }
       }
    }
+
+   private String getBucketName(HttpRequest req) {
+      checkArgument(req instanceof GeneratedHttpRequest<?>, "this should be a generated http request");
+      GeneratedHttpRequest<?> request = GeneratedHttpRequest.class.cast(req);
+
+      String bucketName = null;
+
+      for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
+         if (any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]), ANNOTATIONTYPE_BUCKET)) {
+            bucketName = (String) request.getArgs().get(i);
+            break;
+         }
+      }
+
+      return bucketName;
+   }
+
 }
