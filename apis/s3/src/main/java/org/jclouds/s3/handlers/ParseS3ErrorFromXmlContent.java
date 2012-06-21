@@ -25,12 +25,14 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 
+import java.net.URI;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.util.AWSUtils;
@@ -39,9 +41,7 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import org.jclouds.s3.S3ApiMetadata;
 
 /**
  * @author Adrian Cole
@@ -54,7 +54,7 @@ public class ParseS3ErrorFromXmlContent extends ParseAWSErrorFromXmlContent {
    private final boolean isVhostStyle;
 
    @Inject
-   ParseS3ErrorFromXmlContent(AWSUtils utils, @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
+   public ParseS3ErrorFromXmlContent(AWSUtils utils, @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
             @Named(PROPERTY_S3_SERVICE_PATH) String servicePath) {
       super(utils);
       this.servicePath = servicePath;
@@ -66,8 +66,19 @@ public class ParseS3ErrorFromXmlContent extends ParseAWSErrorFromXmlContent {
       switch (response.getStatusCode()) {
          case 404:
             if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               // If we have a payload/bucket/container that is not all lowercase, vhost-style URLs are not an option
+               // and must be automatically converted to their path-based equivalent.  This should only be possible for
+               // AWS-S3 since it is the only S3 implementation configured to allow uppercase payload/bucket/container
+               // names.
+               //
+               // http://code.google.com/p/jclouds/issues/detail?id=992
+               URI defaultS3Endpoint = URI.create(new S3ApiMetadata().getDefaultEndpoint().get());
+               URI requestEndpoint = command.getCurrentRequest().getEndpoint();
+               boolean wasPathBasedRequest = requestEndpoint.getHost().contains(defaultS3Endpoint.getHost()) &&
+                     requestEndpoint.getHost().equals(defaultS3Endpoint.getHost());
+
                exception = new ResourceNotFoundException(message, exception);
-               if (isVhostStyle) {
+               if (isVhostStyle && !wasPathBasedRequest) {
                   String container = command.getCurrentRequest().getEndpoint().getHost();
                   String key = command.getCurrentRequest().getEndpoint().getPath();
                   if (key == null || key.equals("/"))
