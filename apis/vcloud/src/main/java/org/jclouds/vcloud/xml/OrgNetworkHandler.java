@@ -145,13 +145,13 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.equals("OrgNetwork")) {
+      if (SaxUtils.equalsOrSuffix(qName, "OrgNetwork")) {
          network = newReferenceType(attributes);
-      } else if (qName.equals("FirewallRule")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "FirewallRule")) {
          this.inFirewallRule = true;
-      } else if (qName.equals("ParentNetwork")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "ParentNetwork")) {
          parentNetwork = newReferenceType(attributes);
-      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Link") && "up".equals(attributes.get("rel"))) {
          org = newReferenceType(attributes);
       } else {
          taskHandler.startElement(uri, localName, qName, attrs);
@@ -166,38 +166,38 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
 
    public void endElement(String uri, String name, String qName) {
       taskHandler.endElement(uri, name, qName);
-      if (qName.equals("Task")) {
+      if (SaxUtils.equalsOrSuffix(qName, "Task")) {
          this.tasks.add(taskHandler.getResult());
-      } else if (qName.equals("Description")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Description")) {
          if (inFirewallRule)
             firewallRuleDescription = currentOrNull();
          else
             orgDescription = currentOrNull();
-      } else if (qName.equals("FenceMode")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "FenceMode")) {
          fenceMode = FenceMode.fromValue(currentOrNull());
-      } else if (qName.equals("StartAddress")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "StartAddress")) {
          startAddress = currentOrNull();
-      } else if (qName.equals("EndAddress")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "EndAddress")) {
          endAddress = currentOrNull();
-      } else if (qName.equals("AllocatedIpAddress")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "AllocatedIpAddress")) {
          allocatedIpAddresses.add(currentOrNull());
-      } else if (qName.equals("IpRange")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "IpRange")) {
          ipRanges.add(new IpRange(startAddress, endAddress));
          this.startAddress = null;
          this.endAddress = null;
-      } else if (qName.equals("IsInherited")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "IsInherited")) {
          inherited = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("Gateway")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Gateway")) {
          gateway = currentOrNull();
-      } else if (qName.equals("Netmask")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Netmask")) {
          netmask = currentOrNull();
-      } else if (qName.equals("Dns1")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Dns1")) {
          dns1 = currentOrNull();
-      } else if (qName.equals("Dns2")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Dns2")) {
          dns2 = currentOrNull();
-      } else if (qName.equals("DnsSuffix")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "DnsSuffix")) {
          dnsSuffix = currentOrNull();
-      } else if (qName.equals("IpScope")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "IpScope")) {
          ipScope = new IpScope(inherited, gateway, netmask, dns1, dns2, dnsSuffix, ipRanges, allocatedIpAddresses);
          this.inherited = false;
          this.gateway = null;
@@ -207,38 +207,38 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
          this.dnsSuffix = null;
          this.ipRanges = Sets.newLinkedHashSet();
          this.allocatedIpAddresses = Sets.newLinkedHashSet();
-      } else if (qName.equals("IsEnabled")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "IsEnabled")) {
          if (inFirewallRule)
             firewallRuleEnabled = Boolean.parseBoolean(currentOrNull());
          else
             serviceEnabled = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("DefaultLeaseTime")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "DefaultLeaseTime")) {
          defaultLeaseTime = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("MaxLeaseTime")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "MaxLeaseTime")) {
          maxLeaseTime = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("DhcpService")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "DhcpService")) {
          this.dhcpService = new DhcpService(serviceEnabled, defaultLeaseTime, maxLeaseTime, Iterables
                   .getOnlyElement(ipRanges));
          this.serviceEnabled = false;
          this.defaultLeaseTime = null;
          this.maxLeaseTime = null;
          this.ipRanges = Sets.newLinkedHashSet();
-      } else if (qName.equals("Policy")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Policy")) {
          if (inFirewallRule)
             firewallPolicy = FirewallPolicy.fromValue(currentOrNull());
          else
             natPolicy = NatPolicy.fromValue(currentOrNull());
-      } else if (qName.equals("Tcp")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Tcp")) {
          tcp = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("Udp")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Udp")) {
          udp = Boolean.parseBoolean(currentOrNull());
-      } else if (qName.equals("Protocols")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Protocols")) {
          this.protocols = new FirewallProtocols(tcp, udp);
          this.tcp = false;
          this.udp = false;
-      } else if (qName.equals("DestinationIp")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "DestinationIp")) {
          this.destinationIp = currentOrNull();
-      } else if (qName.equals("FirewallRule")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "FirewallRule")) {
          this.inFirewallRule = false;
          this.firewallRules.add(new FirewallRule(firewallRuleEnabled, firewallRuleDescription, firewallPolicy,
                   protocols, port, destinationIp));
@@ -248,13 +248,13 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
          this.protocols = null;
          this.port = -1;
          this.destinationIp = null;
-      } else if (qName.equals("FirewallService")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "FirewallService")) {
          firewallService = new FirewallService(serviceEnabled, firewallRules);
          this.serviceEnabled = false;
          this.firewallRules = Lists.newArrayList();
-      } else if (qName.equals("NatType")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "NatType")) {
          natType = NatType.fromValue(currentOrNull());
-      } else if (qName.equals("MappingMode")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "MappingMode")) {
          mappingMode = MappingMode.fromValue(currentOrNull());
       } else if (qName.equalsIgnoreCase("ExternalIP")) {
          externalIP = currentOrNull();
@@ -264,7 +264,7 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
          vAppScopedLocalId = currentOrNull();
       } else if (qName.equalsIgnoreCase("vmNicId")) {
          vmNicId = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("OneToOneVmRule")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "OneToOneVmRule")) {
          natRules.add(new OneToOneVmRule(mappingMode, externalIP, vAppScopedVmId, vmNicId));
          this.mappingMode = null;
          this.externalIP = null;
@@ -278,14 +278,14 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
          internalPort = Integer.parseInt(currentOrNull());
       } else if (equalsOrSuffix(qName, "Protocol")) {
          natProtocol = NatProtocol.valueOf(currentOrNull());
-      } else if (qName.equals("PortForwardingRule")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "PortForwardingRule")) {
          natRules.add(new PortForwardingRule(externalIP, externalPort, internalIP, internalPort, natProtocol));
          this.externalIP = null;
          this.externalPort = -1;
          this.internalIP = null;
          this.internalPort = -1;
          this.natProtocol = null;
-      } else if (qName.equals("VmRule")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "VmRule")) {
          natRules.add(new VmRule(externalIP, externalPort, vAppScopedLocalId, vmNicId, internalPort, natProtocol));
          this.externalIP = null;
          this.externalPort = -1;
@@ -293,24 +293,24 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
          this.vmNicId = -1;
          this.internalPort = -1;
          this.natProtocol = null;
-      } else if (qName.equals("NatService")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "NatService")) {
          this.natService = new NatService(serviceEnabled, natType, natPolicy, natRules);
          this.serviceEnabled = false;
          this.natType = null;
          this.natPolicy = null;
          this.natRules = Lists.newArrayList();
-      } else if (qName.equals("Features")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Features")) {
          this.features = new Features(dhcpService, firewallService, natService);
          this.dhcpService = null;
          this.firewallService = null;
          this.natService = null;
-      } else if (qName.equals("Configuration")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Configuration")) {
          configuration = new OrgNetworkImpl.ConfigurationImpl(ipScope, parentNetwork, fenceMode, features);
          this.ipScope = null;
          this.parentNetwork = null;
          this.fenceMode = null;
          this.features = null;
-      } else if (qName.equals("AllowedExternalIpAddress")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "AllowedExternalIpAddress")) {
          allowedExternalIpAddresses.add(currentOrNull());
       }
       currentText = new StringBuilder();

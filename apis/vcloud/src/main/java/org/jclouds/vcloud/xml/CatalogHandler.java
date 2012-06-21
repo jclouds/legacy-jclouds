@@ -70,13 +70,13 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.equals("Catalog")) {
+      if (SaxUtils.equalsOrSuffix(qName, "Catalog")) {
          catalog = newReferenceType(attributes, VCloudMediaType.CATALOG_XML);
-      } else if (qName.equals("CatalogItem")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "CatalogItem")) {
          putReferenceType(contents, attributes);
-      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Link") && "up".equals(attributes.get("rel"))) {
          org = newReferenceType(attributes);
-      } else if (qName.equals("Link") && "add".equals(attributes.get("rel"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Link") && "add".equals(attributes.get("rel"))) {
          readOnly = false;
       } else {
          taskHandler.startElement(uri, localName, qName, attrs);
@@ -85,11 +85,11 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
 
    public void endElement(String uri, String name, String qName) {
       taskHandler.endElement(uri, name, qName);
-      if (qName.equals("Task")) {
+      if (SaxUtils.equalsOrSuffix(qName, "Task")) {
          this.tasks.add(taskHandler.getResult());
-      } else if (qName.equals("Description")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Description")) {
          description = currentOrNull();
-      } else if (qName.equals("IsPublished")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "IsPublished")) {
          published = Boolean.parseBoolean(currentOrNull());
       }
       currentText = new StringBuilder();

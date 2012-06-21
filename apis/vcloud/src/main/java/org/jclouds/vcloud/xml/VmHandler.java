@@ -113,12 +113,12 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          guestCustomizationHandler.startElement(uri, localName, qName, attrs);
       } else if (inTasks) {
          taskHandler.startElement(uri, localName, qName, attrs);
-      } else if (qName.equals("Vm")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Vm")) {
          vm = newReferenceType(attributes);
          String status = attributes.get("status");
          if (status != null)
             this.status = Status.fromValue(Integer.parseInt(status));
-      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Link") && "up".equals(attributes.get("rel"))) {
          vdc = newReferenceType(attributes);
       }
    }
@@ -150,9 +150,9 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          networkConnectionSectionHandler.endElement(uri, name, qName);
       } else if (inTasks) {
          taskHandler.endElement(uri, name, qName);
-      } else if (qName.equals("Description")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Description")) {
          description = currentOrNull();
-      } else if (qName.equals("VAppScopedLocalId")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "VAppScopedLocalId")) {
          vAppScopedLocalId = currentOrNull();
       }
       currentText = new StringBuilder();
