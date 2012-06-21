@@ -131,6 +131,10 @@ public abstract class BaseVCloudComputeServiceExpectTest extends BaseRestClientE
             .message("HTTP/1.1 200 OK").payload(payloadFromResourceWithContentType("/template1.0-vcd15.xml",  VCloudMediaType.VAPPTEMPLATE_XML +";version=1.0"))
             .build();   
 
+   protected HttpResponse successfulVersion1_0GetVAppTemplateResponseFromVCD1_5WithMultipleVMsAndVDCParent = HttpResponse.builder().statusCode(200)
+            .message("HTTP/1.1 200 OK").payload(payloadFromResourceWithContentType("/template1.0-vcd15-multi-vm.xml",  VCloudMediaType.VAPPTEMPLATE_XML +";version=1.0"))
+            .build();   
+
    protected HttpRequest version1_0GetOVFForVAppTemplateRequest = HttpRequest.builder().method("GET").endpoint(
             URI.create(ENDPOINT + "/v1.0/vAppTemplate/" + templateId + "/ovf"))
             .headers(ImmutableMultimap.<String, String> builder()
@@ -139,6 +143,10 @@ public abstract class BaseVCloudComputeServiceExpectTest extends BaseRestClientE
    
    protected HttpResponse successfulVersion1_0GetOVFForVAppTemplateResponseFromVCD1_5WithSingleVM = HttpResponse.builder().statusCode(200)
             .message("HTTP/1.1 200 OK").payload(payloadFromResourceWithContentType("/ovf-ubuntu64.xml",  MediaType.TEXT_XML +";version=1.0"))
+            .build();   
+
+   protected HttpResponse successfulVersion1_0GetOVFForVAppTemplateResponseFromVCD1_5WithMultipleVMs = HttpResponse.builder().statusCode(200)
+            .message("HTTP/1.1 200 OK").payload(payloadFromResourceWithContentType("/ovf-multi-vm.xml",  MediaType.TEXT_XML +";version=1.0"))
             .build();   
 
    public BaseVCloudComputeServiceExpectTest() {
