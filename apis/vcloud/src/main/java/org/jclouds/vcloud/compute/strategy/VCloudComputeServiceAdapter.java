@@ -36,6 +36,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Envelope;
+import org.jclouds.util.Throwables2;
 import org.jclouds.vcloud.TaskInErrorStateException;
 import org.jclouds.vcloud.TaskStillRunningException;
 import org.jclouds.vcloud.VCloudClient;
@@ -109,6 +110,14 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
             } catch (IllegalArgumentException e){
                logger.warn("Unsupported: "+ e.getMessage());
                return false;
+            } catch (RuntimeException e) {
+               IllegalArgumentException e2 = Throwables2.getFirstThrowableOfType(e, IllegalArgumentException.class);
+               if (e2 != null) {
+                  logger.warn("Unsupported: "+ e2.getMessage());
+                  return false;
+               } else {
+                  throw e;
+               }
             }
             return true;
          }
