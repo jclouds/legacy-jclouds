@@ -20,17 +20,22 @@ package org.jclouds.glesys.features;
 
 import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
+
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
+import org.jclouds.glesys.internal.BaseGleSYSClientExpectTest;
 import org.jclouds.glesys.options.AddDomainOptions;
+import org.jclouds.glesys.options.EditRecordOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -38,7 +43,7 @@ import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -47,13 +52,8 @@ import com.google.common.collect.Iterables;
  * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "DomainClientExpectTest")
-public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
-   private DateService dateService = new SimpleDateFormatDateService();
+public class DomainClientExpectTest extends BaseGleSYSClientExpectTest {
    
-   public DomainClientExpectTest() {
-      provider = "glesys";
-   }
-
    public void testListDomainsWhenResponseIs2xx() throws Exception {
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/list/format/json"))
@@ -93,7 +93,7 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("domainname", "testglesys.jclouds.org").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/domain_list_records.json")).build()).getDomainClient();
 
-      Set<DomainRecord> expected = ImmutableSortedSet.of(
+      Set<DomainRecord> expected = ImmutableSet.of(
             DomainRecord.builder().id("224538").domainname("testglesys.jclouds.org").host("@").type("NS").data("ns1.namesystem.se.").ttl(3600).build(),
             DomainRecord.builder().id("224539").domainname("testglesys.jclouds.org").host("@").type("NS").data("ns2.namesystem.se.").ttl(3600).build(),
             DomainRecord.builder().id("224540").domainname("testglesys.jclouds.org").host("@").type("NS").data("ns3.namesystem.se.").ttl(3600).build(),
@@ -104,13 +104,13 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             DomainRecord.builder().id("224545").domainname("testglesys.jclouds.org").host("@").type("MX").data("20 mx02.glesys.se.").ttl(3600).build(),
             DomainRecord.builder().id("224546").domainname("testglesys.jclouds.org").host("@").type("TXT").data("v=spf1 include:spf.glesys.se -all").ttl(3600).build()
       );
-      
+
       Set<DomainRecord> actual = client.listRecords("testglesys.jclouds.org");
-      
+
       assertEquals(actual, expected);
 
-      for(DomainRecord result : actual) {
-         for(DomainRecord expect : expected) {
+      for (DomainRecord result : actual) {
+         for (DomainRecord expect : expected) {
             if (result.equals(expect)) {
                assertEquals(result.toString(), expect.toString(), "Deep comparison using toString() failed!");
             }
@@ -130,24 +130,150 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
       assertTrue(client.listDomains().isEmpty());
    }
 
+   public void testAddDomainRecordsWhenResponseIs2xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/addrecord/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(payloadFromStringWithContentType("domainname=jclouds.org&type=A&host=jclouds.org&data=", MediaType.APPLICATION_FORM_URLENCODED))
+                  .build(),
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_record.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
+
+      assertEquals(client.addRecord("jclouds.org", "jclouds.org", "A", ""), recordInDomainRecord());
+   }
+
+   protected DomainRecord recordInDomainRecord() {
+      return DomainRecord.builder().id("256151").domainname("cl13016-domain.jclouds.org").host("test").type("A").data("127.0.0.1").ttl(3600).build();
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testAddDomainRecordsWhenResponseIs4xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/addrecord/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(payloadFromStringWithContentType("domainname=jclouds.org&type=A&host=jclouds.org&data=", MediaType.APPLICATION_FORM_URLENCODED))
+                  .build(),
+            HttpResponse.builder().statusCode(404).build()).getDomainClient();
+
+      client.addRecord("jclouds.org", "jclouds.org", "A", "");
+   }
+
+   public void testEditDomainRecordsWhenResponseIs2xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/updaterecord/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(payloadFromStringWithContentType("recordid=256151&host=somehost&ttl=1800", MediaType.APPLICATION_FORM_URLENCODED))
+                  .build(),
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_record.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
+
+      assertEquals(client.editRecord("256151", EditRecordOptions.Builder.host("somehost"), EditRecordOptions.Builder.ttl(1800)), recordInDomainRecord());
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testEditDomainRecordsWhenResponseIs4xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/updaterecord/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(payloadFromStringWithContentType("recordid=256151&host=somehost&ttl=1800", MediaType.APPLICATION_FORM_URLENCODED))
+                  .build(),
+            HttpResponse.builder().statusCode(404).build()).getDomainClient();
+
+      client.editRecord("256151", EditRecordOptions.Builder.host("somehost"), EditRecordOptions.Builder.ttl(1800));
+   }
+
+   public void testDeleteDomainRecordsWhenResponseIs2xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/deleterecord/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(payloadFromStringWithContentType("recordid=256151", MediaType.APPLICATION_FORM_URLENCODED))
+                  .build(),
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_record.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
+
+      client.deleteRecord("256151");
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testDeleteDomainRecordsWhenResponseIs4xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/deleterecord/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(payloadFromStringWithContentType("recordid=256151", MediaType.APPLICATION_FORM_URLENCODED))
+                  .build(),
+            HttpResponse.builder().statusCode(404).build()).getDomainClient();
+
+      client.deleteRecord("256151");
+   }
+
+   public void testGetDomainWhenResponseIs2xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/details/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("domainname", "cl66666_x").build())).build(),
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
+
+      assertEquals(client.getDomain("cl66666_x"), domainInDomainDetails());
+   }
+
+
+   public void testGetDomainWhenResponseIs4xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/details/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("domainname", "cl66666_x").build())).build(),
+            HttpResponse.builder().statusCode(404).build())
+            .getDomainClient();
+
+      assertNull(client.getDomain("cl66666_x"));
+   }
+
+   protected Domain domainInDomainDetails() {
+      return Domain.builder().domainName("cl13016-domain.jclouds.org").createTime(dateService.iso8601SecondsDateParse("2012-06-24T11:52:49+02:00")).recordCount(9).build();
+   }
+
    public void testAddDomainWhenResponseIs2xx() throws Exception {
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/add/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("domainname", "cl66666_x").build())).build(),
-            HttpResponse.builder().statusCode(200).build()).getDomainClient();
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
 
-      client.addDomain("cl66666_x");
+      assertEquals(client.addDomain("cl66666_x"), domainInDomainDetails());
    }
-
 
    public void testAddDomainWithOptsWhenResponseIs2xx() throws Exception {
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/add/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("domainname", "cl66666_x")
                         .put("primarynameserver", "ns1.somewhere.x")
@@ -158,31 +284,37 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("retry", "1")
                         .put("ttl", "1")
                         .build())).build(),
-            HttpResponse.builder().statusCode(200).build()).getDomainClient();
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
       AddDomainOptions options = (AddDomainOptions) AddDomainOptions.Builder.primaryNameServer("ns1.somewhere.x")
             .expire(1).minimum(1).refresh(1).responsiblePerson("Tester").retry(1).ttl(1);
 
-      client.addDomain("cl66666_x", options);
+      assertEquals(client.addDomain("cl66666_x", options), domainInDomainDetails());
    }
 
    public void testEditDomainWhenResponseIs2xx() throws Exception {
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/edit/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("domainname", "x").build())).build(),
-            HttpResponse.builder().statusCode(200).build()).getDomainClient();
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
+            .getDomainClient();
 
-      client.editDomain("x");
+      assertEquals(client.editDomain("x"), domainInDomainDetails());
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
    public void testEditDomainWhenResponseIs4xxThrows() throws Exception {
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/edit/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("domainname", "x").build())).build(),
             HttpResponse.builder().statusCode(404).build()).getDomainClient();

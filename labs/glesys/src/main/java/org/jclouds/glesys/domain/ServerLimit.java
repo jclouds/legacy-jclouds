@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,53 +18,93 @@
  */
 package org.jclouds.glesys.domain;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Detailed information about an OpenVZ server's limits
- * 
+ *
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_limits" />
  */
 public class ServerLimit {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int held;
-      private int maxHeld;
-      private int barrier;
-      private int limit;
-      private int failCount;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServerLimit(this);
+   }
 
-      public Builder held(int held) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected long held;
+      protected long maxHeld;
+      protected long barrier;
+      protected long limit;
+      protected long failCount;
+
+      /**
+       * @see ServerLimit#getHeld()
+       */
+      public T held(long held) {
          this.held = held;
-         return this;
+         return self();
       }
 
-      public Builder maxHeld(int maxHeld) {
+      /**
+       * @see ServerLimit#getMaxHeld()
+       */
+      public T maxHeld(long maxHeld) {
          this.maxHeld = maxHeld;
-         return this;
+         return self();
       }
 
-      public Builder barrier(int barrier) {
+      /**
+       * @see ServerLimit#getBarrier()
+       */
+      public T barrier(long barrier) {
          this.barrier = barrier;
-         return this;
+         return self();
       }
 
-      public Builder limit(int limit) {
+      /**
+       * @see ServerLimit#getLimit()
+       */
+      public T limit(long limit) {
          this.limit = limit;
-         return this;
+         return self();
       }
 
-      public Builder failCount(int failCount) {
+      /**
+       * @see ServerLimit#getFailCount()
+       */
+      public T failCount(long failCount) {
          this.failCount = failCount;
-         return this;
+         return self();
       }
 
       public ServerLimit build() {
          return new ServerLimit(held, maxHeld, barrier, limit, failCount);
+      }
+
+      public T fromServerLimit(ServerLimit in) {
+         return this.held(in.getHeld())
+               .maxHeld(in.getMaxHeld())
+               .barrier(in.getBarrier())
+               .limit(in.getLimit())
+               .failCount(in.getFailCount());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
@@ -74,7 +114,10 @@ public class ServerLimit {
    private final long limit;
    private final long failCount;
 
-   public ServerLimit(long held, long maxHeld, long barrier, long limit, long failCount) {
+   @ConstructorProperties({
+         "held", "maxHeld", "barrier", "limit", "failCount"
+   })
+   protected ServerLimit(long held, long maxHeld, long barrier, long limit, long failCount) {
       this.held = held;
       this.maxHeld = maxHeld;
       this.barrier = barrier;
@@ -83,40 +126,23 @@ public class ServerLimit {
    }
 
    public long getHeld() {
-      return held;
+      return this.held;
    }
 
    public long getMaxHeld() {
-      return maxHeld;
+      return this.maxHeld;
    }
 
    public long getBarrier() {
-      return barrier;
+      return this.barrier;
    }
 
    public long getLimit() {
-      return limit;
+      return this.limit;
    }
 
    public long getFailCount() {
-      return failCount;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof ServerLimit) {
-         final ServerLimit other = (ServerLimit) object;
-         return Objects.equal(held, other.held)
-               && Objects.equal(maxHeld, other.maxHeld)
-               && Objects.equal(barrier, other.barrier)
-               && Objects.equal(limit, other.limit)
-               && Objects.equal(failCount, other.failCount);
-      } else {
-         return false;
-      }
+      return this.failCount;
    }
 
    @Override
@@ -125,7 +151,25 @@ public class ServerLimit {
    }
 
    @Override
-   public String toString() {
-      return String.format("[held=%d, maxHeld=%d, barrier=%d, limit=%d, failCount=%d]", held, maxHeld, barrier, limit, failCount);
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ServerLimit that = ServerLimit.class.cast(obj);
+      return Objects.equal(this.held, that.held)
+            && Objects.equal(this.maxHeld, that.maxHeld)
+            && Objects.equal(this.barrier, that.barrier)
+            && Objects.equal(this.limit, that.limit)
+            && Objects.equal(this.failCount, that.failCount);
    }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("held", held).add("maxHeld", maxHeld).add("barrier", barrier)
+            .add("limit", limit).add("failCount", failCount);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

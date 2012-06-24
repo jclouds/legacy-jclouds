@@ -21,51 +21,58 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.List;
+import java.util.Date;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
 
 /**
- * The allowed arguments for archive manipulation, such as archivesize
+ * Detailed information on usage
  *
  * @author Adam Lowe
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_allowedarguments" />
+ * @see org.jclouds.glesys.domain.ServerStatus
  */
-public class ArchiveAllowedArguments {
+public class ResourceUsageValue {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromArchiveAllowedArguments(this);
+      return new ConcreteBuilder().fromResourceUsage(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected List<Integer> archiveSizes = ImmutableList.of();
+      protected double value;
+      protected Date timestamp;
+
 
       /**
-       * @see ArchiveAllowedArguments#getArchiveSizes()
+       * @see ResourceUsageValue#getValue()
        */
-      public T archiveSizes(List<Integer> archiveSizes) {
-         this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+      public T value(double value) {
+         this.value = value;
          return self();
       }
 
-      public T archiveSizes(Integer... in) {
-         return archiveSizes(ImmutableList.copyOf(in));
+      /**
+       * @see ResourceUsageValue#getTimestamp()
+       */
+      public T timestamp(Date timestamp) {
+         this.timestamp = checkNotNull(timestamp, "timestamp");
+         return self();
       }
 
-      public ArchiveAllowedArguments build() {
-         return new ArchiveAllowedArguments(archiveSizes);
+      public ResourceUsageValue build() {
+         return new ResourceUsageValue(value, timestamp);
       }
 
-      public T fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
-         return this.archiveSizes(in.getArchiveSizes());
+      public T fromResourceUsage(ResourceUsageValue in) {
+         return this
+               .value(in.getValue())
+               .timestamp(in.getTimestamp());
       }
    }
 
@@ -76,38 +83,41 @@ public class ArchiveAllowedArguments {
       }
    }
 
-   private final List<Integer> archiveSizes;
+   private final double value;
+   private final Date timestamp;
 
    @ConstructorProperties({
-         "archivesize"
+         "value", "timestamp"
    })
-   protected ArchiveAllowedArguments(List<Integer> archiveSizes) {
-      this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+   protected ResourceUsageValue(double value, Date timestamp) {
+      this.value = value;
+      this.timestamp = checkNotNull(timestamp, "timestamp");
    }
 
-   /**
-    * @return the list of allowed archive sizes, in GB
-    */
-   public List<Integer> getArchiveSizes() {
-      return this.archiveSizes;
+   public double getValue() {
+      return this.value;
+   }
+
+   public Date getTimestamp() {
+      return this.timestamp;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(archiveSizes);
+      return Objects.hashCode(value, timestamp);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ArchiveAllowedArguments that = ArchiveAllowedArguments.class.cast(obj);
-      return Objects.equal(this.archiveSizes, that.archiveSizes);
+      ResourceUsageValue that = ResourceUsageValue.class.cast(obj);
+      return Objects.equal(this.value, that.value)
+            && Objects.equal(this.timestamp, that.timestamp);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("archiveSizes", archiveSizes);
+      return Objects.toStringHelper("").add("value", value).add("timestamp", timestamp);
    }
 
    @Override

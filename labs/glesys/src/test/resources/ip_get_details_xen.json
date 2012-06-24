@@ -1,1 +1,15 @@
-{"response":{"status":{"code":"200","text":"OK"},"details":{"datacenter":"Falkenberg","ipversion":4,"PTR":"109-74-10-146-static.serverhotell.net.","address":"109.74.10.146","netmask":"255.255.254.0","broadcast":"109.74.11.255","gateway":"109.74.10.1","nameservers":["79.99.4.100","79.99.4.103"],"platform":"Xen"},"debug":{"input":{"ipaddress":"109.74.10.146"}}}}
+{"response":{"status":{"code":200,"timestamp":"2012-06-21T13:11:25+02:00","text":"OK"},
+    "details":{
+        "ipaddress":"109.74.10.13",
+        "netmask":"255.255.254.0",
+        "broadcast":"109.74.11.255",
+        "gateway":"109.74.10.1",
+        "nameservers":["79.99.4.100","79.99.4.101"],
+        "platform":"Xen",
+        "datacenter":"Falkenberg",
+        "ipversion":4,
+        "serverid":null,
+        "reserved":"no",
+        "ptr":"109-74-10-13-static.serverhotell.net.",
+        "cost":{"amount":2,"currency":"EUR","timeperiod":"month"}},
+    "debug":{"input":{"ipaddress":"109.74.10.13"}}}}

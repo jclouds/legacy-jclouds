@@ -21,51 +21,54 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
 
 /**
- * The allowed arguments for archive manipulation, such as archivesize
+ * Information on an Email Account Quota size
  *
  * @author Adam Lowe
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_allowedarguments" />
+ * @see <a href="https://customer.glesys.com/api.php?a=doc#email_list" />
  */
-public class ArchiveAllowedArguments {
+public class EmailQuota {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromArchiveAllowedArguments(this);
+      return new ConcreteBuilder().fromEmailAccount(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected List<Integer> archiveSizes = ImmutableList.of();
+      protected int max;
+      protected String unit;
 
       /**
-       * @see ArchiveAllowedArguments#getArchiveSizes()
+       * @see EmailQuota#getMax()
        */
-      public T archiveSizes(List<Integer> archiveSizes) {
-         this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+      public T max(int max) {
+         this.max = max;
          return self();
       }
 
-      public T archiveSizes(Integer... in) {
-         return archiveSizes(ImmutableList.copyOf(in));
+      /**
+       * @see EmailQuota#getUnit()
+       */
+      public T unit(String unit) {
+         this.unit = checkNotNull(unit, "unit");
+         return self();
       }
 
-      public ArchiveAllowedArguments build() {
-         return new ArchiveAllowedArguments(archiveSizes);
+      public EmailQuota build() {
+         return new EmailQuota(max, unit);
       }
 
-      public T fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
-         return this.archiveSizes(in.getArchiveSizes());
+      public T fromEmailAccount(EmailQuota in) {
+         return this.max(in.getMax()).unit(in.getUnit());
       }
    }
 
@@ -76,38 +79,47 @@ public class ArchiveAllowedArguments {
       }
    }
 
-   private final List<Integer> archiveSizes;
+   private final int max;
+   private final String unit;
 
    @ConstructorProperties({
-         "archivesize"
+         "max", "unit"
    })
-   protected ArchiveAllowedArguments(List<Integer> archiveSizes) {
-      this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+   protected EmailQuota(int max, String unit) {
+      this.max = max;
+      this.unit = unit;
    }
 
    /**
-    * @return the list of allowed archive sizes, in GB
+    * @return the maximum size of the mailbox (in units)
+    * @see #getUnit
     */
-   public List<Integer> getArchiveSizes() {
-      return this.archiveSizes;
+   public int getMax() {
+      return this.max;
+   }
+
+   /**
+    * @return the quota for this e-mail account
+    */
+   public String getUnit() {
+      return this.unit;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(archiveSizes);
+      return Objects.hashCode(max, unit);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ArchiveAllowedArguments that = ArchiveAllowedArguments.class.cast(obj);
-      return Objects.equal(this.archiveSizes, that.archiveSizes);
+      EmailQuota that = EmailQuota.class.cast(obj);
+      return Objects.equal(this.max, that.max) && Objects.equal(this.unit, that.unit);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("archiveSizes", archiveSizes);
+      return Objects.toStringHelper("").add("max", max).add("unit", unit);
    }
 
    @Override

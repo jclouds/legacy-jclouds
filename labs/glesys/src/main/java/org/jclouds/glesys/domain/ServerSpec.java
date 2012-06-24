@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,92 +18,129 @@
  */
 package org.jclouds.glesys.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
- * 
+ * Class ServerSpec
+ *
  * @author Adrian Cole
  */
 public class ServerSpec {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return Builder.fromServerSpecification(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServerSpec(this);
    }
 
-   public static class Builder {
-      protected String datacenter;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
       protected String platform;
-      protected String templateName;
-      protected int diskSizeGB;
+      protected String datacenter;
       protected int memorySizeMB;
+      protected int diskSizeGB;
+      protected String templateName;
       protected int cpuCores;
       protected int transferGB;
 
-      public Builder datacenter(String datacenter) {
-         this.datacenter = datacenter;
-         return this;
+      /**
+       * @see ServerSpec#getPlatform()
+       */
+      public T platform(String platform) {
+         this.platform = checkNotNull(platform, "platform");
+         return self();
       }
 
-      public Builder platform(String platform) {
-         this.platform = platform;
-         return this;
+      /**
+       * @see ServerSpec#getDatacenter()
+       */
+      public T datacenter(String datacenter) {
+         this.datacenter = checkNotNull(datacenter, "datacenter");
+         return self();
       }
 
-      public Builder templateName(String templateName) {
-         this.templateName = templateName;
-         return this;
-      }
-
-      public Builder diskSizeGB(int diskSizeGB) {
-         this.diskSizeGB = diskSizeGB;
-         return this;
-      }
-
-      public Builder memorySizeMB(int memorySizeMB) {
+      /**
+       * @see ServerSpec#getMemorySizeMB()
+       */
+      public T memorySizeMB(int memorySizeMB) {
          this.memorySizeMB = memorySizeMB;
-         return this;
+         return self();
       }
 
-      public Builder cpuCores(int cpuCores) {
+      /**
+       * @see ServerSpec#getDiskSizeGB()
+       */
+      public T diskSizeGB(int diskSizeGB) {
+         this.diskSizeGB = diskSizeGB;
+         return self();
+      }
+
+      /**
+       * @see ServerSpec#getTemplateName()
+       */
+      public T templateName(String templateName) {
+         this.templateName = checkNotNull(templateName, "templateName");
+         return self();
+      }
+
+      /**
+       * @see ServerSpec#getCpuCores()
+       */
+      public T cpuCores(int cpuCores) {
          this.cpuCores = cpuCores;
-         return this;
+         return self();
       }
 
-      public Builder transferGB(int transferGB) {
+      /**
+       * @see ServerSpec#getTransferGB()
+       */
+      public T transferGB(int transferGB) {
          this.transferGB = transferGB;
-         return this;
+         return self();
       }
 
       public ServerSpec build() {
          return new ServerSpec(platform, datacenter, memorySizeMB, diskSizeGB, templateName, cpuCores, transferGB);
       }
 
-      public static Builder fromServerSpecification(ServerSpec in) {
-         return new Builder().platform(in.getPlatform()).datacenter(in.getDatacenter())
-               .memorySizeMB(in.getMemorySizeMB()).diskSizeGB(in.getDiskSizeGB()).templateName(in.getTemplateName())
-               .cpuCores(in.getCpuCores()).transferGB(in.getTransferGB());
+      public T fromServerSpec(ServerSpec in) {
+         return this.platform(in.getPlatform())
+               .datacenter(in.getDatacenter())
+               .memorySizeMB(in.getMemorySizeMB())
+               .diskSizeGB(in.getDiskSizeGB())
+               .templateName(in.getTemplateName())
+               .cpuCores(in.getCpuCores())
+               .transferGB(in.getTransferGB());
       }
    }
 
-   protected final String platform;
-   protected final String datacenter;
-   protected final int memorySizeMB;
-   protected final int diskSizeGB;
-   protected final String templateName;
-   protected final int cpuCores;
-   protected final int transferGB;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   protected ServerSpec(String platform, String datacenter, int memorySizeMB, int diskSizeGB, String templateName,
-         int cpuCores, int transferGB) {
+   private final String platform;
+   private final String datacenter;
+   private final int memorySizeMB;
+   private final int diskSizeGB;
+   private final String templateName;
+   private final int cpuCores;
+   private final int transferGB;
+
+   @ConstructorProperties({
+         "platform", "datacenter", "memorySizeMB", "diskSizeGB", "templateName", "cpuCores", "transferGB"
+   })
+   protected ServerSpec(String platform, String datacenter, int memorySizeMB, int diskSizeGB, String templateName, int cpuCores, int transferGB) {
       this.platform = checkNotNull(platform, "platform");
       this.datacenter = checkNotNull(datacenter, "datacenter");
       this.memorySizeMB = memorySizeMB;
@@ -116,66 +153,50 @@ public class ServerSpec {
    /**
     * @return the data center to create the new server in
     */
-   public String getDatacenter() {
-      return datacenter;
+   public String getPlatform() {
+      return this.platform;
    }
 
    /**
     * @return the platform to use (i.e. "Xen" or "OpenVZ")
     */
-   public String getPlatform() {
-      return platform;
+   public String getDatacenter() {
+      return this.datacenter;
    }
 
    /**
     * @return the os template to use to create the new server
     */
-   public String getTemplateName() {
-      return templateName;
+   public int getMemorySizeMB() {
+      return this.memorySizeMB;
    }
 
    /**
     * @return the amount of disk space, in GB, to allocate
     */
    public int getDiskSizeGB() {
-      return diskSizeGB;
+      return this.diskSizeGB;
    }
 
    /**
     * @return the memory, in MB, to allocate
     */
-   public int getMemorySizeMB() {
-      return memorySizeMB;
+   public String getTemplateName() {
+      return this.templateName;
    }
 
    /**
     * @return the number of CPU cores to allocate
     */
    public int getCpuCores() {
-      return cpuCores;
+      return this.cpuCores;
    }
 
    /**
     * @return bandwidth of in GB
     */
    public int getTransferGB() {
-      return transferGB;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof ServerSpec) {
-         final ServerSpec that = ServerSpec.class.cast(object);
-         return equal(platform, that.platform) && equal(datacenter, that.datacenter)
-               && equal(memorySizeMB, that.memorySizeMB) && equal(diskSizeGB, that.diskSizeGB)
-               && equal(templateName, that.templateName) && equal(cpuCores, that.cpuCores)
-               && equal(transferGB, that.transferGB);
-      } else {
-         return false;
-      }
+      return this.transferGB;
    }
 
    @Override
@@ -184,9 +205,27 @@ public class ServerSpec {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ServerSpec that = ServerSpec.class.cast(obj);
+      return Objects.equal(this.platform, that.platform)
+            && Objects.equal(this.datacenter, that.datacenter)
+            && Objects.equal(this.memorySizeMB, that.memorySizeMB)
+            && Objects.equal(this.diskSizeGB, that.diskSizeGB)
+            && Objects.equal(this.templateName, that.templateName)
+            && Objects.equal(this.cpuCores, that.cpuCores)
+            && Objects.equal(this.transferGB, that.transferGB);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("platform", platform).add("datacenter", datacenter)
+            .add("memorySizeMB", memorySizeMB).add("diskSizeGB", diskSizeGB).add("templateName", templateName)
+            .add("cpuCores", cpuCores).add("transferGB", transferGB);
+   }
+
+   @Override
    public String toString() {
-      return toStringHelper("").add("platform", platform).add("datacenter", datacenter)
-            .add("templateName", templateName).add("cpuCores", cpuCores).add("memorySizeMB", memorySizeMB)
-            .add("diskSizeGB", diskSizeGB).add("transferGB", transferGB).toString();
+      return string().toString();
    }
 }

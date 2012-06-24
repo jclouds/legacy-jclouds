@@ -18,27 +18,20 @@
  */
 package org.jclouds.glesys.internal;
 
-import static org.testng.Assert.assertEquals;
-
-import org.jclouds.glesys.GleSYSProviderMetadata;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 /**
- * @author Adrian Cole
+ * Configures a glesys client expect test - provides a dateService
+ *
+ * @author Adam Lowe
  */
-public abstract class BaseGleSYSAsyncClientTest<T> extends BaseAsyncClientTest<T> {
+public class BaseGleSYSClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
+   protected DateService dateService = new SimpleDateFormatDateService();
 
-   @Override
-   protected void checkFilters(HttpRequest request) {
-      assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
-   }
-
-   @Override
-   public ProviderMetadata createProviderMetadata() {
-     return new GleSYSProviderMetadata();   
+   public BaseGleSYSClientExpectTest() {
+      provider = "glesys";
    }
 }

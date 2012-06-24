@@ -24,8 +24,8 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
-import org.jclouds.glesys.domain.ArchiveDetails;
 import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
@@ -47,7 +47,7 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
       super.setupContext();
       
       client = gleContext.getApi().getArchiveClient();
-      archiveUser = gleContext.getIdentity().toLowerCase() + "_jcloudstest9";
+      archiveUser = gleContext.getIdentity().toLowerCase() + "_test9";
       archiveCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
                public boolean apply(Integer value){
@@ -97,10 +97,8 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testArchiveDetails() throws Exception {
-      ArchiveDetails details = client.getArchiveDetails(archiveUser);
+      Archive details = client.getArchive(archiveUser);
       assertEquals(details.getUsername(), archiveUser);
-      assertNotNull(details.getFreeSize());
-      assertNotNull(details.getTotalSize());
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
@@ -116,7 +114,7 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
       assertTrue(new RetryablePredicate<String>(
             new Predicate<String>() {
                public boolean apply(String value){
-                  return client.getArchiveDetails(archiveUser) != null && value.equals(client.getArchiveDetails(archiveUser).getTotalSize());
+                  return client.getArchive(archiveUser) != null && value.equals(client.getArchive(archiveUser).getTotalSize());
                }
             }, 30, 1, TimeUnit.SECONDS).apply("20 GB"));
    }

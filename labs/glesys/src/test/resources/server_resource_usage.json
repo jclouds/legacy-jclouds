@@ -1,0 +1,16 @@
+{"response":{
+    "status":{"code":200,"timestamp":"2012-06-24T14:28:10+02:00","text":"OK"},
+    "usage":{
+        "info":{"type":"diskioread","resolution":"minute","unit":"KB"},
+        "values":[
+            {"timestamp":"2012-06-24T14:21:07+02:00","value":0},
+            {"timestamp":"2012-06-24T14:22:05+02:00","value":5.1},
+            {"timestamp":"2012-06-24T14:23:05+02:00","value":0},
+            {"timestamp":"2012-06-24T14:24:08+02:00","value":10},
+            {"timestamp":"2012-06-24T14:25:12+02:00","value":0},
+            {"timestamp":"2012-06-24T14:26:07+02:00","value":0},
+            {"timestamp":"2012-06-24T14:27:12+02:00","value":0},
+            {"timestamp":"2012-06-24T14:28:05+02:00","value":0}
+        ]
+    },
+    "debug":{"input":{"serverid":"vz1166090","resolution":"minute","resource":"diskioread"}}}}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,48 +18,75 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Detailed information about e-mail settings for a single domain
- * 
+ *
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
-//TODO: find a better name for this class
 @Beta
 public class EmailOverviewDomain {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String domain;
-      private int accounts;
-      private int aliases;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromEmailOverviewDomain(this);
+   }
 
-      public Builder domain(String domain) {
-         this.domain = domain;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String domain;
+      protected int accounts;
+      protected int aliases;
+
+      /**
+       * @see EmailOverviewDomain#getDomain()
+       */
+      public T domain(String domain) {
+         this.domain = checkNotNull(domain, "domain");
+         return self();
       }
 
-      public Builder accounts(int accounts) {
+      /**
+       * @see EmailOverviewDomain#getAccounts()
+       */
+      public T accounts(int accounts) {
          this.accounts = accounts;
-         return this;
+         return self();
       }
-      
-      public Builder aliases(int aliases) {
+
+      /**
+       * @see EmailOverviewDomain#getAliases()
+       */
+      public T aliases(int aliases) {
          this.aliases = aliases;
-         return this;
+         return self();
       }
-      
+
       public EmailOverviewDomain build() {
          return new EmailOverviewDomain(domain, accounts, aliases);
       }
-      
-      public Builder fromEmailOverview(EmailOverviewDomain in) {
-         return domain(domain).accounts(in.getAccounts()).aliases(in.getAliases());
+
+      public T fromEmailOverviewDomain(EmailOverviewDomain in) {
+         return this.domain(in.getDomain()).accounts(in.getAccounts()).aliases(in.getAliases());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
@@ -67,25 +94,28 @@ public class EmailOverviewDomain {
    private final int accounts;
    private final int aliases;
 
-   public EmailOverviewDomain(String domain, int accounts, int aliases) {
-      this.domain = domain;
+   @ConstructorProperties({
+         "domainname", "accounts", "aliases"
+   })
+   protected EmailOverviewDomain(String domain, int accounts, int aliases) {
+      this.domain = checkNotNull(domain, "domain");
       this.accounts = accounts;
       this.aliases = aliases;
    }
 
    /** @return the domain name */
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /** @return the number of e-mail accounts in the domain */
    public int getAccounts() {
-      return accounts;
+      return this.accounts;
    }
 
    /** @return the number of e-mail aliases in the domain */
    public int getAliases() {
-      return aliases;
+      return this.aliases;
    }
 
    @Override
@@ -94,21 +124,20 @@ public class EmailOverviewDomain {
    }
 
    @Override
-   public boolean equals(Object object) {
-      if (object == this) {
-         return true;
-      }
-      if (object instanceof EmailOverviewDomain) {
-         EmailOverviewDomain other = (EmailOverviewDomain) object;
-         return Objects.equal(domain, other.domain);
-      } else {
-         return false;
-      }
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      EmailOverviewDomain that = EmailOverviewDomain.class.cast(obj);
+      return Objects.equal(this.domain, that.domain);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("domain", domain).add("accounts", accounts).add("aliases", aliases);
    }
 
    @Override
    public String toString() {
-      return String.format("domain=%s, accounts=%d, aliases=%d", domain, accounts, aliases);
+      return string().toString();
    }
 
 }
