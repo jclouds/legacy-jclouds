@@ -52,7 +52,7 @@
         <test.ssh.keyfile />
 
         <jclouds.osgi.export>org.jclouds.sshj*;version="${project.version}"</jclouds.osgi.export>
-        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",org.apache.commons.io.input;version="[1.4,3)",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -97,7 +97,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.4</version>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 
