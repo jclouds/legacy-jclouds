@@ -18,9 +18,6 @@
  */
 package org.jclouds.glesys.parse;
 
-import static java.util.Arrays.asList;
-
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -32,22 +29,31 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 @Test(groups = "unit", testName = "ParseIpAddressFromResponseTest")
 public class ParseIpAddressFromResponseTest extends BaseSetParserTest<String> {
-
+   public static final Set<String> EXPECTED_IPS = ImmutableSet.of("109.74.10.13", "109.74.10.50", "109.74.10.109", "109.74.10.125",
+         "109.74.10.131", "109.74.10.148", "109.74.10.171", "109.74.10.173", "109.74.10.191", "109.74.10.215",
+         "109.74.10.216", "109.74.10.219", "109.74.10.223", "109.74.10.224", "109.74.10.236", "109.74.10.249",
+         "109.74.11.49", "109.74.11.58", "109.74.11.62", "109.74.11.63", "109.74.11.73", "109.74.11.76",
+         "109.74.11.86", "109.74.11.98", "109.74.11.118", "109.74.11.124", "109.74.11.131", "109.74.11.137",
+         "109.74.11.146", "109.74.11.157", "109.74.11.159", "109.74.11.173", "109.74.11.178", "109.74.11.187",
+         "109.74.11.190", "109.74.11.205", "109.74.11.213", "109.74.11.234", "109.74.11.236", "109.74.11.241",
+         "109.74.11.243", "109.74.11.246", "109.74.11.247");
+   
    @Override
    public String resource() {
       return "/ip_list_free.json";
    }
 
    @Override
-   @SelectJson("iplist")
+   @SelectJson("ipaddresses")
    @Consumes(MediaType.APPLICATION_JSON)
    public Set<String> expected() {
-      return new HashSet<String>(asList("31.192.226.131", "31.192.226.133"));
+      return EXPECTED_IPS;
    }
 
    protected Injector injector() {

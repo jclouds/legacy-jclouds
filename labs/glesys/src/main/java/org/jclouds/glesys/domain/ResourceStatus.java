@@ -21,66 +21,63 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Detailed information on usage
  *
  * @author Adam Lowe
- * @see ResourceUsageInfo
- * @see ResourceUsageValue
+ * @see ServerStatus
  */
-public class ResourceUsage {
+public class ResourceStatus {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromResourceUsages(this);
+      return new ConcreteBuilder().fromResourceUsage(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected ResourceUsageInfo info;
-      protected Set<ResourceUsageValue> values = ImmutableSet.of();
+      protected double usage;
+      protected double max;
+      protected String unit;
 
       /**
-       * @see ResourceUsage#getInfo()
+       * @see ResourceStatus#getUsage()
        */
-      public T info(ResourceUsageInfo info) {
-         this.info = checkNotNull(info, "info");
+      public T usage(double usage) {
+         this.usage = usage;
          return self();
       }
 
       /**
-       * @see ResourceUsage#getValues()
+       * @see ResourceStatus#getMax()
        */
-      public T values(Set<ResourceUsageValue> values) {
-         this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+      public T max(double max) {
+         this.max = max;
          return self();
       }
 
       /**
-       * @see ResourceUsage#getValues()
+       * @see ResourceStatus#getUnit()
        */
-      public T values(ResourceUsageValue... in) {
-         return values(ImmutableSet.copyOf(in));
+      public T unit(String unit) {
+         this.unit = checkNotNull(unit, "unit");
+         return self();
       }
 
-      public ResourceUsage build() {
-         return new ResourceUsage(info, values);
+      public ResourceStatus build() {
+         return new ResourceStatus(usage, max, unit);
       }
 
-      public T fromResourceUsages(ResourceUsage in) {
-         return this
-               .info(in.getInfo())
-               .values(in.getValues());
+      public T fromResourceUsage(ResourceStatus in) {
+         return this.usage(in.getUsage()).max(in.getMax()).unit(in.getUnit());
       }
    }
 
@@ -91,42 +88,57 @@ public class ResourceUsage {
       }
    }
 
-   private final ResourceUsageInfo info;
-   private final Set<ResourceUsageValue> values;
+   private final double usage;
+   private final double max;
+   private final String unit;
 
    @ConstructorProperties({
-         "info", "values"
+         "usage", "max", "unit"
    })
-   protected ResourceUsage(ResourceUsageInfo info, Set<ResourceUsageValue> values) {
-      this.info = checkNotNull(info, "info");
-      this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+   protected ResourceStatus(double usage, double max, String unit) {
+      this.usage = usage;
+      this.max = max;
+      this.unit = checkNotNull(unit, "unit");
    }
 
-   public ResourceUsageInfo getInfo() {
-      return this.info;
+   /**
+    * @return the usage in #unit
+    */
+   public double getUsage() {
+      return this.usage;
    }
 
-   public Set<ResourceUsageValue> getValues() {
-      return this.values;
+   /**
+    * @return the max usage in #unit
+    */
+   public double getMax() {
+      return this.max;
+   }
+
+   /**
+    * @return the unit used
+    */
+   public String getUnit() {
+      return this.unit;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(info, values);
+      return Objects.hashCode(usage, max, unit);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ResourceUsage that = ResourceUsage.class.cast(obj);
-      return Objects.equal(this.info, that.info)
-            && Objects.equal(this.values, that.values);
+      ResourceStatus that = ResourceStatus.class.cast(obj);
+      return Objects.equal(this.usage, that.usage)
+            && Objects.equal(this.max, that.max)
+            && Objects.equal(this.unit, that.unit);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("info", info).add("values", values);
+      return Objects.toStringHelper("").add("usage", usage).add("max", max).add("unit", unit);
    }
 
    @Override

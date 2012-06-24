@@ -47,9 +47,9 @@ public class ServerStatus {
       protected abstract T self();
 
       protected Server.State state;
-      protected ResourceUsage cpu;
-      protected ResourceUsage memory;
-      protected ResourceUsage disk;
+      protected ResourceStatus cpu;
+      protected ResourceStatus memory;
+      protected ResourceStatus disk;
       protected ServerUptime uptime;
 
       /**
@@ -63,7 +63,7 @@ public class ServerStatus {
       /**
        * @see ServerStatus#getCpu()
        */
-      public T cpu(ResourceUsage cpu) {
+      public T cpu(ResourceStatus cpu) {
          this.cpu = checkNotNull(cpu, "cpu");
          return self();
       }
@@ -71,7 +71,7 @@ public class ServerStatus {
       /**
        * @see ServerStatus#getMemory()
        */
-      public T memory(ResourceUsage memory) {
+      public T memory(ResourceStatus memory) {
          this.memory = checkNotNull(memory, "memory");
          return self();
       }
@@ -79,7 +79,7 @@ public class ServerStatus {
       /**
        * @see ServerStatus#getDisk()
        */
-      public T disk(ResourceUsage disk) {
+      public T disk(ResourceStatus disk) {
          this.disk = checkNotNull(disk, "disk");
          return self();
       }
@@ -109,16 +109,16 @@ public class ServerStatus {
    }
 
    private final Server.State state;
-   private final ResourceUsage cpu;
-   private final ResourceUsage memory;
-   private final ResourceUsage disk;
+   private final ResourceStatus cpu;
+   private final ResourceStatus memory;
+   private final ResourceStatus disk;
    private final ServerUptime uptime;
 
    @ConstructorProperties({
          "state", "cpu", "memory", "disk", "uptime"
    })
-   protected ServerStatus(Server.State state, @Nullable ResourceUsage cpu, @Nullable ResourceUsage memory,
-                          @Nullable ResourceUsage disk, @Nullable ServerUptime uptime) {
+   protected ServerStatus(Server.State state, @Nullable ResourceStatus cpu, @Nullable ResourceStatus memory,
+                          @Nullable ResourceStatus disk, @Nullable ServerUptime uptime) {
       this.state = checkNotNull(state, "state");
       this.cpu = cpu;
       this.memory = memory;
@@ -138,7 +138,7 @@ public class ServerStatus {
     * @return CPU usage information
     */
    @Nullable
-   public ResourceUsage getCpu() {
+   public ResourceStatus getCpu() {
       return this.cpu;
    }
 
@@ -146,7 +146,7 @@ public class ServerStatus {
     * @return details of memory usage and limits
     */
    @Nullable
-   public ResourceUsage getMemory() {
+   public ResourceStatus getMemory() {
       return this.memory;
    }
 
@@ -154,7 +154,7 @@ public class ServerStatus {
     * @return details of disk usage and limits
     */
    @Nullable
-   public ResourceUsage getDisk() {
+   public ResourceStatus getDisk() {
       return this.disk;
    }
 

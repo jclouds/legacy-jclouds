@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.OSTemplate;
+import org.jclouds.glesys.domain.ResourceUsage;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
@@ -225,15 +226,19 @@ public interface ServerAsyncClient {
     * @see ServerClient#resetPassword
     */
    @POST
-   @Path("/server/destroy/format/json")
-   ListenableFuture<Void> resetPassword(@FormParam("serverid") String id, @FormParam("newpassword") String password);
+   @Path("/server/resetpassword/format/json")
+   @SelectJson("server")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ServerDetails> resetPassword(@FormParam("serverid") String id, @FormParam("rootpassword") String password);
 
    /**
-    * @see ServerClient#resourceUsage
+    * @see ServerClient#getResourceUsage
     */
    @POST
    @Path("/server/resourceusage/format/json")
-   void resourceUsage(@FormParam("serverid") String id, @FormParam("resource") String resource,
+   @SelectJson("usage")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ResourceUsage> getResourceUsage(@FormParam("serverid") String id, @FormParam("resource") String resource,
          @FormParam("resolution") String resolution);
 
 }

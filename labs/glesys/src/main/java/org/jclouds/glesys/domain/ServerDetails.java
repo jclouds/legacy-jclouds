@@ -168,9 +168,12 @@ public class ServerDetails extends Server {
    private final Set<Ip> ips;
 
    @ConstructorProperties({
-         "serverid", "hostname", "datacenter", "platform", "state", "description", "templatename", "cpucores", "memorysize", "disksize", "transfer", "cost", "iplist"
+         "serverid", "hostname", "datacenter", "platform", "state", "description", "templatename", "cpucores",
+         "memorysize", "disksize", "transfer", "cost", "iplist"
    })
-   protected ServerDetails(String id, String hostname, String datacenter, String platform, @Nullable Server.State state, @Nullable String description, String templateName, int cpuCores, int memorySizeMB, int diskSizeGB, int transferGB, Cost cost, @Nullable Set<Ip> ips) {
+   protected ServerDetails(String id, String hostname, String datacenter, String platform, @Nullable Server.State state,
+                           @Nullable String description, String templateName, int cpuCores, int memorySizeMB,
+                           int diskSizeGB, int transferGB, Cost cost, @Nullable Set<Ip> ips) {
       super(id, hostname, datacenter, platform);
       this.state = state;
       this.description = description;

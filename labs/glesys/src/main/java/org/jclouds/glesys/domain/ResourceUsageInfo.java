@@ -21,66 +21,66 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Detailed information on usage
  *
  * @author Adam Lowe
- * @see ResourceUsageInfo
- * @see ResourceUsageValue
+ * @see ServerStatus
  */
-public class ResourceUsage {
+public class ResourceUsageInfo {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromResourceUsages(this);
+      return new ConcreteBuilder().fromResourceUsageInfo(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      protected ResourceUsageInfo info;
-      protected Set<ResourceUsageValue> values = ImmutableSet.of();
+      protected String resource;
+      protected String resolution;
+      protected String unit;
 
       /**
-       * @see ResourceUsage#getInfo()
+       * @see ResourceUsageInfo#getResource()
        */
-      public T info(ResourceUsageInfo info) {
-         this.info = checkNotNull(info, "info");
+      public T resource(String resource) {
+         this.resource = checkNotNull(resource, "resource");
          return self();
       }
 
       /**
-       * @see ResourceUsage#getValues()
+       * @see ResourceUsageInfo#getResolution()
        */
-      public T values(Set<ResourceUsageValue> values) {
-         this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+      public T resolution(String resolution) {
+         this.resolution = checkNotNull(resolution, "resolution");
          return self();
       }
 
       /**
-       * @see ResourceUsage#getValues()
+       * @see ResourceUsageInfo#getUnit()
        */
-      public T values(ResourceUsageValue... in) {
-         return values(ImmutableSet.copyOf(in));
+      public T unit(String unit) {
+         this.unit = checkNotNull(unit, "unit");
+         return self();
       }
 
-      public ResourceUsage build() {
-         return new ResourceUsage(info, values);
+      public ResourceUsageInfo build() {
+         return new ResourceUsageInfo(resource, resolution, unit);
       }
 
-      public T fromResourceUsages(ResourceUsage in) {
+      public T fromResourceUsageInfo(ResourceUsageInfo in) {
          return this
-               .info(in.getInfo())
-               .values(in.getValues());
+               .resource(in.getResource())
+               .resolution(in.getResolution())
+               .unit(in.getUnit());
       }
    }
 
@@ -91,42 +91,49 @@ public class ResourceUsage {
       }
    }
 
-   private final ResourceUsageInfo info;
-   private final Set<ResourceUsageValue> values;
+   private final String resource;
+   private final String resolution;
+   private final String unit;
 
    @ConstructorProperties({
-         "info", "values"
+         "type", "resolution", "unit"
    })
-   protected ResourceUsage(ResourceUsageInfo info, Set<ResourceUsageValue> values) {
-      this.info = checkNotNull(info, "info");
-      this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+   protected ResourceUsageInfo(String resource, String resolution, String unit) {
+      this.resource = checkNotNull(resource, "resource");
+      this.resolution = checkNotNull(resolution, "resolution");
+      this.unit = checkNotNull(unit, "unit");
    }
 
-   public ResourceUsageInfo getInfo() {
-      return this.info;
+   public String getResource() {
+      return this.resource;
    }
 
-   public Set<ResourceUsageValue> getValues() {
-      return this.values;
+   public String getResolution() {
+      return this.resolution;
+   }
+
+   public String getUnit() {
+      return this.unit;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(info, values);
+      return Objects.hashCode(resource, resolution, unit);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ResourceUsage that = ResourceUsage.class.cast(obj);
-      return Objects.equal(this.info, that.info)
-            && Objects.equal(this.values, that.values);
+      ResourceUsageInfo that = ResourceUsageInfo.class.cast(obj);
+      return Objects.equal(this.resource, that.resource)
+            && Objects.equal(this.resolution, that.resolution)
+            && Objects.equal(this.unit, that.unit);
    }
 
    protected ToStringHelper string() {
       return Objects.toStringHelper("")
-            .add("info", info).add("values", values);
+            .add("resource", resource).add("resolution", resolution).add("unit", unit);
    }
 
    @Override

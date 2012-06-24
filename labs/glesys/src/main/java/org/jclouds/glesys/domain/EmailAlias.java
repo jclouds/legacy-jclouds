@@ -38,20 +38,20 @@ public class EmailAlias {
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromEmailAccount(this);
+      return new ConcreteBuilder().fromEmailAlias(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected String account;
+      protected String alias;
       protected String forwardTo;
 
       /**
-       * @see org.jclouds.glesys.domain.EmailAlias#getAccount()
+       * @see org.jclouds.glesys.domain.EmailAlias#getAlias()
        */
-      public T account(String account) {
-         this.account = checkNotNull(account, "account");
+      public T alias(String alias) {
+         this.alias = checkNotNull(alias, "alias");
          return self();
       }
 
@@ -64,11 +64,11 @@ public class EmailAlias {
       }
 
       public EmailAlias build() {
-         return new EmailAlias(account, forwardTo);
+         return new EmailAlias(alias, forwardTo);
       }
 
-      public T fromEmailAccount(EmailAlias in) {
-         return this.account(in.getAccount()).forwardTo(in.getForwardTo());
+      public T fromEmailAlias(EmailAlias in) {
+         return this.alias(in.getAlias()).forwardTo(in.getForwardTo());
       }
    }
 
@@ -79,22 +79,22 @@ public class EmailAlias {
       }
    }
 
-   private final String account;
+   private final String alias;
    private final String forwardTo;
 
    @ConstructorProperties({
          "emailalias", "goto"
    })
-   protected EmailAlias(String account, String forwardTo) {
-      this.account = checkNotNull(account, "account");
+   protected EmailAlias(String alias, String forwardTo) {
+      this.alias = checkNotNull(alias, "alias");
       this.forwardTo = checkNotNull(forwardTo, "forwardTo");
    }
 
    /**
     * @return the e-mail address being forwarded
     */
-   public String getAccount() {
-      return this.account;
+   public String getAlias() {
+      return this.alias;
    }
 
    /**
@@ -106,7 +106,7 @@ public class EmailAlias {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(account);
+      return Objects.hashCode(alias);
    }
 
    @Override
@@ -114,12 +114,12 @@ public class EmailAlias {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
       EmailAlias that = EmailAlias.class.cast(obj);
-      return Objects.equal(this.account, that.account);
+      return Objects.equal(this.alias, that.alias);
    }
 
    protected ToStringHelper string() {
       return Objects.toStringHelper("")
-            .add("account", account).add("forwardTo", forwardTo);
+            .add("alias", alias).add("forwardTo", forwardTo);
    }
 
    @Override

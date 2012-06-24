@@ -21,66 +21,58 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.Set;
+import java.util.Date;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Detailed information on usage
  *
  * @author Adam Lowe
- * @see ResourceUsageInfo
- * @see ResourceUsageValue
+ * @see org.jclouds.glesys.domain.ServerStatus
  */
-public class ResourceUsage {
+public class ResourceUsageValue {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromResourceUsages(this);
+      return new ConcreteBuilder().fromResourceUsage(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected ResourceUsageInfo info;
-      protected Set<ResourceUsageValue> values = ImmutableSet.of();
+      protected double value;
+      protected Date timestamp;
+
 
       /**
-       * @see ResourceUsage#getInfo()
+       * @see ResourceUsageValue#getValue()
        */
-      public T info(ResourceUsageInfo info) {
-         this.info = checkNotNull(info, "info");
+      public T value(double value) {
+         this.value = value;
          return self();
       }
 
       /**
-       * @see ResourceUsage#getValues()
+       * @see ResourceUsageValue#getTimestamp()
        */
-      public T values(Set<ResourceUsageValue> values) {
-         this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+      public T timestamp(Date timestamp) {
+         this.timestamp = checkNotNull(timestamp, "timestamp");
          return self();
       }
 
-      /**
-       * @see ResourceUsage#getValues()
-       */
-      public T values(ResourceUsageValue... in) {
-         return values(ImmutableSet.copyOf(in));
+      public ResourceUsageValue build() {
+         return new ResourceUsageValue(value, timestamp);
       }
 
-      public ResourceUsage build() {
-         return new ResourceUsage(info, values);
-      }
-
-      public T fromResourceUsages(ResourceUsage in) {
+      public T fromResourceUsage(ResourceUsageValue in) {
          return this
-               .info(in.getInfo())
-               .values(in.getValues());
+               .value(in.getValue())
+               .timestamp(in.getTimestamp());
       }
    }
 
@@ -91,42 +83,41 @@ public class ResourceUsage {
       }
    }
 
-   private final ResourceUsageInfo info;
-   private final Set<ResourceUsageValue> values;
+   private final double value;
+   private final Date timestamp;
 
    @ConstructorProperties({
-         "info", "values"
+         "value", "timestamp"
    })
-   protected ResourceUsage(ResourceUsageInfo info, Set<ResourceUsageValue> values) {
-      this.info = checkNotNull(info, "info");
-      this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+   protected ResourceUsageValue(double value, Date timestamp) {
+      this.value = value;
+      this.timestamp = checkNotNull(timestamp, "timestamp");
    }
 
-   public ResourceUsageInfo getInfo() {
-      return this.info;
+   public double getValue() {
+      return this.value;
    }
 
-   public Set<ResourceUsageValue> getValues() {
-      return this.values;
+   public Date getTimestamp() {
+      return this.timestamp;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(info, values);
+      return Objects.hashCode(value, timestamp);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ResourceUsage that = ResourceUsage.class.cast(obj);
-      return Objects.equal(this.info, that.info)
-            && Objects.equal(this.values, that.values);
+      ResourceUsageValue that = ResourceUsageValue.class.cast(obj);
+      return Objects.equal(this.value, that.value)
+            && Objects.equal(this.timestamp, that.timestamp);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("info", info).add("values", values);
+      return Objects.toStringHelper("").add("value", value).add("timestamp", timestamp);
    }
 
    @Override

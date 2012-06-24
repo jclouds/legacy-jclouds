@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.EmailAccount;
+import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.CreateAccountOptions;
 import org.jclouds.glesys.options.EditAccountOptions;
@@ -53,6 +54,13 @@ public interface EmailClient {
    Set<EmailAccount> listAccounts(String domain);
 
    /**
+    * Get the set of details about e-mail aliases
+    *
+    * @return the relevant set of details
+    */
+   Set<EmailAlias> listAliases(String domain);
+
+   /**
     * Create a new e-mail account
     *
     * @param accountAddress the e-mail address to use (the domain should already exist)
@@ -60,7 +68,7 @@ public interface EmailClient {
     * @param options        optional parameters
     * @see DomainClient#addDomain
     */
-   void createAccount(String accountAddress, String password, CreateAccountOptions... options);
+   EmailAccount createAccount(String accountAddress, String password, CreateAccountOptions... options);
 
    /**
     * Create an e-mail alias for an e-mail account
@@ -69,7 +77,7 @@ public interface EmailClient {
     * @param toEmailAddress the existing e-mail account address the alias should forward to
     * @see DomainClient#addDomain
     */
-   void createAlias(String aliasAddress, String toEmailAddress);
+   EmailAlias createAlias(String aliasAddress, String toEmailAddress);
 
    /**
     * Adjust an e-mail account's settings
@@ -77,7 +85,7 @@ public interface EmailClient {
     * @param accountAddress the existing e-mail account address
     * @param options        optional parameters
     */
-   void editAccount(String accountAddress, EditAccountOptions... options);
+   EmailAccount editAccount(String accountAddress, EditAccountOptions... options);
 
    /**
     * Adjust (re-target) an e-mail alias
@@ -85,13 +93,13 @@ public interface EmailClient {
     * @param aliasAddress   the existing alias e-mail address
     * @param toEmailAddress the existing e-mail account address the alias should forward to
     */
-   void editAlias(String aliasAddress, String toEmailAddress);
+   EmailAlias editAlias(String aliasAddress, String toEmailAddress);
 
    /**
     * Delete an e-mail account or alias
     *
     * @param accountAddress the existing alias e-mail account or alias address
     */
-   void delete(String accountAddress);
+   boolean delete(String accountAddress);
 
 }

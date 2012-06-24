@@ -27,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.glesys.domain.EmailAccount;
+import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.CreateAccountOptions;
 import org.jclouds.glesys.options.EditAccountOptions;
@@ -55,7 +56,7 @@ public interface EmailAsyncClient {
     */
    @POST
    @Path("/email/overview/format/json")
-   @SelectJson("response")
+   @SelectJson("overview")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<EmailOverview> getEmailOverview();
@@ -68,41 +69,59 @@ public interface EmailAsyncClient {
    @SelectJson("emailaccounts")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<EmailAccount>> listAccounts(@FormParam("domain") String domain);
+   ListenableFuture<Set<EmailAccount>> listAccounts(@FormParam("domainname") String domain);
+
+   /**
+    * @see org.jclouds.glesys.features.EmailClient#listAccounts
+    */
+   @POST
+   @Path("/email/list/format/json")
+   @SelectJson("emailaliases")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<EmailAlias>> listAliases(@FormParam("domainname") String domain);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#createAccount
     */
    @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("emailaccount")
    @Path("/email/createaccount/format/json")
-   ListenableFuture<Void> createAccount(@FormParam("emailaccount") String accountAddress, @FormParam("password") String password, CreateAccountOptions... options);
+   ListenableFuture<EmailAccount> createAccount(@FormParam("emailaccount") String accountAddress, @FormParam("password") String password, CreateAccountOptions... options);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#createAlias
     */
    @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("alias")
    @Path("/email/createalias/format/json")
-   ListenableFuture<Void> createAlias(@FormParam("emailalias") String aliasAddress, @FormParam("goto") String toEmailAddress);
+   ListenableFuture<EmailAlias> createAlias(@FormParam("emailalias") String aliasAddress, @FormParam("goto") String toEmailAddress);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#editAccount
     */
    @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("emailaccount")
    @Path("/email/editaccount/format/json")
-   ListenableFuture<Void> editAccount(@FormParam("emailaccount") String accountAddress, EditAccountOptions... options);
+   ListenableFuture<EmailAccount> editAccount(@FormParam("emailaccount") String accountAddress, EditAccountOptions... options);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#editAlias
     */
    @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("alias")
    @Path("/email/editalias/format/json")
-   ListenableFuture<Void> editAlias(@FormParam("emailalias") String aliasAddress, @FormParam("goto") String toEmailAddress);
+   ListenableFuture<EmailAlias> editAlias(@FormParam("emailalias") String aliasAddress, @FormParam("goto") String toEmailAddress);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#delete
     */
    @POST
    @Path("/email/delete/format/json")
-   ListenableFuture<Void> delete(@FormParam("email") String accountAddress);
+   ListenableFuture<Boolean> delete(@FormParam("email") String accountAddress);
 
 }

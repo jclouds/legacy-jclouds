@@ -21,8 +21,9 @@ package org.jclouds.glesys;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.glesys.internal.BaseGleSYSAsyncClientTest;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,11 +38,15 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", testName = "GleSYSAsyncClientTest")
-public class GleSYSAsyncClientTest extends BaseGleSYSAsyncClientTest<GleSYSAsyncClient> {
-
+public class GleSYSAsyncClientTest extends BaseAsyncClientTest<GleSYSAsyncClient> {
    private GleSYSAsyncClient asyncClient;
    private GleSYSClient syncClient;
 
+   @Override
+   public ProviderMetadata createProviderMetadata() {
+      return new GleSYSProviderMetadata();
+   }
+   
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert syncClient.getServerClient() != null;
       assert syncClient.getIpClient() != null;

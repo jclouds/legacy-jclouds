@@ -164,7 +164,7 @@ public class EmailAccount {
    private final Date modified;
 
    @ConstructorProperties({
-         "emailaccount", "quota", "usedquota", "antispamlevel", "antivirus", "autorespond", "autorespondmessage", "autorespondsaveemail", "created", "modified"
+         "emailaccount", "quota", "antispamlevel", "antivirus", "autorespond", "autorespondmessage", "autorespondsaveemail", "created", "modified"
    })
    protected EmailAccount(String account, EmailQuota quota, int antispamLevel,
                           GleSYSBoolean antiVirus, GleSYSBoolean autoRespond, @Nullable String autoRespondMessage,
