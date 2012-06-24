@@ -1,0 +1,24 @@
+<ListUsersResponse>
+   <ListUsersResult>
+      <Users>
+         <member>
+            <Path>/division_abc/subdivision_xyz/engineering/</Path>
+            <UserName>Andrew</UserName>
+            <UserId>AID2MAB8DPLSRHEXAMPLE</UserId>
+            <Arn>arn:aws:iam::123456789012:user/division_abc/subdivision_xyz/engineering/Andrew</Arn>
+            <CreateDate>2009-03-06T21:47:48Z</CreateDate>
+         </member>
+         <member>
+            <Path>/division_abc/subdivision_xyz/engineering/</Path>
+            <UserName>Jackie</UserName>
+            <UserId>AIDIODR4TAW7CSEXAMPLE</UserId>
+            <Arn>arn:aws:iam::123456789012:user/division_abc/subdivision_xyz/engineering/Jackie</Arn>
+            <CreateDate>2009-03-06T21:47:48Z</CreateDate>
+         </member>
+      </Users>
+      <IsTruncated>false</IsTruncated>
+   </ListUsersResult>
+   <ResponseMetadata>
+      <RequestId>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE</RequestId>
+   </ResponseMetadata>
+</ListUsersResponse>
