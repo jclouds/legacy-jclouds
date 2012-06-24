@@ -21,51 +21,54 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
 
 /**
- * The allowed arguments for archive manipulation, such as archivesize
+ * Detailed information on an Email Account
  *
  * @author Adam Lowe
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_allowedarguments" />
+ * @see <a href="https://customer.glesys.com/api.php?a=doc#email_list" />
  */
-public class ArchiveAllowedArguments {
+public class EmailAlias {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromArchiveAllowedArguments(this);
+      return new ConcreteBuilder().fromEmailAccount(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected List<Integer> archiveSizes = ImmutableList.of();
+      protected String account;
+      protected String forwardTo;
 
       /**
-       * @see ArchiveAllowedArguments#getArchiveSizes()
+       * @see org.jclouds.glesys.domain.EmailAlias#getAccount()
        */
-      public T archiveSizes(List<Integer> archiveSizes) {
-         this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+      public T account(String account) {
+         this.account = checkNotNull(account, "account");
          return self();
       }
 
-      public T archiveSizes(Integer... in) {
-         return archiveSizes(ImmutableList.copyOf(in));
+      /**
+       * @see EmailAlias#getForwardTo()
+       */
+      public T forwardTo(String forwardTo) {
+         this.forwardTo = checkNotNull(forwardTo, "forwardTo");
+         return self();
       }
 
-      public ArchiveAllowedArguments build() {
-         return new ArchiveAllowedArguments(archiveSizes);
+      public EmailAlias build() {
+         return new EmailAlias(account, forwardTo);
       }
 
-      public T fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
-         return this.archiveSizes(in.getArchiveSizes());
+      public T fromEmailAccount(EmailAlias in) {
+         return this.account(in.getAccount()).forwardTo(in.getForwardTo());
       }
    }
 
@@ -76,38 +79,47 @@ public class ArchiveAllowedArguments {
       }
    }
 
-   private final List<Integer> archiveSizes;
+   private final String account;
+   private final String forwardTo;
 
    @ConstructorProperties({
-         "archivesize"
+         "emailalias", "goto"
    })
-   protected ArchiveAllowedArguments(List<Integer> archiveSizes) {
-      this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+   protected EmailAlias(String account, String forwardTo) {
+      this.account = checkNotNull(account, "account");
+      this.forwardTo = checkNotNull(forwardTo, "forwardTo");
    }
 
    /**
-    * @return the list of allowed archive sizes, in GB
+    * @return the e-mail address being forwarded
     */
-   public List<Integer> getArchiveSizes() {
-      return this.archiveSizes;
+   public String getAccount() {
+      return this.account;
+   }
+
+   /**
+    * @return the e-mail address this address forwards to
+    */
+   public String getForwardTo() {
+      return this.forwardTo;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(archiveSizes);
+      return Objects.hashCode(account);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ArchiveAllowedArguments that = ArchiveAllowedArguments.class.cast(obj);
-      return Objects.equal(this.archiveSizes, that.archiveSizes);
+      EmailAlias that = EmailAlias.class.cast(obj);
+      return Objects.equal(this.account, that.account);
    }
 
    protected ToStringHelper string() {
       return Objects.toStringHelper("")
-            .add("archiveSizes", archiveSizes);
+            .add("account", account).add("forwardTo", forwardTo);
    }
 
    @Override

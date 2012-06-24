@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,7 +18,14 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Detailed information server status including hardware usage (cpu, memory and disk), bandwidth and up-time.
@@ -26,51 +33,78 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_status" />
  */
-
 public class ServerStatus {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private Server.State state;
-      private ResourceUsage cpu;
-      private ResourceUsage memory;
-      private ResourceUsage disk;
-      private ServerUptime uptime;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServerStatus(this);
+   }
 
-      public Builder state(Server.State state) {
-         this.state = state;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected Server.State state;
+      protected ResourceUsage cpu;
+      protected ResourceUsage memory;
+      protected ResourceUsage disk;
+      protected ServerUptime uptime;
+
+      /**
+       * @see ServerStatus#getState()
+       */
+      public T state(Server.State state) {
+         this.state = checkNotNull(state, "state");
+         return self();
       }
 
-      public Builder cpu(ResourceUsage cpu) {
-         this.cpu = cpu;
-         return this;
+      /**
+       * @see ServerStatus#getCpu()
+       */
+      public T cpu(ResourceUsage cpu) {
+         this.cpu = checkNotNull(cpu, "cpu");
+         return self();
       }
 
-      public Builder memory(ResourceUsage memory) {
-         this.memory = memory;
-         return this;
+      /**
+       * @see ServerStatus#getMemory()
+       */
+      public T memory(ResourceUsage memory) {
+         this.memory = checkNotNull(memory, "memory");
+         return self();
       }
 
-      public Builder disk(ResourceUsage disk) {
-         this.disk = disk;
-         return this;
+      /**
+       * @see ServerStatus#getDisk()
+       */
+      public T disk(ResourceUsage disk) {
+         this.disk = checkNotNull(disk, "disk");
+         return self();
       }
 
-      public Builder uptime(ServerUptime uptime) {
-         this.uptime = uptime;
-         return this;
+      /**
+       * @see ServerStatus#getUptime()
+       */
+      public T uptime(ServerUptime uptime) {
+         this.uptime = checkNotNull(uptime, "uptime");
+         return self();
       }
 
       public ServerStatus build() {
          return new ServerStatus(state, cpu, memory, disk, uptime);
       }
 
-      public Builder fromServerStatus(ServerStatus in) {
-         return state(in.getState()).cpu(in.getCpu()).memory(in.getMemory()).disk(in.getDisk()).uptime(in.getUptime());
+      public T fromServerStatus(ServerStatus in) {
+         return this.state(in.getState()).cpu(in.getCpu()).memory(in.getMemory()).disk(in.getDisk()).uptime(in.getUptime());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
@@ -80,8 +114,12 @@ public class ServerStatus {
    private final ResourceUsage disk;
    private final ServerUptime uptime;
 
-   public ServerStatus(Server.State state, ResourceUsage cpu, ResourceUsage memory, ResourceUsage disk,  ServerUptime uptime) {
-      this.state = state;
+   @ConstructorProperties({
+         "state", "cpu", "memory", "disk", "uptime"
+   })
+   protected ServerStatus(Server.State state, @Nullable ResourceUsage cpu, @Nullable ResourceUsage memory,
+                          @Nullable ResourceUsage disk, @Nullable ServerUptime uptime) {
+      this.state = checkNotNull(state, "state");
       this.cpu = cpu;
       this.memory = memory;
       this.disk = disk;
@@ -91,64 +129,68 @@ public class ServerStatus {
    /**
     * @return the state of the server (e.g. "running")
     */
+   @Nullable
    public Server.State getState() {
-      return state;
+      return this.state;
    }
 
    /**
     * @return CPU usage information
     */
+   @Nullable
    public ResourceUsage getCpu() {
-      return cpu;
+      return this.cpu;
    }
 
    /**
     * @return details of memory usage and limits
     */
+   @Nullable
    public ResourceUsage getMemory() {
-      return memory;
+      return this.memory;
    }
 
    /**
     * @return details of disk usage and limits
     */
+   @Nullable
    public ResourceUsage getDisk() {
-      return disk;
+      return this.disk;
    }
 
    /**
     * @return the uptime of the server
     */
+   @Nullable
    public ServerUptime getUptime() {
-      return uptime;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof ServerStatus) {
-         final ServerStatus other = (ServerStatus) object;
-         return Objects.equal(state, other.state)
-               && Objects.equal(cpu, other.cpu)
-               && Objects.equal(memory, other.memory)
-               && Objects.equal(disk, other.disk)
-               && Objects.equal(uptime, other.uptime);
-      } else {
-         return false;
-      }
+      return this.uptime;
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(state, cpu, memory, disk, uptime);
    }
-   
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ServerStatus that = ServerStatus.class.cast(obj);
+      return Objects.equal(this.state, that.state)
+            && Objects.equal(this.cpu, that.cpu)
+            && Objects.equal(this.memory, that.memory)
+            && Objects.equal(this.disk, that.disk)
+            && Objects.equal(this.uptime, that.uptime);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("state", state).add("cpu", cpu).add("memory", memory).add("disk", disk).add("uptime", uptime);
+   }
+
    @Override
    public String toString() {
-      return String.format("[state=%s, cpu=%s, memory=%s, disk=%s, uptime=%s]",
-            state, cpu, memory, disk, uptime);
+      return string().toString();
    }
 
 }

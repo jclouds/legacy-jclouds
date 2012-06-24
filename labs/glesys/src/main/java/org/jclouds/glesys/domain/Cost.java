@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,8 +20,10 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * The Cost class contains information about the cost of a server
@@ -30,84 +32,94 @@ import com.google.gson.annotations.SerializedName;
  * @see ServerDetails
  */
 public class Cost {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private double amount;
-      private String currency;
-      private String timePeriod;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromCost(this);
+   }
 
-      public Builder amount(double amount) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected double amount;
+      protected String currency;
+      protected String timePeriod;
+
+      /**
+       * @see Cost#getAmount()
+       */
+      public T amount(double amount) {
          this.amount = amount;
-         return this;
+         return self();
       }
 
-      public Builder currency(String currency) {
-         this.currency = currency;
-         return this;
+      /**
+       * @see Cost#getCurrency()
+       */
+      public T currency(String currency) {
+         this.currency = checkNotNull(currency, "currency");
+         return self();
       }
 
-      public Builder timePeriod(String timePeriod) {
-         this.timePeriod = timePeriod;
-         return this;
+      /**
+       * @see Cost#getTimePeriod()
+       */
+      public T timePeriod(String timePeriod) {
+         this.timePeriod = checkNotNull(timePeriod, "timePeriod");
+         return self();
       }
 
       public Cost build() {
          return new Cost(amount, currency, timePeriod);
       }
 
-      public Builder fromCost(Cost cost) {
-         return amount(cost.getAmount()).currency(cost.getCurrency()).timePeriod(cost.getTimePeriod());
+      public T fromCost(Cost in) {
+         return this.amount(in.getAmount()).currency(in.getCurrency()).timePeriod(in.getTimePeriod());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
    private final double amount;
    private final String currency;
-   @SerializedName("timeperiod")
    private final String timePeriod;
 
-   public Cost(double amount, String currency, String timePeriod) {
+   @ConstructorProperties({
+         "amount", "currency", "timeperiod"
+   })
+   protected Cost(double amount, String currency, String timePeriod) {
       this.amount = amount;
       this.currency = checkNotNull(currency, "currency");
-      this.timePeriod = timePeriod;
+      this.timePeriod = checkNotNull(timePeriod, "timePeriod");
    }
 
    /**
     * @return the numeric cost in #currency / #timePeriod
     */
    public double getAmount() {
-      return amount;
+      return this.amount;
    }
 
    /**
     * @return the currency unit, e.g. "EUR" for Euro
     */
    public String getCurrency() {
-      return currency;
+      return this.currency;
    }
 
    /**
     * @return the time period for which this cost charged, e.g. "month"
     */
    public String getTimePeriod() {
-      return timePeriod;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Cost) {
-         Cost other = (Cost) object;
-         return Objects.equal(amount, other.amount)
-               && Objects.equal(currency, other.currency)
-               && Objects.equal(timePeriod, other.timePeriod);
-      } else {
-         return false;
-      }
+      return this.timePeriod;
    }
 
    @Override
@@ -116,8 +128,22 @@ public class Cost {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Cost that = Cost.class.cast(obj);
+      return Objects.equal(this.amount, that.amount)
+            && Objects.equal(this.currency, that.currency)
+            && Objects.equal(this.timePeriod, that.timePeriod);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("amount", amount).add("currency", currency).add("timePeriod", timePeriod);
+   }
+
+   @Override
    public String toString() {
-      return String.format(
-            "[amount=%f, currency=%s, timePeriod=%s]", amount, currency, timePeriod);
+      return string().toString();
    }
 }

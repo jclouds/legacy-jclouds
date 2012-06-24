@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,8 +18,12 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Information about an archive
@@ -27,102 +31,143 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_list" />
  */
-public class Archive implements Comparable<Archive> {
-   public static Builder builder() {
-      return new Builder();
+public class Archive {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromArchive(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
       protected String username;
       protected String totalSize;
       protected String freeSize;
       protected boolean locked;
 
-      public Builder username(String username) {
-         this.username = username;
-         return this;
+      /**
+       * @see Archive#getUsername()
+       */
+      public T username(String username) {
+         this.username = checkNotNull(username, "username");
+         return self();
       }
 
-      public Builder totalSize(String totalSize) {
-         this.totalSize = totalSize;
-         return this;
+      /**
+       * @see Archive#getTotalSize()
+       */
+      public T totalSize(String totalSize) {
+         this.totalSize = checkNotNull(totalSize, "totalSize");
+         return self();
       }
 
-      public Builder freeSize(String freeSize) {
-         this.freeSize = freeSize;
-         return this;
+      /**
+       * @see Archive#getFreeSize()
+       */
+      public T freeSize(String freeSize) {
+         this.freeSize = checkNotNull(freeSize, "freeSize");
+         return self();
       }
 
-      public Builder locked(boolean locked) {
+      /**
+       * @see Archive#isLocked()
+       */
+      public T locked(boolean locked) {
          this.locked = locked;
-         return this;
+         return self();
       }
 
       public Archive build() {
-         return new Archive(username, totalSize, freeSize, locked);
+         return new Archive(username, totalSize, freeSize, new GleSYSBoolean(locked));
       }
 
-      public Builder fromArchive(Archive in) {
-         return username(in.getUsername()).totalSize(in.getTotalSize()).freeSize(in.getFreeSize()).locked(in.isLocked());
+      public T fromArchive(Archive in) {
+         return this
+               .username(in.getUsername())
+               .totalSize(in.getTotalSize())
+               .freeSize(in.getFreeSize())
+               .locked(in.isLocked());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
    private final String username;
-   @SerializedName("size_total")
    private final String totalSize;
-   @SerializedName("size_free")
    private final String freeSize;
    private final boolean locked;
 
-   /** @return the name (username) of the archive */
+   @ConstructorProperties({
+         "username", "sizetotal", "sizefree", "locked"
+   })
+   protected Archive(String username, String totalSize, String freeSize, GleSYSBoolean locked) {
+      this.username = checkNotNull(username, "username");
+      this.totalSize = checkNotNull(totalSize, "totalSize");
+      this.freeSize = checkNotNull(freeSize, "freeSize");
+      this.locked = checkNotNull(locked, "locked").getValue();
+   }
+
+   /**
+    * @return the name (username) of the archive
+    */
    public String getUsername() {
-      return username;
+      return this.username;
    }
 
-   /** @return the total size of the archive, ex. "10 GB" */
+   /**
+    * @return the total size of the archive, ex. "10 GB"
+    */
    public String getTotalSize() {
-      return totalSize;
+      return this.totalSize;
    }
 
-   /** @return the free space left of the archive */
+   /**
+    * @return the free space left of the archive
+    */
    public String getFreeSize() {
-      return freeSize;
+      return this.freeSize;
    }
 
-   /** @return true if the archive is locked */
+   /**
+    * @return true if the archive is locked
+    */
    public boolean isLocked() {
-      return locked;
-   }
-
-   public Archive(String username, String totalSize, String freeSize, boolean locked) {
-      this.username = username;
-      this.totalSize = totalSize;
-      this.freeSize = freeSize;
-      this.locked = locked;
+      return this.locked;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(username);
+      return Objects.hashCode(username, totalSize, freeSize, locked);
    }
 
    @Override
-   public int compareTo(Archive other) {
-      return username.compareTo(other.getUsername());
-   }
-   
-   @Override
    public boolean equals(Object obj) {
-      if (this == obj) {
-         return true;
-      }
-      return obj instanceof Archive
-            && Objects.equal(username, ((Archive) obj).username);
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Archive that = Archive.class.cast(obj);
+      return Objects.equal(this.username, that.username)
+            && Objects.equal(this.totalSize, that.totalSize)
+            && Objects.equal(this.freeSize, that.freeSize)
+            && Objects.equal(this.locked, that.locked);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("username", username).add("totalSize", totalSize).add("freeSize", freeSize).add("locked", locked);
    }
 
    @Override
    public String toString() {
-      return String.format("[username=%s, totalSize=%s, freeSize=%s, locked=%b]", username, totalSize, freeSize, locked);
+      return string().toString();
    }
 
 }

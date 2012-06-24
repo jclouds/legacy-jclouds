@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,12 +20,12 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Sets the allowed arguments for some of the functions in this module such as disksize, cpucores etc.
@@ -34,79 +34,104 @@ import com.google.gson.annotations.SerializedName;
  * @see <a href="https://customer.glesys.com/api.php?a=doc#server_allowedarguments" />
  */
 public class AllowedArgumentsForCreateServer {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private Set<Integer> diskSizes;
-      private Set<Integer> memorySizes;
-      private Set<Integer> cpuCores;
-      private Set<String> templates;
-      private Set<Integer> transfers;
-      private Set<String> dataCenters;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromAllowedArgumentsForCreateServer(this);
+   }
 
-      public Builder diskSizes(Integer... sizes) {
-         return diskSizes(ImmutableSet.<Integer>copyOf(sizes));
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected Set<Integer> diskSizes = ImmutableSet.of();
+      protected Set<Integer> memorySizes = ImmutableSet.of();
+      protected Set<Integer> cpuCores = ImmutableSet.of();
+      protected Set<String> templates = ImmutableSet.of();
+      protected Set<Integer> transfers = ImmutableSet.of();
+      protected Set<String> dataCenters = ImmutableSet.of();
+
+      /**
+       * @see AllowedArgumentsForCreateServer#getDiskSizesInGB()
+       */
+      public T diskSizes(Set<Integer> diskSizes) {
+         this.diskSizes = ImmutableSet.copyOf(checkNotNull(diskSizes, "diskSizesInGB"));
+         return self();
       }
 
-      public Builder diskSizes(Set<Integer> sizes) {
-         this.diskSizes = sizes;
-         return this;
+      public T diskSizes(Integer... in) {
+         return diskSizes(ImmutableSet.copyOf(in));
       }
 
-      public Builder memorySizes(Integer... sizes) {
-         return memorySizes(ImmutableSet.<Integer>copyOf(sizes));
+      /**
+       * @see AllowedArgumentsForCreateServer#getMemorySizesInMB()
+       */
+      public T memorySizes(Set<Integer> memorySizes) {
+         this.memorySizes = ImmutableSet.copyOf(checkNotNull(memorySizes, "memorySizesInMB"));
+         return self();
       }
 
-      public Builder memorySizes(Set<Integer> sizes) {
-         this.memorySizes = sizes;
-         return this;
+      public T memorySizes(Integer... in) {
+         return memorySizes(ImmutableSet.copyOf(in));
       }
 
-      public Builder cpuCores(Integer... cpuCores) {
-         this.cpuCores = ImmutableSet.<Integer>copyOf(cpuCores);
-         return this;
+      /**
+       * @see AllowedArgumentsForCreateServer#getCpuCoreOptions()
+       */
+      public T cpuCores(Set<Integer> cpuCores) {
+         this.cpuCores = ImmutableSet.copyOf(checkNotNull(cpuCores, "cpuCoreOptions"));
+         return self();
       }
 
-      public Builder cpuCores(Set<Integer> cpuCores) {
-         this.cpuCores = cpuCores;
-         return this;
+      public T cpuCores(Integer... in) {
+         return cpuCores(ImmutableSet.copyOf(in));
       }
 
-      public Builder templates(String... templates) {
-         return templates(ImmutableSet.<String>copyOf(templates));
+      /**
+       * @see AllowedArgumentsForCreateServer#getTemplateNames()
+       */
+      public T templates(Set<String> templates) {
+         this.templates = ImmutableSet.copyOf(checkNotNull(templates, "templateNames"));
+         return self();
       }
 
-      public Builder templates(Set<String> templates) {
-         this.templates = templates;
-         return this;
+      public T templates(String... in) {
+         return templates(ImmutableSet.copyOf(in));
       }
 
-      public Builder transfers(Integer... transfers) {
-         return transfers(ImmutableSet.<Integer>copyOf(transfers));
+      /**
+       * @see AllowedArgumentsForCreateServer#getTransfersInGB()
+       */
+      public T transfers(Set<Integer> transfers) {
+         this.transfers = ImmutableSet.copyOf(checkNotNull(transfers, "transfersInGB"));
+         return self();
       }
 
-      public Builder transfers(Set<Integer> transfers) {
-         this.transfers = transfers;
-         return this;
+      public T transfers(Integer... in) {
+         return transfers(ImmutableSet.copyOf(in));
       }
 
-      public Builder dataCenters(String... dataCenters) {
-         return dataCenters(ImmutableSet.<String>copyOf(dataCenters));
+      /**
+       * @see AllowedArgumentsForCreateServer#getDataCenters()
+       */
+      public T dataCenters(Set<String> dataCenters) {
+         this.dataCenters = ImmutableSet.copyOf(checkNotNull(dataCenters, "dataCenters"));
+         return self();
       }
 
-      public Builder dataCenters(Set<String> dataCenters) {
-         this.dataCenters = dataCenters;
-         return this;
+      public T dataCenters(String... in) {
+         return dataCenters(ImmutableSet.copyOf(in));
       }
 
       public AllowedArgumentsForCreateServer build() {
          return new AllowedArgumentsForCreateServer(diskSizes, memorySizes, cpuCores, templates, transfers, dataCenters);
       }
 
-      public Builder fromAllowedArguments(AllowedArgumentsForCreateServer in) {
-         return diskSizes(in.getDiskSizesInGB())
+      public T fromAllowedArgumentsForCreateServer(AllowedArgumentsForCreateServer in) {
+         return this
+               .diskSizes(in.getDiskSizesInGB())
                .memorySizes(in.getMemorySizesInMB())
                .cpuCores(in.getCpuCoreOptions())
                .templates(in.getTemplateNames())
@@ -115,34 +140,30 @@ public class AllowedArgumentsForCreateServer {
       }
    }
 
-   @SerializedName("disksize")
-   private final Set<Integer> diskSizes;
-   @SerializedName("memorysize")
-   private final Set<Integer> memorySizes;
-   @SerializedName("cpucores")
-   private final Set<Integer> cpuCores;
-   @SerializedName("template")
-   private final Set<String> templates;
-   @SerializedName("transfer")
-   private final Set<Integer> transfers;
-   @SerializedName("datacenter")
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final Set<Integer> diskSizesInGB;
+   private final Set<Integer> memorySizesInMB;
+   private final Set<Integer> cpuCoreOptions;
+   private final Set<String> templateNames;
+   private final Set<Integer> transfersInGB;
    private final Set<String> dataCenters;
 
-   public AllowedArgumentsForCreateServer(Set<Integer> diskSizes, Set<Integer> memorySizes, Set<Integer> cpuCores,
-                                 Set<String> templates, Set<Integer> transfers, Set<String> dataCenters) {
-      checkNotNull(diskSizes, "diskSizes");
-      checkNotNull(memorySizes, "memorySizes");
-      checkNotNull(cpuCores, "cpuCores");
-      checkNotNull(templates, "templates");
-      checkNotNull(transfers, "transfers");
-      checkNotNull(dataCenters, "dataCenters");
-
-      this.diskSizes = diskSizes;
-      this.memorySizes = memorySizes;
-      this.cpuCores = cpuCores;
-      this.templates = templates;
-      this.transfers = transfers;
-      this.dataCenters = dataCenters;
+   @ConstructorProperties({
+         "disksize", "memorysize", "cpucores", "template", "transfer", "datacenter"
+   })
+   protected AllowedArgumentsForCreateServer(Set<Integer> diskSizesInGB, Set<Integer> memorySizesInMB, Set<Integer> cpuCoreOptions, Set<String> templateNames, Set<Integer> transfersInGB, Set<String> dataCenters) {
+      this.diskSizesInGB = ImmutableSet.copyOf(checkNotNull(diskSizesInGB, "diskSizesInGB"));
+      this.memorySizesInMB = ImmutableSet.copyOf(checkNotNull(memorySizesInMB, "memorySizesInMB"));
+      this.cpuCoreOptions = ImmutableSet.copyOf(checkNotNull(cpuCoreOptions, "cpuCoreOptions"));
+      this.templateNames = ImmutableSet.copyOf(checkNotNull(templateNames, "templateNames"));
+      this.transfersInGB = ImmutableSet.copyOf(checkNotNull(transfersInGB, "transfersInGB"));
+      this.dataCenters = ImmutableSet.copyOf(checkNotNull(dataCenters, "dataCenters"));
    }
 
    /**
@@ -150,82 +171,73 @@ public class AllowedArgumentsForCreateServer {
     * @see org.jclouds.glesys.domain.OSTemplate#getMinDiskSize()
     */
    public Set<Integer> getDiskSizesInGB() {
-      return diskSizes;
+      return this.diskSizesInGB;
    }
 
    /**
     * @return a list of memory sizes, in MB, that can be used for creating servers on this platform
-    * @see  org.jclouds.glesys.domain.OSTemplate#getMinMemSize()
+    * @see org.jclouds.glesys.domain.OSTemplate#getMinMemSize()
     */
    public Set<Integer> getMemorySizesInMB() {
-      return memorySizes;
+      return this.memorySizesInMB;
    }
 
    /**
     * @return a list of which core counts can be used for creating servers on this platform
     */
    public Set<Integer> getCpuCoreOptions() {
-      return cpuCores;
+      return this.cpuCoreOptions;
    }
 
    /**
     * @return a list of template names available for creating servers on this platform
-    * @see org.jclouds.glesys.domain.OSTemplate#getName() 
+    * @see org.jclouds.glesys.domain.OSTemplate#getName()
     */
    public Set<String> getTemplateNames() {
-      return templates;
+      return this.templateNames;
    }
 
    /**
     * @return the list of transfer settings available for creating servers on this platform
     */
    public Set<Integer> getTransfersInGB() {
-      return transfers;
+      return this.transfersInGB;
    }
 
    /**
     * @return the list of datacenters available that support creating servers on this platform
     */
    public Set<String> getDataCenters() {
-      return dataCenters;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof AllowedArgumentsForCreateServer) {
-         final AllowedArgumentsForCreateServer other = (AllowedArgumentsForCreateServer) object;
-         return Objects.equal(diskSizes, other.diskSizes)
-               && Objects.equal(memorySizes, other.memorySizes)
-               && Objects.equal(cpuCores, other.cpuCores)
-               && Objects.equal(templates, other.templates)
-               && Objects.equal(transfers, other.transfers)
-               && Objects.equal(dataCenters, other.dataCenters);
-      } else {
-         return false;
-      }
+      return this.dataCenters;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(diskSizes, memorySizes, cpuCores, templates, transfers, dataCenters);
+      return Objects.hashCode(diskSizesInGB, memorySizesInMB, cpuCoreOptions, templateNames, transfersInGB, dataCenters);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      AllowedArgumentsForCreateServer that = AllowedArgumentsForCreateServer.class.cast(obj);
+      return Objects.equal(this.diskSizesInGB, that.diskSizesInGB)
+            && Objects.equal(this.memorySizesInMB, that.memorySizesInMB)
+            && Objects.equal(this.cpuCoreOptions, that.cpuCoreOptions)
+            && Objects.equal(this.templateNames, that.templateNames)
+            && Objects.equal(this.transfersInGB, that.transfersInGB)
+            && Objects.equal(this.dataCenters, that.dataCenters);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("diskSizesInGB", diskSizesInGB).add("memorySizesInMB", memorySizesInMB)
+            .add("cpuCoreOptions", cpuCoreOptions).add("templateNames", templateNames)
+            .add("transfersInGB", transfersInGB).add("dataCenters", dataCenters);
    }
 
    @Override
    public String toString() {
-      checkNotNull(diskSizes, "diskSizes");
-      checkNotNull(memorySizes, "memorySizes");
-      checkNotNull(cpuCores, "cpuCores");
-      checkNotNull(templates, "templates");
-      checkNotNull(transfers, "transfers");
-      checkNotNull(dataCenters, "dataCenters");
-
-      Joiner commaJoiner = Joiner.on(", ");
-      return String.format("[disksize=[%s], memorysize=[%s], cpuCores=[%s], templates=[%s], transfers=[%s], datacenters=[%s]]",
-            commaJoiner.join(diskSizes), commaJoiner.join(memorySizes), commaJoiner.join(cpuCores), commaJoiner.join(templates),
-            commaJoiner.join(transfers), commaJoiner.join(dataCenters));
+      return string().toString();
    }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,10 +18,15 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Domain data for a Glesys account.
@@ -29,80 +34,253 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#domain_list" />
  */
-public class Domain implements Comparable<Domain> {
-   public static Builder builder() {
-      return new Builder();
+public class Domain {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String domainName;
-      private Date createTime;
-      private int recordCount;
-      private boolean useGlesysNameServer;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromDomain(this);
+   }
 
-      public Builder domainName(String domainName) {
-         this.domainName = domainName;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String domainName;
+      protected Date createTime;
+      protected int recordCount;
+      protected boolean useGlesysNameServer;
+      protected String primaryNameServer;
+      protected String responsiblePerson;
+      protected int ttl;
+      protected int refresh;
+      protected int retry;
+      protected int expire;
+      protected int minimum;
+
+      /**
+       * @see Domain#getDomainName()
+       */
+      public T domainName(String domainName) {
+         this.domainName = checkNotNull(domainName, "domainName");
+         return self();
       }
 
-      public Builder createTime(Date createTime) {
+      /**
+       * @see Domain#getCreateTime()
+       */
+      public T createTime(Date createTime) {
          this.createTime = createTime;
-         return this;
+         return self();
       }
 
-      public Builder recordCount(int recordCount) {
+      /**
+       * @see Domain#getRecordCount()
+       */
+      public T recordCount(int recordCount) {
          this.recordCount = recordCount;
-         return this;
+         return self();
       }
 
-      public Builder useGlesysNameServer(boolean useGlesysNameServer) {
+      /**
+       * @see Domain#isUseGlesysNameServer()
+       */
+      public T useGlesysNameServer(boolean useGlesysNameServer) {
          this.useGlesysNameServer = useGlesysNameServer;
-         return this;
+         return self();
+      }
+
+      /**
+       * @see Domain#getPrimaryNameServer()
+       */
+      public T primaryNameServer(String primaryNameServer) {
+         this.primaryNameServer = primaryNameServer;
+         return self();
+      }
+
+      /**
+       * @see Domain#getResponsiblePerson()
+       */
+      public T responsiblePerson(String responsiblePerson) {
+         this.responsiblePerson = responsiblePerson;
+         return self();
+      }
+
+      /**
+       * @see Domain#getTtl()
+       */
+      public T ttl(int ttl) {
+         this.ttl = ttl;
+         return self();
+      }
+
+      /**
+       * @see Domain#getRefresh()
+       */
+      public T refresh(int refresh) {
+         this.refresh = refresh;
+         return self();
+      }
+
+      /**
+       * @see Domain#getRetry()
+       */
+      public T retry(int retry) {
+         this.retry = retry;
+         return self();
+      }
+
+      /**
+       * @see Domain#getExpire()
+       */
+      public T expire(int expire) {
+         this.expire = expire;
+         return self();
+      }
+
+      /**
+       * @see Domain#getMinimum()
+       */
+      public T minimum(int minimum) {
+         this.minimum = minimum;
+         return self();
       }
 
       public Domain build() {
-         return new Domain(domainName, createTime, recordCount, useGlesysNameServer);
+         return new Domain(domainName, createTime, recordCount, new GleSYSBoolean(useGlesysNameServer), primaryNameServer, responsiblePerson, ttl, refresh, retry, expire, minimum);
       }
 
-      public Builder fromDomain(Domain in) {
-         return new Builder().domainName(in.getDomainName()).createTime(in.getCreateTime()).recordCount(in.getRecordCount()).useGlesysNameServer(in.isGlesysNameServer());
+      public T fromDomain(Domain in) {
+         return this.domainName(in.getDomainName())
+               .createTime(in.getCreateTime())
+               .recordCount(in.getRecordCount())
+               .useGlesysNameServer(in.isUseGlesysNameServer())
+               .primaryNameServer(in.getPrimaryNameServer())
+               .responsiblePerson(in.getResponsiblePerson())
+               .ttl(in.getTtl())
+               .refresh(in.getRefresh())
+               .retry(in.getRetry())
+               .expire(in.getExpire());
       }
    }
 
-   @SerializedName("domainname")
-   private final String domainName;
-   @SerializedName("createtime")
-   private final Date createTime;
-   @SerializedName("recordcount")
-   private final int recordCount;
-   @SerializedName("usingglesysnameserver")
-   private final boolean useGlesysNameServer;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public Domain(String domainName, Date createTime, int recordCount, boolean useGlesysNameServer) {
-      this.domainName = domainName;
+   private final String domainName;
+   private final Date createTime;
+   private final int recordCount;
+   private final boolean useGlesysNameServer;
+   private final String primaryNameServer;
+   private final String responsiblePerson;
+   private final int ttl;
+   private final int refresh;
+   private final int retry;
+   private final int expire;
+   private final int minimum;
+
+   @ConstructorProperties({
+         "domainname", "createtime", "recordcount", "usingglesysnameserver", "primarynameserver", "responsibleperson",
+         "ttl", "refresh", "retry", "expire", "minimum"
+   })
+   protected Domain(String domainName, @Nullable Date createTime, int recordCount, GleSYSBoolean useGlesysNameServer,
+                    @Nullable String primaryNameServer, @Nullable String responsiblePerson,
+                    int ttl, int refresh, int retry, int expire, int minimum) {
+      this.domainName = checkNotNull(domainName, "domainName");
       this.createTime = createTime;
       this.recordCount = recordCount;
-      this.useGlesysNameServer = useGlesysNameServer;
+      this.useGlesysNameServer = checkNotNull(useGlesysNameServer, "useGlesysNameServer").getValue();
+      this.primaryNameServer = primaryNameServer;
+      this.responsiblePerson = responsiblePerson;
+      this.ttl = ttl;
+      this.refresh = refresh;
+      this.retry = retry;
+      this.expire = expire;
+      this.minimum = minimum;
    }
 
-   /** @return the domain name, ex. "jclouds.org" */
+   /**
+    * @return the domain name, ex. "jclouds.org"
+    */
    public String getDomainName() {
-      return domainName;
+      return this.domainName;
    }
 
-   /** @return the date the domain was registered with GleSYS */
+   /**
+    * @return the date the domain was registered with GleSYS
+    */
    public Date getCreateTime() {
-      return createTime;
+      return this.createTime;
    }
 
-   /** @return the number of DNS records for this domain */
+   /**
+    * @return the number of DNS records for this domain
+    */
    public int getRecordCount() {
-      return recordCount;
+      return this.recordCount;
    }
 
-   /** @return true if a GleSYS nameserver holds the records */
-   public boolean isGlesysNameServer() {
-      return useGlesysNameServer;
+   /**
+    * @return true if a GleSYS nameserver holds the records
+    */
+   public boolean isUseGlesysNameServer() {
+      return this.useGlesysNameServer;
+   }
+
+   @Nullable
+   public String getPrimaryNameServer() {
+      return primaryNameServer;
+   }
+
+   /**
+    * The E-mail address of the person responsible for this domain (reformatted with '.' at end).
+    */
+   @Nullable
+   public String getResponsiblePerson() {
+      return responsiblePerson;
+   }
+
+   /**
+    * TTL (time to live). The number of seconds a domain name is cached locally before expiration and return to authoritative nameServers for updates
+    */
+   public int getTtl() {
+      return ttl;
+   }
+
+   /**
+    * The number of seconds between update requests from secondary and slave name servers
+    */
+   public int getRefresh() {
+      return refresh;
+   }
+
+
+   /**
+    * The number of seconds the secondary/slave will wait before retrying when the last attempt failed
+    */
+   public int getRetry() {
+      return retry;
+   }
+
+   /**
+    * The number of seconds a master or slave will wait before considering the data stale if it cannot reach the primary name server
+    */
+   public int getExpire() {
+      return expire;
+   }
+
+   /**
+    * The minimum/default TTL if the domain does not specify ttl
+    *
+    * @see #getTtl()
+    */
+   public int getMinimum() {
+      return minimum;
    }
 
    @Override
@@ -111,25 +289,21 @@ public class Domain implements Comparable<Domain> {
    }
 
    @Override
-   public int compareTo(Domain other) {
-      return domainName.compareTo(other.getDomainName());
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Domain that = Domain.class.cast(obj);
+      return Objects.equal(this.domainName, that.domainName);
    }
 
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Domain) {
-         return Objects.equal(domainName, ((Domain) object).domainName);
-      } else {
-         return false;
-      }
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("domainName", domainName).add("createTime", createTime).add("recordCount", recordCount).add("useGlesysNameServer", useGlesysNameServer);
    }
 
    @Override
    public String toString() {
-      return String.format("[domainname=%s, createtime=%s, count=%d, useglesysnameserver=%b]", domainName, createTime, recordCount, useGlesysNameServer);
+      return string().toString();
    }
 
 }

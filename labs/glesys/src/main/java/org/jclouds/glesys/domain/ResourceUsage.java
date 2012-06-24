@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,7 +18,12 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Detailed information on usage
@@ -26,38 +31,60 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  * @see ServerStatus
  */
-
 public class ResourceUsage {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private double usage;
-      private double max;
-      private String unit;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromResourceUsage(this);
+   }
 
-      public Builder usage(double usage) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected double usage;
+      protected double max;
+      protected String unit;
+
+      /**
+       * @see ResourceUsage#getUsage()
+       */
+      public T usage(double usage) {
          this.usage = usage;
-         return this;
+         return self();
       }
 
-      public Builder max(double max) {
+      /**
+       * @see ResourceUsage#getMax()
+       */
+      public T max(double max) {
          this.max = max;
-         return this;
+         return self();
       }
 
-      public Builder unit(String unit) {
-         this.unit = unit;
-         return this;
+      /**
+       * @see ResourceUsage#getUnit()
+       */
+      public T unit(String unit) {
+         this.unit = checkNotNull(unit, "unit");
+         return self();
       }
 
       public ResourceUsage build() {
          return new ResourceUsage(usage, max, unit);
       }
 
-      public Builder fromCpu(ResourceUsage in) {
-         return usage(in.getUsage()).max(in.getMax()).unit(in.getUnit());
+      public T fromResourceUsage(ResourceUsage in) {
+         return this.usage(in.getUsage()).max(in.getMax()).unit(in.getUnit());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
@@ -65,56 +92,58 @@ public class ResourceUsage {
    private final double max;
    private final String unit;
 
-   public ResourceUsage(double usage, double max, String unit) {
+   @ConstructorProperties({
+         "usage", "max", "unit"
+   })
+   protected ResourceUsage(double usage, double max, String unit) {
       this.usage = usage;
       this.max = max;
-      this.unit = unit;
+      this.unit = checkNotNull(unit, "unit");
    }
 
    /**
     * @return the usage in #unit
     */
    public double getUsage() {
-      return usage;
+      return this.usage;
    }
 
    /**
     * @return the max usage in #unit
     */
    public double getMax() {
-      return max;
+      return this.max;
    }
 
    /**
     * @return the unit used
     */
    public String getUnit() {
-      return unit;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof ResourceUsage) {
-         ResourceUsage other = (ResourceUsage) object;
-         return Objects.equal(usage, other.usage)
-               && Objects.equal(max, other.max)
-               && Objects.equal(unit, other.unit);
-      } else {
-         return false;
-      }
+      return this.unit;
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(usage, max, unit);
    }
-   
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ResourceUsage that = ResourceUsage.class.cast(obj);
+      return Objects.equal(this.usage, that.usage)
+            && Objects.equal(this.max, that.max)
+            && Objects.equal(this.unit, that.unit);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("usage", usage).add("max", max).add("unit", unit);
+   }
+
    @Override
    public String toString() {
-      return String.format("[usage=%f, max=%f, unit=%s]",
-            usage, max, unit);
+      return string().toString();
    }
+
 }
