@@ -21,51 +21,63 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
-import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
 
 /**
- * The allowed arguments for archive manipulation, such as archivesize
+ * Detailed information on usage
  *
  * @author Adam Lowe
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_allowedarguments" />
+ * @see ServerStatus
  */
-public class ArchiveAllowedArguments {
+public class ResourceStatus {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromArchiveAllowedArguments(this);
+      return new ConcreteBuilder().fromResourceUsage(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected List<Integer> archiveSizes = ImmutableList.of();
+      protected double usage;
+      protected double max;
+      protected String unit;
 
       /**
-       * @see ArchiveAllowedArguments#getArchiveSizes()
+       * @see ResourceStatus#getUsage()
        */
-      public T archiveSizes(List<Integer> archiveSizes) {
-         this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+      public T usage(double usage) {
+         this.usage = usage;
          return self();
       }
 
-      public T archiveSizes(Integer... in) {
-         return archiveSizes(ImmutableList.copyOf(in));
+      /**
+       * @see ResourceStatus#getMax()
+       */
+      public T max(double max) {
+         this.max = max;
+         return self();
       }
 
-      public ArchiveAllowedArguments build() {
-         return new ArchiveAllowedArguments(archiveSizes);
+      /**
+       * @see ResourceStatus#getUnit()
+       */
+      public T unit(String unit) {
+         this.unit = checkNotNull(unit, "unit");
+         return self();
       }
 
-      public T fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
-         return this.archiveSizes(in.getArchiveSizes());
+      public ResourceStatus build() {
+         return new ResourceStatus(usage, max, unit);
+      }
+
+      public T fromResourceUsage(ResourceStatus in) {
+         return this.usage(in.getUsage()).max(in.getMax()).unit(in.getUnit());
       }
    }
 
@@ -76,38 +88,57 @@ public class ArchiveAllowedArguments {
       }
    }
 
-   private final List<Integer> archiveSizes;
+   private final double usage;
+   private final double max;
+   private final String unit;
 
    @ConstructorProperties({
-         "archivesize"
+         "usage", "max", "unit"
    })
-   protected ArchiveAllowedArguments(List<Integer> archiveSizes) {
-      this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+   protected ResourceStatus(double usage, double max, String unit) {
+      this.usage = usage;
+      this.max = max;
+      this.unit = checkNotNull(unit, "unit");
    }
 
    /**
-    * @return the list of allowed archive sizes, in GB
+    * @return the usage in #unit
     */
-   public List<Integer> getArchiveSizes() {
-      return this.archiveSizes;
+   public double getUsage() {
+      return this.usage;
+   }
+
+   /**
+    * @return the max usage in #unit
+    */
+   public double getMax() {
+      return this.max;
+   }
+
+   /**
+    * @return the unit used
+    */
+   public String getUnit() {
+      return this.unit;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(archiveSizes);
+      return Objects.hashCode(usage, max, unit);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ArchiveAllowedArguments that = ArchiveAllowedArguments.class.cast(obj);
-      return Objects.equal(this.archiveSizes, that.archiveSizes);
+      ResourceStatus that = ResourceStatus.class.cast(obj);
+      return Objects.equal(this.usage, that.usage)
+            && Objects.equal(this.max, that.max)
+            && Objects.equal(this.unit, that.unit);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("archiveSizes", archiveSizes);
+      return Objects.toStringHelper("").add("usage", usage).add("max", max).add("unit", unit);
    }
 
    @Override

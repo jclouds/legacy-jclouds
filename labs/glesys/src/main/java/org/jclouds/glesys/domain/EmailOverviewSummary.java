@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,90 +18,130 @@
  */
 package org.jclouds.glesys.domain;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Summary information of e-mail settings and limits for a GleSYS account
- * 
+ *
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
 //TODO: find a better name for this class
 @Beta
 public class EmailOverviewSummary {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int accounts;
-      private int maxAccounts;
-      private int aliases;
-      private int maxAliases;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromEmailOverviewSummary(this);
+   }
 
-      public Builder accounts(int accounts) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected int accounts;
+      protected int maxAccounts;
+      protected int aliases;
+      protected int maxAliases;
+
+      /**
+       * @see EmailOverviewSummary#getAccounts()
+       */
+      public T accounts(int accounts) {
          this.accounts = accounts;
-         return this;
+         return self();
       }
-      
-      public Builder maxAccounts(int maxAccounts) {
+
+      /**
+       * @see EmailOverviewSummary#getMaxAccounts()
+       */
+      public T maxAccounts(int maxAccounts) {
          this.maxAccounts = maxAccounts;
-         return this;
+         return self();
       }
-      
-      public Builder aliases(int aliases) {
+
+      /**
+       * @see EmailOverviewSummary#getAliases()
+       */
+      public T aliases(int aliases) {
          this.aliases = aliases;
-         return this;
+         return self();
       }
-      
-      public Builder maxAliases(int maxAliases) {
+
+      /**
+       * @see EmailOverviewSummary#getMaxAliases()
+       */
+      public T maxAliases(int maxAliases) {
          this.maxAliases = maxAliases;
-         return this;
+         return self();
       }
-      
+
       public EmailOverviewSummary build() {
          return new EmailOverviewSummary(accounts, maxAccounts, aliases, maxAliases);
       }
-      
-      public Builder fromEmailOverview(EmailOverviewSummary in) {
-         return accounts(in.getAccounts()).maxAccounts(in.getMaxAccounts()).aliases(in.getAliases()).maxAliases(in.getMaxAliases());
+
+      public T fromEmailOverviewSummary(EmailOverviewSummary in) {
+         return this.accounts(in.getAccounts())
+               .maxAccounts(in.getMaxAccounts())
+               .aliases(in.getAliases())
+               .maxAliases(in.getMaxAliases());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
    private final int accounts;
-   @SerializedName("maxaccounts")
    private final int maxAccounts;
    private final int aliases;
-   @SerializedName("maxaliases")
    private final int maxAliases;
 
-   public EmailOverviewSummary(int accounts, int maxAccounts, int aliases, int maxAliases) {
+   @ConstructorProperties({
+         "accounts", "maxaccounts", "aliases", "maxaliases"
+   })
+   protected EmailOverviewSummary(int accounts, int maxAccounts, int aliases, int maxAliases) {
       this.accounts = accounts;
       this.maxAccounts = maxAccounts;
       this.aliases = aliases;
       this.maxAliases = maxAliases;
    }
 
-   /** @return the number of e-mail accounts */
+   /**
+    * @return the number of e-mail accounts
+    */
    public int getAccounts() {
-      return accounts;
+      return this.accounts;
    }
 
-   /** @return the maximum number of e-mail accounts */
+   /**
+    * @return the maximum number of e-mail accounts
+    */
    public int getMaxAccounts() {
-      return maxAccounts;
+      return this.maxAccounts;
    }
 
-   /** @return the number of e-mail aliases */
+   /**
+    * @return the number of e-mail aliases
+    */
    public int getAliases() {
-      return aliases;
+      return this.aliases;
    }
 
-   /** @return the maximum number of e-mail aliases */
+   /**
+    * @return the maximum number of e-mail aliases
+    */
    public int getMaxAliases() {
-      return maxAliases;
+      return this.maxAliases;
    }
 
    @Override
@@ -110,24 +150,24 @@ public class EmailOverviewSummary {
    }
 
    @Override
-   public boolean equals(Object object) {
-      if (object == this) {
-         return true;
-      }
-      if (object instanceof EmailOverviewSummary) {
-         EmailOverviewSummary other = (EmailOverviewSummary) object;
-         return Objects.equal(accounts, other.accounts)
-               && Objects.equal(maxAccounts, other.maxAccounts)
-               && Objects.equal(aliases, other.aliases)
-               && Objects.equal(maxAliases, other.maxAliases);
-      } else {
-         return false;
-      }
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      EmailOverviewSummary that = EmailOverviewSummary.class.cast(obj);
+      return Objects.equal(this.accounts, that.accounts)
+            && Objects.equal(this.maxAccounts, that.maxAccounts)
+            && Objects.equal(this.aliases, that.aliases)
+            && Objects.equal(this.maxAliases, that.maxAliases);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("accounts", accounts).add("maxAccounts", maxAccounts).add("aliases", aliases).add("maxAliases", maxAliases);
    }
 
    @Override
    public String toString() {
-      return String.format("accounts=%d, maxAccounts=%d, aliases=%d, maxAliases=%d", accounts, maxAccounts, aliases, maxAliases);
+      return string().toString();
    }
 
 }

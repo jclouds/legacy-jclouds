@@ -1,1 +1,1 @@
-{"response":{"status":{"code":"200","text":"OK"},"archives":[{"username":"xxxxx_test1","size_total":"30 GB","size_free":"30 GB","locked":false}],"debug":{"input":[]}}}
+{"response":{"status":{"code":"200","text":"OK"},"archives":[{"username":"xxxxx_test1","sizetotal":"30 GB","sizefree":"20 GB","locked":false}],"debug":{"input":[]}}}

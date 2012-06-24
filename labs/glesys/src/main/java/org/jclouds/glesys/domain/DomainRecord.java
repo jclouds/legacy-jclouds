@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,7 +18,14 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * DNS record data.
@@ -26,55 +33,92 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#domain_list_records" />
  */
-public class DomainRecord implements Comparable<DomainRecord> {
-   public static Builder builder() {
-      return new Builder();
+public class DomainRecord {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private String domainname;
-      private String host;
-      private String type;
-      private String data;
-      private int ttl;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromDomainRecord(this);
+   }
 
-      public Builder id(String id) {
-         this.id = id;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String id;
+      protected String domainname;
+      protected String host;
+      protected String type;
+      protected String data;
+      protected int ttl;
+
+      /**
+       * @see DomainRecord#getId()
+       */
+      public T id(String id) {
+         this.id = checkNotNull(id, "id");
+         return self();
       }
 
-      public Builder domainname(String domainname) {
-         this.domainname = domainname;
-         return this;
+      /**
+       * @see DomainRecord#getDomainname()
+       */
+      public T domainname(String domainname) {
+         this.domainname = checkNotNull(domainname, "domainname");
+         return self();
       }
 
-      public Builder host(String host) {
-         this.host = host;
-         return this;
+      /**
+       * @see DomainRecord#getHost()
+       */
+      public T host(String host) {
+         this.host = checkNotNull(host, "host");
+         return self();
       }
 
-      public Builder type(String type) {
-         this.type = type;
-         return this;
+      /**
+       * @see DomainRecord#getType()
+       */
+      public T type(String type) {
+         this.type = checkNotNull(type, "type");
+         return self();
       }
 
-      public Builder data(String data) {
-         this.data = data;
-         return this;
+      /**
+       * @see DomainRecord#getData()
+       */
+      public T data(String data) {
+         this.data = checkNotNull(data, "data");
+         return self();
       }
 
-      public Builder ttl(int ttl) {
+      /**
+       * @see DomainRecord#getTtl()
+       */
+      public T ttl(int ttl) {
          this.ttl = ttl;
-         return this;
+         return self();
       }
 
       public DomainRecord build() {
          return new DomainRecord(id, domainname, host, type, data, ttl);
       }
 
-      public Builder fromDomainRecord(DomainRecord in) {
-         return new Builder().id(in.getId()).domainname(in.getDomainName()).host(in.getHost()).type(in.getType()).data(in.getData()).ttl(in.getTtl());
+      public T fromDomainRecord(DomainRecord in) {
+         return this.id(in.getId())
+               .domainname(in.getDomainname())
+               .host(in.getHost())
+               .type(in.getType())
+               .data(in.getData())
+               .ttl(in.getTtl());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
@@ -85,11 +129,14 @@ public class DomainRecord implements Comparable<DomainRecord> {
    private final String data;
    private final int ttl;
 
-   public DomainRecord(String id, String domainname, String host, String type, String data, int ttl) {
+   @ConstructorProperties({
+         "recordid", "domainname", "host", "type", "data", "ttl"
+   })
+   protected DomainRecord(@Nullable String id, String domainname, String host, String type, @Nullable String data, int ttl) {
       this.id = id;
-      this.domainname = domainname;
-      this.host = host;
-      this.type = type;
+      this.domainname = checkNotNull(domainname, "domainname");
+      this.host = checkNotNull(host, "host");
+      this.type = checkNotNull(type, "type");
       this.data = data;
       this.ttl = ttl;
    }
@@ -99,47 +146,43 @@ public class DomainRecord implements Comparable<DomainRecord> {
     * @see org.jclouds.glesys.features.DomainClient
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the zone content of the record
     */
-   public String getDomainName() {
-      return domainname;
+   public String getDomainname() {
+      return this.domainname;
    }
 
    /**
     * @return the host content of the record
     */
    public String getHost() {
-      return host;
+      return this.host;
    }
 
    /**
     * @return the type of the record, ex. "A"
     */
    public String getType() {
-      return type;
+      return this.type;
    }
 
    /**
     * @return the data content of the record
     */
+   @Nullable
    public String getData() {
-      return data;
+      return this.data;
    }
 
    /**
     * @return the TTL/Time-to-live for the record
     */
    public int getTtl() {
-      return ttl;
-   }
-
-   @Override
-   public int compareTo(DomainRecord other) {
-      return id.compareTo(other.getId());
+      return this.ttl;
    }
 
    @Override
@@ -148,21 +191,22 @@ public class DomainRecord implements Comparable<DomainRecord> {
    }
 
    @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof DomainRecord) {
-         DomainRecord other = (DomainRecord) object;
-         return Objects.equal(id, other.id);
-      } else {
-         return false;
-      }
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      DomainRecord that = DomainRecord.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("id", id).add("domainname", domainname).add("host", host).add("type", type).add("data", data)
+            .add("ttl", ttl);
    }
 
    @Override
    public String toString() {
-      return String.format("[id=%s, domainname=%s, host=%s, type=%s, data=%s, ttl=%d]", id, domainname, host, type, data, ttl);
+      return string().toString();
    }
 
 }

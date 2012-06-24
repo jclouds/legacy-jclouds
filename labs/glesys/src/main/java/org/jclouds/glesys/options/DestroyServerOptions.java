@@ -47,7 +47,7 @@ public class DestroyServerOptions extends BaseHttpRequestOptions {
     * @param keepIp if true, keep the ip address
     */
    public DestroyServerOptions keepIp(boolean keepIp) {
-      formParameters.put("keepip", Integer.toString(keepIp ? 1 : 0));
+      formParameters.put("keepip", Boolean.toString(keepIp));
       return this;
    }
 }

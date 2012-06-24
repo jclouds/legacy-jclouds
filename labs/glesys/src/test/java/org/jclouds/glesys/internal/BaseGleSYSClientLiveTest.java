@@ -18,24 +18,14 @@
  */
 package org.jclouds.glesys.internal;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.glesys.domain.ServerSpec;
-import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.features.DomainClient;
-import org.jclouds.glesys.features.ServerClient;
-import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeGroups;
@@ -77,43 +67,4 @@ public class BaseGleSYSClientLiveTest extends BaseComputeServiceContextLiveTest 
       assertTrue(result.apply(before + 1));
    }
 
-   protected ServerStatusChecker createServer(String hostName) {
-      ServerClient client = gleContext.getApi().getServerClient();
-
-      ServerDetails testServer = client.createServerWithHostnameAndRootPassword(
-            ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")
-                  .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50).build(), hostName, UUID.randomUUID()
-                  .toString().replace("-",""));
-
-      assertNotNull(testServer.getId());
-      assertEquals(testServer.getHostname(), hostName);
-      assertFalse(testServer.getIps().isEmpty());
-
-      ServerStatusChecker runningServerCounter = new ServerStatusChecker(client, testServer.getId(), 180, 10,
-            TimeUnit.SECONDS);
-
-      assertTrue(runningServerCounter.apply(Server.State.RUNNING));
-      return runningServerCounter;
-   }
-
-   public static class ServerStatusChecker extends RetryablePredicate<Server.State> {
-      private final String serverId;
-
-      public String getServerId() {
-         return serverId;
-      }
-
-      public ServerStatusChecker(final ServerClient client, final String serverId, long maxWait, long period,
-            TimeUnit unit) {
-         super(new Predicate<Server.State>() {
-
-            public boolean apply(Server.State value) {
-               ServerStatus status = client.getServerStatus(serverId, ServerStatusOptions.Builder.state());
-               return status.getState() == value;
-            }
-
-         }, maxWait, period, unit);
-         this.serverId = serverId;
-      }
-   }
 }
