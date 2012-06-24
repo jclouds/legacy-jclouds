@@ -20,10 +20,13 @@ package org.jclouds.glesys.functions.internal;
 
 import java.io.IOException;
 
+import org.jclouds.glesys.domain.GleSYSBoolean;
 import org.jclouds.glesys.domain.Server;
 
+import com.google.common.base.Objects;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -42,5 +45,24 @@ public class GleSYSTypeAdapters {
          return Server.State.fromValue(reader.nextString());
       }
    }
+
+   public static class GleSYSBooleanAdapter extends TypeAdapter<GleSYSBoolean> {
+
+      @Override
+      public void write(JsonWriter writer, GleSYSBoolean value) throws IOException {
+         writer.value(value.getValue() ? "yes" : "no");
+      }
+
+      @Override
+      public GleSYSBoolean read(JsonReader in) throws IOException {
+         if (in.peek() == JsonToken.BOOLEAN) {
+            return new GleSYSBoolean(in.nextBoolean());
+         } else {
+            return new GleSYSBoolean(Objects.equal(in.nextString(), "yes"));
+         }
+      }
+
+   }
+
 
 }
