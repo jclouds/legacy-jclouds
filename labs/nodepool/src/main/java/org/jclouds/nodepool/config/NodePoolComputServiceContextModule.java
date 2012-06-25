@@ -31,6 +31,7 @@ public class NodePoolComputServiceContextModule extends BaseComputeServiceContex
 
    @Provides
    @Singleton
+   @Named("METADATA_STORE")
    public Map<String, InputStream> provideInputStreamMapFromBlobStore(BlobStoreContext in,
             @Named(NodeMetadataStore.CONTAINER) String container) {
       return in.createInputStreamMap(container);

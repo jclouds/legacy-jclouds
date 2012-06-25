@@ -1,5 +1,7 @@
 package org.jclouds.nodepool;
 
+import java.util.Properties;
+
 import org.jclouds.compute.StubComputeServiceIntegrationTest;
 import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
 import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
@@ -16,8 +18,16 @@ public class NodePoolComputeServiceStubTest extends StubComputeServiceIntegratio
    }
 
    @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      props.put("jclouds.filesystem.basedir", "target/test-data");
+      props.put("jclouds.nodepool.metadatastore.container", "jsonmetadata");
+      return props;
+   }
+
+   @Override
    protected Iterable<Module> setupModules() {
-      return ImmutableSet.<Module> of(new StubComputeServiceContextModule(), new FilesystemBlobStoreContextModule());
+      return ImmutableSet.<Module> of(new FilesystemBlobStoreContextModule());
    }
 
    // public void testStartPool() throws InterruptedException, ExecutionException, RunNodesException
