@@ -18,19 +18,23 @@
  */
 package org.jclouds.nodepool;
 
+import javax.inject.Singleton;
+
 import org.jclouds.Context;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.location.Provider;
 import org.jclouds.nodepool.internal.BaseNodePoolComputeService;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 
+@Singleton
 public class NodePoolComputeServiceContext extends ComputeServiceContextImpl {
 
    @Inject
-   public NodePoolComputeServiceContext(Context backend, TypeToken<? extends Context> backendType,
+   public NodePoolComputeServiceContext(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
             ComputeService computeService, Utils utils) {
       super(backend, backendType, computeService, utils);
    }
@@ -42,7 +46,6 @@ public class NodePoolComputeServiceContext extends ComputeServiceContextImpl {
 
    public NodePoolStats getPoolStats() {
       return new NodePoolStats(getComputeService().currentSize(), getComputeService().idleNodes(), getComputeService()
-               .usedNodes(), getComputeService().allocationInProgressNodes(), getComputeService().maxNodes(),
-               getComputeService().minNodes());
+               .usedNodes(), getComputeService().maxNodes(), getComputeService().minNodes());
    }
 }

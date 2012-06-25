@@ -18,12 +18,10 @@
  */
 package org.jclouds.nodepool.internal;
 
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Closeable;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -36,24 +34,22 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.HashMultimap;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -64,6 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author David Alves
  * 
  */
+
 public abstract class BaseNodePoolComputeService implements ComputeService, Closeable {
 
    protected final ComputeService backingComputeService;
@@ -72,18 +69,17 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
    protected final Image image;
    protected final Hardware hardware;
    protected final Location location;
-
-   // assignments of nodes to group names
-   protected final Multimap<String, NodeMetadata> assignments = HashMultimap.create();
+   protected final NodeMetadataStore metadataStore;
 
    public BaseNodePoolComputeService(ComputeServiceContext backingComputeServiceContext, String poolGroupNamePrefix,
-            Template backingTemplate) {
+            Template backingTemplate, NodeMetadataStore metadataStore) {
       this.backingComputeService = backingComputeServiceContext.getComputeService();
       this.poolGroupName = poolGroupNamePrefix;
       this.template = backingTemplate == null ? this.backingComputeService.templateBuilder().build() : backingTemplate;
       this.image = this.template.getImage();
       this.hardware = this.template.getHardware();
       this.location = this.template.getLocation();
+      this.metadataStore = metadataStore;
    }
 
    /**
@@ -93,64 +89,47 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
     * @param filter
     * @return
     */
-   private Predicate<NodeMetadata> transformUserPredicateSpecificIdPredicate(Predicate<NodeMetadata> filter) {
-      Iterable<Map.Entry<String, NodeMetadata>> relevantAssginemnts = filterAssignmentsBasedOnUserPredicate(filter);
-      final Set<String> ids = Sets.newHashSet();
-      for (Map.Entry<String, NodeMetadata> assignment : relevantAssginemnts) {
-         ids.add(assignment.getValue().getId());
-      }
+   protected Predicate<NodeMetadata> transformUserPredicateInSpecificIdPredicate(Predicate<NodeMetadata> filter) {
+      final Set<NodeMetadata> filteredNodes = filterFrontendNodesBasedOnUserPredicate(filter);
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata input) {
-            return ids.contains(input.getId());
+            return filteredNodes.contains(input);
          }
       };
 
    }// TODO this is n^2 expensive. s
 
-   private Map<? extends NodeMetadata, ExecResponse> transformBackendExecutionMapIntoFrontend(
-            Map<? extends NodeMetadata, ExecResponse> backendMap) {
-      Map<NodeMetadata, ExecResponse> frontendMap = Maps.newHashMapWithExpectedSize(backendMap.size());
-      for (Map.Entry<? extends NodeMetadata, ExecResponse> entry : backendMap.entrySet()) {
-         Map.Entry<String, NodeMetadata> assignmentEntry = findAssigmentEntry(entry.getKey().getId());
-         frontendMap
-                  .put(toFrontendNodemetadata(assignmentEntry.getValue(), assignmentEntry.getKey()), entry.getValue());
-      }
-      return frontendMap;
-   }
-
-   protected Map.Entry<String, NodeMetadata> findAssigmentEntry(final String id) {
-      // TODO reverse lookup data structure would be faster but will pools be that big ?
-      return find(assignments.entries(), new Predicate<Map.Entry<String, NodeMetadata>>() {
+   private <T extends NodeMetadata> Map<T, ExecResponse> transformBackendExecutionMapIntoFrontend(
+            Map<T, ExecResponse> backendMap) {
+      return Maps2.transformKeys(backendMap, new Function<T, T>() {
+         @SuppressWarnings("unchecked")
          @Override
-         public boolean apply(Entry<String, NodeMetadata> entry) {
-            return entry.getValue().getId().equals(id);
+         public T apply(T input) {
+            return (T) metadataStore.load(input);
          }
       });
-   }
 
-   protected NodeMetadata toFrontendNodemetadata(NodeMetadata backendNodeMetadata, String group) {
-      return NodeMetadataBuilder.fromNodeMetadata(backendNodeMetadata).group(group).build();
    }
 
    /**
     * Because a lot of predicates are based on group info we need that to check wether the predicate
     * matches.
     */
-   protected Iterable<Map.Entry<String, NodeMetadata>> filterAssignmentsBasedOnUserPredicate(
-            final Predicate<NodeMetadata> userFilter) {
-      return filter(assignments.entries(), new Predicate<Map.Entry<String, NodeMetadata>>() {
+   protected Set<NodeMetadata> filterFrontendNodesBasedOnUserPredicate(final Predicate<NodeMetadata> userFilter) {
+      return Sets.filter(metadataStore.loadAll(getBackendNodes()), new Predicate<NodeMetadata>() {
          @Override
-         public boolean apply(Entry<String, NodeMetadata> input) {
-            return userFilter.apply(toFrontendNodemetadata(input.getValue(), input.getKey()));
+         public boolean apply(NodeMetadata input) {
+            return userFilter.apply(input);
          }
       });
    }
 
    @Override
    public NodeMetadata getNodeMetadata(String id) {
-      Map.Entry<String, NodeMetadata> assigmentEntry = findAssigmentEntry(id);
-      return toFrontendNodemetadata(assigmentEntry.getValue(), assigmentEntry.getKey());
+      NodeMetadata backendMetadata = backingComputeService.getNodeMetadata(id);
+      checkState(backendMetadata.getGroup().equals(backendMetadata));
+      return metadataStore.load(backendMetadata);
    }
 
    @Override
@@ -169,14 +148,14 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
       return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
-               transformUserPredicateSpecificIdPredicate(filter), runScript, options));
+               transformUserPredicateInSpecificIdPredicate(filter), runScript, options));
    }
 
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             Statement runScript, RunScriptOptions options) throws RunScriptOnNodesException {
       return transformBackendExecutionMapIntoFrontend(backingComputeService.runScriptOnNodesMatching(
-               transformUserPredicateSpecificIdPredicate(filter), runScript, options));
+               transformUserPredicateInSpecificIdPredicate(filter), runScript, options));
    }
 
    @Override
@@ -187,28 +166,22 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
    @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate filter) {
-      return FluentIterable.from(filterAssignmentsBasedOnUserPredicate(filter))
-               .transform(new Function<Map.Entry<String, NodeMetadata>, NodeMetadata>() {
-                  @Override
-                  public NodeMetadata apply(Entry<String, NodeMetadata> input) {
-                     return toFrontendNodemetadata(input.getValue(), input.getKey());
-                  }
-               }).toImmutableSet();
+      return filterFrontendNodesBasedOnUserPredicate(filter);
    }
 
    @Override
    public void rebootNodesMatching(final Predicate<NodeMetadata> filter) {
-      backingComputeService.rebootNodesMatching(transformUserPredicateSpecificIdPredicate(filter));
+      backingComputeService.rebootNodesMatching(transformUserPredicateInSpecificIdPredicate(filter));
    }
 
    @Override
    public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
-      backingComputeService.resumeNodesMatching(transformUserPredicateSpecificIdPredicate(filter));
+      backingComputeService.resumeNodesMatching(transformUserPredicateInSpecificIdPredicate(filter));
    }
 
    @Override
    public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
-      backingComputeService.suspendNodesMatching(transformUserPredicateSpecificIdPredicate(filter));
+      backingComputeService.suspendNodesMatching(transformUserPredicateInSpecificIdPredicate(filter));
    }
 
    @Override
@@ -222,13 +195,12 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
    @Override
    public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, Template template)
             throws RunNodesException {
-      return createNodesInGroup(group, count);
+      return createNodesInGroup(group, count, template.getOptions());
    }
 
    @Override
-   public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, TemplateOptions templateOptions)
-            throws RunNodesException {
-      return createNodesInGroup(group, count);
+   public Set<? extends NodeMetadata> createNodesInGroup(String group, int count) throws RunNodesException {
+      return createNodesInGroup(group, count, template.getOptions());
    }
 
    @Override
@@ -264,7 +236,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public void suspendNode(String id) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          backingComputeService.suspendNode(id);
       }
       throw new NoSuchElementException(id);
@@ -272,7 +244,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public void resumeNode(String id) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          backingComputeService.resumeNode(id);
       }
       throw new NoSuchElementException(id);
@@ -280,7 +252,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public void rebootNode(String id) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          backingComputeService.rebootNode(id);
       }
       throw new NoSuchElementException(id);
@@ -288,7 +260,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public ExecResponse runScriptOnNode(String id, Statement runScript) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          return runScriptOnNode(id, runScript, new RunScriptOptions());
       }
       throw new NoSuchElementException(id);
@@ -296,7 +268,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public ExecResponse runScriptOnNode(String id, String runScript) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          return runScriptOnNode(id, runScript, new RunScriptOptions());
       }
       throw new NoSuchElementException(id);
@@ -305,7 +277,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public ExecResponse runScriptOnNode(String id, Statement runScript, RunScriptOptions options) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          return backingComputeService.runScriptOnNode(id, runScript, options);
       }
       throw new NoSuchElementException(id);
@@ -313,7 +285,7 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public ListenableFuture<ExecResponse> submitScriptOnNode(String id, Statement runScript, RunScriptOptions options) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          return backingComputeService.submitScriptOnNode(id, runScript, options);
       }
       throw new NoSuchElementException(id);
@@ -321,10 +293,24 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
 
    @Override
    public ExecResponse runScriptOnNode(String id, String runScript, RunScriptOptions options) {
-      if (findAssigmentEntry(id) != null) {
+      if (getNodeMetadata(id) != null) {
          return backingComputeService.runScriptOnNode(id, runScript, options);
       }
       throw new NoSuchElementException(id);
+   }
+
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public Set<NodeMetadata> getBackendNodes() {
+      return (Set<NodeMetadata>) backingComputeService.listNodesDetailsMatching((Predicate) NodePredicates
+               .inGroup(poolGroupName));
+   }
+
+   protected void addToPool(int number) {
+      try {
+         backingComputeService.createNodesInGroup(poolGroupName, number, template);
+      } catch (RunNodesException e) {
+         throw Throwables.propagate(e);
+      }
    }
 
    public abstract int idleNodes();
@@ -332,8 +318,6 @@ public abstract class BaseNodePoolComputeService implements ComputeService, Clos
    public abstract int maxNodes();
 
    public abstract int minNodes();
-
-   public abstract int allocationInProgressNodes();
 
    public abstract int usedNodes();
 

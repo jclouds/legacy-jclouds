@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.nodepool.config.NodePoolComputServiceContextModule;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 public class NodePoolApiMetadata extends BaseApiMetadata {
@@ -64,9 +65,10 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
    public static class Builder extends BaseApiMetadata.Builder {
       protected Builder() {
          id("nodepool").name("node pool provider wrapper").identityName("Unused").defaultIdentity("nodepool")
-                  .defaultEndpoint("nodepool").documentation(
-                           URI.create("http://www.jclouds.org/documentation/userguide/compute")).view(
-                           ComputeServiceContext.class).defaultProperties(NodePoolApiMetadata.defaultProperties());
+                  .defaultEndpoint("nodepool")
+                  .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
+                  .view(ComputeServiceContext.class).defaultModule(NodePoolComputServiceContextModule.class)
+                  .defaultProperties(NodePoolApiMetadata.defaultProperties());
       }
 
       @Override

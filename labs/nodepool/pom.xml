@@ -29,10 +29,21 @@
     </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-blobstore</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>filesystem</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
-      <scope>test</scope>
+
     </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>

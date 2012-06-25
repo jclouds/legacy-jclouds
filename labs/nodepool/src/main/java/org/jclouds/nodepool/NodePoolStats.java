@@ -30,16 +30,13 @@ public class NodePoolStats {
    private final int currentSize;
    private final int idleNodes;
    private final int usedNodes;
-   private final int allocationInProgressNodes;
    private final int maxNodes;
    private final int minNodes;
 
-   NodePoolStats(int currentSize, int idleNodes, int usedNodes, int allocationInProgressNodes, int maxNodes,
-            int minNodes) {
+   NodePoolStats(int currentSize, int idleNodes, int usedNodes, int maxNodes, int minNodes) {
       this.currentSize = currentSize;
       this.idleNodes = idleNodes;
       this.usedNodes = usedNodes;
-      this.allocationInProgressNodes = allocationInProgressNodes;
       this.maxNodes = maxNodes;
       this.minNodes = minNodes;
    }
@@ -77,14 +74,6 @@ public class NodePoolStats {
     */
    public int minNodes() {
       return minNodes;
-   }
-
-   /**
-    * The number of nodes that are currently being allocated in the backend provider but are not yet
-    * in the pool.
-    */
-   public int allocationInProgressNodes() {
-      return allocationInProgressNodes;
    }
 
 }
