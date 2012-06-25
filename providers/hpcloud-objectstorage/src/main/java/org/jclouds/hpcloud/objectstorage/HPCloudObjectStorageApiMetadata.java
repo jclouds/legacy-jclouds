@@ -84,7 +84,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
          super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
          id("hpcloud-objectstorage")
          .name("HP Cloud Services Object Storage API")
-         .identityName("tenantName:accessKey or accessKey")
+         .identityName("yourTenantName:yourAccessKey")
          .credentialName("secretKey")
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
          .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
