@@ -27,18 +27,10 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
-import org.jclouds.glesys.domain.Console;
-import org.jclouds.glesys.domain.Cost;
-import org.jclouds.glesys.domain.Ip;
-import org.jclouds.glesys.domain.OSTemplate;
-import org.jclouds.glesys.domain.ResourceUsage;
-import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.glesys.domain.ServerSpec;
-import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.ServerUptime;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.glesys.domain.*;
+import org.jclouds.glesys.internal.BaseGleSYSClientExpectTest;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
@@ -48,7 +40,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -61,11 +52,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "ServerAsyncClientTest")
-public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
-
-   public ServerClientExpectTest() {
-      provider = "glesys";
-   }
+public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
@@ -136,23 +123,24 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
       ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.builder();
 
-      for (String name : new String[] { "Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
+      for (String name : new String[]{"Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
             "Debian 5.0 32-bit", "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11",
             "Fedora Core 11 64-bit", "Gentoo", "Gentoo 64-bit", "Scientific Linux 6", "Scientific Linux 6 64-bit",
-            "Slackware 12", "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit" }) {
-         expectedBuilder.add(new OSTemplate(name, 5, 128, "linux", "OpenVZ"));
+            "Slackware 12", "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit"}) {
+         expectedBuilder.add(OSTemplate.builder().name(name).minDiskSize(5).minMemSize(128).os("linux").platform("OpenVZ").build());
       }
 
-      for (String name : new String[] { "CentOS 5.5 x64", "CentOS 5.5 x86", "Centos 6 x64", "Centos 6 x86",
+      for (String name : new String[]{"CentOS 5.5 x64", "CentOS 5.5 x86", "Centos 6 x64", "Centos 6 x86",
             "Debian-6 x64", "Debian 5.0.1 x64", "FreeBSD 8.2", "Gentoo 10.1 x64", "Ubuntu 8.04 x64",
-            "Ubuntu 10.04 LTS 64-bit", "Ubuntu 10.10 x64", "Ubuntu 11.04 x64" }) {
-         expectedBuilder.add(new OSTemplate(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
+            "Ubuntu 10.04 LTS 64-bit", "Ubuntu 10.10 x64", "Ubuntu 11.04 x64"}) {
+         expectedBuilder.add(OSTemplate.builder().name(name).minDiskSize(5).minMemSize(512)
+               .os(name.startsWith("FreeBSD") ? "freebsd" : "linux").platform("Xen").build());
       }
-      for (String name : new String[] { "Windows Server 2008 R2 x64 std", "Windows Server 2008 R2 x64 web",
-            "Windows Server 2008 x64 web", "Windows Server 2008 x86 web" }) {
-         expectedBuilder.add(new OSTemplate(name, 20, 1024, "windows", "Xen"));
+      for (String name : new String[]{"Windows Server 2008 R2 x64 std", "Windows Server 2008 R2 x64 web",
+            "Windows Server 2008 x64 web", "Windows Server 2008 x86 web"}) {
+         expectedBuilder.add(OSTemplate.builder().name(name).minDiskSize(20).minMemSize(1024).os("windows").platform("Xen").build());
       }
-      
+
       assertEquals(client.listTemplates(), expectedBuilder.build());
    }
 
@@ -172,11 +160,11 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
    }
 
    public static ServerDetails expectedServerDetails() {
-      Ip ip = Ip.builder().version4().ip("109.74.10.45").cost(2.0).build();
-      Cost cost = Cost.builder().amount(13.22).currency("EUR").timePeriod("month").build();
-      return ServerDetails.builder().id("xm3276891").transferGB(50).hostname("glesys-s-6dd").cpuCores(1).memorySizeMB(512)
-            .diskSizeGB(5).description("glesys-s-6dd").datacenter("Falkenberg").platform("Xen")
-            .templateName("Ubuntu 11.04 x64").state(Server.State.LOCKED).cost(cost).ips(ip).build();
+      Ip ip = Ip.builder().version4().ip("31.192.231.254").version4().cost(2.0).currency("EUR").build();
+      Cost cost = Cost.builder().amount(10.22).currency("EUR").timePeriod("month").build();
+      return ServerDetails.builder().id("vz1840356").transferGB(50).hostname("test-email-jclouds").cpuCores(1).memorySizeMB(512)
+            .diskSizeGB(5).datacenter("Falkenberg").description("glesys-s-6dd").platform("OpenVZ")
+            .templateName("Ubuntu 10.04 LTS 32-bit").state(Server.State.RUNNING).cost(cost).ips(ip).build();
    }
 
    @Test
@@ -262,10 +250,14 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891").build())).build(),
+                        .put("serverid", "xm3276891")
+                        .put("description", "this is a different description!")
+                        .put("hostname", "new-hostname")
+                        .build())).build(),
             HttpResponse.builder().statusCode(206).build()).getServerClient();
 
-      client.editServer("xm3276891");
+      client.editServer("xm3276891", EditServerOptions.Builder.description("this is a different description!"),
+            EditServerOptions.Builder.hostname("new-hostname"));
    }
 
    @Test
@@ -290,7 +282,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
       client.editServer("xm3276891", options);
    }
-   
+
    @Test
    public void testCloneServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
@@ -302,7 +294,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("serverid", "xm3276891")
                         .put("hostname", "hostname1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
-      
+
       assertEquals(client.cloneServer("xm3276891", "hostname1"), expectedServerDetails());
    }
 
@@ -534,7 +526,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                   .headers(ImmutableMultimap.<String, String>builder()
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("keepip", "1").build())).build(),
+                        .put("serverid", "server777").put("keepip", "true").build())).build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
@@ -548,21 +540,63 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                   .headers(ImmutableMultimap.<String, String>builder()
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("keepip", "0").build())).build(),
+                        .put("serverid", "server777").put("keepip", "false").build())).build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 
       client.destroyServer("server777", DestroyServerOptions.Builder.discardIp());
    }
 
+   public void testResourceUsageWhenResponseIs2xx() throws Exception {
+      ServerClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/resourceusage/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("serverid", "server777").put("resolution", "minute").put("resource", "diskioread").build())).build(),
+            HttpResponse.builder().statusCode(200)
+                  .payload(payloadFromResourceWithContentType("/server_resource_usage.json", MediaType.APPLICATION_JSON))
+                  .build())
+            .getServerClient();
+
+      ResourceUsage expected = ResourceUsage.builder().info(
+            ResourceUsageInfo.builder().resolution("minute").resource("diskioread").unit("KB").build())
+            .values(
+                  ResourceUsageValue.builder().value(0.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:21:07+02:00")).build(),
+                  ResourceUsageValue.builder().value(5.1).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:22:05+02:00")).build(),
+                  ResourceUsageValue.builder().value(0.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:23:05+02:00")).build(),
+                  ResourceUsageValue.builder().value(10.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:24:08+02:00")).build(),
+                  ResourceUsageValue.builder().value(0.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:25:12+02:00")).build(),
+                  ResourceUsageValue.builder().value(0.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:26:07+02:00")).build(),
+                  ResourceUsageValue.builder().value(0.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:27:12+02:00")).build(),
+                  ResourceUsageValue.builder().value(0.0).timestamp(dateService.iso8601SecondsDateParse("2012-06-24T14:28:05+02:00")).build()
+            ).build();
+      assertEquals(client.getResourceUsage("server777", "diskioread", "minute").toString(), expected.toString());
+   }
+
+   @Test(expectedExceptions = {AuthorizationException.class})
+   public void testResouceUsageWhenResponseIs4xx() throws Exception {
+      ServerClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/resourceusage/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("serverid", "server777").put("resolution", "minute").put("resource", "diskioread").build())).build(),
+            HttpResponse.builder().statusCode(401).build())
+            .getServerClient();
+
+      client.getResourceUsage("server777", "diskioread", "minute");
+   }
 
    private ServerStatus expectedServerStatus() {
-      ResourceUsage cpu = ResourceUsage.builder().unit("cores").max(1.0).usage(0.0).build();
-      ResourceUsage disk = ResourceUsage.builder().unit("GB").usage(0.0).max(5).build();
-      ResourceUsage memory = ResourceUsage.builder().unit("MB").usage(0.0).max(512).build();
-      ServerUptime uptime = ServerUptime.builder().current(0).unit("seconds").build();
+      ResourceStatus cpu = ResourceStatus.builder().unit("cores").max(1.0).usage(0.0).build();
+      ResourceStatus disk = ResourceStatus.builder().unit("MB").usage(0.0).max(5120).build();
+      ResourceStatus memory = ResourceStatus.builder().unit("MB").usage(2.0).max(512).build();
+      ServerUptime uptime = ServerUptime.builder().current(21).unit("seconds").build();
       return ServerStatus.builder().state(Server.State.RUNNING).uptime(uptime).
             cpu(cpu).disk(disk).memory(memory).build();
    }
-   
+
 }

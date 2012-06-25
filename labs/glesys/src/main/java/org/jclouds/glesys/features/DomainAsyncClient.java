@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -62,18 +63,32 @@ public interface DomainAsyncClient {
    ListenableFuture<Set<Domain>> listDomains();
 
    /**
+    * @see org.jclouds.glesys.features.DomainClient#getDomain
+    */
+   @POST
+   @Path("/domain/details/format/json")
+   @SelectJson("domain")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Domain> getDomain(@FormParam("domainname") String name);
+
+   /**
     * @see DomainClient#addDomain
     */
    @POST
    @Path("/domain/add/format/json")
-   ListenableFuture<Void> addDomain(@FormParam("domainname") String name, AddDomainOptions... options);
+   @SelectJson("domain")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Domain> addDomain(@FormParam("domainname") String name, AddDomainOptions... options);
 
    /**
     * @see DomainClient#editDomain
     */
    @POST
    @Path("/domain/edit/format/json")
-   ListenableFuture<Void> editDomain(@FormParam("domainname") String domain, DomainOptions... options);
+   @SelectJson("domain")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Domain> editDomain(@FormParam("domainname") String domain, DomainOptions... options);
 
 
    /**
@@ -97,7 +112,9 @@ public interface DomainAsyncClient {
     */
    @POST
    @Path("/domain/addrecord/format/json")
-   ListenableFuture<Void> addRecord(@FormParam("domainname") String domain, @FormParam("host") String host,
+   @SelectJson("record")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<DomainRecord> addRecord(@FormParam("domainname") String domain, @FormParam("host") String host,
                                     @FormParam("type") String type, @FormParam("data") String data,
                                     AddRecordOptions... options);
 
@@ -106,7 +123,9 @@ public interface DomainAsyncClient {
     */
    @POST
    @Path("/domain/updaterecord/format/json")
-   ListenableFuture<Void> editRecord(@FormParam("recordid") String record_id, EditRecordOptions... options);
+   @SelectJson("record")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<DomainRecord> editRecord(@FormParam("recordid") String record_id, EditRecordOptions... options);
 
    /**
     * @see DomainClient#deleteRecord

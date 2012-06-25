@@ -21,7 +21,6 @@ package org.jclouds.aws.s3;
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Map;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -68,7 +67,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides access to amazon-specific S3 features
  * 
- * @author Adrian Cole
+ * @author Adrian Cole, Jeremy Whitlock
  */
 @SkipEncoding('/')
 @RequestFilters(RequestAuthorizeSignature.class)

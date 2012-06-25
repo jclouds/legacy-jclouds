@@ -24,24 +24,27 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Set;
 
-import org.jclouds.glesys.GleSYSClient;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.glesys.domain.EmailAccount;
+import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.domain.EmailOverviewDomain;
 import org.jclouds.glesys.domain.EmailOverviewSummary;
+import org.jclouds.glesys.domain.EmailQuota;
+import org.jclouds.glesys.internal.BaseGleSYSClientExpectTest;
+import org.jclouds.glesys.options.EditAccountOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests annotation parsing of {@code EmailClient}
@@ -49,10 +52,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "EmailAsyncClientTest")
-public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
-   public EmailClientExpectTest() {
-      provider = "glesys";
-   }
+public class EmailClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListWhenResponseIs2xx() throws Exception {
       EmailClient client = requestSendsResponse(
@@ -61,18 +61,22 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("domain", "test").build())).build(),
+                        ImmutableMultimap.<String, String>builder().put("domainname", "cl13016.test.jclouds.org").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/email_list.json")).build()).getEmailClient();
 
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      EmailAccount.Builder builder = EmailAccount.builder().quota("200 MB").usedQuota("0 MB").antispamLevel(3).antiVirus(true).autoRespond(false).autoRespondSaveEmail(true).autoRespondMessage("false");
+      EmailAccount.Builder builder = EmailAccount.builder().quota(EmailQuota.builder().max(200).unit("MB").build()).antispamLevel(3).antiVirus(true).autoRespond(false).autoRespondSaveEmail(true);
       Set<EmailAccount> expected =
             ImmutableSet.of(
-                  builder.account("test@adamlowe.net").created(dateFormat.parse("2011-12-22T12:13:14")).modified(dateFormat.parse("2011-12-22T12:13:35")).build(),
-                  builder.account("test2@adamlowe.net").created(dateFormat.parse("2011-12-22T12:14:29")).modified(dateFormat.parse("2011-12-22T12:14:31")).build()
+                  builder.account("test1@cl13016.test.jclouds.org").antispamLevel(3)
+                        .created(dateService.iso8601SecondsDateParse("2012-06-24T11:53:45+02:00")).build(),
+                  builder.account("test@cl13016.test.jclouds.org").antispamLevel(3)
+                        .created(dateService.iso8601SecondsDateParse("2012-06-21T11:26:09+02:00"))
+                        .modified(dateService.iso8601SecondsDateParse("2012-06-24T11:53:48+02:00")).build()
             );
 
-      assertEquals(client.listAccounts("test"), expected);
+      Set<EmailAccount> actual = client.listAccounts("cl13016.test.jclouds.org");
+      assertEquals(actual, expected);
+      assertEquals(Iterables.get(actual, 0).toString(), Iterables.get(expected, 0).toString());
    }
 
    public void testListWhenResponseIs404IsEmpty() throws Exception {
@@ -82,10 +86,38 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("domain", "test").build())).build(),
+                        ImmutableMultimap.<String, String>builder().put("domainname", "test").build())).build(),
             HttpResponse.builder().statusCode(404).build()).getEmailClient();
 
       assertTrue(client.listAccounts("test").isEmpty());
+   }
+
+   public void testListAliasesWhenResponseIs2xx() throws Exception {
+      EmailClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/list/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(
+                        ImmutableMultimap.<String, String>builder().put("domainname", "cl13016.test.jclouds.org").build())).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/email_list.json")).build()).getEmailClient();
+
+      EmailAlias expected = EmailAlias.builder().alias("test2@cl13016.test.jclouds.org").forwardTo("test2@cl13016.test.jclouds.org").build();
+      EmailAlias actual = Iterables.getOnlyElement(client.listAliases("cl13016.test.jclouds.org"));
+      assertEquals(actual, expected);
+   }
+
+   public void testListAliasesWhenResponseIs404IsEmpty() throws Exception {
+      EmailClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/list/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(
+                        ImmutableMultimap.<String, String>builder().put("domainname", "test").build())).build(),
+            HttpResponse.builder().statusCode(404).build()).getEmailClient();
+
+      assertTrue(client.listAliases("test").isEmpty());
    }
 
    public void testOverviewWhenResponseIs2xx() throws Exception {
@@ -97,8 +129,8 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
                   .build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/email_overview.json")).build()).getEmailClient();
 
-      EmailOverviewSummary summary = EmailOverviewSummary.builder().accounts(2).maxAccounts(50).aliases(0).maxAliases(1000).build();
-      EmailOverviewDomain domain = EmailOverviewDomain.builder().domain("adamlowe.net").accounts(2).aliases(0).build();
+      EmailOverviewSummary summary = EmailOverviewSummary.builder().accounts(2).maxAccounts(50).aliases(1).maxAliases(1000).build();
+      EmailOverviewDomain domain = EmailOverviewDomain.builder().domain("cl13016.test.jclouds.org").accounts(2).aliases(0).build();
       EmailOverview expected = EmailOverview.builder().summary(summary).domains(domain).build();
 
       assertEquals(client.getEmailOverview(), expected);
@@ -120,15 +152,61 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
       EmailClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/createaccount/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("emailaccount", "test@jclouds.org")
                         .put("password", "newpass")
                         .build()))
                   .build(),
-            HttpResponse.builder().statusCode(200).build()).getEmailClient();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/email_details.json", MediaType.APPLICATION_JSON)).build())
+            .getEmailClient();
 
-      client.createAccount("test@jclouds.org", "newpass");
+      assertEquals(client.createAccount("test@jclouds.org", "newpass").toString(), getEmailAccountInDetails().toString());
+   }
+
+   public void testEditAccountWhenResponseIs2xx() throws Exception {
+      EmailClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/editaccount/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("emailaccount", "test@jclouds.org")
+                        .put("password", "anotherpass")
+                        .build()))
+                  .build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/email_details.json", MediaType.APPLICATION_JSON)).build())
+            .getEmailClient();
+
+      assertEquals(client.editAccount("test@jclouds.org", EditAccountOptions.Builder.password("anotherpass")).toString(), getEmailAccountInDetails().toString());
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testEditAccountWhenResponseIs4xx() throws Exception {
+      EmailClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/editaccount/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("emailaccount", "test@jclouds.org")
+                        .put("password", "anotherpass")
+                        .build()))
+                  .build(),
+            HttpResponse.builder().statusCode(404).build())
+            .getEmailClient();
+
+      assertEquals(client.editAccount("test@jclouds.org", EditAccountOptions.Builder.password("anotherpass")).toString(), getEmailAccountInDetails().toString());
+   }
+
+   private EmailAccount getEmailAccountInDetails() {
+      return EmailAccount.builder().account("test@CL13016.jclouds.org")
+            .antispamLevel(3)
+            .antiVirus(true)
+            .autoRespondSaveEmail(true)
+            .created(dateService.iso8601SecondsDateParse("2012-06-20T12:01:01+02:00"))
+            .quota(EmailQuota.builder().max(200).unit("MB").build()).build();
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
@@ -136,6 +214,7 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
       EmailClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/createaccount/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("emailaccount", "test@jclouds.org")
@@ -151,6 +230,7 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
       EmailClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/createalias/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("emailalias", "test2@jclouds.org")
@@ -167,6 +247,7 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
       EmailClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/createalias/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("emailalias", "test2@jclouds.org")
@@ -182,6 +263,7 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
       EmailClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/editalias/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("emailalias", "test2@jclouds.org")
@@ -198,6 +280,7 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
       EmailClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/editalias/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
                         .put("emailalias", "test2@jclouds.org")
@@ -207,5 +290,34 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
             HttpResponse.builder().statusCode(404).build()).getEmailClient();
 
       client.editAlias("test2@jclouds.org", "test@jclouds.org");
+   }
+
+   public void testDeleteWhenResponseIs2xx() throws Exception {
+      EmailClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/delete/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("email", "test2@jclouds.org")
+                        .build()))
+                  .build(),
+            HttpResponse.builder().statusCode(200).build()).getEmailClient();
+
+      client.delete("test2@jclouds.org");
+   }
+
+   @Test(expectedExceptions = {ResourceNotFoundException.class})
+   public void testDeleteWhenResponseIs4xxThrows() throws Exception {
+      EmailClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/email/delete/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("email", "test2@jclouds.org")
+                        .build()))
+                  .build(),
+            HttpResponse.builder().statusCode(404).build()).getEmailClient();
+
+      client.delete("test2@jclouds.org");
    }
 }

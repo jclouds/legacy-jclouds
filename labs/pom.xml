@@ -52,5 +52,7 @@
        <module>rackspace-cloudservers-us</module>
        <module>greenqloud-compute</module>
        <module>greenqloud-storage</module>
+       <module>iam</module>
+       <module>aws-iam</module>
     </modules>
 </project>

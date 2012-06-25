@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,7 +18,12 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents an 'uptime' duration of server in a Glesys cloud
@@ -27,64 +32,76 @@ import com.google.common.base.Objects;
  * @see ServerStatus
  */
 public class ServerUptime {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private long current;
-      private String unit;
-      
-      public Builder current(long current) {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServerUptime(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected long current;
+      protected String unit;
+
+      /**
+       * @see ServerUptime#getCurrent()
+       */
+      public T current(long current) {
          this.current = current;
-         return this;
+         return self();
       }
 
-      public Builder unit(String unit) {
-         this.unit = unit;
-         return this;
+      /**
+       * @see ServerUptime#getUnit()
+       */
+      public T unit(String unit) {
+         this.unit = checkNotNull(unit, "unit");
+         return self();
       }
-      
+
       public ServerUptime build() {
          return new ServerUptime(current, unit);
       }
-      
-      public Builder fromServerUptime(ServerUptime from) {
-         return current(from.getCurrent()).unit(from.getUnit());
+
+      public T fromServerUptime(ServerUptime in) {
+         return this.current(in.getCurrent()).unit(in.getUnit());
       }
    }
-   
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
    private final long current;
    private final String unit;
 
-   public ServerUptime(long current, String unit) {
+   @ConstructorProperties({
+         "current", "unit"
+   })
+   protected ServerUptime(long current, String unit) {
       this.current = current;
-      this.unit = unit;
+      this.unit = checkNotNull(unit, "unit");
    }
-   
+
    /**
-    * @return the time the server has been up in #unit
+    * @return the time the server has been up in #getUnit()
     */
    public long getCurrent() {
-      return current;
+      return this.current;
    }
 
    /**
-    * @return the  unit used for #time
+    * @return the unit used for #getCurrent()
     */
    public String getUnit() {
-      return unit;
-   }
-
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      return object instanceof ServerUptime
-            && Objects.equal(current, ((ServerUptime) object).getCurrent())
-            && Objects.equal(unit, ((ServerUptime) object).getUnit());
+      return this.unit;
    }
 
    @Override
@@ -93,8 +110,20 @@ public class ServerUptime {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ServerUptime that = ServerUptime.class.cast(obj);
+      return Objects.equal(this.current, that.current) && Objects.equal(this.unit, that.unit);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("current", current).add("unit", unit);
+   }
+
+   @Override
    public String toString() {
-      return String.format("[current=%d unit=%s]", current, unit);
+      return string().toString();
    }
 
 }

@@ -41,27 +41,36 @@ import org.jclouds.glesys.options.EditRecordOptions;
 public interface DomainClient {
 
    /**
-    * Get a list of all invoices for this account.
+    * Get a list of all domains for this account.
     *
-    * @return an account's associated invoice objects.
+    * @return an account's associated domain objects.
     */
    Set<Domain> listDomains();
 
    /**
-    * Add a domain to the Glesys dns-system
+    * Get a specific domain.
     *
-    * @param domain  the name of the domain to add.
-    * @param options optional parameters
+    * @return the requested domain object.
     */
-   void addDomain(String domain, AddDomainOptions... options);
+   Domain getDomain(String domain);
 
    /**
     * Add a domain to the Glesys dns-system
     *
     * @param domain  the name of the domain to add.
     * @param options optional parameters
+    * @return information about the added domain
     */
-   void editDomain(String domain, DomainOptions... options);
+   Domain addDomain(String domain, AddDomainOptions... options);
+
+   /**
+    * Edit a domain to the Glesys dns-system
+    *
+    * @param domain  the name of the domain to add.
+    * @param options optional parameters
+    * @return information about the modified domain
+    */
+   Domain editDomain(String domain, DomainOptions... options);
 
    /**
     * Remove a domain to the Glesys dns-system
@@ -80,13 +89,10 @@ public interface DomainClient {
    /**
     * Add a DNS Record
     *
-    * @param domain the domain to add the record to
-    * @param host
-    * @param type
-    * @param data
+    * @param domain  the domain to add the record to
     * @param options optional settings for the record
     */
-   void addRecord(String domain, String host, String type, String data, AddRecordOptions... options);
+   DomainRecord addRecord(String domain, String host, String type, String data, AddRecordOptions... options);
 
    /**
     * Modify a specific DNS Record
@@ -95,7 +101,7 @@ public interface DomainClient {
     * @param options  the settings to change
     * @see #listRecords to retrieve the necessary ids
     */
-   void editRecord(String recordId, EditRecordOptions... options);
+   DomainRecord editRecord(String recordId, EditRecordOptions... options);
 
    /**
     * Delete a DNS record

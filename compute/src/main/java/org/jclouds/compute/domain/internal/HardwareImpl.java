@@ -19,7 +19,7 @@
 package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 
 import java.net.URI;
@@ -104,9 +104,8 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    public int compareTo(ResourceMetadata<ComputeType> that) {
       if (that instanceof Hardware) {
          Hardware thatHardware = Hardware.class.cast(that);
-         return ComparisonChain.start().compare(getCoresAndSpeed(this), getCoresAndSpeed(thatHardware)).compare(
-                  this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware)).compare(
-                  getHypervisor(), thatHardware.getHypervisor()).result();
+         return ComparisonChain.start().compare(getCores(this), getCores(thatHardware)).compare(this.getRam(), thatHardware.getRam())
+               .compare(getSpace(this), getSpace(thatHardware)).result();
       } else {
          return super.compareTo(that);
       }

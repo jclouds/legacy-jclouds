@@ -63,7 +63,14 @@ public class BindAsHostPrefixIfConfigured implements Binder {
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      if (isVhostStyle) {
+      // If we have a payload/bucket/container that is not all lowercase, vhost-style URLs are not an option and must be
+      // automatically converted to their path-based equivalent.  This should only be possible for AWS-S3 since it is
+      // the only S3 implementation configured to allow uppercase payload/bucket/container names.
+      //
+      // http://code.google.com/p/jclouds/issues/detail?id=992
+      String payloadAsString = payload.toString();
+
+      if (isVhostStyle && payloadAsString.equals(payloadAsString.toLowerCase())) {
          request = bindAsHostPrefix.bindToRequest(request, payload);
          String host = request.getEndpoint().getHost();
          if (request.getEndpoint().getPort() != -1) {
@@ -80,7 +87,7 @@ public class BindAsHostPrefixIfConfigured implements Binder {
             indexToInsert = indexToInsert == -1 ? 0 : indexToInsert;
             indexToInsert += servicePath.length();
          }
-         path.insert(indexToInsert, "/" + payload.toString());
+         path.insert(indexToInsert, "/" + payloadAsString);
          builder.replacePath(path.toString());
          return (R) request.toBuilder().endpoint(builder.buildFromEncodedMap(ImmutableMap.<String, Object> of()))
                   .build();

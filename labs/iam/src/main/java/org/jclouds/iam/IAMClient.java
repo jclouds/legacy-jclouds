@@ -16,29 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys.internal;
+package org.jclouds.iam;
 
-import static org.testng.Assert.assertEquals;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.glesys.GleSYSProviderMetadata;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.iam.domain.User;
+import org.jclouds.iam.features.UserClient;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
+ * Provides access to Amazon IAM via the Query API
+ * <p/>
+ * 
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/IAM/latest/APIReference"
+ *      />
  * @author Adrian Cole
  */
-public abstract class BaseGleSYSAsyncClientTest<T> extends BaseAsyncClientTest<T> {
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface IAMClient {
+   /**
+    * Retrieves information about the current user, including the user's path, GUID, and ARN.
+    */
+   User getCurrentUser();
 
-   @Override
-   protected void checkFilters(HttpRequest request) {
-      assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
-   }
-
-   @Override
-   public ProviderMetadata createProviderMetadata() {
-     return new GleSYSProviderMetadata();   
-   }
+   /**
+    * Provides synchronous access to User features.
+    */
+   @Delegate
+   UserClient getUserClient();
 }

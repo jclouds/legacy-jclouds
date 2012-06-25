@@ -56,9 +56,9 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.equals("TasksList")) {
+      if (SaxUtils.equalsOrSuffix(qName, "TasksList")) {
          resource = Utils.newReferenceType(attributes);
-      } else if (qName.equals("Link") && "self".equals(attributes.get("rel"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Link") && "self".equals(attributes.get("rel"))) {
          resource = Utils.newReferenceType(attributes);
       } else {
          taskHandler.startElement(uri, localName, qName, attrs);
@@ -68,7 +68,7 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       taskHandler.endElement(uri, localName, qName);
-      if (qName.equals("Task")) {
+      if (SaxUtils.equalsOrSuffix(qName, "Task")) {
          this.tasks.add(taskHandler.getResult());
       }
    }

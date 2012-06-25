@@ -20,10 +20,12 @@ package org.jclouds.glesys.compute.functions;
 
 import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 
 import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
@@ -73,22 +75,25 @@ public class ServerDetailsToNodeMetadataTest extends BaseGleSYSComputeServiceExp
 
       ).getInstance(ServerDetailsToNodeMetadata.class);
 
+      NodeMetadata actual = toTest.apply(ServerClientExpectTest.expectedServerDetails());
+      assertNotNull(actual);
+
       assertEquals(
-            toTest.apply(ServerClientExpectTest.expectedServerDetails()),
+            actual.toString(),
             new NodeMetadataBuilder()
-                  .ids("xm3276891")
-                  .name("glesys-s-6dd")
-                  .hostname("glesys-s-6dd")
+                  .ids("vz1840356")
+                  .name("test-email-jclouds")
+                  .hostname("test-email-jclouds")
                   .group("glesys-s")
-                  .imageId("Ubuntu 11.04 x64")
+                  .imageId("Ubuntu 10.04 LTS 32-bit")
                   .operatingSystem(
-                        OperatingSystem.builder().name("Ubuntu 11.04 x64").family(OsFamily.UBUNTU).version("11.04")
-                              .is64Bit(true).description("Ubuntu 11.04 x64").build())
-                  .publicAddresses(ImmutableSet.of("109.74.10.45"))
+                        OperatingSystem.builder().name("Ubuntu 10.04 LTS 32-bit").family(OsFamily.UBUNTU).version("10.04")
+                              .is64Bit(false).description("Ubuntu 10.04 LTS 32-bit").build())
+                  .publicAddresses(ImmutableSet.of("31.192.231.254"))
                   .hardware(
-                        new HardwareBuilder().ids("xm3276891").ram(512)
+                        new HardwareBuilder().ids("vz1840356").ram(512)
                               .processors(ImmutableList.of(new Processor(1, 1.0)))
-                              .volumes(ImmutableList.<Volume> of(new VolumeImpl(5f, true, true))).hypervisor("Xen")
-                              .build()).status(Status.RUNNING).build());
+                              .volumes(ImmutableList.<Volume> of(new VolumeImpl(5f, true, true))).hypervisor("OpenVZ")
+                              .build()).status(Status.RUNNING).build().toString());
    }
 }

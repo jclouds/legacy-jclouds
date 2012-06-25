@@ -26,6 +26,8 @@ import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.io.Payloads.newByteArrayPayload;
 import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,11 +36,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.jclouds.aws.AWSResponseException;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.PutOptions;
+import org.jclouds.domain.Location;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
@@ -48,13 +54,15 @@ import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.InputSupplier;
+
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.InputSupplier;
 
 /**
  * Tests behavior of {@code S3Client}
@@ -197,4 +205,59 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          returnContainer(containerName);
       }
    }
+
+   /**
+    * http://code.google.com/p/jclouds/issues/detail?id=992
+    */
+   public void testUseBucketWithUpperCaseName() throws Exception {
+      String bucketName = CONTAINER_PREFIX + "-TestBucket";
+      String blobName = "TestBlob.txt";
+      StorageMetadata container = null;
+      BlobStore store = view.getBlobStore();
+
+      // Create and use a valid bucket name with uppercase characters in the bucket name (US regions only)
+      try {
+         store.createContainerInLocation(null, bucketName);
+
+         for (StorageMetadata metadata : store.list()) {
+            if (metadata.getName().equals(bucketName)) {
+               container = metadata;
+               break;
+            }
+         }
+
+         assertNotNull(container);
+
+         store.putBlob(bucketName, store.blobBuilder(blobName)
+                                          .payload("This is a test!")
+                                          .contentType("text/plain")
+                                          .build());
+
+         assertNotNull(store.getBlob(bucketName, blobName));
+      } finally {
+         if (container != null) {
+            store.deleteContainer(bucketName);
+         }
+      }
+
+      // Try to create the same bucket successfully created above in one of the non-US regions to ensure an error is
+      // encountered as expected.
+      Location location = null;
+
+      for (Location pLocation : store.listAssignableLocations()) {
+         if (!ImmutableSet.of(Region.US_STANDARD, Region.US_EAST_1, Region.US_WEST_1, Region.US_WEST_2)
+            .contains(pLocation.getId())) {
+            location = pLocation;
+            break;
+         }
+      }
+
+      try {
+         store.createContainerInLocation(location, bucketName);
+         fail("Should had failed because in non-US regions, mixed-case bucket names are invalid.");
+      } catch (AWSResponseException e) {
+         assertEquals("InvalidBucketName", e.getError().getCode());
+      }
+   }
+
 }

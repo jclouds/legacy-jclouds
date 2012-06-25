@@ -332,7 +332,7 @@ Here's an example of creating and running a small linux node in the group webser
        :os-name-matches :os-description-matches :os-version-matches
        :os-arch-matches :os-64-bit :image-name-matches
        :image-version-matches :image-description-matches :image-matches
-       :min-cores :min-ram])))
+       :min-cores :min-ram :min-disk])))
 
 (def
   ^{:doc "TemplateOptions functions" :private true}
@@ -425,7 +425,7 @@ Options correspond to TemplateBuilder methods."
        os-name-matches os-description-matches os-version-matches
        os-arch-matches os-64-bit mage-name-matches
        image-version-matches image-description-matches image-matches
-       min-cores min-ram smallest fastest biggest any]
+       min-cores min-ram min-disk smallest fastest biggest any]
     :as options}]
   (let [builder (.. compute (templateBuilder))]
     (doseq [[option value] options]
