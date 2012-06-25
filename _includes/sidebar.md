@@ -20,7 +20,7 @@
 * [Terremark vCloud Express](/documentation/quickstart/terremark-vcloud-express)
 
 ### Releases
-* [1.5.0-beta.4](/documentation/releasenotes/1.5) [javadoc](http://demobox.github.com/jclouds-maven-site-1.5.0-beta.4/1.5.0-beta.4/jclouds-multi/apidocs/)
-* [1.4.1](/documentation/releasenotes/1.4) [javadoc](http://demobox.github.com/jclouds-maven-site-1.4.1/1.4.1/jclouds-multi/apidocs/)
-* [1.4.0](/documentation/releasenotes/1.4) [javadoc](http://demobox.github.com/jclouds-maven-site-1.4.0/1.4.0/jclouds-multi/apidocs/)
+* [1.5.0-beta.4](/documentation/releasenotes/1.5) [Javadoc](http://demobox.github.com/jclouds-maven-site-1.5.0-beta.4/1.5.0-beta.4/jclouds-multi/apidocs/)
+* [1.4.1](/documentation/releasenotes/1.4) [Javadoc](http://demobox.github.com/jclouds-maven-site-1.4.1/1.4.1/jclouds-multi/apidocs/)
+* [1.4.0](/documentation/releasenotes/1.4) [Javadoc](http://demobox.github.com/jclouds-maven-site-1.4.0/1.4.0/jclouds-multi/apidocs/)
 * [Past Releases](/documentation/releasenotes)
