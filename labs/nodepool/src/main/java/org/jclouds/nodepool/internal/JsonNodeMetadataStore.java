@@ -15,6 +15,7 @@ import org.jclouds.json.Json;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -31,7 +32,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class JsonNodeMetadataStore implements NodeMetadataStore {
 
-   private Map<String, InputStream> storage;
+   private final Supplier<Map<String, InputStream>> storage;
    private final Json json;
 
    private static class JsonUserNodeMetadata {
@@ -45,7 +46,7 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
    }
 
    @Inject
-   public JsonNodeMetadataStore(Map<String, InputStream> storage, Json json) {
+   public JsonNodeMetadataStore(Supplier<Map<String, InputStream>> storage, Json json) {
       this.storage = storage;
       this.json = json;
    }
@@ -63,14 +64,14 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       jsonMetadata.userMetadata = userOptions.getUserMetadata();
       jsonMetadata.userTags = userOptions.getTags();
       jsonMetadata.userGroup = userGroup;
-      storage.put(backendNodeMetadata.getId(), Strings2.toInputStream(json.toJson(jsonMetadata)));
+      storage.get().put(backendNodeMetadata.getId(), Strings2.toInputStream(json.toJson(jsonMetadata)));
       return buildFromJsonAndBackendMetadata(backendNodeMetadata, jsonMetadata);
    }
 
    @Override
    public NodeMetadata load(NodeMetadata backendNodeMetadata) {
       try {
-         InputStream storedMetadata = storage.get(checkNotNull(backendNodeMetadata).getId());
+         InputStream storedMetadata = storage.get().get(checkNotNull(backendNodeMetadata).getId());
          if (storedMetadata == null) {
             return null;
          }
@@ -96,12 +97,12 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
 
    @Override
    public void deleteAllMappings() {
-      storage.clear();
+      storage.get().clear();
    }
 
    @Override
    public void deleteMapping(String backendNodeId) {
-      storage.remove(backendNodeId);
+      storage.get().remove(backendNodeId);
    }
 
    public Set<NodeMetadata> loadAll(Set<NodeMetadata> backendNodes) {
