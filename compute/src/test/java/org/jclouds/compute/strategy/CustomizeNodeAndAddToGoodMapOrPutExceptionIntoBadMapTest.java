@@ -31,10 +31,13 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
+import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
@@ -45,7 +48,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -189,5 +194,59 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
 
       // verify mocks
       verify(initScriptRunnerFactory, openSocketFinder);
+   }
+   
+   public void testRecoversWhenTemporarilyNodeNotFound() {
+      String nodeId = "myid";
+
+      InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
+      OpenSocketFinder openSocketFinder = createMock(OpenSocketFinder.class);
+      Timeouts timeouts = new Timeouts();
+      Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
+      Set<NodeMetadata> goodNodes = Sets.newLinkedHashSet();
+      Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
+      Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
+      TemplateOptions options = new TemplateOptions();
+      
+      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids(nodeId).status(Status.PENDING).build();
+      final NodeMetadata runningNode = new NodeMetadataBuilder().ids(nodeId).status(Status.RUNNING).build();
+      GetNodeMetadataStrategy nodeClient = createMock(GetNodeMetadataStrategy.class);
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(nodeClient);
+      Predicate<AtomicReference<NodeMetadata>> retryableNodeRunning = new ComputeServiceTimeoutsModule() {
+               public Predicate<AtomicReference<NodeMetadata>> nodeRunning(AtomicNodeRunning statusRunning, Timeouts timeouts) {
+                  return super.nodeRunning(statusRunning, timeouts);
+               }
+            }.nodeRunning(nodeRunning, timeouts);
+      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      
+      // Simulate transient error: first call returns null; subsequent calls return the running node
+      EasyMock.expect(nodeClient.getNode(nodeId)).andAnswer(new IAnswer<NodeMetadata>() {
+               private int count = 0;
+               @Override
+               public NodeMetadata answer() throws Throwable {
+                  count++;
+                  if (count <= 1) {
+                     return null;
+                  } else {
+                     return runningNode;
+                  }
+               }
+            }).anyTimes();
+
+      // replay mocks
+      replay(initScriptRunnerFactory, openSocketFinder, nodeClient);
+      
+      // run
+      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(retryableNodeRunning, openSocketFinder, timeouts,
+               templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
+               customizationResponses).apply(atomicNode);
+
+      if (badNodes.size() > 0) Iterables.get(badNodes.values(), 0).printStackTrace();
+      assertEquals(badNodes.size(), 0);
+      assertEquals(goodNodes, ImmutableSet.of(runningNode));
+      assertEquals(customizationResponses.size(), 0);
+
+      // verify mocks
+      verify(initScriptRunnerFactory, openSocketFinder, nodeClient);
    }
 }
