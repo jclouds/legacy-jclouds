@@ -57,7 +57,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Singleton
    @Named(TIMEOUT_NODE_RUNNING)
    protected Predicate<AtomicReference<NodeMetadata>> nodeRunning(AtomicNodeRunning statusRunning, Timeouts timeouts) {
-      return timeouts.nodeRunning == 0 ? statusRunning : new RetryablePredicate<AtomicReference<NodeMetadata>>(statusRunning,
+      return timeouts.nodeRunning == 0 ? statusRunning : new RetryablePredicateGuardingNull<NodeMetadata>(statusRunning,
             timeouts.nodeRunning);
    }
 
@@ -74,7 +74,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Singleton
    @Named(TIMEOUT_NODE_SUSPENDED)
    protected Predicate<AtomicReference<NodeMetadata>> serverSuspended(AtomicNodeSuspended statusSuspended, Timeouts timeouts) {
-      return timeouts.nodeSuspended == 0 ? statusSuspended : new RetryablePredicate<AtomicReference<NodeMetadata>>(statusSuspended,
+      return timeouts.nodeSuspended == 0 ? statusSuspended : new RetryablePredicateGuardingNull<NodeMetadata>(statusSuspended,
             timeouts.nodeSuspended);
    }
    
@@ -90,7 +90,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Singleton
    @Named(TIMEOUT_IMAGE_AVAILABLE)
    protected Predicate<AtomicReference<Image>> imageAvailable(AtomicImageAvailable statusAvailable, Timeouts timeouts) {
-      return timeouts.imageAvailable == 0 ? statusAvailable : new RetryablePredicate<AtomicReference<Image>>(statusAvailable,
+      return timeouts.imageAvailable == 0 ? statusAvailable : new RetryablePredicateGuardingNull<Image>(statusAvailable,
             timeouts.imageAvailable);
    }
 
@@ -105,5 +105,47 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Override
    protected void configure() {
 
+   }
+
+   /**
+    * Avoids "losing" the ComputeMetadata if client returns null temporarily (issue #989).
+    * Ensures we always pass a non-null to the wrapped predicate, but will propagate the null to
+    * the caller qt the end.
+    * 
+    * @author Aled Sage
+    */
+   private static class RetryablePredicateGuardingNull<T> implements Predicate<AtomicReference<T>> {
+      private class AtomicRefAndOrig {
+         private final T orig;
+         private final AtomicReference<T> ref;
+         
+         AtomicRefAndOrig(T orig, AtomicReference<T> ref) {
+            this.orig = orig;
+            this.ref = ref;
+         }
+      }
+      
+      private final RetryablePredicate<AtomicRefAndOrig> retryablePredicate;
+      
+      public RetryablePredicateGuardingNull(final Predicate<AtomicReference<T>> predicate, long maxWait) {
+         Predicate<AtomicRefAndOrig> nonNullThingPredicate = new Predicate<AtomicRefAndOrig>() {
+            @Override
+            public boolean apply(AtomicRefAndOrig input) {
+               AtomicReference<T> ref = (input.ref.get() != null) ? input.ref : new AtomicReference<T>(input.orig);
+               try {
+                  return predicate.apply(ref);
+               } finally {
+                  input.ref.set(ref.get());
+               }
+            }
+         };
+         retryablePredicate = new RetryablePredicate<AtomicRefAndOrig>(nonNullThingPredicate, maxWait);
+      }
+
+      @Override
+      public boolean apply(AtomicReference<T> input) {
+         AtomicRefAndOrig refAndOrig = new AtomicRefAndOrig(input.get(), input);
+         return retryablePredicate.apply(refAndOrig);
+      }
    }
 }
