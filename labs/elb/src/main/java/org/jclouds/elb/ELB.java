@@ -39,5 +39,9 @@ public class ELB {
          }
       });
    }
+   
+   public static Iterable<LoadBalancer> list(LoadBalancerClient loadBalancerClient) {
+      return list(loadBalancerClient, new ListLoadBalancersOptions());
+   }
 
 }
