@@ -23,6 +23,8 @@
   org.jclouds.ec2.ami2
   (:use org.jclouds.compute2 [clojure.core.incubator :only (-?>)])
   (:import org.jclouds.aws.domain.Region
+    org.jclouds.ec2.services.AMIClient
+    org.jclouds.ec2.options.CreateImageOptions
     org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain Volume Volume$Status Snapshot Snapshot$Status AvailabilityZoneInfo)))
 
