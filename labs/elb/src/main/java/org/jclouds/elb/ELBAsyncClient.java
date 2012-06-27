@@ -31,12 +31,15 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.elb.binders.BindAvailabilityZonesToIndexedFormParams;
 import org.jclouds.elb.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.elb.binders.BindLoadBalancerNamesToIndexedFormParams;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.elb.xml.DescribeLoadBalancersResponseHandler;
 import org.jclouds.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
+import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
@@ -47,6 +50,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides access to EC2 Elastic Load Balancer via REST API.
@@ -60,7 +64,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(FormSigner.class)
 @VirtualHost
 public interface ELBAsyncClient {
-   public static final String VERSION = "2011-11-15";
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
+   
+   /**
+    * Provides asynchronous access to LoadBalancer features.
+    */
+   @Delegate
+   LoadBalancerAsyncClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   
+   
+   
+   /// old stuff
+   public static final String VERSION = "2012-06-01";
 
    // TODO: there are a lot of missing methods
 
@@ -122,7 +144,7 @@ public interface ELBAsyncClient {
    @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
    @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<? extends LoadBalancer>> describeLoadBalancersInRegion(
+   ListenableFuture<Set<? extends CrappyLoadBalancer>> describeLoadBalancersInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindLoadBalancerNamesToIndexedFormParams.class) String... loadbalancerNames);
 

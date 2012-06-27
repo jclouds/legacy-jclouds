@@ -35,7 +35,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.ListLoadBalancersStrategy;
@@ -58,13 +58,13 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
 
    private final ELBClient client;
    private final ELBAsyncClient aclient;
-   private final Function<LoadBalancer, LoadBalancerMetadata> converter;
+   private final Function<CrappyLoadBalancer, LoadBalancerMetadata> converter;
    private final ExecutorService executor;
    private final Supplier<Set<String>> regions;
 
    @Inject
    protected ELBListLoadBalancersStrategy(ELBClient client, ELBAsyncClient aclient,
-            Function<LoadBalancer, LoadBalancerMetadata> converter,
+            Function<CrappyLoadBalancer, LoadBalancerMetadata> converter,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Region Supplier<Set<String>> regions) {
       this.client = checkNotNull(client, "client");
       this.aclient = checkNotNull(aclient, "aclient");
@@ -75,13 +75,13 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
 
    @Override
    public Iterable<LoadBalancerMetadata> listLoadBalancers() {
-      Iterable<? extends LoadBalancer> loadBalancers;
+      Iterable<? extends CrappyLoadBalancer> loadBalancers;
       Set<String> regions = this.regions.get();
       if (regions.size() > 0)
-         loadBalancers = concat(transformParallel(regions, new Function<String, Future<? extends Set<? extends LoadBalancer>>>() {
+         loadBalancers = concat(transformParallel(regions, new Function<String, Future<? extends Set<? extends CrappyLoadBalancer>>>() {
 
             @Override
-            public ListenableFuture<? extends Set<? extends LoadBalancer>> apply(String from) {
+            public ListenableFuture<Set<? extends CrappyLoadBalancer>> apply(String from) {
                return aclient.describeLoadBalancersInRegion(from);
             }
 

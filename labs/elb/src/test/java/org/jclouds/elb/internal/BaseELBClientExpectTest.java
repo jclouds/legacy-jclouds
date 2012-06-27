@@ -16,26 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.elb.loadbalancer.config;
+package org.jclouds.elb.internal;
 
-import org.jclouds.elb.domain.CrappyLoadBalancer;
-import org.jclouds.elb.loadbalancer.functions.LoadBalancerToLoadBalancerMetadata;
-import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
+import org.jclouds.elb.ELBClient;
 
-import com.google.common.base.Function;
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ELBLoadBalancerServiceDependenciesModule extends AbstractModule {
-
-   @Override
-   protected void configure() {
-      bind(new TypeLiteral<Function<CrappyLoadBalancer, LoadBalancerMetadata>>() {
-      }).to(LoadBalancerToLoadBalancerMetadata.class);
-   }
+public class BaseELBClientExpectTest extends BaseELBExpectTest<ELBClient> {
 
 }
