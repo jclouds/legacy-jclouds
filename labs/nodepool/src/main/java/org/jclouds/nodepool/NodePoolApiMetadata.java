@@ -18,18 +18,25 @@
  */
 package org.jclouds.nodepool;
 
-import static org.jclouds.nodepool.config.NodePoolComputeServiceProperties.BACKING_GROUP_PROPERTY;
-import static org.jclouds.nodepool.config.NodePoolComputeServiceProperties.MAX_SIZE_PROPERTY;
-import static org.jclouds.nodepool.config.NodePoolComputeServiceProperties.MIN_SIZE_PROPERTY;
-import static org.jclouds.nodepool.config.NodePoolComputeServiceProperties.REMOVE_DESTROYED_PROPERTY;
+import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
+import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_MODULES;
+import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
+import static org.jclouds.nodepool.config.NodePoolProperties.METADATA_CONTAINER;
+import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
+import static org.jclouds.nodepool.config.NodePoolProperties.REMOVE_DESTROYED;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.nodepool.config.NodePoolComputServiceContextModule;
+import org.jclouds.nodepool.config.BindBackendComputeService;
+import org.jclouds.nodepool.config.BindInputStreamToFilesystemBlobStore;
+import org.jclouds.nodepool.config.NodePoolComputeServiceContextModule;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 public class NodePoolApiMetadata extends BaseApiMetadata {
 
@@ -55,20 +62,28 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(BACKING_GROUP_PROPERTY, "nodepool");
-      properties.setProperty(MAX_SIZE_PROPERTY, 10 + "");
-      properties.setProperty(MIN_SIZE_PROPERTY, 5 + "");
-      properties.setProperty(REMOVE_DESTROYED_PROPERTY, "false");
+      properties.setProperty(BACKEND_GROUP, "nodepool");
+      properties.setProperty(METADATA_CONTAINER, "nodes");
+      properties.setProperty(BACKEND_MODULES, "org.jclouds.logging.slf4j.config.SLF4JLoggingModule,org.jclouds.sshj.config.SshjSshClientModule");
+      properties.setProperty(MAX_SIZE, 10 + "");
+      properties.setProperty(MIN_SIZE, 5 + "");
+      properties.setProperty(REMOVE_DESTROYED, "false");
       return properties;
    }
 
    public static class Builder extends BaseApiMetadata.Builder {
       protected Builder() {
-         id("nodepool").name("node pool provider wrapper").identityName("Unused").defaultIdentity("nodepool")
-                  .defaultEndpoint("nodepool")
-                  .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
-                  .view(ComputeServiceContext.class).defaultModule(NodePoolComputServiceContextModule.class)
-                  .defaultProperties(NodePoolApiMetadata.defaultProperties());
+         id("nodepool")
+         .name("node pool provider wrapper")
+         .identityName("backend identity")
+         .endpointName("backend endpoint").defaultEndpoint("fixme")
+         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
+         .view(ComputeServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>> builder()
+               .add(NodePoolComputeServiceContextModule.class)
+               .add(BindInputStreamToFilesystemBlobStore.class)
+               .add(BindBackendComputeService.class).build())
+         .defaultProperties(NodePoolApiMetadata.defaultProperties());
       }
 
       @Override

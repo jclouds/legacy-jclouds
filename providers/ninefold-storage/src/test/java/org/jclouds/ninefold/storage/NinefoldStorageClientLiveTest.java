@@ -26,7 +26,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "NinefoldStorageClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "NinefoldStorageClientLiveTest")
 public class NinefoldStorageClientLiveTest extends AtmosClientLiveTest {
-
+   public NinefoldStorageClientLiveTest() {
+      provider = "ninefold-storage";
+   }
 }

@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -47,7 +45,7 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
    }
 
    @Inject
-   public JsonNodeMetadataStore(@Named("METADATA_STORE") Map<String, InputStream> storage, Json json) {
+   public JsonNodeMetadataStore(Map<String, InputStream> storage, Json json) {
       this.storage = storage;
       this.json = json;
    }

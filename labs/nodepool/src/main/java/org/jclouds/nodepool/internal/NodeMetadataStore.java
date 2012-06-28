@@ -31,8 +31,6 @@ import org.jclouds.compute.options.TemplateOptions;
  */
 public interface NodeMetadataStore {
    
-   public static final String CONTAINER = "jclouds.nodepool.metadatastore.container";
-
    /**
     * Associates the provided user options and group with the provided backend {@link NodeMetadata},
     * then build a frontend version of node metadata that has some fields from the backend node such

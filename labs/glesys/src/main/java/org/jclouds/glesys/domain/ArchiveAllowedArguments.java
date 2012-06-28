@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,14 +18,14 @@
  */
 package org.jclouds.glesys.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
+import java.beans.ConstructorProperties;
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 
 /**
  * The allowed arguments for archive manipulation, such as archivesize
@@ -34,53 +34,62 @@ import com.google.gson.annotations.SerializedName;
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_allowedarguments" />
  */
 public class ArchiveAllowedArguments {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private List<Integer> archiveSizes;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromArchiveAllowedArguments(this);
+   }
 
-      public Builder archiveSizes(List<Integer> archiveSizes) {
-         this.archiveSizes = archiveSizes;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected List<Integer> archiveSizes = ImmutableList.of();
+
+      /**
+       * @see ArchiveAllowedArguments#getArchiveSizes()
+       */
+      public T archiveSizes(List<Integer> archiveSizes) {
+         this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
+         return self();
       }
 
-      public Builder archiveSizes(Integer... archiveSizes) {
-         return archiveSizes(Arrays.asList(archiveSizes));
+      public T archiveSizes(Integer... in) {
+         return archiveSizes(ImmutableList.copyOf(in));
       }
 
       public ArchiveAllowedArguments build() {
          return new ArchiveAllowedArguments(archiveSizes);
       }
-      
-      public Builder fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
-         return archiveSizes(in.getArchiveSizes());
+
+      public T fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
+         return this.archiveSizes(in.getArchiveSizes());
       }
    }
 
-   @SerializedName("archivesize")
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
    private final List<Integer> archiveSizes;
 
-   public ArchiveAllowedArguments(List<Integer> archiveSizes) {
-      checkArgument(archiveSizes != null, "archiveSizes");
-      this.archiveSizes = archiveSizes;
+   @ConstructorProperties({
+         "archivesize"
+   })
+   protected ArchiveAllowedArguments(List<Integer> archiveSizes) {
+      this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
    }
 
    /**
     * @return the list of allowed archive sizes, in GB
     */
    public List<Integer> getArchiveSizes() {
-      return archiveSizes;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      return object instanceof ArchiveAllowedArguments
-         && Objects.equal(archiveSizes, ((ArchiveAllowedArguments) object).archiveSizes);
+      return this.archiveSizes;
    }
 
    @Override
@@ -89,10 +98,21 @@ public class ArchiveAllowedArguments {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ArchiveAllowedArguments that = ArchiveAllowedArguments.class.cast(obj);
+      return Objects.equal(this.archiveSizes, that.archiveSizes);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("archiveSizes", archiveSizes);
+   }
+
+   @Override
    public String toString() {
-      Joiner commaJoiner = Joiner.on(", ");
-      return String.format(
-            "[archiveSizes=[%s]]", commaJoiner.join(archiveSizes));
+      return string().toString();
    }
 
 }

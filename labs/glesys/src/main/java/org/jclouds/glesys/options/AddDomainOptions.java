@@ -85,7 +85,7 @@ public class AddDomainOptions extends DomainOptions {
     * Ensure only NS and SOA records will be created by default, when this option is not used a number of default records will be created on the domain.
     */
    public DomainOptions minimalRecords() {
-      formParameters.put("createrecords",  "0");
+      formParameters.put("createrecords", Boolean.FALSE.toString());
       return this;
    }
 

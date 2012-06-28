@@ -1,0 +1,1 @@
+{"response":{"status":{"code":200,"timestamp":"2012-06-24T11:52:51+02:00","text":"Record added."},"record":{"recordid":256151,"domainname":"cl13016-domain.jclouds.org","host":"test","type":"A","data":"127.0.0.1","ttl":3600},"debug":{"input":{"domainname":"cl13016-domain.jclouds.org","type":"A","host":"test","data":"127.0.0.1"}}}}

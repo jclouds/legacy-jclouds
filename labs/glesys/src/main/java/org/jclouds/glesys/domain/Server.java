@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,9 +20,11 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Listing of a server.
@@ -30,8 +32,10 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_list" />
  */
-public class Server implements Comparable<Server> {
-   
+public class Server {
+
+   /**
+    */
    public static enum State {
 
       RUNNING, LOCKED, STOPPED, UNRECOGNIZED;
@@ -53,53 +57,80 @@ public class Server implements Comparable<Server> {
          }
       }
    }
-   
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServer(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
       protected String id;
       protected String hostname;
       protected String datacenter;
       protected String platform;
 
-      public Builder id(String id) {
-         this.id = id;
-         return this;
+      /**
+       * @see Server#getId()
+       */
+      public T id(String id) {
+         this.id = checkNotNull(id, "id");
+         return self();
       }
 
-      public Builder hostname(String hostname) {
-         this.hostname = hostname;
-         return this;
+      /**
+       * @see Server#getHostname()
+       */
+      public T hostname(String hostname) {
+         this.hostname = checkNotNull(hostname, "hostname");
+         return self();
       }
 
-      public Builder datacenter(String datacenter) {
-         this.datacenter = datacenter;
-         return this;
+      /**
+       * @see Server#getDatacenter()
+       */
+      public T datacenter(String datacenter) {
+         this.datacenter = checkNotNull(datacenter, "datacenter");
+         return self();
       }
 
-      public Builder platform(String platform) {
-         this.platform = platform;
-         return this;
+      /**
+       * @see Server#getPlatform()
+       */
+      public T platform(String platform) {
+         this.platform = checkNotNull(platform, "platform");
+         return self();
       }
 
       public Server build() {
          return new Server(id, hostname, datacenter, platform);
       }
 
-      public Builder fromServer(Server in) {
-         return datacenter(in.getDatacenter()).platform(in.getPlatform()).hostname(in.getHostname()).id(in.getId());
+      public T fromServer(Server in) {
+         return this.id(in.getId()).hostname(in.getHostname()).datacenter(in.getDatacenter()).platform(in.getPlatform());
       }
    }
 
-   @SerializedName("serverid")
-   protected final String id;
-   protected final String hostname;
-   protected final String datacenter;
-   protected final String platform;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public Server(String id, String hostname, String datacenter, String platform) {
+   private final String id;
+   private final String hostname;
+   private final String datacenter;
+   private final String platform;
+
+   @ConstructorProperties({
+         "serverid", "hostname", "datacenter", "platform"
+   })
+   protected Server(String id, String hostname, String datacenter, String platform) {
       this.id = checkNotNull(id, "id");
       this.hostname = checkNotNull(hostname, "hostname");
       this.datacenter = checkNotNull(datacenter, "datacenter");
@@ -110,45 +141,28 @@ public class Server implements Comparable<Server> {
     * @return the generated id of the server
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the hostname of the server
     */
    public String getHostname() {
-      return hostname;
+      return this.hostname;
    }
 
    /**
     * @return platform running the server (ex. {@code OpenVZ})
     */
-   public String getPlatform() {
-      return platform;
+   public String getDatacenter() {
+      return this.datacenter;
    }
 
    /**
     * @return the datacenter the server exists in (ex. {@code Falkenberg})
     */
-   public String getDatacenter() {
-      return datacenter;
-   }
-   
-   @Override
-   public int compareTo(Server other) {
-      return id.compareTo(other.getId());
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Server) {
-         return Objects.equal(id, ((Server) object).id);
-      } else {
-         return false;
-      }
+   public String getPlatform() {
+      return this.platform;
    }
 
    @Override
@@ -157,8 +171,21 @@ public class Server implements Comparable<Server> {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Server that = Server.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("id", id).add("hostname", hostname).add("datacenter", datacenter)
+            .add("platform", platform);
+   }
+
+   @Override
    public String toString() {
-      return String.format("[id=%s, hostname=%s, datacenter=%s, platform=%s]", id, hostname, datacenter, platform);
+      return string().toString();
    }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,69 +18,99 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * Structure containing all information about e-mail addresses for a GleSYS account
- * 
+ *
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
 //TODO: find a better name for this class
 @Beta
 public class EmailOverview {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private EmailOverviewSummary summary;
-      private Set<EmailOverviewDomain> domains;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromEmailOverview(this);
+   }
 
-      public Builder summary(EmailOverviewSummary summary) {
-         this.summary = summary;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected EmailOverviewSummary summary;
+      protected Set<EmailOverviewDomain> domains = ImmutableSet.of();
+
+      /**
+       * @see EmailOverview#getSummary()
+       */
+      public T summary(EmailOverviewSummary summary) {
+         this.summary = checkNotNull(summary, "summary");
+         return self();
       }
 
-      public Builder domains(Set<EmailOverviewDomain> domains) {
-         this.domains = domains;
-         return this;
+      /**
+       * @see EmailOverview#getDomains()
+       */
+      public T domains(Set<EmailOverviewDomain> domains) {
+         this.domains = ImmutableSet.copyOf(checkNotNull(domains, "domains"));
+         return self();
       }
 
-      public Builder domains(EmailOverviewDomain... domains) {
-         return domains(ImmutableSet.copyOf(domains));
+      public T domains(EmailOverviewDomain... in) {
+         return domains(ImmutableSet.copyOf(in));
       }
 
       public EmailOverview build() {
          return new EmailOverview(summary, domains);
       }
-      
-      public Builder fromEmailOverview(EmailOverview in) {
-         return summary(in.getSummary()).domains(in.getDomains());
+
+      public T fromEmailOverview(EmailOverview in) {
+         return this.summary(in.getSummary()).domains(in.getDomains());
       }
    }
 
-   private EmailOverviewSummary summary;
-   private Set<EmailOverviewDomain> domains;
-
-   public EmailOverview(EmailOverviewSummary summary,  Set<EmailOverviewDomain> domains) {
-      this.summary = summary; 
-      this.domains = domains;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   /** @return summary information about the account */
+   private final EmailOverviewSummary summary;
+   private final Set<EmailOverviewDomain> domains;
+
+   @ConstructorProperties({
+         "summary", "domains"
+   })
+   protected EmailOverview(EmailOverviewSummary summary, Set<EmailOverviewDomain> domains) {
+      this.summary = checkNotNull(summary, "summary");
+      this.domains = ImmutableSet.copyOf(checkNotNull(domains, "domains"));
+   }
+
+   /**
+    * @return summary information about the account
+    */
    public EmailOverviewSummary getSummary() {
-      return summary;
+      return this.summary;
    }
 
-   /** @return the set of detailed information about the e-mail addresses and aliases for each domain */
+   /**
+    * @return the set of detailed information about the e-mail addresses and aliases for each domain
+    */
    public Set<EmailOverviewDomain> getDomains() {
-      return domains == null ? ImmutableSet.<EmailOverviewDomain>of() : domains;
+      return this.domains;
    }
 
    @Override
@@ -89,23 +119,22 @@ public class EmailOverview {
    }
 
    @Override
-   public boolean equals(Object object) {
-      if (object == this) {
-         return true;
-      }
-      if (object instanceof EmailOverview) {
-         EmailOverview other = (EmailOverview) object;
-         return Objects.equal(summary, other.summary)
-               && Objects.equal(domains, other.domains);
-      } else {
-         return false;
-      }
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      EmailOverview that = EmailOverview.class.cast(obj);
+      return Objects.equal(this.summary, that.summary)
+            && Objects.equal(this.domains, that.domains);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("summary", summary).add("domains", domains);
    }
 
    @Override
    public String toString() {
-      Joiner commaJoiner = Joiner.on(", ");
-      return String.format("summary=%s, domains=[%s]", summary, commaJoiner.join(getDomains()));
+      return string().toString();
    }
 
 }

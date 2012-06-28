@@ -1,0 +1,1 @@
+{"response":{"status":{"code":200,"timestamp":"2012-06-24T11:52:49+02:00","text":"Domain added"},"domain":{"domainname":"cl13016-domain.jclouds.org","createtime":"2012-06-24T11:52:49+02:00","recordcount":9,"usingglesysnameserver":"no"},"debug":{"input":{"domainname":"cl13016-domain.jclouds.org"}}}}

@@ -70,19 +70,19 @@ public class CreateAccountOptions extends BaseHttpRequestOptions {
 
    /** Enable or disable virus checking */
    public CreateAccountOptions antiVirus(boolean antiVirus) {
-      formParameters.put("antivirus", Integer.toString(antiVirus ? 1 : 0));
+      formParameters.put("antivirus", Boolean.toString(antiVirus));
       return this;
    }
 
    /** Enable or disable auto-respond */
    public CreateAccountOptions autorespond(boolean autorespond) {
-      formParameters.put("autorespond", Integer.toString(autorespond ? 1 : 0));
+      formParameters.put("autorespond", Boolean.toString(autorespond));
       return this;
    }
 
    /** Enable or disable saving of auto-respond e-mails */
    public CreateAccountOptions autorespondSaveEmail(boolean autorespondSaveEmail) {
-      formParameters.put("autorespondsaveemail", Integer.toString(autorespondSaveEmail ? 1 : 0));
+      formParameters.put("autorespondsaveemail", Boolean.toString(autorespondSaveEmail));
       return this;
    }
 

@@ -44,12 +44,12 @@ import com.google.common.base.Predicate;
  */
 @Test(groups = "live", testName = "DomainClientLiveTest", singleThreaded = true)
 public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
-   public final String testDomain = "glesystest.jclouds.org";
+   public String testDomain;
 
    @BeforeGroups(groups = {"live"})
    public void setupContext() {
       super.setupContext();
-
+      testDomain =  identity.toLowerCase() + "-domain.jclouds.org";
       client = gleContext.getApi().getDomainClient();
       domainCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
@@ -86,9 +86,18 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    private RetryablePredicate<Integer> recordCounter;
 
    @Test
+   public void testGetDomain() throws Exception {
+      Domain domain = client.getDomain(testDomain);
+      assertNotNull(domain);
+      assertEquals(domain.getDomainName(), testDomain);
+      assertNotNull(domain.getCreateTime());
+   }
+   
+   @Test
    public void testEditDomain() throws Exception {
-      client.editDomain(testDomain, DomainOptions.Builder.responsiblePerson("tester.jclouds.org"));
-      assertTrue(client.listDomains().contains(Domain.builder().domainName(testDomain).build()));
+      client.editDomain(testDomain, DomainOptions.Builder.responsiblePerson("another-tester.jclouds.org."));
+      Domain domain = client.getDomain(testDomain);
+      assertEquals(domain.getResponsiblePerson(), "another-tester.jclouds.org.");
    }
 
    @Test

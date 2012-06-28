@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.SortedMap;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.SaxUtils;
 
 import com.google.common.collect.Maps;
 
@@ -40,11 +41,11 @@ public class SupportedVersionsHandler extends ParseSax.HandlerWithResult<SortedM
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Version")) {
+      if (SaxUtils.equalsOrSuffix(qName, "Version")) {
          version = currentOrNull();
-      } else if (qName.equals("LoginUrl")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "LoginUrl")) {
          location = URI.create(currentOrNull());
-      } else if (qName.equals("VersionInfo")) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "VersionInfo")) {
          contents.put(version, location);
       }
       currentText = new StringBuilder();

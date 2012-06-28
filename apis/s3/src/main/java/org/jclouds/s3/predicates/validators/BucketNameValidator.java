@@ -40,7 +40,7 @@ import com.google.inject.Singleton;
 public class BucketNameValidator extends DnsNameValidator {
 
    @Inject
-   BucketNameValidator() {
+   public BucketNameValidator() {
       super(3, 63);
    }
 
