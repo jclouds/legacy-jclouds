@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.UsageRecord;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
 import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
 import org.testng.annotations.Test;
@@ -51,7 +52,7 @@ public class GlobalUsageClientLiveTest extends BaseCloudStackClientLiveTest {
 
       JobResult result = globalAdminClient.getUsageClient().generateUsageRecords(start, end, GenerateUsageRecordsOptions.NONE);
       assertNotNull(result);
-      assertTrue(result.getSuccess(), result.getDisplayText());
+      assertTrue(result.isSuccess(), result.getDisplayText());
 
       Set<UsageRecord> records = globalAdminClient.getUsageClient().listUsageRecords(start, end, ListUsageRecordsOptions.NONE);
       assertNotNull(records);

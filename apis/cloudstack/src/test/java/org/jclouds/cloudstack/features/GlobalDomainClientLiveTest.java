@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNull;
 import javax.annotation.Nullable;
 
 import org.jclouds.cloudstack.domain.Domain;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

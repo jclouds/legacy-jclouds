@@ -93,7 +93,7 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
       if (toParse.getResult() != null) {
          if (toParse.getResult().size() == 1) {
             @SuppressWarnings({"unchecked", "rawtypes"})
-            Builder<Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
+            Builder<?,Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
             if (toParse.getResult().containsKey("success")) {
                builder.result(null);
             } else {
@@ -118,11 +118,11 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
             result = builder.build();
          } else if (toParse.getResult().containsKey("errorcode")) {
             @SuppressWarnings({"unchecked", "rawtypes"})
-            Builder<Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
+            Builder<?, Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
             builder.result(null);// avoid classcastexceptions
-            builder.error(new AsyncJobError(ErrorCode.fromValue(toParse.getResult().get("errorcode").toString()), toParse
-               .getResult().containsKey("errortext") ? toParse.getResult().get("errortext").toString()
-               .replace("\"", "") : null));
+            builder.error(AsyncJobError.builder().errorCode(ErrorCode.fromValue(toParse.getResult().get("errorcode").toString()))
+                  .errorText(toParse.getResult().containsKey("errortext") ? toParse.getResult().get("errortext").toString().replace("\"", "") : null)
+                  .build());
             result = builder.build();
          } else if (toParse.getResult().size() > 1) {
             logger.warn("unexpected size of async job result; expecting a map with a single element",

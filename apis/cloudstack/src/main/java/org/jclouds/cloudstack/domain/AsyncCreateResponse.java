@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,29 +18,79 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
+ * Class AsyncCreateResponse
+ *
  * @author Adrian Cole
  */
 public class AsyncCreateResponse {
-   public static final AsyncCreateResponse UNINITIALIZED = new AsyncCreateResponse();
-   
-   private String id;
-   @SerializedName("jobid")
-   private String jobId;
+   public static final AsyncCreateResponse UNINITIALIZED = new AsyncCreateResponse(null, null);
 
-   /**
-    * present only for serializer
-    * 
-    */
-   AsyncCreateResponse() {
-
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public AsyncCreateResponse(String id, String jobId) {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromAsyncCreateResponse(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected String jobId;
+
+      /**
+       * @see AsyncCreateResponse#getId()
+       */
+      public T id(String id) {
+         this.id = id;
+         return self();
+      }
+
+      /**
+       * @see AsyncCreateResponse#getJobId()
+       */
+      public T jobId(String jobId) {
+         this.jobId = jobId;
+         return self();
+      }
+
+      public AsyncCreateResponse build() {
+         return new AsyncCreateResponse(id, jobId);
+      }
+
+      public T fromAsyncCreateResponse(AsyncCreateResponse in) {
+         return this
+               .id(in.getId())
+               .jobId(in.getJobId());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   @Named("jobid")
+   private final String jobId;
+
+   @ConstructorProperties({
+         "id", "jobid"
+   })
+   protected AsyncCreateResponse(@Nullable String id, @Nullable String jobId) {
       this.id = id;
       this.jobId = jobId;
    }
@@ -48,44 +98,41 @@ public class AsyncCreateResponse {
    /**
     * @return id of the resource being created
     */
+   @Nullable
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return id of the job in progress
     */
+   @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, jobId);
+      return Objects.hashCode(id, jobId);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      AsyncCreateResponse that = (AsyncCreateResponse) obj;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      AsyncCreateResponse that = AsyncCreateResponse.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.jobId, that.jobId);
+   }
 
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(jobId, that.jobId)) return false;
-
-      return true;
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("jobId", jobId);
    }
 
    @Override
    public String toString() {
-      return "AsyncCreateResponse{" +
-            "id=" + id +
-            ", jobId=" + jobId +
-            '}';
+      return string().toString();
    }
 
 }

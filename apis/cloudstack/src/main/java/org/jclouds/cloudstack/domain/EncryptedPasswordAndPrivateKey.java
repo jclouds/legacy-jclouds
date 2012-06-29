@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,17 +18,75 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class EncryptedPasswordAndPrivateKey
+ *
  * @author Andrei Savu
  */
 public class EncryptedPasswordAndPrivateKey {
 
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromEncryptedPasswordAndPrivateKey(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String encryptedPassword;
+      protected String privateKey;
+
+      /**
+       * @see EncryptedPasswordAndPrivateKey#getEncryptedPassword()
+       */
+      public T encryptedPassword(String encryptedPassword) {
+         this.encryptedPassword = encryptedPassword;
+         return self();
+      }
+
+      /**
+       * @see EncryptedPasswordAndPrivateKey#getPrivateKey()
+       */
+      public T privateKey(String privateKey) {
+         this.privateKey = privateKey;
+         return self();
+      }
+
+      public EncryptedPasswordAndPrivateKey build() {
+         return new EncryptedPasswordAndPrivateKey(encryptedPassword, privateKey);
+      }
+
+      public T fromEncryptedPasswordAndPrivateKey(EncryptedPasswordAndPrivateKey in) {
+         return this
+               .encryptedPassword(in.getEncryptedPassword())
+               .privateKey(in.getPrivateKey());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
    private final String encryptedPassword;
    private final String privateKey;
 
-   public EncryptedPasswordAndPrivateKey(String encryptedPassword, String privateKey) {
+   @ConstructorProperties({
+         "encryptedPassword", "privateKey"
+   })
+   protected EncryptedPasswordAndPrivateKey(@Nullable String encryptedPassword, @Nullable String privateKey) {
       this.encryptedPassword = encryptedPassword;
       this.privateKey = privateKey;
    }
@@ -36,40 +94,41 @@ public class EncryptedPasswordAndPrivateKey {
    /**
     * @return the encrypted password String representation
     */
+   @Nullable
    public String getEncryptedPassword() {
-      return encryptedPassword;
+      return this.encryptedPassword;
    }
 
    /**
     * @return get the string representation of the private key
     */
+   @Nullable
    public String getPrivateKey() {
-      return privateKey;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      EncryptedPasswordAndPrivateKey that = (EncryptedPasswordAndPrivateKey) o;
-
-      if (!Objects.equal(encryptedPassword, that.encryptedPassword)) return false;
-      if (!Objects.equal(privateKey, that.privateKey)) return false;
-
-      return true;
+      return this.privateKey;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(encryptedPassword, privateKey);
+      return Objects.hashCode(encryptedPassword, privateKey);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      EncryptedPasswordAndPrivateKey that = EncryptedPasswordAndPrivateKey.class.cast(obj);
+      return Objects.equal(this.encryptedPassword, that.encryptedPassword)
+            && Objects.equal(this.privateKey, that.privateKey);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("encryptedPassword", encryptedPassword).add("privateKey", privateKey);
    }
 
    @Override
    public String toString() {
-      return "EncryptedPasswordAndPrivateKey{" +
-         "encryptedPassword='" + encryptedPassword + '\'' +
-         ", privateKey='" + privateKey + '\'' +
-         '}';
+      return string().toString();
    }
+
 }

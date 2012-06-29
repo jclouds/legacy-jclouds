@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.features;
+package org.jclouds.cloudstack.internal;
 
 import static org.testng.Assert.assertEquals;
 

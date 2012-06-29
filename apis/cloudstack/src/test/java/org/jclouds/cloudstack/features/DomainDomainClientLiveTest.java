@@ -24,7 +24,7 @@ import static com.google.common.collect.Iterables.find;
 import com.google.common.collect.Sets;
 import static com.google.common.collect.Sets.newHashSet;
 import java.util.NoSuchElementException;
-import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.name;
+
 import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.parentDomainId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -33,12 +33,9 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.Domain;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code DomainDomainClient}

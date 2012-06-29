@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,117 +18,149 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents an alert issued by Cloudstack
  *
  * @author Richard Downer
  */
-public class Alert implements Comparable<Alert> {
+public class Alert {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private String description;
-      private Date sent;
-      private String type;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromAlert(this);
+   }
 
-      public Builder id(String id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected String description;
+      protected Date sent;
+      protected String type;
+
+      /**
+       * @see Alert#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see Alert#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder sent(Date sent) {
+      /**
+       * @see Alert#getSent()
+       */
+      public T sent(Date sent) {
          this.sent = sent;
-         return this;
+         return self();
       }
 
-      public Builder type(String type) {
+      /**
+       * @see Alert#getType()
+       */
+      public T type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
       public Alert build() {
          return new Alert(id, description, sent, type);
       }
+
+      public T fromAlert(Alert in) {
+         return this
+               .id(in.getId())
+               .description(in.getDescription())
+               .sent(in.getSent())
+               .type(in.getType());
+      }
    }
 
-   private String id;
-   private String description;
-   private Date sent;
-   private String type;
-
-   /* exists for the deserializer, only */
-   Alert() {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   private Alert(String id, String description, Date sent, String type) {
-      this.id = id;
+   private final String id;
+   private final String description;
+   private final Date sent;
+   private final String type;
+
+   @ConstructorProperties({
+         "id", "description", "sent", "type"
+   })
+   protected Alert(String id, @Nullable String description, @Nullable Date sent, @Nullable String type) {
+      this.id = checkNotNull(id, "id");
       this.description = description;
       this.sent = sent;
       this.type = type;
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
+   @Nullable
    public Date getSent() {
-      return sent;
+      return this.sent;
    }
 
+   @Nullable
    public String getType() {
-      return type;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Alert that = (Alert) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(sent, that.sent)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-
-      return true;
+      return this.type;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, description, sent, type);
+      return Objects.hashCode(id, description, sent, type);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Alert that = Alert.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.sent, that.sent)
+            && Objects.equal(this.type, that.type);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("description", description).add("sent", sent).add("type", type);
+   }
 
    @Override
    public String toString() {
-      return "Alert{" +
-            "id=" + id +
-            ", description='" + description + '\'' +
-            ", sent=" + sent +
-            ", type='" + type + '\'' +
-            '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(Alert other) {
-      return this.getId().compareTo(other.getId());
-   }
 }

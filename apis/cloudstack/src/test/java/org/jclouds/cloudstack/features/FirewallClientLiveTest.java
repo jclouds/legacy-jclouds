@@ -34,6 +34,7 @@ import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.CreateFirewallRuleOptions;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.AfterGroups;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,94 +16,117 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Representation of the API keypair response
  *
  * @author Andrei Savu
  */
-public class ApiKeyPair implements Comparable<ApiKeyPair> {
+public class ApiKeyPair {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiKeyPair(this);
+   }
 
-      private String apiKey;
-      private String secretKey;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder apiKey(String apiKey) {
+      protected String apiKey;
+      protected String secretKey;
+
+      /**
+       * @see ApiKeyPair#getApiKey()
+       */
+      public T apiKey(String apiKey) {
          this.apiKey = apiKey;
-         return this;
+         return self();
       }
 
-      public Builder secretKey(String secretKey) {
+      /**
+       * @see ApiKeyPair#getSecretKey()
+       */
+      public T secretKey(String secretKey) {
          this.secretKey = secretKey;
-         return this;
+         return self();
       }
 
       public ApiKeyPair build() {
          return new ApiKeyPair(apiKey, secretKey);
       }
+
+      public T fromApiKeyPair(ApiKeyPair in) {
+         return this
+               .apiKey(in.getApiKey())
+               .secretKey(in.getSecretKey());
+      }
    }
 
-   // for deserialization
-   ApiKeyPair() {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   @SerializedName("apikey")
-   private String apiKey;
-   @SerializedName("secretkey")
-   private String secretKey;
+   @Named("apikey")
+   private final String apiKey;
+   @Named("secretkey")
+   private final String secretKey;
 
-   public ApiKeyPair(String apiKey, String secretKey) {
+   @ConstructorProperties({
+         "apikey", "secretkey"
+   })
+   protected ApiKeyPair(@Nullable String apiKey, @Nullable String secretKey) {
       this.apiKey = apiKey;
       this.secretKey = secretKey;
    }
 
-   public String getSecretKey() {
-      return secretKey;
-   }
-
+   @Nullable
    public String getApiKey() {
-      return apiKey;
+      return this.apiKey;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ApiKeyPair that = (ApiKeyPair) o;
-
-      if (!Objects.equal(apiKey, that.apiKey)) return false;
-      if (!Objects.equal(secretKey, that.secretKey)) return false;
-
-      return true;
+   @Nullable
+   public String getSecretKey() {
+      return this.secretKey;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(apiKey, secretKey);
+      return Objects.hashCode(apiKey, secretKey);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ApiKeyPair that = ApiKeyPair.class.cast(obj);
+      return Objects.equal(this.apiKey, that.apiKey)
+            && Objects.equal(this.secretKey, that.secretKey);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("apiKey", apiKey).add("secretKey", secretKey);
    }
 
    @Override
    public String toString() {
-      return "ApiKeyPair{" +
-         "apiKey='" + apiKey + '\'' +
-         ", secretKey='" + secretKey + '\'' +
-         '}';
-   }
-
-   @Override
-   public int compareTo(ApiKeyPair arg0) {
-      return apiKey.compareTo(arg0.getApiKey());
+      return string().toString();
    }
 
 }

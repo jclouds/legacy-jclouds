@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,184 +18,208 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class SnapshotPolicy
+ * 
  * @author Richard Downer
- */
-public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
+*/
+public class SnapshotPolicy {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromSnapshotPolicy(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String id;
-      private Snapshot.Interval interval;
-      private long numberToRetain;
-      private String schedule;
-      private String timezone;
-      private String volumeId;
-
-      /**
-       * @param id the ID of the snapshot policy
+      protected String id;
+      protected Snapshot.Interval interval;
+      protected long numberToRetain;
+      protected String schedule;
+      protected String timezone;
+      protected String volumeId;
+   
+      /** 
+       * @see SnapshotPolicy#getId()
        */
-      public Builder id(String id) {
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      /**
-       * @param interval valid types are hourly, daily, weekly, monthy, template, and none.
+      /** 
+       * @see SnapshotPolicy#getInterval()
        */
-      public Builder interval(Snapshot.Interval interval) {
+      public T interval(Snapshot.Interval interval) {
          this.interval = interval;
-         return this;
+         return self();
       }
 
-      /**
-       * @param numberToRetain maximum number of snapshots retained
+      /** 
+       * @see SnapshotPolicy#getNumberToRetain()
        */
-      public Builder numberToRetain(long numberToRetain) {
+      public T numberToRetain(long numberToRetain) {
          this.numberToRetain = numberToRetain;
-         return this;
+         return self();
       }
 
-      /**
-       * @param schedule time the snapshot is scheduled to be taken.
+      /** 
+       * @see SnapshotPolicy#getSchedule()
        */
-      public Builder schedule(String schedule) {
+      public T schedule(String schedule) {
          this.schedule = schedule;
-         return this;
+         return self();
       }
 
-      /**
-       * @param timezone the time zone of the snapshot policy
+      /** 
+       * @see SnapshotPolicy#getTimezone()
        */
-      public Builder timezone(String timezone) {
+      public T timezone(String timezone) {
          this.timezone = timezone;
-         return this;
+         return self();
       }
 
-      /**
-       * @param volumeId ID of the disk volume
+      /** 
+       * @see SnapshotPolicy#getVolumeId()
        */
-      public Builder volumeId(String volumeId) {
+      public T volumeId(String volumeId) {
          this.volumeId = volumeId;
-         return this;
+         return self();
       }
 
       public SnapshotPolicy build() {
          return new SnapshotPolicy(id, interval, numberToRetain, schedule, timezone, volumeId);
       }
+      
+      public T fromSnapshotPolicy(SnapshotPolicy in) {
+         return this
+                  .id(in.getId())
+                  .interval(in.getInterval())
+                  .numberToRetain(in.getNumberToRetain())
+                  .schedule(in.getSchedule())
+                  .timezone(in.getTimezone())
+                  .volumeId(in.getVolumeId());
+      }
    }
 
-   private String id;
-   @SerializedName("intervaltype")
-   private Snapshot.Interval interval;
-   @SerializedName("maxsnaps")
-   private long numberToRetain;
-   private String schedule;
-   private String timezone;
-   @SerializedName("volumeid")
-   private String volumeId;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public SnapshotPolicy(String id, Snapshot.Interval interval, long numberToRetain, String schedule, String timezone, String volumeId) {
-      this.id = id;
+   private final String id;
+   @Named("intervaltype")
+   private final Snapshot.Interval interval;
+   @Named("maxsnaps")
+   private final long numberToRetain;
+   private final String schedule;
+   private final String timezone;
+   @Named("volumeid")
+   private final String volumeId;
+
+   @ConstructorProperties({
+      "id", "intervaltype", "maxsnaps", "schedule", "timezone", "volumeid"
+   })
+   protected SnapshotPolicy(String id, @Nullable Snapshot.Interval interval, long numberToRetain, @Nullable String schedule,
+                            @Nullable String timezone, @Nullable String volumeId) {
+      this.id = checkNotNull(id, "id");
       this.interval = interval;
       this.numberToRetain = numberToRetain;
       this.schedule = schedule;
       this.timezone = timezone;
       this.volumeId = volumeId;
    }
-   
-   /**
-    * present only for serializer
-    */
-   SnapshotPolicy() {
-   }
 
    /**
     * @return the ID of the snapshot policy
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return valid types are hourly, daily, weekly, monthy, template, and none.
     */
+   @Nullable
    public Snapshot.Interval getInterval() {
-      return interval;
+      return this.interval;
    }
 
    /**
     * @return maximum number of snapshots retained
     */
    public long getNumberToRetain() {
-      return numberToRetain;
+      return this.numberToRetain;
    }
 
    /**
     * @return time the snapshot is scheduled to be taken.
     */
+   @Nullable
    public String getSchedule() {
-      return schedule;
+      return this.schedule;
    }
 
    /**
     * @return the time zone of the snapshot policy
     */
+   @Nullable
    public String getTimezone() {
-      return timezone;
+      return this.timezone;
    }
 
    /**
     * @return ID of the disk volume
     */
+   @Nullable
    public String getVolumeId() {
-      return volumeId;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      SnapshotPolicy that = (SnapshotPolicy) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(numberToRetain, that.numberToRetain)) return false;
-      if (!Objects.equal(volumeId, that.volumeId)) return false;
-      if (!Objects.equal(interval, that.interval)) return false;
-      if (!Objects.equal(schedule, that.schedule)) return false;
-      if (!Objects.equal(timezone, that.timezone)) return false;
-
-      return true;
+      return this.volumeId;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, numberToRetain, volumeId, interval, schedule, timezone);
+      return Objects.hashCode(id, interval, numberToRetain, schedule, timezone, volumeId);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      SnapshotPolicy that = SnapshotPolicy.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.interval, that.interval)
+               && Objects.equal(this.numberToRetain, that.numberToRetain)
+               && Objects.equal(this.schedule, that.schedule)
+               && Objects.equal(this.timezone, that.timezone)
+               && Objects.equal(this.volumeId, that.volumeId);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("interval", interval).add("numberToRetain", numberToRetain).add("schedule", schedule).add("timezone", timezone)
+            .add("volumeId", volumeId);
+   }
+   
    @Override
    public String toString() {
-      return "SnapshotPolicy{" +
-            "id=" + id +
-            ", interval=" + interval +
-            ", numberToRetain=" + numberToRetain +
-            ", schedule='" + schedule + '\'' +
-            ", timezone='" + timezone + '\'' +
-            ", volumeId=" + volumeId +
-            '}';
-   }
-
-   @Override
-   public int compareTo(SnapshotPolicy other) {
-      return id.compareTo(other.getId());
+      return string().toString();
    }
 
 }

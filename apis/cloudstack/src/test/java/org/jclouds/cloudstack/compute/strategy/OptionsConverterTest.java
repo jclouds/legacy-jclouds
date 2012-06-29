@@ -39,7 +39,7 @@ public class OptionsConverterTest {
    private static final Map<String,Network> EMPTY_NETWORKS_MAP = Collections.<String, Network>emptyMap();
    private static final String ZONE_ID = "2";
    private final NetworkService firewallServiceWithStaticNat
-      = new NetworkService("Firewall", ImmutableMap.of("StaticNat", "true"));
+      = NetworkService.builder().name("Firewall").capabilities(ImmutableMap.of("StaticNat", "true")).build();
 
    @Test
    public void testBasicNetworkOptionsConverter() {

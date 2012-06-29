@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,151 +18,236 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import java.util.Collections;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class IPForwardingRule
+ * 
  * @author Adrian Cole
- */
+*/
 public class IPForwardingRule implements Comparable<IPForwardingRule> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromIPForwardingRule(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String IPAddress;
-      private String IPAddressId;
-      private int startPort;
-      private String protocol;
-      public int endPort;
-      private String state;
-      private String virtualMachineDisplayName;
-      public String virtualMachineId;
-      private String virtualMachineName;
-      private Set<String> CIDRs = ImmutableSet.of();
-      private int privateEndPort;
-      private int publicEndPort;
-      public int publicPort;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected String IPAddress;
+      protected String IPAddressId;
+      protected int startPort;
+      protected String protocol;
+      protected int endPort;
+      protected String state;
+      protected String virtualMachineDisplayName;
+      protected String virtualMachineId;
+      protected String virtualMachineName;
+      protected int publicPort;
+      protected Set<String> CIDRs = ImmutableSet.of();
+      protected int privateEndPort;
+      protected int publicEndPort;
+   
+      /** 
+       * @see IPForwardingRule#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder IPAddress(String IPAddress) {
+      /** 
+       * @see IPForwardingRule#getIPAddress()
+       */
+      public T IPAddress(String IPAddress) {
          this.IPAddress = IPAddress;
-         return this;
+         return self();
       }
 
-      public Builder IPAddressId(String IPAddressId) {
+      /** 
+       * @see IPForwardingRule#getIPAddressId()
+       */
+      public T IPAddressId(String IPAddressId) {
          this.IPAddressId = IPAddressId;
-         return this;
+         return self();
       }
 
-      public Builder startPort(int startPort) {
+      /** 
+       * @see IPForwardingRule#getStartPort()
+       */
+      public T startPort(int startPort) {
          this.startPort = startPort;
-         return this;
+         return self();
       }
 
-      public Builder protocol(String protocol) {
+      /** 
+       * @see IPForwardingRule#getProtocol()
+       */
+      public T protocol(String protocol) {
          this.protocol = protocol;
-         return this;
+         return self();
       }
 
-      public Builder endPort(int endPort) {
+      /** 
+       * @see IPForwardingRule#getEndPort()
+       */
+      public T endPort(int endPort) {
          this.endPort = endPort;
-         return this;
+         return self();
       }
 
-      public Builder state(String state) {
+      /** 
+       * @see IPForwardingRule#getState()
+       */
+      public T state(String state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder virtualMachineDisplayName(String virtualMachineDisplayName) {
+      /** 
+       * @see IPForwardingRule#getVirtualMachineDisplayName()
+       */
+      public T virtualMachineDisplayName(String virtualMachineDisplayName) {
          this.virtualMachineDisplayName = virtualMachineDisplayName;
-         return this;
+         return self();
       }
 
-      public Builder virtualMachineId(String virtualMachineId) {
+      /** 
+       * @see IPForwardingRule#getVirtualMachineId()
+       */
+      public T virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
-         return this;
+         return self();
       }
 
-      public Builder virtualMachineName(String virtualMachineName) {
+      /** 
+       * @see IPForwardingRule#getVirtualMachineName()
+       */
+      public T virtualMachineName(String virtualMachineName) {
          this.virtualMachineName = virtualMachineName;
-         return this;
+         return self();
       }
 
-      public Builder publicPort(int publicPort) {
+      /** 
+       * @see IPForwardingRule#getPublicPort()
+       */
+      public T publicPort(int publicPort) {
          this.publicPort = publicPort;
-         return this;
+         return self();
       }
 
-      public Builder CIDRs(Set<String> CIDRs) {
-         this.CIDRs = CIDRs;
-         return this;
+      /** 
+       * @see IPForwardingRule#getCIDRs()
+       */
+      public T CIDRs(Set<String> CIDRs) {
+         this.CIDRs = ImmutableSet.copyOf(checkNotNull(CIDRs, "CIDRs"));      
+         return self();
       }
 
-      public Builder privateEndPort(int privateEndPort) {
+      public T CIDRs(String... in) {
+         return CIDRs(ImmutableSet.copyOf(in));
+      }
+
+      /** 
+       * @see IPForwardingRule#getPrivateEndPort()
+       */
+      public T privateEndPort(int privateEndPort) {
          this.privateEndPort = privateEndPort;
-         return this;
+         return self();
       }
 
-      public Builder publicEndPort(int publicEndPort) {
+      /** 
+       * @see IPForwardingRule#getPublicEndPort()
+       */
+      public T publicEndPort(int publicEndPort) {
          this.publicEndPort = publicEndPort;
-         return this;
+         return self();
       }
 
       public IPForwardingRule build() {
-         return new IPForwardingRule(id, IPAddress, IPAddressId, startPort, protocol, endPort, state,
-               virtualMachineDisplayName, virtualMachineId, virtualMachineName, publicEndPort, publicPort, CIDRs, privateEndPort);
+         return new IPForwardingRule(id, IPAddress, IPAddressId, startPort, protocol, endPort, state, virtualMachineDisplayName,
+               virtualMachineId, virtualMachineName, publicPort, CIDRs, privateEndPort, publicEndPort);
+      }
+      
+      public T fromIPForwardingRule(IPForwardingRule in) {
+         return this
+                  .id(in.getId())
+                  .IPAddress(in.getIPAddress())
+                  .IPAddressId(in.getIPAddressId())
+                  .startPort(in.getStartPort())
+                  .protocol(in.getProtocol())
+                  .endPort(in.getEndPort())
+                  .state(in.getState())
+                  .virtualMachineDisplayName(in.getVirtualMachineDisplayName())
+                  .virtualMachineId(in.getVirtualMachineId())
+                  .virtualMachineName(in.getVirtualMachineName())
+                  .publicPort(in.getPublicPort())
+                  .CIDRs(in.getCIDRs())
+                  .privateEndPort(in.getPrivateEndPort())
+                  .publicEndPort(in.getPublicEndPort());
       }
    }
 
-   private String id;
-   @SerializedName("ipaddress")
-   private String IPAddress;
-   @SerializedName("ipaddressid")
-   private String IPAddressId;
-   @SerializedName("startport")
-   private int startPort;
-   private String protocol;
-   @SerializedName("endport")
-   public int endPort;
-   private String state;
-   @SerializedName("virtualmachinedisplayname")
-   private String virtualMachineDisplayName;
-   @SerializedName("virtualmachineid")
-   public String virtualMachineId;
-   @SerializedName("virtualmachinename")
-   private String virtualMachineName;
-   @SerializedName("publicport")
-   public int publicPort;
-   @SerializedName("cidrlist")
-   private Set<String> CIDRs;
-   @SerializedName("privateendport")
-   private int privateEndPort;
-   @SerializedName("publicendport")
-   private int publicEndPort;
-
-   // for deserializer
-   IPForwardingRule() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public IPForwardingRule(String id, String iPAddress, String iPAddressId, int startPort, String protocol, int endPort,
-                           String state, String virtualMachineDisplayName, String virtualMachineId, String virtualMachineName,
-                           int publicEndPort, int publicPort, Set<String> CIDRs, int privateEndPort) {
-      this.id = id;
-      this.IPAddress = iPAddress;
-      this.IPAddressId = iPAddressId;
+   private final String id;
+   @Named("ipaddress")
+   private final String IPAddress;
+   @Named("ipaddressid")
+   private final String IPAddressId;
+   @Named("startport")
+   private final int startPort;
+   private final String protocol;
+   @Named("endport")
+   private final int endPort;
+   private final String state;
+   @Named("virtualmachinedisplayname")
+   private final String virtualMachineDisplayName;
+   @Named("virtualmachineid")
+   private final String virtualMachineId;
+   @Named("virtualmachinename")
+   private final String virtualMachineName;
+   @Named("publicport")
+   private final int publicPort;
+   @Named("cidrlist")
+   private final Set<String> CIDRs;
+   @Named("privateendport")
+   private final int privateEndPort;
+   @Named("publicendport")
+   private final int publicEndPort;
+
+   @ConstructorProperties({
+      "id", "ipaddress", "ipaddressid", "startport", "protocol", "endport", "state", "virtualmachinedisplayname",
+         "virtualmachineid", "virtualmachinename", "publicport", "cidrlist", "privateendport", "publicendport"
+   })
+   protected IPForwardingRule(String id, String IPAddress, String IPAddressId, int startPort, @Nullable String protocol,
+                              int endPort, @Nullable String state, @Nullable String virtualMachineDisplayName,
+                              @Nullable String virtualMachineId, @Nullable String virtualMachineName, int publicPort,
+                              @Nullable Set<String> CIDRs, int privateEndPort, int publicEndPort) {
+      this.id = checkNotNull(id, "id");
+      this.IPAddress = IPAddress;
+      this.IPAddressId = IPAddressId;
       this.startPort = startPort;
       this.protocol = protocol;
       this.endPort = endPort;
@@ -170,153 +255,158 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       this.virtualMachineDisplayName = virtualMachineDisplayName;
       this.virtualMachineId = virtualMachineId;
       this.virtualMachineName = virtualMachineName;
-      this.CIDRs = Sets.newHashSet(CIDRs);
+      this.publicPort = publicPort;
+      this.CIDRs = CIDRs == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(CIDRs);      
       this.privateEndPort = privateEndPort;
       this.publicEndPort = publicEndPort;
-      this.publicPort = publicPort;
-
-   }
-
-   @Override
-   public int compareTo(IPForwardingRule arg0) {
-      return id.compareTo(arg0.getId());
    }
 
    /**
     * @return the ID of the ip forwarding rule
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the public ip address for the ip forwarding rule
     */
+   @Nullable
    public String getIPAddress() {
-      return IPAddress;
+      return this.IPAddress;
    }
 
    /**
     * @return the public ip address id for the ip forwarding rule
     */
+   @Nullable
    public String getIPAddressId() {
-      return IPAddressId;
+      return this.IPAddressId;
    }
 
    /**
     * @return the private port for the ip forwarding rule
     */
    public int getStartPort() {
-      return startPort;
+      return this.startPort;
    }
 
    /**
     * @return the protocol of the ip forwarding rule
     */
+   @Nullable
    public String getProtocol() {
-      return protocol;
+      return this.protocol;
    }
 
    /**
     * @return the public port for the ip forwarding rule
     */
    public int getEndPort() {
-      return endPort;
+      return this.endPort;
    }
 
    /**
     * @return the state of the rule
     */
+   @Nullable
    public String getState() {
-      return state;
+      return this.state;
    }
 
    /**
     * @return the VM display name for the ip forwarding rule
     */
+   @Nullable
    public String getVirtualMachineDisplayName() {
-      return virtualMachineDisplayName;
+      return this.virtualMachineDisplayName;
    }
 
    /**
     * @return the VM ID for the ip forwarding rule
     */
+   @Nullable
    public String getVirtualMachineId() {
-      return virtualMachineId;
+      return this.virtualMachineId;
    }
 
    /**
     * @return the VM name for the ip forwarding rule
     */
+   @Nullable
    public String getVirtualMachineName() {
-      return virtualMachineName;
+      return this.virtualMachineName;
    }
 
    /**
     * @return the starting port of port forwarding rule's public port range
     */
    public int getPublicPort() {
-      return publicPort;
+      return this.publicPort;
    }
 
    /**
     * @return the cidr list to forward traffic from
     */
    public Set<String> getCIDRs() {
-      return Collections.unmodifiableSet(CIDRs);
+      return this.CIDRs;
    }
 
    /**
     * @return the ending port of port forwarding rule's private port range
     */
    public int getPrivateEndPort() {
-      return privateEndPort;
+      return this.privateEndPort;
    }
 
    /**
     * @return the ending port of port forwarding rule's private port range
     */
    public int getPublicEndPort() {
-      return publicEndPort;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      IPForwardingRule that = (IPForwardingRule) o;
-
-      if (!Objects.equal(IPAddress, that.IPAddress)) return false;
-      if (!Objects.equal(IPAddressId, that.IPAddressId)) return false;
-      if (!Objects.equal(endPort, that.endPort)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(protocol, that.protocol)) return false;
-      if (!Objects.equal(startPort, that.startPort)) return false;
-      if (!Objects.equal(publicEndPort, that.publicEndPort)) return false;
-      if (!Objects.equal(privateEndPort, that.privateEndPort)) return false;
-      if (!Objects.equal(publicPort, that.publicPort)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(virtualMachineDisplayName, that.virtualMachineDisplayName)) return false;
-      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
-      if (!Objects.equal(virtualMachineName, that.virtualMachineName)) return false;
-
-      return true;
+      return this.publicEndPort;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(IPAddress, IPAddressId, endPort, id, protocol, startPort, publicEndPort,
-                               privateEndPort, publicPort, state, virtualMachineDisplayName,
-                               virtualMachineId, virtualMachineName);
+      return Objects.hashCode(id, IPAddress, IPAddressId, startPort, protocol, endPort, state, virtualMachineDisplayName, virtualMachineId, virtualMachineName, publicPort, CIDRs, privateEndPort, publicEndPort);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      IPForwardingRule that = IPForwardingRule.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.IPAddress, that.IPAddress)
+               && Objects.equal(this.IPAddressId, that.IPAddressId)
+               && Objects.equal(this.startPort, that.startPort)
+               && Objects.equal(this.protocol, that.protocol)
+               && Objects.equal(this.endPort, that.endPort)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.virtualMachineDisplayName, that.virtualMachineDisplayName)
+               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+               && Objects.equal(this.virtualMachineName, that.virtualMachineName)
+               && Objects.equal(this.publicPort, that.publicPort)
+               && Objects.equal(this.CIDRs, that.CIDRs)
+               && Objects.equal(this.privateEndPort, that.privateEndPort)
+               && Objects.equal(this.publicEndPort, that.publicEndPort);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("IPAddress", IPAddress).add("IPAddressId", IPAddressId).add("startPort", startPort)
+            .add("protocol", protocol).add("endPort", endPort).add("state", state).add("virtualMachineDisplayName", virtualMachineDisplayName)
+            .add("virtualMachineId", virtualMachineId).add("virtualMachineName", virtualMachineName).add("publicPort", publicPort)
+            .add("CIDRs", CIDRs).add("privateEndPort", privateEndPort).add("publicEndPort", publicEndPort);
+   }
+   
+   @Override
    public String toString() {
-      return "[IPAddress=" + IPAddress + ", IPAddressId=" + IPAddressId + ", id=" + id + ", startPort=" + startPort
-            + ", protocol=" + protocol + ", endPort=" + endPort + ", state=" + state + ", virtualMachineDisplayName="
-            + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId + ", virtualMachineName="
-            + virtualMachineName + "]";
+      return string().toString();
    }
 
+   @Override
+   public int compareTo(IPForwardingRule o) {
+      return id.compareTo(o.getId());
+   }
 }

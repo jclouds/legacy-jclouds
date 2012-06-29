@@ -77,17 +77,17 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
                   .isDefault(true)
                   .services(
                         ImmutableSortedSet.of(
-                              new NetworkService("Vpn", ImmutableMap.of("SupportedVpnTypes", "pptp,l2tp,ipsec")),
-                              new NetworkService("Gateway"),
-                              new NetworkService("UserData"),
-                              new NetworkService("Dhcp"),
-                              new NetworkService("Firewall", ImmutableSortedMap.<String, String> naturalOrder()
+                              NetworkService.builder().name("Vpn").capabilities(ImmutableMap.of("SupportedVpnTypes", "pptp,l2tp,ipsec")).build(),
+                              NetworkService.builder().name("Gateway").build(),
+                              NetworkService.builder().name("UserData").build(),
+                              NetworkService.builder().name("Dhcp").build(),
+                              NetworkService.builder().name("Firewall").capabilities(ImmutableSortedMap.<String, String> naturalOrder()
                                     .put("SupportedSourceNatTypes", "per account").put("StaticNat", "true")
                                     .put("TrafficStatistics", "per public ip").put("PortForwarding", "true")
-                                    .put("MultipleIps", "true").put("SupportedProtocols", "tcp,udp").build()),
-                              new NetworkService("Dns"),
-                              new NetworkService("Lb", ImmutableMap.of("SupportedLbAlgorithms",
-                                    "roundrobin,leastconn,source", "SupportedProtocols", "tcp, udp"))))
+                                    .put("MultipleIps", "true").put("SupportedProtocols", "tcp,udp").build()).build(),
+                              NetworkService.builder().name("Dns").build(),
+                              NetworkService.builder().name("Lb").capabilities(ImmutableMap.of("SupportedLbAlgorithms",
+                                    "roundrobin,leastconn,source", "SupportedProtocols", "tcp, udp")).build()))
                   .networkDomain("cs3cloud.internal").build());
    }
 }

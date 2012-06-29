@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.NetworkType;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateNetworkOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.functions.IdentityFunction;

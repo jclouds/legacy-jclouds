@@ -23,6 +23,7 @@ import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;
 

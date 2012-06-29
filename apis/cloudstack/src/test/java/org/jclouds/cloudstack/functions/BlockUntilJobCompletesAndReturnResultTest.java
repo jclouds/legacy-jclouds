@@ -58,8 +58,8 @@ public class BlockUntilJobCompletesAndReturnResultTest {
       replay(jobClient);
 
       assertEquals(
-            new BlockUntilJobCompletesAndReturnResult(client, jobComplete).<String> apply(new AsyncCreateResponse(id,
-                  jobId)), "foo");
+            new BlockUntilJobCompletesAndReturnResult(client, jobComplete).<String>apply(AsyncCreateResponse.builder().id(id).jobId(
+                  jobId).build()), "foo");
 
       verify(client);
       verify(jobClient);
@@ -83,8 +83,8 @@ public class BlockUntilJobCompletesAndReturnResultTest {
       replay(jobClient);
 
       assertEquals(
-            new BlockUntilJobCompletesAndReturnResult(client, jobComplete).<String> apply(new AsyncCreateResponse(id,
-                  jobId)), "foo");
+            new BlockUntilJobCompletesAndReturnResult(client, jobComplete).<String>apply(
+                  AsyncCreateResponse.builder().id(id).jobId(jobId).build()), "foo");
 
       verify(client);
       verify(jobClient);
@@ -102,15 +102,17 @@ public class BlockUntilJobCompletesAndReturnResultTest {
 
       expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
       expect(jobClient.getAsyncJob(jobId)).andReturn(
-            AsyncJob.builder().id(jobId).error(
-               new AsyncJobError(ErrorCode.INTERNAL_ERROR, "ERRROR")).result("foo").build()).atLeastOnce();
+            AsyncJob.builder().id(jobId)
+                  .error(AsyncJobError.builder().errorCode(ErrorCode.INTERNAL_ERROR).errorText("ERRROR").build())
+                  .result("foo").build())
+            .atLeastOnce();
 
       replay(client);
       replay(jobClient);
 
       assertEquals(
-            new BlockUntilJobCompletesAndReturnResult(client, jobComplete).<String> apply(new AsyncCreateResponse(id,
-                  jobId)), "foo");
+            new BlockUntilJobCompletesAndReturnResult(client, jobComplete).<String>apply(
+                  AsyncCreateResponse.builder().id(id).jobId(jobId).build()), "foo");
 
       verify(client);
       verify(jobClient);

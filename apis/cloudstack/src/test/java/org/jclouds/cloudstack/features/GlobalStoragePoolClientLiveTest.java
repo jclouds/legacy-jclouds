@@ -25,6 +25,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.StoragePool;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Strings;

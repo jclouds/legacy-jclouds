@@ -38,6 +38,7 @@ import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.BeforeGroups;
