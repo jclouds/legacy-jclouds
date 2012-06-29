@@ -37,6 +37,6 @@ public class ParseLoginResponseFromHttpResponse implements Function<HttpResponse
       String jSessionId = get(Splitter.on("=").split(get(Splitter.on(";").trimResults().split(
          getOnlyElement(response.getHeaders().get("Set-Cookie"))), 0)), 1);
       
-      return LoginResponse.builder().copyOf(login).jSessionId(jSessionId).build();
+      return LoginResponse.builder().fromLoginResponse(login).jSessionId(jSessionId).build();
    }
 }

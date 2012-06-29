@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,160 +16,219 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Representation of the login API call response
  * 
  * @author Andrei Savu
- */
-public class LoginResponse implements Comparable<LoginResponse> {
+*/
+public class LoginResponse {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromLoginResponse(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String username;
-      private String userId;
-      private String password;
-      private String domainId;
-      private long timeout;
-      private boolean registered;
-      private String accountName;
-      private String firstName;
-      private String lastName;
-      private Account.Type accountType;
-      private String timezone;
-      private String timezoneOffset;
-      private String sessionKey;
-      private String jSessionId;
-
-      public Builder copyOf(LoginResponse r) {
-         this.username = r.username;
-         this.userId = r.userId;
-         this.password = r.password;
-         this.domainId = r.domainId;
-         this.timeout = r.timeout;
-         this.registered = r.registered;
-         this.accountName = r.accountName;
-         this.firstName = r.firstName;
-         this.lastName = r.lastName;
-         this.accountType = r.accountType;
-         this.timezone = r.timezone;
-         this.timezoneOffset = r.timezoneOffset;
-         this.sessionKey = r.sessionKey;
-         this.jSessionId = r.jSessionId;
-         return this;
-      }
-
-      public Builder username(String username) {
+      protected String username;
+      protected String userId;
+      protected String password;
+      protected String domainId;
+      protected long timeout;
+      protected boolean registered;
+      protected String accountName;
+      protected String firstName;
+      protected String lastName;
+      protected Account.Type accountType;
+      protected String timezone;
+      protected String timezoneOffset;
+      protected String sessionKey;
+      protected String jSessionId;
+   
+      /** 
+       * @see LoginResponse#getUsername()
+       */
+      public T username(String username) {
          this.username = username;
-         return this;
+         return self();
       }
 
-      public Builder userId(String userId) {
+      /** 
+       * @see LoginResponse#getUserId()
+       */
+      public T userId(String userId) {
          this.userId = userId;
-         return this;
+         return self();
       }
 
-      public Builder password(String password) {
+      /** 
+       * @see LoginResponse#getPassword()
+       */
+      public T password(String password) {
          this.password = password;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see LoginResponse#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder timeout(long timeout) {
+      /** 
+       * @see LoginResponse#getTimeout()
+       */
+      public T timeout(long timeout) {
          this.timeout = timeout;
-         return this;
+         return self();
       }
 
-      public Builder registered(boolean registered) {
+      /** 
+       * @see LoginResponse#isRegistered()
+       */
+      public T registered(boolean registered) {
          this.registered = registered;
-         return this;
+         return self();
       }
 
-      public Builder accountName(String accountName) {
+      /** 
+       * @see LoginResponse#getAccountName()
+       */
+      public T accountName(String accountName) {
          this.accountName = accountName;
-         return this;
+         return self();
       }
 
-      public Builder firstName(String firstName) {
+      /** 
+       * @see LoginResponse#getFirstName()
+       */
+      public T firstName(String firstName) {
          this.firstName = firstName;
-         return this;
+         return self();
       }
 
-      public Builder lastName(String lastName) {
+      /** 
+       * @see LoginResponse#getLastName()
+       */
+      public T lastName(String lastName) {
          this.lastName = lastName;
-         return this;
+         return self();
       }
 
-      public Builder accountType(Account.Type accountType) {
+      /** 
+       * @see LoginResponse#getAccountType()
+       */
+      public T accountType(Account.Type accountType) {
          this.accountType = accountType;
-         return this;
+         return self();
       }
 
-      public Builder timezone(String timezone) {
+      /** 
+       * @see LoginResponse#getTimezone()
+       */
+      public T timezone(String timezone) {
          this.timezone = timezone;
-         return this;
+         return self();
       }
 
-      public Builder timezoneOffset(String timezoneOffset) {
+      /** 
+       * @see LoginResponse#getTimezoneOffset()
+       */
+      public T timezoneOffset(String timezoneOffset) {
          this.timezoneOffset = timezoneOffset;
-         return this;
+         return self();
       }
 
-      public Builder sessionKey(String sessionKey) {
+      /** 
+       * @see LoginResponse#getSessionKey()
+       */
+      public T sessionKey(String sessionKey) {
          this.sessionKey = sessionKey;
-         return this;
+         return self();
       }
 
-      public Builder jSessionId(String jSessionId) {
+      /** 
+       * @see LoginResponse#getJSessionId()
+       */
+      public T jSessionId(String jSessionId) {
          this.jSessionId = jSessionId;
-         return this;
+         return self();
       }
 
       public LoginResponse build() {
-         return new LoginResponse(username, userId, password, domainId, timeout, registered, accountName, firstName,
-                  lastName, accountType, timezone, timezoneOffset, sessionKey, jSessionId);
+         return new LoginResponse(username, userId, password, domainId, timeout, registered, accountName, firstName, lastName, accountType, timezone, timezoneOffset, sessionKey, jSessionId);
+      }
+      
+      public T fromLoginResponse(LoginResponse in) {
+         return this
+                  .username(in.getUsername())
+                  .userId(in.getUserId())
+                  .password(in.getPassword())
+                  .domainId(in.getDomainId())
+                  .timeout(in.getTimeout())
+                  .registered(in.isRegistered())
+                  .accountName(in.getAccountName())
+                  .firstName(in.getFirstName())
+                  .lastName(in.getLastName())
+                  .accountType(in.getAccountType())
+                  .timezone(in.getTimezone())
+                  .timezoneOffset(in.getTimezoneOffset())
+                  .sessionKey(in.getSessionKey())
+                  .jSessionId(in.getJSessionId());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
    private final String username;
-   @SerializedName("userid")
+   @Named("userid")
    private final String userId;
    private final String password;
-   @SerializedName("domainid")
+   @Named("domainid")
    private final String domainId;
    private final long timeout;
    private final boolean registered;
-   @SerializedName("account")
+   @Named("account")
    private final String accountName;
-   @SerializedName("firstname")
+   @Named("firstname")
    private final String firstName;
-   @SerializedName("lastname")
+   @Named("lastname")
    private final String lastName;
-   @SerializedName("type")
+   @Named("type")
    private final Account.Type accountType;
    private final String timezone;
-   @SerializedName("timezoneoffset")
+   @Named("timezoneoffset")
    private final String timezoneOffset;
-   @SerializedName("sessionkey")
+   @Named("sessionkey")
    private final String sessionKey;
    private final String jSessionId;
 
-   public LoginResponse(String username, String userId, String password, String domainId, long timeout, boolean registered,
-            String accountName, String firstName, String lastName, Account.Type accountType, String timezone,
-            String timezoneOffset, String sessionKey, String jSessionId) {
+   @ConstructorProperties({
+      "username", "userid", "password", "domainid", "timeout", "registered", "account", "firstname", "lastname", "type", "timezone", "timezoneoffset", "sessionkey", "jSessionId"
+   })
+   protected LoginResponse(@Nullable String username, @Nullable String userId, @Nullable String password, @Nullable String domainId, long timeout, boolean registered, @Nullable String accountName, @Nullable String firstName, @Nullable String lastName, @Nullable Account.Type accountType, @Nullable String timezone, @Nullable String timezoneOffset, @Nullable String sessionKey, @Nullable String jSessionId) {
       this.username = username;
       this.userId = userId;
       this.password = password;
@@ -186,107 +245,108 @@ public class LoginResponse implements Comparable<LoginResponse> {
       this.jSessionId = jSessionId;
    }
 
+   @Nullable
    public String getUsername() {
-      return username;
+      return this.username;
    }
 
+   @Nullable
    public String getUserId() {
-      return userId;
+      return this.userId;
    }
 
+   @Nullable
    public String getPassword() {
-      return password;
+      return this.password;
    }
 
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    public long getTimeout() {
-      return timeout;
+      return this.timeout;
    }
 
    public boolean isRegistered() {
-      return registered;
+      return this.registered;
    }
 
+   @Nullable
    public String getAccountName() {
-      return accountName;
+      return this.accountName;
    }
 
+   @Nullable
    public String getFirstName() {
-      return firstName;
+      return this.firstName;
    }
 
+   @Nullable
    public String getLastName() {
-      return lastName;
+      return this.lastName;
    }
 
+   @Nullable
    public Account.Type getAccountType() {
-      return accountType;
+      return this.accountType;
    }
 
+   @Nullable
    public String getTimezone() {
-      return timezone;
+      return this.timezone;
    }
 
+   @Nullable
    public String getTimezoneOffset() {
-      return timezoneOffset;
+      return this.timezoneOffset;
    }
 
+   @Nullable
    public String getSessionKey() {
-      return sessionKey;
+      return this.sessionKey;
    }
 
+   @Nullable
    public String getJSessionId() {
-      return jSessionId;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      LoginResponse that = (LoginResponse) o;
-
-      if (!Objects.equal(accountName, that.accountName)) return false;
-      if (!Objects.equal(accountType, that.accountType)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(firstName, that.firstName)) return false;
-      if (!Objects.equal(jSessionId, that.jSessionId)) return false;
-      if (!Objects.equal(lastName, that.lastName)) return false;
-      if (!Objects.equal(password, that.password)) return false;
-      if (!Objects.equal(registered, that.registered)) return false;
-      if (!Objects.equal(sessionKey, that.sessionKey)) return false;
-      if (!Objects.equal(timeout, that.timeout)) return false;
-      if (!Objects.equal(timezone, that.timezone)) return false;
-      if (!Objects.equal(timezoneOffset, that.timezoneOffset)) return false;
-      if (!Objects.equal(userId, that.userId)) return false;
-      if (!Objects.equal(username, that.username)) return false;
-
-      return true;
+      return this.jSessionId;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(accountName, accountType, domainId, firstName, jSessionId, lastName,
-                               password, registered, sessionKey, timeout, timezone, timezoneOffset,
-                               userId, username);
+      return Objects.hashCode(username, userId, password, domainId, timeout, registered, accountName, firstName, lastName, accountType, timezone, timezoneOffset, sessionKey, jSessionId);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      LoginResponse that = LoginResponse.class.cast(obj);
+      return Objects.equal(this.username, that.username)
+               && Objects.equal(this.userId, that.userId)
+               && Objects.equal(this.password, that.password)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.timeout, that.timeout)
+               && Objects.equal(this.registered, that.registered)
+               && Objects.equal(this.accountName, that.accountName)
+               && Objects.equal(this.firstName, that.firstName)
+               && Objects.equal(this.lastName, that.lastName)
+               && Objects.equal(this.accountType, that.accountType)
+               && Objects.equal(this.timezone, that.timezone)
+               && Objects.equal(this.timezoneOffset, that.timezoneOffset)
+               && Objects.equal(this.sessionKey, that.sessionKey)
+               && Objects.equal(this.jSessionId, that.jSessionId);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("username", username).add("userId", userId).add("password", password).add("domainId", domainId).add("timeout", timeout).add("registered", registered).add("accountName", accountName).add("firstName", firstName).add("lastName", lastName).add("accountType", accountType).add("timezone", timezone).add("timezoneOffset", timezoneOffset).add("sessionKey", sessionKey).add("jSessionId", jSessionId);
+   }
+   
    @Override
    public String toString() {
-      return "LoginResponse{" + "username='" + username + '\'' + ", userId=" + userId + ", password='" + password
-               + '\'' + ", domainId=" + domainId + ", timeout=" + timeout + ", registered=" + registered
-               + ", accountName='" + accountName + '\'' + ", firstName='" + firstName + '\'' + ", lastName='"
-               + lastName + '\'' + ", accountType=" + accountType + ", timezone='" + timezone + '\''
-               + ", timezoneOffset='" + timezoneOffset + '\'' + ", sessionKey='" + sessionKey + '\'' + ", jSessionId='"
-               + jSessionId + '\'' + '}';
-   }
-
-   @Override
-   public int compareTo(LoginResponse arg0) {
-      return sessionKey.compareTo(arg0.getSessionKey());
+      return string().toString();
    }
 
 }

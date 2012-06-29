@@ -30,6 +30,7 @@ import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
 import org.jclouds.cloudstack.options.UpdatePodOptions;

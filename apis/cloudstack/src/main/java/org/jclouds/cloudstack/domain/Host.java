@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,11 +20,17 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents a host issued by Cloudstack
@@ -41,7 +47,7 @@ public class Host implements Comparable<Host> {
       public static ClusterType fromValue(String value) {
          try {
             return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
-         } catch(IllegalArgumentException e) {
+         } catch (IllegalArgumentException e) {
             return UNKNOWN;
          }
       }
@@ -116,368 +122,544 @@ public class Host implements Comparable<Host> {
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private AllocationState allocationState;
-      private int averageLoad;
-      private String capabilities;
-      private String clusterId;
-      private String clusterName;
-      private ClusterType clusterType;
-      private String cpuAllocated;
-      private int cpuNumber;
-      private int cpuSpeed;
-      private String cpuUsed;
-      private float cpuWithOverProvisioning;
-      private Date created;
-      private Date disconnected;
-      private long diskSizeAllocated;
-      private long diskSizeTotal;
-      private String events;
-      private boolean hasEnoughCapacity;
-      private String hostTags;
-      private String hypervisor;
-      private String ipAddress;
-      private boolean localStorageActive;
-      private String jobId;
-      private AsyncJob.Status jobStatus;
-      private Date lastPinged;
-      private String managementServerId;
-      private long memoryAllocated;
-      private long memoryTotal;
-      private long memoryUsed;
-      private String name;
-      private long networkKbsRead;
-      private long networkKbsWrite;
-      private String osCategoryId;
-      private String osCategoryName;
-      private String podId;
-      private String podName;
-      private Date removed;
-      private State state;
-      private Type type;
-      private String version;
-      private String zoneId;
-      private String zoneName;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromHost(this);
+   }
 
-      public Builder id(String id) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String id;
+      protected AllocationState allocationState;
+      protected int averageLoad;
+      protected String capabilities;
+      protected String clusterId;
+      protected String clusterName;
+      protected Host.ClusterType clusterType;
+      protected String cpuAllocated;
+      protected int cpuNumber;
+      protected int cpuSpeed;
+      protected String cpuUsed;
+      protected float cpuWithOverProvisioning;
+      protected Date created;
+      protected Date disconnected;
+      protected long diskSizeAllocated;
+      protected long diskSizeTotal;
+      protected String events;
+      protected boolean hasEnoughCapacity;
+      protected String hostTags;
+      protected String hypervisor;
+      protected String ipAddress;
+      protected boolean localStorageActive;
+      protected String jobId;
+      protected AsyncJob.Status jobStatus;
+      protected Date lastPinged;
+      protected String managementServerId;
+      protected long memoryAllocated;
+      protected long memoryTotal;
+      protected long memoryUsed;
+      protected String name;
+      protected long networkKbsRead;
+      protected long networkKbsWrite;
+      protected String osCategoryId;
+      protected String osCategoryName;
+      protected String podId;
+      protected String podName;
+      protected Date removed;
+      protected Host.State state;
+      protected Host.Type type;
+      protected String version;
+      protected String zoneId;
+      protected String zoneName;
+
+      /**
+       * @see Host#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder allocationState(AllocationState allocationState) {
+      /**
+       * @see Host#getAllocationState()
+       */
+      public T allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
-         return this;
+         return self();
       }
 
-      public Builder averageLoad(int averageLoad) {
+      /**
+       * @see Host#getAverageLoad()
+       */
+      public T averageLoad(int averageLoad) {
          this.averageLoad = averageLoad;
-         return this;
+         return self();
       }
 
-      public Builder capabilities(String capabilities) {
+      /**
+       * @see Host#getCapabilities()
+       */
+      public T capabilities(String capabilities) {
          this.capabilities = capabilities;
-         return this;
+         return self();
       }
 
-      public Builder clusterId(String clusterId) {
+      /**
+       * @see Host#getClusterId()
+       */
+      public T clusterId(String clusterId) {
          this.clusterId = clusterId;
-         return this;
+         return self();
       }
 
-      public Builder clusterName(String clusterName) {
+      /**
+       * @see Host#getClusterName()
+       */
+      public T clusterName(String clusterName) {
          this.clusterName = clusterName;
-         return this;
+         return self();
       }
 
-      public Builder clusterType(ClusterType clusterType) {
+      /**
+       * @see Host#getClusterType()
+       */
+      public T clusterType(Host.ClusterType clusterType) {
          this.clusterType = clusterType;
-         return this;
+         return self();
       }
 
-      public Builder cpuAllocated(String cpuAllocated) {
+      /**
+       * @see Host#getCpuAllocated()
+       */
+      public T cpuAllocated(String cpuAllocated) {
          this.cpuAllocated = cpuAllocated;
-         return this;
+         return self();
       }
 
-      public Builder cpuNumber(int cpuNumber) {
+      /**
+       * @see Host#getCpuNumber()
+       */
+      public T cpuNumber(int cpuNumber) {
          this.cpuNumber = cpuNumber;
-         return this;
+         return self();
       }
 
-      public Builder cpuSpeed(int cpuSpeed) {
+      /**
+       * @see Host#getCpuSpeed()
+       */
+      public T cpuSpeed(int cpuSpeed) {
          this.cpuSpeed = cpuSpeed;
-         return this;
+         return self();
       }
 
-      public Builder cpuUsed(String cpuUsed) {
+      /**
+       * @see Host#getCpuUsed()
+       */
+      public T cpuUsed(String cpuUsed) {
          this.cpuUsed = cpuUsed;
-         return this;
+         return self();
       }
 
-      public Builder cpuWithOverProvisioning(float cpuWithOverProvisioning) {
+      /**
+       * @see Host#getCpuWithOverProvisioning()
+       */
+      public T cpuWithOverProvisioning(float cpuWithOverProvisioning) {
          this.cpuWithOverProvisioning = cpuWithOverProvisioning;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /**
+       * @see Host#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder disconnected(Date disconnected) {
+      /**
+       * @see Host#getDisconnected()
+       */
+      public T disconnected(Date disconnected) {
          this.disconnected = disconnected;
-         return this;
+         return self();
       }
 
-      public Builder diskSizeAllocated(long diskSizeAllocated) {
+      /**
+       * @see Host#getDiskSizeAllocated()
+       */
+      public T diskSizeAllocated(long diskSizeAllocated) {
          this.diskSizeAllocated = diskSizeAllocated;
-         return this;
+         return self();
       }
 
-      public Builder diskSizeTotal(long diskSizeTotal) {
+      /**
+       * @see Host#getDiskSizeTotal()
+       */
+      public T diskSizeTotal(long diskSizeTotal) {
          this.diskSizeTotal = diskSizeTotal;
-         return this;
+         return self();
       }
 
-      public Builder events(String events) {
+      /**
+       * @see Host#getEvents()
+       */
+      public T events(String events) {
          this.events = events;
-         return this;
+         return self();
       }
 
-      public Builder hasEnoughCapacity(boolean hasEnoughCapacity) {
+      /**
+       * @see Host#isHasEnoughCapacity()
+       */
+      public T hasEnoughCapacity(boolean hasEnoughCapacity) {
          this.hasEnoughCapacity = hasEnoughCapacity;
-         return this;
+         return self();
       }
 
-      public Builder hostTags(String hostTags) {
+      /**
+       * @see Host#getHostTags()
+       */
+      public T hostTags(String hostTags) {
          this.hostTags = hostTags;
-         return this;
+         return self();
       }
 
-      public Builder hypervisor(String hypervisor) {
+      /**
+       * @see Host#getHypervisor()
+       */
+      public T hypervisor(String hypervisor) {
          this.hypervisor = hypervisor;
-         return this;
+         return self();
       }
 
-      public Builder ipAddress(String ipAddress) {
+      /**
+       * @see Host#getIpAddress()
+       */
+      public T ipAddress(String ipAddress) {
          this.ipAddress = ipAddress;
-         return this;
+         return self();
       }
 
-      public Builder localStorageActive(boolean localStorageActive) {
+      /**
+       * @see Host#isLocalStorageActive()
+       */
+      public T localStorageActive(boolean localStorageActive) {
          this.localStorageActive = localStorageActive;
-         return this;
+         return self();
       }
 
-      public Builder jobId(String jobId) {
+      /**
+       * @see Host#getJobId()
+       */
+      public T jobId(String jobId) {
          this.jobId = jobId;
-         return this;
+         return self();
       }
 
-      public Builder jobStatus(AsyncJob.Status jobStatus) {
+      /**
+       * @see Host#getJobStatus()
+       */
+      public T jobStatus(AsyncJob.Status jobStatus) {
          this.jobStatus = jobStatus;
-         return this;
+         return self();
       }
 
-      public Builder lastPinged(Date lastPinged) {
+      /**
+       * @see Host#getLastPinged()
+       */
+      public T lastPinged(Date lastPinged) {
          this.lastPinged = lastPinged;
-         return this;
+         return self();
       }
 
-      public Builder managementServerId(String managementServerId) {
+      /**
+       * @see Host#getManagementServerId()
+       */
+      public T managementServerId(String managementServerId) {
          this.managementServerId = managementServerId;
-         return this;
+         return self();
       }
 
-      public Builder memoryAllocated(long memoryAllocated) {
+      /**
+       * @see Host#getMemoryAllocated()
+       */
+      public T memoryAllocated(long memoryAllocated) {
          this.memoryAllocated = memoryAllocated;
-         return this;
+         return self();
       }
 
-      public Builder memoryTotal(long memoryTotal) {
+      /**
+       * @see Host#getMemoryTotal()
+       */
+      public T memoryTotal(long memoryTotal) {
          this.memoryTotal = memoryTotal;
-         return this;
+         return self();
       }
 
-      public Builder memoryUsed(long memoryUsed) {
+      /**
+       * @see Host#getMemoryUsed()
+       */
+      public T memoryUsed(long memoryUsed) {
          this.memoryUsed = memoryUsed;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see Host#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder networkKbsRead(long networkKbsRead) {
+      /**
+       * @see Host#getNetworkKbsRead()
+       */
+      public T networkKbsRead(long networkKbsRead) {
          this.networkKbsRead = networkKbsRead;
-         return this;
+         return self();
       }
 
-      public Builder networkKbsWrite(long networkKbsWrite) {
+      /**
+       * @see Host#getNetworkKbsWrite()
+       */
+      public T networkKbsWrite(long networkKbsWrite) {
          this.networkKbsWrite = networkKbsWrite;
-         return this;
+         return self();
       }
 
-      public Builder osCategoryId(String osCategoryId) {
+      /**
+       * @see Host#getOsCategoryId()
+       */
+      public T osCategoryId(String osCategoryId) {
          this.osCategoryId = osCategoryId;
-         return this;
+         return self();
       }
 
-      public Builder osCategoryName(String osCategoryName) {
+      /**
+       * @see Host#getOsCategoryName()
+       */
+      public T osCategoryName(String osCategoryName) {
          this.osCategoryName = osCategoryName;
-         return this;
+         return self();
       }
 
-      public Builder podId(String podId) {
+      /**
+       * @see Host#getPodId()
+       */
+      public T podId(String podId) {
          this.podId = podId;
-         return this;
+         return self();
       }
 
-      public Builder podName(String podName) {
+      /**
+       * @see Host#getPodName()
+       */
+      public T podName(String podName) {
          this.podName = podName;
-         return this;
+         return self();
       }
 
-      public Builder removed(Date removed) {
+      /**
+       * @see Host#getRemoved()
+       */
+      public T removed(Date removed) {
          this.removed = removed;
-         return this;
+         return self();
       }
 
-      public Builder state(State state) {
+      /**
+       * @see Host#getState()
+       */
+      public T state(Host.State state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder type(Type type) {
+      /**
+       * @see Host#getType()
+       */
+      public T type(Host.Type type) {
          this.type = type;
-         return this;
+         return self();
       }
 
-      public Builder version(String version) {
+      /**
+       * @see Host#getVersion()
+       */
+      public T version(String version) {
          this.version = version;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /**
+       * @see Host#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder zoneName(String zoneName) {
+      /**
+       * @see Host#getZoneName()
+       */
+      public T zoneName(String zoneName) {
          this.zoneName = zoneName;
-         return this;
+         return self();
       }
+
 
       public Host build() {
-         return new Host(id, allocationState, averageLoad, capabilities,
-            clusterId, clusterName, clusterType, cpuAllocated,
-            cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning,
-            created, disconnected, diskSizeAllocated, diskSizeTotal,
-            events, hasEnoughCapacity, hostTags, hypervisor,
-            ipAddress, localStorageActive, jobId, jobStatus,
-            lastPinged, managementServerId, memoryAllocated, memoryTotal,
-            memoryUsed, name, networkKbsRead, networkKbsWrite,
-            osCategoryId, osCategoryName, podId, podName, removed,
-            state, type, version, zoneId, zoneName);
+         return new Host(id, allocationState, averageLoad, capabilities, clusterId, clusterName, clusterType, cpuAllocated, cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning, created, disconnected, diskSizeAllocated, diskSizeTotal, events, hasEnoughCapacity, hostTags, hypervisor, ipAddress, localStorageActive, jobId, jobStatus, lastPinged, managementServerId, memoryAllocated, memoryTotal, memoryUsed, name, networkKbsRead, networkKbsWrite, osCategoryId, osCategoryName, podId, podName, removed, state, type, version, zoneId, zoneName);
+      }
+
+      public T fromHost(Host in) {
+         return this
+               .id(in.getId())
+               .allocationState(in.getAllocationState())
+               .averageLoad(in.getAverageLoad())
+               .capabilities(in.getCapabilities())
+               .clusterId(in.getClusterId())
+               .clusterName(in.getClusterName())
+               .clusterType(in.getClusterType())
+               .cpuAllocated(in.getCpuAllocated())
+               .cpuNumber(in.getCpuNumber())
+               .cpuSpeed(in.getCpuSpeed())
+               .cpuUsed(in.getCpuUsed())
+               .cpuWithOverProvisioning(in.getCpuWithOverProvisioning())
+               .created(in.getCreated())
+               .disconnected(in.getDisconnected())
+               .diskSizeAllocated(in.getDiskSizeAllocated())
+               .diskSizeTotal(in.getDiskSizeTotal())
+               .events(in.getEvents())
+               .hasEnoughCapacity(in.isHasEnoughCapacity())
+               .hostTags(in.getHostTags())
+               .hypervisor(in.getHypervisor())
+               .ipAddress(in.getIpAddress())
+               .localStorageActive(in.isLocalStorageActive())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus())
+               .lastPinged(in.getLastPinged())
+               .managementServerId(in.getManagementServerId())
+               .memoryAllocated(in.getMemoryAllocated())
+               .memoryTotal(in.getMemoryTotal())
+               .memoryUsed(in.getMemoryUsed())
+               .name(in.getName())
+               .networkKbsRead(in.getNetworkKbsRead())
+               .networkKbsWrite(in.getNetworkKbsWrite())
+               .osCategoryId(in.getOsCategoryId())
+               .osCategoryName(in.getOsCategoryName())
+               .podId(in.getPodId())
+               .podName(in.getPodName())
+               .removed(in.getRemoved())
+               .state(in.getState())
+               .type(in.getType())
+               .version(in.getVersion())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName());
       }
    }
 
-   private String id;
-   @SerializedName("allocationstate")
-   private AllocationState allocationState;
-   @SerializedName("averageload")
-   private int averageLoad;
-   @SerializedName("capabilities")
-   private String capabilities;
-   @SerializedName("clusterid")
-   private String clusterId;
-   @SerializedName("clustername")
-   private String clusterName;
-   @SerializedName("clustertype")
-   private ClusterType clusterType;
-   @SerializedName("cpuallocated")
-   private String cpuAllocated;
-   @SerializedName("cpunumber")
-   private int cpuNumber;
-   @SerializedName("cpuspeed")
-   private int cpuSpeed;
-   @SerializedName("cpuused")
-   private String cpuUsed;
-   @SerializedName("cpuwithoverprovisioning")
-   private float cpuWithOverProvisioning;
-   private Date created;
-   private Date disconnected;
-   @SerializedName("disksizeallocated")
-   private long diskSizeAllocated;
-   @SerializedName("disksizetotal")
-   private long diskSizeTotal;
-   private String events;
-   @SerializedName("hasenoughcapacity")
-   private boolean hasEnoughCapacity;
-   @SerializedName("hosttags")
-   private String hostTags;
-   private String hypervisor;
-   @SerializedName("ipaddress")
-   private String ipAddress;
-   @SerializedName("islocalstorageactive")
-   private boolean localStorageActive;
-   @SerializedName("jobid")
-   private String jobId;
-   @SerializedName("jobstatus")
-   private AsyncJob.Status jobStatus;
-   @SerializedName("lastpinged")
-   private Date lastPinged;
-   @SerializedName("managementserverid")
-   private String managementServerId;
-   @SerializedName("memoryallocated")
-   private long memoryAllocated;
-   @SerializedName("memorytotal")
-   private long memoryTotal;
-   @SerializedName("memoryused")
-   private long memoryUsed;
-   private String name;
-   @SerializedName("networkkbsread")
-   private long networkKbsRead;
-   @SerializedName("networkkbswrite")
-   private long networkKbsWrite;
-   @SerializedName("oscategoryid")
-   private String osCategoryId;
-   @SerializedName("oscategoryname")
-   private String osCategoryName;
-   @SerializedName("podid")
-   private String podId;
-   @SerializedName("podname")
-   private String podName;
-   private Date removed;
-   private State state;
-   private Type type;
-   private String version;
-   @SerializedName("zoneid")
-   private String zoneId;
-   @SerializedName("zonename")
-   private String zoneName;
-
-   /* exists for the deserializer, only */
-   Host() {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public Host(String id, AllocationState allocationState, int averageLoad, String capabilities,
-               String clusterId, String clusterName, ClusterType clusterType, String cpuAllocated,
-               int cpuNumber, int cpuSpeed, String cpuUsed, float cpuWithOverProvisioning,
-               Date created, Date disconnected, long diskSizeAllocated, long diskSizeTotal,
-               String events, boolean hasEnoughCapacity, String hostTags, String hypervisor,
-               String ipAddress, boolean localStorageActive, String jobId, AsyncJob.Status jobStatus,
-               Date lastPinged, String managementServerId, long memoryAllocated, long memoryTotal,
-               long memoryUsed, String name, long networkKbsRead, long networkKbsWrite,
-               String osCategoryId, String osCategoryName, String podId, String podName, Date removed,
-               State state, Type type, String version, String zoneId, String zoneName) {
-      this.id = id;
+   private final String id;
+   @Named("allocationstate")
+   private final AllocationState allocationState;
+   @Named("averageload")
+   private final int averageLoad;
+   private final String capabilities;
+   @Named("clusterid")
+   private final String clusterId;
+   @Named("clustername")
+   private final String clusterName;
+   @Named("clustertype")
+   private final Host.ClusterType clusterType;
+   @Named("cpuallocated")
+   private final String cpuAllocated;
+   @Named("cpunumber")
+   private final int cpuNumber;
+   @Named("cpuspeed")
+   private final int cpuSpeed;
+   @Named("cpuused")
+   private final String cpuUsed;
+   @Named("cpuwithoverprovisioning")
+   private final float cpuWithOverProvisioning;
+   private final Date created;
+   private final Date disconnected;
+   @Named("disksizeallocated")
+   private final long diskSizeAllocated;
+   @Named("disksizetotal")
+   private final long diskSizeTotal;
+   private final String events;
+   @Named("hasenoughcapacity")
+   private final boolean hasEnoughCapacity;
+   @Named("hosttags")
+   private final String hostTags;
+   private final String hypervisor;
+   @Named("ipaddress")
+   private final String ipAddress;
+   @Named("islocalstorageactive")
+   private final boolean localStorageActive;
+   @Named("jobid")
+   private final String jobId;
+   @Named("jobstatus")
+   private final AsyncJob.Status jobStatus;
+   @Named("lastpinged")
+   private final Date lastPinged;
+   @Named("managementserverid")
+   private final String managementServerId;
+   @Named("memoryallocated")
+   private final long memoryAllocated;
+   @Named("memorytotal")
+   private final long memoryTotal;
+   @Named("memoryused")
+   private final long memoryUsed;
+   private final String name;
+   @Named("networkkbsread")
+   private final long networkKbsRead;
+   @Named("networkkbswrite")
+   private final long networkKbsWrite;
+   @Named("oscategoryid")
+   private final String osCategoryId;
+   @Named("oscategoryname")
+   private final String osCategoryName;
+   @Named("podid")
+   private final String podId;
+   @Named("podname")
+   private final String podName;
+   private final Date removed;
+   private final Host.State state;
+   private final Host.Type type;
+   private final String version;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+
+   @ConstructorProperties({
+         "id", "allocationstate", "averageload", "capabilities", "clusterid", "clustername", "clustertype", "cpuallocated", "cpunumber", "cpuspeed", "cpuused", "cpuwithoverprovisioning", "created", "disconnected", "disksizeallocated", "disksizetotal", "events", "hasenoughcapacity", "hosttags", "hypervisor", "ipaddress", "islocalstorageactive", "jobid", "jobstatus", "lastpinged", "managementserverid", "memoryallocated", "memorytotal", "memoryused", "name", "networkkbsread", "networkkbswrite", "oscategoryid", "oscategoryname", "podid", "podname", "removed", "state", "type", "version", "zoneid", "zonename"
+   })
+   protected Host(String id, @Nullable AllocationState allocationState, int averageLoad, @Nullable String capabilities,
+                  @Nullable String clusterId, @Nullable String clusterName, @Nullable Host.ClusterType clusterType,
+                  @Nullable String cpuAllocated, int cpuNumber, int cpuSpeed, @Nullable String cpuUsed,
+                  float cpuWithOverProvisioning, @Nullable Date created, @Nullable Date disconnected, long diskSizeAllocated,
+                  long diskSizeTotal, @Nullable String events, boolean hasEnoughCapacity, @Nullable String hostTags,
+                  @Nullable String hypervisor, @Nullable String ipAddress, boolean localStorageActive, @Nullable String jobId,
+                  @Nullable AsyncJob.Status jobStatus, @Nullable Date lastPinged, @Nullable String managementServerId,
+                  long memoryAllocated, long memoryTotal, long memoryUsed, @Nullable String name, long networkKbsRead, long networkKbsWrite,
+                  @Nullable String osCategoryId, @Nullable String osCategoryName, @Nullable String podId, @Nullable String podName,
+                  @Nullable Date removed, @Nullable Host.State state, @Nullable Host.Type type, @Nullable String version, @Nullable String zoneId,
+                  @Nullable String zoneName) {
+      this.id = checkNotNull(id, "id");
       this.allocationState = allocationState;
       this.averageLoad = averageLoad;
       this.capabilities = capabilities;
@@ -522,282 +704,275 @@ public class Host implements Comparable<Host> {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
    public AllocationState getAllocationState() {
-      return allocationState;
+      return this.allocationState;
    }
 
    public int getAverageLoad() {
-      return averageLoad;
+      return this.averageLoad;
    }
 
+   @Nullable
    public String getCapabilities() {
-      return capabilities;
+      return this.capabilities;
    }
 
+   @Nullable
    public String getClusterId() {
-      return clusterId;
+      return this.clusterId;
    }
 
+   @Nullable
    public String getClusterName() {
-      return clusterName;
+      return this.clusterName;
    }
 
-   public ClusterType getClusterType() {
-      return clusterType;
+   @Nullable
+   public Host.ClusterType getClusterType() {
+      return this.clusterType;
    }
 
+   @Nullable
    public String getCpuAllocated() {
-      return cpuAllocated;
+      return this.cpuAllocated;
    }
 
    public int getCpuNumber() {
-      return cpuNumber;
+      return this.cpuNumber;
    }
 
    public int getCpuSpeed() {
-      return cpuSpeed;
+      return this.cpuSpeed;
    }
 
+   @Nullable
    public String getCpuUsed() {
-      return cpuUsed;
+      return this.cpuUsed;
    }
 
    public float getCpuWithOverProvisioning() {
-      return cpuWithOverProvisioning;
+      return this.cpuWithOverProvisioning;
    }
 
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
+   @Nullable
    public Date getDisconnected() {
-      return disconnected;
+      return this.disconnected;
    }
 
    public long getDiskSizeAllocated() {
-      return diskSizeAllocated;
+      return this.diskSizeAllocated;
    }
 
    public long getDiskSizeTotal() {
-      return diskSizeTotal;
+      return this.diskSizeTotal;
    }
 
+   @Nullable
    public String getEvents() {
-      return events;
+      return this.events;
    }
 
    public boolean isHasEnoughCapacity() {
-      return hasEnoughCapacity;
+      return this.hasEnoughCapacity;
    }
 
+   @Nullable
    public String getHostTags() {
-      return hostTags;
+      return this.hostTags;
    }
 
+   @Nullable
    public String getHypervisor() {
-      return hypervisor;
+      return this.hypervisor;
    }
 
+   @Nullable
    public String getIpAddress() {
-      return ipAddress;
+      return this.ipAddress;
    }
 
    public boolean isLocalStorageActive() {
-      return localStorageActive;
+      return this.localStorageActive;
    }
 
+   @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
+   @Nullable
    public AsyncJob.Status getJobStatus() {
-      return jobStatus;
+      return this.jobStatus;
    }
 
+   @Nullable
    public Date getLastPinged() {
-      return lastPinged;
+      return this.lastPinged;
    }
 
+   @Nullable
    public String getManagementServerId() {
-      return managementServerId;
+      return this.managementServerId;
    }
 
    public long getMemoryAllocated() {
-      return memoryAllocated;
+      return this.memoryAllocated;
    }
 
    public long getMemoryTotal() {
-      return memoryTotal;
+      return this.memoryTotal;
    }
 
    public long getMemoryUsed() {
-      return memoryUsed;
+      return this.memoryUsed;
    }
-
+   
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    public long getNetworkKbsRead() {
-      return networkKbsRead;
+      return this.networkKbsRead;
    }
 
    public long getNetworkKbsWrite() {
-      return networkKbsWrite;
+      return this.networkKbsWrite;
    }
 
+   @Nullable
    public String getOsCategoryId() {
-      return osCategoryId;
+      return this.osCategoryId;
    }
 
+   @Nullable
    public String getOsCategoryName() {
-      return osCategoryName;
+      return this.osCategoryName;
    }
 
+   @Nullable
    public String getPodId() {
-      return podId;
+      return this.podId;
    }
 
+   @Nullable
    public String getPodName() {
-      return podName;
+      return this.podName;
    }
 
+   @Nullable
    public Date getRemoved() {
-      return removed;
+      return this.removed;
    }
 
-   public State getState() {
-      return state;
+   @Nullable
+   public Host.State getState() {
+      return this.state;
    }
 
-   public Type getType() {
-      return type;
+   @Nullable
+   public Host.Type getType() {
+      return this.type;
    }
 
+   @Nullable
    public String getVersion() {
-      return version;
+      return this.version;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getZoneName() {
-      return zoneName;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Host that = (Host) o;
-
-      if (!Objects.equal(averageLoad, that.averageLoad)) return false;
-      if (!Objects.equal(clusterId, that.clusterId)) return false;
-      if (!Objects.equal(cpuNumber, that.cpuNumber)) return false;
-      if (!Objects.equal(cpuSpeed, that.cpuSpeed)) return false;
-      if (!Objects.equal(cpuWithOverProvisioning, that.cpuWithOverProvisioning)) return false;
-      if (!Objects.equal(diskSizeAllocated, that.diskSizeAllocated)) return false;
-      if (!Objects.equal(diskSizeTotal, that.diskSizeTotal)) return false;
-      if (!Objects.equal(hasEnoughCapacity, that.hasEnoughCapacity)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(jobId, that.jobId)) return false;
-      if (!Objects.equal(localStorageActive, that.localStorageActive)) return false;
-      if (!Objects.equal(managementServerId, that.managementServerId)) return false;
-      if (!Objects.equal(memoryAllocated, that.memoryAllocated)) return false;
-      if (!Objects.equal(memoryTotal, that.memoryTotal)) return false;
-      if (!Objects.equal(memoryUsed, that.memoryUsed)) return false;
-      if (!Objects.equal(networkKbsRead, that.networkKbsRead)) return false;
-      if (!Objects.equal(networkKbsWrite, that.networkKbsWrite)) return false;
-      if (!Objects.equal(osCategoryId, that.osCategoryId)) return false;
-      if (!Objects.equal(osCategoryName, that.osCategoryName)) return false;
-      if (!Objects.equal(podId, that.podId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(allocationState, that.allocationState)) return false;
-      if (!Objects.equal(capabilities, that.capabilities)) return false;
-      if (!Objects.equal(clusterName, that.clusterName)) return false;
-      if (!Objects.equal(clusterType, that.clusterType)) return false;
-      if (!Objects.equal(cpuAllocated, that.cpuAllocated)) return false;
-      if (!Objects.equal(cpuUsed, that.cpuUsed)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(disconnected, that.disconnected)) return false;
-      if (!Objects.equal(events, that.events)) return false;
-      if (!Objects.equal(hostTags, that.hostTags)) return false;
-      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
-      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
-      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
-      if (!Objects.equal(lastPinged, that.lastPinged)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(podName, that.podName)) return false;
-      if (!Objects.equal(removed, that.removed)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-      if (!Objects.equal(version, that.version)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.zoneName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(averageLoad, clusterId, cpuNumber, cpuSpeed, cpuWithOverProvisioning, diskSizeAllocated,
-                               diskSizeTotal, hasEnoughCapacity, id, jobId, localStorageActive, managementServerId,
-                               memoryAllocated, memoryTotal, memoryUsed, networkKbsRead, networkKbsWrite, osCategoryId,
-                               osCategoryName, podId, zoneId, allocationState, capabilities, clusterName, clusterType,
-                               cpuAllocated, cpuUsed, created, disconnected, events, hostTags, hypervisor, ipAddress,
-                               jobStatus, lastPinged, name, podName, removed, state, type, version, zoneName);
+      return Objects.hashCode(id, allocationState, averageLoad, capabilities, clusterId, clusterName, clusterType, cpuAllocated, cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning, created, disconnected, diskSizeAllocated, diskSizeTotal, events, hasEnoughCapacity, hostTags, hypervisor, ipAddress, localStorageActive, jobId, jobStatus, lastPinged, managementServerId, memoryAllocated, memoryTotal, memoryUsed, name, networkKbsRead, networkKbsWrite, osCategoryId, osCategoryName, podId, podName, removed, state, type, version, zoneId, zoneName);
    }
-   
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Host that = Host.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.allocationState, that.allocationState)
+            && Objects.equal(this.averageLoad, that.averageLoad)
+            && Objects.equal(this.capabilities, that.capabilities)
+            && Objects.equal(this.clusterId, that.clusterId)
+            && Objects.equal(this.clusterName, that.clusterName)
+            && Objects.equal(this.clusterType, that.clusterType)
+            && Objects.equal(this.cpuAllocated, that.cpuAllocated)
+            && Objects.equal(this.cpuNumber, that.cpuNumber)
+            && Objects.equal(this.cpuSpeed, that.cpuSpeed)
+            && Objects.equal(this.cpuUsed, that.cpuUsed)
+            && Objects.equal(this.cpuWithOverProvisioning, that.cpuWithOverProvisioning)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.disconnected, that.disconnected)
+            && Objects.equal(this.diskSizeAllocated, that.diskSizeAllocated)
+            && Objects.equal(this.diskSizeTotal, that.diskSizeTotal)
+            && Objects.equal(this.events, that.events)
+            && Objects.equal(this.hasEnoughCapacity, that.hasEnoughCapacity)
+            && Objects.equal(this.hostTags, that.hostTags)
+            && Objects.equal(this.hypervisor, that.hypervisor)
+            && Objects.equal(this.ipAddress, that.ipAddress)
+            && Objects.equal(this.localStorageActive, that.localStorageActive)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus)
+            && Objects.equal(this.lastPinged, that.lastPinged)
+            && Objects.equal(this.managementServerId, that.managementServerId)
+            && Objects.equal(this.memoryAllocated, that.memoryAllocated)
+            && Objects.equal(this.memoryTotal, that.memoryTotal)
+            && Objects.equal(this.memoryUsed, that.memoryUsed)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.networkKbsRead, that.networkKbsRead)
+            && Objects.equal(this.networkKbsWrite, that.networkKbsWrite)
+            && Objects.equal(this.osCategoryId, that.osCategoryId)
+            && Objects.equal(this.osCategoryName, that.osCategoryName)
+            && Objects.equal(this.podId, that.podId)
+            && Objects.equal(this.podName, that.podName)
+            && Objects.equal(this.removed, that.removed)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.type, that.type)
+            && Objects.equal(this.version, that.version)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("allocationState", allocationState).add("averageLoad", averageLoad)
+            .add("capabilities", capabilities).add("clusterId", clusterId).add("clusterName", clusterName)
+            .add("clusterType", clusterType).add("cpuAllocated", cpuAllocated).add("cpuNumber", cpuNumber)
+            .add("cpuSpeed", cpuSpeed).add("cpuUsed", cpuUsed).add("cpuWithOverProvisioning", cpuWithOverProvisioning)
+            .add("created", created).add("disconnected", disconnected).add("diskSizeAllocated", diskSizeAllocated)
+            .add("diskSizeTotal", diskSizeTotal).add("events", events).add("hasEnoughCapacity", hasEnoughCapacity)
+            .add("hostTags", hostTags).add("hypervisor", hypervisor).add("ipAddress", ipAddress)
+            .add("localStorageActive", localStorageActive).add("jobId", jobId).add("jobStatus", jobStatus)
+            .add("lastPinged", lastPinged).add("managementServerId", managementServerId).add("memoryAllocated", memoryAllocated)
+            .add("memoryTotal", memoryTotal).add("memoryUsed", memoryUsed).add("name", name).add("networkKbsRead", networkKbsRead)
+            .add("networkKbsWrite", networkKbsWrite).add("osCategoryId", osCategoryId).add("osCategoryName", osCategoryName)
+            .add("podId", podId).add("podName", podName).add("removed", removed).add("state", state).add("type", type)
+            .add("version", version).add("zoneId", zoneId).add("zoneName", zoneName);
+   }
+
    @Override
    public String toString() {
-      return "Host{" +
-         "id=" + id +
-         ", allocationState=" + allocationState +
-         ", averageLoad=" + averageLoad +
-         ", capabilities='" + capabilities + '\'' +
-         ", clusterId=" + clusterId +
-         ", clusterName='" + clusterName + '\'' +
-         ", clusterType=" + clusterType +
-         ", cpuAllocated='" + cpuAllocated + '\'' +
-         ", cpuNumber=" + cpuNumber +
-         ", cpuSpeed=" + cpuSpeed +
-         ", cpuUsed='" + cpuUsed + '\'' +
-         ", cpuWithOverProvisioning=" + cpuWithOverProvisioning +
-         ", created=" + created +
-         ", disconnected=" + disconnected +
-         ", diskSizeAllocated=" + diskSizeAllocated +
-         ", diskSizeTotal=" + diskSizeTotal +
-         ", events='" + events + '\'' +
-         ", hasEnoughCapacity=" + hasEnoughCapacity +
-         ", hostTags='" + hostTags + '\'' +
-         ", hypervisor='" + hypervisor + '\'' +
-         ", ipAddress='" + ipAddress + '\'' +
-         ", localStorageActive=" + localStorageActive +
-         ", jobId=" + jobId +
-         ", jobStatus=" + jobStatus +
-         ", lastPinged=" + lastPinged +
-         ", managementServerId=" + managementServerId +
-         ", memoryAllocated=" + memoryAllocated +
-         ", memoryTotal=" + memoryTotal +
-         ", memoryUsed=" + memoryUsed +
-         ", name='" + name + '\'' +
-         ", networkKbsRead=" + networkKbsRead +
-         ", networkKbsWrite=" + networkKbsWrite +
-         ", osCategoryId=" + osCategoryId +
-         ", osCategoryName=" + osCategoryName +
-         ", podId=" + podId +
-         ", podName='" + podName + '\'' +
-         ", removed=" + removed +
-         ", state=" + state +
-         ", type=" + type +
-         ", version='" + version + '\'' +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         '}';
+      return string().toString();
    }
 
    @Override

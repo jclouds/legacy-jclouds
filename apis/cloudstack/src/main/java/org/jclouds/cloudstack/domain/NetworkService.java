@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,125 +20,225 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.collect.Sets;
 
 /**
- * 
+ * Class NetworkService
+ *
  * @author Adrian Cole
  */
 public class NetworkService implements Comparable<NetworkService> {
-   // internal only to match json type
-   private static class Capability implements Comparable<Capability> {
 
-      private String name;
-      private String value;
+   public static class Capability implements Comparable<Capability> {
 
-      private Capability() {
-
+      public static Builder<?> builder() {
+         return new ConcreteBuilder();
       }
 
-      private Capability(String name, String value) {
-         this.name = name;
+      public Builder<?> toBuilder() {
+         return new ConcreteBuilder().fromCapability(this);
+      }
+
+      public static abstract class Builder<T extends Builder<T>>  {
+         protected abstract T self();
+
+         protected String name;
+         protected String value;
+
+         /**
+          * @see Capability#getName()
+          */
+         public T name(String name) {
+            this.name = name;
+            return self();
+         }
+
+         /**
+          * @see Capability#getValue()
+          */
+         public T value(String value) {
+            this.value = value;
+            return self();
+         }
+
+         public Capability build() {
+            return new Capability(name, value);
+         }
+
+         public T fromCapability(Capability in) {
+            return this
+                  .name(in.getName())
+                  .value(in.getValue());
+         }
+         
+      }
+
+      private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+         @Override
+         protected ConcreteBuilder self() {
+            return this;
+         }
+      }
+
+      private final String name;
+      private final String value;
+
+      @ConstructorProperties({
+            "name", "value"
+      })
+      protected Capability(String name, @Nullable String value) {
+         this.name = checkNotNull(name, "name");
          this.value = value;
       }
 
-      @Override
-      public boolean equals(Object o) {
-          if (this == o) return true;
-          if (o == null || getClass() != o.getClass()) return false;
-          
-          NetworkService.Capability that = (NetworkService.Capability) o;
-          
-          if (!Objects.equal(name, that.name)) return false;
-          if (!Objects.equal(value, that.value)) return false;
-          
-          return true;
+      public String getName() {
+         return this.name;
       }
-      
+
+      @Nullable
+      public String getValue() {
+         return this.value;
+      }
+
       @Override
       public int hashCode() {
-          return Objects.hashCode(name, value);
+         return Objects.hashCode(name, value);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         Capability that = Capability.class.cast(obj);
+         return Objects.equal(this.name, that.name)
+               && Objects.equal(this.value, that.value);
+      }
+
+      protected ToStringHelper string() {
+         return Objects.toStringHelper(this)
+               .add("name", name).add("value", value);
       }
 
       @Override
       public String toString() {
-         return "[name=" + name + ", value=" + value + "]";
+         return string().toString();
       }
 
       @Override
       public int compareTo(Capability o) {
-         return name.compareTo(o.name);
+         return name.compareTo(o.getName());
+      }
+   }
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromNetworkService(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String name;
+      protected Set<Capability> capabilities = Sets.newHashSet();
+
+      /**
+       * @see NetworkService#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
       }
 
+      /**
+       * @see NetworkService#getCapabilities()
+       */
+      public T capabilities(Map<String, String> capabilities) {
+         for (Map.Entry<String, String> entry : capabilities.entrySet()) {
+            this.capabilities.add(Capability.builder().name(entry.getKey()).value(entry.getValue()).build());
+         }
+         return self();
+      }
+
+      public NetworkService build() {
+         return new NetworkService(name, capabilities);
+      }
+
+      public T fromNetworkService(NetworkService in) {
+         return this
+               .name(in.getName())
+               .capabilities(in.getCapabilities());
+      }
    }
 
-   private String name;
-   @SerializedName("capability")
-   // so tests and serialization comes out expected
-   private SortedSet<? extends NetworkService.Capability> capabilities = ImmutableSortedSet.of();
-
-   NetworkService() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public NetworkService(String name) {
-      this(name, ImmutableMap.<String, String> of());
-   }
+   private final String name;
+   @Named("capability")
+   private final Set<Capability> capabilities;
 
-   public NetworkService(String name, Map<String, String> capabilities) {
+   @ConstructorProperties({
+         "name", "capability"
+   })
+   protected NetworkService(String name, @Nullable Set<Capability> capabilities) {
       this.name = checkNotNull(name, "name");
-      ImmutableSortedSet.Builder<Capability> internal = ImmutableSortedSet.naturalOrder();
-      for (Entry<String, String> capabililty : checkNotNull(capabilities, "capabilities").entrySet())
-         internal.add(new Capability(capabililty.getKey(), capabililty.getValue()));
-      this.capabilities = internal.build();
+      this.capabilities = capabilities == null ? ImmutableSet.<Capability>of() : ImmutableSortedSet.copyOf(capabilities);
    }
 
    public String getName() {
-      return name;
+      return this.name;
    }
 
    public Map<String, String> getCapabilities() {
       // so tests and serialization comes out expected
-      Builder<String, String> returnVal = ImmutableSortedMap.naturalOrder();
+      ImmutableSortedMap.Builder<String, String> returnVal = ImmutableSortedMap.naturalOrder();
       for (Capability capability : capabilities) {
          returnVal.put(capability.name, capability.value);
       }
       return returnVal.build();
    }
-
+   
    @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      NetworkService that = (NetworkService) o;
-
-      if (!Objects.equal(capabilities, that.capabilities)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(name, capabilities);
    }
 
    @Override
-   public int hashCode() {
-       return Objects.hashCode(capabilities, name);
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      NetworkService that = NetworkService.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+            && Objects.equal(this.capabilities, that.capabilities);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).add("name", name).add("capabilities", capabilities);
    }
 
    @Override
    public String toString() {
-      return "NetworkService{" +
-            "name='" + name + '\'' +
-            ", capabilities=" + capabilities +
-            '}';
+      return string().toString();
    }
 
    @Override

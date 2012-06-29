@@ -103,8 +103,8 @@ public class ParseAsyncJobFromHttpResponseTest {
          .status(Status.FAILED)
          .progress(0)
          .resultType("object")
-         .error(new AsyncJobError(ErrorCode.INTERNAL_ERROR, "Internal error executing " +
-            "command, please contact your system administrator"))
+         .error(AsyncJobError.builder().errorCode(ErrorCode.INTERNAL_ERROR).errorText("Internal error executing " +
+            "command, please contact your system administrator").build())
          .resultCode(ResultCode.FAIL).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);

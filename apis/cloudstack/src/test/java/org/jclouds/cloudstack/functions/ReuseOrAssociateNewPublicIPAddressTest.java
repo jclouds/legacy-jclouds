@@ -85,7 +85,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
             ImmutableSet.<PublicIPAddress> of());
 
-      AsyncCreateResponse job = new AsyncCreateResponse("1", "2");
+      AsyncCreateResponse job = AsyncCreateResponse.builder().id("1").jobId("2").build();
       // make sure we created the job relating to a new ip
       expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
 

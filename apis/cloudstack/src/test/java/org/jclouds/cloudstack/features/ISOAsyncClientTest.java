@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.domain.PermissionOperation;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.DeleteISOOptions;
 import org.jclouds.cloudstack.options.ExtractISOOptions;

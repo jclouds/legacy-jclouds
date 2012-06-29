@@ -38,7 +38,7 @@ public class JobResultResponseTest extends BaseItemParserTest<JobResult> {
    @Override
    @SelectJson("jobresult")
    public JobResult expected() {
-      return new JobResult(true, null);
+      return JobResult.builder().success(true).build();
    }
 
 }

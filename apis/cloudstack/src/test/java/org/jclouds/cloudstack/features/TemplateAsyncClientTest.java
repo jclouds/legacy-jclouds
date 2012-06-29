@@ -25,6 +25,7 @@ import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateFilter;
 import org.jclouds.cloudstack.domain.TemplateMetadata;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.CreateTemplateOptions;
 import org.jclouds.cloudstack.options.DeleteTemplateOptions;

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.functions.ReturnVoidOnNotFoundOr404OrUnableToFindAccountOwner;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AssociateIPAddressOptions;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.jclouds.functions.IdentityFunction;

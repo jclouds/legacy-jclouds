@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
 import org.testng.collections.Sets;
 

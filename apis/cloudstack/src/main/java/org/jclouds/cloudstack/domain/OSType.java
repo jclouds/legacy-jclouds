@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,56 +18,92 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
+ * Class OSType
+ *
  * @author Adrian Cole
  */
 public class OSType implements Comparable<OSType> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private String OSCategoryId;
-      private String description;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromOSType(this);
+   }
 
-      public Builder id(String id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected String OSCategoryId;
+      protected String description;
+
+      /**
+       * @see OSType#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder OSCategoryId(String OSCategoryId) {
+      /**
+       * @see OSType#getOSCategoryId()
+       */
+      public T OSCategoryId(String OSCategoryId) {
          this.OSCategoryId = OSCategoryId;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see OSType#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       public OSType build() {
          return new OSType(id, OSCategoryId, description);
       }
+
+      public T fromOSType(OSType in) {
+         return this
+               .id(in.getId())
+               .OSCategoryId(in.getOSCategoryId())
+               .description(in.getDescription());
+      }
    }
 
-   // for deserialization
-   OSType() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   private String id;
-   @SerializedName("oscategoryid")
-   private String OSCategoryId;
-   private String description;
+   private final String id;
+   @Named("oscategoryid")
+   private final String OSCategoryId;
+   private final String description;
 
-   public OSType(String id, String OSCategoryId, String description) {
-      this.id = id;
+   @ConstructorProperties({
+         "id", "oscategoryid", "description"
+   })
+   protected OSType(String id, @Nullable String OSCategoryId, @Nullable String description) {
+      this.id = checkNotNull(id, "id");
       this.OSCategoryId = OSCategoryId;
       this.description = description;
    }
@@ -76,54 +112,51 @@ public class OSType implements Comparable<OSType> {
     * @return the ID of the OS type
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the ID of the OS category
     */
+   @Nullable
    public String getOSCategoryId() {
-      return OSCategoryId;
+      return this.OSCategoryId;
    }
 
    /**
     * @return the name/description of the OS type
     */
+   @Nullable
    public String getDescription() {
-      return description;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      OSType that = (OSType) o;
-
-      if (!Objects.equal(OSCategoryId, that.OSCategoryId)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-
-      return true;
+      return this.description;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(OSCategoryId, description, id);
+      return Objects.hashCode(id, OSCategoryId, description);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      OSType that = OSType.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.OSCategoryId, that.OSCategoryId)
+            && Objects.equal(this.description, that.description);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).add("id", id).add("OSCategoryId", OSCategoryId).add("description", description);
    }
 
    @Override
    public String toString() {
-      return "OSType{" +
-            "id=" + id +
-            ", OSCategoryId=" + OSCategoryId +
-            ", description='" + description + '\'' +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(OSType arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(OSType o) {
+      return id.compareTo(o.getId());
    }
-
 }

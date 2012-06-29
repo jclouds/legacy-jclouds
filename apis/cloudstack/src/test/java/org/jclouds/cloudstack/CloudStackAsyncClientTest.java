@@ -21,7 +21,7 @@ package org.jclouds.cloudstack;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.cloudstack.features.BaseCloudStackAsyncClientTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;

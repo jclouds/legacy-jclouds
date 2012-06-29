@@ -40,10 +40,10 @@ public class UserPredicatesTest {
    @Test
    public void testMatchApiKey() {
       assertTrue(apiKeyEquals("random-text").apply(
-         User.builder().apiKey("random-text").build()
+         User.builder().id("random-id").apiKey("random-text").build()
       ));
       assertFalse(apiKeyEquals("something-different").apply(
-         User.builder().apiKey("random-text").build()
+         User.builder().id("randome-id").apiKey("random-text").build()
       ));
    }
 
@@ -60,7 +60,7 @@ public class UserPredicatesTest {
 
    @Test(dataProvider = "accountType")
    public void testAccountType(Account.Type type, boolean isUser, boolean isDomainAdmin, boolean isAdmin) {
-      User testUser = User.builder().accountType(type).build();
+      User testUser = User.builder().id("someid").accountType(type).build();
       assertEquals(isUserAccount().apply(testUser), isUser);
       assertEquals(isDomainAdminAccount().apply(testUser), isDomainAdmin);
       assertEquals(isAdminAccount().apply(testUser), isAdmin);

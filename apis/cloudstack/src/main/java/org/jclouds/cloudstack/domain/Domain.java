@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,11 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Representation of the API domain response
@@ -29,80 +36,122 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Domain implements Comparable<Domain> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromDomain(this);
+   }
 
-      private String id;
-      private boolean hasChild;
-      private long level;
-      private String name;
-      private String networkDomain;
-      private String parentDomainId;
-      private String parentDomainName;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected boolean hasChild;
+      protected long level;
+      protected String name;
+      protected String networkDomain;
+      protected String parentDomainId;
+      protected String parentDomainName;
+
+      /**
+       * @see Domain#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder hasChild(boolean hasChild) {
+      /**
+       * @see Domain#hasChild()
+       */
+      public T hasChild(boolean hasChild) {
          this.hasChild = hasChild;
-         return this;
+         return self();
       }
 
-      public Builder level(long level) {
+      /**
+       * @see Domain#getLevel()
+       */
+      public T level(long level) {
          this.level = level;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see Domain#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder networkDomain(String networkDomain) {
+      /**
+       * @see Domain#getNetworkDomain()
+       */
+      public T networkDomain(String networkDomain) {
          this.networkDomain = networkDomain;
-         return this;
+         return self();
       }
 
-      public Builder parentDomainId(String parentDomainId) {
+      /**
+       * @see Domain#getParentDomainId()
+       */
+      public T parentDomainId(String parentDomainId) {
          this.parentDomainId = parentDomainId;
-         return this;
+         return self();
       }
 
-      public Builder parentDomainName(String parentDomainName) {
+      /**
+       * @see Domain#getParentDomainName()
+       */
+      public T parentDomainName(String parentDomainName) {
          this.parentDomainName = parentDomainName;
-         return this;
+         return self();
       }
 
       public Domain build() {
-         return new Domain(id, hasChild, level, name, networkDomain,
-            parentDomainId, parentDomainName);
+         return new Domain(id, hasChild, level, name, networkDomain, parentDomainId, parentDomainName);
+      }
+
+      public T fromDomain(Domain in) {
+         return this
+               .id(in.getId())
+               .hasChild(in.hasChild())
+               .level(in.getLevel())
+               .name(in.getName())
+               .networkDomain(in.getNetworkDomain())
+               .parentDomainId(in.getParentDomainId())
+               .parentDomainName(in.getParentDomainName());
       }
    }
 
-   // for deserialization
-   Domain() {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   private String id;
-   @SerializedName("haschild")
-   private boolean hasChild;
-   private long level;
-   private String name;
-   @SerializedName("networkdomain")
-   private String networkDomain;
-   @SerializedName("parentdomainid")
-   private String parentDomainId;
-   @SerializedName("parentdomainname")
-   private String parentDomainName;
+   private final String id;
+   @Named("haschild")
+   private final boolean hasChild;
+   private final long level;
+   private final String name;
+   @Named("networkdomain")
+   private final String networkDomain;
+   @Named("parentdomainid")
+   private final String parentDomainId;
+   @Named("parentdomainname")
+   private final String parentDomainName;
 
-   public Domain(String id, boolean hasChild, long level, String name, String networkDomain,
-         String parentDomainId, String parentDomainName) {
-      this.id = id;
+   @ConstructorProperties({
+         "id", "haschild", "level", "name", "networkdomain", "parentdomainid", "parentdomainname"
+   })
+   protected Domain(String id, boolean hasChild, long level, @Nullable String name, @Nullable String networkDomain,
+                    @Nullable String parentDomainId, @Nullable String parentDomainName) {
+      this.id = checkNotNull(id, "id");
       this.hasChild = hasChild;
       this.level = level;
       this.name = name;
@@ -112,72 +161,69 @@ public class Domain implements Comparable<Domain> {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
    public boolean hasChild() {
-      return hasChild;
+      return this.hasChild;
    }
 
    public long getLevel() {
-      return level;
+      return this.level;
    }
 
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
+   @Nullable
    public String getNetworkDomain() {
-      return networkDomain;
+      return this.networkDomain;
    }
 
+   @Nullable
    public String getParentDomainId() {
-      return parentDomainId;
+      return this.parentDomainId;
    }
 
+   @Nullable
    public String getParentDomainName() {
-      return parentDomainName;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Domain that = (Domain) o;
-
-      if (!Objects.equal(hasChild, that.hasChild)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(level, that.level)) return false;
-      if (!Objects.equal(parentDomainId, that.parentDomainId)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(networkDomain, that.networkDomain)) return false;
-      if (!Objects.equal(parentDomainName, that.parentDomainName)) return false;
-
-      return true;
+      return this.parentDomainName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, hasChild, level, name, networkDomain, parentDomainId, parentDomainName);
+      return Objects.hashCode(id, hasChild, level, name, networkDomain, parentDomainId, parentDomainName);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Domain that = Domain.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.hasChild, that.hasChild)
+            && Objects.equal(this.level, that.level)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.networkDomain, that.networkDomain)
+            && Objects.equal(this.parentDomainId, that.parentDomainId)
+            && Objects.equal(this.parentDomainName, that.parentDomainName);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("hasChild", hasChild).add("level", level).add("name", name).add("networkDomain", networkDomain).add("parentDomainId", parentDomainId).add("parentDomainName", parentDomainName);
    }
 
    @Override
    public String toString() {
-      return "Domain{" +
-         "id='" + id + '\'' +
-         ", hasChild=" + hasChild +
-         ", level=" + level +
-         ", name='" + name + '\'' +
-         ", networkDomain='" + networkDomain + '\'' +
-         ", parentDomainId='" + parentDomainId + '\'' +
-         ", parentDomainName='" + parentDomainName + '\'' +
-         '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(Domain arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(Domain other) {
+      return id.compareTo(other.getId());
    }
 
 }

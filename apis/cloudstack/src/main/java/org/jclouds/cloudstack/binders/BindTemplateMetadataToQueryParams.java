@@ -57,8 +57,8 @@ public class BindTemplateMetadataToQueryParams implements Binder {
       if (metadata.getVirtualMachineId() != null) {
 	      request = ModifyRequest.addQueryParam(request, "virtualmachineid", metadata.getVirtualMachineId(), uriBuilderProvider.get());
       }
-      if (metadata.getPasswordEnabled() != null) {
-	      request = ModifyRequest.addQueryParam(request, "passwordenabled", metadata.getPasswordEnabled(), uriBuilderProvider.get());
+      if (metadata.isPasswordEnabled() != null) {
+	      request = ModifyRequest.addQueryParam(request, "passwordenabled", metadata.isPasswordEnabled(), uriBuilderProvider.get());
       }
       return request;
    }

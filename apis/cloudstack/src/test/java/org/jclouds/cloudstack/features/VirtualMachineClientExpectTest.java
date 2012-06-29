@@ -27,6 +27,7 @@ import java.security.cert.CertificateException;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
+import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.jclouds.http.HttpRequest;
@@ -87,7 +88,7 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpe
       WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
 
       assertEquals(passwordDecrypt.apply(
-         new EncryptedPasswordAndPrivateKey(actual, privateKey)).getPassword(), "bX7vvptvw");
+         EncryptedPasswordAndPrivateKey.builder().encryptedPassword(actual).privateKey(privateKey).build()).getPassword(), "bX7vvptvw");
    }
 
    @Override

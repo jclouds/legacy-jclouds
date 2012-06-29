@@ -24,6 +24,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.VMGroup;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListVMGroupsOptions;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;

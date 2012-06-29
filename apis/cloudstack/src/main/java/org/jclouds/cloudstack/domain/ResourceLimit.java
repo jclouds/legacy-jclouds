@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,143 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Map;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class ResourceLimit
+ * 
  * @author Vijay Kiran
- */
-public class ResourceLimit implements Comparable<ResourceLimit> {
-
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-
-      private String account;
-      private String domain;
-      private String domainId;
-      private int max;
-      private ResourceType resourceType;
-
-      public Builder account(String account) {
-         this.account = account;
-         return this;
-      }
-
-      public Builder domain(String domain) {
-         this.domain = domain;
-         return this;
-      }
-
-      public Builder domainId(String domainId) {
-         this.domainId = domainId;
-         return this;
-      }
-
-      public Builder max(int max) {
-         this.max = max;
-         return this;
-      }
-
-      public Builder resourceType(ResourceType resourceType) {
-         this.resourceType = resourceType;
-         return this;
-      }
-
-      public ResourceLimit build() {
-         return new ResourceLimit(account, domain, domainId, max, resourceType);
-      }
-   }
-
-   // for deserialization
-   ResourceLimit() {
-
-   }
-
-   private String account;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   private int max;
-   @SerializedName("resourcetype")
-   private ResourceType resourceType;
-
-   public ResourceLimit(String account, String domain, String domainId, int max, ResourceType resourceType) {
-      this.account = account;
-      this.domain = domain;
-      this.domainId = domainId;
-      this.max = max;
-      this.resourceType = resourceType;
-   }
-
-   public String getAccount() {
-      return account;
-   }
-
-   public String getDomain() {
-      return domain;
-   }
-
-   public String getDomainId() {
-      return domainId;
-   }
-
-   public int getMax() {
-      return max;
-   }
-
-   public ResourceType getResourceType() {
-      return resourceType;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ResourceLimit that = (ResourceLimit) o;
-
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(max, that.max)) return false;
-      if (!Objects.equal(resourceType, that.resourceType)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-
-      return true;
-   }
-
-   @Override
-   public int hashCode() {
-       return Objects.hashCode(domainId, max, resourceType, account, domain);
-   }
-
-   @Override
-   public int compareTo(ResourceLimit that) {
-      return this.account.compareTo(that.account);
-   }
-
-   @Override
-   public String toString() {
-      return "ResourceLimit{" +
-            "account='" + account + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", max=" + max +
-            ", resourceType=" + resourceType +
-            '}';
-   }
+*/
+public class ResourceLimit {
 
    /**
     * Type of resource to update.
@@ -200,7 +86,7 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
       public int getCode(){
          return code;
       }
-      
+
       @Override
       public String toString() {
          return name();
@@ -210,6 +96,155 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
          Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
-
    }
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromResourceLimit(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String account;
+      protected String domain;
+      protected String domainId;
+      protected int max;
+      protected ResourceType resourceType;
+   
+      /** 
+       * @see ResourceLimit#getAccount()
+       */
+      public T account(String account) {
+         this.account = account;
+         return self();
+      }
+
+      /** 
+       * @see ResourceLimit#getDomain()
+       */
+      public T domain(String domain) {
+         this.domain = domain;
+         return self();
+      }
+
+      /** 
+       * @see ResourceLimit#getDomainId()
+       */
+      public T domainId(String domainId) {
+         this.domainId = domainId;
+         return self();
+      }
+
+      /** 
+       * @see ResourceLimit#getMax()
+       */
+      public T max(int max) {
+         this.max = max;
+         return self();
+      }
+
+      /** 
+       * @see ResourceLimit#getResourceType()
+       */
+      public T resourceType(ResourceType resourceType) {
+         this.resourceType = resourceType;
+         return self();
+      }
+
+      public ResourceLimit build() {
+         return new ResourceLimit(account, domain, domainId, max, resourceType);
+      }
+      
+      public T fromResourceLimit(ResourceLimit in) {
+         return this
+                  .account(in.getAccount())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .max(in.getMax())
+                  .resourceType(in.getResourceType());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String account;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   private final int max;
+   @Named("resourcetype")
+   private final ResourceLimit.ResourceType resourceType;
+
+   @ConstructorProperties({
+      "account", "domain", "domainid", "max", "resourcetype"
+   })
+   protected ResourceLimit(@Nullable String account, @Nullable String domain, @Nullable String domainId, int max,
+                           @Nullable ResourceType resourceType) {
+      this.account = account;
+      this.domain = domain;
+      this.domainId = domainId;
+      this.max = max;
+      this.resourceType = resourceType;
+   }
+
+   @Nullable
+   public String getAccount() {
+      return this.account;
+   }
+
+   @Nullable
+   public String getDomain() {
+      return this.domain;
+   }
+
+   @Nullable
+   public String getDomainId() {
+      return this.domainId;
+   }
+
+   public int getMax() {
+      return this.max;
+   }
+
+   @Nullable
+   public ResourceType getResourceType() {
+      return this.resourceType;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(account, domain, domainId, max, resourceType);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ResourceLimit that = ResourceLimit.class.cast(obj);
+      return Objects.equal(this.account, that.account)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.max, that.max)
+               && Objects.equal(this.resourceType, that.resourceType);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("account", account).add("domain", domain).add("domainId", domainId).add("max", max).add("resourceType", resourceType);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

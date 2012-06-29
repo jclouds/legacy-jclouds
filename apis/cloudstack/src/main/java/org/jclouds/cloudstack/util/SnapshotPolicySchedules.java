@@ -28,18 +28,18 @@ import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
  */
 public class SnapshotPolicySchedules {
    public static SnapshotPolicySchedule hourly(int minute) {
-      return new SnapshotPolicySchedule(Snapshot.Interval.HOURLY, String.format("%02d", minute));
+      return SnapshotPolicySchedule.builder().interval(Snapshot.Interval.HOURLY).time(String.format("%02d", minute)).build();
    }
 
    public static SnapshotPolicySchedule daily(int hour, int minute) {
-      return new SnapshotPolicySchedule(Snapshot.Interval.DAILY, String.format("%02d:%02d", minute, hour));
+      return SnapshotPolicySchedule.builder().interval(Snapshot.Interval.DAILY).time(String.format("%02d:%02d", minute, hour)).build();
    }
 
    public static SnapshotPolicySchedule weekly(int day, int hour, int minute) {
-      return new SnapshotPolicySchedule(Snapshot.Interval.WEEKLY, String.format("%02d:%02d:%02d", minute, hour, day));
+      return SnapshotPolicySchedule.builder().interval(Snapshot.Interval.WEEKLY).time(String.format("%02d:%02d:%02d", minute, hour, day)).build();
    }
 
    public static SnapshotPolicySchedule monthly(int day, int hour, int minute) {
-      return new SnapshotPolicySchedule(Snapshot.Interval.MONTHLY, String.format("%02d:%02d:%02d", minute, hour, day));
+      return SnapshotPolicySchedule.builder().interval(Snapshot.Interval.MONTHLY).time(String.format("%02d:%02d:%02d", minute, hour, day)).build();
    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,112 +18,180 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
+ * Class Event
+ *
  * @author Vijay Kiran
  */
 public class Event implements Comparable<Event> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private String account;
-      private String description;
-      private Date created;
-      private String domain;
-      private String domainId;
-      //TODO Change to enum : the event level (INFO, WARN, ERROR)
-      private String level;
-      private String parentId;
-      private String state;
-      //Event Type
-      private String type;
-      private String username;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromEvent(this);
+   }
 
-      public Builder id(String id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected String account;
+      protected String description;
+      protected Date created;
+      protected String domain;
+      protected String domainId;
+      protected String level;
+      protected String parentId;
+      protected String state;
+      protected String type;
+      protected String username;
+
+      /**
+       * @see Event#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /**
+       * @see Event#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see Event#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /**
+       * @see Event#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /**
+       * @see Event#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /**
+       * @see Event#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder level(String level) {
+      /**
+       * @see Event#getLevel()
+       */
+      public T level(String level) {
          this.level = level;
-         return this;
+         return self();
       }
 
-      public Builder parentId(String parentId) {
+      /**
+       * @see Event#getParentId()
+       */
+      public T parentId(String parentId) {
          this.parentId = parentId;
-         return this;
+         return self();
       }
 
-      public Builder state(String state) {
+      /**
+       * @see Event#getState()
+       */
+      public T state(String state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder type(String type) {
+      /**
+       * @see Event#getType()
+       */
+      public T type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
-      public Builder username(String username) {
+      /**
+       * @see Event#getUsername()
+       */
+      public T username(String username) {
          this.username = username;
-         return this;
+         return self();
       }
 
       public Event build() {
          return new Event(id, account, description, created, domain, domainId, level, parentId, state, type, username);
       }
 
+      public T fromEvent(Event in) {
+         return this
+               .id(in.getId())
+               .account(in.getAccount())
+               .description(in.getDescription())
+               .created(in.getCreated())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .level(in.getLevel())
+               .parentId(in.getParentId())
+               .state(in.getState())
+               .type(in.getType())
+               .username(in.getUsername());
+      }
    }
 
-   private String id;
-   private String account;
-   private String description;
-   private Date created;
-   private String domain;
-   private String domainId;
-   //TODO Change to enum : the event level (INFO, WARN, ERROR)
-   private String level;
-   private String parentId;
-   private String state;
-   //Event Type
-   private String type;
-   private String username;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public Event(String id, String account, String description, Date created, String domain, String domainId, String level,
-                String parentId, String state, String type, String username) {
-      this.id = id;
+   private final String id;
+   private final String account;
+   private final String description;
+   private final Date created;
+   private final String domain;
+   private final String domainId;
+   private final String level;
+   private final String parentId;
+   private final String state;
+   private final String type;
+   private final String username;
+
+   @ConstructorProperties({
+         "id", "account", "description", "created", "domain", "domainId", "level", "parentId", "state", "type", "username"
+   })
+   protected Event(String id, @Nullable String account, @Nullable String description, @Nullable Date created,
+                   @Nullable String domain, @Nullable String domainId, @Nullable String level, @Nullable String parentId,
+                   @Nullable String state, @Nullable String type, @Nullable String username) {
+      this.id = checkNotNull(id, "id");
       this.account = account;
       this.description = description;
       this.created = created;
@@ -137,139 +205,132 @@ public class Event implements Comparable<Event> {
    }
 
    /**
-    * present only for serializer
-    */
-   Event() {
-
-   }
-
-   /**
     * @return the ID of the event
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the account name for the account that owns the object being acted on in the event
-    *         (e.g. the owner of the virtual machine, ip address, or security group)
+   (e.g. the owner of the virtual machine, ip address, or security group)
     */
+   @Nullable
    public String getAccount() {
-      return account;
-   }
-
-   /**
-    * @return the date the event was created
-    */
-   public Date getCreated() {
-      return created;
+      return this.account;
    }
 
    /**
     * @return the description of the event
     */
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
+   }
+
+   /**
+    * @return the date the event was created
+    */
+   @Nullable
+   public Date getCreated() {
+      return this.created;
    }
 
    /**
     * @return the name of the account's domain
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the id of the account's domain
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return the event level (INFO, WARN, ERROR)
     */
+   @Nullable
    public String getLevel() {
-      return level;
+      return this.level;
    }
 
    /**
     * @return whether the event is parented
     */
+   @Nullable
    public String getParentId() {
-      return parentId;
+      return this.parentId;
    }
 
    /**
     * @return the state of the event
     */
+   @Nullable
    public String getState() {
-      return state;
+      return this.state;
    }
 
    /**
     * @return the type of the event (see event types)
     */
+   @Nullable
    public String getType() {
-      return type;
+      return this.type;
    }
 
    /**
     * @return the name of the user who performed the action (can be different from the account if
-    *         an admin is performing an action for a user, e.g. starting/stopping a user's virtual machine)
+   an admin is performing an action for a user, e.g. starting/stopping a user's virtual machine)
     */
+   @Nullable
    public String getUsername() {
-      return username;
-   }
-
-   @Override
-   public int compareTo(Event arg0) {
-      return id.compareTo(arg0.getId());
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Event that = (Event) o;
-
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(level, that.level)) return false;
-      if (!Objects.equal(parentId, that.parentId)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-      if (!Objects.equal(username, that.username)) return false;
-
-      return true;
+      return this.username;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, account, description, created, domain, domainId, level, parentId, state, type, username);
+      return Objects.hashCode(id, account, description, created, domain, domainId, level, parentId, state, type, username);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Event that = Event.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.level, that.level)
+            && Objects.equal(this.parentId, that.parentId)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.type, that.type)
+            && Objects.equal(this.username, that.username);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("description", description).add("created", created)
+            .add("domain", domain).add("domainId", domainId).add("level", level).add("parentId", parentId)
+            .add("state", state).add("type", type).add("username", username);
    }
 
    @Override
    public String toString() {
-      return "Event{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", description='" + description + '\'' +
-            ", created=" + created +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", level='" + level + '\'' +
-            ", parentId='" + parentId + '\'' +
-            ", state='" + state + '\'' +
-            ", type='" + type + '\'' +
-            ", username='" + username + '\'' +
-            '}';
+      return string().toString();
    }
 
+   @Override
+   public int compareTo(Event other) {
+      return id.compareTo(other.getId());
+   }
 
 }

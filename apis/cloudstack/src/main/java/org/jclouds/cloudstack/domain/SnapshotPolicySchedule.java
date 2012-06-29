@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,35 +18,112 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * Describes the schedule of a snapshot policy.
  *
  * @see org.jclouds.cloudstack.util.SnapshotPolicySchedules
  * @author Richard Downer
- */
+*/
 public class SnapshotPolicySchedule {
 
-   private Snapshot.Interval interval;
-   private String time;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromSnapshotPolicySchedule(this);
+   }
 
-   public SnapshotPolicySchedule(Snapshot.Interval interval, String time) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected Snapshot.Interval interval;
+      protected String time;
+   
+      /** 
+       * @see SnapshotPolicySchedule#getInterval()
+       */
+      public T interval(Snapshot.Interval interval) {
+         this.interval = interval;
+         return self();
+      }
+
+      /** 
+       * @see SnapshotPolicySchedule#getTime()
+       */
+      public T time(String time) {
+         this.time = time;
+         return self();
+      }
+
+      public SnapshotPolicySchedule build() {
+         return new SnapshotPolicySchedule(interval, time);
+      }
+      
+      public T fromSnapshotPolicySchedule(SnapshotPolicySchedule in) {
+         return this
+                  .interval(in.getInterval())
+                  .time(in.getTime());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final Snapshot.Interval interval;
+   private final String time;
+
+   @ConstructorProperties({
+      "interval", "time"
+   })
+   protected SnapshotPolicySchedule(@Nullable Snapshot.Interval interval, @Nullable String time) {
       this.interval = interval;
       this.time = time;
    }
 
+   @Nullable
    public Snapshot.Interval getInterval() {
-      return interval;
+      return this.interval;
    }
 
+   @Nullable
    public String getTime() {
-      return time;
+      return this.time;
    }
 
    @Override
-   public String toString() {
-      return "SnapshotPolicySchedule{" +
-            "interval=" + interval +
-            ", time='" + time + '\'' +
-            '}';
+   public int hashCode() {
+      return Objects.hashCode(interval, time);
    }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      SnapshotPolicySchedule that = SnapshotPolicySchedule.class.cast(obj);
+      return Objects.equal(this.interval, that.interval)
+               && Objects.equal(this.time, that.time);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("interval", interval).add("time", time);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

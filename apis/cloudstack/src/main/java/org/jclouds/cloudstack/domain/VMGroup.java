@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,74 +18,127 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class VMGroup
+ * 
  * @author Richard Downer
- */
-public class VMGroup implements Comparable<VMGroup> {
+*/
+public class VMGroup {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromVMGroup(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String id;
-      private String account;
-      private Date created;
-      private String domain;
-      private String domainId;
-      private String name;
-
-      public Builder id(String id) {
+      protected String id;
+      protected String account;
+      protected Date created;
+      protected String domain;
+      protected String domainId;
+      protected String name;
+   
+      /** 
+       * @see VMGroup#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see VMGroup#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /** 
+       * @see VMGroup#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see VMGroup#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see VMGroup#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see VMGroup#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       public VMGroup build() {
          return new VMGroup(id, account, created, domain, domainId, name);
       }
+      
+      public T fromVMGroup(VMGroup in) {
+         return this
+                  .id(in.getId())
+                  .account(in.getAccount())
+                  .created(in.getCreated())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .name(in.getName());
+      }
    }
 
-   private String id;
-   private String account;
-   private Date created;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   private String name;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public VMGroup(String id, String account, Date created, String domain, String domainId, String name) {
-      this.id = id;
+   private final String id;
+   private final String account;
+   private final Date created;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   private final String name;
+
+   @ConstructorProperties({
+      "id", "account", "created", "domain", "domainid", "name"
+   })
+   protected VMGroup(String id, @Nullable String account, @Nullable Date created, @Nullable String domain,
+                     @Nullable String domainId, @Nullable String name) {
+      this.id = checkNotNull(id, "id");
       this.account = account;
       this.created = created;
       this.domain = domain;
@@ -94,89 +147,77 @@ public class VMGroup implements Comparable<VMGroup> {
    }
 
    /**
-    * present only for serializer
-    */
-   VMGroup() {
-   }
-
-   /**
     * @return the VMGroup's ID
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the account that owns the VMGroup
     */
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
    /**
     * @return the VMGroup's creation timestamp
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
     * @return the domain that contains the VMGroup
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the ID of the domain that contains the VMGroup
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return the name of the VMGroup
     */
    public String getName() {
-      return name;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      VMGroup that = (VMGroup) o;
-
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-
-      return true;
+      return this.name;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(domainId, id, account, created, domain, name);
+      return Objects.hashCode(id, account, created, domain, domainId, name);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      VMGroup that = VMGroup.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.name, that.name);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("created", created).add("domain", domain).add("domainId", domainId).add("name", name);
+   }
+   
    @Override
    public String toString() {
-      return "VMGroup{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", created=" + created +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", name='" + name + '\'' +
-            '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(VMGroup vmGroup) {
-      return id.compareTo(vmGroup.getId());
-   }
 }

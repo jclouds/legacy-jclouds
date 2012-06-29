@@ -25,6 +25,7 @@ import java.net.URI;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.jclouds.http.HttpRequest;
