@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,299 +20,339 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
-import java.util.Set;
 
-import javax.annotation.Nullable;
+import javax.inject.Named;
 
-import com.google.common.base.Joiner;
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class NetworkOffering
  * 
  * @author Adrian Cole
- */
+*/
 public class NetworkOffering implements Comparable<NetworkOffering> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromNetworkOffering(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String name;
-      private String displayText;
-      private Date created;
-      private NetworkOfferingAvailabilityType availability;
-      private Integer maxConnections;
-      private int networkRate;
-      private boolean isDefault;
-      private boolean supportsVLAN;
-      private TrafficType trafficType;
-      private GuestIPType guestIPType;
-      private Set<String> tags = ImmutableSet.of();
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected String name;
+      protected String displayText;
+      protected Date created;
+      protected NetworkOfferingAvailabilityType availability;
+      protected Integer maxConnections;
+      protected boolean isDefault;
+      protected boolean supportsVLAN;
+      protected TrafficType trafficType;
+      protected GuestIPType guestIPType;
+      protected int networkRate;
+      protected String tags;
+   
+      /** 
+       * @see NetworkOffering#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see NetworkOffering#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder displayText(String displayText) {
+      /** 
+       * @see NetworkOffering#getDisplayText()
+       */
+      public T displayText(String displayText) {
          this.displayText = displayText;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /** 
+       * @see NetworkOffering#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder availability(NetworkOfferingAvailabilityType availability) {
+      /** 
+       * @see NetworkOffering#getAvailability()
+       */
+      public T availability(NetworkOfferingAvailabilityType availability) {
          this.availability = availability;
-         return this;
+         return self();
       }
 
-      public Builder maxConnections(Integer maxConnections) {
+      /** 
+       * @see NetworkOffering#getMaxConnections()
+       */
+      public T maxConnections(Integer maxConnections) {
          this.maxConnections = maxConnections;
-         return this;
+         return self();
       }
 
-      public Builder isDefault(boolean isDefault) {
+      /** 
+       * @see NetworkOffering#isDefault()
+       */
+      public T isDefault(boolean isDefault) {
          this.isDefault = isDefault;
-         return this;
+         return self();
       }
 
-      public Builder networkRate(int networkRate) {
-         this.networkRate = networkRate;
-         return this;
-      }
-
-      public Builder supportsVLAN(boolean supportsVLAN) {
+      /** 
+       * @see NetworkOffering#supportsVLAN()
+       */
+      public T supportsVLAN(boolean supportsVLAN) {
          this.supportsVLAN = supportsVLAN;
-         return this;
+         return self();
       }
 
-      public Builder trafficType(TrafficType trafficType) {
+      /** 
+       * @see NetworkOffering#getTrafficType()
+       */
+      public T trafficType(TrafficType trafficType) {
          this.trafficType = trafficType;
-         return this;
+         return self();
       }
 
-      public Builder guestIPType(GuestIPType guestIPType) {
+      /** 
+       * @see NetworkOffering#getGuestIPType()
+       */
+      public T guestIPType(GuestIPType guestIPType) {
          this.guestIPType = guestIPType;
-         return this;
+         return self();
       }
 
-      public Builder tags(Set<String> tags) {
-         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
-         return this;
+      /** 
+       * @see NetworkOffering#getNetworkRate()
+       */
+      public T networkRate(int networkRate) {
+         this.networkRate = networkRate;
+         return self();
+      }
+
+      /** 
+       * @see NetworkOffering#getTags()
+       */
+      public T tags(String tags) {
+         this.tags = tags;
+         return self();
       }
 
       public NetworkOffering build() {
-         return new NetworkOffering(id, name, displayText, created, availability, supportsVLAN, maxConnections,
-               isDefault, trafficType, guestIPType, networkRate, tags);
+         return new NetworkOffering(id, name, displayText, created, availability, maxConnections, isDefault, supportsVLAN, trafficType, guestIPType, networkRate, tags);
+      }
+      
+      public T fromNetworkOffering(NetworkOffering in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .displayText(in.getDisplayText())
+                  .created(in.getCreated())
+                  .availability(in.getAvailability())
+                  .maxConnections(in.getMaxConnections())
+                  .isDefault(in.isDefault())
+                  .supportsVLAN(in.supportsVLAN())
+                  .trafficType(in.getTrafficType())
+                  .guestIPType(in.getGuestIPType())
+                  .networkRate(in.getNetworkRate())
+                  .tags(in.getTags());
       }
    }
 
-   private String id;
-   private String name;
-   @SerializedName("displaytext")
-   private String displayText;
-   private Date created;
-   @SerializedName("availability")
-   private NetworkOfferingAvailabilityType availability;
-   @SerializedName("maxconnections")
-   private Integer maxConnections;
-   @SerializedName("isdefault")
-   private boolean isDefault;
-   @SerializedName("specifyvlan")
-   private boolean supportsVLAN;
-   @SerializedName("traffictype")
-   private TrafficType trafficType;
-   @SerializedName("guestiptype")
-   private GuestIPType guestIPType;
-   @SerializedName("networkrate")
-   private int networkRate = -1;
-   private String tags;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public NetworkOffering(String id, String name, String displayText, @Nullable Date created,
-         NetworkOfferingAvailabilityType availability, boolean supportsVLAN, @Nullable Integer maxConnections,
-         boolean isDefault, TrafficType trafficType, GuestIPType guestIPType, int networkRate, Set<String> tags) {
-      this.id = id;
+   private final String id;
+   private final String name;
+   @Named("displaytext")
+   private final String displayText;
+   private final Date created;
+   private final NetworkOfferingAvailabilityType availability;
+   @Named("maxconnections")
+   private final Integer maxConnections;
+   @Named("isdefault")
+   private final boolean isDefault;
+   @Named("specifyvlan")
+   private final boolean supportsVLAN;
+   @Named("traffictype")
+   private final TrafficType trafficType;
+   @Named("guestiptype")
+   private final GuestIPType guestIPType;
+   @Named("networkrate")
+   private final int networkRate;
+   private final String tags;
+
+   @ConstructorProperties({
+      "id", "name", "displaytext", "created", "availability", "maxconnections", "isdefault", "specifyvlan", "traffictype", "guestiptype", "networkrate", "tags"
+   })
+   protected NetworkOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created, @Nullable NetworkOfferingAvailabilityType availability, @Nullable Integer maxConnections, boolean isDefault, boolean supportsVLAN, @Nullable TrafficType trafficType, @Nullable GuestIPType guestIPType, int networkRate, @Nullable String tags) {
+      this.id = checkNotNull(id, "id");
       this.name = name;
       this.displayText = displayText;
       this.created = created;
       this.availability = availability;
-      this.supportsVLAN = supportsVLAN;
       this.maxConnections = maxConnections;
       this.isDefault = isDefault;
+      this.supportsVLAN = supportsVLAN;
       this.trafficType = trafficType;
       this.guestIPType = guestIPType;
       this.networkRate = networkRate;
-      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
+      this.tags = tags;
    }
 
    /**
-    * present only for serializer
-    * 
-    */
-   NetworkOffering() {
-
-   }
-
-   /**
-    * 
     * @return the id of the network offering
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
-    * 
     * @return the name of the network offering
     */
-
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
-    * 
     * @return an alternate display text of the network offering.
     */
+   @Nullable
    public String getDisplayText() {
-      return displayText;
+      return this.displayText;
    }
 
    /**
-    * 
     * @return the date this network offering was created
     */
    @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
-    * 
     * @return Availability name for the offering
     */
+   @Nullable
    public NetworkOfferingAvailabilityType getAvailability() {
-      return availability;
+      return this.availability;
    }
 
    /**
-    * 
-    * @return true if network offering supports vlans, false otherwise
-    */
-   public boolean supportsVLAN() {
-      return supportsVLAN;
-   }
-
-   /**
-    * 
     * @return the max number of concurrent connection the network offering
-    *         supports
+         supports
     */
    @Nullable
    public Integer getMaxConnections() {
-      return maxConnections;
+      return this.maxConnections;
    }
 
    /**
-    * 
     * @return true if network offering is default, false otherwise
     */
    public boolean isDefault() {
-      return isDefault;
+      return this.isDefault;
    }
 
    /**
-    * 
+    * @return true if network offering supports vlans, false otherwise
+    */
+   public boolean supportsVLAN() {
+      return this.supportsVLAN;
+   }
+
+   /**
     * @return the traffic type for this network offering
     */
+   @Nullable
    public TrafficType getTrafficType() {
-      return trafficType;
+      return this.trafficType;
    }
 
    /**
-    * 
     * @return the guest ip type for this network offering
     */
+   @Nullable
    public GuestIPType getGuestIPType() {
-      return guestIPType;
+      return this.guestIPType;
    }
 
    /**
-    * 
     * @return data transfer rate in megabits per second allowed.
     */
    public int getNetworkRate() {
-      return networkRate;
+      return this.networkRate;
    }
 
    /**
-    * 
     * @return the tags for the network offering
     */
-   public Set<String> getTags() {
-      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String> of();
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      NetworkOffering that = (NetworkOffering) o;
-
-      if (!Objects.equal(availability, that.availability)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(isDefault, that.isDefault)) return false;
-      if (!Objects.equal(maxConnections, that.maxConnections)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(supportsVLAN, that.supportsVLAN)) return false;
-      if (!Objects.equal(tags, that.tags)) return false;
-      if (!Objects.equal(trafficType, that.trafficType)) return false;
-
-      return true;
+   @Nullable
+   public String getTags() {
+      return this.tags;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(availability, created, displayText, id, isDefault, maxConnections, name, supportsVLAN, tags, trafficType);
+      return Objects.hashCode(id, name, displayText, created, availability, maxConnections, isDefault, supportsVLAN, trafficType, guestIPType, networkRate, tags);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      NetworkOffering that = NetworkOffering.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.displayText, that.displayText)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.availability, that.availability)
+               && Objects.equal(this.maxConnections, that.maxConnections)
+               && Objects.equal(this.isDefault, that.isDefault)
+               && Objects.equal(this.supportsVLAN, that.supportsVLAN)
+               && Objects.equal(this.trafficType, that.trafficType)
+               && Objects.equal(this.guestIPType, that.guestIPType)
+               && Objects.equal(this.networkRate, that.networkRate)
+               && Objects.equal(this.tags, that.tags);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("displayText", displayText).add("created", created).add("availability", availability).add("maxConnections", maxConnections).add("isDefault", isDefault).add("supportsVLAN", supportsVLAN).add("trafficType", trafficType).add("guestIPType", guestIPType).add("networkRate", networkRate).add("tags", tags);
+   }
+   
    @Override
    public String toString() {
-      return "NetworkOffering{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", displayText='" + displayText + '\'' +
-            ", created=" + created +
-            ", availability=" + availability +
-            ", maxConnections=" + maxConnections +
-            ", isDefault=" + isDefault +
-            ", supportsVLAN=" + supportsVLAN +
-            ", trafficType=" + trafficType +
-            ", guestIPType=" + guestIPType +
-            ", networkRate=" + networkRate +
-            ", tags='" + tags + '\'' +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(NetworkOffering arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(NetworkOffering o) {
+      return id.compareTo(o.getId());
    }
 
 }

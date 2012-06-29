@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,172 +18,208 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * @author Richard Downer
- */
+*/
 public class TemplateExtraction implements Comparable<TemplateExtraction> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromTemplateExtraction(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String id;
-      private String accountId;
-      private Date created;
-      private String extractId;
-      private ExtractMode extractMode;
-      private String name;
-      private String state;
-      private String status;
-      private String storageType;
-      private int uploadPercentage;
-      private String url;
-      private String zoneId;
-      private String zoneName;
-
-      /**
-       * @param id the id of extracted object
+      protected String id;
+      protected String accountId;
+      protected Date created;
+      protected String extractId;
+      protected ExtractMode extractMode;
+      protected String name;
+      protected String state;
+      protected String status;
+      protected String storageType;
+      protected int uploadPercentage;
+      protected String url;
+      protected String zoneId;
+      protected String zoneName;
+   
+      /** 
+       * @see TemplateExtraction#getId()
        */
-      public Builder id(String id) {
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      /**
-       * @param accountId the account id to which the extracted object belongs
+      /** 
+       * @see TemplateExtraction#getAccountId()
        */
-      public Builder accountId(String accountId) {
+      public T accountId(String accountId) {
          this.accountId = accountId;
-         return this;
+         return self();
       }
 
-      /**
-       * @param created the time and date the object was created
+      /** 
+       * @see TemplateExtraction#getCreated()
        */
-      public Builder created(Date created) {
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      /**
-       * @param extractId the upload id of extracted object
+      /** 
+       * @see TemplateExtraction#getExtractId()
        */
-      public Builder extractId(String extractId) {
+      public T extractId(String extractId) {
          this.extractId = extractId;
-         return this;
+         return self();
       }
 
-      /**
-       * @param extractMode the mode of extraction - upload or download
+      /** 
+       * @see TemplateExtraction#getExtractMode()
        */
-      public Builder extractMode(ExtractMode extractMode) {
+      public T extractMode(ExtractMode extractMode) {
          this.extractMode = extractMode;
-         return this;
+         return self();
       }
 
-      /**
-       * @param name the name of the extracted object
+      /** 
+       * @see TemplateExtraction#getName()
        */
-      public Builder name(String name) {
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      /**
-       * @param state the state of the extracted object
+      /** 
+       * @see TemplateExtraction#getState()
        */
-      public Builder state(String state) {
+      public T state(String state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      /**
-       * @param status the status of the extraction
+      /** 
+       * @see TemplateExtraction#getStatus()
        */
-      public Builder status(String status) {
+      public T status(String status) {
          this.status = status;
-         return this;
+         return self();
       }
 
-      /**
-       * @param storageType type of the storage
+      /** 
+       * @see TemplateExtraction#getStorageType()
        */
-      public Builder storageType(String storageType) {
+      public T storageType(String storageType) {
          this.storageType = storageType;
-         return this;
+         return self();
       }
 
-      /**
-       * @param uploadPercentage the percentage of the entity uploaded to the specified location
+      /** 
+       * @see TemplateExtraction#getUploadPercentage()
        */
-      public Builder uploadPercentage(int uploadPercentage) {
+      public T uploadPercentage(int uploadPercentage) {
          this.uploadPercentage = uploadPercentage;
-         return this;
+         return self();
       }
 
-      /**
-       * @param url if mode = upload then url of the uploaded entity. if mode = download the url from which the entity can be downloaded
+      /** 
+       * @see TemplateExtraction#getUrl()
        */
-      public Builder url(String url) {
+      public T url(String url) {
          this.url = url;
-         return this;
+         return self();
       }
 
-      /**
-       * @param zoneId zone ID the object was extracted from
+      /** 
+       * @see TemplateExtraction#getZoneId()
        */
-      public Builder zoneId(String zoneId) {
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      /**
-       * @param zoneName zone name the object was extracted from
+      /** 
+       * @see TemplateExtraction#getZoneName()
        */
-      public Builder zoneName(String zoneName) {
+      public T zoneName(String zoneName) {
          this.zoneName = zoneName;
-         return this;
+         return self();
       }
 
       public TemplateExtraction build() {
-         return new TemplateExtraction(id, accountId, created, extractId,
-            extractMode, name, state, status, storageType, uploadPercentage,
-            url,zoneId, zoneName);
+         return new TemplateExtraction(id, accountId, created, extractId, extractMode, name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
+      }
+      
+      public T fromTemplateExtraction(TemplateExtraction in) {
+         return this
+                  .id(in.getId())
+                  .accountId(in.getAccountId())
+                  .created(in.getCreated())
+                  .extractId(in.getExtractId())
+                  .extractMode(in.getExtractMode())
+                  .name(in.getName())
+                  .state(in.getState())
+                  .status(in.getStatus())
+                  .storageType(in.getStorageType())
+                  .uploadPercentage(in.getUploadPercentage())
+                  .url(in.getUrl())
+                  .zoneId(in.getZoneId())
+                  .zoneName(in.getZoneName());
       }
    }
 
-   private String id;
-   @SerializedName("accountid")
-   private String accountId;
-   private Date created;
-   private String extractId;
-   private ExtractMode extractMode;
-   private String name;
-   private String state;
-   private String status;
-   @SerializedName("storagetype")
-   private String storageType;
-   @SerializedName("uploadpercentage")
-   private int uploadPercentage;
-   private String url;
-   @SerializedName("zoneid")
-   private String zoneId;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   /**
-    *  Construct a new TemplateExtraction instance
-    */
-   public TemplateExtraction(String id, String accountId, Date created, String extractId,
-                             ExtractMode extractMode, String name, String state, String status,
-                             String storageType, int uploadPercentage, String url,
-                             String zoneId, String zoneName) {
-      this.id = id;
+   private final String id;
+   @Named("accountid")
+   private final String accountId;
+   private final Date created;
+   private final String extractId;
+   private final ExtractMode extractMode;
+   private final String name;
+   private final String state;
+   private final String status;
+   @Named("storagetype")
+   private final String storageType;
+   @Named("uploadpercentage")
+   private final int uploadPercentage;
+   private final String url;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+
+   @ConstructorProperties({
+      "id", "accountid", "created", "extractId", "extractMode", "name", "state", "status", "storagetype", "uploadpercentage", "url", "zoneid", "zonename"
+   })
+   protected TemplateExtraction(String id, @Nullable String accountId, @Nullable Date created, @Nullable String extractId,
+                                @Nullable ExtractMode extractMode, @Nullable String name, @Nullable String state, @Nullable String status,
+                                @Nullable String storageType, int uploadPercentage, @Nullable String url, @Nullable String zoneId,
+                                @Nullable String zoneName) {
+      this.id = checkNotNull(id, "id");
       this.accountId = accountId;
       this.created = created;
       this.extractId = extractId;
@@ -198,153 +234,141 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       this.zoneName = zoneName;
    }
 
-   @SerializedName("zonename")
-   private String zoneName;
-
-
-   /**
-    * present only for serializer
-    */
-   TemplateExtraction() {
-   }
-
    /**
     * @return the id of extracted object
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the account id to which the extracted object belongs
     */
+   @Nullable
    public String getAccountId() {
-      return accountId;
+      return this.accountId;
    }
 
    /**
     * @return the time and date the object was created
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
     * @return the upload id of extracted object
     */
+   @Nullable
    public String getExtractId() {
-      return extractId;
+      return this.extractId;
    }
 
    /**
     * @return the mode of extraction - upload or download
     */
+   @Nullable
    public ExtractMode getExtractMode() {
-      return extractMode;
+      return this.extractMode;
    }
 
    /**
     * @return the name of the extracted object
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return the state of the extracted object
     */
+   @Nullable
    public String getState() {
-      return state;
+      return this.state;
    }
 
    /**
     * @return the status of the extraction
     */
+   @Nullable
    public String getStatus() {
-      return status;
+      return this.status;
    }
 
    /**
     * @return type of the storage
     */
+   @Nullable
    public String getStorageType() {
-      return storageType;
+      return this.storageType;
    }
 
    /**
     * @return the percentage of the entity uploaded to the specified location
     */
    public int getUploadPercentage() {
-      return uploadPercentage;
+      return this.uploadPercentage;
    }
 
    /**
     * @return if mode = upload then url of the uploaded entity. if mode = download the url from which the entity can be downloaded
     */
+   @Nullable
    public String getUrl() {
-      return url;
+      return this.url;
    }
 
    /**
     * @return zone ID the object was extracted from
     */
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
    /**
     * @return zone name the object was extracted from
     */
+   @Nullable
    public String getZoneName() {
-      return zoneName;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      TemplateExtraction that = (TemplateExtraction) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(accountId, that.accountId)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(extractId, that.extractId)) return false;
-      if (!Objects.equal(extractMode, that.extractMode)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(status, that.status)) return false;
-      if (!Objects.equal(storageType, that.storageType)) return false;
-      if (!Objects.equal(uploadPercentage, that.uploadPercentage)) return false;
-      if (!Objects.equal(url, that.url)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.zoneName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, accountId, created, extractId, extractMode, name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
+      return Objects.hashCode(id, accountId, created, extractId, extractMode, name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      TemplateExtraction that = TemplateExtraction.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.accountId, that.accountId)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.extractId, that.extractId)
+               && Objects.equal(this.extractMode, that.extractMode)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.status, that.status)
+               && Objects.equal(this.storageType, that.storageType)
+               && Objects.equal(this.uploadPercentage, that.uploadPercentage)
+               && Objects.equal(this.url, that.url)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.zoneName, that.zoneName);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("accountId", accountId).add("created", created).add("extractId", extractId).add("extractMode", extractMode).add("name", name).add("state", state).add("status", status).add("storageType", storageType).add("uploadPercentage", uploadPercentage).add("url", url).add("zoneId", zoneId).add("zoneName", zoneName);
+   }
+   
+   @Override
    public String toString() {
-      return "TemplateExtraction{" +
-            "id=" + id +
-            ", accountId=" + accountId +
-            ", created=" + created +
-            ", extractId=" + extractId +
-            ", extractMode=" + extractMode +
-            ", name='" + name + '\'' +
-            ", state='" + state + '\'' +
-            ", status='" + status + '\'' +
-            ", storageType='" + storageType + '\'' +
-            ", uploadPercentage=" + uploadPercentage +
-            ", url='" + url + '\'' +
-            ", zoneId=" + zoneId +
-            ", zoneName='" + zoneName + '\'' +
-            '}';
+      return string().toString();
    }
 
    @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,106 +20,164 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
-import java.util.SortedSet;
 
-import javax.annotation.Nullable;
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class SecurityGroup
+ * 
  * @author Adrian Cole
- */
+*/
 public class SecurityGroup implements Comparable<SecurityGroup> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromSecurityGroup(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String account;
-      private String name;
-      private String description;
-      private String domain;
-      private String domainId;
-      private String jobId;
-      private Integer jobStatus;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private Set<IngressRule> ingressRules = ImmutableSet.of();
-
-      public Builder id(String id) {
+      protected String id;
+      protected String account;
+      protected String name;
+      protected String description;
+      protected String domain;
+      protected String domainId;
+      protected String jobId;
+      protected Integer jobStatus;
+      protected Set<IngressRule> ingressRules;
+   
+      /** 
+       * @see SecurityGroup#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see SecurityGroup#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see SecurityGroup#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /** 
+       * @see SecurityGroup#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see SecurityGroup#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see SecurityGroup#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder jobId(String jobId) {
+      /** 
+       * @see SecurityGroup#getJobId()
+       */
+      public T jobId(String jobId) {
          this.jobId = jobId;
-         return this;
+         return self();
       }
 
-      public Builder jobStatus(int jobStatus) {
+      /** 
+       * @see SecurityGroup#getJobStatus()
+       */
+      public T jobStatus(Integer jobStatus) {
          this.jobStatus = jobStatus;
-         return this;
+         return self();
       }
 
-      public Builder ingressRules(Set<IngressRule> ingressRules) {
-         this.ingressRules = ImmutableSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
-         return this;
+      /** 
+       * @see SecurityGroup#getIngressRules()
+       */
+      public T ingressRules(Set<IngressRule> ingressRules) {
+         this.ingressRules = ingressRules;
+         return self();
       }
 
       public SecurityGroup build() {
          return new SecurityGroup(id, account, name, description, domain, domainId, jobId, jobStatus, ingressRules);
       }
+      
+      public T fromSecurityGroup(SecurityGroup in) {
+         return this
+                  .id(in.getId())
+                  .account(in.getAccount())
+                  .name(in.getName())
+                  .description(in.getDescription())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .jobId(in.getJobId())
+                  .jobStatus(in.getJobStatus())
+                  .ingressRules(in.getIngressRules());
+      }
    }
 
-   private String id;
-   private String account;
-   private String name;
-   private String description;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("jobid")
-   @Nullable
-   private String jobId;
-   @SerializedName("jobstatus")
-   @Nullable
-   private Integer jobStatus;
-   @SerializedName("ingressrule")
-   // so that tests and serialization come out expected
-   private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule>of();
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public SecurityGroup(String id, String account, String name, String description, String domain, String domainId,
-                        String jobId, Integer jobStatus, Set<IngressRule> ingressRules) {
-      this.id = id;
+   private final String id;
+   private final String account;
+   private final String name;
+   private final String description;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("jobid")
+   private final String jobId;
+   @Named("jobstatus")
+   private final Integer jobStatus;
+   @Named("ingressrule")
+   private final Set<IngressRule> ingressRules;
+
+   @ConstructorProperties({
+      "id", "account", "name", "description", "domain", "domainid", "jobid", "jobstatus", "ingressrule"
+   })
+   protected SecurityGroup(String id, @Nullable String account, @Nullable String name, @Nullable String description,
+                           @Nullable String domain, @Nullable String domainId, @Nullable String jobId, @Nullable Integer jobStatus,
+                           @Nullable Set<IngressRule> ingressRules) {
+      this.id = checkNotNull(id, "id");
       this.account = account;
       this.name = name;
       this.description = description;
@@ -127,60 +185,64 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       this.domainId = domainId;
       this.jobId = jobId;
       this.jobStatus = jobStatus;
-      this.ingressRules = ImmutableSortedSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
-   }
-
-   /**
-    * present only for serializer
-    */
-   SecurityGroup() {
-
+      this.ingressRules = ingressRules == null ? ImmutableSet.<IngressRule>of() : ImmutableSortedSet.copyOf(ingressRules);
    }
 
    /**
     * @return the id of the security group
     */
    public String getId() {
-      return id;
+      return this.id;
+   }
+
+   /**
+    * @return the account owning the security group
+    */
+   @Nullable
+   public String getAccount() {
+      return this.account;
    }
 
    /**
     * @return the name of the security group
     */
-
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return an alternate display text of the security group.
     */
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    /**
     * @return Domain name for the security group
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the domain id of the security group
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return shows the current pending asynchronous job ID. This tag is not
-    *         returned if no current pending jobs are acting on the virtual
-    *         machine
+         returned if no current pending jobs are acting on the virtual
+         machine
     */
    @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
    /**
@@ -188,59 +250,49 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
     */
    @Nullable
    public Integer getJobStatus() {
-      return jobStatus;
-   }
-
-   /**
-    * @return the account owning the security group
-    */
-   public String getAccount() {
-      return account;
+      return this.jobStatus;
    }
 
    /**
     * @return the list of ingress rules associated with the security group
     */
    public Set<IngressRule> getIngressRules() {
-      return ingressRules;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      SecurityGroup that = (SecurityGroup) o;
-
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
-
-      return true;
+      return this.ingressRules;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(domainId, id, jobStatus);
+      return Objects.hashCode(id, account, name, description, domain, domainId, jobId, jobStatus, ingressRules);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      SecurityGroup that = SecurityGroup.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.jobId, that.jobId)
+               && Objects.equal(this.jobStatus, that.jobStatus)
+               && Objects.equal(this.ingressRules, that.ingressRules);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).add("id", id).add("account", account).add("name", name).add("description", description)
+            .add("domain", domain).add("domainId", domainId).add("jobId", jobId).add("jobStatus", jobStatus).add("ingressRules", ingressRules);
+   }
+   
    @Override
    public String toString() {
-      return "SecurityGroup{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", name='" + name + '\'' +
-            ", description='" + description + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", jobId=" + jobId +
-            ", jobStatus=" + jobStatus +
-            ", ingressRules=" + ingressRules +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(SecurityGroup arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(SecurityGroup o) {
+      return id.compareTo(o.getId());
    }
 }

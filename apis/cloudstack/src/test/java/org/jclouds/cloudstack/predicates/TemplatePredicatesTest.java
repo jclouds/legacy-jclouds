@@ -35,20 +35,20 @@ public class TemplatePredicatesTest {
    @Test
    public void testTemplateIsReady() {
       assertTrue(isReady().apply(
-         Template.builder().ready(true).build()
+         Template.builder().id("a").ready(true).build()
       ));
       assertFalse(isReady().apply(
-         Template.builder().ready(false).build()
+         Template.builder().id("b").ready(false).build()
       ));
    }
 
    @Test
    public void testTemplateIsPasswordEnabled() {
       assertTrue(isPasswordEnabled().apply(
-         Template.builder().passwordEnabled(true).build()
+         Template.builder().id("anid").passwordEnabled(true).build()
       ));
       assertFalse(isPasswordEnabled().apply(
-         Template.builder().passwordEnabled(false).build()
+         Template.builder().id("someid").passwordEnabled(false).build()
       ));
    }
 }

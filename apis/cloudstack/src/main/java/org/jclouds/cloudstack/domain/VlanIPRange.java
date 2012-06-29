@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,139 +18,236 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents the data object used in CloudStack's "Vlan" API.
- *
+ * 
  * @author Richard Downer
- */
+*/
 public class VlanIPRange implements Comparable<VlanIPRange> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromVlanIPRange(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String id;
-      private String description;
-      private boolean forVirtualNetwork;
-      private String zoneId;
-      private String vlan;
-      private String account;
-      private String domainId;
-      private String domain;
-      private String podId;
-      private String podName;
-      private String gateway;
-      private String netmask;
-      private String startIP;
-      private String endIP;
-      private String networkId;
-
-      public Builder id(String id) {
+      protected String id;
+      protected String description;
+      protected boolean forVirtualNetwork;
+      protected String zoneId;
+      protected String vlan;
+      protected String account;
+      protected String domainId;
+      protected String domain;
+      protected String podId;
+      protected String podName;
+      protected String gateway;
+      protected String netmask;
+      protected String startIP;
+      protected String endIP;
+      protected String networkId;
+   
+      /** 
+       * @see VlanIPRange#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /** 
+       * @see VlanIPRange#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder forVirtualNetwork(boolean forVirtualNetwork) {
+      /** 
+       * @see VlanIPRange#isForVirtualNetwork()
+       */
+      public T forVirtualNetwork(boolean forVirtualNetwork) {
          this.forVirtualNetwork = forVirtualNetwork;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /** 
+       * @see VlanIPRange#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder vlan(String vlan) {
+      /** 
+       * @see VlanIPRange#getVlan()
+       */
+      public T vlan(String vlan) {
          this.vlan = vlan;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see VlanIPRange#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see VlanIPRange#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see VlanIPRange#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder podId(String podId) {
+      /** 
+       * @see VlanIPRange#getPodId()
+       */
+      public T podId(String podId) {
          this.podId = podId;
-         return this;
+         return self();
       }
 
-      public Builder podName(String podName) {
+      /** 
+       * @see VlanIPRange#getPodName()
+       */
+      public T podName(String podName) {
          this.podName = podName;
-         return this;
+         return self();
       }
 
-      public Builder gateway(String gateway) {
+      /** 
+       * @see VlanIPRange#getGateway()
+       */
+      public T gateway(String gateway) {
          this.gateway = gateway;
-         return this;
+         return self();
       }
 
-      public Builder netmask(String netmask) {
+      /** 
+       * @see VlanIPRange#getNetmask()
+       */
+      public T netmask(String netmask) {
          this.netmask = netmask;
-         return this;
+         return self();
       }
 
-      public Builder startIP(String startIP) {
+      /** 
+       * @see VlanIPRange#getStartIP()
+       */
+      public T startIP(String startIP) {
          this.startIP = startIP;
-         return this;
+         return self();
       }
 
-      public Builder endIP(String endIP) {
+      /** 
+       * @see VlanIPRange#getEndIP()
+       */
+      public T endIP(String endIP) {
          this.endIP = endIP;
-         return this;
+         return self();
       }
 
-      public Builder networkId(String networkId) {
+      /** 
+       * @see VlanIPRange#getNetworkId()
+       */
+      public T networkId(String networkId) {
          this.networkId = networkId;
-         return this;
+         return self();
+      }
+
+      public VlanIPRange build() {
+         return new VlanIPRange(id, description, forVirtualNetwork, zoneId, vlan, account, domainId, domain, podId,
+               podName, gateway, netmask, startIP, endIP, networkId);
       }
       
-      public VlanIPRange build() {
-         return new VlanIPRange(id, description, forVirtualNetwork, zoneId, vlan, account, domainId, domain, podId, podName, gateway, netmask, startIP, endIP, networkId);
+      public T fromVlanIPRange(VlanIPRange in) {
+         return this
+                  .id(in.getId())
+                  .description(in.getDescription())
+                  .forVirtualNetwork(in.isForVirtualNetwork())
+                  .zoneId(in.getZoneId())
+                  .vlan(in.getVlan())
+                  .account(in.getAccount())
+                  .domainId(in.getDomainId())
+                  .domain(in.getDomain())
+                  .podId(in.getPodId())
+                  .podName(in.getPodName())
+                  .gateway(in.getGateway())
+                  .netmask(in.getNetmask())
+                  .startIP(in.getStartIP())
+                  .endIP(in.getEndIP())
+                  .networkId(in.getNetworkId());
       }
    }
-   
-   private String id;
-   private String description;
-   @SerializedName("forvirtualnetwork") private boolean forVirtualNetwork;
-   @SerializedName("zoneid") private String zoneId;
-   private String vlan;
-   private String account;
-   @SerializedName("domainid") private String domainId;
-   private String domain;
-   @SerializedName("podid") private String podId;
-   @SerializedName("podname") private String podName;
-   private String gateway;
-   private String netmask;
-   @SerializedName("startip") private String startIP;
-   @SerializedName("endip") private String endIP;
-   @SerializedName("networkid") private String networkId;
 
-   /* just for the deserializer */
-   VlanIPRange() {}
-   
-   public VlanIPRange(String id, String description, boolean forVirtualNetwork, String zoneId, String vlan, String account, String domainId, String domain, String podId, String podName, String gateway, String netmask, String startIP, String endIP, String networkId) {
-      this.id = id;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   private final String description;
+   @Named("forvirtualnetwork")
+   private final boolean forVirtualNetwork;
+   @Named("zoneid")
+   private final String zoneId;
+   private final String vlan;
+   private final String account;
+   @Named("domainid")
+   private final String domainId;
+   private final String domain;
+   @Named("podid")
+   private final String podId;
+   @Named("podname")
+   private final String podName;
+   private final String gateway;
+   private final String netmask;
+   @Named("startip")
+   private final String startIP;
+   @Named("endip")
+   private final String endIP;
+   @Named("networkid")
+   private final String networkId;
+
+   @ConstructorProperties({
+      "id", "description", "forvirtualnetwork", "zoneid", "vlan", "account", "domainid", "domain", "podid", "podname",
+         "gateway", "netmask", "startip", "endip", "networkid"
+   })
+   protected VlanIPRange(String id, @Nullable String description, boolean forVirtualNetwork, @Nullable String zoneId,
+                         @Nullable String vlan, @Nullable String account, @Nullable String domainId, @Nullable String domain,
+                         @Nullable String podId, @Nullable String podName, @Nullable String gateway, @Nullable String netmask,
+                         @Nullable String startIP, @Nullable String endIP, @Nullable String networkId) {
+      this.id = checkNotNull(id, "id");
       this.description = description;
       this.forVirtualNetwork = forVirtualNetwork;
       this.zoneId = zoneId;
@@ -168,121 +265,121 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    public boolean isForVirtualNetwork() {
-      return forVirtualNetwork;
+      return this.forVirtualNetwork;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getVlan() {
-      return vlan;
+      return this.vlan;
    }
 
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
+   @Nullable
    public String getPodId() {
-      return podId;
+      return this.podId;
    }
 
+   @Nullable
    public String getPodName() {
-      return podName;
+      return this.podName;
    }
 
+   @Nullable
    public String getGateway() {
-      return gateway;
+      return this.gateway;
    }
 
+   @Nullable
    public String getNetmask() {
-      return netmask;
+      return this.netmask;
    }
 
+   @Nullable
    public String getStartIP() {
-      return startIP;
+      return this.startIP;
    }
 
+   @Nullable
    public String getEndIP() {
-      return endIP;
+      return this.endIP;
    }
 
+   @Nullable
    public String getNetworkId() {
-      return networkId;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      VlanIPRange that = (VlanIPRange) o;
-
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(forVirtualNetwork, that.forVirtualNetwork)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(networkId, that.networkId)) return false;
-      if (!Objects.equal(podId, that.podId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(endIP, that.endIP)) return false;
-      if (!Objects.equal(gateway, that.gateway)) return false;
-      if (!Objects.equal(netmask, that.netmask)) return false;
-      if (!Objects.equal(podName, that.podName)) return false;
-      if (!Objects.equal(startIP, that.startIP)) return false;
-      if (!Objects.equal(vlan, that.vlan)) return false;
-
-      return true;
+      return this.networkId;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(domainId, forVirtualNetwork, id, networkId, podId,
-                               zoneId, account, description, domain, endIP, gateway,
-                               netmask, podName, startIP, vlan);
+      return Objects.hashCode(id, description, forVirtualNetwork, zoneId, vlan, account, domainId, domain, podId, podName, gateway, netmask, startIP, endIP, networkId);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      VlanIPRange that = VlanIPRange.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.forVirtualNetwork, that.forVirtualNetwork)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.vlan, that.vlan)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.podId, that.podId)
+               && Objects.equal(this.podName, that.podName)
+               && Objects.equal(this.gateway, that.gateway)
+               && Objects.equal(this.netmask, that.netmask)
+               && Objects.equal(this.startIP, that.startIP)
+               && Objects.equal(this.endIP, that.endIP)
+               && Objects.equal(this.networkId, that.networkId);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("description", description).add("forVirtualNetwork", forVirtualNetwork).add("zoneId", zoneId)
+            .add("vlan", vlan).add("account", account).add("domainId", domainId).add("domain", domain).add("podId", podId)
+            .add("podName", podName).add("gateway", gateway).add("netmask", netmask).add("startIP", startIP).add("endIP", endIP)
+            .add("networkId", networkId);
+   }
+   
+   @Override
    public String toString() {
-      return "VlanIPRange{" +
-         "id=" + id +
-         ", description='" + description + '\'' +
-         ", forVirtualNetwork=" + forVirtualNetwork +
-         ", zoneId=" + zoneId +
-         ", vlan='" + vlan + '\'' +
-         ", account='" + account + '\'' +
-         ", domainId=" + domainId +
-         ", domain='" + domain + '\'' +
-         ", podId=" + podId +
-         ", podName='" + podName + '\'' +
-         ", gateway='" + gateway + '\'' +
-         ", netmask='" + netmask + '\'' +
-         ", startIP='" + startIP + '\'' +
-         ", endIP='" + endIP + '\'' +
-         ", networkId=" + networkId +
-         '}';
+      return string().toString();
    }
 
    @Override
    public int compareTo(VlanIPRange other) {
       return this.id.compareTo(other.id);
    }
+
 }

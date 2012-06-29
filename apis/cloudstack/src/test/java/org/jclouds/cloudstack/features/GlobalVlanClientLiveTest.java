@@ -31,6 +31,7 @@ import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.domain.VlanIPRange;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;

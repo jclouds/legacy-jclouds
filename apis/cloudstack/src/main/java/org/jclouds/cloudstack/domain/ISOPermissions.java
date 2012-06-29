@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,136 +18,169 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
+ * Class ISOPermissions
+ * 
  * @author Richard Downer
- */
-public class ISOPermissions implements Comparable<ISOPermissions> {
+*/
+public class ISOPermissions {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromISOPermissions(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String id;
-      private String account;
-      private String domainId;
-      private boolean isPublic;
-
-      /**
-       * @param id the template ID
+      protected String id;
+      protected Set<String> accounts = ImmutableSet.of();
+      protected String domainId;
+      protected boolean isPublic;
+   
+      /** 
+       * @see ISOPermissions#getId()
        */
-      public Builder id(String id) {
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      /**
-       * @param account the list of accounts the template is available for
+      /** 
+       * @see ISOPermissions#getAccounts()
        */
-      public Builder account(String account) {
-         this.account = account;
-         return this;
+      public T accounts(Set<String> accounts) {
+         this.accounts = ImmutableSet.copyOf(checkNotNull(accounts, "accounts"));      
+         return self();
       }
 
-      /**
-       * @param domainId the ID of the domain to which the template belongs
+      public T accounts(String... in) {
+         return accounts(ImmutableSet.copyOf(in));
+      }
+
+      /** 
+       * @see ISOPermissions#getDomainId()
        */
-      public Builder domainId(String domainId) {
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      /**
-       * @param isPublic true if this template is a public template, false otherwise
+      /** 
+       * @see ISOPermissions#isPublic()
        */
-      public Builder isPublic(boolean isPublic) {
+      public T isPublic(boolean isPublic) {
          this.isPublic = isPublic;
-         return this;
+         return self();
       }
 
+      public ISOPermissions build() {
+         return new ISOPermissions(id, accounts, domainId, isPublic);
+      }
+      
+      public T fromISOPermissions(ISOPermissions in) {
+         return this
+                  .id(in.getId())
+                  .accounts(in.getAccounts())
+                  .domainId(in.getDomainId())
+                  .isPublic(in.isPublic());
+      }
    }
 
-   private String id;
-   @SerializedName("account")
-   private Set<String> accounts;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("ispublic")
-   private boolean isPublic;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   /**
-    * present only for serializer
-    */
-   ISOPermissions() {
+   private final String id;
+   @Named("account")
+   private final Set<String> accounts;
+   @Named("domainid")
+   private final String domainId;
+   @Named("ispublic")
+   private final boolean isPublic;
+
+   @ConstructorProperties({
+      "id", "account", "domainid", "ispublic"
+   })
+   protected ISOPermissions(String id, @Nullable Set<String> accounts,  @Nullable String domainId, boolean isPublic) {
+      this.id = checkNotNull(id, "id");
+      this.accounts = accounts == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(accounts);      
+      this.domainId = domainId;
+      this.isPublic = isPublic;
    }
 
    /**
     * @return the template ID
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the list of accounts the template is available for
     */
    public Set<String> getAccounts() {
-      return accounts;
+      return this.accounts;
    }
 
    /**
     * @return the ID of the domain to which the template belongs
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return true if this template is a public template, false otherwise
     */
-   public boolean getIsPublic() {
-      return isPublic;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ISOPermissions that = (ISOPermissions) o;
-
-      if (!Objects.equal(accounts, that.accounts)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(isPublic, that.isPublic)) return false;
-
-      return true;
+   public boolean isPublic() {
+      return this.isPublic;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(accounts, domainId, id, isPublic);
+      return Objects.hashCode(id, accounts, domainId, isPublic);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ISOPermissions that = ISOPermissions.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.accounts, that.accounts)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.isPublic, that.isPublic);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("accounts", accounts).add("domainId", domainId).add("isPublic", isPublic);
+   }
+   
    @Override
    public String toString() {
-      return "ISOPermissions{" +
-            "id=" + id +
-            ", accounts='" + accounts + '\'' +
-            ", domainId=" + domainId +
-            ", isPublic=" + isPublic +
-            '}';
-   }
-
-   @Override
-   public int compareTo(ISOPermissions other) {
-      return id.compareTo(other.getId());
+      return string().toString();
    }
 
 }

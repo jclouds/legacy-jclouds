@@ -40,6 +40,7 @@ import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshException;

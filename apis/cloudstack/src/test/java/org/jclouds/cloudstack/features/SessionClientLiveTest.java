@@ -29,6 +29,7 @@ import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.util.ApiKeyPairs;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.rest.AuthorizationException;

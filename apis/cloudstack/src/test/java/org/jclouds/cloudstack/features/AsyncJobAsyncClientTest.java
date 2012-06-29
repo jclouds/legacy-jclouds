@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.functions.ParseAsyncJobFromHttpResponse;
 import org.jclouds.cloudstack.functions.ParseAsyncJobsFromHttpResponse;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAsyncJobsOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;

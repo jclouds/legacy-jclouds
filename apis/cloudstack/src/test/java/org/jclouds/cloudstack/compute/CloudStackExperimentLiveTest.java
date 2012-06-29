@@ -38,7 +38,7 @@ import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.domain.TrafficType;
-import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.compute.RunNodesException;
@@ -160,8 +160,8 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
 
          assertEquals(passwordDecrypt.apply(
-            new EncryptedPasswordAndPrivateKey(encryptedPassword, keyPair.getPrivateKey())).getPassword(),
-            "bX7vvptvw");
+            EncryptedPasswordAndPrivateKey.builder().encryptedPassword(encryptedPassword).privateKey(keyPair.getPrivateKey()).build())
+               .getPassword(), "bX7vvptvw");
 
       } finally {
          if (node != null) {

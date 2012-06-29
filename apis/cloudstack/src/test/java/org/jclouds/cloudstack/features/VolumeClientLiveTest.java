@@ -37,6 +37,7 @@ import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.PredicateCallable;

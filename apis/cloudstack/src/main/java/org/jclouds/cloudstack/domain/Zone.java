@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,177 +20,257 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Adrian Cole, Andrei Savu
- */
+*/
 public class Zone implements Comparable<Zone> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromZone(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String description;
-      private String displayText;
-      private List<String> DNS = ImmutableList.of();
-      private String domain;
-      private String domainId;
-      private String guestCIDRAddress;
-      private List<String> internalDNS = ImmutableList.of();
-      private String name;
-      private NetworkType networkType;
-      private String VLAN;
-      private boolean securityGroupsEnabled;
-      private AllocationState allocationState;
-      private String dhcpProvider;
-      private String zoneToken;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected String description;
+      protected String displayText;
+      protected String DNS1;
+      protected String DNS2;
+      protected String domain;
+      protected String domainId;
+      protected String guestCIDRAddress;
+      protected String internalDNS1;
+      protected String internalDNS2;
+      protected String name;
+      protected NetworkType networkType;
+      protected String VLAN;
+      protected boolean securityGroupsEnabled;
+      protected AllocationState allocationState;
+      protected String dhcpProvider;
+      protected String zoneToken;
+   
+      /** 
+       * @see Zone#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /** 
+       * @see Zone#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder displayText(String displayText) {
+      /** 
+       * @see Zone#getDisplayText()
+       */
+      public T displayText(String displayText) {
          this.displayText = displayText;
-         return this;
+         return self();
       }
 
-      public Builder DNS(List<String> DNS) {
-         this.DNS = ImmutableList.copyOf(checkNotNull(DNS, "DNS"));
-         return this;
+      /** 
+       * @see Zone#getDNS()
+       */
+      public T DNS(List<String> DNS) {
+         if (!DNS.isEmpty()) this.DNS1 = DNS.get(0);
+         if (DNS.size() > 1) this.DNS2 = DNS.get(1);
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see Zone#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see Zone#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder guestCIDRAddress(String guestCIDRAddress) {
+      /** 
+       * @see Zone#getGuestCIDRAddress()
+       */
+      public T guestCIDRAddress(String guestCIDRAddress) {
          this.guestCIDRAddress = guestCIDRAddress;
-         return this;
+         return self();
       }
 
-      public Builder internalDNS(List<String> internalDNS) {
-         this.internalDNS = ImmutableList.copyOf(checkNotNull(internalDNS, "internalDNS"));
-         return this;
+      /** 
+       * @see Zone#getInternalDNS()
+       */
+      public T internalDNS(List<String> DNS) {
+         if (!DNS.isEmpty()) this.internalDNS1 = DNS.get(0);
+         if (DNS.size() > 1) this.internalDNS2 = DNS.get(1);
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see Zone#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder networkType(NetworkType networkType) {
+      /** 
+       * @see Zone#getNetworkType()
+       */
+      public T networkType(NetworkType networkType) {
          this.networkType = networkType;
-         return this;
+         return self();
       }
 
-      public Builder VLAN(String VLAN) {
+      /** 
+       * @see Zone#getVLAN()
+       */
+      public T VLAN(String VLAN) {
          this.VLAN = VLAN;
-         return this;
+         return self();
       }
 
-      public Builder securityGroupsEnabled(boolean securityGroupsEnabled) {
+      /** 
+       * @see Zone#isSecurityGroupsEnabled()
+       */
+      public T securityGroupsEnabled(boolean securityGroupsEnabled) {
          this.securityGroupsEnabled = securityGroupsEnabled;
-         return this;
+         return self();
       }
 
-
-      public Builder allocationState(AllocationState allocationState) {
+      /** 
+       * @see Zone#getAllocationState()
+       */
+      public T allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
-         return this;
+         return self();
       }
 
-      public Builder dhcpProvider(String dhcpProvider) {
+      /** 
+       * @see Zone#getDhcpProvider()
+       */
+      public T dhcpProvider(String dhcpProvider) {
          this.dhcpProvider = dhcpProvider;
-         return this;
+         return self();
       }
 
-      public Builder zoneToken(String zoneToken) {
+      /** 
+       * @see Zone#getZoneToken()
+       */
+      public T zoneToken(String zoneToken) {
          this.zoneToken = zoneToken;
-         return this;
+         return self();
       }
 
       public Zone build() {
-         return new Zone(id, description, displayText, DNS, domain, domainId, guestCIDRAddress, internalDNS, name,
-               networkType, VLAN, securityGroupsEnabled, allocationState, dhcpProvider, zoneToken);
+         return new Zone(id, description, displayText, DNS1, DNS2, domain, domainId, guestCIDRAddress, internalDNS1, internalDNS2,
+               name, networkType, VLAN, securityGroupsEnabled, allocationState, dhcpProvider, zoneToken);
+      }
+      
+      public T fromZone(Zone in) {
+         return this
+                  .id(in.getId())
+                  .description(in.getDescription())
+                  .displayText(in.getDisplayText())
+                  .DNS(in.getDNS())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .guestCIDRAddress(in.getGuestCIDRAddress())
+                  .internalDNS(in.getInternalDNS())
+                  .name(in.getName())
+                  .networkType(in.getNetworkType())
+                  .VLAN(in.getVLAN())
+                  .securityGroupsEnabled(in.isSecurityGroupsEnabled())
+                  .allocationState(in.getAllocationState())
+                  .dhcpProvider(in.getDhcpProvider())
+                  .zoneToken(in.getZoneToken());
       }
    }
 
-   private String id;
-   private String description;
-   @SerializedName("displaytext")
-   private String displayText;
-   @SerializedName("dns1")
-   private String DNS1;
-   @SerializedName("dns2")
-   private String DNS2;
-   private String domain;
-   @Nullable
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("guestcidraddress")
-   private String guestCIDRAddress;
-   @SerializedName("internaldns1")
-   private String internalDNS1;
-   @SerializedName("internaldns2")
-   private String internalDNS2;
-   private String name;
-   @SerializedName("networktype")
-   private NetworkType networkType;
-   @SerializedName("vlan")
-   private String VLAN;
-   @SerializedName("securitygroupsenabled")
-   private boolean securityGroupsEnabled;
-   @SerializedName("allocationstate")
-   private AllocationState allocationState;
-   @SerializedName("dhcpprovider")
-   private String dhcpProvider;
-   @SerializedName("zonetoken")
-   private String zoneToken;
-
-   /**
-    * present only for serializer
-    */
-   Zone() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public Zone(String id, String description, String displayText, List<String> DNS, String domain, String domainId,
-               String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType,
-               String vLAN, boolean securityGroupsEnabled, AllocationState allocationState, String dhcpProvider, String zoneToken) {
-      this.id = id;
+   private final String id;
+   private final String description;
+   @Named("displaytext")
+   private final String displayText;
+   @Named("dns1")
+   private final String DNS1;
+   @Named("dns2")
+   private final String DNS2;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("guestcidraddress")
+   private final String guestCIDRAddress;
+   @Named("internaldns1")
+   private final String internalDNS1;
+   @Named("internaldns2")
+   private final String internalDNS2;
+   private final String name;
+   @Named("networktype")
+   private final NetworkType networkType;
+   @Named("vlan")
+   private final String VLAN;
+   @Named("securitygroupsenabled")
+   private final boolean securityGroupsEnabled;
+   @Named("allocationstate")
+   private final AllocationState allocationState;
+   @Named("dhcpprovider")
+   private final String dhcpProvider;
+   @Named("zonetoken")
+   private final String zoneToken;
+
+   @ConstructorProperties({
+      "id", "description", "displaytext", "dns1", "dns2", "domain", "domainid", "guestcidraddress", "internaldns1", "internaldns2", "name", "networktype", "vlan", "securitygroupsenabled", "allocationstate", "dhcpprovider", "zonetoken"
+   })
+   protected Zone(String id, @Nullable String description, @Nullable String displayText, @Nullable String DNS1, @Nullable String DNS2,
+                  @Nullable String domain, @Nullable String domainId, @Nullable String guestCIDRAddress, @Nullable String internalDNS1,
+                  @Nullable String internalDNS2, @Nullable String name, @Nullable NetworkType networkType, @Nullable String VLAN, 
+                  boolean securityGroupsEnabled, @Nullable AllocationState allocationState, @Nullable String dhcpProvider,
+                  @Nullable String zoneToken) {
+      this.id = checkNotNull(id, "id");
       this.description = description;
       this.displayText = displayText;
-      this.DNS1 = checkNotNull(DNS, "DNS").size() > 0 ? DNS.get(0) : null;
-      this.DNS2 = DNS.size() > 1 ? DNS.get(1) : null;
+      this.DNS1 = DNS1;
+      this.DNS2 = DNS2;
       this.domain = domain;
       this.domainId = domainId;
       this.guestCIDRAddress = guestCIDRAddress;
-      this.internalDNS1 = checkNotNull(internalDNS, "internalDNS").size() > 0 ? internalDNS.get(0) : null;
-      this.internalDNS2 = internalDNS.size() > 1 ? internalDNS.get(1) : null;
+      this.internalDNS1 = internalDNS1;
+      this.internalDNS2 = internalDNS2;
       this.name = name;
       this.networkType = networkType;
-      this.VLAN = vLAN;
+      this.VLAN = VLAN;
       this.securityGroupsEnabled = securityGroupsEnabled;
       this.allocationState = allocationState;
       this.dhcpProvider = dhcpProvider;
@@ -201,21 +281,23 @@ public class Zone implements Comparable<Zone> {
     * @return Zone id
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return Zone description
     */
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    /**
     * @return the display text of the zone
     */
+   @Nullable
    public String getDisplayText() {
-      return displayText;
+      return this.displayText;
    }
 
    /**
@@ -233,8 +315,9 @@ public class Zone implements Comparable<Zone> {
    /**
     * @return Domain name for the Vms in the zone
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
@@ -242,14 +325,15 @@ public class Zone implements Comparable<Zone> {
     */
    @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return the guest CIDR address for the Zone
     */
+   @Nullable
    public String getGuestCIDRAddress() {
-      return guestCIDRAddress;
+      return this.guestCIDRAddress;
    }
 
    /**
@@ -267,113 +351,104 @@ public class Zone implements Comparable<Zone> {
    /**
     * @return Zone name
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return the network type of the zone; can be Basic or Advanced
     */
+   @Nullable
    public NetworkType getNetworkType() {
-      return networkType;
+      return this.networkType;
    }
 
    /**
     * @return the vlan range of the zone
     */
+   @Nullable
    public String getVLAN() {
-      return VLAN;
+      return this.VLAN;
    }
 
    /**
     * @return true if this zone has security groups enabled
     */
    public boolean isSecurityGroupsEnabled() {
-      return securityGroupsEnabled;
+      return this.securityGroupsEnabled;
    }
 
    /**
     * @return the allocation state of the cluster
     */
+   @Nullable
    public AllocationState getAllocationState() {
-      return allocationState;
+      return this.allocationState;
    }
 
    /**
     * @return the dhcp Provider for the Zone
     */
+   @Nullable
    public String getDhcpProvider() {
-      return dhcpProvider;
+      return this.dhcpProvider;
    }
 
    /**
     * @return Zone Token
     */
+   @Nullable
    public String getZoneToken() {
-      return zoneToken;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Zone that = (Zone) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-      if (!Objects.equal(DNS1, that.DNS1)) return false;
-      if (!Objects.equal(DNS2, that.DNS2)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(guestCIDRAddress, that.guestCIDRAddress)) return false;
-      if (!Objects.equal(internalDNS1, that.internalDNS1)) return false;
-      if (!Objects.equal(internalDNS2, that.internalDNS2)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(networkType, that.networkType)) return false;
-      if (!Objects.equal(VLAN, that.VLAN)) return false;
-      if (!Objects.equal(securityGroupsEnabled, that.securityGroupsEnabled)) return false;
-      if (!Objects.equal(allocationState, that.allocationState)) return false;
-      if (!Objects.equal(dhcpProvider, that.dhcpProvider)) return false;
-      if (!Objects.equal(zoneToken, that.zoneToken)) return false;
-
-      return true;
+      return this.zoneToken;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, description, displayText, DNS1, DNS2, domain, domainId,
-                               guestCIDRAddress, internalDNS1, internalDNS2, name, networkType, VLAN,
-                               securityGroupsEnabled, allocationState, dhcpProvider,
-                               zoneToken);
+      return Objects.hashCode(id, description, displayText, DNS1, DNS2, domain, domainId, guestCIDRAddress, internalDNS1,
+            internalDNS2, name, networkType, VLAN, securityGroupsEnabled, allocationState, dhcpProvider, zoneToken);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Zone that = Zone.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.displayText, that.displayText)
+               && Objects.equal(this.DNS1, that.DNS1)
+               && Objects.equal(this.DNS2, that.DNS2)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.guestCIDRAddress, that.guestCIDRAddress)
+               && Objects.equal(this.internalDNS1, that.internalDNS1)
+               && Objects.equal(this.internalDNS2, that.internalDNS2)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.networkType, that.networkType)
+               && Objects.equal(this.VLAN, that.VLAN)
+               && Objects.equal(this.securityGroupsEnabled, that.securityGroupsEnabled)
+               && Objects.equal(this.allocationState, that.allocationState)
+               && Objects.equal(this.dhcpProvider, that.dhcpProvider)
+               && Objects.equal(this.zoneToken, that.zoneToken);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("description", description).add("displayText", displayText).add("DNS1", DNS1).add("DNS2", DNS2)
+            .add("domain", domain).add("domainId", domainId).add("guestCIDRAddress", guestCIDRAddress).add("internalDNS1", internalDNS1)
+            .add("internalDNS2", internalDNS2).add("name", name).add("networkType", networkType).add("VLAN", VLAN)
+            .add("securityGroupsEnabled", securityGroupsEnabled).add("allocationState", allocationState).add("dhcpProvider", dhcpProvider)
+            .add("zoneToken", zoneToken);
+   }
+   
    @Override
    public String toString() {
-      return "Zone{" +
-            "id=" + id +
-            ", description='" + description + '\'' +
-            ", displayText='" + displayText + '\'' +
-            ", DNS1='" + DNS1 + '\'' +
-            ", DNS2='" + DNS2 + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", guestCIDRAddress='" + guestCIDRAddress + '\'' +
-            ", internalDNS1='" + internalDNS1 + '\'' +
-            ", internalDNS2='" + internalDNS2 + '\'' +
-            ", name='" + name + '\'' +
-            ", networkType=" + networkType +
-            ", VLAN='" + VLAN + '\'' +
-            ", securityGroupsEnabled=" + securityGroupsEnabled +
-            ", allocationState='" + allocationState + '\'' +
-            ", dhcpProvider='" + dhcpProvider + '\'' +
-            ", zoneToken='" + zoneToken + '\'' +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(Zone arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(Zone o) {
+      return id.compareTo(o.getId());
    }
 }
