@@ -108,21 +108,10 @@ public class Resource implements Comparable<Resource> {
    @ConstructorProperties({
          "id", "name", "links"
    })
-   protected Resource(String id, @Nullable String name, Set<Link> links) {
+   protected Resource(String id, @Nullable String name, @Nullable Set<Link> links) {
       this.id = checkNotNull(id, "id");
       this.name = name;
-      this.links = ImmutableSet.copyOf(checkNotNull(links, "links"));
-   }
-   
-   // leaving till beans in other openstack projects are updated
-   @Deprecated
-   protected Resource(Builder<?> builder) {
-      this(builder.id, builder.name, builder.links);
-   }
-
-   @Deprecated
-   protected Resource() {
-      id = null; name = null; links = ImmutableSet.of();
+      this.links = links == null ? ImmutableSet.<Link>of() : ImmutableSet.copyOf(checkNotNull(links, "links"));
    }
    
    /**
