@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,180 +20,264 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class LoadBalancerRule
+ * 
  * @author Adrian Cole
- */
-public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
+*/
+public class LoadBalancerRule {
+
+   /**
+    */
    public static enum State {
       ADD, ACTIVE, UNRECOGNIZED;
-
+      
       @Override
       public String toString() {
-         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
       }
-
+      
       public static State fromValue(String state) {
-         try {
-            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
+      try {
+      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+      } catch (IllegalArgumentException e) {
+      return UNRECOGNIZED;
       }
-
+      }
+      
    }
 
    public static enum Algorithm {
       SOURCE, ROUNDROBIN, LEASTCONN, UNRECOGNIZED;
-
+      
       @Override
       public String toString() {
-         return name().toLowerCase();
+      return name().toLowerCase();
       }
-
+      
       public static Algorithm fromValue(String algorithm) {
-         try {
-            return Algorithm.valueOf(checkNotNull(algorithm, "algorithm").toUpperCase());
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
+      try {
+      return Algorithm.valueOf(checkNotNull(algorithm, "algorithm").toUpperCase());
+      } catch (IllegalArgumentException e) {
+      return UNRECOGNIZED;
       }
-
+      }
+      
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromLoadBalancerRule(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String account;
-      private Algorithm algorithm;
-      private String description;
-      private String domain;
-      private String domainId;
-      private String name;
-      private int privatePort;
-      private String publicIP;
-      private String publicIPId;
-      private int publicPort;
-      private State state;
-      private Set<String> CIDRs = ImmutableSet.of();
-      private String zoneId;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected String account;
+      protected LoadBalancerRule.Algorithm algorithm;
+      protected String description;
+      protected String domain;
+      protected String domainId;
+      protected String name;
+      protected int privatePort;
+      protected String publicIP;
+      protected String publicIPId;
+      protected int publicPort;
+      protected LoadBalancerRule.State state;
+      protected Set<String> CIDRs = ImmutableSet.of();
+      protected String zoneId;
+   
+      /** 
+       * @see LoadBalancerRule#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see LoadBalancerRule#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder algorithm(Algorithm algorithm) {
+      /** 
+       * @see LoadBalancerRule#getAlgorithm()
+       */
+      public T algorithm(LoadBalancerRule.Algorithm algorithm) {
          this.algorithm = algorithm;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /** 
+       * @see LoadBalancerRule#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see LoadBalancerRule#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see LoadBalancerRule#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see LoadBalancerRule#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder privatePort(int privatePort) {
+      /** 
+       * @see LoadBalancerRule#getPrivatePort()
+       */
+      public T privatePort(int privatePort) {
          this.privatePort = privatePort;
-         return this;
+         return self();
       }
 
-      public Builder publicIP(String publicIP) {
+      /** 
+       * @see LoadBalancerRule#getPublicIP()
+       */
+      public T publicIP(String publicIP) {
          this.publicIP = publicIP;
-         return this;
+         return self();
       }
 
-      public Builder publicIPId(String publicIPId) {
+      /** 
+       * @see LoadBalancerRule#getPublicIPId()
+       */
+      public T publicIPId(String publicIPId) {
          this.publicIPId = publicIPId;
-         return this;
+         return self();
       }
 
-      public Builder publicPort(int publicPort) {
+      /** 
+       * @see LoadBalancerRule#getPublicPort()
+       */
+      public T publicPort(int publicPort) {
          this.publicPort = publicPort;
-         return this;
+         return self();
       }
 
-      public Builder state(State state) {
+      /** 
+       * @see LoadBalancerRule#getState()
+       */
+      public T state(LoadBalancerRule.State state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder CIDRs(Set<String> CIDRs) {
-         this.CIDRs = CIDRs;
-         return this;
+      /** 
+       * @see LoadBalancerRule#getCIDRs()
+       */
+      public T CIDRs(Set<String> CIDRs) {
+         this.CIDRs = ImmutableSet.copyOf(checkNotNull(CIDRs, "CIDRs"));      
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      public T CIDRs(String... in) {
+         return CIDRs(ImmutableSet.copyOf(in));
+      }
+
+      /** 
+       * @see LoadBalancerRule#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
       public LoadBalancerRule build() {
-         return new LoadBalancerRule(id, account, algorithm, description, domain, domainId, name, privatePort,
-               publicIP, publicIPId, publicPort, state, zoneId, CIDRs);
+         return new LoadBalancerRule(id, account, algorithm, description, domain, domainId, name, privatePort, publicIP, publicIPId, publicPort, state, CIDRs, zoneId);
+      }
+      
+      public T fromLoadBalancerRule(LoadBalancerRule in) {
+         return this
+                  .id(in.getId())
+                  .account(in.getAccount())
+                  .algorithm(in.getAlgorithm())
+                  .description(in.getDescription())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .name(in.getName())
+                  .privatePort(in.getPrivatePort())
+                  .publicIP(in.getPublicIP())
+                  .publicIPId(in.getPublicIPId())
+                  .publicPort(in.getPublicPort())
+                  .state(in.getState())
+                  .CIDRs(in.getCIDRs())
+                  .zoneId(in.getZoneId());
       }
    }
 
-   private String id;
-   private String account;
-   private Algorithm algorithm;
-   private String description;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   private String name;
-   @SerializedName("privateport")
-   private int privatePort;
-   @SerializedName("publicip")
-   private String publicIP;
-   @SerializedName("publicipid")
-   private String publicIPId;
-   @SerializedName("publicport")
-   private int publicPort;
-   private State state;
-   @SerializedName("cidrlist")
-   private Set<String> CIDRs;
-   @SerializedName("zoneId")
-   private String zoneId;
-
-   // for deserializer
-   LoadBalancerRule() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public LoadBalancerRule(String id, String account, Algorithm algorithm, String description, String domain,
-                           String domainId, String name, int privatePort, String publicIP, String publicIPId, int publicPort, State state,
-                           String zoneId, Set<String> CIDRs) {
-      this.id = id;
+   private final String id;
+   private final String account;
+   private final LoadBalancerRule.Algorithm algorithm;
+   private final String description;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   private final String name;
+   @Named("privateport")
+   private final int privatePort;
+   @Named("publicip")
+   private final String publicIP;
+   @Named("publicipid")
+   private final String publicIPId;
+   @Named("publicport")
+   private final int publicPort;
+   private final LoadBalancerRule.State state;
+   @Named("cidrlist")
+   private final Set<String> CIDRs;
+   private final String zoneId;
+
+   @ConstructorProperties({
+      "id", "account", "algorithm", "description", "domain", "domainid", "name", "privateport", "publicip", "publicipid", "publicport", "state", "cidrlist", "zoneId"
+   })
+   protected LoadBalancerRule(String id, @Nullable String account, @Nullable LoadBalancerRule.Algorithm algorithm,
+                              @Nullable String description, @Nullable String domain, @Nullable String domainId, @Nullable String name,
+                              int privatePort, @Nullable String publicIP, @Nullable String publicIPId, int publicPort,
+                              @Nullable LoadBalancerRule.State state, @Nullable Set<String> CIDRs, @Nullable String zoneId) {
+      this.id = checkNotNull(id, "id");
       this.account = account;
       this.algorithm = algorithm;
       this.description = description;
@@ -205,162 +289,152 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       this.publicIPId = publicIPId;
       this.publicPort = publicPort;
       this.state = state;
+      this.CIDRs = CIDRs == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(CIDRs);      
       this.zoneId = zoneId;
-      this.CIDRs = ImmutableSet.copyOf(CIDRs);
-
    }
 
    /**
     * @return the load balancer rule ID
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the account of the load balancer rule
     */
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
    /**
     * @return the load balancer algorithm (source, roundrobin, leastconn)
     */
-   public Algorithm getAlgorithm() {
-      return algorithm;
+   @Nullable
+   public LoadBalancerRule.Algorithm getAlgorithm() {
+      return this.algorithm;
    }
 
    /**
     * @return the description of the load balancer
     */
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    /**
     * @return the domain of the load balancer rule
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the domain ID of the load balancer rule
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return the name of the load balancer
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return the private port
     */
    public int getPrivatePort() {
-      return privatePort;
+      return this.privatePort;
    }
 
    /**
     * @return the public ip address
     */
+   @Nullable
    public String getPublicIP() {
-      return publicIP;
+      return this.publicIP;
    }
 
    /**
     * @return the public ip address id
     */
+   @Nullable
    public String getPublicIPId() {
-      return publicIPId;
+      return this.publicIPId;
    }
 
    /**
     * @return the public port
     */
    public int getPublicPort() {
-      return publicPort;
+      return this.publicPort;
    }
 
    /**
     * @return the state of the rule
     */
-   public State getState() {
-      return state;
+   @Nullable
+   public LoadBalancerRule.State getState() {
+      return this.state;
    }
 
    /**
     * @return the cidr list to forward traffic from
     */
    public Set<String> getCIDRs() {
-      return CIDRs;
+      return this.CIDRs;
    }
 
    /**
     * @return the id of the zone the rule beStrings to
     */
+   @Nullable
    public String getZoneId() {
-      return zoneId;
-   }
-
-   @Override
-   public int compareTo(LoadBalancerRule arg0) {
-      return id.compareTo(arg0.getId());
-   }
-
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      LoadBalancerRule that = (LoadBalancerRule) o;
-
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(algorithm, that.algorithm)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(privatePort, that.privatePort)) return false;
-      if (!Objects.equal(publicIP, that.publicIP)) return false;
-      if (!Objects.equal(publicIPId, that.publicIPId)) return false;
-      if (!Objects.equal(publicPort, that.publicPort)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-
-      return true;
+      return this.zoneId;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(account, algorithm, description, domain, domainId, id, name, privatePort, publicIP, publicIPId, publicPort, zoneId, state);
+      return Objects.hashCode(id, account, algorithm, description, domain, domainId, name, privatePort, publicIP, publicIPId, publicPort, state, CIDRs, zoneId);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      LoadBalancerRule that = LoadBalancerRule.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.algorithm, that.algorithm)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.privatePort, that.privatePort)
+               && Objects.equal(this.publicIP, that.publicIP)
+               && Objects.equal(this.publicIPId, that.publicIPId)
+               && Objects.equal(this.publicPort, that.publicPort)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.CIDRs, that.CIDRs)
+               && Objects.equal(this.zoneId, that.zoneId);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("algorithm", algorithm).add("description", description).add("domain", domain).add("domainId", domainId).add("name", name).add("privatePort", privatePort).add("publicIP", publicIP).add("publicIPId", publicIPId).add("publicPort", publicPort).add("state", state).add("CIDRs", CIDRs).add("zoneId", zoneId);
+   }
+   
+   @Override
    public String toString() {
-      return "LoadBalancerRule{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", algorithm=" + algorithm +
-            ", description='" + description + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", name='" + name + '\'' +
-            ", privatePort=" + privatePort +
-            ", publicIP='" + publicIP + '\'' +
-            ", publicIPId=" + publicIPId +
-            ", publicPort=" + publicPort +
-            ", state=" + state +
-            ", CIDRs=" + CIDRs +
-            ", zoneId=" + zoneId +
-            '}';
+      return string().toString();
    }
 
 }

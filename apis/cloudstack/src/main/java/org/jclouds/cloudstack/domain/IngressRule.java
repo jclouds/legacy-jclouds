@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,118 +18,170 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * 
  * @author Adrian Cole
- */
+*/
 public class IngressRule implements Comparable<IngressRule> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromIngressRule(this);
    }
 
-   public static class Builder {
-      private String account;
-      private String CIDR;
-      private int endPort = -1;
-      private int ICMPCode = -1;
-      private int ICMPType = -1;
-      private String protocol;
-       private String id;
-      private String securityGroupName;
-      private int startPort = -1;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder account(String account) {
+      protected String account;
+      protected String CIDR;
+      protected int endPort;
+      protected int ICMPCode;
+      protected int ICMPType;
+      protected String protocol;
+      protected String id;
+      protected String securityGroupName;
+      protected int startPort;
+   
+      /** 
+       * @see IngressRule#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder CIDR(String CIDR) {
+      /** 
+       * @see IngressRule#getCIDR()
+       */
+      public T CIDR(String CIDR) {
          this.CIDR = CIDR;
-         return this;
+         return self();
       }
 
-      public Builder endPort(int endPort) {
+      /** 
+       * @see IngressRule#getEndPort()
+       */
+      public T endPort(int endPort) {
          this.endPort = endPort;
-         return this;
+         return self();
       }
 
-      public Builder ICMPCode(int ICMPCode) {
+      /** 
+       * @see IngressRule#getICMPCode()
+       */
+      public T ICMPCode(int ICMPCode) {
          this.ICMPCode = ICMPCode;
-         return this;
+         return self();
       }
 
-      public Builder ICMPType(int ICMPType) {
+      /** 
+       * @see IngressRule#getICMPType()
+       */
+      public T ICMPType(int ICMPType) {
          this.ICMPType = ICMPType;
-         return this;
+         return self();
       }
 
-      public Builder protocol(String protocol) {
+      /** 
+       * @see IngressRule#getProtocol()
+       */
+      public T protocol(String protocol) {
          this.protocol = protocol;
-         return this;
+         return self();
       }
 
-      public Builder id(String id) {
+      /** 
+       * @see IngressRule#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder securityGroupName(String securityGroupName) {
+      /** 
+       * @see IngressRule#getSecurityGroupName()
+       */
+      public T securityGroupName(String securityGroupName) {
          this.securityGroupName = securityGroupName;
-         return this;
+         return self();
       }
 
-      public Builder startPort(int startPort) {
+      /** 
+       * @see IngressRule#getStartPort()
+       */
+      public T startPort(int startPort) {
          this.startPort = startPort;
-         return this;
+         return self();
       }
 
       public IngressRule build() {
          return new IngressRule(account, CIDR, endPort, ICMPCode, ICMPType, protocol, id, securityGroupName, startPort);
       }
+      
+      public T fromIngressRule(IngressRule in) {
+         return this
+                  .account(in.getAccount())
+                  .CIDR(in.getCIDR())
+                  .endPort(in.getEndPort())
+                  .ICMPCode(in.getICMPCode())
+                  .ICMPType(in.getICMPType())
+                  .protocol(in.getProtocol())
+                  .id(in.getId())
+                  .securityGroupName(in.getSecurityGroupName())
+                  .startPort(in.getStartPort());
+      }
    }
 
-   private String account;
-   @SerializedName("cidr")
-   private String CIDR;
-   @SerializedName("endport")
-   private int endPort = -1;
-   @SerializedName("icmpcode")
-   private int ICMPCode = -1;
-   @SerializedName("icmptype")
-   private int ICMPType = -1;
-   private String protocol;
-   @SerializedName("ruleid")
-   private String id;
-   @SerializedName("securitygroupname")
-   private String securityGroupName;
-   @SerializedName("startport")
-   private int startPort = -1;
-
-   // for serialization
-   IngressRule() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public IngressRule(String account, String CIDR, int endPort, int iCMPCode, int iCMPType, String protocol, String id,
-         String securityGroupName, int startPort) {
-      if (account == null)
-         checkArgument(securityGroupName == null && CIDR != null,
-               "if you do not specify an account and security group, you must specify a CIDR range");
-      if (CIDR == null)
-         checkArgument(account != null && securityGroupName != null,
-               "if you do not specify an account and security group, you must specify a CIDR range");
+   private final String account;
+   @Named("cidr")
+   private final String CIDR;
+   @Named("endport")
+   private final int endPort;
+   @Named("icmpcode")
+   private final int ICMPCode;
+   @Named("icmptype")
+   private final int ICMPType;
+   private final String protocol;
+   @Named("ruleid")
+   private final String id;
+   @Named("securitygroupname")
+   private final String securityGroupName;
+   @Named("startport")
+   private final int startPort;
+
+   @ConstructorProperties({
+      "account", "cidr", "endport", "icmpcode", "icmptype", "protocol", "ruleid", "securitygroupname", "startport"
+   })
+   protected IngressRule(@Nullable String account, @Nullable String CIDR, int endPort, int ICMPCode, int ICMPType,
+                         @Nullable String protocol, String id, @Nullable String securityGroupName, int startPort) {
       this.account = account;
       this.CIDR = CIDR;
       this.endPort = endPort;
-      this.ICMPCode = iCMPCode;
-      this.ICMPType = iCMPType;
+      this.ICMPCode = ICMPCode;
+      this.ICMPType = ICMPType;
       this.protocol = protocol;
-      this.id = id;
+      this.id = checkNotNull(id, "id");
       this.securityGroupName = securityGroupName;
       this.startPort = startPort;
    }
@@ -137,108 +189,104 @@ public class IngressRule implements Comparable<IngressRule> {
    /**
     * @return account owning the ingress rule
     */
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
    /**
     * @return the CIDR notation for the base IP address of the ingress rule
     */
+   @Nullable
    public String getCIDR() {
-      return CIDR;
+      return this.CIDR;
    }
 
    /**
     * @return the ending IP of the ingress rule
     */
    public int getEndPort() {
-      return endPort;
+      return this.endPort;
    }
 
    /**
     * @return the code for the ICMP message response
     */
    public int getICMPCode() {
-      return ICMPCode;
+      return this.ICMPCode;
    }
 
    /**
     * @return the type of the ICMP message response
     */
    public int getICMPType() {
-      return ICMPType;
+      return this.ICMPType;
    }
 
    /**
     * @return the protocol of the ingress rule
     */
+   @Nullable
    public String getProtocol() {
-      return protocol;
+      return this.protocol;
    }
 
    /**
     * @return the id of the ingress rule
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return security group name
     */
+   @Nullable
    public String getSecurityGroupName() {
-      return securityGroupName;
+      return this.securityGroupName;
    }
 
    /**
     * @return the starting IP of the ingress rule
     */
    public int getStartPort() {
-      return startPort;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      IngressRule that = (IngressRule) o;
-
-      if (!Objects.equal(CIDR, that.CIDR)) return false;
-      if (!Objects.equal(ICMPCode, that.ICMPCode)) return false;
-      if (!Objects.equal(ICMPType, that.ICMPType)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(endPort, that.endPort)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(protocol, that.protocol)) return false;
-      if (!Objects.equal(securityGroupName, that.securityGroupName)) return false;
-      if (!Objects.equal(startPort, that.startPort)) return false;
-
-      return true;
+      return this.startPort;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(CIDR, ICMPCode, ICMPType, account, endPort, id, protocol, securityGroupName, startPort);
+      return Objects.hashCode(account, CIDR, endPort, ICMPCode, ICMPType, protocol, id, securityGroupName, startPort);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      IngressRule that = IngressRule.class.cast(obj);
+      return Objects.equal(this.account, that.account)
+               && Objects.equal(this.CIDR, that.CIDR)
+               && Objects.equal(this.endPort, that.endPort)
+               && Objects.equal(this.ICMPCode, that.ICMPCode)
+               && Objects.equal(this.ICMPType, that.ICMPType)
+               && Objects.equal(this.protocol, that.protocol)
+               && Objects.equal(this.id, that.id)
+               && Objects.equal(this.securityGroupName, that.securityGroupName)
+               && Objects.equal(this.startPort, that.startPort);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("account", account).add("CIDR", CIDR).add("endPort", endPort).add("ICMPCode", ICMPCode)
+            .add("ICMPType", ICMPType).add("protocol", protocol).add("id", id).add("securityGroupName", securityGroupName).add("startPort", startPort);
+   }
+   
    @Override
    public String toString() {
-      return "IngressRule{" +
-            "account='" + account + '\'' +
-            ", CIDR='" + CIDR + '\'' +
-            ", endPort=" + endPort +
-            ", ICMPCode=" + ICMPCode +
-            ", ICMPType=" + ICMPType +
-            ", protocol='" + protocol + '\'' +
-            ", id=" + id +
-            ", securityGroupName='" + securityGroupName + '\'' +
-            ", startPort=" + startPort +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(IngressRule arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(IngressRule o) {
+      return id.compareTo(o.getId());
    }
 }

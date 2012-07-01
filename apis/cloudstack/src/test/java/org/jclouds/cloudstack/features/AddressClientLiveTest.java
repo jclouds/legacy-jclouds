@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListPublicIPAddressesOptions;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;

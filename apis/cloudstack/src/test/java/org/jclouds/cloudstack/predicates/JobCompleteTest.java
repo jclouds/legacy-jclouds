@@ -68,7 +68,7 @@ public class JobCompleteTest {
    public void testFailedJobComplete() {
       AsyncJob<?> job = AsyncJob.builder().id("100")
          .status(Status.FAILED).resultCode(ResultCode.FAIL)
-         .error(new AsyncJobError(ErrorCode.INTERNAL_ERROR, "Dummy test error")).build();
+         .error(AsyncJobError.builder().errorCode(ErrorCode.INTERNAL_ERROR).errorText("Dummy test error").build()).build();
       expect((Object) asyncJobClient.getAsyncJob(job.getId())).andReturn(job);
 
       replay(client, asyncJobClient);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,9 +20,16 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents a CloudStack Cluster.
@@ -31,7 +38,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Cluster implements Comparable<Cluster> {
 
-   public enum ManagedState {
+   /**
+    */
+   public static enum ManagedState {
       MANAGED,
       PREPARE_UNMANAGED,
       UNMANAGED,
@@ -52,93 +61,160 @@ public class Cluster implements Comparable<Cluster> {
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private AllocationState allocationState;
-      private Host.ClusterType clusterType;
-      private String hypervisor;
-      private ManagedState managedState;
-      private String name;
-      private String podId;
-      private String podName;
-      private String zoneId;
-      private String zoneName;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromCluster(this);
+   }
 
-      public Builder id(String id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected AllocationState allocationState;
+      protected Host.ClusterType clusterType;
+      protected String hypervisor;
+      protected Cluster.ManagedState managedState;
+      protected String name;
+      protected String podId;
+      protected String podName;
+      protected String zoneId;
+      protected String zoneName;
+
+      /**
+       * @see Cluster#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder allocationState(AllocationState allocationState) {
+      /**
+       * @see Cluster#getAllocationState()
+       */
+      public T allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
-         return this;
+         return self();
       }
 
-      public Builder clusterType(Host.ClusterType clusterType) {
+      /**
+       * @see Cluster#getClusterType()
+       */
+      public T clusterType(Host.ClusterType clusterType) {
          this.clusterType = clusterType;
-         return this;
+         return self();
       }
 
-      public Builder hypervisor(String hypervisor) {
+      /**
+       * @see Cluster#getHypervisor()
+       */
+      public T hypervisor(String hypervisor) {
          this.hypervisor = hypervisor;
-         return this;
+         return self();
       }
 
-      public Builder managedState(ManagedState managedState) {
+      /**
+       * @see Cluster#getManagedState()
+       */
+      public T managedState(Cluster.ManagedState managedState) {
          this.managedState = managedState;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see Cluster#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder podId(String podId) {
+      /**
+       * @see Cluster#getPodId()
+       */
+      public T podId(String podId) {
          this.podId = podId;
-         return this;
+         return self();
       }
 
-      public Builder podName(String podName) {
+      /**
+       * @see Cluster#getPodName()
+       */
+      public T podName(String podName) {
          this.podName = podName;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /**
+       * @see Cluster#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder zoneName(String zoneName) {
+      /**
+       * @see Cluster#getZoneName()
+       */
+      public T zoneName(String zoneName) {
          this.zoneName = zoneName;
-         return this;
+         return self();
       }
 
       public Cluster build() {
          return new Cluster(id, allocationState, clusterType, hypervisor, managedState, name, podId, podName, zoneId, zoneName);
       }
+
+      public T fromCluster(Cluster in) {
+         return this
+               .id(in.getId())
+               .allocationState(in.getAllocationState())
+               .clusterType(in.getClusterType())
+               .hypervisor(in.getHypervisor())
+               .managedState(in.getManagedState())
+               .name(in.getName())
+               .podId(in.getPodId())
+               .podName(in.getPodName())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName());
+      }
    }
 
-   private String id;
-   @SerializedName("allocationstate") private AllocationState allocationState;
-   @SerializedName("clustertype") private Host.ClusterType clusterType;
-   @SerializedName("hypervisortype") private String hypervisor;
-   @SerializedName("managedstate") private ManagedState managedState;
-   private String name;
-   @SerializedName("podid") private String podId;
-   @SerializedName("podname") private String podName;
-   @SerializedName("zoneid") private String zoneId;
-   @SerializedName("zonename") private String zoneName;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   // Just for the serializer
-   Cluster() {}
+   private final String id;
+   @Named("allocationstate")
+   private final AllocationState allocationState;
+   @Named("clustertype")
+   private final Host.ClusterType clusterType;
+   @Named("hypervisortype")
+   private final String hypervisor;
+   @Named("managedstate")
+   private final Cluster.ManagedState managedState;
+   private final String name;
+   @Named("podid")
+   private final String podId;
+   @Named("podname")
+   private final String podName;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
 
-   public Cluster(String id, AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, String podId, String podName, String zoneId, String zoneName) {
-      this.id = id;
+   @ConstructorProperties({
+         "id", "allocationstate", "clustertype", "hypervisortype", "managedstate", "name", "podid", "podname", "zoneid", "zonename"
+   })
+   protected Cluster(String id, @Nullable AllocationState allocationState, @Nullable Host.ClusterType clusterType,
+                     @Nullable String hypervisor, @Nullable Cluster.ManagedState managedState, @Nullable String name,
+                     @Nullable String podId, @Nullable String podName, @Nullable String zoneId, @Nullable String zoneName) {
+      this.id = checkNotNull(id, "id");
       this.allocationState = allocationState;
       this.clusterType = clusterType;
       this.hypervisor = hypervisor;
@@ -151,86 +227,85 @@ public class Cluster implements Comparable<Cluster> {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
    public AllocationState getAllocationState() {
-      return allocationState;
+      return this.allocationState;
    }
 
+   @Nullable
    public Host.ClusterType getClusterType() {
-      return clusterType;
+      return this.clusterType;
    }
 
+   @Nullable
    public String getHypervisor() {
-      return hypervisor;
+      return this.hypervisor;
    }
 
-   public ManagedState getManagedState() {
-      return managedState;
+   @Nullable
+   public Cluster.ManagedState getManagedState() {
+      return this.managedState;
    }
 
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
+   @Nullable
    public String getPodId() {
-      return podId;
+      return this.podId;
    }
 
+   @Nullable
    public String getPodName() {
-      return podName;
+      return this.podName;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getZoneName() {
-      return zoneName;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Cluster that = (Cluster) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(podId, that.podId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(allocationState, that.allocationState)) return false;
-      if (!Objects.equal(clusterType, that.clusterType)) return false;
-      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
-      if (!Objects.equal(managedState, that.managedState)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(podName, that.podName)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.zoneName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, allocationState, clusterType, hypervisor, managedState, name, podId, podName,
-                               zoneId, zoneName);
+      return Objects.hashCode(id, allocationState, clusterType, hypervisor, managedState, name, podId, podName, zoneId, zoneName);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Cluster that = Cluster.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.allocationState, that.allocationState)
+            && Objects.equal(this.clusterType, that.clusterType)
+            && Objects.equal(this.hypervisor, that.hypervisor)
+            && Objects.equal(this.managedState, that.managedState)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.podId, that.podId)
+            && Objects.equal(this.podName, that.podName)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("allocationState", allocationState).add("clusterType", clusterType).add("hypervisor", hypervisor)
+            .add("managedState", managedState).add("name", name).add("podId", podId).add("podName", podName).add("zoneId", zoneId).add("zoneName", zoneName);
    }
 
    @Override
    public String toString() {
-      return "Cluster{" +
-         "id=" + id +
-         ", allocationState=" + allocationState +
-         ", clusterType=" + clusterType +
-         ", hypervisor='" + hypervisor + '\'' +
-         ", managedState=" + managedState +
-         ", name='" + name + '\'' +
-         ", podId=" + podId +
-         ", podName='" + podName + '\'' +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         '}';
+      return string().toString();
    }
 
    @Override

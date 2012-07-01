@@ -26,7 +26,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -48,21 +48,21 @@ public class DescribeLoadBalancerResponseHandlerTest extends BaseHandlerTest {
    public void testParse() {
       InputStream is = getClass().getResourceAsStream("/describe_loadbalancers.xml");
 
-      Set<LoadBalancer> contents = Sets.newHashSet();
-      LoadBalancer dummy = new LoadBalancer(null, "my-load-balancer", ImmutableSet.of("i-5b33e630",
+      Set<CrappyLoadBalancer> contents = Sets.newHashSet();
+      CrappyLoadBalancer dummy = new CrappyLoadBalancer(null, "my-load-balancer", ImmutableSet.of("i-5b33e630",
             "i-8f26d7e4", "i-5933e632"), ImmutableSet.of("us-east-1a"),
             "my-load-balancer-1400212309.us-east-1.elb.amazonaws.com");
       contents.add(dummy);
 
-      Set<LoadBalancer> result = parseLoadBalancers(is);
+      Set<CrappyLoadBalancer> result = parseLoadBalancers(is);
 
       assertEquals(result, contents);
    }
 
-   private Set<LoadBalancer> parseLoadBalancers(InputStream is) {
+   private Set<CrappyLoadBalancer> parseLoadBalancers(InputStream is) {
       DescribeLoadBalancersResponseHandler handler = injector.getInstance(DescribeLoadBalancersResponseHandler.class);
       addDefaultRegionToHandler(handler);
-      Set<LoadBalancer> result = factory.create(handler).parse(is);
+      Set<CrappyLoadBalancer> result = factory.create(handler).parse(is);
       return result;
    }
 

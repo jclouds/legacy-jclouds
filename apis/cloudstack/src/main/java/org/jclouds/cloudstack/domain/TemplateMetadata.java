@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,219 +18,222 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class TemplateMetadata
+ * 
  * @author Richard Downer
- */
+*/
 public class TemplateMetadata {
 
-    public static Builder builder() {
-        return new Builder();
-    }
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromTemplateMetadata(this);
+   }
 
-    public static class Builder {
-        private String name;
-        private String osTypeId;
-        private String displayText;
-        private String snapshotId;
-        private String volumeId;
-        private String virtualMachineId;
-        private Boolean passwordEnabled;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-        /**
-         * @param name
-         *            the name of the template
-         */
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+      protected String name;
+      protected String osTypeId;
+      protected String displayText;
+      protected String snapshotId;
+      protected String volumeId;
+      protected String virtualMachineId;
+      protected Boolean passwordEnabled;
+   
+      /** 
+       * @see TemplateMetadata#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
 
-        /**
-         * @param osTypeId
-         *            the ID of the OS Type that best represents the OS of this template.
-         */
-        public Builder osTypeId(String osTypeId) {
-            this.osTypeId = osTypeId;
-            return this;
-        }
+      /** 
+       * @see TemplateMetadata#getOsTypeId()
+       */
+      public T osTypeId(String osTypeId) {
+         this.osTypeId = osTypeId;
+         return self();
+      }
 
-        /**
-         * @param displayText
-         *            the display text of the template. This is usually used for display purposes.
-         */
-        public Builder displayText(String displayText) {
-            this.displayText = displayText;
-            return this;
-        }
+      /** 
+       * @see TemplateMetadata#getDisplayText()
+       */
+      public T displayText(String displayText) {
+         this.displayText = displayText;
+         return self();
+      }
 
-        /**
-         * @param snapshotId
-         *      the ID of the snapshot the template is being created from.
-         *          Either this parameter, or volumeId has to be passed in
-         */
-        public Builder snapshotId(String snapshotId) {
-            this.snapshotId = snapshotId;
-            return this;
-        }
+      /** 
+       * @see TemplateMetadata#getSnapshotId()
+       */
+      public T snapshotId(String snapshotId) {
+         this.snapshotId = snapshotId;
+         return self();
+      }
 
-        /**
-         * @param volumeId
-         *          the ID of the disk volume the template is being created from.
-         *          Either this parameter, or snapshotId has to be passed in
-         */
-        public Builder volumeId(String volumeId) {
-            this.volumeId = volumeId;
-            return this;
-        }
+      /** 
+       * @see TemplateMetadata#getVolumeId()
+       */
+      public T volumeId(String volumeId) {
+         this.volumeId = volumeId;
+         return self();
+      }
 
-        /**
-         * @param virtualMachineId
-         *          the ID of the disk volume the template is being created from
-         */
-        public Builder virtualMachineId(String virtualMachineId) {
-            this.virtualMachineId = virtualMachineId;
-            return this;
-        }
+      /** 
+       * @see TemplateMetadata#getVirtualMachineId()
+       */
+      public T virtualMachineId(String virtualMachineId) {
+         this.virtualMachineId = virtualMachineId;
+         return self();
+      }
 
-        /**
-         * the template supports the password reset feature.
-         */
-        public Builder passwordEnabled() {
-            this.passwordEnabled = true;
-            return this;
-        }
+      /** 
+       * @see TemplateMetadata#isPasswordEnabled()
+       */
+      public T passwordEnabled(Boolean passwordEnabled) {
+         this.passwordEnabled = passwordEnabled;
+         return self();
+      }
 
-        public TemplateMetadata build() {
-            TemplateMetadata template = new TemplateMetadata(name, osTypeId, displayText);
-            template.setPasswordEnabled(passwordEnabled);
-            template.setSnapshotId(snapshotId);
-            template.setVirtualMachineId(virtualMachineId);
-            template.setVolumeId(volumeId);
-            return template;
-        }
-    }
+      public TemplateMetadata build() {
+         return new TemplateMetadata(name, osTypeId, displayText, snapshotId, volumeId, virtualMachineId, passwordEnabled);
+      }
+      
+      public T fromTemplateMetadata(TemplateMetadata in) {
+         return this
+                  .name(in.getName())
+                  .osTypeId(in.getOsTypeId())
+                  .displayText(in.getDisplayText())
+                  .snapshotId(in.getSnapshotId())
+                  .volumeId(in.getVolumeId())
+                  .virtualMachineId(in.getVirtualMachineId())
+                  .passwordEnabled(in.isPasswordEnabled());
+      }
+   }
 
-    private String name;
-    private String osTypeId;
-    private String displayText;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-    private String snapshotId;
-    private String volumeId;
-    private String virtualMachineId;;
-    private Boolean passwordEnabled;
+   private final String name;
+   private final String osTypeId;
+   private final String displayText;
+   private final String snapshotId;
+   private final String volumeId;
+   private final String virtualMachineId;
+   private final Boolean passwordEnabled;
 
-    public TemplateMetadata(String name, String osTypeId, String displayText) {
-        this.name = name;
-        this.osTypeId = osTypeId;
-        this.displayText = displayText;
-    }
+   @ConstructorProperties({
+      "name", "osTypeId", "displayText", "snapshotId", "volumeId", "virtualMachineId", "passwordEnabled"
+   })
+   protected TemplateMetadata(String name, @Nullable String osTypeId, @Nullable String displayText, @Nullable String snapshotId,
+                              @Nullable String volumeId, String virtualMachineId, Boolean passwordEnabled) {
+      this.name = checkNotNull(name, "name");
+      this.osTypeId = osTypeId;
+      this.displayText = displayText;
+      this.snapshotId = snapshotId;
+      this.volumeId = volumeId;
+      this.virtualMachineId = virtualMachineId;
+      this.passwordEnabled = passwordEnabled;
+   }
 
-    /**
-     * present only for serializer
-     */
-    TemplateMetadata() {
-    }
+   /**
+    * @return the name of the template
+    */
+   public String getName() {
+      return this.name;
+   }
 
-    /**
-     * @return the ID of the snapshot the template is being created from
-     */
-    public String getSnapshotId() {
-        return snapshotId;
-    }
+   /**
+    * @return the ID of the OS Type that best represents the OS of this template.
+    */
+   @Nullable
+   public String getOsTypeId() {
+      return this.osTypeId;
+   }
 
-    public void setSnapshotId(String snapshotId) {
-        this.snapshotId = snapshotId;
-    }
+   /**
+    * @return the display text of the template. This is usually used for display purposes.
+    */
+   @Nullable
+   public String getDisplayText() {
+      return this.displayText;
+   }
 
-    /**
-     * @return the ID of the disk volume the template is being created from
-     */
-    public String getVolumeId() {
-        return volumeId;
-    }
+   /**
+    * @return the ID of the snapshot the template is being created from
+    */
+   @Nullable
+   public String getSnapshotId() {
+      return this.snapshotId;
+   }
 
-    public void setVolumeId(String volumeId) {
-        this.volumeId = volumeId;
-    }
+   /**
+    * @return the ID of the disk volume the template is being created from
+    */
+   @Nullable
+   public String getVolumeId() {
+      return this.volumeId;
+   }
 
-    /**
-     * @return Optional, VM ID
-     */
-    public String getVirtualMachineId() {
-        return virtualMachineId;
-    }
+   /**
+    * @return Optional, VM ID
+    */
+   @Nullable
+   public String getVirtualMachineId() {
+      return this.virtualMachineId;
+   }
 
-    public void setVirtualMachineId(String virtualMachineId) {
-        this.virtualMachineId = virtualMachineId;
-    }
-
-    /**
-     * @return true if the template supports the password reset feature; default is false
-     */
-    public Boolean getPasswordEnabled() {
-        return passwordEnabled;
-    }
-
-    public void setPasswordEnabled(Boolean passwordEnabled) {
-        this.passwordEnabled = passwordEnabled;
-    }
-
-    /**
-     * @return the name of the template
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return the ID of the OS Type that best represents the OS of this template.
-     */
-    public String getOsTypeId() {
-        return osTypeId;
-    }
-
-    /**
-     * @return the display text of the template. This is usually used for display purposes.
-     */
-    public String getDisplayText() {
-        return displayText;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TemplateMetadata that = (TemplateMetadata) o;
-
-        if (!Objects.equal(osTypeId, that.osTypeId)) return false;
-        if (!Objects.equal(snapshotId, that.snapshotId)) return false;
-        if (!Objects.equal(volumeId, that.volumeId)) return false;
-        if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
-        if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
-        if (!Objects.equal(displayText, that.displayText)) return false;
-        if (!Objects.equal(name, that.name)) return false;
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name, displayText, osTypeId, snapshotId, volumeId, passwordEnabled, virtualMachineId);
-    }
+   @Nullable
+   public Boolean isPasswordEnabled() {
+      return this.passwordEnabled;
+   }
 
    @Override
+   public int hashCode() {
+      return Objects.hashCode(name, osTypeId, displayText, snapshotId, volumeId, virtualMachineId, passwordEnabled);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      TemplateMetadata that = TemplateMetadata.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+               && Objects.equal(this.osTypeId, that.osTypeId)
+               && Objects.equal(this.displayText, that.displayText)
+               && Objects.equal(this.snapshotId, that.snapshotId)
+               && Objects.equal(this.volumeId, that.volumeId)
+               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+               && Objects.equal(this.passwordEnabled, that.passwordEnabled);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("name", name).add("osTypeId", osTypeId).add("displayText", displayText).add("snapshotId", snapshotId)
+            .add("volumeId", volumeId).add("virtualMachineId", virtualMachineId).add("passwordEnabled", passwordEnabled);
+   }
+   
+   @Override
    public String toString() {
-      return "TemplateMetadata{" +
-            "name='" + name + '\'' +
-            ", osTypeId=" + osTypeId +
-            ", displayText='" + displayText + '\'' +
-            ", snapshotId=" + snapshotId +
-            ", volumeId=" + volumeId +
-            ", virtualMachineId=" + virtualMachineId +
-            ", passwordEnabled=" + passwordEnabled +
-            '}';
+      return string().toString();
    }
 
 }

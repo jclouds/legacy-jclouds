@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.functions.ParseIdToNameEntryFromHttpResponse;
 import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;

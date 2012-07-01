@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,73 +18,114 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class Capabilities
+ *
  * @author Adrian Cole
  */
 public class Capabilities {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String cloudStackVersion;
-      private boolean securityGroupsEnabled;
-      private boolean canShareTemplates;
-      private boolean firewallRuleUiEnabled;
-      private boolean supportELB;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromCapabilities(this);
+   }
 
-      public Builder cloudStackVersion(String cloudStackVersion) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String cloudStackVersion;
+      protected boolean securityGroupsEnabled;
+      protected boolean canShareTemplates;
+      protected boolean firewallRuleUiEnabled;
+      protected boolean supportELB;
+
+      /**
+       * @see Capabilities#getCloudStackVersion()
+       */
+      public T cloudStackVersion(String cloudStackVersion) {
          this.cloudStackVersion = cloudStackVersion;
-         return this;
+         return self();
       }
 
-      public Builder securityGroupsEnabled(boolean securityGroupsEnabled) {
+      /**
+       * @see Capabilities#isSecurityGroupsEnabled()
+       */
+      public T securityGroupsEnabled(boolean securityGroupsEnabled) {
          this.securityGroupsEnabled = securityGroupsEnabled;
-         return this;
+         return self();
       }
 
-      public Builder sharedTemplatesEnabled(boolean canShareTemplates) {
+      /**
+       * @see Capabilities#canShareTemplates()
+       */
+      public T canShareTemplates(boolean canShareTemplates) {
          this.canShareTemplates = canShareTemplates;
-         return this;
+         return self();
       }
 
-      public Builder firewallRuleUiEnabled(boolean firewallRuleUiEnabled) {
+      /**
+       * @see Capabilities#isFirewallRuleUiEnabled()
+       */
+      public T firewallRuleUiEnabled(boolean firewallRuleUiEnabled) {
          this.firewallRuleUiEnabled = firewallRuleUiEnabled;
-         return this;
+         return self();
       }
 
-      public Builder supportELB(boolean supportELB) {
+      /**
+       * @see Capabilities#isSupportELB()
+       */
+      public T supportELB(boolean supportELB) {
          this.supportELB = supportELB;
-         return this;
+         return self();
       }
 
       public Capabilities build() {
          return new Capabilities(cloudStackVersion, securityGroupsEnabled, canShareTemplates, firewallRuleUiEnabled, supportELB);
       }
+
+      public T fromCapabilities(Capabilities in) {
+         return this
+               .cloudStackVersion(in.getCloudStackVersion())
+               .securityGroupsEnabled(in.isSecurityGroupsEnabled())
+               .canShareTemplates(in.canShareTemplates())
+               .firewallRuleUiEnabled(in.isFirewallRuleUiEnabled())
+               .supportELB(in.isSupportELB());
+      }
    }
 
-   @SerializedName("cloudstackversion")
-   private String cloudStackVersion;
-   @SerializedName("securitygroupsenabled")
-   private boolean securityGroupsEnabled;
-   @SerializedName("userpublictemplateenabled")
-   private boolean canShareTemplates;
-   private boolean firewallRuleUiEnabled;
-   private boolean supportELB;
-
-
-   /**
-    * present only for serializer
-    */
-   Capabilities() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public Capabilities(String cloudStackVersion, boolean securityGroupsEnabled, boolean canShareTemplates,
-                       boolean firewallRuleUiEnabled, boolean supportELB) {
+   @Named("cloudstackversion")
+   private final String cloudStackVersion;
+   @Named("securitygroupsenabled")
+   private final boolean securityGroupsEnabled;
+   @Named("userpublictemplateenabled")
+   private final boolean canShareTemplates;
+   private final boolean firewallRuleUiEnabled;
+   private final boolean supportELB;
+
+   @ConstructorProperties({
+         "cloudstackversion", "securitygroupsenabled", "userpublictemplateenabled", "firewallRuleUiEnabled", "supportELB"
+   })
+   protected Capabilities(@Nullable String cloudStackVersion, boolean securityGroupsEnabled, boolean canShareTemplates,
+                          boolean firewallRuleUiEnabled, boolean supportELB) {
       this.cloudStackVersion = cloudStackVersion;
       this.securityGroupsEnabled = securityGroupsEnabled;
       this.canShareTemplates = canShareTemplates;
@@ -95,71 +136,61 @@ public class Capabilities {
    /**
     * @return version of the cloud stack
     */
+   @Nullable
    public String getCloudStackVersion() {
-      return cloudStackVersion;
+      return this.cloudStackVersion;
    }
 
    /**
     * @return true if security groups support is enabled, false otherwise
     */
    public boolean isSecurityGroupsEnabled() {
-      return securityGroupsEnabled;
+      return this.securityGroupsEnabled;
    }
 
-   /**
-    * @return true if user and domain admins can set templates to be shared,
-    *         false otherwise
-    */
-   public boolean isSharedTemplatesEnabled() {
-      return canShareTemplates;
+   public boolean canShareTemplates() {
+      return this.canShareTemplates;
    }
 
    /**
     * @return true if the firewall rule UI is enabled
     */
    public boolean isFirewallRuleUiEnabled() {
-      return firewallRuleUiEnabled;
+      return this.firewallRuleUiEnabled;
    }
 
    /**
     * @return true if region supports elastic load balancer on basic zones
     */
    public boolean isSupportELB() {
-      return supportELB;
+      return this.supportELB;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(canShareTemplates, cloudStackVersion, securityGroupsEnabled, firewallRuleUiEnabled, supportELB);
+      return Objects.hashCode(cloudStackVersion, securityGroupsEnabled, canShareTemplates, firewallRuleUiEnabled, supportELB);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Capabilities that = (Capabilities) obj;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Capabilities that = Capabilities.class.cast(obj);
+      return Objects.equal(this.cloudStackVersion, that.cloudStackVersion)
+            && Objects.equal(this.securityGroupsEnabled, that.securityGroupsEnabled)
+            && Objects.equal(this.canShareTemplates, that.canShareTemplates)
+            && Objects.equal(this.firewallRuleUiEnabled, that.firewallRuleUiEnabled)
+            && Objects.equal(this.supportELB, that.supportELB);
+   }
 
-      if (!Objects.equal(canShareTemplates, that.canShareTemplates)) return false;
-      if (!Objects.equal(cloudStackVersion, that.cloudStackVersion)) return false;
-      if (!Objects.equal(securityGroupsEnabled, that.securityGroupsEnabled)) return false;
-      if (!Objects.equal(firewallRuleUiEnabled, that.firewallRuleUiEnabled)) return false;
-      if (!Objects.equal(supportELB, that.supportELB)) return false;
-
-      return true;
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("cloudStackVersion", cloudStackVersion).add("securityGroupsEnabled", securityGroupsEnabled).add("canShareTemplates", canShareTemplates).add("firewallRuleUiEnabled", firewallRuleUiEnabled).add("supportELB", supportELB);
    }
 
    @Override
    public String toString() {
-      return "Capabilities{" +
-            "cloudStackVersion='" + cloudStackVersion + '\'' +
-            ", securityGroupsEnabled=" + securityGroupsEnabled +
-            ", canShareTemplates=" + canShareTemplates +
-            ", firewallRuleUiEnabled=" + firewallRuleUiEnabled +
-            ", supportELB=" + supportELB +
-            '}';
+      return string().toString();
    }
+
 }

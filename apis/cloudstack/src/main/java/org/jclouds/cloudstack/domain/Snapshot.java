@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,158 +20,27 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class Snapshot
+ *
  * @author Richard Downer
  */
-public class Snapshot implements Comparable<Snapshot> {
+public class Snapshot {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-
-      private String id;
-      private String account;
-      private Date created;
-      private String domain;
-      private String domainId;
-      private Interval interval;
-      private String jobId;
-      private String jobStatus;
-      private String name;
-      private Type snapshotType;
-      private State state;
-      private String volumeId;
-      private String volumeName;
-      private Volume.Type volumeType;
-
-      /**
-       * @param id ID of the snapshot
-       */
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @param account the account associated with the snapshot
-       */
-      public Builder account(String account) {
-         this.account = account;
-         return this;
-      }
-
-      /**
-       * @param created the date the snapshot was created
-       */
-      public Builder created(Date created) {
-         this.created = created;
-         return this;
-      }
-
-      /**
-       * @param domain the domain name of the snapshot's account
-       */
-      public Builder domain(String domain) {
-         this.domain = domain;
-         return this;
-      }
-
-      /**
-       * @param domainId the domain ID of the snapshot's account
-       */
-      public Builder domainId(String domainId) {
-         this.domainId = domainId;
-         return this;
-      }
-
-      /**
-       * @param interval valid types are hourly, daily, weekly, monthy, template, and none.
-       */
-      public Builder interval(Interval interval) {
-         this.interval = interval;
-         return this;
-      }
-
-      /**
-       * @param jobId the job ID associated with the snapshot. This is only displayed if the snapshot listed is part of a currently running asynchronous job.
-       */
-      public Builder jobId(String jobId) {
-         this.jobId = jobId;
-         return this;
-      }
-
-      /**
-       * @param jobStatus the job status associated with the snapshot. This is only displayed if the snapshot listed is part of a currently running asynchronous job.
-       */
-      public Builder jobStatus(String jobStatus) {
-         this.jobStatus = jobStatus;
-         return this;
-      }
-
-      /**
-       * @param name name of the snapshot
-       */
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @param snapshotType the type of the snapshot
-       */
-      public Builder snapshotType(Type snapshotType) {
-         this.snapshotType = snapshotType;
-         return this;
-      }
-
-      /**
-       * @param state the state of the snapshot. BackedUp means that snapshot is ready to be used; Creating - the snapshot is being allocated on the primary storage; BackingUp - the snapshot is being backed up on secondary storage
-       */
-      public Builder state(State state) {
-         this.state = state;
-         return this;
-      }
-
-      /**
-       * @param volumeId ID of the disk volume
-       */
-      public Builder volumeId(String volumeId) {
-         this.volumeId = volumeId;
-         return this;
-      }
-
-      /**
-       * @param volumeName name of the disk volume
-       */
-      public Builder volumeName(String volumeName) {
-         this.volumeName = volumeName;
-         return this;
-      }
-
-      /**
-       * @param volumeType type of the disk volume
-       */
-      public Builder volumeType(Volume.Type volumeType) {
-         this.volumeType = volumeType;
-         return this;
-      }
-
-      public Snapshot build() {
-         return new Snapshot(id, account, created, domain, domainId, interval, jobId,
-               jobStatus, name, snapshotType, state, volumeId, volumeName, volumeType);
-      }
-
-   }
-
-   public enum State {
+   /**
+    */
+   public static enum State {
 
       BACKED_UP, CREATING, BACKING_UP, UNRECOGNIZED;
 
@@ -189,7 +58,9 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public enum Type {
+   /**
+    */
+   public static enum Type {
 
       MANUAL, RECURRING, UNRECOGNIZED;
 
@@ -202,7 +73,9 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public enum Interval {
+   /**
+    */
+   public static enum Interval {
 
       HOURLY, DAILY, WEEKLY, MONTHLY, template, none, UNRECOGNIZED;
 
@@ -215,32 +88,206 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   private String id;
-   private String account;
-   private Date created;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("intervaltype")
-   private Interval interval;
-   @SerializedName("jobid")
-   private String jobId;
-   @SerializedName("jobstatus")
-   private String jobStatus;
-   private String name;
-   @SerializedName("snapshottype")
-   private Type snapshotType;
-   private State state;
-   @SerializedName("volumeid")
-   private String volumeId;
-   @SerializedName("volumename")
-   private String volumeName;
-   @SerializedName("volumetype")
-   private Volume.Type volumeType;
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
 
-   public Snapshot(String id, String account, Date created, String domain, String domainId, Interval interval, String jobId,
-         String jobStatus, String name, Type snapshotType, State state, String volumeId, String volumeName, Volume.Type volumeType) {
-      this.id = id;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromSnapshot(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String id;
+      protected String account;
+      protected Date created;
+      protected String domain;
+      protected String domainId;
+      protected Snapshot.Interval interval;
+      protected String jobId;
+      protected String jobStatus;
+      protected String name;
+      protected Snapshot.Type snapshotType;
+      protected Snapshot.State state;
+      protected String volumeId;
+      protected String volumeName;
+      protected Volume.Type volumeType;
+
+      /**
+       * @see Snapshot#getId()
+       */
+      public T id(String id) {
+         this.id = id;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getAccount()
+       */
+      public T account(String account) {
+         this.account = account;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getCreated()
+       */
+      public T created(Date created) {
+         this.created = created;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getDomain()
+       */
+      public T domain(String domain) {
+         this.domain = domain;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getDomainId()
+       */
+      public T domainId(String domainId) {
+         this.domainId = domainId;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getInterval()
+       */
+      public T interval(Snapshot.Interval interval) {
+         this.interval = interval;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getJobId()
+       */
+      public T jobId(String jobId) {
+         this.jobId = jobId;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getJobStatus()
+       */
+      public T jobStatus(String jobStatus) {
+         this.jobStatus = jobStatus;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getSnapshotType()
+       */
+      public T snapshotType(Snapshot.Type snapshotType) {
+         this.snapshotType = snapshotType;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getState()
+       */
+      public T state(Snapshot.State state) {
+         this.state = state;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getVolumeId()
+       */
+      public T volumeId(String volumeId) {
+         this.volumeId = volumeId;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getVolumeName()
+       */
+      public T volumeName(String volumeName) {
+         this.volumeName = volumeName;
+         return self();
+      }
+
+      /**
+       * @see Snapshot#getVolumeType()
+       */
+      public T volumeType(Volume.Type volumeType) {
+         this.volumeType = volumeType;
+         return self();
+      }
+
+      public Snapshot build() {
+         return new Snapshot(id, account, created, domain, domainId, interval, jobId, jobStatus, name, snapshotType, state,
+               volumeId, volumeName, volumeType);
+      }
+
+      public T fromSnapshot(Snapshot in) {
+         return this
+               .id(in.getId())
+               .account(in.getAccount())
+               .created(in.getCreated())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .interval(in.getInterval())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus())
+               .name(in.getName())
+               .snapshotType(in.getSnapshotType())
+               .state(in.getState())
+               .volumeId(in.getVolumeId())
+               .volumeName(in.getVolumeName())
+               .volumeType(in.getVolumeType());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   private final String account;
+   private final Date created;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("intervaltype")
+   private final Snapshot.Interval interval;
+   @Named("jobid")
+   private final String jobId;
+   @Named("jobstatus")
+   private final String jobStatus;
+   private final String name;
+   @Named("snapshottype")
+   private final Snapshot.Type snapshotType;
+   private final Snapshot.State state;
+   @Named("volumeid")
+   private final String volumeId;
+   @Named("volumename")
+   private final String volumeName;
+   @Named("volumetype")
+   private final Volume.Type volumeType;
+
+   @ConstructorProperties({
+         "id", "account", "created", "domain", "domainid", "intervaltype", "jobid", "jobstatus", "name", "snapshottype", "state", "volumeid", "volumename", "volumetype"
+   })
+   protected Snapshot(String id, @Nullable String account, @Nullable Date created, @Nullable String domain, @Nullable String domainId,
+                      @Nullable Snapshot.Interval interval, @Nullable String jobId, @Nullable String jobStatus, @Nullable String name,
+                      @Nullable Snapshot.Type snapshotType, @Nullable Snapshot.State state, @Nullable String volumeId, @Nullable String volumeName,
+                      @Nullable Volume.Type volumeType) {
+      this.id = checkNotNull(id, "id");
       this.account = account;
       this.created = created;
       this.domain = domain;
@@ -257,163 +304,152 @@ public class Snapshot implements Comparable<Snapshot> {
    }
 
    /**
-    * present only for serializer
-    */
-   Snapshot() {
-   }
-
-   /**
     * @return ID of the snapshot
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the account associated with the snapshot
     */
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
    /**
     * @return the date the snapshot was created
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
     * @return the domain name of the snapshot's account
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the domain ID of the snapshot's account
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return valid types are hourly, daily, weekly, monthy, template, and none.
     */
-   public Interval getInterval() {
-      return interval;
+   @Nullable
+   public Snapshot.Interval getInterval() {
+      return this.interval;
    }
 
    /**
     * @return the job ID associated with the snapshot. This is only displayed if the snapshot listed is part of a currently running asynchronous job.
     */
+   @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
    /**
     * @return the job status associated with the snapshot. This is only displayed if the snapshot listed is part of a currently running asynchronous job.
     */
+   @Nullable
    public String getJobStatus() {
-      return jobStatus;
+      return this.jobStatus;
    }
 
    /**
     * @return name of the snapshot
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return the type of the snapshot
     */
-   public Type getSnapshotType() {
-      return snapshotType;
+   @Nullable
+   public Snapshot.Type getSnapshotType() {
+      return this.snapshotType;
    }
 
    /**
     * @return the state of the snapshot. BackedUp means that snapshot is ready to be used; Creating - the snapshot is being allocated on the primary storage; BackingUp - the snapshot is being backed up on secondary storage
     */
-   public State getState() {
-      return state;
+   @Nullable
+   public Snapshot.State getState() {
+      return this.state;
    }
 
    /**
     * @return ID of the disk volume
     */
+   @Nullable
    public String getVolumeId() {
-      return volumeId;
+      return this.volumeId;
    }
 
    /**
     * @return name of the disk volume
     */
+   @Nullable
    public String getVolumeName() {
-      return volumeName;
+      return this.volumeName;
    }
 
    /**
     * @return type of the disk volume
     */
+   @Nullable
    public Volume.Type getVolumeType() {
-      return volumeType;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Snapshot that = (Snapshot) o;
-
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(jobId, that.jobId)) return false;
-      if (!Objects.equal(volumeId, that.volumeId)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(interval, that.interval)) return false;
-      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(snapshotType, that.snapshotType)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(volumeName, that.volumeName)) return false;
-      if (!Objects.equal(volumeType, that.volumeType)) return false;
-
-      return true;
+      return this.volumeType;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(domainId, id, jobId, volumeId, account, created, domain,
-                               interval, jobStatus, name, snapshotType, state, volumeName,
-                               volumeType);
+      return Objects.hashCode(id, account, created, domain, domainId, interval, jobId, jobStatus, name, snapshotType, state, volumeId, volumeName, volumeType);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Snapshot that = Snapshot.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.interval, that.interval)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.snapshotType, that.snapshotType)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.volumeId, that.volumeId)
+            && Objects.equal(this.volumeName, that.volumeName)
+            && Objects.equal(this.volumeType, that.volumeType);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("created", created).add("domain", domain).add("domainId", domainId)
+            .add("interval", interval).add("jobId", jobId).add("jobStatus", jobStatus).add("name", name).add("snapshotType", snapshotType)
+            .add("state", state).add("volumeId", volumeId).add("volumeName", volumeName).add("volumeType", volumeType);
    }
 
    @Override
    public String toString() {
-      return "Snapshot{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", created=" + created +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", interval=" + interval +
-            ", jobId=" + jobId +
-            ", jobStatus='" + jobStatus + '\'' +
-            ", name='" + name + '\'' +
-            ", snapshotType=" + snapshotType +
-            ", state=" + state +
-            ", volumeId=" + volumeId +
-            ", volumeName='" + volumeName + '\'' +
-            ", volumeType=" + volumeType +
-            '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(Snapshot other) {
-      return id.compareTo(other.getId());
-   }
 }

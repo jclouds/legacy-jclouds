@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import org.jclouds.cloudstack.config.CloudStackProperties;
 import org.jclouds.cloudstack.features.AccountClient;
-import org.jclouds.cloudstack.features.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,16 +18,24 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
+ * Class AsyncJob
+ *
  * @author Adrian Cole
  */
-public class AsyncJob<T> {
+public class AsyncJob<S> {
 
    /**
     * Valid job result codes
@@ -98,132 +106,205 @@ public class AsyncJob<T> {
       }
    }
 
-   public static <T> Builder<T> builder() {
-      return new Builder<T>();
+   public static <T> Builder<?,T> builder() {
+      return new ConcreteBuilder<T>();
    }
 
-   public static class Builder<T> {
-      private String accountId;
-      private String cmd;
-      private Date created;
-      private String id;
-      private String instanceId;
-      private String instanceType;
-      private int progress;
-      private T result;
-      private ResultCode resultCode = ResultCode.UNKNOWN;
-      private String resultType;
-      private AsyncJobError error;
-      private Status status = Status.UNKNOWN;
-      private String userId;
+   public Builder toBuilder() {
+      return new ConcreteBuilder<S>().fromAsyncJob(this);
+   }
 
-      public Builder<T> accountId(String accountId) {
+   public static abstract class Builder<T extends Builder<T,S>, S>  {
+      protected abstract T self();
+
+      protected String accountId;
+      protected String cmd;
+      protected Date created;
+      protected String id;
+      protected String instanceId;
+      protected String instanceType;
+      protected int progress;
+      protected S result;
+      protected AsyncJob.ResultCode resultCode;
+      protected String resultType;
+      protected AsyncJob.Status status;
+      protected String userId;
+      protected AsyncJobError error;
+
+      /**
+       * @see AsyncJob#getAccountId()
+       */
+      public T accountId(String accountId) {
          this.accountId = accountId;
-         return this;
+         return self();
       }
 
-      public Builder<T> cmd(String cmd) {
+      /**
+       * @see AsyncJob#getCmd()
+       */
+      public T cmd(String cmd) {
          this.cmd = cmd;
-         return this;
+         return self();
       }
 
-      public Builder<T> created(Date created) {
+      /**
+       * @see AsyncJob#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder<T> id(String id) {
+      /**
+       * @see AsyncJob#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder<T> instanceId(String instanceId) {
+      /**
+       * @see AsyncJob#getInstanceId()
+       */
+      public T instanceId(String instanceId) {
          this.instanceId = instanceId;
-         return this;
+         return self();
       }
 
-      public Builder<T> error(AsyncJobError error) {
-         this.error = error;
-         return this;
-      }
-
-      public Builder<T> instanceType(String instanceType) {
+      /**
+       * @see AsyncJob#getInstanceType()
+       */
+      public T instanceType(String instanceType) {
          this.instanceType = instanceType;
-         return this;
+         return self();
       }
 
-      public Builder<T> progress(int progress) {
+      /**
+       * @see AsyncJob#getProgress()
+       */
+      public T progress(int progress) {
          this.progress = progress;
-         return this;
+         return self();
       }
 
-      public Builder<T> result(T result) {
+      /**
+       * @see AsyncJob#getResult()
+       */
+      public T result(S result) {
          this.result = result;
-         return this;
+         return self();
       }
 
-      public Builder<T> resultCode(ResultCode resultCode) {
+      /**
+       * @see AsyncJob#getResultCode()
+       */
+      public T resultCode(AsyncJob.ResultCode resultCode) {
          this.resultCode = resultCode;
-         return this;
+         return self();
       }
 
-      public Builder<T> resultType(String resultType) {
+      /**
+       * @see AsyncJob#getResultType()
+       */
+      public T resultType(String resultType) {
          this.resultType = resultType;
-         return this;
+         return self();
       }
 
-      public Builder<T> status(Status status) {
+      /**
+       * @see AsyncJob#getStatus()
+       */
+      public T status(AsyncJob.Status status) {
          this.status = status;
-         return this;
+         return self();
       }
 
-      public Builder<T> userId(String userId) {
+      /**
+       * @see AsyncJob#getUserId()
+       */
+      public T userId(String userId) {
          this.userId = userId;
-         return this;
+         return self();
       }
 
-      public AsyncJob<T> build() {
-         return new AsyncJob<T>(accountId, cmd, created, id, instanceId, instanceType, progress, result, resultCode,
+      /**
+       * @see AsyncJob#getError()
+       */
+      public T error(AsyncJobError error) {
+         this.error = error;
+         return self();
+      }
+
+      public AsyncJob build() {
+         return new AsyncJob<S>(accountId, cmd, created, id, instanceId, instanceType, progress, result, resultCode,
                resultType, status, userId, error);
       }
 
-      public static <T> Builder<T> fromAsyncJobUntyped(AsyncJob<T> in) {
-         return new Builder<T>().accountId(in.accountId).cmd(in.cmd).created(in.created).id(in.id)
-               .instanceId(in.instanceId).instanceType(in.instanceType).progress(in.progress).result(in.result)
-               .resultCode(in.resultCode).resultType(in.resultType).status(in.status).userId(in.userId).error(in.error);
+      public T fromAsyncJob(AsyncJob<S> in) {
+         return this
+               .accountId(in.getAccountId())
+               .cmd(in.getCmd())
+               .created(in.getCreated())
+               .id(in.getId())
+               .instanceId(in.getInstanceId())
+               .instanceType(in.getInstanceType())
+               .progress(in.getProgress())
+               .result(in.getResult())
+               .resultCode(in.getResultCode())
+               .resultType(in.getResultType())
+               .status(in.getStatus())
+               .userId(in.getUserId())
+               .error(in.getError());
+      }
+
+      public static Builder<?, Object> fromAsyncJobUntyped(AsyncJob in) {
+         return new ConcreteBuilder().fromAsyncJob(in);
       }
    }
 
-   @SerializedName("accountid")
-   private String accountId;
-   private String cmd;
-   private Date created;
-   @SerializedName("jobid")
-   private String id;
-   @SerializedName("jobinstanceid")
-   private String instanceId;
-   @SerializedName("jobinstancetype")
-   private String instanceType;
-   @SerializedName("jobprocstatus")
-   private int progress;
-   @SerializedName("jobresult")
-   private T result;
-   @SerializedName("jobresultcode")
-   private ResultCode resultCode = ResultCode.UNKNOWN;
-   @SerializedName("jobresulttype")
-   private String resultType;
-   @SerializedName("jobstatus")
-   private Status status = Status.UNKNOWN;
-   @SerializedName("userid")
-   private String userId;
-   private AsyncJobError error;
+   private static class ConcreteBuilder<T> extends Builder<ConcreteBuilder<T>,T> {
+      @Override
+      protected ConcreteBuilder<T> self() {
+         return this;
+      }
+   }
 
-   public AsyncJob(String accountId, String cmd, Date created, String id, String instanceId, String instanceType,
-         int progress, T result, ResultCode resultCode, String resultType, Status status, String userId, AsyncJobError error) {
+   @Named("accountid")
+   private final String accountId;
+   private final String cmd;
+   private final Date created;
+   @Named("jobid")
+   private final String id;
+   @Named("jobinstanceid")
+   private final String instanceId;
+   @Named("jobinstancetype")
+   private final String instanceType;
+   @Named("jobprocstatus")
+   private final int progress;
+   @Named("jobresult")
+   private final S result;
+   @Named("jobresultcode")
+   private final AsyncJob.ResultCode resultCode;
+   @Named("jobresulttype")
+   private final String resultType;
+   @Named("jobstatus")
+   private final AsyncJob.Status status;
+   @Named("userid")
+   private final String userId;
+   private final AsyncJobError error;
+
+   @ConstructorProperties({
+         "accountid", "cmd", "created", "jobid", "jobinstanceid", "jobinstancetype", "jobprocstatus", "jobresult",
+         "jobresultcode", "jobresulttype", "jobstatus", "userid", "error"
+   })
+   protected AsyncJob(@Nullable String accountId, @Nullable String cmd, @Nullable Date created, String id,
+                      @Nullable String instanceId, @Nullable String instanceType, int progress, @Nullable S result,
+                      @Nullable AsyncJob.ResultCode resultCode, @Nullable String resultType, @Nullable AsyncJob.Status status,
+                      @Nullable String userId, @Nullable AsyncJobError error) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
-      this.id = id;
+      this.id = checkNotNull(id, "id");
       this.instanceId = instanceId;
       this.instanceType = instanceType;
       this.progress = progress;
@@ -236,105 +317,106 @@ public class AsyncJob<T> {
    }
 
    /**
-    * present only for serializer
-    * 
-    */
-   AsyncJob() {
-
-   }
-
-   /**
     * @return the account that executed the async command
     */
+   @Nullable
    public String getAccountId() {
-      return accountId;
+      return this.accountId;
    }
 
    /**
     * @return the async command executed
     */
+   @Nullable
    public String getCmd() {
-      return cmd;
+      return this.cmd;
    }
 
    /**
     * @return the created date of the job
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
     * @return async job ID
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the unique ID of the instance/entity object related to the job
     */
+   @Nullable
    public String getInstanceId() {
-      return instanceId;
+      return this.instanceId;
    }
 
    /**
     * @return the instance/entity object related to the job
     */
+   @Nullable
    public String getInstanceType() {
-      return instanceType;
+      return this.instanceType;
    }
 
    /**
     * @return the progress information of the PENDING job
     */
    public int getProgress() {
-      return progress;
+      return this.progress;
    }
 
    /**
     * @return the result reason
     */
-   public T getResult() {
-      return result;
+   @Nullable
+   public S getResult() {
+      return this.result;
    }
 
    /**
     * @return the result code for the job
     */
-   public ResultCode getResultCode() {
-      return resultCode;
+   @Nullable
+   public AsyncJob.ResultCode getResultCode() {
+      return this.resultCode;
    }
 
    /**
     * @return the result type
     */
+   @Nullable
    public String getResultType() {
-      return resultType;
+      return this.resultType;
    }
 
    /**
     * @return the current job status-should be 0 for PENDING
     */
-   public Status getStatus() {
-      return status;
+   @Nullable
+   public AsyncJob.Status getStatus() {
+      return this.status;
    }
 
    /**
     * @return the user that executed the async command
     */
+   @Nullable
    public String getUserId() {
-      return userId;
+      return this.userId;
    }
 
    /**
-    * 
-    * 
     * @return the error related to this command, or null if no error or error
-    *         not yet encountered.
+   not yet encountered.
     */
+   @Nullable
    public AsyncJobError getError() {
-      return error;
+      return this.error;
    }
 
    public boolean hasFailed() {
@@ -347,55 +429,39 @@ public class AsyncJob<T> {
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(accountId, cmd, created, id, instanceId, instanceType, error, progress,
-                               result, resultCode, resultType, status, userId);
+      return Objects.hashCode(accountId, cmd, created, id, instanceId, instanceType, progress, result, resultCode, resultType, status, userId, error);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      AsyncJob that = AsyncJob.class.cast(obj);
+      return Objects.equal(this.accountId, that.accountId)
+            && Objects.equal(this.cmd, that.cmd)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.id, that.id)
+            && Objects.equal(this.instanceId, that.instanceId)
+            && Objects.equal(this.instanceType, that.instanceType)
+            && Objects.equal(this.progress, that.progress)
+            && Objects.equal(this.result, that.result)
+            && Objects.equal(this.resultCode, that.resultCode)
+            && Objects.equal(this.resultType, that.resultType)
+            && Objects.equal(this.status, that.status)
+            && Objects.equal(this.userId, that.userId)
+            && Objects.equal(this.error, that.error);
+   }
 
-      AsyncJob<?> that = (AsyncJob<?>) obj;
-
-      if (!Objects.equal(accountId, that.accountId)) return false;
-      if (!Objects.equal(cmd, that.cmd)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(instanceId, that.instanceId)) return false;
-      if (!Objects.equal(instanceType, that.instanceType)) return false;
-      if (!Objects.equal(error, that.error)) return false;
-      if (!Objects.equal(progress, that.progress)) return false;
-      if (!Objects.equal(result, that.result)) return false;
-      if (!Objects.equal(resultCode, that.resultCode)) return false;
-      if (!Objects.equal(resultType, that.resultType)) return false;
-      if (!Objects.equal(status, that.status)) return false;
-      if (!Objects.equal(userId, that.userId)) return false;
-
-      return true;
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("accountId", accountId).add("cmd", cmd).add("created", created).add("id", id).add("instanceId", instanceId)
+            .add("instanceType", instanceType).add("progress", progress).add("result", result).add("resultCode", resultCode)
+            .add("resultType", resultType).add("status", status).add("userId", userId).add("error", error);
    }
 
    @Override
    public String toString() {
-      return "AsyncJob{" +
-            "accountId=" + accountId +
-            ", cmd='" + cmd + '\'' +
-            ", created=" + created +
-            ", id=" + id +
-            ", instanceId=" + instanceId +
-            ", instanceType='" + instanceType + '\'' +
-            ", progress=" + progress +
-            ", result=" + result +
-            ", resultCode=" + resultCode +
-            ", resultType='" + resultType + '\'' +
-            ", status=" + status +
-            ", userId=" + userId +
-            ", error=" + error +
-            '}';
+      return string().toString();
    }
 
 }

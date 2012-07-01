@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
 public class NetworkPredicatesTest {
 
    public void testHasLoadBalancerService() {
-      Network network = Network.builder().id("204").services(ImmutableSet.of(new NetworkService("Lb"))).build();
+      Network network = Network.builder().id("204").services(ImmutableSet.of(NetworkService.builder().name("Lb").build())).build();
 
       assert hasLoadBalancerService().apply(network);
       assert !supportsStaticNAT().apply(network);
@@ -55,7 +55,8 @@ public class NetworkPredicatesTest {
             .builder()
             .id("204")
             .services(
-                  ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true"))))
+                  ImmutableSet.of(NetworkService.builder().name("Firewall").capabilities(
+                        ImmutableMap.<String, String> of("StaticNat", "true")).build()))
             .build();
 
       assert !hasLoadBalancerService().apply(network);
@@ -65,7 +66,8 @@ public class NetworkPredicatesTest {
 
    public void testNoSupport() {
       Network network = Network.builder().id("204")
-            .services(ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of()))).build();
+            .services(ImmutableSet.of(NetworkService.builder().name("Firewall").capabilities(
+                  ImmutableMap.<String, String> of()).build())).build();
 
       assert !hasLoadBalancerService().apply(network);
       assert !supportsStaticNAT().apply(network);
@@ -77,8 +79,8 @@ public class NetworkPredicatesTest {
             .builder()
             .id("204")
             .services(
-                  ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("PortForwarding",
-                        "true")))).build();
+                  ImmutableSet.of(NetworkService.builder().name("Firewall").capabilities(
+                        ImmutableMap.<String, String> of("PortForwarding", "true")).build())).build();
 
       assert !hasLoadBalancerService().apply(network);
       assert !supportsStaticNAT().apply(network);
@@ -90,8 +92,8 @@ public class NetworkPredicatesTest {
             .builder()
             .id("204")
             .services(
-                  ImmutableSet.of(new NetworkService("Firewall", ImmutableMap.<String, String> of("StaticNat", "true",
-                        "PortForwarding", "true")))).build();
+                  ImmutableSet.of(NetworkService.builder().name("Firewall").capabilities(
+                        ImmutableMap.<String, String> of("StaticNat", "true", "PortForwarding", "true")).build())).build();
 
       assert Predicates.and(supportsPortForwarding(), supportsStaticNAT()).apply(network);
       assert !hasLoadBalancerService().apply(network);
@@ -99,10 +101,10 @@ public class NetworkPredicatesTest {
    }
 
    public void testDefaultNetworkInZone() {
-      Network defaultInZone = Network.builder().isDefault(true).zoneId("42").build();
-      Network defaultNotInZone = Network.builder().isDefault(true).zoneId("200").build();
-      Network notDefaultInZone = Network.builder().isDefault(false).zoneId("42").build();
-      Network notDefaultNotInZone = Network.builder().isDefault(false).zoneId("200").build();
+      Network defaultInZone = Network.builder().id("42-1").isDefault(true).zoneId("42").build();
+      Network defaultNotInZone = Network.builder().id("200-1").isDefault(true).zoneId("200").build();
+      Network notDefaultInZone = Network.builder().id("42-2").isDefault(false).zoneId("42").build();
+      Network notDefaultNotInZone = Network.builder().id("200-2").isDefault(false).zoneId("200").build();
 
       Predicate<Network> predicate = defaultNetworkInZone("42");
       assertTrue(predicate.apply(defaultInZone));

@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.jclouds.cloudstack.domain.OSType;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
 import org.testng.annotations.Test;
 

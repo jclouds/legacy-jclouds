@@ -85,7 +85,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
          id("hpcloud-compute")
          .name("HP Cloud Compute Services")
          .apiMetadata(new NovaApiMetadata().toBuilder()
-                  .identityName("tenantName:accessKey or accessKey")
+                  .identityName("yourTenantName:yourAccessKey")
                   .credentialName("secretKey")
                   .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForZones.class,NovaRestClientModule.class, HPCloudComputeServiceContextModule.class))
                   .build())

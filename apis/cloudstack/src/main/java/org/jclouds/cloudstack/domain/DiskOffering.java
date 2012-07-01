@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,103 +20,162 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
-import java.util.Set;
 
-import com.google.common.base.Joiner;
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
+ * Class DiskOffering
+ *
  * @author Adrian Cole
  */
 public class DiskOffering implements Comparable<DiskOffering> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private String name;
-      private String displayText;
-      private Date created;
-      private String domain;
-      private String domainId;
-      private int diskSize;
-      private boolean customized;
-      private Set<String> tags = ImmutableSet.of();
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromDiskOffering(this);
+   }
 
-      public Builder id(String id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected String name;
+      protected String displayText;
+      protected Date created;
+      protected String domain;
+      protected String domainId;
+      protected int diskSize;
+      protected boolean customized;
+      protected String tags;
+
+      /**
+       * @see DiskOffering#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see DiskOffering#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder displayText(String displayText) {
+      /**
+       * @see DiskOffering#getDisplayText()
+       */
+      public T displayText(String displayText) {
          this.displayText = displayText;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /**
+       * @see DiskOffering#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /**
+       * @see DiskOffering#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /**
+       * @see DiskOffering#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder diskSize(int diskSize) {
+      /**
+       * @see DiskOffering#getDiskSize()
+       */
+      public T diskSize(int diskSize) {
          this.diskSize = diskSize;
-         return this;
+         return self();
       }
 
-      public Builder customized(boolean customized) {
+      /**
+       * @see DiskOffering#isCustomized()
+       */
+      public T customized(boolean customized) {
          this.customized = customized;
-         return this;
+         return self();
       }
 
-      public Builder tags(Set<String> tags) {
-         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
-         return this;
+      /**
+       * @see DiskOffering#getTags()
+       */
+      public T tags(String tags) {
+         this.tags = tags;
+         return self();
       }
 
       public DiskOffering build() {
          return new DiskOffering(id, name, displayText, created, domain, domainId, diskSize, customized, tags);
       }
+
+      public T fromDiskOffering(DiskOffering in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .displayText(in.getDisplayText())
+               .created(in.getCreated())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .diskSize(in.getDiskSize())
+               .customized(in.isCustomized())
+               .tags(in.getTags());
+      }
    }
 
-   private String id;
-   private String name;
-   @SerializedName("displaytext")
-   private String displayText;
-   private Date created;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("disksize")
-   private int diskSize;
-   @SerializedName("iscustomized")
-   private boolean customized;
-   private String tags;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public DiskOffering(String id, String name, String displayText, Date created, String domain, String domainId,
-         int diskSize, boolean customized, Set<String> tags) {
-      this.id = id;
+   private final String id;
+   private final String name;
+   @Named("displaytext")
+   private final String displayText;
+   private final Date created;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("disksize")
+   private final int diskSize;
+   @Named("iscustomized")
+   private final boolean customized;
+   private final String tags;
+
+   @ConstructorProperties({
+         "id", "name", "displaytext", "created", "domain", "domainid", "disksize", "iscustomized", "tags"
+   })
+   protected DiskOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created,
+                          @Nullable String domain, @Nullable String domainId, int diskSize, boolean customized,
+                          @Nullable String tags) {
+      this.id = checkNotNull(id, "id");
       this.name = name;
       this.displayText = displayText;
       this.created = created;
@@ -124,136 +183,113 @@ public class DiskOffering implements Comparable<DiskOffering> {
       this.domainId = domainId;
       this.diskSize = diskSize;
       this.customized = customized;
-      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
+      this.tags = tags;
    }
 
    /**
-    * present only for serializer
-    * 
-    */
-   DiskOffering() {
-
-   }
-
-   /**
-    * 
     * @return the id of the disk offering
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
-    * 
     * @return the name of the disk offering
     */
-
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
-    * 
     * @return an alternate display text of the disk offering.
     */
+   @Nullable
    public String getDisplayText() {
-      return displayText;
+      return this.displayText;
    }
 
    /**
-    * 
     * @return the date this disk offering was created
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
-    * 
     * @return Domain name for the offering
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
-    * 
     * @return the domain id of the disk offering
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
-    * 
     * @return the size of the disk offering in GB
     */
    public int getDiskSize() {
-      return diskSize;
+      return this.diskSize;
    }
 
    /**
-    * 
     * @return the ha support in the disk offering
     */
    public boolean isCustomized() {
-      return customized;
+      return this.customized;
    }
 
    /**
-    * 
     * @return the tags for the disk offering
     */
-   public Set<String> getTags() {
-      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String> of();
+   @Nullable
+   public String getTags() {
+      return this.tags;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(created, customized, diskSize, displayText, domain, domainId, id, name, tags);
+      return Objects.hashCode(id, name, displayText, created, domain, domainId, diskSize, customized, tags);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DiskOffering that = (DiskOffering) obj;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      DiskOffering that = DiskOffering.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.diskSize, that.diskSize)
+            && Objects.equal(this.customized, that.customized)
+            && Objects.equal(this.tags, that.tags);
+   }
 
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(customized, that.customized)) return false;
-      if (!Objects.equal(diskSize, that.diskSize)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(tags, that.tags)) return false;
-
-      return true;
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("displayText", displayText).add("created", created).add("domain", domain)
+            .add("domainId", domainId).add("diskSize", diskSize).add("customized", customized).add("tags", tags);
    }
 
    @Override
    public String toString() {
-      return "DiskOffering{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", displayText='" + displayText + '\'' +
-            ", created=" + created +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", diskSize=" + diskSize +
-            ", customized=" + customized +
-            ", tags='" + tags + '\'' +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(DiskOffering arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(DiskOffering other) {
+      return id.compareTo(other.getId());
    }
 
 }

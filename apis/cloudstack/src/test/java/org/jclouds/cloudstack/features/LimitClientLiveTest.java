@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.ResourceLimit;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
 
 /**

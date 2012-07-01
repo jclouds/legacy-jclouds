@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.Volume;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.PredicateCallable;

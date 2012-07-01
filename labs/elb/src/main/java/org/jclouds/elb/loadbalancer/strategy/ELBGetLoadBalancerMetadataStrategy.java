@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.strategy.GetLoadBalancerMetadataStrategy;
 
@@ -42,10 +42,10 @@ import com.google.common.base.Function;
 public class ELBGetLoadBalancerMetadataStrategy implements GetLoadBalancerMetadataStrategy {
 
    private final ELBClient client;
-   private final Function<LoadBalancer, LoadBalancerMetadata> converter;
+   private final Function<CrappyLoadBalancer, LoadBalancerMetadata> converter;
 
    @Inject
-   protected ELBGetLoadBalancerMetadataStrategy(ELBClient client, Function<LoadBalancer, LoadBalancerMetadata> converter) {
+   protected ELBGetLoadBalancerMetadataStrategy(ELBClient client, Function<CrappyLoadBalancer, LoadBalancerMetadata> converter) {
       this.client = checkNotNull(client, "client");
       this.converter = checkNotNull(converter, "converter");
    }

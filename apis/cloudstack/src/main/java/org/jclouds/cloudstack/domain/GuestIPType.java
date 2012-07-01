@@ -25,7 +25,7 @@ import com.google.common.base.CaseFormat;
 /**
  * 
  * @author Adrian Cole
- * @see NetworkOfferingClient#listNetworkOfferings
+ * @see org.jclouds.cloudstack.features.OfferingClient#listNetworkOfferings
  */
 public enum GuestIPType {
 

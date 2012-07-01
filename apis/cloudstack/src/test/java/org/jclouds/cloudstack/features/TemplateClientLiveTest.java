@@ -40,6 +40,7 @@ import org.jclouds.cloudstack.domain.TemplateMetadata;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.CreateTemplateOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.options.ListVolumesOptions;

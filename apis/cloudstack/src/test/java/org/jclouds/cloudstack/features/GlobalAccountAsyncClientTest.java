@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateAccountOptions;
 import org.jclouds.cloudstack.options.UpdateAccountOptions;
 import org.jclouds.http.HttpRequest;

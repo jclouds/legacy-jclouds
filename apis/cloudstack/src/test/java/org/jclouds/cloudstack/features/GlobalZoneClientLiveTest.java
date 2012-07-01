@@ -24,6 +24,7 @@ import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

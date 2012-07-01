@@ -24,9 +24,15 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.features.LoadBalancerClient;
+import org.jclouds.location.Region;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 
 import com.google.common.annotations.Beta;
+import com.google.inject.Provides;
 
 /**
  * Provides access to EC2 Elastic Load Balancer via their REST API.
@@ -38,7 +44,22 @@ import com.google.common.annotations.Beta;
 // see ELBAsyncClient
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ELBClient {
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
+  
+   /**
+    * Provides synchronous access to LoadBalancer features.
+    */
+   @Delegate
+   LoadBalancerClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
+   
+   /// old stuff
    /**
     * Creates a load balancer
     * 
@@ -105,6 +126,6 @@ public interface ELBClient {
     *           names associated with the LoadBalancers at creation time.
     * @return
     */
-   Set<? extends LoadBalancer> describeLoadBalancersInRegion(@Nullable String region, String... loadbalancerNames);
+   Set<? extends CrappyLoadBalancer> describeLoadBalancersInRegion(@Nullable String region, String... loadbalancerNames);
 
 }

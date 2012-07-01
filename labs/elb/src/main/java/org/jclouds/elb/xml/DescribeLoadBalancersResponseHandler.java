@@ -25,10 +25,10 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
-import org.jclouds.elb.domain.LoadBalancer;
-import org.jclouds.elb.domain.LoadBalancer.AppCookieStickinessPolicy;
-import org.jclouds.elb.domain.LoadBalancer.LBCookieStickinessPolicy;
-import org.jclouds.elb.domain.LoadBalancer.LoadBalancerListener;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer.AppCookieStickinessPolicy;
+import org.jclouds.elb.domain.CrappyLoadBalancer.LBCookieStickinessPolicy;
+import org.jclouds.elb.domain.CrappyLoadBalancer.LoadBalancerListener;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
  * @author Lili Nadar
  */
 public class DescribeLoadBalancersResponseHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<Set<LoadBalancer>> {
+      ParseSax.HandlerForGeneratedRequestWithResult<Set<CrappyLoadBalancer>> {
    private final DateService dateService;
    private final LoadBalancerListenerHandler listenerHandler;
 
@@ -54,7 +54,7 @@ public class DescribeLoadBalancersResponseHandler extends
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private Set<LoadBalancer> contents = Sets.newLinkedHashSet();
+   private Set<CrappyLoadBalancer> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
 
    private boolean inListenerDescriptions = false;
@@ -65,7 +65,7 @@ public class DescribeLoadBalancersResponseHandler extends
    // TODO unused?
    private boolean inLoadBalancerDescriptions = false;
 
-   private LoadBalancer elb;
+   private CrappyLoadBalancer elb;
    // TODO unused?
    private AppCookieStickinessPolicy appCookieStickinessPolicy;
    // TODO unused?
@@ -89,7 +89,7 @@ public class DescribeLoadBalancersResponseHandler extends
 
       if (qName.equals("member")) {
          if (!(inListenerDescriptions || inAppCookieStickinessPolicies || inInstances || inLBCookieStickinessPolicies || inAvailabilityZones)) {
-            elb = new LoadBalancer();
+            elb = new CrappyLoadBalancer();
          }
       }
    }
@@ -141,7 +141,7 @@ public class DescribeLoadBalancersResponseHandler extends
    }
 
    @Override
-   public Set<LoadBalancer> getResult() {
+   public Set<CrappyLoadBalancer> getResult() {
       return contents;
    }
 

@@ -33,7 +33,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
@@ -53,10 +53,10 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
    @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final ELBClient client;
-   protected final Function<LoadBalancer, LoadBalancerMetadata> converter;
+   protected final Function<CrappyLoadBalancer, LoadBalancerMetadata> converter;
 
    @Inject
-   protected ELBLoadBalanceNodesStrategy(ELBClient client, Function<LoadBalancer, LoadBalancerMetadata> converter) {
+   protected ELBLoadBalanceNodesStrategy(ELBClient client, Function<CrappyLoadBalancer, LoadBalancerMetadata> converter) {
       this.client = checkNotNull(client, "client");
       this.converter = checkNotNull(converter, "converter");
    }

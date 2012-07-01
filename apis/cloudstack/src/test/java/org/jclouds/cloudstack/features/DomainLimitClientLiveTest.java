@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
 
 /**

@@ -36,20 +36,20 @@ public class ZonePredicatesTest {
    @Test
    public void testSupportsAdvancedNetworks() {
       assertTrue(supportsAdvancedNetworks().apply(
-         Zone.builder().networkType(NetworkType.ADVANCED).build()
+         Zone.builder().id("41").networkType(NetworkType.ADVANCED).build()
       ));
       assertFalse(supportsAdvancedNetworks().apply(
-         Zone.builder().networkType(NetworkType.BASIC).build()
+         Zone.builder().id("42").networkType(NetworkType.BASIC).build()
       ));
    }
 
    @Test
    public void testSupportsSecurityGroups() {
       assertTrue(supportsSecurityGroups().apply(
-         Zone.builder().securityGroupsEnabled(true).build()
+         Zone.builder().id("43").securityGroupsEnabled(true).build()
       ));
       assertFalse(supportsSecurityGroups().apply(
-         Zone.builder().securityGroupsEnabled(false).build()
+         Zone.builder().id("44").securityGroupsEnabled(false).build()
       ));
    }
 

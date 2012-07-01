@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,130 +18,162 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents a Pod in CloudStack.
- *
+ * 
  * @author Richard Downer
- */
+*/
 public class Pod implements Comparable<Pod> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromPod(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String id;
-      private String name;
-      private String zoneId;
-      private String zoneName;
-      private String gateway;
-      private String netmask;
-      private String startIp;
-      private String endIp;
-      private AllocationState allocationState;
-
-      private Builder() {}
-
-      /**
-       * @param id the ID of the Pod
+      protected String id;
+      protected String name;
+      protected String zoneId;
+      protected String zoneName;
+      protected String gateway;
+      protected String netmask;
+      protected String startIp;
+      protected String endIp;
+      protected AllocationState allocationState;
+   
+      /** 
+       * @see Pod#getId()
        */
-      public Builder id(String id) {
-         this.id  = id;
-         return this;
+      public T id(String id) {
+         this.id = id;
+         return self();
       }
 
-      /**
-       * @param name the name of the Pod
+      /** 
+       * @see Pod#getName()
        */
-      public Builder name(String name) {
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      /**
-       * @param zoneId the Zone ID of the Pod
+      /** 
+       * @see Pod#getZoneId()
        */
-      public Builder zoneId(String zoneId) {
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      /**
-       * @param zoneName the Zone name of the Pod
+      /** 
+       * @see Pod#getZoneName()
        */
-      public Builder zoneName(String zoneName) {
+      public T zoneName(String zoneName) {
          this.zoneName = zoneName;
-         return this;
+         return self();
       }
 
-      /**
-       * @param gateway the gateway of the Pod
+      /** 
+       * @see Pod#getGateway()
        */
-      public Builder gateway(String gateway) {
+      public T gateway(String gateway) {
          this.gateway = gateway;
-         return this;
+         return self();
       }
 
-      /**
-       * @param netmask the netmask of the Pod
+      /** 
+       * @see Pod#getNetmask()
        */
-      public Builder netmask(String netmask) {
+      public T netmask(String netmask) {
          this.netmask = netmask;
-         return this;
+         return self();
       }
 
-      /**
-       * @param startIp the starting IP for the Pod
+      /** 
+       * @see Pod#getStartIp()
        */
-      public Builder startIp(String startIp) {
+      public T startIp(String startIp) {
          this.startIp = startIp;
-         return this;
+         return self();
       }
 
-      /**
-       * @param endIp the ending IP for the Pod
+      /** 
+       * @see Pod#getEndIp()
        */
-      public Builder endIp(String endIp) {
+      public T endIp(String endIp) {
          this.endIp = endIp;
-         return this;
+         return self();
       }
 
-      /**
-       * @param allocationState the allocation state of the cluster
+      /** 
+       * @see Pod#getAllocationState()
        */
-      public Builder allocationState(AllocationState allocationState) {
+      public T allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
-         return this;
+         return self();
       }
 
-      /**
-       * Build the Pod object
-       * @return the Pod object
-       */
       public Pod build() {
          return new Pod(id, name, zoneId, zoneName, gateway, netmask, startIp, endIp, allocationState);
       }
+      
+      public T fromPod(Pod in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .zoneId(in.getZoneId())
+                  .zoneName(in.getZoneName())
+                  .gateway(in.getGateway())
+                  .netmask(in.getNetmask())
+                  .startIp(in.getStartIp())
+                  .endIp(in.getEndIp())
+                  .allocationState(in.getAllocationState());
+      }
    }
 
-   private String id;
-   private String name;
-   @SerializedName("zoneid") private String zoneId;
-   @SerializedName("zonename") private String zoneName;
-   private String gateway;
-   private String netmask;
-   @SerializedName("startip") private String startIp;
-   @SerializedName("endip") private String endIp;
-   @SerializedName("allocationstate") private AllocationState allocationState;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   /* Just for the serializer */
-   Pod() {}
+   private final String id;
+   private final String name;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+   private final String gateway;
+   private final String netmask;
+   @Named("startip")
+   private final String startIp;
+   @Named("endip")
+   private final String endIp;
+   @Named("allocationstate")
+   private final AllocationState allocationState;
 
-   public Pod(String id, String name, String zoneId, String zoneName, String gateway, String netmask, String startIp, String endIp, AllocationState allocationState) {
-      this.id = id;
+   @ConstructorProperties({
+      "id", "name", "zoneid", "zonename", "gateway", "netmask", "startip", "endip", "allocationstate"
+   })
+   protected Pod(String id, @Nullable String name, @Nullable String zoneId, @Nullable String zoneName, @Nullable String gateway, @Nullable String netmask, @Nullable String startIp, @Nullable String endIp, @Nullable AllocationState allocationState) {
+      this.id = checkNotNull(id, "id");
       this.name = name;
       this.zoneId = zoneId;
       this.zoneName = zoneName;
@@ -156,103 +188,102 @@ public class Pod implements Comparable<Pod> {
     * @return id the ID of the Pod
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return name the name of the Pod
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return zoneId the Zone ID of the Pod
     */
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
    /**
     * @return zoneName the Zone name of the Pod
     */
+   @Nullable
    public String getZoneName() {
-      return zoneName;
+      return this.zoneName;
    }
 
    /**
     * @return gateway the gateway of the Pod
     */
+   @Nullable
    public String getGateway() {
-      return gateway;
+      return this.gateway;
    }
 
    /**
     * @return netmask the netmask of the Pod
     */
+   @Nullable
    public String getNetmask() {
-      return netmask;
+      return this.netmask;
    }
 
    /**
     * @return startIp the starting IP for the Pod
     */
+   @Nullable
    public String getStartIp() {
-      return startIp;
+      return this.startIp;
    }
 
    /**
     * @return endIp the ending IP for the Pod
     */
+   @Nullable
    public String getEndIp() {
-      return endIp;
+      return this.endIp;
    }
 
    /**
-    * @param allocationState the allocation state of the cluster
+    * @return the allocation state of the cluster
     */
+   @Nullable
    public AllocationState getAllocationState() {
-      return allocationState;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Pod that = (Pod) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(allocationState, that.allocationState)) return false;
-      if (!Objects.equal(endIp, that.endIp)) return false;
-      if (!Objects.equal(gateway, that.gateway)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(netmask, that.netmask)) return false;
-      if (!Objects.equal(startIp, that.startIp)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.allocationState;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, zoneId, allocationState, endIp, gateway, name, netmask, startIp, zoneName);
+      return Objects.hashCode(id, name, zoneId, zoneName, gateway, netmask, startIp, endIp, allocationState);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Pod that = Pod.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.zoneName, that.zoneName)
+               && Objects.equal(this.gateway, that.gateway)
+               && Objects.equal(this.netmask, that.netmask)
+               && Objects.equal(this.startIp, that.startIp)
+               && Objects.equal(this.endIp, that.endIp)
+               && Objects.equal(this.allocationState, that.allocationState);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("zoneId", zoneId).add("zoneName", zoneName).add("gateway", gateway).add("netmask", netmask).add("startIp", startIp).add("endIp", endIp).add("allocationState", allocationState);
+   }
+   
+   @Override
    public String toString() {
-      return "Pod{" +
-         "id=" + id +
-         ", name='" + name + '\'' +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         ", gateway='" + gateway + '\'' +
-         ", netmask='" + netmask + '\'' +
-         ", startIp='" + startIp + '\'' +
-         ", endIp='" + endIp + '\'' +
-         ", allocationState=" + allocationState +
-         '}';
+      return string().toString();
    }
 
    @Override

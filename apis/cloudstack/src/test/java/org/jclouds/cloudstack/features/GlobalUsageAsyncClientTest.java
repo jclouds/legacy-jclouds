@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
 import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
 import org.jclouds.http.HttpRequest;
