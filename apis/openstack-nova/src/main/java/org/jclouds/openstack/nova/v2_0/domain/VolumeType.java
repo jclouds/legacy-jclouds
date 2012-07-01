@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,41 +20,44 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Volume Type used in the Volume Type Extension for Nova
- *
+ * 
  * @see org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeClient
- */
+*/
 public class VolumeType {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromVolumeType(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String id;
-      private String name;
-      private Date created = new Date();
-      private Date updated;
-      private Map<String, String> extraSpecs;
-
-      /**
+      protected String id;
+      protected String name;
+      protected Date created;
+      protected Date updated;
+      protected Map<String, String> extraSpecs = ImmutableMap.of();
+   
+      /** 
        * @see VolumeType#getId()
        */
       public T id(String id) {
@@ -62,7 +65,7 @@ public class VolumeType {
          return self();
       }
 
-      /**
+      /** 
        * @see VolumeType#getName()
        */
       public T name(String name) {
@@ -70,7 +73,7 @@ public class VolumeType {
          return self();
       }
 
-      /**
+      /** 
        * @see VolumeType#getCreated()
        */
       public T created(Date created) {
@@ -78,7 +81,7 @@ public class VolumeType {
          return self();
       }
 
-      /**
+      /** 
        * @see VolumeType#getUpdated()
        */
       public T updated(Date updated) {
@@ -86,27 +89,26 @@ public class VolumeType {
          return self();
       }
 
-      /**
+      /** 
        * @see VolumeType#getExtraSpecs()
        */
       public T extraSpecs(Map<String, String> extraSpecs) {
-         this.extraSpecs = ImmutableMap.copyOf(extraSpecs);
+         this.extraSpecs = ImmutableMap.copyOf(checkNotNull(extraSpecs, "extraSpecs"));     
          return self();
       }
 
       public VolumeType build() {
-         return new VolumeType(this);
+         return new VolumeType(id, name, created, updated, extraSpecs);
       }
-
+      
       public T fromVolumeType(VolumeType in) {
          return this
-               .id(in.getId())
-               .name(in.getName())
-               .extraSpecs(in.getExtraSpecs())
-               .created(in.getCreated())
-               .updated(in.getUpdated().orNull());
+                  .id(in.getId())
+                  .name(in.getName())
+                  .created(in.getCreated())
+                  .updated(in.getUpdated().orNull())
+                  .extraSpecs(in.getExtraSpecs());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -116,27 +118,24 @@ public class VolumeType {
       }
    }
 
-   protected VolumeType() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   private String id;
-   private String name;
-   @SerializedName("created_at")
-   private Date created;
-   @SerializedName("updated_at")
-   private Optional<Date> updated = Optional.absent();
-   @SerializedName(value = "extra_specs")
-   private Map<String, String> extraSpecs = ImmutableMap.of();
+   private final String id;
+   private final String name;
+   @Named("created_at")
+   private final Date created;
+   @Named("updated_at")
+   private final Optional<Date> updated;
+   @Named("extra_specs")
+   private final Map<String, String> extraSpecs;
 
-   protected VolumeType(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
-      this.name = checkNotNull(builder.name, "name");
-      this.extraSpecs = checkNotNull(builder.extraSpecs, "extraSpecs");
-      this.created = checkNotNull(builder.created, "created");
-      this.updated = Optional.fromNullable(builder.updated);
+   @ConstructorProperties({
+      "id", "name", "created_at", "updated_at", "extra_specs"
+   })
+   protected VolumeType(String id, String name, Date created, @Nullable Date updated, Map<String, String> extraSpecs) {
+      this.id = checkNotNull(id, "id");
+      this.name = checkNotNull(name, "name");
+      this.created = checkNotNull(created, "created");
+      this.updated = Optional.fromNullable(updated);
+      this.extraSpecs = ImmutableMap.copyOf(checkNotNull(extraSpecs, "extraSpecs"));     
    }
 
    public String getId() {
@@ -147,18 +146,22 @@ public class VolumeType {
       return this.name;
    }
 
-   /** The Date the VolumeType was created */
+   /**
+    * The Date the VolumeType was created
+    */
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
-   /** The Date the VolumeType as last updated - absent if no updates have taken place */
+   /**
+    * The Date the VolumeType as last updated - absent if no updates have taken place
+    */
    public Optional<Date> getUpdated() {
-      return updated;
+      return this.updated;
    }
 
    public Map<String, String> getExtraSpecs() {
-      return Collections.unmodifiableMap(this.extraSpecs);
+      return this.extraSpecs;
    }
 
    @Override
@@ -172,21 +175,17 @@ public class VolumeType {
       if (obj == null || getClass() != obj.getClass()) return false;
       VolumeType that = VolumeType.class.cast(obj);
       return Objects.equal(this.id, that.id)
-            && Objects.equal(this.name, that.name)
-            && Objects.equal(this.created, that.created)
-            && Objects.equal(this.updated, that.updated)
-            && Objects.equal(this.extraSpecs, that.extraSpecs);
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.updated, that.updated)
+               && Objects.equal(this.extraSpecs, that.extraSpecs);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("id", id)
-            .add("name", name)
-            .add("created", created)
-            .add("updated", updated)
-            .add("extraSpecs", extraSpecs);
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("created", created).add("updated", updated).add("extraSpecs", extraSpecs);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

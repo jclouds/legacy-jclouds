@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
-import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.util.Preconditions2;
@@ -42,6 +41,7 @@ import org.jclouds.util.Preconditions2;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.collect.ForwardingObject;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -162,7 +162,7 @@ public class CreateServerOptions implements MapBinder {
       List<File> personality;
       String key_name;
       @SerializedName(value = "security_groups")
-      Set<SecurityGroup> securityGroupNames;
+      Set<NamedThingy> securityGroupNames;
       String user_data;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
@@ -187,10 +187,9 @@ public class CreateServerOptions implements MapBinder {
       if (userData != null)
           server.user_data = Base64.encodeBytes(userData);
       if (securityGroupNames.size() > 0) {
-         server.securityGroupNames = Sets.newHashSet();
+         server.securityGroupNames = Sets.newLinkedHashSet();
          for (String groupName : securityGroupNames) {
-            SecurityGroup group = SecurityGroup.builder().name(groupName).build();
-            server.securityGroupNames.add(group);
+            server.securityGroupNames.add(new NamedThingy(groupName));
          }
       }
       if (adminPass != null) {
@@ -199,6 +198,20 @@ public class CreateServerOptions implements MapBinder {
 
       return bindToRequest(request, ImmutableMap.of("server", server));
    }
+
+   private static class NamedThingy extends ForwardingObject {
+      private String name;
+
+      private NamedThingy(String name) {
+         this.name = name;
+      }
+
+      @Override
+      protected Object delegate() {
+         return name;
+      }
+   }
+
 
    /**
     * You may further customize a cloud server by injecting data into the file

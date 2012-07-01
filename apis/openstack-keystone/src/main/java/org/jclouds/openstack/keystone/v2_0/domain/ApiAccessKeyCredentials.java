@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,71 +16,86 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 
 import org.jclouds.openstack.keystone.v2_0.config.CredentialType;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Api AccessKey Credentials
- * 
+ *
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Client_Operations.html#d662e583"
- *      />
+/>
  * @author Adrian Cole
  */
 @CredentialType(CredentialTypes.API_ACCESS_KEY_CREDENTIALS)
 public class ApiAccessKeyCredentials {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromSecretKeyCredentials(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiAccessKeyCredentials(this);
    }
 
    public static ApiAccessKeyCredentials createWithAccessKeyAndSecretKey(String accessKey, String secretKey) {
-      return builder().secretKey(secretKey).accessKey(accessKey).build();
+      return new ApiAccessKeyCredentials(accessKey, secretKey);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
       protected String accessKey;
       protected String secretKey;
 
       /**
        * @see ApiAccessKeyCredentials#getAccessKey()
        */
-      protected Builder secretKey(String secretKey) {
-         this.secretKey = secretKey;
-         return this;
+      public T accessKey(String accessKey) {
+         this.accessKey = accessKey;
+         return self();
       }
 
       /**
        * @see ApiAccessKeyCredentials#getSecretKey()
        */
-      public Builder accessKey(String accessKey) {
-         this.accessKey = accessKey;
-         return this;
+      public T secretKey(String secretKey) {
+         this.secretKey = secretKey;
+         return self();
       }
 
       public ApiAccessKeyCredentials build() {
          return new ApiAccessKeyCredentials(accessKey, secretKey);
       }
 
-      public Builder fromSecretKeyCredentials(ApiAccessKeyCredentials from) {
-         return accessKey(from.getAccessKey()).secretKey(from.getSecretKey());
+      public T fromApiAccessKeyCredentials(ApiAccessKeyCredentials in) {
+         return this
+               .accessKey(in.getAccessKey())
+               .secretKey(in.getSecretKey());
       }
    }
 
-   protected final String accessKey;
-   protected final String secretKey;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
+   private final String accessKey;
+   private final String secretKey;
+
+   @ConstructorProperties({
+         "accessKey", "secretKey"
+   })
    protected ApiAccessKeyCredentials(String accessKey, String secretKey) {
       this.accessKey = checkNotNull(accessKey, "accessKey");
       this.secretKey = checkNotNull(secretKey, "secretKey");
@@ -90,27 +105,14 @@ public class ApiAccessKeyCredentials {
     * @return the accessKey
     */
    public String getAccessKey() {
-      return accessKey;
+      return this.accessKey;
    }
 
    /**
     * @return the secretKey
     */
    public String getSecretKey() {
-      return secretKey;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof ApiAccessKeyCredentials) {
-         final ApiAccessKeyCredentials other = ApiAccessKeyCredentials.class.cast(object);
-         return equal(accessKey, other.accessKey) && equal(secretKey, other.secretKey);
-      } else {
-         return false;
-      }
+      return this.secretKey;
    }
 
    @Override
@@ -119,8 +121,22 @@ public class ApiAccessKeyCredentials {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ApiAccessKeyCredentials that = ApiAccessKeyCredentials.class.cast(obj);
+      return Objects.equal(this.accessKey, that.accessKey)
+            && Objects.equal(this.secretKey, that.secretKey);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("accessKey", accessKey).add("secretKey", secretKey);
+   }
+
+   @Override
    public String toString() {
-      return toStringHelper("").add("accessKey", accessKey).add("secretKey", secretKey).toString();
+      return string().toString();
    }
 
 }

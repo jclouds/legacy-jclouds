@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,71 +16,85 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import org.jclouds.openstack.keystone.v2_0.config.CredentialType;
-import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Password Credentials
- * 
+ *
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Client_Operations.html#d662e583"
- *      />
+/>
  * @author Adrian Cole
  */
-@CredentialType(CredentialTypes.PASSWORD_CREDENTIALS)
+@CredentialType("passwordCredentials")
 public class PasswordCredentials {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromPasswordCredentials(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromPasswordCredentials(this);
    }
 
    public static PasswordCredentials createWithUsernameAndPassword(String username, String password) {
-      return builder().password(password).username(username).build();
+      return new PasswordCredentials(username, password);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
       protected String username;
       protected String password;
 
       /**
        * @see PasswordCredentials#getUsername()
        */
-      protected Builder password(String password) {
-         this.password = password;
-         return this;
+      public T username(String username) {
+         this.username = username;
+         return self();
       }
 
       /**
        * @see PasswordCredentials#getPassword()
        */
-      public Builder username(String username) {
-         this.username = username;
-         return this;
+      public T password(String password) {
+         this.password = password;
+         return self();
       }
 
       public PasswordCredentials build() {
          return new PasswordCredentials(username, password);
       }
 
-      public Builder fromPasswordCredentials(PasswordCredentials from) {
-         return username(from.getUsername()).password(from.getPassword());
+      public T fromPasswordCredentials(PasswordCredentials in) {
+         return this
+               .username(in.getUsername())
+               .password(in.getPassword());
       }
    }
 
-   protected final String username;
-   protected final String password;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
+   private final String username;
+   private final String password;
+
+   @ConstructorProperties({
+         "username", "password"
+   })
    protected PasswordCredentials(String username, String password) {
       this.username = checkNotNull(username, "username");
       this.password = checkNotNull(password, "password");
@@ -90,27 +104,14 @@ public class PasswordCredentials {
     * @return the username
     */
    public String getUsername() {
-      return username;
+      return this.username;
    }
 
    /**
     * @return the password
     */
    public String getPassword() {
-      return password;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof PasswordCredentials) {
-         final PasswordCredentials other = PasswordCredentials.class.cast(object);
-         return equal(username, other.username) && equal(password, other.password);
-      } else {
-         return false;
-      }
+      return this.password;
    }
 
    @Override
@@ -119,8 +120,22 @@ public class PasswordCredentials {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      PasswordCredentials that = PasswordCredentials.class.cast(obj);
+      return Objects.equal(this.username, that.username)
+            && Objects.equal(this.password, that.password);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("username", username).add("password", password);
+   }
+
+   @Override
    public String toString() {
-      return toStringHelper("").add("username", username).add("password", password).toString();
+      return string().toString();
    }
 
 }

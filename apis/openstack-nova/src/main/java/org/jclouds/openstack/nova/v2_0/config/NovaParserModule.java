@@ -18,19 +18,20 @@
  */
 package org.jclouds.openstack.nova.v2_0.config;
 
+import java.beans.ConstructorProperties;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
-import org.jclouds.openstack.nova.v2_0.domain.HostResourceUsage;
-import org.jclouds.openstack.nova.v2_0.domain.Server;
-import org.jclouds.openstack.nova.v2_0.domain.ServerExtendedAttributes;
-import org.jclouds.openstack.nova.v2_0.domain.ServerExtendedStatus;
-import org.jclouds.openstack.nova.v2_0.domain.ServerWithSecurityGroups;
+import org.jclouds.openstack.nova.v2_0.domain.*;
+import org.jclouds.openstack.v2_0.domain.Link;
+import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
@@ -57,7 +58,8 @@ public class NovaParserModule extends AbstractModule {
       return ImmutableMap.<Type, Object>of(
             HostResourceUsage.class, new HostResourceUsageAdapter(),
             ServerWithSecurityGroups.class, new ServerWithSecurityGroupsAdapter(),
-            Server.class, new ServerAdapter()
+            Server.class, new ServerAdapter(),
+            SecurityGroupRule.class, new SecurityGroupRuleAdapter()
       );
    }
 
@@ -71,7 +73,7 @@ public class NovaParserModule extends AbstractModule {
       public HostResourceUsage apply(HostResourceUsageView in) {
          return in.resource.toBuilder().build();
       }
-      
+
       @Override
       public HostResourceUsage deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
          return apply((HostResourceUsageView) context.deserialize(jsonElement, HostResourceUsageView.class));
@@ -81,13 +83,18 @@ public class NovaParserModule extends AbstractModule {
       public JsonElement serialize(HostResourceUsage hostResourceUsage, Type type, JsonSerializationContext context) {
          return context.serialize(hostResourceUsage);
       }
-      
+
       private static class HostResourceUsageView {
          protected HostResourceUsageInternal resource;
       }
+
       private static class HostResourceUsageInternal extends HostResourceUsage {
-         protected HostResourceUsageInternal(Builder<?> builder) {
-            super(builder);
+
+         @ConstructorProperties({
+               "host", "project", "memory_mb", "cpu", "disk_gb"
+         })
+         protected HostResourceUsageInternal(String host, @Nullable String project, int memoryMb, int cpu, int diskGb) {
+            super(host, project, memoryMb, cpu, diskGb);
          }
       }
    }
@@ -124,7 +131,7 @@ public class NovaParserModule extends AbstractModule {
          }
          ServerExtendedAttributes extraAttributes = context.deserialize(jsonElement, ServerExtendedAttributes.class);
          if (!Objects.equal(extraAttributes, ServerExtendedAttributes.builder().build())) {
-            result.extraAttributes(extraAttributes);
+            result.extendedAttributes(extraAttributes);
          }
          return result.build();
       }
@@ -134,9 +141,47 @@ public class NovaParserModule extends AbstractModule {
       }
 
       private static class ServerInternal extends Server {
-         protected ServerInternal() {
+         @ConstructorProperties({
+               "id", "name", "links", "uuid", "tenant_id", "user_id", "updated", "created", "hostId", "accessIPv4", "accessIPv6", "status", "image", "flavor", "key_name", "config_drive", "addresses", "metadata", "extendedStatus", "extendedAttributes", "OS-DCF:diskConfig"
+         })
+         protected ServerInternal(String id, @Nullable String name, java.util.Set<Link> links, @Nullable String uuid, String tenantId,
+                                  String userId, Date updated, Date created, @Nullable String hostId, @Nullable String accessIPv4,
+                                  @Nullable String accessIPv6, Server.Status status, Resource image, Resource flavor, @Nullable String keyName,
+                                  @Nullable String configDrive, Map<String, Set<Address>> addresses, Map<String, String> metadata,
+                                  @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes, @Nullable String diskConfig) {
+            super(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses, metadata, extendedStatus, extendedAttributes, diskConfig);
          }
       }
    }
 
+   /* trying to cope with group { } to signify no group! */
+   @Singleton
+   public static class SecurityGroupRuleAdapter implements JsonDeserializer<SecurityGroupRule> {
+      @Override
+      public SecurityGroupRule deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+         SecurityGroupRule ruleBase = apply((SecurityGroupRuleInternal) context.deserialize(jsonElement, SecurityGroupRuleInternal.class));
+         if (jsonElement.getAsJsonObject().has("group")) {
+            try {
+               TenantIdAndName group = context.deserialize(jsonElement.getAsJsonObject().getAsJsonObject("group"), TenantIdAndName.class);
+               ruleBase = ruleBase.toBuilder().group(group).build();
+            } catch (NullPointerException ex) {
+            }
+         }
+         return ruleBase;
+      }
+
+      public SecurityGroupRule apply(SecurityGroupRuleInternal in) {
+         return in.toBuilder().build();
+      }
+
+      private static class SecurityGroupRuleInternal extends SecurityGroupRule {
+         @ConstructorProperties({
+               "ip_protocol", "from_port", "to_port", "id", "parent_group_id", "ip_range"
+         })
+         protected SecurityGroupRuleInternal(IpProtocol ipProtocol, int fromPort, int toPort, String id, String parentGroupId, @Nullable Cidr ipRange) {
+            super(ipProtocol, fromPort, toPort, id, null, parentGroupId, ipRange);
+         }
+      }
+   }
 }

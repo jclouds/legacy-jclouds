@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,101 +20,128 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Set;
+
+import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Information the SimpleTenantUsage extension returns data about each tenant
- *
+ * 
  * @author Adam Lowe
- */
+*/
 public class SimpleTenantUsage {
-   public static Builder<?> builder() {
+
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromSimpleTenantUsage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
-      private String tenantId;
-      private double totalLocalGbUsage;
-      private double totalVcpusUsage;
-      private double totalMemoryMbUsage;
-      private double totalHours;
-      private Date start;
-      private Date stop;
-      private Set<SimpleServerUsage> serverUsages = Sets.newLinkedHashSet();
-
+   public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
+      protected String tenantId;
+      protected double totalLocalGbUsage;
+      protected double totalVcpusUsage;
+      protected double totalMemoryMbUsage;
+      protected double totalHours;
+      protected Date start;
+      protected Date stop;
+      protected Set<SimpleServerUsage> serverUsages = ImmutableSet.of();
+   
+      /** 
+       * @see SimpleTenantUsage#getTenantId()
+       */
       public T tenantId(String tenantId) {
          this.tenantId = tenantId;
          return self();
       }
-      
-      public T totalLocalGbUsage(double total_local_gb_usage) {
-         this.totalLocalGbUsage = total_local_gb_usage;
+
+      /** 
+       * @see SimpleTenantUsage#getTotalLocalGbUsage()
+       */
+      public T totalLocalGbUsage(double totalLocalGbUsage) {
+         this.totalLocalGbUsage = totalLocalGbUsage;
          return self();
       }
 
-      public T totalVcpusUsage(double total_vcpus_usage) {
-         this.totalVcpusUsage = total_vcpus_usage;
+      /** 
+       * @see SimpleTenantUsage#getTotalVcpusUsage()
+       */
+      public T totalVcpusUsage(double totalVcpusUsage) {
+         this.totalVcpusUsage = totalVcpusUsage;
          return self();
       }
 
-      public T totalMemoryMbUsage(double total_memory_mb_usage) {
-         this.totalMemoryMbUsage = total_memory_mb_usage;
+      /** 
+       * @see SimpleTenantUsage#getTotalMemoryMbUsage()
+       */
+      public T totalMemoryMbUsage(double totalMemoryMbUsage) {
+         this.totalMemoryMbUsage = totalMemoryMbUsage;
          return self();
       }
 
-      public T totalHours(double total_hours) {
-         this.totalHours = total_hours;
+      /** 
+       * @see SimpleTenantUsage#getTotalHours()
+       */
+      public T totalHours(double totalHours) {
+         this.totalHours = totalHours;
          return self();
       }
 
+      /** 
+       * @see SimpleTenantUsage#getStart()
+       */
       public T start(Date start) {
          this.start = start;
          return self();
       }
 
+      /** 
+       * @see SimpleTenantUsage#getStop()
+       */
       public T stop(Date stop) {
          this.stop = stop;
          return self();
       }
 
+      /** 
+       * @see SimpleTenantUsage#getServerUsages()
+       */
       public T serverUsages(Set<SimpleServerUsage> serverUsages) {
-         this.serverUsages = serverUsages;
+         this.serverUsages = ImmutableSet.copyOf(checkNotNull(serverUsages, "serverUsages"));      
          return self();
       }
 
-      public SimpleTenantUsage build() {
-         return new SimpleTenantUsage(this);
+      public T serverUsages(SimpleServerUsage... in) {
+         return serverUsages(ImmutableSet.copyOf(in));
       }
 
-
+      public SimpleTenantUsage build() {
+         return new SimpleTenantUsage(tenantId, totalLocalGbUsage, totalVcpusUsage, totalMemoryMbUsage, totalHours, start, stop, serverUsages);
+      }
+      
       public T fromSimpleTenantUsage(SimpleTenantUsage in) {
          return this
-               .totalLocalGbUsage(in.getTotalLocalGbUsage())
-               .totalVcpusUsage(in.getTotalVcpusUsage())
-               .totalMemoryMbUsage(in.getTotalMemoryMbUsage())
-               .totalHours(in.getTotalHours())
-               .start(in.getStart())
-               .stop(in.getStop())
-               .serverUsages(in.getServerUsages())
-               ;
+                  .tenantId(in.getTenantId())
+                  .totalLocalGbUsage(in.getTotalLocalGbUsage())
+                  .totalVcpusUsage(in.getTotalVcpusUsage())
+                  .totalMemoryMbUsage(in.getTotalMemoryMbUsage())
+                  .totalHours(in.getTotalHours())
+                  .start(in.getStart())
+                  .stop(in.getStop())
+                  .serverUsages(in.getServerUsages());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -123,91 +150,73 @@ public class SimpleTenantUsage {
          return this;
       }
    }
-   
-   protected SimpleTenantUsage() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName("tenant_id")
-   private String tenantId;
-   @SerializedName("total_local_gb_usage")
-   private double totalLocalGbUsage;
-   @SerializedName("total_vcpus_usage")
-   private double totalVcpusUsage;
-   @SerializedName("total_memory_mb_usage")
-   private double totalMemoryMbUsage;
-   @SerializedName("total_hours")
-   private double totalHours;
-   private Date start;
-   private Date stop;
-   @SerializedName("server_usages")
-   private Set<SimpleServerUsage> serverUsages = ImmutableSet.of();
 
-   private SimpleTenantUsage(Builder<?> builder) {
-      this.tenantId = builder.tenantId;
-      this.totalLocalGbUsage = builder.totalLocalGbUsage;
-      this.totalVcpusUsage = builder.totalVcpusUsage;
-      this.totalMemoryMbUsage = builder.totalMemoryMbUsage;
-      this.totalHours = builder.totalHours;
-      this.start = builder.start;
-      this.stop = builder.stop;
-      this.serverUsages = ImmutableSet.copyOf(checkNotNull(builder.serverUsages, "serverUsages"));
+   @Named("tenant_id")
+   private final String tenantId;
+   @Named("total_local_gb_usage")
+   private final double totalLocalGbUsage;
+   @Named("total_vcpus_usage")
+   private final double totalVcpusUsage;
+   @Named("total_memory_mb_usage")
+   private final double totalMemoryMbUsage;
+   @Named("total_hours")
+   private final double totalHours;
+   private final Date start;
+   private final Date stop;
+   @Named("server_usages")
+   private final Set<SimpleServerUsage> serverUsages;
+
+   @ConstructorProperties({
+      "tenant_id", "total_local_gb_usage", "total_vcpus_usage", "total_memory_mb_usage", "total_hours", "start", "stop", "server_usages"
+   })
+   protected SimpleTenantUsage(String tenantId, double totalLocalGbUsage, double totalVcpusUsage, double totalMemoryMbUsage, double totalHours, @Nullable Date start, @Nullable Date stop, @Nullable Set<SimpleServerUsage> serverUsages) {
+      this.tenantId = checkNotNull(tenantId, "tenantId");
+      this.totalLocalGbUsage = totalLocalGbUsage;
+      this.totalVcpusUsage = totalVcpusUsage;
+      this.totalMemoryMbUsage = totalMemoryMbUsage;
+      this.totalHours = totalHours;
+      this.start = start;
+      this.stop = stop;
+      this.serverUsages = serverUsages == null ? ImmutableSet.<SimpleServerUsage>of() : ImmutableSet.copyOf(serverUsages);      
    }
 
    public String getTenantId() {
-      return tenantId;
+      return this.tenantId;
    }
 
-   /**
-    */
    public double getTotalLocalGbUsage() {
       return this.totalLocalGbUsage;
    }
 
-   /**
-    */
    public double getTotalVcpusUsage() {
       return this.totalVcpusUsage;
    }
 
-   /**
-    */
    public double getTotalMemoryMbUsage() {
       return this.totalMemoryMbUsage;
    }
 
-   /**
-    */
    public double getTotalHours() {
       return this.totalHours;
    }
 
-   /**
-    */
    @Nullable
    public Date getStart() {
       return this.start;
    }
 
-   /**
-    */
    @Nullable
    public Date getStop() {
       return this.stop;
    }
 
-   /**
-    */
-   @Nullable
    public Set<SimpleServerUsage> getServerUsages() {
-      return serverUsages == null ? ImmutableSet.<SimpleServerUsage>of() : Collections.unmodifiableSet(this.serverUsages);
+      return this.serverUsages;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(totalLocalGbUsage, totalVcpusUsage, totalMemoryMbUsage, totalHours, start, stop, serverUsages);
+      return Objects.hashCode(tenantId, totalLocalGbUsage, totalVcpusUsage, totalMemoryMbUsage, totalHours, start, stop, serverUsages);
    }
 
    @Override
@@ -215,28 +224,21 @@ public class SimpleTenantUsage {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
       SimpleTenantUsage that = SimpleTenantUsage.class.cast(obj);
-      return Objects.equal(this.totalLocalGbUsage, that.totalLocalGbUsage)
-            && Objects.equal(this.totalVcpusUsage, that.totalVcpusUsage)
-            && Objects.equal(this.totalMemoryMbUsage, that.totalMemoryMbUsage)
-            && Objects.equal(this.totalHours, that.totalHours)
-            && Objects.equal(this.start, that.start)
-            && Objects.equal(this.stop, that.stop)
-            && Objects.equal(this.serverUsages, that.serverUsages)
-            ;
+      return Objects.equal(this.tenantId, that.tenantId)
+               && Objects.equal(this.totalLocalGbUsage, that.totalLocalGbUsage)
+               && Objects.equal(this.totalVcpusUsage, that.totalVcpusUsage)
+               && Objects.equal(this.totalMemoryMbUsage, that.totalMemoryMbUsage)
+               && Objects.equal(this.totalHours, that.totalHours)
+               && Objects.equal(this.start, that.start)
+               && Objects.equal(this.stop, that.stop)
+               && Objects.equal(this.serverUsages, that.serverUsages);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("totalLocalGbUsage", totalLocalGbUsage)
-            .add("totalVcpusUsage", totalVcpusUsage)
-            .add("totalMemoryMbUsage", totalMemoryMbUsage)
-            .add("totalHours", totalHours)
-            .add("start", start)
-            .add("stop", stop)
-            .add("serverUsages", serverUsages)
-            ;
+      return Objects.toStringHelper(this)
+            .add("tenantId", tenantId).add("totalLocalGbUsage", totalLocalGbUsage).add("totalVcpusUsage", totalVcpusUsage).add("totalMemoryMbUsage", totalMemoryMbUsage).add("totalHours", totalHours).add("start", start).add("stop", stop).add("serverUsages", serverUsages);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

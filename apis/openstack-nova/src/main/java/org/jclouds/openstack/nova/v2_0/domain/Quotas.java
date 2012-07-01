@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,43 +20,46 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents the set of limits (quotas) returned by the Quota Extension
- *
+ * 
  * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaClient
- */
+*/
 public class Quotas {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromQuotas(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String id;
-      private int metadataItems;
-      private int injectedFileContentBytes;
-      private int volumes;
-      private int gigabytes;
-      private int ram;
-      private int floatingIps;
-      private int instances;
-      private int injectedFiles;
-      private int cores;
-      private int securityGroups;
-      private int securityGroupRules;
-      private int keyPairs;
-
-      /**
+      protected String id;
+      protected int metadataItems;
+      protected int injectedFileContentBytes;
+      protected int volumes;
+      protected int gigabytes;
+      protected int ram;
+      protected int floatingIps;
+      protected int instances;
+      protected int injectedFiles;
+      protected int cores;
+      protected int securityGroups;
+      protected int securityGroupRules;
+      protected int keyPairs;
+   
+      /** 
        * @see Quotas#getId()
        */
       public T id(String id) {
@@ -64,7 +67,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getMetadataItems()
        */
       public T metadataItems(int metadataItems) {
@@ -72,7 +75,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getInjectedFileContentBytes()
        */
       public T injectedFileContentBytes(int injectedFileContentBytes) {
@@ -80,7 +83,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getVolumes()
        */
       public T volumes(int volumes) {
@@ -88,7 +91,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getGigabytes()
        */
       public T gigabytes(int gigabytes) {
@@ -96,7 +99,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getRam()
        */
       public T ram(int ram) {
@@ -104,7 +107,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getFloatingIps()
        */
       public T floatingIps(int floatingIps) {
@@ -112,7 +115,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getInstances()
        */
       public T instances(int instances) {
@@ -120,7 +123,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getInjectedFiles()
        */
       public T injectedFiles(int injectedFiles) {
@@ -128,7 +131,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getCores()
        */
       public T cores(int cores) {
@@ -136,7 +139,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getSecurityGroups()
        */
       public T securityGroups(int securityGroups) {
@@ -144,7 +147,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getSecurityGroupRules()
        */
       public T securityGroupRules(int securityGroupRules) {
@@ -152,7 +155,7 @@ public class Quotas {
          return self();
       }
 
-      /**
+      /** 
        * @see Quotas#getKeyPairs()
        */
       public T keyPairs(int keyPairs) {
@@ -161,23 +164,24 @@ public class Quotas {
       }
 
       public Quotas build() {
-         return new Quotas(this);
+         return new Quotas(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);
       }
-
+      
       public T fromQuotas(Quotas in) {
-         return this.id(in.getId())
-               .metadataItems(in.getMetadataItems())
-               .injectedFileContentBytes(in.getInjectedFileContentBytes())
-               .volumes(in.getVolumes())
-               .gigabytes(in.getGigabytes())
-               .ram(in.getRam())
-               .floatingIps(in.getFloatingIps())
-               .instances(in.getInstances())
-               .injectedFiles(in.getInjectedFiles())
-               .cores(in.getCores())
-               .securityGroups(in.getSecurityGroups())
-               .securityGroupRules(in.getSecurityGroupRules())
-               .keyPairs(in.getKeyPairs());
+         return this
+                  .id(in.getId())
+                  .metadataItems(in.getMetadataItems())
+                  .injectedFileContentBytes(in.getInjectedFileContentBytes())
+                  .volumes(in.getVolumes())
+                  .gigabytes(in.getGigabytes())
+                  .ram(in.getRam())
+                  .floatingIps(in.getFloatingIps())
+                  .instances(in.getInstances())
+                  .injectedFiles(in.getInjectedFiles())
+                  .cores(in.getCores())
+                  .securityGroups(in.getSecurityGroups())
+                  .securityGroupRules(in.getSecurityGroupRules())
+                  .keyPairs(in.getKeyPairs());
       }
    }
 
@@ -187,49 +191,45 @@ public class Quotas {
          return this;
       }
    }
-   
-   protected Quotas() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName("id")
-   private String id;
-   @SerializedName("metadata_items")
-   private int metadataItems;
-   @SerializedName("injected_file_content_bytes")
-   private int injectedFileContentBytes;
-   private int volumes;
-   private int gigabytes;
-   private int ram;
-   @SerializedName("floating_ips")
-   private int floatingIps;
-   private int instances;
-   @SerializedName("injected_files")
-   private int injectedFiles;
-   private int cores;
-   @SerializedName("security_groups")
-   private int securityGroups;
-   @SerializedName("security_group_rules")
-   private int securityGroupRules;
-   @SerializedName("key_pairs")
-   private int keyPairs;
 
-   protected Quotas(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
-      this.metadataItems = checkNotNull(builder.metadataItems, "metadataItems");
-      this.injectedFileContentBytes = checkNotNull(builder.injectedFileContentBytes, "injectedFileContentBytes");
-      this.volumes = checkNotNull(builder.volumes, "volumes");
-      this.gigabytes = checkNotNull(builder.gigabytes, "gigabytes");
-      this.ram = checkNotNull(builder.ram, "ram");
-      this.floatingIps = checkNotNull(builder.floatingIps, "floatingIps");
-      this.instances = checkNotNull(builder.instances, "instances");
-      this.injectedFiles = checkNotNull(builder.injectedFiles, "injectedFiles");
-      this.cores = checkNotNull(builder.cores, "cores");
-      this.securityGroups = checkNotNull(builder.securityGroups, "securityGroups");
-      this.securityGroupRules = checkNotNull(builder.securityGroupRules, "securityGroupRules");
-      this.keyPairs = checkNotNull(builder.keyPairs, "keyPairs");
+   private final String id;
+   @Named("metadata_items")
+   private final int metadataItems;
+   @Named("injected_file_content_bytes")
+   private final int injectedFileContentBytes;
+   private final int volumes;
+   private final int gigabytes;
+   private final int ram;
+   @Named("floating_ips")
+   private final int floatingIps;
+   private final int instances;
+   @Named("injected_files")
+   private final int injectedFiles;
+   private final int cores;
+   @Named("security_groups")
+   private final int securityGroups;
+   @Named("security_group_rules")
+   private final int securityGroupRules;
+   @Named("key_pairs")
+   private final int keyPairs;
+
+   @ConstructorProperties({
+      "id", "metadata_items", "injected_file_content_bytes", "volumes", "gigabytes", "ram", "floating_ips", "instances", "injected_files", "cores", "security_groups", "security_group_rules", "key_pairs"
+   })
+   protected Quotas(String id, int metadataItems, int injectedFileContentBytes, int volumes, int gigabytes, int ram, int floatingIps, int instances, int injectedFiles, int cores, int securityGroups, int securityGroupRules, int keyPairs) {
+      this.id = checkNotNull(id, "id");
+      this.metadataItems = metadataItems;
+      this.injectedFileContentBytes = injectedFileContentBytes;
+      this.volumes = volumes;
+      this.gigabytes = gigabytes;
+      this.ram = ram;
+      this.floatingIps = floatingIps;
+      this.instances = instances;
+      this.injectedFiles = injectedFiles;
+      this.cores = cores;
+      this.securityGroups = securityGroups;
+      this.securityGroupRules = securityGroupRules;
+      this.keyPairs = keyPairs;
    }
 
    /**
@@ -298,7 +298,6 @@ public class Quotas {
 
    /**
     * @return the limit of the number of security groups that can be created for the tenant
-    *
     * @see org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient
     */
    public int getSecurityGroups() {
@@ -307,7 +306,6 @@ public class Quotas {
 
    /**
     * @return the limit of the number of security group rules that can be created for the tenant
-    *
     * @see org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient
     */
    public int getSecurityGroupRules() {
@@ -316,7 +314,6 @@ public class Quotas {
 
    /**
     * @return the limit of the number of key pairs that can be created for the tenant
-    *
     * @see org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient
     */
    public int getKeyPairs() {
@@ -334,37 +331,25 @@ public class Quotas {
       if (obj == null || getClass() != obj.getClass()) return false;
       Quotas that = Quotas.class.cast(obj);
       return Objects.equal(this.id, that.id)
-            && Objects.equal(this.metadataItems, that.metadataItems)
-            && Objects.equal(this.injectedFileContentBytes, that.injectedFileContentBytes)
-            && Objects.equal(this.volumes, that.volumes)
-            && Objects.equal(this.gigabytes, that.gigabytes)
-            && Objects.equal(this.ram, that.ram)
-            && Objects.equal(this.floatingIps, that.floatingIps)
-            && Objects.equal(this.instances, that.instances)
-            && Objects.equal(this.injectedFiles, that.injectedFiles)
-            && Objects.equal(this.cores, that.cores)
-            && Objects.equal(this.securityGroups, that.securityGroups)
-            && Objects.equal(this.securityGroupRules, that.securityGroupRules)
-            && Objects.equal(this.keyPairs, that.keyPairs);
+               && Objects.equal(this.metadataItems, that.metadataItems)
+               && Objects.equal(this.injectedFileContentBytes, that.injectedFileContentBytes)
+               && Objects.equal(this.volumes, that.volumes)
+               && Objects.equal(this.gigabytes, that.gigabytes)
+               && Objects.equal(this.ram, that.ram)
+               && Objects.equal(this.floatingIps, that.floatingIps)
+               && Objects.equal(this.instances, that.instances)
+               && Objects.equal(this.injectedFiles, that.injectedFiles)
+               && Objects.equal(this.cores, that.cores)
+               && Objects.equal(this.securityGroups, that.securityGroups)
+               && Objects.equal(this.securityGroupRules, that.securityGroupRules)
+               && Objects.equal(this.keyPairs, that.keyPairs);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("id", id)
-            .add("metadataItems", metadataItems)
-            .add("injectedFileContentBytes", injectedFileContentBytes)
-            .add("volumes", volumes)
-            .add("gigabytes", gigabytes)
-            .add("ram", ram)
-            .add("floatingIps", floatingIps)
-            .add("instances", instances)
-            .add("injectedFiles", injectedFiles)
-            .add("cores", cores)
-            .add("securityGroups", securityGroups)
-            .add("securityGroupRules", securityGroupRules)
-            .add("keyPairs", keyPairs);
+      return Objects.toStringHelper(this)
+            .add("id", id).add("metadataItems", metadataItems).add("injectedFileContentBytes", injectedFileContentBytes).add("volumes", volumes).add("gigabytes", gigabytes).add("ram", ram).add("floatingIps", floatingIps).add("instances", instances).add("injectedFiles", injectedFiles).add("cores", cores).add("securityGroups", securityGroups).add("securityGroupRules", securityGroupRules).add("keyPairs", keyPairs);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

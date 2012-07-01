@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,29 +20,33 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Named;
+
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
+import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.util.Multimaps2;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * A server is a virtual machine instance in the compute system. Flavor and image are requisite
  * elements when creating a server.
- * 
+ *
  * @author Adrian Cole
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Get_Server_Details-d1e2623.html"
@@ -53,10 +57,10 @@ public class Server extends Resource {
    /**
     * Servers contain a status attribute that can be used as an indication of the current server
     * state. Servers with an ACTIVE status are available for use.
-    * 
+    * <p/>
     * Other possible values for the status attribute include: BUILD, REBUILD, SUSPENDED, RESIZE,
     * VERIFY_RESIZE, REVERT_RESIZE, PASSWORD, REBOOT, HARD_REBOOT, DELETED, UNKNOWN, and ERROR.
-    * 
+    *
     * @author Adrian Cole
     */
    public static enum Status {
@@ -76,7 +80,6 @@ public class Server extends Resource {
       }
    }
 
-
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
@@ -85,28 +88,25 @@ public class Server extends Resource {
       return new ConcreteBuilder().fromServer(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
-      private String uuid;
-      private String tenantId;
-      private String userId;
-      private Date updated;
-      private Date created;
-      private String hostId;
-      private String accessIPv4;
-      private String accessIPv6;
-      private Server.Status status;
-      private Resource image;
-      private Resource flavor;
-      private String keyName;
-      private String configDrive;
-      private Multimap<String, Address> addresses = ImmutableMultimap.of();
-      private Map<String, String> metadata = ImmutableMap.of();
-      // Extended status extension
-      private ServerExtendedStatus extendedStatus;
-      // Extended server attributes extension
-      private ServerExtendedAttributes extendedAttributes;
-      // Disk Config extension
-      private String diskConfig;
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+      protected String uuid;
+      protected String tenantId;
+      protected String userId;
+      protected Date updated;
+      protected Date created;
+      protected String hostId;
+      protected String accessIPv4;
+      protected String accessIPv6;
+      protected Server.Status status;
+      protected Resource image;
+      protected Resource flavor;
+      protected String keyName;
+      protected String configDrive;
+      protected Multimap<String, Address> addresses = ImmutableMultimap.of();
+      protected Map<String, String> metadata = ImmutableMap.of();
+      protected ServerExtendedStatus extendedStatus;
+      protected ServerExtendedAttributes extendedAttributes;
+      protected String diskConfig;
 
       /**
        * @see Server#getUuid()
@@ -224,10 +224,10 @@ public class Server extends Resource {
        * @see Server#getMetadata()
        */
       public T metadata(Map<String, String> metadata) {
-         this.metadata = metadata;
+         this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
          return self();
       }
-      
+
       /**
        * @see Server#getExtendedStatus()
        */
@@ -237,9 +237,9 @@ public class Server extends Resource {
       }
 
       /**
-       * @see Server#getExtendedAttributes() 
+       * @see Server#getExtendedAttributes()
        */
-      public T extraAttributes(ServerExtendedAttributes extendedAttributes) {
+      public T extendedAttributes(ServerExtendedAttributes extendedAttributes) {
          this.extendedAttributes = extendedAttributes;
          return self();
       }
@@ -253,7 +253,9 @@ public class Server extends Resource {
       }
 
       public Server build() {
-         return new Server(this);
+         return new Server(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6,
+               status, image, flavor, keyName, configDrive, Multimaps2.toOldSchool(addresses), metadata, extendedStatus,
+               extendedAttributes, diskConfig);
       }
 
       public T fromServer(Server in) {
@@ -274,7 +276,7 @@ public class Server extends Resource {
                .addresses(in.getAddresses())
                .metadata(in.getMetadata())
                .extendedStatus(in.getExtendedStatus().orNull())
-               .extraAttributes(in.getExtendedAttributes().orNull())
+               .extendedAttributes(in.getExtendedAttributes().orNull())
                .diskConfig(in.getDiskConfig().orNull());
       }
    }
@@ -285,68 +287,64 @@ public class Server extends Resource {
          return this;
       }
    }
-   
-   protected Server() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   private String uuid;
-   @SerializedName("tenant_id")
-   private String tenantId;
-   @SerializedName("user_id")
-   private String userId;
-   private Date updated;
-   private Date created;
-   private String hostId;
-   private String accessIPv4;
-   private String accessIPv6;
-   private Status status;
-   private Resource image;
-   private Resource flavor;
-   @SerializedName("key_name")
-   private String keyName;
-   @SerializedName("config_drive")
-   private String configDrive;
-   // TODO: get gson multimap adapter!
-   private Map<String, Set<Address>> addresses = ImmutableMap.of();
-   private Map<String, String> metadata = ImmutableMap.of();
-   // Extended status extension
-   // @Prefixed("OS-EXT-STS:")
-   private Optional<ServerExtendedStatus> extendedStatus = Optional.absent();
-   // Extended server attributes extension
-   // @Prefixed("OS-EXT-SRV-ATTR:")
-   private Optional<ServerExtendedAttributes> extendedAttributes = Optional.absent();
-   // Disk Config extension
-   @SerializedName("OS-DCF:diskConfig")
-   private Optional<String> diskConfig = Optional.absent();
 
-   protected Server(Builder<?> builder) {
-      super(builder);
-      this.uuid = builder.uuid; // TODO: see what version this came up in
-      this.tenantId = checkNotNull(builder.tenantId, "tenantId");
-      this.userId = checkNotNull(builder.userId, "userId");
-      this.updated = checkNotNull(builder.updated, "updated");
-      this.created = checkNotNull(builder.created, "created");
-      this.hostId = builder.hostId;
-      this.accessIPv4 = builder.accessIPv4;
-      this.accessIPv6 = builder.accessIPv6;
-      this.status = checkNotNull(builder.status, "status");
-      this.configDrive = builder.configDrive;
-      this.image = checkNotNull(builder.image, "image");
-      this.flavor = checkNotNull(builder.flavor, "flavor");
-      this.metadata = Maps.newHashMap(builder.metadata);
-      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(builder.addresses, "addresses")));
-      this.keyName = builder.keyName;
-      this.extendedStatus = Optional.fromNullable(builder.extendedStatus);
-      this.extendedAttributes = Optional.fromNullable(builder.extendedAttributes);
-      this.diskConfig = builder.diskConfig == null ? Optional.<String>absent() : Optional.of(builder.diskConfig);
+   private final String uuid;
+   @Named("tenant_id")
+   private final String tenantId;
+   @Named("user_id")
+   private final String userId;
+   private final Date updated;
+   private final Date created;
+   private final String hostId;
+   private final String accessIPv4;
+   private final String accessIPv6;
+   private final Server.Status status;
+   private final Resource image;
+   private final Resource flavor;
+   @Named("key_name")
+   private final String keyName;
+   @Named("config_drive")
+   private final String configDrive;
+   private final Map<String, Set<Address>> addresses;
+   private final Map<String, String> metadata;
+   private final Optional<ServerExtendedStatus> extendedStatus;
+   private final Optional<ServerExtendedAttributes> extendedAttributes;
+   @Named("OS-DCF:diskConfig")
+   private final Optional<String> diskConfig;
+
+   @ConstructorProperties({
+         "id", "name", "links", "uuid", "tenant_id", "user_id", "updated", "created", "hostId", "accessIPv4", "accessIPv6", "status", "image", "flavor", "key_name", "config_drive", "addresses", "metadata", "extendedStatus", "extendedAttributes", "OS-DCF:diskConfig"
+   })
+   protected Server(String id, @Nullable String name, java.util.Set<Link> links, @Nullable String uuid, String tenantId,
+                    String userId, @Nullable Date updated, Date created, @Nullable String hostId, @Nullable String accessIPv4,
+                    @Nullable String accessIPv6, Server.Status status, Resource image, Resource flavor, @Nullable String keyName,
+                    @Nullable String configDrive, Map<String, Set<Address>> addresses, Map<String, String> metadata,
+                    @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes,
+                    @Nullable String diskConfig) {
+      super(id, name, links);
+      this.uuid = uuid;
+      this.tenantId = checkNotNull(tenantId, "tenantId");
+      this.userId = checkNotNull(userId, "userId");
+      this.updated = updated;
+      this.created = checkNotNull(created, "created");
+      this.hostId = Strings.emptyToNull(hostId);
+      this.accessIPv4 = Strings.emptyToNull(accessIPv4);
+      this.accessIPv6 = Strings.emptyToNull(accessIPv6);
+      this.status = checkNotNull(status, "status");
+      this.image = checkNotNull(image, "image");
+      this.flavor = checkNotNull(flavor, "flavor");
+      this.keyName = Strings.emptyToNull(keyName);
+      this.configDrive = Strings.emptyToNull(configDrive);
+      this.addresses = ImmutableMap.copyOf(checkNotNull(addresses, "addresses"));
+      this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+      this.extendedStatus = Optional.fromNullable(extendedStatus);
+      this.extendedAttributes = Optional.fromNullable(extendedAttributes);
+      this.diskConfig = Optional.fromNullable(diskConfig);
    }
 
    /**
     * only present until the id is in uuid form
-    * 
+    *
     * @return uuid, if id is an integer val
     */
    @Nullable
@@ -362,6 +360,7 @@ public class Server extends Resource {
       return this.userId;
    }
 
+   @Nullable
    public Date getUpdated() {
       return this.updated;
    }
@@ -375,17 +374,17 @@ public class Server extends Resource {
     */
    @Nullable
    public String getHostId() {
-      return Strings.emptyToNull(this.hostId);
+      return this.hostId;
    }
 
    @Nullable
    public String getAccessIPv4() {
-      return Strings.emptyToNull(this.accessIPv4);
+      return this.accessIPv4;
    }
 
    @Nullable
    public String getAccessIPv6() {
-      return Strings.emptyToNull(this.accessIPv6);
+      return this.accessIPv6;
    }
 
    public Status getStatus() {
@@ -394,7 +393,7 @@ public class Server extends Resource {
 
    @Nullable
    public String getConfigDrive() {
-      return Strings.emptyToNull(this.configDrive);
+      return this.configDrive;
    }
 
    public Resource getImage() {
@@ -425,7 +424,6 @@ public class Server extends Resource {
    public String getKeyName() {
       return keyName;
    }
-
 
    /**
     * Retrieves the extended server status fields (alias "OS-EXT-STS")
@@ -468,11 +466,12 @@ public class Server extends Resource {
 
    @Override
    protected ToStringHelper string() {
-      return super.string().add("uuid", uuid).add("tenantId", tenantId).add(
-            "userId", userId).add("hostId", getHostId()).add("updated", updated).add("created", created).add(
-            "accessIPv4", getAccessIPv4()).add("accessIPv6", getAccessIPv6()).add("status", status).add(
-            "configDrive", getConfigDrive()).add("image", image).add("flavor", flavor).add("metadata", metadata)
-            .add("addresses", getAddresses()).add("diskConfig", diskConfig)
-            .add("extendedStatus", extendedStatus).add("extendedAttributes", extendedAttributes);
+      return super.string()
+            .add("uuid", uuid).add("tenantId", tenantId).add("userId", userId).add("updated", updated).add("created", created)
+            .add("hostId", hostId).add("accessIPv4", accessIPv4).add("accessIPv6", accessIPv6).add("status", status).add("image", image)
+            .add("flavor", flavor).add("keyName", keyName).add("configDrive", configDrive).add("addresses", addresses)
+            .add("metadata", metadata).add("extendedStatus", extendedStatus).add("extendedAttributes", extendedAttributes)
+            .add("diskConfig", diskConfig);
    }
+
 }
