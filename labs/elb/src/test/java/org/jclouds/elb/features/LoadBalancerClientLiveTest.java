@@ -38,6 +38,7 @@ public class LoadBalancerClientLiveTest extends BaseELBClientLiveTest {
       checkNotNull(loadBalancer.getName(), "While Name can be null for a LoadBalancer, its Optional wrapper cannot.");
       checkNotNull(loadBalancer.getCreatedTime(), "CreatedTime cannot be null for a LoadBalancer.");
       checkNotNull(loadBalancer.getDnsName(), "DnsName cannot be null for a LoadBalancer.");
+      checkNotNull(loadBalancer.getHealthCheck(), "HealthCheck cannot be null for a LoadBalancer.");
       checkNotNull(loadBalancer.getScheme(),
                "While Scheme can be null for a LoadBalancer, its Optional wrapper cannot.");
       checkNotNull(loadBalancer.getVPCId(), "While VPCId can be null for a LoadBalancer, its Optional wrapper cannot.");

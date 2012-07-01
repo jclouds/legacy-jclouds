@@ -37,18 +37,21 @@ import org.xml.sax.SAXException;
  * @author Adrian Cole
  */
 public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWithResult<LoadBalancer> {
-   private final DateService dateService;
-   private final ListenerWithPoliciesHandler listenerHandler;
+   protected final DateService dateService;
+   protected final HealthCheckHandler healthCheckHandler;
+   protected final ListenerWithPoliciesHandler listenerHandler;
 
    @Inject
-   protected LoadBalancerHandler(DateService dateService, ListenerWithPoliciesHandler listenerHandler) {
+   protected LoadBalancerHandler(DateService dateService, HealthCheckHandler healthCheckHandler, ListenerWithPoliciesHandler listenerHandler) {
       this.dateService = dateService;
+      this.healthCheckHandler = healthCheckHandler;
       this.listenerHandler = listenerHandler;
    }
 
    private StringBuilder currentText = new StringBuilder();
    private LoadBalancer.Builder<?> builder = LoadBalancer.builder();
 
+   private boolean inHealthCheck;
    private boolean inListeners;
 
    protected int memberDepth;
@@ -72,6 +75,8 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
    public void startElement(String url, String name, String qName, Attributes attributes) throws SAXException {
       if (equalsOrSuffix(qName, "member")) {
          memberDepth++;
+      } else if (equalsOrSuffix(qName, "HealthCheck")) {
+         inHealthCheck = true;
       } else if (equalsOrSuffix(qName, "ListenerDescriptions")) {
          inListeners = true;
       }
@@ -90,6 +95,9 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          memberDepth--;
       } else if (equalsOrSuffix(qName, "ListenerDescriptions")) {
          inListeners = false;
+      } else if (equalsOrSuffix(qName, "HealthCheck")) {
+         builder.healthCheck(healthCheckHandler.getResult());
+         inHealthCheck = false;
       } else if (equalsOrSuffix(qName, "LoadBalancerName")) {
          builder.name(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "CreatedTime")) {
@@ -102,6 +110,8 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          builder.scheme(Scheme.fromValue(currentOrNull(currentText)));
       } else if (equalsOrSuffix(qName, "VPCId")) {
          builder.VPCId(currentOrNull(currentText));
+      } else if (inHealthCheck) {
+         healthCheckHandler.endElement(uri, name, qName);
       } else if (inListeners) {
          listenerHandler.endElement(uri, name, qName);
       }
@@ -121,6 +131,8 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
    public void characters(char ch[], int start, int length) {
       if (inListeners) {
          listenerHandler.characters(ch, start, length);
+      } else if (inHealthCheck) {
+         healthCheckHandler.characters(ch, start, length);
       } else {
          currentText.append(ch, start, length);
       }

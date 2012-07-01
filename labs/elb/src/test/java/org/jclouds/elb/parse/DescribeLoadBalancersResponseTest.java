@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 import org.jclouds.collect.PaginatedSet;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.elb.domain.HealthCheck;
 import org.jclouds.elb.domain.ListenerWithPolicies;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.domain.Protocol;
@@ -58,6 +59,12 @@ public class DescribeLoadBalancersResponseTest extends BaseHandlerTest {
                     .name("my-load-balancer")
                     .createdTime(new SimpleDateFormatDateService().iso8601DateParse("2010-03-03T20:54:45.110Z"))
                     .dnsName("my-load-balancer-1400212309.us-east-1.elb.amazonaws.com")
+                    .healthCheck(HealthCheck.builder()
+                                            .interval(300)
+                                            .target("HTTP:80/index.html")
+                                            .healthyThreshold(3)
+                                            .timeout(30)
+                                            .unhealthyThreshold(5).build())
                     .instanceIds(ImmutableSet.of("i-5b33e630", "i-8f26d7e4", "i-5933e632"))
                     .listener(ListenerWithPolicies.builder().protocol(Protocol.HTTP).port(80).instancePort(80).build())
                     .listener(ListenerWithPolicies.builder().protocol(Protocol.TCP).port(443).instancePort(443).build())

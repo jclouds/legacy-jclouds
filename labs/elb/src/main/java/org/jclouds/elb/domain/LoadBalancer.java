@@ -99,13 +99,14 @@ public class LoadBalancer {
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      private String name;
-      private Date createdTime;
-      private String dnsName;
-      private ImmutableSet.Builder<String> instanceIds = ImmutableSet.<String> builder();
-      private ImmutableSet.Builder<ListenerWithPolicies> listeners = ImmutableSet.<ListenerWithPolicies> builder();
-      private Optional<Scheme> scheme = Optional.absent();
-      private Optional<String> VPCId = Optional.absent();
+      protected String name;
+      protected Date createdTime;
+      protected String dnsName;
+      protected HealthCheck healthCheck;
+      protected ImmutableSet.Builder<String> instanceIds = ImmutableSet.<String> builder();
+      protected ImmutableSet.Builder<ListenerWithPolicies> listeners = ImmutableSet.<ListenerWithPolicies> builder();
+      protected Optional<Scheme> scheme = Optional.absent();
+      protected Optional<String> VPCId = Optional.absent();
 
       /**
        * @see LoadBalancer#getName()
@@ -128,6 +129,14 @@ public class LoadBalancer {
        */
       public T dnsName(String dnsName) {
          this.dnsName = dnsName;
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getHealthCheck()
+       */
+      public T healthCheck(HealthCheck healthCheck) {
+         this.healthCheck = healthCheck;
          return self();
       }
 
@@ -180,12 +189,14 @@ public class LoadBalancer {
       }
 
       public LoadBalancer build() {
-         return new LoadBalancer(name, createdTime, dnsName, instanceIds.build(), listeners.build(), scheme, VPCId);
+         return new LoadBalancer(name, createdTime, dnsName, healthCheck, instanceIds.build(), listeners.build(),
+                  scheme, VPCId);
       }
 
       public T fromLoadBalancer(LoadBalancer in) {
-         return this.name(in.getName()).createdTime(in.getCreatedTime()).dnsName(in.getDnsName()).instanceIds(
-                  in.getInstanceIds()).scheme(in.getScheme().orNull()).VPCId(in.getVPCId().orNull());
+         return this.name(in.getName()).createdTime(in.getCreatedTime()).dnsName(in.getDnsName()).healthCheck(
+                  in.getHealthCheck()).instanceIds(in.getInstanceIds()).scheme(in.getScheme().orNull()).VPCId(
+                  in.getVPCId().orNull());
       }
    }
 
@@ -196,19 +207,22 @@ public class LoadBalancer {
       }
    }
 
-   private final String name;
-   private final Date createdTime;
-   private final String dnsName;
-   private final Set<String> instanceIds;
-   private final Set<ListenerWithPolicies> listeners;
-   private final Optional<Scheme> scheme;
-   private final Optional<String> VPCId;
+   protected final String name;
+   protected final Date createdTime;
+   protected final String dnsName;
+   protected final HealthCheck healthCheck;
+   protected final Set<String> instanceIds;
+   protected final Set<ListenerWithPolicies> listeners;
+   protected final Optional<Scheme> scheme;
+   protected final Optional<String> VPCId;
 
-   protected LoadBalancer(String name, Date createdTime, String dnsName, Iterable<String> instanceIds,
-            Iterable<ListenerWithPolicies> listeners, Optional<Scheme> scheme, Optional<String> VPCId) {
+   protected LoadBalancer(String name, Date createdTime, String dnsName, HealthCheck healthCheck,
+            Iterable<String> instanceIds, Iterable<ListenerWithPolicies> listeners, Optional<Scheme> scheme,
+            Optional<String> VPCId) {
       this.name = name;
       this.createdTime = createdTime;
       this.dnsName = dnsName;
+      this.healthCheck = healthCheck;
       this.instanceIds = ImmutableSet.copyOf(instanceIds);
       this.listeners = ImmutableSet.copyOf(listeners);
       this.scheme = scheme;
@@ -235,6 +249,13 @@ public class LoadBalancer {
     */
    public String getDnsName() {
       return dnsName;
+   }
+
+   /**
+    * Specifies information regarding the various health probes conducted on the LoadBalancer.
+    */
+   public HealthCheck getHealthCheck() {
+      return healthCheck;
    }
 
    /**
@@ -295,8 +316,8 @@ public class LoadBalancer {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("name", name).add("createdTime", createdTime).add(
-               "dnsName", dnsName).add("instanceIds", instanceIds).add("listeners", listeners).add("scheme",
-               scheme.orNull()).add("VPCId", VPCId.orNull()).toString();
+               "dnsName", dnsName).add("healthCheck", healthCheck).add("instanceIds", instanceIds).add("listeners",
+               listeners).add("scheme", scheme.orNull()).add("VPCId", VPCId.orNull()).toString();
    }
 
 }
