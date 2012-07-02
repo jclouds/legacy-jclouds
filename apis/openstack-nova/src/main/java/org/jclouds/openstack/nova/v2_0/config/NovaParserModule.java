@@ -58,8 +58,7 @@ public class NovaParserModule extends AbstractModule {
       return ImmutableMap.<Type, Object>of(
             HostResourceUsage.class, new HostResourceUsageAdapter(),
             ServerWithSecurityGroups.class, new ServerWithSecurityGroupsAdapter(),
-            Server.class, new ServerAdapter(),
-            SecurityGroupRule.class, new SecurityGroupRuleAdapter()
+            Server.class, new ServerAdapter()
       );
    }
 
@@ -150,37 +149,6 @@ public class NovaParserModule extends AbstractModule {
                                   @Nullable String configDrive, Map<String, Set<Address>> addresses, Map<String, String> metadata,
                                   @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes, @Nullable String diskConfig) {
             super(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses, metadata, extendedStatus, extendedAttributes, diskConfig);
-         }
-      }
-   }
-
-   /* trying to cope with group { } to signify no group! */
-   @Singleton
-   public static class SecurityGroupRuleAdapter implements JsonDeserializer<SecurityGroupRule> {
-      @Override
-      public SecurityGroupRule deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
-         SecurityGroupRule ruleBase = apply((SecurityGroupRuleInternal) context.deserialize(jsonElement, SecurityGroupRuleInternal.class));
-         if (jsonElement.getAsJsonObject().has("group")) {
-            try {
-               TenantIdAndName group = context.deserialize(jsonElement.getAsJsonObject().getAsJsonObject("group"), TenantIdAndName.class);
-               ruleBase = ruleBase.toBuilder().group(group).build();
-            } catch (NullPointerException ex) {
-            }
-         }
-         return ruleBase;
-      }
-
-      public SecurityGroupRule apply(SecurityGroupRuleInternal in) {
-         return in.toBuilder().build();
-      }
-
-      private static class SecurityGroupRuleInternal extends SecurityGroupRule {
-         @ConstructorProperties({
-               "ip_protocol", "from_port", "to_port", "id", "parent_group_id", "ip_range"
-         })
-         protected SecurityGroupRuleInternal(IpProtocol ipProtocol, int fromPort, int toPort, String id, String parentGroupId, @Nullable Cidr ipRange) {
-            super(ipProtocol, fromPort, toPort, id, null, parentGroupId, ipRange);
          }
       }
    }
