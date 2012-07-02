@@ -46,8 +46,8 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 /**
- * An eager {@link NodePoolComputeService}. Eagerly builds and maintains a pool
- * of nodes. It's only "started" after min nodes are allocated and available.
+ * An eager {@link NodePoolComputeService}. Eagerly builds and maintains a pool of nodes. It's only
+ * "started" after min nodes are allocated and available.
  * 
  * @author David Alves
  * 
@@ -65,9 +65,9 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
 
    @Inject
    public EagerNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
-         @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupPrefix,
-         @Named(MAX_SIZE) int maxSize, @Named(MIN_SIZE) int minSize, @Named(REMOVE_DESTROYED) boolean readdDestroyed,
-         NodeMetadataStore storage) {
+            @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupPrefix,
+            @Named(MAX_SIZE) int maxSize, @Named(MIN_SIZE) int minSize,
+            @Named(REMOVE_DESTROYED) boolean readdDestroyed, NodeMetadataStore storage) {
       super(backendComputeService, backendTemplate, poolGroupPrefix, storage);
       this.maxSize = maxSize;
       this.minSize = minSize;
@@ -77,9 +77,15 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
    @PostConstruct
    public void startEagerPool() {
       Set<? extends NodeMetadata> backendNodes = getBackendNodes();
+      int currentNodes = backendNodes.size();
+      int newNodes = backendNodes.size() < minSize ? backendNodes.size() - minSize : 0;
+      logger.info(
+               ">> initializing nodepool [backend provider: %s]. [existing nodes: %s, min nodes: %s, new node to allocate: %s ]",
+               backendComputeService.get().getClass().getSimpleName(), currentNodes, minSize, newNodes);
       if (backendNodes.size() < minSize) {
          addToPool(backendNodes.size() - minSize);
       }
+      logger.info("<< pool initialized.");
    }
 
    @Override
@@ -90,8 +96,8 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
          Set<NodeMetadata> frontendNodes = metadataStore.loadAll(backendNodes);
 
          checkState(frontendNodes.size() + count < maxSize,
-               "cannot add more nodes to pool [requested: %s, current: %s, max: %s]", count, frontendNodes.size(),
-               maxSize);
+                  "cannot add more nodes to pool [requested: %s, current: %s, max: %s]", count, frontendNodes.size(),
+                  maxSize);
 
          SetView<NodeMetadata> availableNodes = Sets.difference(backendNodes, frontendNodes);
 

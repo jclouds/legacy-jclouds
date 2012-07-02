@@ -30,7 +30,6 @@
   <groupId>org.jclouds.labs</groupId>
   <artifactId>nodepool</artifactId>
   <name>jcloud nodepool api</name>
-  <description>jclouds components to access an implementation of Joyent SDC</description>
   <packaging>bundle</packaging>
 
   <properties>
