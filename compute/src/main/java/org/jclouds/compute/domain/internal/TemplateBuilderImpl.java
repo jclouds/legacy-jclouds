@@ -19,6 +19,7 @@
 package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
@@ -139,6 +140,29 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.optionsProvider = optionsProvider;
       this.defaultTemplateProvider = defaultTemplateProvider;
    }
+
+   static Predicate<Hardware> supportsImagesPredicate(final Iterable<? extends Image> images) {
+      return new Predicate<Hardware>() {
+         @Override
+         public boolean apply(final Hardware hardware) {
+            return Iterables.any(images, new Predicate<Image>() {
+
+               @Override
+               public boolean apply(Image input) {
+                  return hardware.supportsImage().apply(input);
+               }
+
+               @Override
+               public String toString() {
+                  return "hardware(" + hardware + ").supportsImage()";
+               }
+
+            });
+
+         }
+
+      };
+   } 
 
    final Predicate<ComputeMetadata> locationPredicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(new Supplier<Location>(){
 
@@ -627,7 +651,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
       Set<? extends Image> images = getImages();
+      checkState(images.size() > 0, "no images present!");
       Set<? extends Hardware> hardwaresToSearch = hardwares.get();
+      checkState(hardwaresToSearch.size() > 0, "no hardware profiles present!");
 
       Image image = null;
       if (imageId != null) {
@@ -705,44 +731,36 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          logger.warn(exception, "hardware ids that didn't match: %s", transform(hardwares, hardwareToId));
       throw exception;
    }
-   
+
    protected Hardware resolveHardware(Set<? extends Hardware> hardwarel, final Iterable<? extends Image> images) {
       Ordering<Hardware> hardwareOrdering = hardwareSorter();
-      Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = ImmutableSet.of();
-      try {
-         hardwaresThatAreCompatibleWithOurImages = filter(hardwarel, new Predicate<Hardware>() {
-            @Override
-            public boolean apply(final Hardware hardware) {
-               return Iterables.any(images, new Predicate<Image>() {
+      
+      Iterable<Predicate<Image>> supportsImagePredicates = Iterables.transform(hardwarel,
+               new Function<Hardware, Predicate<Image>>() {
 
                   @Override
-                  public boolean apply(Image input) {
-                     return hardware.supportsImage().apply(input);
-                  }
-
-                  @Override
-                  public String toString() {
-                     return "hardware(" + hardware + ").supportsImage()";
+                  public Predicate<Image> apply(Hardware input) {
+                     return input.supportsImage();
                   }
 
                });
+      
+      Predicate<Image> supportsImagePredicate = Iterables.size(supportsImagePredicates) == 1 ? Iterables
+               .getOnlyElement(supportsImagePredicates) : Predicates.<Image>or(supportsImagePredicates);
 
-            }
-         });
-      } catch (NoSuchElementException exception) {
+      if (!Iterables.any(images, supportsImagePredicate)) {
+         String message = format("no hardware profiles support images matching params: %s", supportsImagePredicate);
+         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwarel);
+      }
 
-      }
-      if (size(hardwaresThatAreCompatibleWithOurImages) == 0) {
-         String message = format("no hardware profiles support images matching params: %s", toString());
-         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwaresThatAreCompatibleWithOurImages);
-      }
+      Iterable<? extends Hardware> hardwareCompatibleWithOurImages = filter(hardwarel, supportsImagesPredicate(images));
       Predicate<Hardware> hardwarePredicate = buildHardwarePredicate();
       Hardware hardware;
       try {
-         hardware = hardwareOrdering.max(filter(hardwaresThatAreCompatibleWithOurImages, hardwarePredicate));
+         hardware = hardwareOrdering.max(filter(hardwareCompatibleWithOurImages, hardwarePredicate));
       } catch (NoSuchElementException exception) {
          String message = format("no hardware profiles match params: %s", hardwarePredicate);
-         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwaresThatAreCompatibleWithOurImages);
+         throw throwNoSuchElementExceptionAfterLoggingHardwareIds(message, hardwareCompatibleWithOurImages);
       }
       logger.trace("<<   matched hardware(%s)", hardware.getId());
       return hardware;

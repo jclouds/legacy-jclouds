@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2.compute.functions;
 
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Maps.uniqueIndex;
 
 import java.util.Map;
@@ -38,18 +39,19 @@ public class ImagesToRegionAndIdMap implements Function<Iterable<? extends Image
    public static Map<RegionAndName, ? extends Image> imagesToMap(Iterable<? extends Image> input) {
       return new ImagesToRegionAndIdMap().apply(input);
    }
-   
+
    @Override
    public Map<RegionAndName, ? extends Image> apply(Iterable<? extends Image> input) {
       return uniqueIndex(input, new Function<Image, RegionAndName>() {
-         
+
          @Override
          public RegionAndName apply(Image from) {
+            checkState(from.getLocation() != null,
+                     "in ec2, image locations cannot be null; typically, they are Region-scoped");
             return new RegionAndName(from.getLocation().getId(), from.getProviderId());
          }
-         
+
       });
    }
-
 
 }
