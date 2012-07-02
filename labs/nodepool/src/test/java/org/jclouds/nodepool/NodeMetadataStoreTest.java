@@ -133,6 +133,7 @@ public class NodeMetadataStoreTest {
       assertEquals(nodeMeta2.getId(), store.load(nodeMeta2).getId());
    }
 
+   @Test(groups = "unit", dependsOnMethods = "testDeleteMapping")
    public void testDeleteAllMappings() {
       store.deleteAllMappings();
       assertNull(store.load(nodeMeta1));

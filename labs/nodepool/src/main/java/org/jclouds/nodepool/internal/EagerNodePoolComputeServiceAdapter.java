@@ -83,7 +83,7 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
                ">> initializing nodepool [backend provider: %s]. [existing nodes: %s, min nodes: %s, allocating: %s ]",
                backendComputeService.get().getClass().getSimpleName(), currentNodes, minSize, newNodes);
       if (backendNodes.size() < minSize) {
-         addToPool(backendNodes.size() - minSize);
+         addToPool(minSize - backendNodes.size());
       }
       logger.info("<< pool initialized.");
    }
@@ -100,7 +100,6 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
                   maxSize);
 
          SetView<NodeMetadata> availableNodes = Sets.difference(backendNodes, frontendNodes);
-
          NodeMetadata node = metadataStore.store(Iterables.get(availableNodes, 0), template.getOptions(), group);
          return new NodeWithInitialCredentials(node);
       }

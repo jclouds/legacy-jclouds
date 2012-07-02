@@ -43,8 +43,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * A base class for {@link NodePoolComputeService}, takes care of keeping (not
- * changing assignments) and of everything that does not change the pool.
+ * A base class for {@link NodePoolComputeService}, takes care of keeping (not changing assignments)
+ * and of everything that does not change the pool.
  * 
  * @author David Alves
  * 
@@ -57,8 +57,8 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
    protected final NodeMetadataStore metadataStore;
 
    public BaseNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
-         @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupNamePrefix,
-         NodeMetadataStore metadataStore) {
+            @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupNamePrefix,
+            NodeMetadataStore metadataStore) {
       this.backendComputeService = backendComputeService;
       this.poolGroupName = poolGroupNamePrefix;
       this.backendTemplate = backendTemplate;
@@ -71,7 +71,7 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
       checkState(backendMetadata.getGroup().equals(backendMetadata));
       return metadataStore.load(backendMetadata);
    }
-   
+
    @Override
    public Iterable<NodeMetadata> listNodes() {
       return metadataStore.loadAll(getBackendNodes());
@@ -123,10 +123,10 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
       throw new NoSuchElementException(id);
    }
 
-
    protected Set<NodeMetadata> getBackendNodes() {
-      return ImmutableSet.copyOf(Iterables.filter(backendComputeService.get().listNodesDetailsMatching(
-            NodePredicates.all()), NodePredicates.inGroup(poolGroupName)));
+      return ImmutableSet.copyOf(Iterables.filter(
+               backendComputeService.get().listNodesDetailsMatching(NodePredicates.all()),
+               NodePredicates.inGroup(poolGroupName)));
    }
 
    protected void addToPool(int number) {

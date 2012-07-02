@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.util.Strings2;
+import org.testng.internal.annotations.Sets;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -43,7 +45,7 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       private String user;
       private String password;
       private String privateKey;
-      private Boolean authenticateSudo;
+      private boolean authenticateSudo;
    }
 
    @Inject
@@ -61,7 +63,8 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       jsonMetadata.user = userOptions.getLoginUser();
       jsonMetadata.password = userOptions.getLoginPassword();
       jsonMetadata.privateKey = userOptions.getLoginPrivateKey();
-      jsonMetadata.authenticateSudo = userOptions.shouldAuthenticateSudo();
+      jsonMetadata.authenticateSudo = userOptions.shouldAuthenticateSudo() != null ? userOptions
+               .shouldAuthenticateSudo().booleanValue() : false;
       jsonMetadata.userMetadata = userOptions.getUserMetadata();
       jsonMetadata.userTags = userOptions.getTags();
       jsonMetadata.userGroup = userGroup;
@@ -94,6 +97,7 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
                .credentials(
                         new LoginCredentials(jsonMetadata.user, jsonMetadata.password, jsonMetadata.privateKey,
                                  jsonMetadata.authenticateSudo)).build();
+
    }
 
    @Override
@@ -107,11 +111,19 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
    }
 
    public Set<NodeMetadata> loadAll(Set<NodeMetadata> backendNodes) {
-      return ImmutableSet.copyOf(Iterables.transform(backendNodes, new Function<NodeMetadata, NodeMetadata>() {
+      if (backendNodes == null || backendNodes.isEmpty()) {
+         return Collections.emptySet();
+      }
+      final Set<NodeMetadata> loadedSet = Sets.newLinkedHashSet();
+      Iterables.transform(backendNodes, new Function<NodeMetadata, NodeMetadata>() {
          @Override
          public NodeMetadata apply(NodeMetadata input) {
-            return load(input);
+            if (load(input) != null) {
+               loadedSet.add(input);
+            }
+            return null;
          }
-      }));
+      });
+      return ImmutableSet.copyOf(loadedSet);
    }
 }

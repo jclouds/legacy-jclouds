@@ -47,34 +47,30 @@ import com.google.inject.Provides;
 
 public class BindBackendComputeService extends BindJcloudsModules {
 
-  
    @Provides
    @Singleton
    @Backend
-   protected String provideBackendProvider(@Named(NodePoolProperties.BACKEND_PROVIDER) String provider){
+   protected String provideBackendProvider(@Named(NodePoolProperties.BACKEND_PROVIDER) String provider) {
       return provider;
    }
-   
+
    // things wrapped in suppliers are intentional. They can cause network i/o
    // and shouldn't be invoked until after the injector is created.
-   
+
    @Provides
    @Singleton
    @Backend
    @Exposed
    protected Supplier<ComputeService> makeBackendComputeService(@Backend final String provider,
-         @Backend final Set<Module> modules, @Provider final Credentials creds,
-         @Backend final Supplier<Properties> overrides, final Closer closer) {
-
+            @Backend final Set<Module> modules, @Provider final Credentials creds,
+            @Backend final Supplier<Properties> overrides, final Closer closer) {
       return Suppliers.memoize(new Supplier<ComputeService>() {
 
          @Override
          public ComputeService get() {
             ComputeServiceContext ctx = ContextBuilder.newBuilder(provider)
-                                                      .credentials(creds.identity, creds.credential)
-                                                      .overrides(overrides.get())
-                                                      .modules(modules)
-                                                      .buildView(ComputeServiceContext.class);
+                     .credentials(creds.identity, creds.credential).overrides(overrides.get()).modules(modules)
+                     .buildView(ComputeServiceContext.class);
             closer.addToClose(ctx);
             return ctx.getComputeService();
          }
@@ -95,8 +91,8 @@ public class BindBackendComputeService extends BindJcloudsModules {
    @Singleton
    @Backend
    protected Supplier<Properties> propertiesFor(final FilterStringsBoundToInjectorByName filterStringsBoundByName,
-         @Backend final String provider, @Provider final Supplier<URI> endpoint, @ApiVersion final String apiVersion,
-         @BuildVersion final String buildVersion) {
+            @Backend final String provider, @Provider final Supplier<URI> endpoint,
+            @ApiVersion final String apiVersion, @BuildVersion final String buildVersion) {
       return Suppliers.memoize(new Supplier<Properties>() {
 
          @Override

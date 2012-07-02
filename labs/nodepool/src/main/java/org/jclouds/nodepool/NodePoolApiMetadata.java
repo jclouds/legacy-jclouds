@@ -64,7 +64,8 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(BACKEND_GROUP, "nodepool");
       properties.setProperty(METADATA_CONTAINER, "nodes");
-      properties.setProperty(BACKEND_MODULES, "org.jclouds.logging.slf4j.config.SLF4JLoggingModule,org.jclouds.sshj.config.SshjSshClientModule");
+      properties.setProperty(BACKEND_MODULES,
+               "org.jclouds.logging.slf4j.config.SLF4JLoggingModule,org.jclouds.sshj.config.SshjSshClientModule");
       properties.setProperty(MAX_SIZE, 10 + "");
       properties.setProperty(MIN_SIZE, 5 + "");
       properties.setProperty(REMOVE_DESTROYED, "false");
@@ -74,16 +75,18 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
    public static class Builder extends BaseApiMetadata.Builder {
       protected Builder() {
          id("nodepool")
-         .name("node pool provider wrapper")
-         .identityName("backend identity")
-         .endpointName("backend endpoint").defaultEndpoint("fixme")
-         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
-         .view(ComputeServiceContext.class)
-         .defaultModules(ImmutableSet.<Class<? extends Module>> builder()
-               .add(NodePoolComputeServiceContextModule.class)
-               .add(BindInputStreamToFilesystemBlobStore.class)
-               .add(BindBackendComputeService.class).build())
-         .defaultProperties(NodePoolApiMetadata.defaultProperties());
+                  .name("node pool provider wrapper")
+                  .identityName("backend identity")
+                  .endpointName("backend endpoint")
+                  .defaultEndpoint("fixme")
+                  .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
+                  .view(ComputeServiceContext.class)
+                  .defaultModules(
+                           ImmutableSet.<Class<? extends Module>> builder()
+                                    .add(NodePoolComputeServiceContextModule.class)
+                                    .add(BindInputStreamToFilesystemBlobStore.class)
+                                    .add(BindBackendComputeService.class).build())
+                  .defaultProperties(NodePoolApiMetadata.defaultProperties());
       }
 
       @Override
