@@ -49,9 +49,10 @@ public class BindInputStreamToFilesystemBlobStore extends BindJcloudsModules {
    @Provides
    @Singleton
    @Exposed
-   protected Supplier<Map<String, InputStream>> provideInputStreamMapFromBlobStore(Supplier<BlobStoreContext> in,
-         @Named(NodePoolProperties.METADATA_CONTAINER) final String container) {
-      return Suppliers.memoize(Suppliers.compose(new Function<BlobStoreContext, Map<String, InputStream>>() {
+   @Named("METADATA")
+   protected Map<String, InputStream> provideInputStreamMapFromBlobStore(Supplier<BlobStoreContext> in,
+            @Named(NodePoolProperties.METADATA_CONTAINER) final String container) {
+      return (new Function<BlobStoreContext, Map<String, InputStream>>() {
 
          @Override
          public Map<String, InputStream> apply(BlobStoreContext input) {
@@ -59,13 +60,13 @@ public class BindInputStreamToFilesystemBlobStore extends BindJcloudsModules {
             return input.createInputStreamMap(container);
          }
 
-      }, in));
+      }).apply(in.get());
    }
 
    @Provides
    @Singleton
    protected Supplier<BlobStoreContext> makeBlobStoreContext(@Named(NodePoolProperties.BASEDIR) final String basedir,
-         @Backend final Set<Module> modules, final Closer closer) {
+            @Backend final Set<Module> modules, final Closer closer) {
       final Properties overrides = new Properties();
       overrides.setProperty(FilesystemConstants.PROPERTY_BASEDIR, basedir);
       return Suppliers.memoize(new Supplier<BlobStoreContext>() {
@@ -74,14 +75,12 @@ public class BindInputStreamToFilesystemBlobStore extends BindJcloudsModules {
          public BlobStoreContext get() {
             // GAE alert!
             new File(basedir).mkdirs();
-            BlobStoreContext returnVal = ContextBuilder.newBuilder("filesystem")
-                                                       .overrides(overrides)
-                                                       .modules(modules) 
-                                                       .buildView(BlobStoreContext.class);
+            BlobStoreContext returnVal = ContextBuilder.newBuilder("filesystem").overrides(overrides).modules(modules)
+                     .buildView(BlobStoreContext.class);
             closer.addToClose(returnVal);
             return returnVal;
          }
-         
+
       });
    }
 }

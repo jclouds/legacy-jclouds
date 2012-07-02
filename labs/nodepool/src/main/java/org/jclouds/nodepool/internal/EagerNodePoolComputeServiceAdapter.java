@@ -78,9 +78,9 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
    public void startEagerPool() {
       Set<? extends NodeMetadata> backendNodes = getBackendNodes();
       int currentNodes = backendNodes.size();
-      int newNodes = backendNodes.size() < minSize ? backendNodes.size() - minSize : 0;
+      int newNodes = backendNodes.size() < minSize ? minSize - backendNodes.size() : 0;
       logger.info(
-               ">> initializing nodepool [backend provider: %s]. [existing nodes: %s, min nodes: %s, new node to allocate: %s ]",
+               ">> initializing nodepool [backend provider: %s]. [existing nodes: %s, min nodes: %s, allocating: %s ]",
                backendComputeService.get().getClass().getSimpleName(), currentNodes, minSize, newNodes);
       if (backendNodes.size() < minSize) {
          addToPool(backendNodes.size() - minSize);
