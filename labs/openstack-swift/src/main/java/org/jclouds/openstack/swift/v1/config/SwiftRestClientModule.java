@@ -26,6 +26,10 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
+import org.jclouds.location.suppliers.all.RegionToProvider;
+import org.jclouds.location.suppliers.implicit.FirstRegion;
 import org.jclouds.openstack.swift.v1.SwiftAsyncClient;
 import org.jclouds.openstack.swift.v1.SwiftClient;
 import org.jclouds.openstack.swift.v1.features.AccountAsyncClient;
@@ -39,6 +43,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Scopes;
 
 /**
  * Configures the Swift connection.
@@ -62,6 +67,13 @@ public class SwiftRestClientModule extends RestClientModule<SwiftClient, SwiftAs
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
+   }
+   
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(FirstRegion.class).in(Scopes.SINGLETON);
+      bind(LocationsSupplier.class).to(RegionToProvider.class).in(Scopes.SINGLETON);
    }
 
    @Override

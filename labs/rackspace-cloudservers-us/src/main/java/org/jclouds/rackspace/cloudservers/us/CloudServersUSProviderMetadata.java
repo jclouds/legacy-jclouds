@@ -18,19 +18,18 @@
  */
 package org.jclouds.rackspace.cloudservers.us;
 
-import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
-import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule.CloudIdentityAuthenticationModuleForZones;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
+import org.jclouds.rackspace.cloudservers.us.config.CloudServersUSComputeServiceContextModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -65,8 +64,6 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
-      properties.setProperty(TEMPLATE, "imageId=DFW/3afe97b2-26dc-49c5-a2cc-a2fc8d80c001,loginUser=root");
-
       return properties;
    }
    
@@ -80,7 +77,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
                   .credentialName("API Key")
                   .version("2")
                   .documentation(URI.create("http://docs.rackspace.com/servers/api/v2/cs-devguide/content/ch_preface.html#webhelp-currentid"))
-                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudIdentityAuthenticationModuleForZones.class, NovaRestClientModule.class, NovaComputeServiceContextModule.class))
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudIdentityAuthenticationModuleForZones.class, NovaRestClientModule.class, CloudServersUSComputeServiceContextModule.class))
                   .build())
          .homepage(URI.create("http://www.rackspace.com/cloud/nextgen"))
          .console(URI.create("https://mycloud.rackspace.com"))

@@ -55,6 +55,7 @@ import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.predicates.ImagePredicates;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
@@ -155,8 +156,26 @@ public class NovaComputeServiceAdapter implements
    public Iterable<ImageInZone> listImages() {
       Builder<ImageInZone> builder = ImmutableSet.builder();
       for (final String zoneId : zoneIds.get()) {
-         builder.addAll(transform(filter(novaClient.getImageClientForZone(zoneId).listImagesInDetail(), ImagePredicates
-                  .statusEquals(Image.Status.ACTIVE)), new Function<Image, ImageInZone>() {
+         Set<Image> images = novaClient.getImageClientForZone(zoneId).listImagesInDetail();
+         if (images.size() == 0) {
+            logger.debug("no images found in zone %s", zoneId);
+            continue;
+         }
+         Iterable<Image> active = filter(images, ImagePredicates.statusEquals(Image.Status.ACTIVE));
+         if (images.size() == 0) {
+            logger.debug("no images with status active in zone %s; non-active: %s", zoneId,
+                     transform(active, new Function<Image, String>() {
+
+                        @Override
+                        public String apply(Image input) {
+                           return Objects.toStringHelper("").add("id", input.getId()).add("status", input.getStatus())
+                                    .toString();
+                        }
+
+                     }));
+            continue;
+         }
+         builder.addAll(transform(active, new Function<Image, ImageInZone>() {
 
             @Override
             public ImageInZone apply(Image arg0) {

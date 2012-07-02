@@ -30,7 +30,9 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
-import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
+import org.jclouds.location.suppliers.LocationsSupplier;
+import org.jclouds.location.suppliers.all.ZoneToProvider;
+import org.jclouds.location.suppliers.implicit.FirstZone;
 import org.jclouds.openstack.nova.v2_0.NovaAsyncClient;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
 import org.jclouds.openstack.nova.v2_0.domain.Extension;
@@ -125,7 +127,8 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    @Override
    protected void installLocations() {
       super.installLocations();
-      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
+      bind(ImplicitLocationSupplier.class).to(FirstZone.class).in(Scopes.SINGLETON);
+      bind(LocationsSupplier.class).to(ZoneToProvider.class).in(Scopes.SINGLETON);
    }
 
    @Provides

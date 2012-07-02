@@ -53,14 +53,16 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return (input.version.equals("") || (input.version.matches("^1[01].*") && !input.version
+                  return (input.version.equals("") || (input.version.matches("^1[012].*") && !input.version
                            .equals("10.10")))
                            && input.is64Bit;
                case DEBIAN:
                   return input.is64Bit && !input.version.equals("5.0");
                case CENTOS:
-                  return (input.version.equals("") || input.version.equals("5.6") || input.version.equals("6.0"))
+                  return (input.version.equals("") || input.version.equals("5.0")|| input.version.equals("5.6") || input.version.equals("6.0"))
                            && input.is64Bit;
+               case WINDOWS:
+                  return input.is64Bit && input.version.equals("");
                default:
                   return false;
             }
@@ -73,15 +75,15 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
    public void testTemplateBuilder() {
       Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu 11.10");
+      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu 12.04 LTS");
       assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "root");
       assertEquals(defaultTemplate.getLocation().getId(), "DFW");
       assertEquals(defaultTemplate.getImage().getLocation().getId(), "DFW");
       assertEquals(defaultTemplate.getHardware().getLocation().getId(), "DFW");
-      assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).shouldAutoAssignFloatingIp(), true);
-      assertEquals(getCores(defaultTemplate.getHardware()), 4.0d);
+      assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).shouldAutoAssignFloatingIp(), false);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override

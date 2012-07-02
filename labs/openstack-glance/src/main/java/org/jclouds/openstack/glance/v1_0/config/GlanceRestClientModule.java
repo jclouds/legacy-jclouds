@@ -26,6 +26,10 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
+import org.jclouds.location.suppliers.all.RegionToProvider;
+import org.jclouds.location.suppliers.implicit.FirstRegion;
 import org.jclouds.openstack.glance.v1_0.GlanceAsyncClient;
 import org.jclouds.openstack.glance.v1_0.GlanceClient;
 import org.jclouds.openstack.glance.v1_0.features.ImageAsyncClient;
@@ -35,6 +39,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Scopes;
 
 /**
  * Configures the Glance connection.
@@ -57,7 +62,14 @@ public class GlanceRestClientModule extends RestClientModule<GlanceClient, Glanc
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }
-
+   
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(FirstRegion.class).in(Scopes.SINGLETON);
+      bind(LocationsSupplier.class).to(RegionToProvider.class).in(Scopes.SINGLETON);
+   }
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(GlanceErrorHandler.class);
