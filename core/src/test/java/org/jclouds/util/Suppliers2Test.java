@@ -74,7 +74,7 @@ public class Suppliers2Test {
          }
       };
       
-      Supplier<Integer> memoizedSupplier = Suppliers2.memoizeWithExpirationOnAbsoluteInterval(
+      Supplier<Integer> memoizedSupplier = Suppliers2.memoizeWithExpirationAfterWrite(
                slowSupplier, EXPIRATION_TIME, TimeUnit.MILLISECONDS);
       
       assertEquals(memoizedSupplier.get(), (Integer)10);
@@ -100,7 +100,7 @@ public class Suppliers2Test {
     public void testMemoizeWithExpiration() throws InterruptedException {
       CountingSupplier countingSupplier = new CountingSupplier();
 
-      Supplier<Integer> memoizedSupplier = Suppliers2.memoizeWithExpirationOnAbsoluteInterval(
+      Supplier<Integer> memoizedSupplier = Suppliers2.memoizeWithExpirationAfterWrite(
           countingSupplier, 75, TimeUnit.MILLISECONDS);
 
       checkExpiration(countingSupplier, memoizedSupplier);
@@ -111,7 +111,7 @@ public class Suppliers2Test {
         throws InterruptedException {
       CountingSupplier countingSupplier = new CountingSupplier();
 
-      Supplier<Integer> memoizedSupplier = Suppliers2.memoizeWithExpirationOnAbsoluteInterval(
+      Supplier<Integer> memoizedSupplier = Suppliers2.memoizeWithExpirationAfterWrite(
           countingSupplier, 75, TimeUnit.MILLISECONDS);
       // Calls to the original memoized supplier shouldn't affect its copy.
       memoizedSupplier.get();
@@ -120,7 +120,7 @@ public class Suppliers2Test {
       memoizedSupplier.get();
 
       CountingSupplier countingCopy = (CountingSupplier)
-          ((Suppliers2.ExpiringMemoizingSupplier<Integer>) copy).delegate;
+          ((Suppliers2.ExpireAfterWriteSupplier<Integer>) copy).delegate();
       checkExpiration(countingCopy, copy);
     }
 
@@ -154,7 +154,7 @@ public class Suppliers2Test {
       Function<Supplier<Boolean>, Supplier<Boolean>> memoizer =
           new Function<Supplier<Boolean>, Supplier<Boolean>>() {
         @Override public Supplier<Boolean> apply(Supplier<Boolean> supplier) {
-          return Suppliers2.memoizeWithExpirationOnAbsoluteInterval(
+          return Suppliers2.memoizeWithExpirationAfterWrite(
               supplier, Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         }
       };
