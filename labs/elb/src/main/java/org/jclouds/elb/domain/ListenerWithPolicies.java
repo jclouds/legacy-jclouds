@@ -19,6 +19,7 @@
 package org.jclouds.elb.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
@@ -49,8 +50,8 @@ public class ListenerWithPolicies extends Listener {
       /**
        * @see ListenerWithPolicies#getPolicyNames()
        */
-      public T policyNames(Iterable<String> policyName) {
-         this.policyNames.addAll(policyName);
+      public T policyNames(Iterable<String> policyNames) {
+         this.policyNames.addAll(checkNotNull(policyNames, "policyNames"));
          return self();
       }
 
@@ -58,7 +59,7 @@ public class ListenerWithPolicies extends Listener {
        * @see ListenerWithPolicies#getPolicyNames()
        */
       public T policyName(String policyName) {
-         this.policyNames.add(policyName);
+         this.policyNames.add(checkNotNull(policyName, "policyName"));
          return self();
       }
 
@@ -83,9 +84,9 @@ public class ListenerWithPolicies extends Listener {
    private final Set<String> policyNames;
 
    protected ListenerWithPolicies(int instancePort, Protocol instanceProtocol, int port, Protocol protocol,
-            Optional<String> SSLCertificateId, Iterable<String> policiesNames) {
+            Optional<String> SSLCertificateId, Iterable<String> policyNames) {
       super(instancePort, instanceProtocol, port, protocol, SSLCertificateId);
-      this.policyNames = ImmutableSet.copyOf(policiesNames);
+      this.policyNames = ImmutableSet.copyOf(checkNotNull(policyNames, "policyNames"));
    }
 
    /**

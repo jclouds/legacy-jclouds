@@ -36,7 +36,7 @@
     <properties>
         <test.elb.zone>us-east-1a</test.elb.zone>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
-        <test.elb.api-version>2010-07-01</test.elb.api-version>
+        <test.elb.api-version>2012-06-01</test.elb.api-version>
         <test.elb.build-version></test.elb.build-version>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
@@ -99,8 +99,14 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
+            <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

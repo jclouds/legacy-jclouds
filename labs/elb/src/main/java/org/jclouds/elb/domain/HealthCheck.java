@@ -18,6 +18,8 @@
  */
 package org.jclouds.elb.domain;
 
+import static com.google.common.base.Preconditions.*;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -46,11 +48,11 @@ public class HealthCheck {
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected int healthyThreshold;
-      protected int interval;
+      protected int healthyThreshold = -1;
+      protected int interval = -1;
       protected String target;
-      protected int timeout;
-      protected int unhealthyThreshold;
+      protected int timeout = -1;
+      protected int unhealthyThreshold = -1;
 
       /**
        * @see HealthCheck#getHealthyThreshold()
@@ -116,13 +118,18 @@ public class HealthCheck {
    protected final int unhealthyThreshold;
 
    protected HealthCheck(int healthyThreshold, int interval, String target, int timeout, int unhealthyThreshold) {
-      this.healthyThreshold = healthyThreshold;
-      this.interval = interval;
-      this.target = target;
-      this.timeout = timeout;
-      this.unhealthyThreshold = unhealthyThreshold;
+      this.healthyThreshold = checkNonNegative(healthyThreshold, "healthyThreshold");
+      this.interval = checkNonNegative(interval, "interval");
+      this.target = checkNotNull(target, "target");
+      this.timeout = checkNonNegative(timeout, "timeout");
+      this.unhealthyThreshold = checkNonNegative(unhealthyThreshold, "unhealthyThreshold");
    }
 
+   static int checkNonNegative(int in, String name) {
+      checkArgument(in > 0, "%s must be non-negative", name);
+      return in;
+   }
+   
    /**
     * Specifies the number of consecutive health probe successes required before moving the instance
     * to the Healthy state.

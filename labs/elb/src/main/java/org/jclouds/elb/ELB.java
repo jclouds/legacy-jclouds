@@ -25,7 +25,7 @@ public class ELB {
     * 
     * @return iterable of loadBalancers fitting the criteria
     */
-   public static Iterable<LoadBalancer> list(final LoadBalancerClient loadBalancerClient, final ListLoadBalancersOptions options) {
+   public static Iterable<LoadBalancer> listLoadBalancers(final LoadBalancerClient loadBalancerClient, final ListLoadBalancersOptions options) {
       return PaginatedSets.lazyContinue(loadBalancerClient.list(options), new Function<String, PaginatedSet<LoadBalancer>>() {
 
          @Override
@@ -40,8 +40,8 @@ public class ELB {
       });
    }
    
-   public static Iterable<LoadBalancer> list(LoadBalancerClient loadBalancerClient) {
-      return list(loadBalancerClient, new ListLoadBalancersOptions());
+   public static Iterable<LoadBalancer> listLoadBalancers(LoadBalancerClient loadBalancerClient) {
+      return listLoadBalancers(loadBalancerClient, new ListLoadBalancersOptions());
    }
-
+   
 }

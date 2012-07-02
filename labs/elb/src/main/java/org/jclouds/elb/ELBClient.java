@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.elb.features.LoadBalancerClient;
+import org.jclouds.elb.features.PolicyClient;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
@@ -58,6 +59,11 @@ public interface ELBClient {
    @Delegate
    LoadBalancerClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
+   /**
+    * Provides synchronous access to Policy features.
+    */
+   @Delegate
+   PolicyClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
    
    /// old stuff
    /**

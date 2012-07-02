@@ -36,7 +36,7 @@ public class ELBTest {
 
       EasyMock.replay(loadBalancerClient);
 
-      Assert.assertEquals(1, Iterables.size(ELB.list(loadBalancerClient, options)));
+      Assert.assertEquals(1, Iterables.size(ELB.listLoadBalancers(loadBalancerClient, options)));
    }
 
 
@@ -56,7 +56,7 @@ public class ELBTest {
 
       EasyMock.replay(loadBalancerClient);
 
-      Assert.assertEquals(2, Iterables.size(ELB.list(loadBalancerClient, options)));
+      Assert.assertEquals(2, Iterables.size(ELB.listLoadBalancers(loadBalancerClient, options)));
    }
 
 }

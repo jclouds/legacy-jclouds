@@ -18,6 +18,9 @@
  */
 package org.jclouds.elb.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Objects.ToStringHelper;
@@ -51,9 +54,9 @@ public class Listener {
    public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
-      protected int instancePort;
+      protected int instancePort = -1;
       protected Protocol instanceProtocol;
-      protected int port;
+      protected int port = -1;
       protected Protocol protocol;
       protected Optional<String> SSLCertificateId = Optional.absent();
 
@@ -124,13 +127,18 @@ public class Listener {
 
    protected Listener(int instancePort, Protocol instanceProtocol, int port, Protocol protocol,
             Optional<String> SSLCertificateId) {
-      this.instancePort = instancePort;
-      this.instanceProtocol = instanceProtocol;
-      this.port = port;
-      this.protocol = protocol;
-      this.SSLCertificateId = SSLCertificateId;
+      this.instancePort = checkNonNegative(instancePort, "instancePort");
+      this.instanceProtocol = checkNotNull(instanceProtocol, "instanceProtocol");
+      this.port = checkNonNegative(port, "port");
+      this.protocol = checkNotNull(protocol, "protocol");
+      this.SSLCertificateId = checkNotNull(SSLCertificateId, "SSLCertificateId");
    }
 
+   static int checkNonNegative(int in, String name) {
+      checkArgument(in > 0, "%s must be non-negative", name);
+      return in;
+   }
+   
    /**
     * The name associated with the LoadBalancer. The name must be unique within your set of
     * LoadBalancers.

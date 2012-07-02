@@ -33,6 +33,7 @@ import org.jclouds.elb.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.elb.binders.BindLoadBalancerNamesToIndexedFormParams;
 import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
+import org.jclouds.elb.features.PolicyAsyncClient;
 import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.elb.xml.DescribeLoadBalancersResponseHandler;
 import org.jclouds.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
@@ -78,9 +79,12 @@ public interface ELBAsyncClient {
    @Delegate
    LoadBalancerAsyncClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
-   
-   
-   
+   /**
+    * Provides asynchronous access to Policy features.
+    */
+   @Delegate
+   PolicyAsyncClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
    /// old stuff
    public static final String VERSION = "2012-06-01";
 

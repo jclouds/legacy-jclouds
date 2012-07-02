@@ -25,6 +25,8 @@ import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.features.LoadBalancerClient;
+import org.jclouds.elb.features.PolicyAsyncClient;
+import org.jclouds.elb.features.PolicyClient;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
@@ -38,7 +40,9 @@ import com.google.common.reflect.TypeToken;
 @ConfiguresRestClient
 public class ELBRestClientModule extends FormSigningRestClientModule<ELBClient, ELBAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class).build();
+            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)
+            .put(PolicyClient.class, PolicyAsyncClient.class)
+            .build();
 
    public ELBRestClientModule() {
       super(TypeToken.of(ELBClient.class), TypeToken.of(ELBAsyncClient.class), DELEGATE_MAP);

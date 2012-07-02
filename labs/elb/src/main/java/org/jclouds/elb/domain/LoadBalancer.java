@@ -143,8 +143,8 @@ public class LoadBalancer {
       /**
        * @see LoadBalancer#getInstanceIds()
        */
-      public T instanceIds(Iterable<String> instanceId) {
-         this.instanceIds.addAll(instanceId);
+      public T instanceIds(Iterable<String> instanceIds) {
+         this.instanceIds.addAll(checkNotNull(instanceIds, "instanceIds"));
          return self();
       }
 
@@ -152,15 +152,15 @@ public class LoadBalancer {
        * @see LoadBalancer#getInstanceIds()
        */
       public T instanceId(String instanceId) {
-         this.instanceIds.add(instanceId);
+         this.instanceIds.add(checkNotNull(instanceId, "instanceId"));
          return self();
       }
 
       /**
        * @see LoadBalancer#getListeners()
        */
-      public T listeners(Iterable<ListenerWithPolicies> listener) {
-         this.listeners.addAll(listener);
+      public T listeners(Iterable<ListenerWithPolicies> listeners) {
+         this.listeners.addAll(checkNotNull(listeners, "listeners"));
          return self();
       }
 
@@ -168,7 +168,7 @@ public class LoadBalancer {
        * @see LoadBalancer#getListeners()
        */
       public T listener(ListenerWithPolicies listener) {
-         this.listeners.add(listener);
+         this.listeners.add(checkNotNull(listener, "listener"));
          return self();
       }
 
@@ -194,9 +194,9 @@ public class LoadBalancer {
       }
 
       public T fromLoadBalancer(LoadBalancer in) {
-         return this.name(in.getName()).createdTime(in.getCreatedTime()).dnsName(in.getDnsName()).healthCheck(
-                  in.getHealthCheck()).instanceIds(in.getInstanceIds()).scheme(in.getScheme().orNull()).VPCId(
-                  in.getVPCId().orNull());
+         return this.name(in.getName()).createdTime(in.getCreatedTime()).dnsName(in.getDnsName())
+                  .healthCheck(in.getHealthCheck()).listeners(in.getListeners()).instanceIds(in.getInstanceIds())
+                  .scheme(in.getScheme().orNull()).VPCId(in.getVPCId().orNull());
       }
    }
 
@@ -219,14 +219,14 @@ public class LoadBalancer {
    protected LoadBalancer(String name, Date createdTime, String dnsName, HealthCheck healthCheck,
             Iterable<String> instanceIds, Iterable<ListenerWithPolicies> listeners, Optional<Scheme> scheme,
             Optional<String> VPCId) {
-      this.name = name;
-      this.createdTime = createdTime;
-      this.dnsName = dnsName;
-      this.healthCheck = healthCheck;
-      this.instanceIds = ImmutableSet.copyOf(instanceIds);
-      this.listeners = ImmutableSet.copyOf(listeners);
-      this.scheme = scheme;
-      this.VPCId = VPCId;
+      this.name = checkNotNull(name, "name");
+      this.createdTime = checkNotNull(createdTime, "createdTime");
+      this.dnsName = checkNotNull(dnsName, "dnsName");
+      this.healthCheck = checkNotNull(healthCheck, "healthCheck");
+      this.instanceIds = ImmutableSet.copyOf(checkNotNull(instanceIds, "instanceIds"));
+      this.listeners = ImmutableSet.copyOf(checkNotNull(listeners, "listeners"));
+      this.scheme = checkNotNull(scheme, "scheme");
+      this.VPCId = checkNotNull(VPCId, "VPCId");
    }
 
    /**
