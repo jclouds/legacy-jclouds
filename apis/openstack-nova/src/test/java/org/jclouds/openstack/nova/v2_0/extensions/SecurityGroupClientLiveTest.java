@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Michael Arnold
  */
-@Test(groups = "live", testName = "SecurityGroupClientLiveTest")
+@Test(groups = "live", testName = "SecurityGroupClientLiveTest", singleThreaded = true)
 public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
 
    public static final String SECURITY_GROUP_NAME = "testsg";
