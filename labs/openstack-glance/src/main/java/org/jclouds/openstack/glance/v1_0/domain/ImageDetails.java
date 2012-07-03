@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,19 +20,24 @@ package org.jclouds.openstack.glance.v1_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.v2_0.domain.Link;
+
+import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Detailed listing of an Image
- * 
+ *
  * @author Adrian Cole
  * @see <a href= "http://glance.openstack.org/glanceapi.html" />
  * @see <a href= "https://github.com/openstack/glance/blob/master/glance/api/v1/images.py" />
@@ -48,17 +53,17 @@ public class ImageDetails extends Image {
       return new ConcreteBuilder().fromImageDetails(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Image.Builder<T> {
-      private long minDisk;
-      private long minRam;
-      private Optional<String> location = Optional.absent();
-      private Optional<String> owner = Optional.absent();
-      private Date updatedAt;
-      private Date createdAt;
-      private Optional<Date> deletedAt = Optional.absent();
-      private Status status = Status.UNRECOGNIZED;
-      private boolean isPublic;
-      private Map<String, String> properties = ImmutableMap.of();
+   public static abstract class Builder<T extends Builder<T>> extends Image.Builder<T>  {
+      protected long minDisk;
+      protected long minRam;
+      protected String location;
+      protected String owner;
+      protected Date updatedAt;
+      protected Date createdAt;
+      protected Date deletedAt;
+      protected Image.Status status;
+      protected boolean isPublic;
+      protected Map<String, String> properties = ImmutableMap.of();
 
       /**
        * @see ImageDetails#getMinDisk()
@@ -79,23 +84,8 @@ public class ImageDetails extends Image {
       /**
        * @see ImageDetails#getLocation()
        */
-      public T location(Optional<String> location) {
-         this.location = location;
-         return self();
-      }
-
-      /**
-       * @see ImageDetails#getLocation()
-       */
       public T location(String location) {
-         return location(Optional.of(location));
-      }
-
-      /**
-       * @see ImageDetails#getOwner()
-       */
-      public T owner(Optional<String> owner) {
-         this.owner = owner;
+         this.location = location;
          return self();
       }
 
@@ -103,7 +93,8 @@ public class ImageDetails extends Image {
        * @see ImageDetails#getOwner()
        */
       public T owner(String owner) {
-         return owner(Optional.of(owner));
+         this.owner = owner;
+         return self();
       }
 
       /**
@@ -125,22 +116,15 @@ public class ImageDetails extends Image {
       /**
        * @see ImageDetails#getDeletedAt()
        */
-      public T deletedAt(Optional<Date> deletedAt) {
+      public T deletedAt(Date deletedAt) {
          this.deletedAt = deletedAt;
          return self();
       }
 
       /**
-       * @see ImageDetails#getDeletedAt()
-       */
-      public T deletedAt(Date deletedAt) {
-         return deletedAt(Optional.of(deletedAt));
-      }
-
-      /**
        * @see ImageDetails#getStatus()
        */
-      public T status(Status status) {
+      public T status(Image.Status status) {
          this.status = status;
          return self();
       }
@@ -157,18 +141,26 @@ public class ImageDetails extends Image {
        * @see ImageDetails#getProperties()
        */
       public T properties(Map<String, String> properties) {
-         this.properties = properties;
+         this.properties = ImmutableMap.copyOf(checkNotNull(properties, "properties"));
          return self();
       }
 
       public ImageDetails build() {
-         return new ImageDetails(this);
+         return new ImageDetails(id, name, links, containerFormat, diskFormat, size, checksum, minDisk, minRam, location, owner, updatedAt, createdAt, deletedAt, status, isPublic, properties);
       }
 
       public T fromImageDetails(ImageDetails in) {
-         return super.fromImage(in).minDisk(in.getMinDisk()).minRam(in.getMinRam()).location(in.getLocation())
-                  .updatedAt(in.getUpdatedAt()).createdAt(in.getCreatedAt()).deletedAt(in.getDeletedAt()).status(
-                           in.getStatus()).isPublic(in.isPublic()).properties(in.getProperties());
+         return super.fromImage(in)
+               .minDisk(in.getMinDisk())
+               .minRam(in.getMinRam())
+               .location(in.getLocation().orNull())
+               .owner(in.getOwner().orNull())
+               .updatedAt(in.getUpdatedAt())
+               .createdAt(in.getCreatedAt())
+               .deletedAt(in.getDeletedAt().orNull())
+               .status(in.getStatus())
+               .isPublic(in.isPublic())
+               .properties(in.getProperties());
       }
    }
 
@@ -179,49 +171,42 @@ public class ImageDetails extends Image {
       }
    }
 
-   protected ImageDetails() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
+   @Named("min_disk")
+   private final long minDisk;
+   @Named("min_ram")
+   private final long minRam;
+   private final Optional<String> location;
+   private final Optional<String> owner;
+   @Named("updated_at")
+   private final Date updatedAt;
+   @Named("created_at")
+   private final Date createdAt;
+   @Named("deleted_at")
+   private final Optional<Date> deletedAt;
+   private final Image.Status status;
+   @Named("is_public")
+   private final boolean isPublic;
+   private final Map<String, String> properties;
 
-   // | min_disk | int(11) | YES | | NULL | |
-   @SerializedName("min_disk")
-   private long minDisk;
-   // | min_ram | int(11) | YES | | NULL | |
-   @SerializedName("min_ram")
-   private long minRam;
-   // | location | text | YES | | NULL | |
-   private Optional<String> location = Optional.absent();
-   // | owner | varchar(255) | YES | | NULL | |
-   private Optional<String> owner = Optional.absent();
-   // | updated_at | datetime | YES | | NULL | |
-   @SerializedName("updated_at")
-   private Date updatedAt;
-   // | created_at | datetime | NO | | NULL | |
-   @SerializedName("created_at")
-   private Date createdAt;
-   @SerializedName("deleted_at")
-   private Optional<Date> deletedAt = Optional.absent();
-   // | status | varchar(30) | NO | | NULL | |
-   private Status status = Status.UNRECOGNIZED;
-   // | is_public | tinyint(1) | NO | | NULL | |
-   @SerializedName("is_public")
-   private boolean isPublic;
-   private Map<String, String> properties = ImmutableMap.of();
-
-   protected ImageDetails(Builder<?> builder) {
-      super(builder);
-      this.minDisk = builder.minDisk;
-      this.minRam = checkNotNull(builder.minRam, "minRam");
-      this.location = checkNotNull(builder.location, "location");
-      this.owner = checkNotNull(builder.owner, "owner");
-      this.updatedAt = checkNotNull(builder.updatedAt, "updatedAt");
-      this.createdAt = checkNotNull(builder.createdAt, "createdAt");
-      this.deletedAt = checkNotNull(builder.deletedAt, "deletedAt");
-      this.status = checkNotNull(builder.status, "status");
-      this.isPublic = checkNotNull(builder.isPublic, "isPublic");
-      this.properties = ImmutableMap.copyOf(builder.properties);
+   @ConstructorProperties({
+         "id", "name", "links", "container_format", "disk_format", "size", "checksum", "min_disk", "min_ram", "location", "owner", "updated_at", "created_at", "deleted_at", "status", "is_public", "properties"
+   })
+   protected ImageDetails(String id, @Nullable String name, Set<Link> links, @Nullable ContainerFormat containerFormat,
+                          @Nullable DiskFormat diskFormat, @Nullable Long size, @Nullable String checksum, long minDisk,
+                          long minRam, @Nullable String location, @Nullable String owner, Date updatedAt, 
+                          Date createdAt, @Nullable Date deletedAt, Image.Status status, boolean isPublic, 
+                          Map<String, String> properties) {
+      super(id, name, links, containerFormat, diskFormat, size, checksum);
+      this.minDisk = minDisk;
+      this.minRam = minRam;
+      this.location = Optional.fromNullable(location);
+      this.owner = Optional.fromNullable(owner);
+      this.updatedAt = checkNotNull(updatedAt, "updatedAt");
+      this.createdAt = checkNotNull(createdAt, "createdAt");
+      this.deletedAt = Optional.fromNullable(deletedAt);
+      this.status = checkNotNull(status, "status");
+      this.isPublic = isPublic;
+      this.properties = ImmutableMap.copyOf(checkNotNull(properties, "properties"));
    }
 
    /**
@@ -238,18 +223,14 @@ public class ImageDetails extends Image {
       return this.minRam;
    }
 
-   public Status getStatus() {
-      return this.status;
-   }
-
    public Optional<String> getLocation() {
       return this.location;
    }
 
    public Optional<String> getOwner() {
-      return owner;
+      return this.owner;
    }
-   
+
    public Date getUpdatedAt() {
       return this.updatedAt;
    }
@@ -262,22 +243,43 @@ public class ImageDetails extends Image {
       return this.deletedAt;
    }
 
+   public Image.Status getStatus() {
+      return this.status;
+   }
+
    public boolean isPublic() {
       return this.isPublic;
    }
 
    public Map<String, String> getProperties() {
-      // in case this was assigned in gson
-      return ImmutableMap.copyOf(Maps.filterValues(this.properties, Predicates.notNull()));
+      return this.properties;
    }
 
-   // hashCode/equals from super is ok
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(minDisk, minRam, location, owner, updatedAt, createdAt, deletedAt, status, isPublic, properties);
+   }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ImageDetails that = ImageDetails.class.cast(obj);
+      return super.equals(that) && Objects.equal(this.minDisk, that.minDisk)
+            && Objects.equal(this.minRam, that.minRam)
+            && Objects.equal(this.location, that.location)
+            && Objects.equal(this.owner, that.owner)
+            && Objects.equal(this.updatedAt, that.updatedAt)
+            && Objects.equal(this.createdAt, that.createdAt)
+            && Objects.equal(this.deletedAt, that.deletedAt)
+            && Objects.equal(this.status, that.status)
+            && Objects.equal(this.isPublic, that.isPublic)
+            && Objects.equal(this.properties, that.properties);
+   }
+
    protected ToStringHelper string() {
-      return super.string().add("minDisk", minDisk).add("minRam", minRam).add("location", location).add("deletedAt",
-               getDeletedAt()).add("updatedAt", updatedAt).add("createdAt", createdAt).add("status", status).add(
-               "location", location).add("owner", owner).add("isPublic", isPublic).add("properties", properties);
+      return super.string()
+            .add("minDisk", minDisk).add("minRam", minRam).add("location", location).add("owner", owner).add("updatedAt", updatedAt).add("createdAt", createdAt).add("deletedAt", deletedAt).add("status", status).add("isPublic", isPublic).add("properties", properties);
    }
 
 }

@@ -4,6 +4,8 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -64,18 +66,13 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
          return name(from.getName()).count(from.getCount()).bytes(from.getBytes());
       }
    }
-
-   protected ContainerMetadata() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
   
    protected String name;
    protected int count;
    protected int bytes;
 
-   public ContainerMetadata(String name, int count, int bytes) {
+   @ConstructorProperties({"name", "count", "bytes"})
+   protected ContainerMetadata(String name, int count, int bytes) {
       this.name = checkNotNull(name, "name");
       this.count = count;
       this.bytes = bytes;

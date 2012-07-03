@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,31 +20,40 @@ package org.jclouds.openstack.quantum.v1_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A Quantum network
- *
+ * 
  * @author Adam Lowe
  * @see <a href="http://docs.openstack.org/api/openstack-network/1.0/content/Networks.html">api doc</a>
- */
+*/
 public class Network extends Reference {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromNetwork(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T> {
-      protected abstract T self();
-
-      private String name;
-
-      /**
+   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
+      protected String name;
+   
+      /** 
        * @see Network#getName()
        */
       public T name(String name) {
@@ -53,11 +62,12 @@ public class Network extends Reference {
       }
 
       public Network build() {
-         return new Network(this);
+         return new Network(id, name);
       }
-
+      
       public T fromNetwork(Network in) {
-         return super.fromReference(in).name(in.getName());
+         return super.fromReference(in)
+                  .name(in.getName());
       }
    }
 
@@ -70,25 +80,21 @@ public class Network extends Reference {
 
    private final String name;
 
-   protected Network(Builder<?> builder) {
-      super(builder);
-      this.name = checkNotNull(builder.name, "name");
+   @ConstructorProperties({
+      "id", "name"
+   })
+   protected Network(String id, String name) {
+      super(id);
+      this.name = checkNotNull(name, "name");
    }
 
-   protected Network() {
-      // for GSON
-      this.name = null;
-   }
-
-   /**
-    */
    public String getName() {
       return this.name;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), name);
+      return Objects.hashCode(name);
    }
 
    @Override
@@ -98,8 +104,10 @@ public class Network extends Reference {
       Network that = Network.class.cast(obj);
       return super.equals(that) && Objects.equal(this.name, that.name);
    }
-
+   
    protected ToStringHelper string() {
-      return super.string().add("name", name);
+      return super.string()
+            .add("name", name);
    }
+   
 }

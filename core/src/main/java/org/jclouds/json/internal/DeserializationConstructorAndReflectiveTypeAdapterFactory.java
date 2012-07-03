@@ -52,6 +52,9 @@ import com.google.gson.stream.JsonWriter;
  * If there's an annotation designating a parameterized constructor, invoke that for fields
  * correlating to named parameter annotations. Otherwise, use {@link ConstructorConstructor}, and
  * set fields via reflection.
+ * <p/>
+ * Notes: primitive constructor params are set to the Java defaults (0 or false) if not present; and
+ *  the empty object ({}) is treated as a null if the constructor for the object throws an NPE.
  * <li>Serialization</li>
  * Serialize based on reflective access to fields, delegating to ReflectiveTypeAdaptor.
  * </ul>
@@ -155,8 +158,9 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
 
          Class<?>[] paramTypes = parameterizedCtor.getParameterTypes();
          Object[] ctorParams = new Object[paramTypes.length];
+         boolean empty = true;
 
-         // TODO determine if we can drop this
+         // Set all primitive constructor params to defaults
          for (int i = 0; i < paramTypes.length; i++) {
             if (paramTypes[i] == boolean.class) {
                ctorParams[i] = Boolean.FALSE;
@@ -168,6 +172,7 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
          try {
             in.beginObject();
             while (in.hasNext()) {
+               empty = false;
                String name = in.nextName();
                ParameterReader parameter = parameterReaders.get(name);
                if (parameter == null) {
@@ -183,12 +188,21 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
 
          for (int i = 0; i < paramTypes.length; i++) {
             if (paramTypes[i].isPrimitive()) {
-               checkArgument(ctorParams[i] != null, "Primative param[" + i + "] in constructor " + parameterizedCtor
+               checkArgument(ctorParams[i] != null, "Primitive param[" + i + "] in constructor " + parameterizedCtor
                      + " cannot be absent!");
             }
          }
          in.endObject();
-         return newInstance(ctorParams);
+
+         try {
+            return newInstance(ctorParams);
+         } catch (NullPointerException ex) {
+            // If {} was found and constructor threw NPE, we treat the field as null
+            if (empty && paramTypes.length > 0) {
+               return null;
+            }
+            throw ex;
+         }
       }
 
       /**

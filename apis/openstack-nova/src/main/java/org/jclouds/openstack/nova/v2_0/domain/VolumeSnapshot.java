@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,96 +20,110 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
+
+import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * An Openstack Nova Volume Snapshot
- */
+*/
 public class VolumeSnapshot {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromSnapshot(this);
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromVolumeSnapshot(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String id;
-      private String volumeId;
-      private Volume.Status status;
-      private int size;
-      private Date created;
-      private String name;
-      private String description;
-
-      /** @see VolumeSnapshot#getId() */
+      protected String id;
+      protected String volumeId;
+      protected Volume.Status status;
+      protected int size;
+      protected Date created;
+      protected String name;
+      protected String description;
+   
+      /** 
+       * @see VolumeSnapshot#getId()
+       */
       public T id(String id) {
          this.id = id;
          return self();
       }
 
-      /** @see VolumeSnapshot#getVolumeId() */
+      /** 
+       * @see VolumeSnapshot#getVolumeId()
+       */
       public T volumeId(String volumeId) {
          this.volumeId = volumeId;
          return self();
       }
 
-      /** @see VolumeSnapshot#getStatus() */
+      /** 
+       * @see VolumeSnapshot#getStatus()
+       */
       public T status(Volume.Status status) {
          this.status = status;
          return self();
       }
 
-      /** @see VolumeSnapshot#getSize() */
+      /** 
+       * @see VolumeSnapshot#getSize()
+       */
       public T size(int size) {
          this.size = size;
          return self();
       }
 
-      /** @see VolumeSnapshot#getCreated() */
+      /** 
+       * @see VolumeSnapshot#getCreated()
+       */
       public T created(Date created) {
          this.created = created;
          return self();
       }
 
-      /** @see VolumeSnapshot#getName() */
+      /** 
+       * @see VolumeSnapshot#getName()
+       */
       public T name(String name) {
          this.name = name;
          return self();
       }
 
-      /** @see VolumeSnapshot#getDescription() */
+      /** 
+       * @see VolumeSnapshot#getDescription()
+       */
       public T description(String description) {
          this.description = description;
          return self();
       }
 
       public VolumeSnapshot build() {
-         return new VolumeSnapshot(this);
+         return new VolumeSnapshot(id, volumeId, status, size, created, name, description);
       }
-
-      public T fromSnapshot(VolumeSnapshot in) {
+      
+      public T fromVolumeSnapshot(VolumeSnapshot in) {
          return this
-               .id(in.getId())
-               .volumeId(in.getVolumeId())
-               .status(in.getStatus())
-               .size(in.getSize())
-               .created(in.getCreated())
-               .name(in.getName())
-               .description(in.getDescription())
-               ;
+                  .id(in.getId())
+                  .volumeId(in.getVolumeId())
+                  .status(in.getStatus())
+                  .size(in.getSize())
+                  .created(in.getCreated())
+                  .name(in.getName())
+                  .description(in.getDescription());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -119,31 +133,28 @@ public class VolumeSnapshot {
       }
    }
 
-   protected VolumeSnapshot() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   private String id;
-   private String volumeId;
-   private Volume.Status status;
-   private int size;
-   @SerializedName(value="createdAt")
-   private Date created;
-   @SerializedName(value="displayName")
-   private String name;
-   @SerializedName(value="displayDescription")
-   private String description;
+   private final String id;
+   private final String volumeId;
+   private final Volume.Status status;
+   private final int size;
+   @Named("createdAt")
+   private final Date created;
+   @Named("displayName")
+   private final String name;
+   @Named("displayDescription")
+   private final String description;
 
-   protected VolumeSnapshot(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
-      this.volumeId = checkNotNull(builder.volumeId, "volumeId");
-      this.status = checkNotNull(builder.status, "status");
-      this.size = builder.size;
-      this.created = builder.created;
-      this.name = builder.name;
-      this.description = builder.description;
+   @ConstructorProperties({
+      "id", "volumeId", "status", "size", "createdAt", "displayName", "displayDescription"
+   })
+   protected VolumeSnapshot(String id, String volumeId, Volume.Status status, int size, @Nullable Date created, @Nullable String name, @Nullable String description) {
+      this.id = checkNotNull(id, "id");
+      this.volumeId = checkNotNull(volumeId, "volumeId");
+      this.status = checkNotNull(status, "status");
+      this.size = size;
+      this.created = created;
+      this.name = name;
+      this.description = description;
    }
 
    /**
@@ -190,7 +201,6 @@ public class VolumeSnapshot {
       return this.name;
    }
 
-
    /**
     * @return the description of this snapshot - as displayed in the openstack console
     */
@@ -210,27 +220,19 @@ public class VolumeSnapshot {
       if (obj == null || getClass() != obj.getClass()) return false;
       VolumeSnapshot that = VolumeSnapshot.class.cast(obj);
       return Objects.equal(this.id, that.id)
-            && Objects.equal(this.volumeId, that.volumeId)
-            && Objects.equal(this.status, that.status)
-            && Objects.equal(this.size, that.size)
-            && Objects.equal(this.created, that.created)
-            && Objects.equal(this.name, that.name)
-            && Objects.equal(this.description, that.description)
-            ;
+               && Objects.equal(this.volumeId, that.volumeId)
+               && Objects.equal(this.status, that.status)
+               && Objects.equal(this.size, that.size)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.description, that.description);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("id", id)
-            .add("volumeId", volumeId)
-            .add("status", status)
-            .add("size", size)
-            .add("created", created)
-            .add("name", name)
-            .add("description", description)
-            ;
+      return Objects.toStringHelper(this)
+            .add("id", id).add("volumeId", volumeId).add("status", status).add("size", size).add("created", created).add("name", name).add("description", description);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

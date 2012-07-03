@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "SecurityGroupPredicatesTest")
 public class SecurityGroupPredicatesTest {
-   SecurityGroup ref = SecurityGroup.builder().name("jclouds").description("description").build();
+   SecurityGroup ref = SecurityGroup.builder().id("12345").name("jclouds").description("description").build();
 
    @Test
    public void testnameEqualsWhenEqual() {

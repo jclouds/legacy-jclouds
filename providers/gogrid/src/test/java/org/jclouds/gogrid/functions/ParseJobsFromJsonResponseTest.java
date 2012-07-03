@@ -40,6 +40,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -61,18 +62,17 @@ public class ParseJobsFromJsonResponseTest {
       ParseJobListFromJsonResponse parser = i.getInstance(ParseJobListFromJsonResponse.class);
       SortedSet<Job> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-      Map<String, String> details = Maps.newTreeMap();
-      details.put("description", null);
-      details.put("image", "GSI-f8979644-e646-4711-ad58-d98a5fa3612c");
-      details.put("ip", "204.51.240.189");
-      details.put("name", "ServerCreated40562");
-      details.put("type", "virtual_server");
+      Map<String, String> details = ImmutableMap.of(
+            "image", "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
+            "ip", "204.51.240.189",
+            "name", "ServerCreated40562",
+            "type", "virtual_server");
 
       Job job = new Job(250628L, new Option(7L, "DeleteVirtualServer", "Delete Virtual Server"),
             ObjectType.VIRTUAL_SERVER, new Date(1267404528895L), new Date(1267404538592L), JobState.SUCCEEDED, 1,
             "3116784158f0af2d-24076@api.gogrid.com", ImmutableSortedSet.of(new JobProperties(940263L, new Date(
-                  1267404528897L), JobState.CREATED, null), new JobProperties(940264L, new Date(1267404528967L),
-                  JobState.QUEUED, null)), details);
+            1267404528897L), JobState.CREATED, null), new JobProperties(940264L, new Date(1267404528967L),
+            JobState.QUEUED, null)), details);
       assertEquals(job, Iterables.getOnlyElement(response));
    }
 

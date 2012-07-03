@@ -95,7 +95,7 @@ public class ParseServerWithAllExtensionsTest extends BaseItemParserTest<Server>
             .addresses(ImmutableMultimap.of("private", Address.createV4("10.0.0.8")))
             .diskConfig("MANUAL")
             .extendedStatus(ServerExtendedStatus.builder().vmState("paused").powerState(3).build())
-            .extraAttributes(ServerExtendedAttributes.builder().instanceName("instance-00000014").hostName("ubuntu").build())
+            .extendedAttributes(ServerExtendedAttributes.builder().instanceName("instance-00000014").hostName("ubuntu").build())
             .build();
    }
   

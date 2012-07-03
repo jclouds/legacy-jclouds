@@ -18,6 +18,7 @@ package org.jclouds.json.internal;
  * under the License.
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
@@ -38,6 +39,7 @@ import org.jclouds.json.internal.NamingStrategies.ExtractNamed;
 import org.jclouds.json.internal.NamingStrategies.ExtractSerializedName;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
@@ -164,6 +166,8 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
          return true;
       }
 
+      @Override
+      public String toString() { return "ValidatedConstructor[foo=" + foo + ",bar=" + bar + "]"; }
    }
 
    public void testValidatedConstructor() throws IOException {
@@ -227,13 +231,50 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
             return false;
          return true;
       }
-
    }
 
    public void testRenamedFields() throws IOException {
       TypeAdapter<RenamedFields> adapter = parameterizedCtorFactory.create(gson, TypeToken.get(RenamedFields.class));
       assertEquals(new RenamedFields(0, 1), adapter.fromJson("{\"foo\":0,\"_bar\":1}"));
       assertEquals(adapter.toJson(new RenamedFields(0, 1)), "{\"foo\":0,\"_bar\":1}");
+   }
+
+   private static class ComposedObjects {
+      final ValidatedConstructor x;
+      final ValidatedConstructor y;
+
+      @ConstructorProperties({"x", "y"})
+      ComposedObjects(ValidatedConstructor x, ValidatedConstructor y) {
+         this.x = checkNotNull(x);
+         this.y = checkNotNull(y);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         ComposedObjects other = ComposedObjects.class.cast(obj);
+         return other != null && Objects.equal(x, other.x) && Objects.equal(y, other.y);
+      }
+      
+      @Override
+      public String toString() { return "ComposedObjects[x=" + x.toString() + ";y=" + y.toString() + "]"; }
+   }
+   
+   public void checkSimpleComposedObject() throws IOException  {
+      ValidatedConstructor x = new ValidatedConstructor(0,1);
+      ValidatedConstructor y = new ValidatedConstructor(1,2);
+      TypeAdapter<ComposedObjects> adapter = parameterizedCtorFactory.create(gson, TypeToken.get(ComposedObjects.class));
+      assertEquals(new ComposedObjects(x, y), adapter.fromJson("{\"x\":{\"foo\":0,\"bar\":1},\"y\":{\"foo\":1,\"bar\":2}}"));
+   }
+
+   public void testEmptyObjectIsNull() throws IOException {
+      TypeAdapter<ComposedObjects> adapter = parameterizedCtorFactory.create(gson, TypeToken.get(ComposedObjects.class));
+      assertNull(adapter.fromJson("{}"));
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testPartialObjectStillThrows() throws IOException {
+      TypeAdapter<ComposedObjects> adapter = parameterizedCtorFactory.create(gson, TypeToken.get(ComposedObjects.class));
+      assertNull(adapter.fromJson("{\"x\":{\"foo\":0,\"bar\":1}}"));
    }
 
    public void testCanOverrideDefault() throws IOException {

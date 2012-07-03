@@ -54,17 +54,17 @@ public class ParseComputeServiceTypicalSecurityGroupTest extends BaseItemParserT
    @Consumes(MediaType.APPLICATION_JSON)
    public SecurityGroup expected() {
 
-      Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
+      Set<SecurityGroupRule> securityGroupRules = ImmutableSet.of(
             SecurityGroupRule.builder().fromPort(22)
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("2769")
                   .ipRange("0.0.0.0/0").id("10331").build(),
-            SecurityGroupRule.builder().fromPort(22).group(new TenantIdAndName("37936628937291", "jclouds_mygroup"))
+            SecurityGroupRule.builder().fromPort(22).group(TenantIdAndName.builder().tenantId("37936628937291").name("jclouds_mygroup").build())
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("2769")
                   .id("10332").build(),
             SecurityGroupRule.builder().fromPort(8080)
                   .ipProtocol(IpProtocol.TCP).toPort(8080).parentGroupId("2769")
                   .ipRange("0.0.0.0/0").id("10333").build(),
-            SecurityGroupRule.builder().fromPort(8080).group(new TenantIdAndName("37936628937291", "jclouds_mygroup"))
+            SecurityGroupRule.builder().fromPort(8080).group(TenantIdAndName.builder().tenantId("37936628937291").name("jclouds_mygroup").build())
                   .ipProtocol(IpProtocol.TCP).toPort(8080).parentGroupId("2769")
                   .id("10334").build()                  
       );

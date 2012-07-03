@@ -23,12 +23,14 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
+
+import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * For convenience, resources contain links to themselves. This allows a client to easily obtain a
@@ -134,17 +136,12 @@ public class Link {
       }
    }
   
-   protected Link() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-
-   @SerializedName("rel")
+   @Named("rel")
    protected Relation relation;
    protected String type;
    protected URI href;
 
+   @ConstructorProperties({"rel", "type", "href"})
    protected Link(Relation relation, @Nullable String type, URI href) {
       this.relation = checkNotNull(relation, "relation");
       this.type = type;

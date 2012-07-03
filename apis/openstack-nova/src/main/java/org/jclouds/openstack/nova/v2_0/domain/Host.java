@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,52 +18,59 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Class Host
- */
+*/
 public class Host {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromHost(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String name;
-      private String service;
-
+      protected String name;
+      protected String service;
+   
+      /** 
+       * @see Host#getName()
+       */
       public T name(String name) {
          this.name = name;
          return self();
       }
 
+      /** 
+       * @see Host#getService()
+       */
       public T service(String service) {
          this.service = service;
          return self();
       }
 
       public Host build() {
-         return new Host(this);
+         return new Host(name, service);
       }
-
+      
       public T fromHost(Host in) {
          return this
-               .name(in.getName())
-               .service(in.getService())
-               ;
+                  .name(in.getName())
+                  .service(in.getService());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -72,31 +79,24 @@ public class Host {
          return this;
       }
    }
-   
-   protected Host() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   @SerializedName(value="host_name")
-   private String name;
-   private String service;
 
-   protected Host(Builder<?> builder) {
-      this.name = builder.name;
-      this.service = builder.service;
+   @Named("host_name")
+   private final String name;
+   private final String service;
+
+   @ConstructorProperties({
+      "host_name", "service"
+   })
+   protected Host(@Nullable String name, @Nullable String service) {
+      this.name = name;
+      this.service = service;
    }
 
-   /**
-    */
    @Nullable
    public String getName() {
       return this.name;
    }
 
-   /**
-    */
    @Nullable
    public String getService() {
       return this.service;
@@ -113,17 +113,14 @@ public class Host {
       if (obj == null || getClass() != obj.getClass()) return false;
       Host that = Host.class.cast(obj);
       return Objects.equal(this.name, that.name)
-            && Objects.equal(this.service, that.service)
-            ;
+               && Objects.equal(this.service, that.service);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("name", name)
-            .add("service", service)
-            ;
+      return Objects.toStringHelper(this)
+            .add("name", name).add("service", service);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

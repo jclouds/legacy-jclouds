@@ -115,7 +115,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                      .put("X-Auth-Token", authToken).build())
          .payload(payloadFromStringWithContentType(
-                  "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group2\"},{\"name\":\"group1\"}]}}","application/json"))
+                  "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group1\"},{\"name\":\"group2\"}]}}","application/json"))
          .build();
 
 

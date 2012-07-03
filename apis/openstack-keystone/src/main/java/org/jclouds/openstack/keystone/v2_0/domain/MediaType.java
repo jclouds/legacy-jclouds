@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0.domain;
 
+import java.beans.ConstructorProperties;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -28,61 +30,70 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 public class MediaType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromMediaType(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromMediaType(this);
    }
 
-   public static class Builder  {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String base;
-      private String type;
+      protected String base;
+      protected String type;
 
-      public Builder base(String base) {
+      /**
+       * @see MediaType#getBase()
+       */
+      public T base(String base) {
          this.base = base;
-         return this;
+         return self();
       }
 
-      public Builder type(String type) {
+      /**
+       * @see MediaType#getType()
+       */
+      public T type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
       public MediaType build() {
-         return new MediaType(this);
+         return new MediaType(base, type);
       }
 
-      public Builder fromMediaType(MediaType in) {
-         return this.base(in.getBase()).type(in.getType());
+      public T fromMediaType(MediaType in) {
+         return this
+               .base(in.getBase())
+               .type(in.getType());
       }
    }
-   
-   protected MediaType() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   private String base;
-   private String type;
 
-   protected MediaType(Builder builder) {
-      this.base = builder.base;
-      this.type = builder.type;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   /**
-    */
+   private final String base;
+   private final String type;
+
+   @ConstructorProperties({
+         "base", "type"
+   })
+   protected MediaType(@Nullable String base, @Nullable String type) {
+      this.base = base;
+      this.type = type;
+   }
+
    @Nullable
    public String getBase() {
       return this.base;
    }
 
-   /**
-    */
    @Nullable
    public String getType() {
       return this.type;
@@ -99,14 +110,12 @@ public class MediaType {
       if (obj == null || getClass() != obj.getClass()) return false;
       MediaType that = MediaType.class.cast(obj);
       return Objects.equal(this.base, that.base)
-            && Objects.equal(this.type, that.type)
-            ;
+            && Objects.equal(this.type, that.type);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("base", base)
-            .add("type", type);
+      return Objects.toStringHelper(this)
+            .add("base", base).add("type", type);
    }
 
    @Override

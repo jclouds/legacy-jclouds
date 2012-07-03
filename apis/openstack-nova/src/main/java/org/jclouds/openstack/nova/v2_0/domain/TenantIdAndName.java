@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,50 +18,88 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class TenantIdAndName
  * 
  * @author Adrian Cole
- */
+*/
 public class TenantIdAndName {
 
-   protected TenantIdAndName() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
    }
-  
-   @SerializedName("tenant_id")
-   protected String tenantId;
-   protected String name;
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromTenantIdAndName(this);
+   }
 
-   public TenantIdAndName(String tenantId, String name) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String tenantId;
+      protected String name;
+   
+      /** 
+       * @see TenantIdAndName#getTenantId()
+       */
+      public T tenantId(String tenantId) {
+         this.tenantId = tenantId;
+         return self();
+      }
+
+      /** 
+       * @see TenantIdAndName#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      public TenantIdAndName build() {
+         return new TenantIdAndName(tenantId, name);
+      }
+      
+      public T fromTenantIdAndName(TenantIdAndName in) {
+         return this
+                  .tenantId(in.getTenantId())
+                  .name(in.getName());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   @Named("tenant_id")
+   private final String tenantId;
+   private final String name;
+
+   @ConstructorProperties({
+      "tenant_id", "name"
+   })
+   protected TenantIdAndName(String tenantId, String name) {
       this.tenantId = checkNotNull(tenantId, "tenantId");
       this.name = checkNotNull(name, "name");
    }
 
    public String getTenantId() {
-      return tenantId;
+      return this.tenantId;
    }
 
    public String getName() {
-      return name;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      TenantIdAndName that = TenantIdAndName.class.cast(o);
-      return equal(this.tenantId, that.tenantId) && equal(this.name, that.name);
+      return this.name;
    }
 
    @Override
@@ -70,11 +108,22 @@ public class TenantIdAndName {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      TenantIdAndName that = TenantIdAndName.class.cast(obj);
+      return Objects.equal(this.tenantId, that.tenantId)
+               && Objects.equal(this.name, that.name);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("tenantId", tenantId).add("name", name);
+   }
+   
+   @Override
    public String toString() {
       return string().toString();
    }
 
-   protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("tenantId", tenantId).add("name", name);
-   }
 }

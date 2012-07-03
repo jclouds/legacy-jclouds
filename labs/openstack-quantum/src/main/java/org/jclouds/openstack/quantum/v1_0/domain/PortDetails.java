@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.quantum.v1_0.domain;
 
+import java.beans.ConstructorProperties;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -25,24 +27,24 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Details of a Quantum Port
- *
+ * 
  * @author Adam Lowe
  * @see <a href="http://docs.openstack.org/api/openstack-network/1.0/content/Ports.html">api doc</a>
- */
+*/
 public class PortDetails extends Port {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromPortDetails(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Port.Builder<T> {
-      private Attachment attachment;
-
-      /**
+   public static abstract class Builder<T extends Builder<T>> extends Port.Builder<T>  {
+      protected Attachment attachment;
+   
+      /** 
        * @see PortDetails#getAttachment()
        */
       public T attachment(Attachment attachment) {
@@ -51,11 +53,12 @@ public class PortDetails extends Port {
       }
 
       public PortDetails build() {
-         return new PortDetails(this);
+         return new PortDetails(id, state, attachment);
       }
-
+      
       public T fromPortDetails(PortDetails in) {
-         return super.fromPort(in).attachment(in.getAttachment());
+         return super.fromPort(in)
+                  .attachment(in.getAttachment());
       }
    }
 
@@ -66,17 +69,14 @@ public class PortDetails extends Port {
       }
    }
 
-   @Nullable
    private final Attachment attachment;
 
-   protected PortDetails(Builder<?> builder) {
-      super(builder);
-      this.attachment = builder.attachment;
-   }
-
-   protected PortDetails() {
-      // for GSON
-      this.attachment = null;
+   @ConstructorProperties({
+      "id", "state", "attachment"
+   })
+   protected PortDetails(String id, Port.State state, @Nullable Attachment attachment) {
+      super(id, state);
+      this.attachment = attachment;
    }
 
    @Nullable
@@ -96,9 +96,10 @@ public class PortDetails extends Port {
       PortDetails that = PortDetails.class.cast(obj);
       return super.equals(that) && Objects.equal(this.attachment, that.attachment);
    }
-
+   
    protected ToStringHelper string() {
-      return super.string().add("attachment", attachment);
+      return super.string()
+            .add("attachment", attachment);
    }
-
+   
 }
