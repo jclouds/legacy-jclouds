@@ -228,7 +228,7 @@ public class Image extends Resource {
       this.minDisk = minDisk;
       this.minRam = minRam;
       this.server = server;
-      this.metadata = metadata == null ? ImmutableMap.<String, String>of() : ImmutableMap.copyOf(Maps.filterValues(metadata, Predicates.notNull()));
+      this.metadata = metadata == null ? ImmutableMap.<String, String>of() : ImmutableMap.copyOf(metadata);
    }
 
    @Nullable

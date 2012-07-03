@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Named;
 
@@ -31,16 +30,12 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
-import org.jclouds.util.Multimaps2;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
@@ -254,7 +249,7 @@ public class Server extends Resource {
 
       public Server build() {
          return new Server(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6,
-               status, image, flavor, keyName, configDrive, Multimaps2.toOldSchool(addresses), metadata, extendedStatus,
+               status, image, flavor, keyName, configDrive, addresses, metadata, extendedStatus,
                extendedAttributes, diskConfig);
       }
 
@@ -305,7 +300,7 @@ public class Server extends Resource {
    private final String keyName;
    @Named("config_drive")
    private final String configDrive;
-   private final Map<String, Set<Address>> addresses;
+   private final Multimap<String, Address> addresses;
    private final Map<String, String> metadata;
    private final Optional<ServerExtendedStatus> extendedStatus;
    private final Optional<ServerExtendedAttributes> extendedAttributes;
@@ -318,7 +313,7 @@ public class Server extends Resource {
    protected Server(String id, @Nullable String name, java.util.Set<Link> links, @Nullable String uuid, String tenantId,
                     String userId, @Nullable Date updated, Date created, @Nullable String hostId, @Nullable String accessIPv4,
                     @Nullable String accessIPv6, Server.Status status, Resource image, Resource flavor, @Nullable String keyName,
-                    @Nullable String configDrive, Map<String, Set<Address>> addresses, Map<String, String> metadata,
+                    @Nullable String configDrive, Multimap<String, Address> addresses, Map<String, String> metadata,
                     @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes,
                     @Nullable String diskConfig) {
       super(id, name, links);
@@ -335,7 +330,7 @@ public class Server extends Resource {
       this.flavor = checkNotNull(flavor, "flavor");
       this.keyName = Strings.emptyToNull(keyName);
       this.configDrive = Strings.emptyToNull(configDrive);
-      this.addresses = ImmutableMap.copyOf(checkNotNull(addresses, "addresses"));
+      this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses"));
       this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
       this.extendedStatus = Optional.fromNullable(extendedStatus);
       this.extendedAttributes = Optional.fromNullable(extendedAttributes);
@@ -405,15 +400,14 @@ public class Server extends Resource {
    }
 
    public Map<String, String> getMetadata() {
-      // in case this was assigned in gson
-      return ImmutableMap.copyOf(Maps.filterValues(this.metadata, Predicates.notNull()));
+      return metadata;
    }
 
    /**
     * @return the ip addresses assigned to the server
     */
    public Multimap<String, Address> getAddresses() {
-      return Multimaps2.fromOldSchool(addresses);
+      return addresses;
    }
 
    /**

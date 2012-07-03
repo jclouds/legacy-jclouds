@@ -30,11 +30,11 @@ import javax.inject.Named;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
-import org.jclouds.util.Multimaps2;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 
 /**
  * Extended server returned by ServerWithSecurityGroupsClient
@@ -71,7 +71,7 @@ public class ServerWithSecurityGroups extends Server {
 
       public ServerWithSecurityGroups build() {
          return new ServerWithSecurityGroups(id, name, links, uuid, tenantId, userId, updated, created, hostId,
-               accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, Multimaps2.toOldSchool(addresses),
+               accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses,
                metadata, extendedStatus, extendedAttributes, diskConfig, securityGroupNames);
       }
       
@@ -98,7 +98,7 @@ public class ServerWithSecurityGroups extends Server {
                                       String tenantId, String userId, Date updated, Date created, @Nullable String hostId,
                                       @Nullable String accessIPv4, @Nullable String accessIPv6, Server.Status status, Resource image,
                                       Resource flavor, @Nullable String keyName, @Nullable String configDrive,
-                                      Map<String, Set<Address>> addresses, Map<String, String> metadata, 
+                                      Multimap<String, Address> addresses, Map<String, String> metadata, 
                                       @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes,
                                       @Nullable String diskConfig, Set<String> securityGroupNames) {
       super(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses, metadata, extendedStatus, extendedAttributes, diskConfig);

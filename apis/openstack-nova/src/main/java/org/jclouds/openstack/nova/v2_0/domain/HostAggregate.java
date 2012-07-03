@@ -170,16 +170,16 @@ public class HostAggregate {
    @ConstructorProperties({
       "id", "name", "availability_zone", "hosts", "operational_state", "created_at", "updated_at", "metadata"
    })
-   protected HostAggregate(String id, String name, String availabilityZone, Set<String> hosts, String state, Date created,
-                           @Nullable Date updated, Map<String, String> metadata) {
+   protected HostAggregate(String id, String name, String availabilityZone, @Nullable Set<String> hosts, String state, Date created,
+                           @Nullable Date updated, @Nullable Map<String, String> metadata) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
-      this.hosts = ImmutableSet.copyOf(checkNotNull(hosts, "hosts"));      
+      this.hosts = hosts == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(hosts);      
       this.state = checkNotNull(state, "state");
       this.created = checkNotNull(created, "created");
       this.updated = Optional.fromNullable(updated);
-      this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));     
+      this.metadata = metadata == null ? ImmutableMap.<String,String>of() : ImmutableMap.copyOf(metadata);     
    }
 
    public String getId() {
