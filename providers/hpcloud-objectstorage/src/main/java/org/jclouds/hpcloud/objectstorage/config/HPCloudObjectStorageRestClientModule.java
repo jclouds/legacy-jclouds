@@ -31,11 +31,7 @@ import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.hpcloud.services.HPExtensionServiceType;
-import org.jclouds.location.suppliers.ImplicitLocationSupplier;
-import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.location.suppliers.all.RegionToProvider;
-import org.jclouds.location.suppliers.implicit.FirstRegion;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
@@ -66,13 +62,6 @@ public class HPCloudObjectStorageRestClientModule extends
    protected void bindResolvedClientsToCommonSwift() {
       bind(CommonSwiftClient.class).to(HPCloudObjectStorageClient.class).in(Scopes.SINGLETON);
       bind(CommonSwiftAsyncClient.class).to(HPCloudObjectStorageAsyncClient.class).in(Scopes.SINGLETON);
-   }
-   
-   @Override
-   protected void installLocations() {
-      super.installLocations();
-      bind(ImplicitLocationSupplier.class).to(FirstRegion.class).in(Scopes.SINGLETON);
-      bind(LocationsSupplier.class).to(RegionToProvider.class).in(Scopes.SINGLETON);
    }
    
    @Provides

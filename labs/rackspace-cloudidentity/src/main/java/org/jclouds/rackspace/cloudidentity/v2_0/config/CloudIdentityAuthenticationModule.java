@@ -37,7 +37,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.google.inject.Scopes;
 
 /**
@@ -45,34 +44,6 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 public class CloudIdentityAuthenticationModule extends KeystoneAuthenticationModule {
-
-   public CloudIdentityAuthenticationModule() {
-      this(new RegionModule());
-   }
-
-   protected CloudIdentityAuthenticationModule(Module locationModule) {
-      super(locationModule);
-   }
-
-   public static class CloudIdentityAuthenticationModuleForRegions extends CloudIdentityAuthenticationModule {
-      public CloudIdentityAuthenticationModuleForRegions() {
-         super(new RegionModule());
-      }
-   }
-
-   public static Module forRegions() {
-      return new CloudIdentityAuthenticationModuleForRegions();
-   }
-
-   public static class CloudIdentityAuthenticationModuleForZones extends CloudIdentityAuthenticationModule {
-      public CloudIdentityAuthenticationModuleForZones() {
-         super(new ZoneModule());
-      }
-   }
-
-   public static Module forZones() {
-      return new CloudIdentityAuthenticationModuleForZones();
-   }
 
    @Override
    protected void bindAuthenticationClient() {

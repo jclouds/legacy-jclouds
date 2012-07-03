@@ -28,8 +28,11 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.KeystoneApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityRestClientModule;
 import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
@@ -85,7 +88,11 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
          .defaultProperties(CloudIdentityApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
          .documentation(URI.create("http://docs.rackspace.com/auth/api/v2.0/auth-client-devguide/"))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudIdentityRestClientModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(CloudIdentityAuthenticationModule.class)
+                                     .add(KeystoneAdminURLModule.class)
+                                     .add(KeystoneParserModule.class)
+                                     .add(KeystoneRestClientModule.class).build());
       }
       
       @Override

@@ -32,8 +32,9 @@ import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCL
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -81,14 +82,15 @@ import org.jclouds.trmk.vcloud_0_8.location.DefaultVDC;
 import org.jclouds.trmk.vcloud_0_8.location.OrgAndVDCToLocationSupplier;
 import org.jclouds.trmk.vcloud_0_8.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -141,7 +143,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @org.jclouds.trmk.vcloud_0_8.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(
          Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgNameToOrgSuppier) {
-      return Suppliers.compose(
+      return Suppliers2.compose(
             new Function<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>, Map<String, String>>() {
 
                @Override
@@ -163,15 +165,15 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> provideOrgMapCache(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
          OrgMapSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @OrgList
    protected Supplier<URI> provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
-      return Suppliers.compose(new Function<VCloudSession, URI>() {
+      return Suppliers2.compose(new Function<VCloudSession, URI>() {
 
          @Override
          public URI apply(VCloudSession arg0) {
@@ -250,8 +252,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @Singleton
    protected Supplier<Map<String, ReferenceType>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          AtomicReference<AuthorizationException> authException, OrgNameToOrgSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides
@@ -259,8 +261,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<Map<URI, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>> provideURIToVDC(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
          URItoVDC supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Singleton
@@ -333,7 +335,6 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    private static class OrgNameToOrgSupplier implements Supplier<Map<String, ReferenceType>> {
       private final Supplier<VCloudSession> sessionSupplier;
 
-      @SuppressWarnings("unused")
       @Inject
       OrgNameToOrgSupplier(Supplier<VCloudSession> sessionSupplier) {
          this.sessionSupplier = sessionSupplier;
@@ -351,7 +352,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<org.jclouds.trmk.vcloud_0_8.domain.Org> provideOrg(
          final Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgSupplier,
          @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(new Function<ReferenceType, org.jclouds.trmk.vcloud_0_8.domain.Org>() {
+      return Suppliers2.compose(new Function<ReferenceType, org.jclouds.trmk.vcloud_0_8.domain.Org>() {
 
          @Override
          public org.jclouds.trmk.vcloud_0_8.domain.Org apply(ReferenceType input) {
@@ -373,8 +374,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>>> provideOrgCatalogItemMapSupplierCache(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
          OrgCatalogSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Catalog>>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides
@@ -382,8 +383,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>> provideOrgVDCSupplierCache(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
          OrgVDCSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Singleton
@@ -460,8 +461,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.CatalogItem>>>> provideOrgCatalogItemSupplierCache(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
          OrgCatalogItemSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.CatalogItem>>>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    /**
@@ -479,15 +480,19 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             AtomicReference<AuthorizationException> authException, final TerremarkVCloudLoginClient login) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
                new Supplier<VCloudSession>() {
 
                   @Override
                   public VCloudSession get() {
                      return login.login();
                   }
-
-               });
+                  
+                  @Override
+                  public String toString() {
+                     return Objects.toStringHelper(login).add("method", "login").toString();
+                  }
+               }, seconds, TimeUnit.SECONDS);
    }
 
    @Singleton
@@ -541,8 +546,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<Map<String, ReferenceType>> provideOrgToKeysListCache(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
          OrgNameToKeysListSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(
-            authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Singleton

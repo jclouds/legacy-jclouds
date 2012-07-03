@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.v2_0.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
@@ -155,7 +156,9 @@ public class NovaComputeServiceAdapter implements
    @Override
    public Iterable<ImageInZone> listImages() {
       Builder<ImageInZone> builder = ImmutableSet.builder();
-      for (final String zoneId : zoneIds.get()) {
+      Set<String> zones = zoneIds.get();
+      checkState(zones.size() > 0, "no zones found in supplier %s", zoneIds);
+      for (final String zoneId : zones) {
          Set<Image> images = novaClient.getImageClientForZone(zoneId).listImagesInDetail();
          if (images.size() == 0) {
             logger.debug("no images found in zone %s", zoneId);

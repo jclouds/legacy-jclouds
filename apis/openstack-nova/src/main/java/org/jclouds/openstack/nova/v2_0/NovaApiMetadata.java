@@ -31,7 +31,8 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForZones;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -100,7 +101,11 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(NovaApiMetadata.defaultProperties())
          .view(TypeToken.of(ComputeServiceContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneAuthenticationModuleForZones.class, NovaRestClientModule.class, NovaComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(KeystoneAuthenticationModule.class)
+                                     .add(ZoneModule.class)
+                                     .add(NovaRestClientModule.class)
+                                     .add(NovaComputeServiceContextModule.class).build());
       }
       
       @Override

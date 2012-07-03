@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -69,7 +70,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultTasksList(DefaultTasksListForOrg defaultTasksListURIForOrg,
          @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(defaultTasksListURIForOrg, defaultOrg);
+      return Suppliers2.compose(defaultTasksListURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -84,7 +85,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,
          @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(defaultCatalogURIForOrg, defaultOrg);
+      return Suppliers2.compose(defaultCatalogURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -121,7 +122,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultVDC(DefaultVDCForOrg defaultVDCURIForOrg,
          @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(defaultVDCURIForOrg, defaultOrg);
+      return Suppliers2.compose(defaultVDCURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -136,7 +137,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultNetwork(DefaultNetworkForVDC defaultNetworkURIForVDC,
          @org.jclouds.trmk.vcloud_0_8.endpoints.VDC Supplier<ReferenceType> defaultVDC) {
-      return Suppliers.compose(defaultNetworkURIForVDC, defaultVDC);
+      return Suppliers2.compose(defaultNetworkURIForVDC, defaultVDC);
    }
 
    @Provides

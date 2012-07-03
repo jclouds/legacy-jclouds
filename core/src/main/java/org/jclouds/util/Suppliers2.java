@@ -24,16 +24,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ForwardingObject;
 import com.google.common.collect.Iterables;
 import com.google.common.io.OutputSupplier;
 
@@ -44,7 +40,7 @@ import com.google.common.io.OutputSupplier;
 public class Suppliers2 {
 
    public static <K, V> Supplier<V> getLastValueInMap(Supplier<Map<K, Supplier<V>>> input) {
-      return Suppliers.compose(new Function<Map<K, Supplier<V>>, V>() {
+      return Suppliers2.compose(new Function<Map<K, Supplier<V>>, V>() {
 
          @Override
          public V apply(Map<K, Supplier<V>> input) {
@@ -86,63 +82,35 @@ public class Suppliers2 {
       };
    }
 
-   /**
-    * same as {@link Supplier.memoizeWithExpiration} except that the expiration ticker starts after
-    * write vs after call to {@code get}.
-    * 
-    * @see Supplier.memoizeWithExpiration
-    */
-   public static <T> Supplier<T> memoizeWithExpirationAfterWrite(Supplier<T> delegate, long duration, TimeUnit unit) {
-      return new ExpireAfterWriteSupplier<T>(delegate, duration, unit);
+   // only here until guava compose gives a toString!
+   // http://code.google.com/p/guava-libraries/issues/detail?id=1052
+   public static <F, T> Supplier<T> compose(Function<? super F, T> function, Supplier<F> supplier) {
+      Preconditions.checkNotNull(function);
+      Preconditions.checkNotNull(supplier);
+      return new SupplierComposition<F, T>(function, supplier);
    }
 
-   static class ExpireAfterWriteSupplier<T> extends ForwardingObject implements Supplier<T>, Serializable {
-      private final Supplier<T> delegate;
-      private final long duration;
-      private final TimeUnit unit;
-      private final LoadingCache<Object, T> cache;
+   private static class SupplierComposition<F, T> implements Supplier<T>, Serializable {
+      /** The serialVersionUID */
+      private static final long serialVersionUID = 1023509665531743802L;
 
-      public ExpireAfterWriteSupplier(Supplier<T> delegate, long duration, TimeUnit unit) {
-         this.delegate = delegate;
-         this.duration = duration;
-         this.unit = unit;
-         cache = CacheBuilder.newBuilder().expireAfterWrite(duration, unit).build(CacheLoader.from(delegate));
-      }
+      final Function<? super F, T> function;
+      final Supplier<F> supplier;
 
-      @Override
-      protected Supplier<T> delegate() {
-         return delegate;
+      SupplierComposition(Function<? super F, T> function, Supplier<F> supplier) {
+         this.function = function;
+         this.supplier = supplier;
       }
 
       @Override
       public T get() {
-         return cache.getUnchecked("FOO");
-      }
-
-      private static final long serialVersionUID = 0;
-
-      @Override
-      public int hashCode() {
-         return Objects.hashCode(delegate, duration, unit);
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         ExpireAfterWriteSupplier<?> that = ExpireAfterWriteSupplier.class.cast(obj);
-         return Objects.equal(delegate, that.delegate) && Objects.equal(duration, that.duration);
+         return function.apply(supplier.get());
       }
 
       @Override
       public String toString() {
-         return Objects.toStringHelper(this).add("delegate", delegate).add("duration", duration).add("unit", unit)
-                  .toString();
+         return Objects.toStringHelper(this).add("function", function).add("supplier", supplier).toString();
       }
-
    }
+
 }

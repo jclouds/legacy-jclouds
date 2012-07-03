@@ -25,6 +25,7 @@ import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -54,6 +55,7 @@ import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.ProductPackageClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
@@ -95,7 +97,7 @@ public class SoftLayerComputeServiceContextModule extends
    public Supplier<ProductPackage> getProductPackage(AtomicReference<AuthorizationException> authException,
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final SoftLayerClient client,
             @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) final String virtualGuestPackageName) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<ProductPackage>(authException, seconds,
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
                new Supplier<ProductPackage>() {
                   @Override
                   public ProductPackage get() {
@@ -104,7 +106,13 @@ public class SoftLayerComputeServiceContextModule extends
                      ProductPackage p = find(accountClient.getActivePackages(), named(virtualGuestPackageName));
                      return productPackageClient.getProductPackage(p.getId());
                   }
-               });
+                  
+                  @Override
+                  public String toString() {
+                     return Objects.toStringHelper(client).add("method", "accountClient.getActivePackages")
+                                                          .add("method", "productPackageClient.getProductPackage").toString();
+                  }
+               }, seconds, TimeUnit.SECONDS);
    }
 
    // TODO: check the prices really do exist

@@ -34,7 +34,7 @@ import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.KeystoneAuthenticationModuleForRegions;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
@@ -62,8 +62,8 @@ public class SwiftRestClientModule<S extends CommonSwiftClient, A extends Common
 
    @SuppressWarnings("unchecked")
    public SwiftRestClientModule() {
-      this((TypeToken) TypeToken.of(SwiftClient.class), (TypeToken) TypeToken.of(SwiftAsyncClient.class), ImmutableMap
-               .<Class<?>, Class<?>> of());
+      this(TypeToken.class.cast(TypeToken.of(SwiftClient.class)), TypeToken.class.cast(TypeToken
+               .of(SwiftAsyncClient.class)), ImmutableMap.<Class<?>, Class<?>> of());
    }
 
    protected SwiftRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
@@ -80,7 +80,7 @@ public class SwiftRestClientModule<S extends CommonSwiftClient, A extends Common
       }
    }
 
-   public static class KeystoneStorageEndpointModule extends KeystoneAuthenticationModuleForRegions {
+   public static class KeystoneStorageEndpointModule extends KeystoneAuthenticationModule {
 
       @Provides
       @Singleton

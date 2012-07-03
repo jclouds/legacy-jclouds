@@ -32,6 +32,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.nodepool.Backend;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -51,7 +52,7 @@ public class BindInputStreamToFilesystemBlobStore extends BindJcloudsModules {
    @Exposed
    protected Supplier<Map<String, InputStream>> provideInputStreamMapFromBlobStore(Supplier<BlobStoreContext> in,
          @Named(NodePoolProperties.METADATA_CONTAINER) final String container) {
-      return Suppliers.memoize(Suppliers.compose(new Function<BlobStoreContext, Map<String, InputStream>>() {
+      return Suppliers.memoize(Suppliers2.compose(new Function<BlobStoreContext, Map<String, InputStream>>() {
 
          @Override
          public Map<String, InputStream> apply(BlobStoreContext input) {

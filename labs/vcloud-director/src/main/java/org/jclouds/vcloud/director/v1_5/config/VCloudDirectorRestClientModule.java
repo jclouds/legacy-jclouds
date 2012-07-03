@@ -40,6 +40,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
@@ -93,7 +94,6 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -187,7 +187,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    @Login
    protected Supplier<URI> loginUrl(@Provider Supplier<URI> provider) {
       // TODO: technically, we should implement version client, but this will work
-      return Suppliers.compose(new Function<URI, URI>() {
+      return Suppliers2.compose(new Function<URI, URI>() {
          
          @Override
          public URI apply(URI arg0) {
@@ -199,7 +199,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    
    @Provides
    protected Supplier<Session> currentSession(Supplier<SessionWithToken> in) {
-      return Suppliers.compose(new Function<SessionWithToken, Session>() {
+      return Suppliers2.compose(new Function<SessionWithToken, Session>() {
          
          @Override
          public Session apply(SessionWithToken arg0) {
@@ -214,7 +214,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    @Singleton
    @org.jclouds.vcloud.director.v1_5.annotations.Session
    protected Supplier<String> sessionToken(Supplier<SessionWithToken> in) {
-      return Suppliers.compose(new Function<SessionWithToken, String>() {
+      return Suppliers2.compose(new Function<SessionWithToken, String>() {
          
          @Override
          public String apply(SessionWithToken arg0) {

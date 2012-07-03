@@ -36,6 +36,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.nodepool.Backend;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.BuildVersion;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -117,7 +118,7 @@ public class BindBackendComputeService extends BindJcloudsModules {
    @Backend
    @Exposed
    protected Supplier<Template> makeBackendTemplate(@Backend Supplier<ComputeService> compute) {
-      return Suppliers.memoize(Suppliers.compose(new Function<ComputeService, Template>() {
+      return Suppliers.memoize(Suppliers2.compose(new Function<ComputeService, Template>() {
 
          @Override
          public Template apply(ComputeService input) {

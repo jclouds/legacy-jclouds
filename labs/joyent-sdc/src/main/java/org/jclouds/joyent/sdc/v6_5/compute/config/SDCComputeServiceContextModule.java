@@ -56,11 +56,11 @@ import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.DatasetInDatacenter;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.MachineInDatacenter;
 import org.jclouds.joyent.sdc.v6_5.domain.datacenterscoped.PackageInDatacenter;
 import org.jclouds.util.Iterables2;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -134,7 +134,7 @@ public class SDCComputeServiceContextModule extends
    @Singleton
    protected Supplier<Map<String, Location>> createLocationIndexedById(
          @Memoized Supplier<Set<? extends Location>> locations) {
-      return Suppliers.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
+      return Suppliers2.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
 
          @Override
          public Map<String, Location> apply(Set<? extends Location> arg0) {

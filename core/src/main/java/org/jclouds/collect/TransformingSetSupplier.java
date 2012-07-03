@@ -20,20 +20,23 @@ package org.jclouds.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.FluentIterable;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
+public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>>, Serializable {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8747953419394840218L;
+   
    private final Supplier<Iterable<F>> backingSupplier;
    private final Function<F, T> converter;
 
@@ -44,7 +47,33 @@ public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>>
 
    @Override
    public Set<? extends T> get() {
-      return ImmutableSet.copyOf(filter(transform(filter(backingSupplier.get(), notNull()), converter), notNull()));
+      Iterable<F> original = backingSupplier.get();
+      return FluentIterable.from(original)
+                           .filter(notNull())
+                           .transform(converter)
+                           .filter(notNull())
+                           .toImmutableSet();
    }
 
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(backingSupplier, converter);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      TransformingSetSupplier<?, ?> that = TransformingSetSupplier.class.cast(obj);
+      return Objects.equal(backingSupplier, that.backingSupplier) && Objects.equal(converter, that.converter);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).add("backingSupplier", backingSupplier).add("converter", converter).toString();
+   }
 }

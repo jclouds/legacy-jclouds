@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Identity;
+import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.ReferenceType;
 
@@ -72,7 +73,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultTasksList(DefaultTasksListForOrg defaultTasksListURIForOrg,
             @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(defaultTasksListURIForOrg, defaultOrg);
+      return Suppliers2.compose(defaultTasksListURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -80,7 +81,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,
             @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(defaultCatalogURIForOrg, defaultOrg);
+      return Suppliers2.compose(defaultCatalogURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -146,7 +147,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultVDC(DefaultVDCForOrg defaultVDCURIForOrg,
             @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(defaultVDCURIForOrg, defaultOrg);
+      return Suppliers2.compose(defaultVDCURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -161,7 +162,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultNetwork(DefaultNetworkForVDC defaultNetworkURIForVDC,
             @org.jclouds.vcloud.endpoints.VDC Supplier<ReferenceType> defaultVDC) {
-      return Suppliers.compose(defaultNetworkURIForVDC, defaultVDC);
+      return Suppliers2.compose(defaultNetworkURIForVDC, defaultVDC);
    }
 
    @Provides

@@ -48,10 +48,10 @@ import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -94,7 +94,7 @@ public class CloudLoadBalancersRestClientModule extends
       @Singleton
       @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID)
       protected Supplier<String> accountID(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-         return Suppliers.compose(new Function<URI, String>() {
+         return Suppliers2.compose(new Function<URI, String>() {
 
             @Override
             public String apply(URI arg0) {

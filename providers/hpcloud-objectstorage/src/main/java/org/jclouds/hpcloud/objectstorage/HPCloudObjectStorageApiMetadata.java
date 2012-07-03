@@ -29,6 +29,7 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.SwiftApiMetadata;
@@ -89,7 +90,11 @@ public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
          .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, HPCloudObjectStorageRestClientModule.class, HPCloudObjectStorageBlobStoreContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(KeystoneStorageEndpointModule.class)
+                                     .add(RegionModule.class)
+                                     .add(HPCloudObjectStorageRestClientModule.class)
+                                     .add(HPCloudObjectStorageBlobStoreContextModule.class).build());
       }
 
       @Override

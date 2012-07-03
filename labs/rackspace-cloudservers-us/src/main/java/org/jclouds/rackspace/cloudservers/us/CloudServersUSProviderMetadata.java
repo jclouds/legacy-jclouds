@@ -23,11 +23,12 @@ import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CRED
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule.CloudIdentityAuthenticationModuleForZones;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.rackspace.cloudservers.us.config.CloudServersUSComputeServiceContextModule;
 
@@ -77,7 +78,11 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
                   .credentialName("API Key")
                   .version("2")
                   .documentation(URI.create("http://docs.rackspace.com/servers/api/v2/cs-devguide/content/ch_preface.html#webhelp-currentid"))
-                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudIdentityAuthenticationModuleForZones.class, NovaRestClientModule.class, CloudServersUSComputeServiceContextModule.class))
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                              .add(CloudIdentityAuthenticationModule.class)
+                                              .add(ZoneModule.class)
+                                              .add(NovaRestClientModule.class)
+                                              .add(CloudServersUSComputeServiceContextModule.class).build())
                   .build())
          .homepage(URI.create("http://www.rackspace.com/cloud/nextgen"))
          .console(URI.create("https://mycloud.rackspace.com"))
