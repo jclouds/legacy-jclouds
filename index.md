@@ -3,38 +3,51 @@ layout: jclouds
 title: jclouds Home
 ---
 
-# jclouds Overview
-jclouds is an open source library that helps you get started in the cloud and reuse your java and clojure development skills. Our api allows you freedom to use portable abstractions or cloud-specific features. We test support of 30 cloud providers and cloud software stacks, including Amazon, GoGrid, Ninefold, vCloud, OpenStack, and Azure.
-We offer several API abstractions as java and clojure libraries. The following are the most mature:
+WHAT IS JCLOUDS? 
+===============
 
-### BLOBSTORE
-Simplifies dealing with key-value providers such as Amazon S3. For example, BlobStore can give you a simple Map view of a container.
+Cloud Interfaces, Simplified.
 
-### COMPUTESERVICE
-Simplifies the task of managing machines in the cloud. For example, you can use ComputeService to start 5 machines and install your software on them.
+jclouds is an open source library that helps you get started in the cloud and utilizes your [Java](http://www.oracle.com/technetwork/java/index.html) 
+or [Clojure](http://clojure.org) development skills. The jclouds API gives you the freedom to use portable abstractions or cloud-specific features. 
+
+jclouds tests support of 30 cloud providers and cloud software stacks including Amazon, GoGrid, Ninefold, vCloud, OpenStack, and Azure.  Please see the
+complete list of [jclouds supported providers](http://www.jclouds.org/documentation/reference/supported-providers/) that are promoted by the jclouds API.
+
+jclouds offers several API abstractions as Java and Clojure libraries. The most mature of these are BlobStore and ComputeService.
+
+## [BLOBSTORE](http://www.jclouds.org/documentation/userguide/blobstore-guide/)
+BlobStore is a simplified and portable means of managing your key-value storage providers.  BlobStore presents you with a straightforward 
+Map view of a container to access your data.
+
+## [COMPUTESERVICE](http://www.jclouds.org/documentation/userguide/compute/)
+ComputeService streamlines the task of managing instances in the cloud by enabling you to start multiple machines at once and install software on them.
+
 
 # WHY SHOULD I USE JCLOUDS?
-
-Even if you don't need the portable apis we provide, or could roll it your own, programming against cloud environments can be challenging. We focus on the following areas so that you can focus on using the cloud, rather than troubleshooting it!
+Programming against cloud environments can be challenging. jclouds focuses on the following areas so that you can get started in the cloud sooner.
 
 ### SIMPLE INTERFACE
-Instead of creating new object types, we reuse concepts like maps so that the programming model is familiar. In this way, you can get started without dealing with REST-like apis or WS.
+Get started without dealing with REST-like APIs or WS.  Instead of creating new object types, jclouds reuses concepts like maps so that the programming 
+model is familiar. 
 
 ### RUNTIME PORTABILITY
-We have drivers that allow you to operate in restricted environments like Google App Engine. We have very few required dependencies, so we are unlikely to clash with your app.
+jclouds drivers enable you to operate in restricted environments like Google App Engine. There are very few required dependencies, so jclouds is unlikely 
+to clash with your app.
 
-### DEAL WITH WEB COMPLEXITY
-Network based computing introduces issues such as transient failures and redirects.
-We handle this for you.
+### DEALS WITH WEB COMPLEXITY
+jclouds handles issues such as transient failures and redirects that traditional network based computing introduces.
 
 ### UNIT TESTABILITY
-Writing tests for cloud endpoints is difficult. We provide you with Stub connections that simulate a cloud without creating network connections. In this way, you can write your unit tests without mocking complexity or the brittleness of remote connections.
+Write your unit tests without mocking complexity or the brittleness of remote connections.  Writing tests for cloud endpoints is difficult. jclouds provides 
+you with Stub connections that simulate a cloud without creating network connections. 
 
 ### PERFORMANCE
-Writing tests for cloud endpoints is difficult. We provide you with Stub connections that simulate a cloud without creating network connections. In this way, you can write your unit tests without mocking complexity or the brittleness of remote connections.
+Customize configuration to match your performance needs.  jclouds provides you with asynchronous commands and tunable http, date, encryption, and 
+encryption modules.
 
-### LOCATION 
-All of our abstractions are location-aware. For example, you can get ISO-3166 codes to tell which country or province a cloud runs in.
+### LOCATION
+jclouds provides location-aware abstractions. For example, you can get ISO-3166 codes to tell which country or province a cloud runs in.
 
 ### QUALITY 
-We test every provider with live scenarios before each release. If it doesn't pass, the provider goes into the sandbox.
+Every provider is tested with live scenarios before each release. If the provider doesn't pass, it goes back into the sandbox.
