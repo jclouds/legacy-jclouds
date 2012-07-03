@@ -19,8 +19,6 @@
 package org.jclouds.openstack.nova.v2_0.config;
 
 import java.beans.ConstructorProperties;
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.Map;
@@ -41,21 +39,18 @@ import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.gson.*;
-import com.google.gson.internal.JsonReaderInternalAccess;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -76,8 +71,6 @@ public class NovaParserModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(GsonModule.Iso8601DateAdapter.class);
-      bind(new TypeLiteral<Set<TypeAdapterFactory>>() {
-      }).toInstance(ImmutableSet.<TypeAdapterFactory>of(new SetTypeAdapterFactory(), new MapTypeAdapterFactory(), new MultimapTypeAdapterFactory()));
    }
 
    @Singleton
@@ -163,148 +156,6 @@ public class NovaParserModule extends AbstractModule {
                                   @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes, @Nullable String diskConfig) {
             super(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses, metadata, extendedStatus, extendedAttributes, diskConfig);
          }
-      }
-   }
-
-   /**
-    * Eliminates nulls from within a set
-    * <p/>
-    * Treats [null] as the empty set; [A, null] as [A]; etc.
-    */
-   public static class SetTypeAdapterFactory implements TypeAdapterFactory {
-      @SuppressWarnings("unchecked")
-      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
-         Type type = typeToken.getType();
-         if (typeToken.getRawType() != Set.class || !(type instanceof ParameterizedType)) {
-            return null;
-         }
-
-         Type elementType = ((ParameterizedType) type).getActualTypeArguments()[0];
-         TypeAdapter<?> elementAdapter = gson.getAdapter(TypeToken.get(elementType));
-         return (TypeAdapter<T>) newSetAdapter(elementAdapter);
-      }
-
-      private <E> TypeAdapter<Set<E>> newSetAdapter(final TypeAdapter<E> elementAdapter) {
-         return new TypeAdapter<Set<E>>() {
-            public void write(JsonWriter out, Set<E> value) throws IOException {
-               out.beginArray();
-               for (E element : value) {
-                  elementAdapter.write(out, element);
-               }
-               out.endArray();
-            }
-
-            public Set<E> read(JsonReader in) throws IOException {
-               Set<E> result = Sets.newLinkedHashSet();
-               in.beginArray();
-               while (in.hasNext()) {
-                  E element = elementAdapter.read(in);
-                  if (element != null) result.add(element);
-               }
-               in.endArray();
-               return result;
-            }
-         }.nullSafe();
-      }
-   }
-
-   /**
-    * Eliminates null values from incoming maps
-    * <p/>
-    * Treats ["a":null] as the empty map; ["a":1, "b":null] as ["a":1]; etc.
-    */
-   public static class MapTypeAdapterFactory implements TypeAdapterFactory {
-      @SuppressWarnings("unchecked")
-      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
-         Type type = typeToken.getType();
-         if (typeToken.getRawType() != Map.class || !(type instanceof ParameterizedType)) {
-            return null;
-         }
-
-         Type keyType = ((ParameterizedType) type).getActualTypeArguments()[0];
-         Type valueType = ((ParameterizedType) type).getActualTypeArguments()[1];
-         TypeAdapter<?> keyAdapter = gson.getAdapter(TypeToken.get(keyType));
-         TypeAdapter<?> valueAdapter = gson.getAdapter(TypeToken.get(valueType));
-         return (TypeAdapter<T>) newMapAdapter(keyAdapter, valueAdapter);
-      }
-
-      private <K,V> TypeAdapter<Map<K, V>> newMapAdapter(final TypeAdapter<K> keyAdapter, final TypeAdapter<V> valueAdapter) {
-         return new TypeAdapter<Map<K, V>>() {
-            public void write(JsonWriter out, Map<K, V> value) throws IOException {
-               out.beginObject();
-               for (Map.Entry<K, V> element : value.entrySet()) {
-                  out.name(keyAdapter.toJson(element.getKey()));
-                  valueAdapter.write(out, element.getValue());
-               }
-               out.endObject();
-            }
-
-            public Map<K, V> read(JsonReader in) throws IOException {
-               Map<K, V> result = Maps.newLinkedHashMap();
-               in.beginObject();
-               while (in.hasNext()) {
-                  JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
-                  K name = keyAdapter.read(in);
-                  V value = valueAdapter.read(in);
-                  if (value != null) result.put(name, value);
-               }
-               in.endObject();
-               return result;
-            }
-         }.nullSafe();
-      }
-   }
-
-   /**
-    * Parses Multi-maps to/from json
-    */
-   public static class MultimapTypeAdapterFactory implements TypeAdapterFactory {
-      @SuppressWarnings("unchecked")
-      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
-         Type type = typeToken.getType();
-         if ((typeToken.getRawType() != Multimap.class) || !(type instanceof ParameterizedType)) {
-            return null;
-         }
-
-         Type keyType = ((ParameterizedType) type).getActualTypeArguments()[0];
-         Type valueType = ((ParameterizedType) type).getActualTypeArguments()[1];
-         TypeAdapter<?> keyAdapter = gson.getAdapter(TypeToken.get(keyType));
-         TypeAdapter<?> valueAdapter = gson.getAdapter(TypeToken.get(valueType));
-         return (TypeAdapter<T>) newMapAdapter(keyAdapter, valueAdapter);
-      }
-
-      private <K,V> TypeAdapter<Multimap<K, V>> newMapAdapter(final TypeAdapter<K> keyAdapter, final TypeAdapter<V> valueAdapter) {
-         return new TypeAdapter<Multimap<K, V>>() {
-            public void write(JsonWriter out, Multimap<K, V> map) throws IOException {
-               out.beginObject();
-               for (K key : map.keySet()) {
-                  out.name(keyAdapter.toJson(key));
-                  out.beginArray();
-                  for (V value : map.get(key)) {
-                     valueAdapter.write(out, value);
-                  }
-                  out.endArray();
-               }
-               out.endObject();
-            }
-
-            public Multimap<K, V> read(JsonReader in) throws IOException {
-               ImmutableMultimap.Builder<K, V> result = ImmutableListMultimap.builder();
-               in.beginObject();
-               while (in.hasNext()) {
-                  JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
-                  K name = keyAdapter.read(in);
-                  in.beginArray();
-                  while (in.hasNext()) {
-                     V value = valueAdapter.read(in);
-                     if (value != null) result.put(name, value);
-                  }
-                  in.endArray();
-               }
-               in.endObject();
-               return result.build();
-            }
-         }.nullSafe();
       }
    }
 }
