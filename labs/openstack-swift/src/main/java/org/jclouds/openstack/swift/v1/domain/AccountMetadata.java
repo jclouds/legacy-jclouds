@@ -3,6 +3,8 @@ package org.jclouds.openstack.swift.v1.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -48,17 +50,12 @@ public class AccountMetadata {
          return containerCount(from.getContainerCount()).bytesUsed(from.getBytesUsed());
       }
    }
-
-   protected AccountMetadata() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
   
    protected int containerCount;
    protected long bytesUsed;
 
-   public AccountMetadata(int containerCount, long bytesUsed) {
+   @ConstructorProperties({"containerCount", "bytesUsed"})
+   protected AccountMetadata(int containerCount, long bytesUsed) {
       this.containerCount = containerCount;
       this.bytesUsed = bytesUsed;
    }

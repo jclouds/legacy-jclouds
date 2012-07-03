@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,86 +18,103 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Ingress access to a destination protocol on particular ports
  * 
  * @author Adrian Cole
- */
+*/
 @Beta
 public class Ingress {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromIngress(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
       protected IpProtocol ipProtocol;
       protected int fromPort;
       protected int toPort;
-
-      /**
-       * 
+   
+      /** 
        * @see Ingress#getIpProtocol()
        */
-      public Builder ipProtocol(IpProtocol ipProtocol) {
+      public T ipProtocol(IpProtocol ipProtocol) {
          this.ipProtocol = ipProtocol;
-         return this;
+         return self();
       }
 
-      /**
-       * 
+      /** 
        * @see Ingress#getFromPort()
        */
-      public Builder fromPort(int fromPort) {
+      public T fromPort(int fromPort) {
          this.fromPort = fromPort;
-         return this;
+         return self();
       }
 
-      /**
-       * 
+      /** 
        * @see Ingress#getToPort()
        */
-      public Builder toPort(int toPort) {
+      public T toPort(int toPort) {
          this.toPort = toPort;
-         return this;
+         return self();
       }
 
       public Ingress build() {
          return new Ingress(ipProtocol, fromPort, toPort);
       }
+      
+      public T fromIngress(Ingress in) {
+         return this
+                  .ipProtocol(in.getIpProtocol())
+                  .fromPort(in.getFromPort())
+                  .toPort(in.getToPort());
+      }
    }
-   
-   protected Ingress() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName(value = "ip_protocol")
-   protected IpProtocol ipProtocol;
-   @SerializedName(value = "from_port")
-   protected int fromPort;
-   @SerializedName(value = "to_port")
-   protected int toPort;
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   @Named("ip_protocol")
+   private final IpProtocol ipProtocol;
+   @Named("from_port")
+   private final int fromPort;
+   @Named("to_port")
+   private final int toPort;
+
+   @ConstructorProperties({
+      "ip_protocol", "from_port", "to_port"
+   })
    protected Ingress(IpProtocol ipProtocol, int fromPort, int toPort) {
+      this.ipProtocol = checkNotNull(ipProtocol, "ipProtocol");
       this.fromPort = fromPort;
       this.toPort = toPort;
-      this.ipProtocol = checkNotNull(ipProtocol, "ipProtocol");
    }
 
    /**
     * destination IP protocol
     */
    public IpProtocol getIpProtocol() {
-      return ipProtocol;
+      return this.ipProtocol;
    }
 
    /**
@@ -105,7 +122,7 @@ public class Ingress {
     * type number of -1 indicates a wildcard (i.e., any ICMP type number).
     */
    public int getFromPort() {
-      return fromPort;
+      return this.fromPort;
    }
 
    /**
@@ -113,19 +130,7 @@ public class Ingress {
     * -1 indicates a wildcard (i.e., any ICMP code).
     */
    public int getToPort() {
-      return toPort;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      // allow subtypes
-      if (o == null || !(o instanceof Ingress))
-         return false;
-      Ingress that = Ingress.class.cast(o);
-      return equal(this.ipProtocol, that.ipProtocol) && equal(this.fromPort, that.fromPort)
-               && equal(this.toPort, that.toPort);
+      return this.toPort;
    }
 
    @Override
@@ -134,12 +139,23 @@ public class Ingress {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Ingress that = Ingress.class.cast(obj);
+      return Objects.equal(this.ipProtocol, that.ipProtocol)
+               && Objects.equal(this.fromPort, that.fromPort)
+               && Objects.equal(this.toPort, that.toPort);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("ipProtocol", ipProtocol).add("fromPort", fromPort).add("toPort", toPort);
+   }
+   
+   @Override
    public String toString() {
       return string().toString();
-   }
-
-   protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("ipProtocol", ipProtocol).add("fromPort", fromPort).add("toPort", toPort);
    }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,39 +18,45 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Additional attributes delivered by Extended Server Attributes extension (alias "OS-EXT-SRV-ATTR")
- *
+ * 
  * @author Adam Lowe
  * @see <a href=
- *        "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_server_attributes.html"
- *       />
+        "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_server_attributes.html"
+       />
  * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
- * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
- */
+ * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#EXTENDED_STATUS
+*/
 public class ServerExtendedAttributes {
-   public static final String PREFIX = "OS-EXT-SRV-ATTR:";
 
-   public static Builder<?> builder() {
+   public static String PREFIX;
+
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromServerExtraAttributes(this);
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromServerExtendedAttributes(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String instanceName;
-      private String hostName;
-      private String hypervisorHostName;
-
-      /**
+      protected String instanceName;
+      protected String hostName;
+      protected String hypervisorHostName;
+   
+      /** 
        * @see ServerExtendedAttributes#getInstanceName()
        */
       public T instanceName(String instanceName) {
@@ -58,7 +64,7 @@ public class ServerExtendedAttributes {
          return self();
       }
 
-      /**
+      /** 
        * @see ServerExtendedAttributes#getHostName()
        */
       public T hostName(String hostName) {
@@ -66,23 +72,23 @@ public class ServerExtendedAttributes {
          return self();
       }
 
-      /**
+      /** 
        * @see ServerExtendedAttributes#getHypervisorHostName()
        */
-      public T hypervisorHostame(String hypervisorHostName) {
+      public T hypervisorHostName(String hypervisorHostName) {
          this.hypervisorHostName = hypervisorHostName;
          return self();
       }
 
       public ServerExtendedAttributes build() {
-         return new ServerExtendedAttributes(this);
+         return new ServerExtendedAttributes(instanceName, hostName, hypervisorHostName);
       }
-
-      public T fromServerExtraAttributes(ServerExtendedAttributes in) {
+      
+      public T fromServerExtendedAttributes(ServerExtendedAttributes in) {
          return this
-               .instanceName(in.getInstanceName())
-               .hostName(in.getHostName())
-               .hypervisorHostame(in.getHypervisorHostName());
+                  .instanceName(in.getInstanceName())
+                  .hostName(in.getHostName())
+                  .hypervisorHostName(in.getHypervisorHostName());
       }
    }
 
@@ -92,34 +98,34 @@ public class ServerExtendedAttributes {
          return this;
       }
    }
-   
-   protected ServerExtendedAttributes() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName(value=PREFIX + "instance_name")
-   private String instanceName;
-   @SerializedName(value=PREFIX + "host")
-   private String hostName;
-   @SerializedName(value=PREFIX + "hypervisor_hostname")
-   private String hypervisorHostName;
 
-   protected ServerExtendedAttributes(Builder<?> builder) {
-      this.instanceName = builder.instanceName;
-      this.hostName = builder.hostName;
-      this.hypervisorHostName = builder.hypervisorHostName;
+   @Named("OS-EXT-SRV-ATTR:instance_name")
+   private final String instanceName;
+   @Named("OS-EXT-SRV-ATTR:host")
+   private final String hostName;
+   @Named("OS-EXT-SRV-ATTR:hypervisor_hostname")
+   private final String hypervisorHostName;
+
+   @ConstructorProperties({
+      "OS-EXT-SRV-ATTR:instance_name", "OS-EXT-SRV-ATTR:host", "OS-EXT-SRV-ATTR:hypervisor_hostname"
+   })
+   protected ServerExtendedAttributes(@Nullable String instanceName, @Nullable String hostName, @Nullable String hypervisorHostName) {
+      this.instanceName = instanceName;
+      this.hostName = hostName;
+      this.hypervisorHostName = hypervisorHostName;
    }
 
+   @Nullable
    public String getInstanceName() {
       return this.instanceName;
    }
 
+   @Nullable
    public String getHostName() {
       return this.hostName;
    }
 
+   @Nullable
    public String getHypervisorHostName() {
       return this.hypervisorHostName;
    }
@@ -135,17 +141,15 @@ public class ServerExtendedAttributes {
       if (obj == null || getClass() != obj.getClass()) return false;
       ServerExtendedAttributes that = ServerExtendedAttributes.class.cast(obj);
       return Objects.equal(this.instanceName, that.instanceName)
-            && Objects.equal(this.hostName, that.hostName)
-            && Objects.equal(this.hypervisorHostName, that.hypervisorHostName);
+               && Objects.equal(this.hostName, that.hostName)
+               && Objects.equal(this.hypervisorHostName, that.hypervisorHostName);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("instanceName", instanceName)
-            .add("hostName", hostName)
-            .add("hypervisorHostName", hypervisorHostName);
+      return Objects.toStringHelper(this)
+            .add("instanceName", instanceName).add("hostName", hostName).add("hypervisorHostName", hypervisorHostName);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

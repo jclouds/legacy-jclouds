@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,29 +18,30 @@
  */
 package org.jclouds.openstack.quantum.v1_0.domain;
 
+import java.beans.ConstructorProperties;
+
 /**
  * A Quantum attachment
- *
+ * 
  * @author Adam Lowe
  * @see <a href="http://docs.openstack.org/api/openstack-network/1.0/content/Attachments.html">api doc</a>
- */
+*/
 public class Attachment extends Reference {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromAttachment(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T> {
-      protected abstract T self();
-
+   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
+   
       public Attachment build() {
-         return new Attachment(this);
+         return new Attachment(id);
       }
-
+      
       public T fromAttachment(Attachment in) {
          return super.fromReference(in);
       }
@@ -53,11 +54,12 @@ public class Attachment extends Reference {
       }
    }
 
-   protected Attachment(Builder<?> builder) {
-      super(builder);
+
+   @ConstructorProperties({
+      "id"
+   })
+   protected Attachment(String id) {
+      super(id);
    }
 
-   protected Attachment() {
-      // for GSON
-   }
 }

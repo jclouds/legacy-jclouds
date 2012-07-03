@@ -1,9 +1,9 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Name 2.0 (the
+ * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,40 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ComparisonChain;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * An network-accessible address, usually described by URL, where a service may be accessed. If
  * using an extension for templates, you can create an endpoint template, which represents the
  * templates of all the consumable services that are available across the regions.
- * 
+ *
  * @author AdrianCole
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Endpoint-Concepts-e1362.html"
- *      />
+/>
  */
-public class Endpoint implements Comparable<Endpoint> {
+public class Endpoint {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromEndpoint(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromEndpoint(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
       protected String versionId;
       protected String region;
@@ -63,108 +62,112 @@ public class Endpoint implements Comparable<Endpoint> {
       /**
        * @see Endpoint#getVersionId()
        */
-      public Builder versionId(String versionId) {
-         this.versionId = checkNotNull(versionId, "versionId");
-         return this;
+      public T versionId(String versionId) {
+         this.versionId = versionId;
+         return self();
       }
 
       /**
        * @see Endpoint#getRegion()
        */
-      public Builder region(String region) {
-         this.region = checkNotNull(region, "region");
-         return this;
+      public T region(String region) {
+         this.region = region;
+         return self();
       }
 
       /**
        * @see Endpoint#getPublicURL()
        */
-      public Builder publicURL(URI publicURL) {
-         this.publicURL = checkNotNull(publicURL, "publicURL");
-         return this;
+      public T publicURL(URI publicURL) {
+         this.publicURL = publicURL;
+         return self();
       }
 
       /**
        * @see Endpoint#getInternalURL()
        */
-      public Builder internalURL(URI internalURL) {
-         this.internalURL = checkNotNull(internalURL, "internalURL");
-         return this;
+      public T internalURL(URI internalURL) {
+         this.internalURL = internalURL;
+         return self();
       }
 
       /**
-       * @see Endpoint#getInternalURL()
+       * @see Endpoint#getAdminURL()
        */
-      public Builder adminURL(URI adminURL) {
-         this.adminURL = checkNotNull(adminURL, "adminURL");
-         return this;
+      public T adminURL(URI adminURL) {
+         this.adminURL = adminURL;
+         return self();
       }
-      
-      /**
-       * @see Endpoint#getTenantId()
-       */
-      public Builder tenantId(@Nullable String tenantId) {
-         this.tenantId = tenantId;
-         return this;
-      }
-      
+
       /**
        * @see Endpoint#getVersionInfo()
        */
-      public Builder versionInfo(URI versionInfo) {
-         this.versionInfo = checkNotNull(versionInfo, "versionInfo");
-         return this;
+      public T versionInfo(URI versionInfo) {
+         this.versionInfo = versionInfo;
+         return self();
       }
-      
+
       /**
        * @see Endpoint#getVersionList()
        */
-      public Builder versionList(URI versionList) {
-         this.versionList = checkNotNull(versionList, "versionList");
+      public T versionList(URI versionList) {
+         this.versionList = versionList;
+         return self();
+      }
+
+      /**
+       * @see Endpoint#getTenantId()
+       */
+      public T tenantId(String tenantId) {
+         this.tenantId = tenantId;
+         return self();
+      }
+
+      public Endpoint build() {
+         return new Endpoint(null, versionId, region, publicURL, internalURL, adminURL, versionInfo, versionList, null, tenantId);
+      }
+
+      public T fromEndpoint(Endpoint in) {
+         return this
+               .versionId(in.getVersionId())
+               .region(in.getRegion())
+               .publicURL(in.getPublicURL())
+               .internalURL(in.getInternalURL())
+               .adminURL(in.getAdminURL())
+               .versionInfo(in.getVersionInfo())
+               .versionList(in.getVersionList())
+               .tenantId(in.getTenantId());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
          return this;
       }
-      
-      public Endpoint build() {
-         return new Endpoint(versionId, region, publicURL, internalURL, adminURL, tenantId, versionInfo, versionList);
-      }
-
-      public Builder fromEndpoint(Endpoint from) {
-         return versionId(from.getVersionId()).region(from.getRegion()).publicURL(from.getPublicURL()).internalURL(
-                  from.getInternalURL()).tenantId(from.getTenantId()).versionInfo(from.getVersionInfo()).versionList(
-                  from.getVersionList());
-      }
    }
-   
-   protected Endpoint() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   // renamed half-way through
-   @Deprecated
-   protected String id;
-   protected String versionId;
-   protected String region;
-   protected URI publicURL;
-   protected URI internalURL;
-   protected URI adminURL;
-   protected URI versionInfo;
-   protected URI versionList;
-   
-   // renamed half-way through
-   @Deprecated
-   protected String tenantName;
-   protected String tenantId;
 
-   protected Endpoint(@Nullable String versionId, @Nullable String region, @Nullable URI publicURL, @Nullable URI internalURL,
-            @Nullable URI adminURL, @Nullable String tenantId, @Nullable URI versionInfo, @Nullable URI versionList) {
-      this.versionId = versionId;
+   private final String versionId;
+   private final String region;
+   private final URI publicURL;
+   private final URI internalURL;
+   private final URI adminURL;
+   private final URI versionInfo;
+   private final URI versionList;
+   private final String tenantId;
+
+   @ConstructorProperties({
+         "id", "versionId", "region", "publicURL", "internalURL", "adminURL", "versionInfo", "versionList", "tenantName", "tenantId"
+   })
+   protected Endpoint(@Nullable String id, @Nullable String versionId, @Nullable String region, @Nullable URI publicURL,
+                      @Nullable URI internalURL, @Nullable URI adminURL, @Nullable URI versionInfo, @Nullable URI versionList,
+                      @Nullable String tenantName, @Nullable String tenantId) {
+      this.versionId = versionId != null ? versionId : id;
+      this.tenantId = tenantId != null ? tenantId : tenantName;
       this.region = region;
       this.publicURL = publicURL;
       this.internalURL = internalURL;
       this.adminURL = adminURL;
-      this.tenantId = tenantId;
       this.versionInfo = versionInfo;
       this.versionList = versionList;
    }
@@ -172,20 +175,20 @@ public class Endpoint implements Comparable<Endpoint> {
    /**
     * When providing an ID, it is assumed that the endpoint exists in the current OpenStack
     * deployment
-    * 
+    *
     * @return the versionId of the endpoint in the current OpenStack deployment, or null if not specified
     */
    @Nullable
    public String getVersionId() {
-      return versionId != null ? versionId : id;
+      return this.versionId;
    }
 
    /**
     * @return the region of the endpoint, or null if not specified
     */
-   @Nullable 
+   @Nullable
    public String getRegion() {
-      return region;
+      return this.region;
    }
 
    /**
@@ -193,7 +196,7 @@ public class Endpoint implements Comparable<Endpoint> {
     */
    @Nullable
    public URI getPublicURL() {
-      return publicURL;
+      return this.publicURL;
    }
 
    /**
@@ -201,7 +204,7 @@ public class Endpoint implements Comparable<Endpoint> {
     */
    @Nullable
    public URI getInternalURL() {
-      return internalURL;
+      return this.internalURL;
    }
 
    /**
@@ -209,7 +212,17 @@ public class Endpoint implements Comparable<Endpoint> {
     */
    @Nullable
    public URI getAdminURL() {
-      return adminURL;
+      return this.adminURL;
+   }
+
+   @Nullable
+   public URI getVersionInfo() {
+      return this.versionInfo;
+   }
+
+   @Nullable
+   public URI getVersionList() {
+      return this.versionList;
    }
 
    /**
@@ -217,53 +230,38 @@ public class Endpoint implements Comparable<Endpoint> {
     */
    @Nullable
    public String getTenantId() {
-      return tenantId != null ? tenantId : tenantName;
-   }
-
-   /**
-    */
-   @Nullable
-   public URI getVersionInfo() {
-      return versionInfo;
-   }
-
-   /**
-    */
-   @Nullable
-   public URI getVersionList() {
-      return versionList;
-   }
-   
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Endpoint) {
-         final Endpoint other = Endpoint.class.cast(object);
-         return equal(getVersionId(), other.getVersionId()) && equal(region, other.region) && equal(publicURL, other.publicURL)
-                  && equal(internalURL, other.internalURL) && equal(adminURL, other.adminURL) && equal(getTenantId(), other.getTenantId());
-      } else {
-         return false;
-      }
+      return this.tenantId;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(getVersionId(), region, publicURL, internalURL, adminURL, getTenantId());
+      return Objects.hashCode(versionId, region, publicURL, internalURL, adminURL, versionInfo, versionList, tenantId);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Endpoint that = Endpoint.class.cast(obj);
+      return Objects.equal(this.versionId, that.versionId)
+            && Objects.equal(this.region, that.region)
+            && Objects.equal(this.publicURL, that.publicURL)
+            && Objects.equal(this.internalURL, that.internalURL)
+            && Objects.equal(this.adminURL, that.adminURL)
+            && Objects.equal(this.versionInfo, that.versionInfo)
+            && Objects.equal(this.versionList, that.versionList)
+            && Objects.equal(this.tenantId, that.tenantId);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("versionId", versionId).add("region", region).add("publicURL", publicURL).add("internalURL", internalURL)
+            .add("adminURL", adminURL).add("versionInfo", versionInfo).add("versionList", versionList).add("tenantId", tenantId);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("versionId", getVersionId()).add("region", region).add("publicURL", publicURL).add(
-               "internalURL", internalURL).add("adminURL", adminURL).add("tenantId", getTenantId()).add("versionInfo",
-               versionInfo).add("versionList", versionList).toString();
-   }
-
-   @Override
-   public int compareTo(Endpoint that) {
-      return ComparisonChain.start().compare(this.getTenantId(), that.getTenantId()).compare(this.getVersionId(), that.getVersionId())
-               .compare(this.region, that.region).result();
+      return string().toString();
    }
 
 }

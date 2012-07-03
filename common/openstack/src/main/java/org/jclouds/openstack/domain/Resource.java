@@ -94,8 +94,7 @@ public class Resource implements Comparable<Resource> {
          return this
                .id(in.getId())
                .name(in.getName())
-               .links(in.getLinks())
-               ;
+               .links(in.getLinks());
       }
    }
 
@@ -105,17 +104,18 @@ public class Resource implements Comparable<Resource> {
          return this;
       }
    }
-   
-   protected Resource() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
 
    private String id;
    private String name;
    private Set<Link> links = ImmutableSet.of();
 
+   protected Resource(String id, @Nullable String name, @Nullable Set<Link> links) {
+      this.id = checkNotNull(id);
+      this.name = name;
+      this.links = links == null ? ImmutableSet.<Link>of() : ImmutableSet.copyOf(links);
+   }
+   
+   @Deprecated
    protected Resource(Builder<?> builder) {
       this.id = checkNotNull(builder.id, "id");
       this.name = builder.name;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,41 +18,45 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Additional attributes delivered by Extended Server Status extension (alias "OS-EXT-STS")
- *
+ * 
  * @author Adam Lowe
  * @see <a href=
- *       "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_status.html"
- *       />
+       "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_status.html"
+       />
  * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
  * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
- */
+*/
 public class ServerExtendedStatus {
-   public static final String PREFIX = "OS-EXT-STS:";
 
-   public static Builder<?> builder() {
+   public static String PREFIX;
+
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromServerExtendedStatus(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String taskState;
-      private String vmState;
-      private int powerState = Integer.MIN_VALUE;
-
-      /**
+      protected String taskState;
+      protected String vmState;
+      protected int powerState;
+   
+      /** 
        * @see ServerExtendedStatus#getTaskState()
        */
       public T taskState(String taskState) {
@@ -60,7 +64,7 @@ public class ServerExtendedStatus {
          return self();
       }
 
-      /**
+      /** 
        * @see ServerExtendedStatus#getVmState()
        */
       public T vmState(String vmState) {
@@ -68,7 +72,7 @@ public class ServerExtendedStatus {
          return self();
       }
 
-      /**
+      /** 
        * @see ServerExtendedStatus#getPowerState()
        */
       public T powerState(int powerState) {
@@ -77,14 +81,14 @@ public class ServerExtendedStatus {
       }
 
       public ServerExtendedStatus build() {
-         return new ServerExtendedStatus(this);
+         return new ServerExtendedStatus(taskState, vmState, powerState);
       }
-
+      
       public T fromServerExtendedStatus(ServerExtendedStatus in) {
          return this
-               .taskState(in.getTaskState())
-               .vmState(in.getVmState())
-               .powerState(in.getPowerState());
+                  .taskState(in.getTaskState())
+                  .vmState(in.getVmState())
+                  .powerState(in.getPowerState());
       }
    }
 
@@ -94,26 +98,23 @@ public class ServerExtendedStatus {
          return this;
       }
    }
-   
-   protected ServerExtendedStatus() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName(value=PREFIX + "task_state")
-   private String taskState;
-   @SerializedName(value=PREFIX + "vm_state")
-   private String vmState;
-   @SerializedName(value=PREFIX + "power_state")
-   private int powerState = Integer.MIN_VALUE;
 
-   protected ServerExtendedStatus(Builder<?> builder) {
-      this.taskState = builder.taskState;
-      this.vmState = builder.vmState;
-      this.powerState = builder.powerState;
+   @Named("OS-EXT-STS:task_state")
+   private final String taskState;
+   @Named("OS-EXT-STS:vm_state")
+   private final String vmState;
+   @Named("OS-EXT-STS:power_state")
+   private final int powerState;
+
+   @ConstructorProperties({
+      "OS-EXT-STS:task_state", "OS-EXT-STS:vm_state", "OS-EXT-STS:power_state"
+   })
+   protected ServerExtendedStatus(@Nullable String taskState, @Nullable String vmState, int powerState) {
+      this.taskState = taskState;
+      this.vmState = vmState;
+      this.powerState = powerState;
    }
-   
+
    @Nullable
    public String getTaskState() {
       return this.taskState;
@@ -139,19 +140,15 @@ public class ServerExtendedStatus {
       if (obj == null || getClass() != obj.getClass()) return false;
       ServerExtendedStatus that = ServerExtendedStatus.class.cast(obj);
       return Objects.equal(this.taskState, that.taskState)
-            && Objects.equal(this.vmState, that.vmState)
-            && Objects.equal(this.powerState, that.powerState)
-            ;
+               && Objects.equal(this.vmState, that.vmState)
+               && Objects.equal(this.powerState, that.powerState);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("taskState", taskState)
-            .add("vmState", vmState)
-            .add("powerState", powerState)
-            ;
+      return Objects.toStringHelper(this)
+            .add("taskState", taskState).add("vmState", vmState).add("powerState", powerState);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

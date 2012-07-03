@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A container used to group or isolate resources and/or identity objects. Depending on the service
@@ -33,19 +33,21 @@ import com.google.common.base.Objects;
  *
  * @author Adrian Cole
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Service-Concepts-e1362.html"
- *      />
+/>
  */
-public class Tenant implements Comparable<Tenant> {
+public class Tenant {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromTenant(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromTenant(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
       protected String id;
       protected String name;
       protected String description;
@@ -53,47 +55,54 @@ public class Tenant implements Comparable<Tenant> {
       /**
        * @see Tenant#getId()
        */
-      public Builder id(String id) {
-         this.id = checkNotNull(id, "id");
-         return this;
+      public T id(String id) {
+         this.id = id;
+         return self();
       }
 
       /**
        * @see Tenant#getName()
        */
-      public Builder name(String name) {
-         this.name = checkNotNull(name, "name");
-         return this;
+      public T name(String name) {
+         this.name = name;
+         return self();
       }
 
       /**
        * @see Tenant#getDescription()
        */
-      public Builder description(String description) {
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       public Tenant build() {
          return new Tenant(id, name, description);
       }
 
-      public Builder fromTenant(Tenant from) {
-         return id(from.getId()).name(from.getName());
+      public T fromTenant(Tenant in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .description(in.getDescription());
       }
    }
-   
-   protected Tenant() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   protected String id;
-   protected String name;
-   protected String description;
 
-   protected Tenant(String id, String name, String description) {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   private final String name;
+   private final String description;
+
+   @ConstructorProperties({
+         "id", "name", "description"
+   })
+   protected Tenant(String id, String name, @Nullable String description) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.description = description;
@@ -105,14 +114,14 @@ public class Tenant implements Comparable<Tenant> {
     * @return the id of the tenant in the current OpenStack deployment
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the name of the tenant
     */
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
@@ -120,21 +129,7 @@ public class Tenant implements Comparable<Tenant> {
     */
    @Nullable
    public String getDescription() {
-      return description;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Tenant) {
-         final Tenant other = Tenant.class.cast(object);
-         return equal(id, other.id) && equal(name, other.name)
-               && equal(description, other.description);
-      } else {
-         return false;
-      }
+      return this.description;
    }
 
    @Override
@@ -143,17 +138,23 @@ public class Tenant implements Comparable<Tenant> {
    }
 
    @Override
-   public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("description", description).toString();
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Tenant that = Tenant.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.description, that.description);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("description", description);
    }
 
    @Override
-   public int compareTo(Tenant that) {
-      if (that == null)
-         return 1;
-      if (this == that)
-         return 0;
-      return this.id.compareTo(that.id);
+   public String toString() {
+      return string().toString();
    }
 
 }

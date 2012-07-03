@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,158 +18,169 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
-public class KeyPair implements Comparable<KeyPair> {
-   public static Builder builder() {
-      return new Builder();
+/**
+ * Class KeyPair
+*/
+public class KeyPair {
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromKeyPair(this);
    }
 
-   public Builder toBuilder() {
-      return builder().fromKeyPair(this);
-   }
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-   public static class Builder {
-
-      private String publicKey;
-      private String privateKey;
-      private String userId;
-      private String name;
-      private String fingerprint;
-
-      public Builder publicKey(String publicKey) {
+      protected String publicKey;
+      protected String privateKey;
+      protected String userId;
+      protected String name;
+      protected String fingerprint;
+   
+      /** 
+       * @see KeyPair#getPublicKey()
+       */
+      public T publicKey(String publicKey) {
          this.publicKey = publicKey;
-         return this;
+         return self();
       }
 
-      public Builder privateKey(String privateKey) {
+      /** 
+       * @see KeyPair#getPrivateKey()
+       */
+      public T privateKey(String privateKey) {
          this.privateKey = privateKey;
-         return this;
+         return self();
       }
 
-      public Builder userId(String userId) {
+      /** 
+       * @see KeyPair#getUserId()
+       */
+      public T userId(String userId) {
          this.userId = userId;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see KeyPair#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder fingerprint(String fingerprint) {
+      /** 
+       * @see KeyPair#getFingerprint()
+       */
+      public T fingerprint(String fingerprint) {
          this.fingerprint = fingerprint;
-         return this;
+         return self();
       }
 
       public KeyPair build() {
          return new KeyPair(publicKey, privateKey, userId, name, fingerprint);
       }
-
-      public Builder fromKeyPair(KeyPair in) {
-         return publicKey(in.getPublicKey()).privateKey(in.getPrivateKey()).userId(in.getUserId()).name(in.getName())
-               .fingerprint(in.getFingerprint());
+      
+      public T fromKeyPair(KeyPair in) {
+         return this
+                  .publicKey(in.getPublicKey())
+                  .privateKey(in.getPrivateKey())
+                  .userId(in.getUserId())
+                  .name(in.getName())
+                  .fingerprint(in.getFingerprint());
       }
-
    }
-   
-   protected KeyPair() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName("public_key")
-   private String publicKey;
-   @SerializedName("private_key")
-   private String privateKey;
-   @SerializedName("user_id")
-   private String userId;
-   private String name;
-   private String fingerprint;
 
-   protected KeyPair(String publicKey, String privateKey, @Nullable String userId, String name, String fingerprint) {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   @Named("public_key")
+   private final String publicKey;
+   @Named("private_key")
+   private final String privateKey;
+   @Named("user_id")
+   private final String userId;
+   private final String name;
+   private final String fingerprint;
+
+   @ConstructorProperties({
+      "public_key", "private_key", "user_id", "name", "fingerprint"
+   })
+   protected KeyPair(@Nullable String publicKey, @Nullable String privateKey, @Nullable String userId, String name, @Nullable String fingerprint) {
       this.publicKey = publicKey;
       this.privateKey = privateKey;
       this.userId = userId;
-      this.name = name;
+      this.name = checkNotNull(name, "name");
       this.fingerprint = fingerprint;
    }
 
+   @Nullable
    public String getPublicKey() {
       return this.publicKey;
    }
 
+   @Nullable
    public String getPrivateKey() {
       return this.privateKey;
    }
 
+   @Nullable
    public String getUserId() {
-      return this.privateKey;
+      return this.userId;
    }
 
    public String getName() {
       return this.name;
    }
 
+   @Nullable
    public String getFingerprint() {
       return this.fingerprint;
    }
 
    @Override
-   public int compareTo(KeyPair o) {
-      return this.fingerprint.compareTo(o.getFingerprint());
-   }
-
-   @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
-      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
-      return result;
+      return Objects.hashCode(publicKey, privateKey, userId, name, fingerprint);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      KeyPair other = (KeyPair) obj;
-      if (publicKey == null) {
-         if (other.publicKey != null)
-            return false;
-      } else if (!publicKey.equals(other.publicKey))
-         return false;
-      if (privateKey == null) {
-         if (other.privateKey != null)
-            return false;
-      } else if (!privateKey.equals(other.privateKey))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (fingerprint == null) {
-         if (other.fingerprint != null)
-            return false;
-      } else if (!fingerprint.equals(other.fingerprint))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      KeyPair that = KeyPair.class.cast(obj);
+      return Objects.equal(this.publicKey, that.publicKey)
+               && Objects.equal(this.privateKey, that.privateKey)
+               && Objects.equal(this.userId, that.userId)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.fingerprint, that.fingerprint);
    }
-
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("publicKey", publicKey).add("privateKey", privateKey).add("userId", userId).add("name", name).add("fingerprint", fingerprint);
+   }
+   
    @Override
    public String toString() {
-      return toStringHelper("").add("userId", userId).add("name", name).add("fingerprint", fingerprint).toString();
+      return string().toString();
    }
+
 }

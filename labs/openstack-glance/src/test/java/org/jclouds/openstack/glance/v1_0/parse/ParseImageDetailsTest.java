@@ -53,7 +53,7 @@ public class ParseImageDetailsTest extends BaseItemParserTest<ImageDetails> {
                   .containerFormat(ContainerFormat.BARE)
                   .diskFormat(DiskFormat.RAW)
                   .checksum("6ae4e0fdc3c108a1bfe10ef5e436f4f4")
-                  .size(27)
+                  .size(27L)
                   .status(Image.Status.ACTIVE)
                   .owner("68a7c7abb7bf45ada1536dfa28ec2115")
                   .isPublic(false)

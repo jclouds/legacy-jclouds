@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,33 +18,32 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
+import java.beans.ConstructorProperties;
+
 /**
  * Represents the set of limits (quota class) returned by the Quota Class Extension
- *
+ * 
  * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaClassClient
- */
+*/
 public class QuotaClass extends Quotas {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromQuotas(this);
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromQuotaClass(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Quotas.Builder<T> {
-      /**
-       * @see QuotaClass#getId()
-       */
-      @Override
-      public T id(String id) {
-         return super.id(id);
-      }
+   public static abstract class Builder<T extends Builder<T>> extends Quotas.Builder<T>  {
+   
       public QuotaClass build() {
-         return new QuotaClass(this);
+         return new QuotaClass(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);
       }
-
+      
+      public T fromQuotaClass(QuotaClass in) {
+         return super.fromQuotas(in);
+      }
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -54,15 +53,12 @@ public class QuotaClass extends Quotas {
       }
    }
 
-   protected QuotaClass(Builder<?> builder) {
-      super(builder);
+
+   @ConstructorProperties({
+      "id", "metadata_items", "injected_file_content_bytes", "volumes", "gigabytes", "ram", "floating_ips", "instances", "injected_files", "cores", "security_groups", "security_group_rules", "key_pairs"
+   })
+   protected QuotaClass(String id, int metadataItems, int injectedFileContentBytes, int volumes, int gigabytes, int ram, int floatingIps, int instances, int injectedFiles, int cores, int securityGroups, int securityGroupRules, int keyPairs) {
+      super(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);
    }
 
-   /**
-    * The id of this Quota Class.
-    */
-   @Override
-   public String getId() {
-      return super.getId();
-   }
 }

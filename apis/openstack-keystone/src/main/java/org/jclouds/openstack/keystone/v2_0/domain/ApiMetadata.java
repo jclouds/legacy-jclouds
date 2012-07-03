@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,20 +20,23 @@ package org.jclouds.openstack.keystone.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Set;
 
+import javax.inject.Named;
+
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class ApiMetadata
+ *
  * @author Adam Lowe
  */
 public class ApiMetadata extends Resource {
@@ -47,9 +50,9 @@ public class ApiMetadata extends Resource {
    }
 
    public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
-      private String status;
-      private Date updated;
-      private Set<MediaType> mediaTypes = Sets.newLinkedHashSet();
+      protected String status;
+      protected Date updated;
+      protected Set<MediaType> mediaTypes = ImmutableSet.of();
 
       /**
        * @see ApiMetadata#getStatus()
@@ -71,12 +74,16 @@ public class ApiMetadata extends Resource {
        * @see ApiMetadata#getMediaTypes()
        */
       public T mediaTypes(Set<MediaType> mediaTypes) {
-         this.mediaTypes = mediaTypes;
+         this.mediaTypes = ImmutableSet.copyOf(checkNotNull(mediaTypes, "mediaTypes"));
          return self();
       }
 
+      public T mediaTypes(MediaType... in) {
+         return mediaTypes(ImmutableSet.copyOf(in));
+      }
+
       public ApiMetadata build() {
-         return new ApiMetadata(this);
+         return new ApiMetadata(id, name, links, status, updated, mediaTypes);
       }
 
       public T fromApiMetadata(ApiMetadata in) {
@@ -85,7 +92,6 @@ public class ApiMetadata extends Resource {
                .updated(in.getUpdated())
                .mediaTypes(in.getMediaTypes());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -94,44 +100,34 @@ public class ApiMetadata extends Resource {
          return this;
       }
    }
-   
-   protected ApiMetadata() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
+
+   private final String status;
+   private final Date updated;
+   @Named("media-types")
+   private final Set<MediaType> mediaTypes;
+
+   @ConstructorProperties({
+         "id", "name", "links", "status", "updated", "media-types"
+   })
+   protected ApiMetadata(String id, @Nullable String name, java.util.Set<Link> links, @Nullable String status, @Nullable Date updated, Set<MediaType> mediaTypes) {
+      super(id, name, links);
+      this.status = status;
+      this.updated = updated;
+      this.mediaTypes = ImmutableSet.copyOf(checkNotNull(mediaTypes, "mediaTypes"));
    }
 
    @Nullable
-   private String status;
-   @Nullable
-   private Date updated;
-
-   @SerializedName(value="media-types")
-   private Set<MediaType> mediaTypes = Sets.newLinkedHashSet();
-
-   protected ApiMetadata(Builder<?> builder) {
-      super(builder);
-      this.status = checkNotNull(builder.status, "status");
-      this.updated = checkNotNull(builder.updated, "updated");
-      this.mediaTypes = ImmutableSet.copyOf(builder.mediaTypes);
-   }
-
-   /**
-    */
    public String getStatus() {
       return this.status;
    }
 
-   /**
-    */
+   @Nullable
    public Date getUpdated() {
       return this.updated;
    }
 
-   /**
-    */
    public Set<MediaType> getMediaTypes() {
-      return Collections.unmodifiableSet(this.mediaTypes);
+      return this.mediaTypes;
    }
 
    @Override
@@ -151,9 +147,7 @@ public class ApiMetadata extends Resource {
 
    protected ToStringHelper string() {
       return super.string()
-            .add("status", status)
-            .add("updated", updated)
-            .add("mediaTypes", mediaTypes);
+            .add("status", status).add("updated", updated).add("mediaTypes", mediaTypes);
    }
 
 }

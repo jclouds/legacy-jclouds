@@ -39,6 +39,9 @@ import org.jclouds.json.Json;
 import org.jclouds.json.internal.DeserializationConstructorAndReflectiveTypeAdapterFactory;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
+import org.jclouds.json.internal.IgnoreNullMapTypeAdapterFactory;
+import org.jclouds.json.internal.IgnoreNullMultimapTypeAdapterFactory;
+import org.jclouds.json.internal.IgnoreNullSetTypeAdapterFactory;
 import org.jclouds.json.internal.NamingStrategies.AnnotationConstructorNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.AnnotationOrNameFieldNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.ExtractNamed;
@@ -94,6 +97,9 @@ public class GsonModule extends AbstractModule {
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
       builder.registerTypeAdapterFactory(new OptionalTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(new IgnoreNullSetTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(new IgnoreNullMapTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(new IgnoreNullMultimapTypeAdapterFactory());
 
       AnnotationConstructorNamingStrategy deserializationPolicy =
             new AnnotationConstructorNamingStrategy(

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,6 +20,8 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -27,62 +29,68 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * An Openstack Nova Volume Attachment (describes how Volumes are attached to Servers)
- */
+*/
 public class VolumeAttachment {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromAttachment(this);
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromVolumeAttachment(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String id;
-      private String volumeId;
-      private String serverId;
-      private String device;
-
-      /** @see VolumeAttachment#getId() */
+      protected String id;
+      protected String volumeId;
+      protected String serverId;
+      protected String device;
+   
+      /** 
+       * @see VolumeAttachment#getId()
+       */
       public T id(String id) {
          this.id = id;
          return self();
       }
 
-      /** @see VolumeAttachment#getVolumeId() */
+      /** 
+       * @see VolumeAttachment#getVolumeId()
+       */
       public T volumeId(String volumeId) {
          this.volumeId = volumeId;
          return self();
       }
 
-      /** @see VolumeAttachment#getServerId() */
+      /** 
+       * @see VolumeAttachment#getServerId()
+       */
       public T serverId(String serverId) {
          this.serverId = serverId;
          return self();
       }
 
-      /** @see VolumeAttachment#getDevice() */
+      /** 
+       * @see VolumeAttachment#getDevice()
+       */
       public T device(String device) {
          this.device = device;
          return self();
       }
 
       public VolumeAttachment build() {
-         return new VolumeAttachment(this);
+         return new VolumeAttachment(id, volumeId, serverId, device);
       }
-
-      public T fromAttachment(VolumeAttachment in) {
+      
+      public T fromVolumeAttachment(VolumeAttachment in) {
          return this
-               .id(in.getId())
-               .volumeId(in.getVolumeId())
-               .serverId(in.getServerId())
-               .device(in.getDevice())
-               ;
+                  .id(in.getId())
+                  .volumeId(in.getVolumeId())
+                  .serverId(in.getServerId())
+                  .device(in.getDevice());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -92,22 +100,19 @@ public class VolumeAttachment {
       }
    }
 
-   protected VolumeAttachment() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   private String id;
-   private String volumeId;
-   private String serverId;
-   private String device;
+   private final String id;
+   private final String volumeId;
+   private final String serverId;
+   private final String device;
 
-   protected VolumeAttachment(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
-      this.volumeId = checkNotNull(builder.volumeId, "volumeId");
-      this.serverId = builder.serverId;
-      this.device = builder.device;
+   @ConstructorProperties({
+      "id", "volumeId", "serverId", "device"
+   })
+   protected VolumeAttachment(String id, String volumeId, @Nullable String serverId, @Nullable String device) {
+      this.id = checkNotNull(id, "id");
+      this.volumeId = checkNotNull(volumeId, "volumeId");
+      this.serverId = serverId;
+      this.device = device;
    }
 
    /**
@@ -151,21 +156,16 @@ public class VolumeAttachment {
       if (obj == null || getClass() != obj.getClass()) return false;
       VolumeAttachment that = VolumeAttachment.class.cast(obj);
       return Objects.equal(this.id, that.id)
-            && Objects.equal(this.volumeId, that.volumeId)
-            && Objects.equal(this.serverId, that.serverId)
-            && Objects.equal(this.device, that.device)
-            ;
+               && Objects.equal(this.volumeId, that.volumeId)
+               && Objects.equal(this.serverId, that.serverId)
+               && Objects.equal(this.device, that.device);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("id", id)
-            .add("volumeId", volumeId)
-            .add("serverId", serverId)
-            .add("device", device)
-            ;
+      return Objects.toStringHelper(this)
+            .add("id", id).add("volumeId", volumeId).add("serverId", serverId).add("device", device);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

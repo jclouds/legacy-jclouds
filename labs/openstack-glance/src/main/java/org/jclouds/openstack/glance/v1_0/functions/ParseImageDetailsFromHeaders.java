@@ -18,21 +18,7 @@
  */
 package org.jclouds.openstack.glance.v1_0.functions;
 
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.CHECKSUM;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.CONTAINER_FORMAT;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.CREATED_AT;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.DELETED_AT;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.DISK_FORMAT;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.ID;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.IS_PUBLIC;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.LOCATION;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.MIN_DISK;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.MIN_RAM;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.NAME;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.OWNER;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.SIZE;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.STATUS;
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.UPDATED_AT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.*;
 
 import javax.inject.Inject;
 
@@ -40,11 +26,10 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;
 import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
-import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
+import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /**
  * This parses {@link ImageDetails} from HTTP headers.
@@ -63,14 +48,14 @@ public class ParseImageDetailsFromHeaders implements Function<HttpResponse, Imag
       ImageDetails.Builder<?> builder = ImageDetails.builder()
                 .id(from.getFirstHeaderOrNull(ID.asHeader()))
                 .name(from.getFirstHeaderOrNull(NAME.asHeader()))
-                .checksum(Optional.fromNullable(from.getFirstHeaderOrNull(CHECKSUM.asHeader())))
+                .checksum(from.getFirstHeaderOrNull(CHECKSUM.asHeader()))
                 .minDisk(Long.parseLong(from.getFirstHeaderOrNull(MIN_DISK.asHeader())))
                 .minRam(Long.parseLong(from.getFirstHeaderOrNull(MIN_RAM.asHeader())))
                 .isPublic(Boolean.parseBoolean(from.getFirstHeaderOrNull(IS_PUBLIC.asHeader())))
                 .createdAt(dateService.iso8601SecondsDateParse(from.getFirstHeaderOrNull(CREATED_AT.asHeader())))
                 .updatedAt(dateService.iso8601SecondsDateParse(from.getFirstHeaderOrNull(UPDATED_AT.asHeader())))
-                .owner(Optional.fromNullable(from.getFirstHeaderOrNull(OWNER.asHeader())))
-                .location(Optional.fromNullable(from.getFirstHeaderOrNull(LOCATION.asHeader())))
+                .owner(from.getFirstHeaderOrNull(OWNER.asHeader()))
+                .location(from.getFirstHeaderOrNull(LOCATION.asHeader()))
                 .status(Status.fromValue(from.getFirstHeaderOrNull(STATUS.asHeader())));
 
       String containerFormat = from.getFirstHeaderOrNull(CONTAINER_FORMAT.asHeader());

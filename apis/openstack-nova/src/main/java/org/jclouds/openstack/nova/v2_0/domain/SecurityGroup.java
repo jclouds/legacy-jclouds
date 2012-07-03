@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,107 +18,118 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
+
+import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Defines a security group
- * 
- */
+*/
 public class SecurityGroup {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromSecurityGroup(this);
    }
 
-   public Builder toBuilder() {
-      return builder().fromSecurityGroup(this);
-   }
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-   public static class Builder {
-
-      private String id;
-      private String tenantId;
-      private String name;
-      private String description;
-      private Set<SecurityGroupRule> rules = ImmutableSet.<SecurityGroupRule> of();
-
-      public Builder id(String id) {
+      protected String id;
+      protected String tenantId;
+      protected String name;
+      protected String description;
+      protected Set<SecurityGroupRule> rules = ImmutableSet.of();
+   
+      /** 
+       * @see SecurityGroup#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder tenantId(String tenantId) {
+      /** 
+       * @see SecurityGroup#getTenantId()
+       */
+      public T tenantId(String tenantId) {
          this.tenantId = tenantId;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see SecurityGroup#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /** 
+       * @see SecurityGroup#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      /**
-       * 
-       * @see #getSecurityGroupNames
+      /** 
+       * @see SecurityGroup#getRules()
        */
-      public Builder rules(SecurityGroupRule... rules) {
-         return rules(ImmutableSet.copyOf(checkNotNull(rules, "rules")));
+      public T rules(Set<SecurityGroupRule> rules) {
+         this.rules = ImmutableSet.copyOf(checkNotNull(rules, "rules"));      
+         return self();
       }
 
-      /**
-       * @see #getSecurityGroupNames
-       */
-      public Builder rules(Iterable<SecurityGroupRule> rules) {
-         this.rules = ImmutableSet.copyOf(checkNotNull(rules, "rules"));
-         return this;
-      }
-
-      public Builder rules(Set<SecurityGroupRule> rules) {
-         this.rules = rules;
-         return this;
+      public T rules(SecurityGroupRule... in) {
+         return rules(ImmutableSet.copyOf(in));
       }
 
       public SecurityGroup build() {
          return new SecurityGroup(id, tenantId, name, description, rules);
       }
-
-      public Builder fromSecurityGroup(SecurityGroup in) {
-         return id(in.getId()).tenantId(in.getTenantId()).name(in.getName()).description(in.getDescription()).rules(
-                  in.getRules());
+      
+      public T fromSecurityGroup(SecurityGroup in) {
+         return this
+                  .id(in.getId())
+                  .tenantId(in.getTenantId())
+                  .name(in.getName())
+                  .description(in.getDescription())
+                  .rules(in.getRules());
       }
-
    }
-   
-   protected SecurityGroup() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   protected String id;
-   @SerializedName("tenant_id")
-   protected String tenantId;
-   protected String name;
-   protected String description;
-   protected Set<SecurityGroupRule> rules = ImmutableSet.of();
 
-   protected SecurityGroup(String id, String tenantId, @Nullable String name, @Nullable String description,
-            Set<SecurityGroupRule> rules) {
-      this.id = id;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   @Named("tenant_id")
+   private final String tenantId;
+   private final String name;
+   private final String description;
+   private final Set<SecurityGroupRule> rules;
+
+   @ConstructorProperties({
+      "id", "tenant_id", "name", "description", "rules"
+   })
+   protected SecurityGroup(String id, @Nullable String tenantId, @Nullable String name, @Nullable String description, Set<SecurityGroupRule> rules) {
+      this.id = checkNotNull(id, "id");
       this.tenantId = tenantId;
       this.name = name;
       this.description = description;
@@ -130,44 +141,50 @@ public class SecurityGroup {
       return this.id;
    }
 
+   @Nullable
    public String getTenantId() {
       return this.tenantId;
    }
 
+   @Nullable
    public String getName() {
       return this.name;
    }
 
+   @Nullable
    public String getDescription() {
       return this.description;
    }
 
    public Set<SecurityGroupRule> getRules() {
-      return this.rules == null ? ImmutableSet.<SecurityGroupRule> of() : rules;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof SecurityGroup) {
-         final SecurityGroup other = SecurityGroup.class.cast(object);
-         return equal(tenantId, other.tenantId) && equal(id, other.id) && equal(name, other.name);
-      } else {
-         return false;
-      }
+      return this.rules;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(tenantId, id, name);
+      return Objects.hashCode(id, tenantId, name, description, rules);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      SecurityGroup that = SecurityGroup.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.tenantId, that.tenantId)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.rules, that.rules);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("tenantId", tenantId).add("name", name).add("description", description).add("rules", rules);
+   }
+   
+   @Override
    public String toString() {
-      return toStringHelper("").add("tenantId", getTenantId()).add("id", getId()).add("name", getName()).add(
-               "description", description).add("rules", getRules()).toString();
+      return string().toString();
    }
 
 }
