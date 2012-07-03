@@ -38,8 +38,9 @@ public class SecurityGroupRule extends Ingress {
    public static class Cidr extends ForwardingObject {
       private String cidr;
 
-      private Cidr(String cidr) {
-         this.cidr = cidr;
+      @ConstructorProperties("cidr")
+      protected Cidr(String cidr) {
+         this.cidr = checkNotNull(cidr);
       }
 
       @Override
