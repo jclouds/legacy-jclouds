@@ -31,7 +31,6 @@ import javax.inject.Named;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * For convenience, resources contain links to themselves. This allows a client to easily obtain a

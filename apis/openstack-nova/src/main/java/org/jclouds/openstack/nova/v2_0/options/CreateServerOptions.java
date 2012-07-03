@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
@@ -46,7 +47,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * 
@@ -152,7 +152,6 @@ public class CreateServerOptions implements MapBinder {
       return string().toString();
    }
 
-   @SuppressWarnings("unused")
    private class ServerRequest {
       final String name;
       final String imageRef;
@@ -161,7 +160,7 @@ public class CreateServerOptions implements MapBinder {
       Map<String, String> metadata;
       List<File> personality;
       String key_name;
-      @SerializedName(value = "security_groups")
+      @Named("security_groups")
       Set<NamedThingy> securityGroupNames;
       String user_data;
 
