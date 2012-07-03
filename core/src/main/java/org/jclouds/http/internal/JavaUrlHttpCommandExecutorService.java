@@ -215,7 +215,9 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          host += ":" + request.getEndpoint().getPort();
       }
       connection.setRequestProperty(HttpHeaders.HOST, host);
-      connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+      if (connection.getRequestProperty(HttpHeaders.USER_AGENT) == null) {
+          connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+      }
 
       if (request.getPayload() != null) {
          MutableContentMetadata md = request.getPayload().getContentMetadata();
