@@ -22,9 +22,12 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -36,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
  *      />
  */
-public class Service implements Comparable<Service> {
+public class Service extends ForwardingSet<Endpoint> implements Comparable<Service> {
 
    public static Builder builder() {
       return new Builder();
@@ -91,16 +94,11 @@ public class Service implements Comparable<Service> {
       }
    }
    
-   protected Service() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   protected String type;
-   protected String name;
-   protected Set<Endpoint> endpoints = ImmutableSet.of();
+   protected final String type;
+   protected final String name;
+   protected final Set<Endpoint> endpoints;
 
+   @ConstructorProperties({ "type", "name", "endpoints" })
    public Service(String type, String name, Set<Endpoint> endpoints) {
       this.type = checkNotNull(type, "type");
       this.name = checkNotNull(name, "name");
@@ -155,11 +153,15 @@ public class Service implements Comparable<Service> {
 
    @Override
    public int compareTo(Service that) {
-      if (that == null)
-         return 1;
-      if (this == that)
-         return 0;
-      return this.type.compareTo(that.type);
+      return ComparisonChain.start()
+                            .compare(this.type, that.type)
+                            .compare(this.name, that.name)
+                            .result();
+   }
+
+   @Override
+   protected Set<Endpoint> delegate() {
+      return endpoints;
    }
 
 }

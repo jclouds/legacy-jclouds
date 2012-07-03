@@ -21,6 +21,7 @@ package org.jclouds.openstack.keystone.v2_0.suppliers;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,6 +36,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.assistedinject.Assisted;
 
 @Singleton
@@ -59,32 +61,36 @@ public class LocationIdToURIFromAccessForTypeAndVersion implements Supplier<Map<
    @Override
    public Map<String, Supplier<URI>> get() {
       Access accessResponse = access.get();
-      Service service = null;
-      try {
-         service = Iterables.find(accessResponse.getServiceCatalog(), new Predicate<Service>() {
+      Set<Service> services = Sets.filter(accessResponse.getServiceCatalog(), new Predicate<Service>() {
 
-            @Override
-            public boolean apply(Service input) {
-               return input.getType().equals(apiType);
+         @Override
+         public boolean apply(Service input) {
+            return input.getType().equals(apiType);
+         }
+
+      });
+      if (services.size() == 0)
+         throw new NoSuchElementException(String.format("apiType %s not found in catalog %s", apiType,
+                  accessResponse.getServiceCatalog()));
+
+      Iterable<Endpoint> endpoints = Iterables.filter(Iterables.concat(services), new Predicate<Endpoint>() {
+
+         @Override
+         public boolean apply(Endpoint input) {
+            if (input.getVersionId() == null) {
+               return true;
             }
+            return input.getVersionId().equals(apiVersion);
+         }
 
-         });
-      } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("apiType %s not found in catalog %s", apiType, accessResponse
-                  .getServiceCatalog()));
-      }
-      Map<String, Endpoint> locationIdToEndpoint = Maps.uniqueIndex(Iterables.filter(service.getEndpoints(),
-               new Predicate<Endpoint>() {
+      });
 
-                  @Override
-                  public boolean apply(Endpoint input) {
-                     if (input.getVersionId() == null) {
-                         return true;
-                     }
-                     return input.getVersionId().equals(apiVersion);
-                  }
+      if (Iterables.size(endpoints) == 0)
+         throw new NoSuchElementException(String.format(
+                  "no endpoints for apiType %s are of version %s, or version agnostic: %s", apiType, apiVersion,
+                  services));
 
-               }), endpointToLocationId);
+      Map<String, Endpoint> locationIdToEndpoint = Maps.uniqueIndex(endpoints, endpointToLocationId);
       return Maps.transformValues(locationIdToEndpoint, endpointToSupplierURI);
    }
 
