@@ -30,11 +30,10 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
 /**
- * Tests behavior of {@code SetAndThrowAuthorizationExceptionSupplier}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest")
 public class SetAndThrowAuthorizationExceptionSupplierTest {
    @Test
    public void testNormal() {

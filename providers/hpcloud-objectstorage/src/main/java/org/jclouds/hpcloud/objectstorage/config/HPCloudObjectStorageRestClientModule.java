@@ -63,7 +63,7 @@ public class HPCloudObjectStorageRestClientModule extends
       bind(CommonSwiftClient.class).to(HPCloudObjectStorageClient.class).in(Scopes.SINGLETON);
       bind(CommonSwiftAsyncClient.class).to(HPCloudObjectStorageAsyncClient.class).in(Scopes.SINGLETON);
    }
-
+   
    @Provides
    @Singleton
    @HPExtensionCDN

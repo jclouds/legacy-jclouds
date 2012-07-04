@@ -24,7 +24,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Set;
 
 import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -73,7 +73,7 @@ public class ELBClientLiveTest<S extends ELBClient, A extends ELBAsyncClient> ex
    }
 
    protected void describeLoadBalancerInRegion(String region) {
-      Set<? extends LoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
+      Set<? extends CrappyLoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
       assertNotNull(allResults);
       assert (allResults.size() >= 1) : region;
    }

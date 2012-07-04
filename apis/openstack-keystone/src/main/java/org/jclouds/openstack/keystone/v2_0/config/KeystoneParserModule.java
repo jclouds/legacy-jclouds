@@ -61,6 +61,7 @@ public class KeystoneParserModule extends AbstractModule {
     * Treats [A,B,C] and {"values"=[A,B,C], "someotherstuff"=...} as the same Set
     */
    public static class SetTypeAdapterFactory implements TypeAdapterFactory {
+      @SuppressWarnings("unchecked")
       public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
          Type type = typeToken.getType();
          if (typeToken.getRawType() != Set.class || !(type instanceof ParameterizedType)) {
@@ -69,7 +70,7 @@ public class KeystoneParserModule extends AbstractModule {
 
          Type elementType = ((ParameterizedType) type).getActualTypeArguments()[0];
          TypeAdapter<?> elementAdapter = gson.getAdapter(TypeToken.get(elementType));
-         return (TypeAdapter<T>) newSetAdapter(elementAdapter);
+         return TypeAdapter.class.cast(newSetAdapter(elementAdapter));
       }
 
       private <E> TypeAdapter<Set<E>> newSetAdapter(final TypeAdapter<E> elementAdapter) {

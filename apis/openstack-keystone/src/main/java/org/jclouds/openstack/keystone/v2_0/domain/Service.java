@@ -1,9 +1,9 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Name 2.0 (the
+ * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -18,35 +18,39 @@
  */
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * An OpenStack service, such as Compute (Nova), Object Storage (Swift), or Image Service (Glance).
  * A service provides one or more endpoints through which users can access resources and perform
  * (presumably useful) operations.
- * 
+ *
  * @author Adrian Cole
  * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
- *      />
+/>
  */
-public class Service implements Comparable<Service> {
+public class Service extends ForwardingSet<Endpoint> implements Comparable<Service> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromService(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromService(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
       protected String type;
       protected String name;
       protected Set<Endpoint> endpoints = ImmutableSet.of();
@@ -54,54 +58,57 @@ public class Service implements Comparable<Service> {
       /**
        * @see Service#getType()
        */
-      public Builder type(String type) {
-         this.type = checkNotNull(type, "type");
-         return this;
+      public T type(String type) {
+         this.type = type;
+         return self();
       }
 
       /**
        * @see Service#getName()
        */
-      public Builder name(String name) {
-         this.name = checkNotNull(name, "name");
-         return this;
+      public T name(String name) {
+         this.name = name;
+         return self();
       }
 
       /**
        * @see Service#getEndpoints()
        */
-      public Builder endpoints(Endpoint... endpoints) {
-         return endpoints(ImmutableSet.copyOf(checkNotNull(endpoints, "endpoints")));
-      }
-
-      /**
-       * @see Service#getEndpoints()
-       */
-      public Builder endpoints(Set<Endpoint> endpoints) {
+      public T endpoints(Set<Endpoint> endpoints) {
          this.endpoints = ImmutableSet.copyOf(checkNotNull(endpoints, "endpoints"));
-         return this;
+         return self();
+      }
+
+      public T endpoints(Endpoint... in) {
+         return endpoints(ImmutableSet.copyOf(in));
       }
 
       public Service build() {
          return new Service(type, name, endpoints);
       }
 
-      public Builder fromService(Service from) {
-         return type(from.getType()).name(from.getName()).endpoints(from.getEndpoints());
+      public T fromService(Service in) {
+         return this
+               .type(in.getType())
+               .name(in.getName())
+               .endpoints(in.getEndpoints());
       }
    }
-   
-   protected Service() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
-   
-   protected String type;
-   protected String name;
-   protected Set<Endpoint> endpoints = ImmutableSet.of();
 
-   public Service(String type, String name, Set<Endpoint> endpoints) {
+   private final String type;
+   private final String name;
+   private final Set<Endpoint> endpoints;
+
+   @ConstructorProperties({
+         "type", "name", "endpoints"
+   })
+   protected Service(String type, String name, Set<Endpoint> endpoints) {
       this.type = checkNotNull(type, "type");
       this.name = checkNotNull(name, "name");
       this.endpoints = ImmutableSet.copyOf(checkNotNull(endpoints, "endpoints"));
@@ -109,38 +116,25 @@ public class Service implements Comparable<Service> {
 
    /**
     * such as {@code compute} (Nova), {@code object-store} (Swift), or {@code image} (Glance)
-    * 
+    *
     * @return the type of the service in the current OpenStack deployment
     */
    public String getType() {
-      return type;
+      return this.type;
    }
 
    /**
     * @return the name of the service
     */
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return the endpoints assigned to the service
     */
    public Set<Endpoint> getEndpoints() {
-      return endpoints;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Service) {
-         final Service other = Service.class.cast(object);
-         return equal(type, other.type) && equal(name, other.name) && equal(endpoints, other.endpoints);
-      } else {
-         return false;
-      }
+      return this.endpoints;
    }
 
    @Override
@@ -149,17 +143,35 @@ public class Service implements Comparable<Service> {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Service that = Service.class.cast(obj);
+      return Objects.equal(this.type, that.type)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.endpoints, that.endpoints);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("type", type).add("name", name).add("endpoints", endpoints);
+   }
+
+   @Override
    public String toString() {
-      return toStringHelper("").add("type", type).add("name", name).add("endpoints", endpoints).toString();
+      return string().toString();
    }
 
    @Override
    public int compareTo(Service that) {
-      if (that == null)
-         return 1;
-      if (this == that)
-         return 0;
-      return this.type.compareTo(that.type);
+      return ComparisonChain.start()
+                            .compare(this.type, that.type)
+                            .compare(this.name, that.name)
+                            .result();
    }
 
+   @Override
+   protected Set<Endpoint> delegate() {
+      return endpoints;
+   }
 }

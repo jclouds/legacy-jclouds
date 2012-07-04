@@ -1,0 +1,20 @@
+<DescribeLoadBalancerPolicyTypesResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+  <DescribeLoadBalancerPolicyTypesResult>
+    <PolicyTypeDescriptions>
+      <member>
+        <PolicyAttributeTypeDescriptions>
+          <member>
+            <AttributeName>PublicKey</AttributeName>
+            <AttributeType>String</AttributeType>
+            <Cardinality>ONE</Cardinality>
+          </member>
+        </PolicyAttributeTypeDescriptions>
+        <PolicyTypeName>PublicKeyPolicyType</PolicyTypeName>
+        <Description>Policy containing a list of public keys to accept when authenticating the back-end server(s). This policy cannot be applied directly to back-end servers or listeners but must be part of a BackendServerAuthenticationPolicyType.</Description>
+      </member>
+    </PolicyTypeDescriptions>
+  </DescribeLoadBalancerPolicyTypesResult>
+  <ResponseMetadata>
+    <RequestId>261327c5-c3d7-11e1-8582-35377554a47d</RequestId>
+  </ResponseMetadata>
+</DescribeLoadBalancerPolicyTypesResponse>

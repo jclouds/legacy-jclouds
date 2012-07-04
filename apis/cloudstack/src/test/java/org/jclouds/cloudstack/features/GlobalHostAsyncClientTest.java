@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;

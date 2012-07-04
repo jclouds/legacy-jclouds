@@ -27,7 +27,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.loadbalancer.BaseLoadBalancerServiceLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -61,9 +61,9 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       for (NodeMetadata node : nodes) {
          instanceIds.add(node.getProviderId());
       }
-      Set<? extends LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(null);
+      Set<? extends CrappyLoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(null);
       assertNotNull(elbs);
-      for (LoadBalancer elb : elbs) {
+      for (CrappyLoadBalancer elb : elbs) {
          if (elb.getName().equals(group))
             assertEquals(elb.getInstanceIds(), instanceIds);
       }

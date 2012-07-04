@@ -27,6 +27,7 @@ import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIME
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -62,11 +63,12 @@ import org.jclouds.savvis.vpdc.internal.VCloudToken;
 import org.jclouds.savvis.vpdc.location.FirstNetwork;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
@@ -91,7 +93,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @Singleton
    protected Supplier<String> provideVCloudToken(Supplier<VCloudSession> cache) {
-      return Suppliers.compose(new Function<VCloudSession, String>() {
+      return Suppliers2.compose(new Function<VCloudSession, String>() {
 
          @Override
          public String apply(VCloudSession input) {
@@ -106,7 +108,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Singleton
    protected Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> provideOrgs(Supplier<VCloudSession> cache,
             @Identity final String user) {
-      return Suppliers.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
+      return Suppliers2.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
 
          @Override
          public Set<org.jclouds.savvis.vpdc.domain.Resource> apply(VCloudSession input) {
@@ -122,7 +124,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Singleton
    protected Supplier<String> provideDefaultOrgId(
             @org.jclouds.savvis.vpdc.internal.Org Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> orgs) {
-      return Suppliers.compose(new Function<Set<org.jclouds.savvis.vpdc.domain.Resource>, String>() {
+      return Suppliers2.compose(new Function<Set<org.jclouds.savvis.vpdc.domain.Resource>, String>() {
 
          @Override
          public String apply(Set<org.jclouds.savvis.vpdc.domain.Resource> input) {
@@ -163,15 +165,18 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final LoginClient login) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
                new Supplier<VCloudSession>() {
 
                   @Override
                   public VCloudSession get() {
                      return login.login();
                   }
-
-               });
+                  @Override
+                  public String toString() {
+                     return Objects.toStringHelper(login).add("method", "login").toString();
+                  }
+               }, seconds, TimeUnit.SECONDS);
    }
 
    @Override

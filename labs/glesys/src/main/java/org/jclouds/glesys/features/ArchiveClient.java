@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
-import org.jclouds.glesys.domain.ArchiveDetails;
 
 /**
  * Provides synchronous access to Archive requests.
@@ -48,7 +47,7 @@ public interface ArchiveClient {
     * @param username the username associated with the archive
     * @return the archive information or null if not found
     */
-   ArchiveDetails getArchiveDetails(String username);
+   Archive getArchive(String username);
 
    /**
     * Create a new backup volume.
@@ -58,7 +57,7 @@ public interface ArchiveClient {
     * @param password the new password
     * @param size     the new size required in GB
     */
-   void createArchive(String username, String password, int size);
+   Archive createArchive(String username, String password, int size);
 
    /**
     * Delete an archive volume. All files on the volume
@@ -75,7 +74,7 @@ public interface ArchiveClient {
     * @param username the username associated with the archive
     * @param size     the new size required, see #getArchiveAllowedArguments for valid values
     */
-   void resizeArchive(String username, int size);
+   Archive resizeArchive(String username, int size);
 
    /**
     * Change the password for an archive user.
@@ -83,7 +82,7 @@ public interface ArchiveClient {
     * @param username the archive username
     * @param password the new password
     */
-   void changeArchivePassword(String username, String password);
+   Archive changeArchivePassword(String username, String password);
 
    /**
     * Lists the allowed arguments for some of the functions in this module such as archive size.

@@ -57,7 +57,7 @@ public class GlanceRestClientModule extends RestClientModule<GlanceClient, Glanc
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }
-
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(GlanceErrorHandler.class);

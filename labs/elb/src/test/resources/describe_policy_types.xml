@@ -1,0 +1,71 @@
+<DescribeLoadBalancerPolicyTypesResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+  <DescribeLoadBalancerPolicyTypesResult>
+    <PolicyTypeDescriptions>
+      <member>
+        <PolicyAttributeTypeDescriptions>
+          <member>
+            <AttributeName>PublicKey</AttributeName>
+            <AttributeType>String</AttributeType>
+            <Cardinality>ONE</Cardinality>
+          </member>
+        </PolicyAttributeTypeDescriptions>
+        <PolicyTypeName>PublicKeyPolicyType</PolicyTypeName>
+        <Description>Policy containing a list of public keys to accept when authenticating the back-end server(s). This policy cannot be applied directly to back-end servers or listeners but must be part of a BackendServerAuthenticationPolicyType.</Description>
+      </member>
+      <member>
+        <PolicyAttributeTypeDescriptions>
+          <member>
+            <AttributeName>CookieName</AttributeName>
+            <AttributeType>String</AttributeType>
+            <Cardinality>ONE</Cardinality>
+          </member>
+        </PolicyAttributeTypeDescriptions>
+        <PolicyTypeName>AppCookieStickinessPolicyType</PolicyTypeName>
+        <Description>Stickiness policy with session lifetimes controlled by the lifetime of the application-generated cookie. This policy can be associated only with HTTP/HTTPS listeners.</Description>
+      </member>
+      <member>
+        <PolicyAttributeTypeDescriptions>
+          <member>
+            <AttributeName>CookieExpirationPeriod</AttributeName>
+            <AttributeType>Long</AttributeType>
+            <Cardinality>ZERO_OR_ONE</Cardinality>
+          </member>
+        </PolicyAttributeTypeDescriptions>
+        <PolicyTypeName>LBCookieStickinessPolicyType</PolicyTypeName>
+        <Description>Stickiness policy with session lifetimes controlled by the browser (user-agent) or a specified expiration period. This policy can be associated only with HTTP/HTTPS listeners.</Description>
+      </member>
+      <member>
+        <PolicyAttributeTypeDescriptions>
+          <member>
+            <AttributeName>Protocol-SSLv2</AttributeName>
+            <AttributeType>Boolean</AttributeType>
+            <DefaultValue>false</DefaultValue>
+            <Cardinality>ZERO_OR_ONE</Cardinality>
+          </member>
+          <member>
+            <AttributeName>Protocol-TLSv1</AttributeName>
+            <AttributeType>Boolean</AttributeType>
+            <DefaultValue>true</DefaultValue>
+            <Cardinality>ZERO_OR_ONE</Cardinality>
+          </member>
+        </PolicyAttributeTypeDescriptions>
+        <PolicyTypeName>SSLNegotiationPolicyType</PolicyTypeName>
+        <Description>Listener policy that defines the ciphers and protocols that will be accepted by the load balancer. This policy can be associated only with HTTPS/SSL listeners.</Description>
+      </member>
+      <member>
+        <PolicyAttributeTypeDescriptions>
+          <member>
+            <AttributeName>PublicKeyPolicyName</AttributeName>
+            <AttributeType>PolicyName</AttributeType>
+            <Cardinality>ONE_OR_MORE</Cardinality>
+          </member>
+        </PolicyAttributeTypeDescriptions>
+        <PolicyTypeName>BackendServerAuthenticationPolicyType</PolicyTypeName>
+        <Description>Policy that controls authentication to back-end server(s) and contains one or more policies, such as an instance of a PublicKeyPolicyType. This policy can be associated only with back-end servers that are using HTTPS/SSL.</Description>
+      </member>
+    </PolicyTypeDescriptions>
+  </DescribeLoadBalancerPolicyTypesResult>
+  <ResponseMetadata>
+    <RequestId>261327c5-c3d7-11e1-8582-35377554a47d</RequestId>
+  </ResponseMetadata>
+</DescribeLoadBalancerPolicyTypesResponse>

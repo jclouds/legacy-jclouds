@@ -35,12 +35,18 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdsSupplier;
 import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
+import org.jclouds.location.suppliers.all.RegionToProvider;
+import org.jclouds.location.suppliers.all.ZoneToProvider;
 import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromZoneIdToURIKeySet;
+import org.jclouds.location.suppliers.implicit.FirstRegion;
+import org.jclouds.location.suppliers.implicit.FirstZone;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
@@ -62,8 +68,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -71,25 +77,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adrian Cole
  */
 public class KeystoneAuthenticationModule extends AbstractModule {
-   private final Module locationModule;
-
-   public KeystoneAuthenticationModule() {
-      this(new RegionModule());
-   }
-
-   protected KeystoneAuthenticationModule(Module locationModule) {
-      this.locationModule = locationModule;
-   }
-   
-   public static class KeystoneAuthenticationModuleForRegions extends KeystoneAuthenticationModule {
-      public KeystoneAuthenticationModuleForRegions() {
-         super(new RegionModule());
-      }
-   }
-
-   public static Module forRegions() {
-      return new KeystoneAuthenticationModuleForRegions();
-   }
    
    public static class RegionModule extends AbstractModule {
       @Override
@@ -100,6 +87,8 @@ public class KeystoneAuthenticationModule extends AbstractModule {
                   RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
          // dynamically build the region list as opposed to from properties
          bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class);
+         bind(ImplicitLocationSupplier.class).to(FirstRegion.class).in(Scopes.SINGLETON);
+         bind(LocationsSupplier.class).to(RegionToProvider.class).in(Scopes.SINGLETON);
       }
 
       // supply the region to id map from keystone, based on the servicetype and api version in
@@ -132,6 +121,8 @@ public class KeystoneAuthenticationModule extends AbstractModule {
                   ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
          // dynamically build the zone list as opposed to from properties
          bind(ZoneIdsSupplier.class).to(ZoneIdsFromZoneIdToURIKeySet.class);
+         bind(ImplicitLocationSupplier.class).to(FirstZone.class).in(Scopes.SINGLETON);
+         bind(LocationsSupplier.class).to(ZoneToProvider.class).in(Scopes.SINGLETON);
       }
 
       // supply the zone to id map from keystone, based on the servicetype and api version in
@@ -146,21 +137,10 @@ public class KeystoneAuthenticationModule extends AbstractModule {
 
    }
 
-   public static class KeystoneAuthenticationModuleForZones extends KeystoneAuthenticationModule {
-      public KeystoneAuthenticationModuleForZones() {
-         super(new ZoneModule());
-      }
-   }
-
-   public static Module forZones() {
-      return new KeystoneAuthenticationModuleForZones();
-   }
-
    @Override
    protected void configure() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
       bindAuthenticationClient();
-      install(locationModule);
    }
 
    protected void bindAuthenticationClient() {

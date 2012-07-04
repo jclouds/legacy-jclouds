@@ -25,6 +25,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.Alert;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListAlertsOptions;
 import org.testng.annotations.Test;
 

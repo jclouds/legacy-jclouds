@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,7 +18,12 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Connection information to connect to a server with VNC.
@@ -27,44 +32,69 @@ import com.google.common.base.Objects;
  * @see <a href="https://customer.glesys.com/api.php?a=doc#server_console" />
  */
 public class Console {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String host;
-      private int port;
-      private String protocol;
-      private String password;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromConsole(this);
+   }
 
-      public Builder host(String host) {
-         this.host = host;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String host;
+      protected int port;
+      protected String protocol;
+      protected String password;
+
+      /**
+       * @see Console#getHost()
+       */
+      public T host(String host) {
+         this.host = checkNotNull(host, "host");
+         return self();
       }
 
-      public Builder port(int port) {
+      /**
+       * @see Console#getPort()
+       */
+      public T port(int port) {
          this.port = port;
-         return this;
+         return self();
       }
 
-      public Builder password(String password) {
-         this.password = password;
-         return this;
+      /**
+       * @see Console#getProtocol()
+       */
+      public T protocol(String protocol) {
+         this.protocol = checkNotNull(protocol, "protocol");
+         return self();
       }
 
-      public Builder protocol(String protocol) {
-         this.protocol = protocol;
-         return this;
+      /**
+       * @see Console#getPassword()
+       */
+      public T password(String password) {
+         this.password = checkNotNull(password, "password");
+         return self();
       }
 
       public Console build() {
          return new Console(host, port, protocol, password);
       }
-      
-      public Builder fromConsole(Console in) {
-         return host(in.getHost()).port(in.getPort()).password(in.getPassword()).protocol(in.getProtocol());
-      }
 
+      public T fromConsole(Console in) {
+         return this.host(in.getHost()).port(in.getPort()).protocol(in.getProtocol()).password(in.getPassword());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
    private final String host;
@@ -72,54 +102,42 @@ public class Console {
    private final String protocol;
    private final String password;
 
-   public Console(String host, int port, String protocol, String password) {
-      this.host = host;
+   @ConstructorProperties({
+         "host", "port", "protocol", "password"
+   })
+   protected Console(String host, int port, String protocol, String password) {
+      this.host = checkNotNull(host, "host");
       this.port = port;
-      this.protocol = protocol;
-      this.password = password;
+      this.protocol = checkNotNull(protocol, "protocol");
+      this.password = checkNotNull(password, "password");
    }
 
    /**
     * @return the host name to use to connect to the server
     */
    public String getHost() {
-      return host;
+      return this.host;
    }
 
    /**
     * @return the port to use to connect to the server
     */
    public int getPort() {
-      return port;
+      return this.port;
    }
 
    /**
     * @return the protocol to use to connect to the server
     */
    public String getProtocol() {
-      return protocol;
+      return this.protocol;
    }
-   
+
    /**
     * @return the password to use to connect to the server
     */
    public String getPassword() {
-      return password;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Console) {
-         final Console other = (Console) object;
-         return Objects.equal(host, other.host)
-               && Objects.equal(port, other.port)
-               && Objects.equal(protocol, other.protocol);
-      } else {
-         return false;
-      }
+      return this.password;
    }
 
    @Override
@@ -128,8 +146,23 @@ public class Console {
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Console that = Console.class.cast(obj);
+      return Objects.equal(this.host, that.host)
+            && Objects.equal(this.port, that.port)
+            && Objects.equal(this.protocol, that.protocol);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("host", host).add("port", port).add("protocol", protocol)
+            .add("password", password);
+   }
+
+   @Override
    public String toString() {
-      return String.format("[host=%s, port=%s, protocol=%s, password=%s]", host, port, protocol, password);
+      return string().toString();
    }
 
 }

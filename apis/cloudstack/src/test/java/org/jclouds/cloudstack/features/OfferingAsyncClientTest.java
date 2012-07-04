@@ -23,6 +23,7 @@ import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.DEFA
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListDiskOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;

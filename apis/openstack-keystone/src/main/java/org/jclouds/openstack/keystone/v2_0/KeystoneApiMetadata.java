@@ -26,8 +26,11 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -85,7 +88,11 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
          .version("2.0")
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(KeystoneApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneRestClientModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(KeystoneAuthenticationModule.class)
+                                     .add(KeystoneAdminURLModule.class)
+                                     .add(KeystoneParserModule.class)
+                                     .add(KeystoneRestClientModule.class).build());
       }
       
       @Override

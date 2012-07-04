@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.ResourceLimit;
 import org.jclouds.cloudstack.domain.ResourceLimit.ResourceType;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;

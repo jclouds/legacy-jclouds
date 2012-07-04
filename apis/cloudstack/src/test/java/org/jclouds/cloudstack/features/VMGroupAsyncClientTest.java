@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateVMGroupOptions;
 import org.jclouds.cloudstack.options.ListVMGroupsOptions;
 import org.jclouds.cloudstack.options.UpdateVMGroupOptions;

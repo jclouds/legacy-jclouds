@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;

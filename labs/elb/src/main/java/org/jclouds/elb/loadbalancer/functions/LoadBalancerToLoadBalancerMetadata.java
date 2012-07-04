@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.CrappyLoadBalancer;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.domain.LoadBalancerType;
 import org.jclouds.loadbalancer.domain.internal.LoadBalancerMetadataImpl;
@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class LoadBalancerToLoadBalancerMetadata implements Function<LoadBalancer, LoadBalancerMetadata> {
+public class LoadBalancerToLoadBalancerMetadata implements Function<CrappyLoadBalancer, LoadBalancerMetadata> {
    @Resource
    protected static Logger logger = Logger.NULL;
    
@@ -60,7 +60,7 @@ public class LoadBalancerToLoadBalancerMetadata implements Function<LoadBalancer
    }
 
    @Override
-   public LoadBalancerMetadata apply(LoadBalancer input) {
+   public LoadBalancerMetadata apply(CrappyLoadBalancer input) {
 
       Location location = input.getRegion() != null ? findLocationWithId(input.getRegion()) : defaultLocationSupplier
                .get();

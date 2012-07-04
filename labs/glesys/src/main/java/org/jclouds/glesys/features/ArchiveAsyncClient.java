@@ -29,7 +29,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
-import org.jclouds.glesys.domain.ArchiveDetails;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -61,21 +60,23 @@ public interface ArchiveAsyncClient {
    ListenableFuture<Set<Archive>> listArchives();
 
    /**
-    * @see ArchiveClient#getArchiveDetails
+    * @see ArchiveClient#getArchive
     */
    @POST
    @Path("/archive/details/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ArchiveDetails> getArchiveDetails(@FormParam("username") String username);
+   ListenableFuture<Archive> getArchive(@FormParam("username") String username);
 
    /**
     * @see ArchiveClient#createArchive
     */
    @POST
    @Path("/archive/create/format/json")
-   ListenableFuture<Void> createArchive(@FormParam("username") String username, @FormParam("password") String password,
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Archive> createArchive(@FormParam("username") String username, @FormParam("password") String password,
                                         @FormParam("size")int size);
 
    /**
@@ -90,13 +91,17 @@ public interface ArchiveAsyncClient {
     */
    @POST
    @Path("/archive/resize/format/json")
-   ListenableFuture<Void> resizeArchive(@FormParam("username") String username, @FormParam("size") int size);
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Archive> resizeArchive(@FormParam("username") String username, @FormParam("size") int size);
    /**
     * @see ArchiveClient#changeArchivePassword
     */
    @POST
    @Path("/archive/changepassword/format/json")
-   ListenableFuture<Void> changeArchivePassword(@FormParam("username") String username, @FormParam("password") String password);
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Archive> changeArchivePassword(@FormParam("username") String username, @FormParam("password") String password);
 
    /**
     * @see org.jclouds.glesys.features.ArchiveClient#getArchiveAllowedArguments

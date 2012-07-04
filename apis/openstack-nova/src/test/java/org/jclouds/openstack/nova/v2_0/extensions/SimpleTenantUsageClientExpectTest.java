@@ -87,7 +87,7 @@ public class SimpleTenantUsageClientExpectTest extends BaseNovaClientExpectTest 
       SimpleTenantUsage usage = client.getTenantUsage("test-1234");
       assertEquals(usage.getTenantId(), "f8535069c3fb404cb61c873b1a0b4921");
       
-      SimpleTenantUsage expected = SimpleTenantUsage.builder().totalHours(4.833333333333333E-7).totalLocalGbUsage(1.933333333333333E-05)
+      SimpleTenantUsage expected = SimpleTenantUsage.builder().tenantId("f8535069c3fb404cb61c873b1a0b4921").totalHours(4.833333333333333E-7).totalLocalGbUsage(1.933333333333333E-05)
             .start(dateService.iso8601DateParse("2012-04-18 13:32:07.255743")).stop(dateService.iso8601DateParse("2012-04-18 13:32:07.255743"))
             .totalMemoryMbUsage(0.0014847999999999999).totalVcpusUsage(7.249999999999999E-07).serverUsages(
             ImmutableSet.of(

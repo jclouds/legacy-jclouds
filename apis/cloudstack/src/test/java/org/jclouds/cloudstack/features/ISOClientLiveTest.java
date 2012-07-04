@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.domain.ISOPermissions;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListISOsOptions;
 import org.testng.annotations.Test;
 

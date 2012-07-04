@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.CreateServiceOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;

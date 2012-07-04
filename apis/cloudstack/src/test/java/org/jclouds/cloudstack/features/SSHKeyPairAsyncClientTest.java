@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.net.URLEncoder;
 
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.functions.IdentityFunction;

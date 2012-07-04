@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.functions.ParseNamesFromHttpResponse;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;

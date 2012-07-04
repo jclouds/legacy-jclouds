@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,103 +18,120 @@
  */
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+import java.util.Set;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Detailed information on usage
  *
  * @author Adam Lowe
- * @see ServerStatus
+ * @see ResourceUsageInfo
+ * @see ResourceUsageValue
  */
-
 public class ResourceUsage {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private double usage;
-      private double max;
-      private String unit;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromResourceUsages(this);
+   }
 
-      public Builder usage(double usage) {
-         this.usage = usage;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected ResourceUsageInfo info;
+      protected Set<ResourceUsageValue> values = ImmutableSet.of();
+
+      /**
+       * @see ResourceUsage#getInfo()
+       */
+      public T info(ResourceUsageInfo info) {
+         this.info = checkNotNull(info, "info");
+         return self();
       }
 
-      public Builder max(double max) {
-         this.max = max;
-         return this;
+      /**
+       * @see ResourceUsage#getValues()
+       */
+      public T values(Set<ResourceUsageValue> values) {
+         this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+         return self();
       }
 
-      public Builder unit(String unit) {
-         this.unit = unit;
-         return this;
+      /**
+       * @see ResourceUsage#getValues()
+       */
+      public T values(ResourceUsageValue... in) {
+         return values(ImmutableSet.copyOf(in));
       }
 
       public ResourceUsage build() {
-         return new ResourceUsage(usage, max, unit);
+         return new ResourceUsage(info, values);
       }
 
-      public Builder fromCpu(ResourceUsage in) {
-         return usage(in.getUsage()).max(in.getMax()).unit(in.getUnit());
+      public T fromResourceUsages(ResourceUsage in) {
+         return this
+               .info(in.getInfo())
+               .values(in.getValues());
       }
    }
 
-   private final double usage;
-   private final double max;
-   private final String unit;
-
-   public ResourceUsage(double usage, double max, String unit) {
-      this.usage = usage;
-      this.max = max;
-      this.unit = unit;
-   }
-
-   /**
-    * @return the usage in #unit
-    */
-   public double getUsage() {
-      return usage;
-   }
-
-   /**
-    * @return the max usage in #unit
-    */
-   public double getMax() {
-      return max;
-   }
-
-   /**
-    * @return the unit used
-    */
-   public String getUnit() {
-      return unit;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
-      if (object instanceof ResourceUsage) {
-         ResourceUsage other = (ResourceUsage) object;
-         return Objects.equal(usage, other.usage)
-               && Objects.equal(max, other.max)
-               && Objects.equal(unit, other.unit);
-      } else {
-         return false;
-      }
+   }
+
+   private final ResourceUsageInfo info;
+   private final Set<ResourceUsageValue> values;
+
+   @ConstructorProperties({
+         "info", "values"
+   })
+   protected ResourceUsage(ResourceUsageInfo info, Set<ResourceUsageValue> values) {
+      this.info = checkNotNull(info, "info");
+      this.values = ImmutableSet.copyOf(checkNotNull(values, "values"));
+   }
+
+   public ResourceUsageInfo getInfo() {
+      return this.info;
+   }
+
+   public Set<ResourceUsageValue> getValues() {
+      return this.values;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(usage, max, unit);
+      return Objects.hashCode(info, values);
    }
-   
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ResourceUsage that = ResourceUsage.class.cast(obj);
+      return Objects.equal(this.info, that.info)
+            && Objects.equal(this.values, that.values);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("info", info).add("values", values);
+   }
+
    @Override
    public String toString() {
-      return String.format("[usage=%f, max=%f, unit=%s]",
-            usage, max, unit);
+      return string().toString();
    }
+
 }

@@ -19,10 +19,16 @@
 package org.jclouds.aws.s3;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
@@ -39,21 +45,17 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3AsyncClientTest;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
+import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
 import org.jclouds.s3.xml.LocationConstraintHandler;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -62,6 +64,16 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "AWSS3AsyncClientTest")
 public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
+
+   @Override
+   public void testCopyObjectInvalidName() throws ArrayIndexOutOfBoundsException, SecurityException,
+                                                  IllegalArgumentException, NoSuchMethodException, IOException {
+      // For AWS S3, S3AsyncClientTest#testCopyObjectInvalidName() will not throw an exception
+      Method method = S3AsyncClient.class.getMethod("copyObject", String.class, String.class, String.class,
+                                                    String.class,
+                                                    Array.newInstance(CopyObjectOptions.class, 0).getClass());
+      processor.createRequest(method, "sourceBucket", "sourceObject", "destinationBucket", "destinationObject");
+   }
 
    public void testGetBucketLocationEU() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);

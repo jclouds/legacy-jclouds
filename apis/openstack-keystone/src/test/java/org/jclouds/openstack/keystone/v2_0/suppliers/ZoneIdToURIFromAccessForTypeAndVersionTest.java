@@ -58,7 +58,6 @@ public class ZoneIdToURIFromAccessForTypeAndVersionTest {
                   ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public Supplier<Access> provide() {
@@ -66,9 +65,14 @@ public class ZoneIdToURIFromAccessForTypeAndVersionTest {
       }
    }).getInstance(ZoneIdToURISupplier.Factory.class);
 
+
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testZoneUnmatches() {
+      Maps.transformValues(factory.createForApiTypeAndVersion("compute", "1.0").get(),
+               Suppliers.<URI> supplierFunction());
+   }
+  
    public void testZoneMatches() {
-      assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("compute", "1.0").get(), Suppliers
-            .<URI> supplierFunction()), ImmutableMap.of());
       assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("compute", "1.1").get(), Suppliers
             .<URI> supplierFunction()), ImmutableMap.of("az-1.region-a.geo-1", URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"),
                                                         "az-2.region-a.geo-1", URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"),
@@ -86,7 +90,6 @@ public class ZoneIdToURIFromAccessForTypeAndVersionTest {
                   ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public Supplier<Access> provide() {

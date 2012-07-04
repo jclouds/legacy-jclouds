@@ -32,6 +32,7 @@ import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.StorageType;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;

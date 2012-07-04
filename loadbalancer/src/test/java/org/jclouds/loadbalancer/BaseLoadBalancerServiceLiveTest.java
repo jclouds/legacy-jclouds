@@ -43,7 +43,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
@@ -111,7 +111,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
    protected String computeBuildversion;
    protected ComputeServiceContext computeContext;
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setupContext() {
       setServiceDefaults();
@@ -144,7 +144,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
 
    abstract protected Module getSshModule();
 
-   @BeforeGroups(groups = { "integration", "live" }, dependsOnMethods = "setupClient")
+   @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
    public void createNodes() throws RunNodesException {
       try {
          nodes = computeContext.getComputeService().createNodesInGroup(group, 2);

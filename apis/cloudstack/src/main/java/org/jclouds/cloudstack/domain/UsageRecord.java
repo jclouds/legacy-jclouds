@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,23 +20,30 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a usage record from CloudStack
- *
+ * 
  * @author Richard Downer
- */
-public class UsageRecord implements Comparable<UsageRecord> {
+*/
+public class UsageRecord {
 
-   public enum UsageType {
+   /**
+    */
+   public static enum UsageType {
       RUNNING_VM(1),
       ALLOCATED_VM(2),
       IP_ADDRESS(3),
@@ -52,197 +59,314 @@ public class UsageRecord implements Comparable<UsageRecord> {
       NETWORK_OFFERING(13),
       VPN_USERS(14),
       UNRECOGNIZED(0);
-
+      
       private int code;
-
+      
       private static final Map<Integer, UsageType> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(UsageType.values()),
-         new Function<UsageType, Integer>() {
-
-            @Override
-            public Integer apply(UsageType input) {
-               return input.code;
-            }
-
-         });
-
-      UsageType(int code) {
-         this.code = code;
+      new Function<UsageType, Integer>() {
+      
+      @Override
+      public Integer apply(UsageType input) {
+      return input.code;
       }
-
+      
+      });
+      
+      UsageType(int code) {
+      this.code = code;
+      }
+      
       @Override
       public String toString() {
-         return "" + code;
+      return "" + code;
       }
-
+      
       public static UsageType fromValue(String usageType) {
-         Integer code = new Integer(checkNotNull(usageType, "usageType"));
-         return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
+      Integer code = new Integer(checkNotNull(usageType, "usageType"));
+      return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
-
+      
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromUsageRecord(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private Builder() {
-      }
-
-      private String id;
-      private String description;
-      private String accountId;
-      private String accountName;
-      private String domainId;
-      private Date startDate;
-      private Date endDate;
-      private Date assignDate;
-      private String releaseDate;
-      private String zoneId;
-      private String virtualMachineId;
-      private String virtualMachineName;
-      private String serviceOfferingId;
-      private String templateId;
-      private String ipAddress;
-      private boolean isSourceNAT;
-      private double rawUsageHours;
-      private String usage;
-      private String type;
-      private UsageType usageType;
-
-      public Builder id(String id) {
+      protected String id;
+      protected String description;
+      protected String accountId;
+      protected String accountName;
+      protected String domainId;
+      protected Date startDate;
+      protected Date endDate;
+      protected Date assignDate;
+      protected String releaseDate;
+      protected String zoneId;
+      protected String virtualMachineId;
+      protected String virtualMachineName;
+      protected String serviceOfferingId;
+      protected String templateId;
+      protected String ipAddress;
+      protected boolean isSourceNAT;
+      protected double rawUsageHours;
+      protected String usage;
+      protected String type;
+      protected UsageType usageType;
+   
+      /** 
+       * @see UsageRecord#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /** 
+       * @see UsageRecord#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder accountId(String accountId) {
+      /** 
+       * @see UsageRecord#getAccountId()
+       */
+      public T accountId(String accountId) {
          this.accountId = accountId;
-         return this;
+         return self();
       }
 
-      public Builder accountName(String accountName) {
+      /** 
+       * @see UsageRecord#getAccountName()
+       */
+      public T accountName(String accountName) {
          this.accountName = accountName;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see UsageRecord#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder startDate(Date startDate) {
+      /** 
+       * @see UsageRecord#getStartDate()
+       */
+      public T startDate(Date startDate) {
          this.startDate = startDate;
-         return this;
+         return self();
       }
 
-      public Builder endDate(Date endDate) {
+      /** 
+       * @see UsageRecord#getEndDate()
+       */
+      public T endDate(Date endDate) {
          this.endDate = endDate;
-         return this;
+         return self();
       }
 
-      public Builder assignDate(Date assignDate) {
+      /** 
+       * @see UsageRecord#getAssignDate()
+       */
+      public T assignDate(Date assignDate) {
          this.assignDate = assignDate;
-         return this;
+         return self();
       }
 
-      public Builder releaseDate(String releaseDate) {
+      /** 
+       * @see UsageRecord#getReleaseDate()
+       */
+      public T releaseDate(String releaseDate) {
          this.releaseDate = releaseDate;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /** 
+       * @see UsageRecord#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder virtualMachineId(String virtualMachineId) {
+      /** 
+       * @see UsageRecord#getVirtualMachineId()
+       */
+      public T virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
-         return this;
+         return self();
       }
 
-      public Builder virtualMachineName(String virtualMachineName) {
+      /** 
+       * @see UsageRecord#getVirtualMachineName()
+       */
+      public T virtualMachineName(String virtualMachineName) {
          this.virtualMachineName = virtualMachineName;
-         return this;
+         return self();
       }
 
-      public Builder serviceOfferingId(String serviceOfferingId) {
+      /** 
+       * @see UsageRecord#getServiceOfferingId()
+       */
+      public T serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
-         return this;
+         return self();
       }
 
-      public Builder templateId(String templateId) {
+      /** 
+       * @see UsageRecord#getTemplateId()
+       */
+      public T templateId(String templateId) {
          this.templateId = templateId;
-         return this;
+         return self();
       }
 
-      public Builder ipAddress(String ipAddress) {
+      /** 
+       * @see UsageRecord#getIpAddress()
+       */
+      public T ipAddress(String ipAddress) {
          this.ipAddress = ipAddress;
-         return this;
+         return self();
       }
 
-      public Builder surceNAT(boolean sourceNAT) {
-         isSourceNAT = sourceNAT;
-         return this;
+      /** 
+       * @see UsageRecord#isSourceNAT()
+       */
+      public T isSourceNAT(boolean isSourceNAT) {
+         this.isSourceNAT = isSourceNAT;
+         return self();
       }
 
-      public Builder rawUsageHours(double rawUsageHours) {
+      /** 
+       * @see UsageRecord#getRawUsageHours()
+       */
+      public T rawUsageHours(double rawUsageHours) {
          this.rawUsageHours = rawUsageHours;
-         return this;
+         return self();
       }
 
-      public Builder usage(String usage) {
+      /** 
+       * @see UsageRecord#getUsage()
+       */
+      public T usage(String usage) {
          this.usage = usage;
-         return this;
+         return self();
       }
 
-      public Builder type(String type) {
+      /** 
+       * @see UsageRecord#getType()
+       */
+      public T type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
-      public Builder usageType(UsageType usageType) {
+      /** 
+       * @see UsageRecord#getUsageType()
+       */
+      public T usageType(UsageType usageType) {
          this.usageType = usageType;
-         return this;
+         return self();
       }
 
       public UsageRecord build() {
-         return new UsageRecord(id, description, accountId, accountName, domainId, startDate, endDate, assignDate, releaseDate, zoneId, virtualMachineId, virtualMachineName, serviceOfferingId, templateId, ipAddress, isSourceNAT, rawUsageHours, usage, type, usageType);
+         return new UsageRecord(id, description, accountId, accountName, domainId, startDate, endDate, assignDate, releaseDate,
+               zoneId, virtualMachineId, virtualMachineName, serviceOfferingId, templateId, ipAddress, isSourceNAT, rawUsageHours,
+               usage, type, usageType);
+      }
+      
+      public T fromUsageRecord(UsageRecord in) {
+         return this
+                  .id(in.getId())
+                  .description(in.getDescription())
+                  .accountId(in.getAccountId())
+                  .accountName(in.getAccountName())
+                  .domainId(in.getDomainId())
+                  .startDate(in.getStartDate())
+                  .endDate(in.getEndDate())
+                  .assignDate(in.getAssignDate())
+                  .releaseDate(in.getReleaseDate())
+                  .zoneId(in.getZoneId())
+                  .virtualMachineId(in.getVirtualMachineId())
+                  .virtualMachineName(in.getVirtualMachineName())
+                  .serviceOfferingId(in.getServiceOfferingId())
+                  .templateId(in.getTemplateId())
+                  .ipAddress(in.getIpAddress())
+                  .isSourceNAT(in.isSourceNAT())
+                  .rawUsageHours(in.getRawUsageHours())
+                  .usage(in.getUsage())
+                  .type(in.getType())
+                  .usageType(in.getUsageType());
       }
    }
 
-   @SerializedName("usageid") private String id;
-   private String description;
-   @SerializedName("accountid") private String accountId;
-   @SerializedName("account") private String accountName;
-   @SerializedName("domainid") private String domainId;
-   @SerializedName("startdate") private Date startDate;
-   @SerializedName("enddate") private Date endDate;
-   @SerializedName("assigndate") private Date assignDate;
-   @SerializedName("releasedate") private String releaseDate;
-   @SerializedName("zoneid") private String zoneId;
-   @SerializedName("virtualmachineid") private String virtualMachineId;
-   @SerializedName("name") private String virtualMachineName;
-   @SerializedName("offeringid") private String serviceOfferingId;
-   @SerializedName("templateid") private String templateId;
-   @SerializedName("ipaddress") private String ipAddress;
-   @SerializedName("issourcenat") private boolean isSourceNAT;
-   @SerializedName("rawusage") private double rawUsageHours;
-   @SerializedName("usage") private String usage;
-   private String type;
-   @SerializedName("usagetype") private UsageType usageType;
-
-   /* Exists only for the deserializer */
-   UsageRecord(){
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public UsageRecord(String id, String description, String accountId, String accountName, String domainId, Date startDate, Date endDate, Date assignDate, String releaseDate, String zoneId, String virtualMachineId, String virtualMachineName, String serviceOfferingId, String templateId, String ipAddress, boolean sourceNAT, double rawUsageHours, String usage, String type, UsageType usageType) {
-      this.id = id;
+   @Named("usageid")
+   private final String id;
+   private final String description;
+   @Named("accountid")
+   private final String accountId;
+   @Named("account")
+   private final String accountName;
+   @Named("domainid")
+   private final String domainId;
+   @Named("startdate")
+   private final Date startDate;
+   @Named("enddate")
+   private final Date endDate;
+   @Named("assigndate")
+   private final Date assignDate;
+   @Named("releasedate")
+   private final String releaseDate;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("virtualmachineid")
+   private final String virtualMachineId;
+   @Named("name")
+   private final String virtualMachineName;
+   @Named("offeringid")
+   private final String serviceOfferingId;
+   @Named("templateid")
+   private final String templateId;
+   @Named("ipaddress")
+   private final String ipAddress;
+   @Named("issourcenat")
+   private final boolean isSourceNAT;
+   @Named("rawusage")
+   private final double rawUsageHours;
+   private final String usage;
+   private final String type;
+   @Named("usagetype")
+   private final UsageType usageType;
+
+   @ConstructorProperties({
+      "usageid", "description", "accountid", "account", "domainid", "startdate", "enddate", "assigndate", "releasedate",
+         "zoneid", "virtualmachineid", "name", "offeringid", "templateid", "ipaddress", "issourcenat", "rawusage", "usage",
+         "type", "usagetype"
+   })
+   protected UsageRecord(String id, @Nullable String description, @Nullable String accountId, @Nullable String accountName,
+                         @Nullable String domainId, @Nullable Date startDate, @Nullable Date endDate, @Nullable Date assignDate,
+                         @Nullable String releaseDate, @Nullable String zoneId, @Nullable String virtualMachineId, @Nullable String virtualMachineName,
+                         @Nullable String serviceOfferingId, @Nullable String templateId, @Nullable String ipAddress,
+                         boolean isSourceNAT, double rawUsageHours, @Nullable String usage, @Nullable String type, @Nullable UsageType usageType) {
+      this.id = checkNotNull(id, "id");
       this.description = description;
       this.accountId = accountId;
       this.accountName = accountName;
@@ -257,7 +381,7 @@ public class UsageRecord implements Comparable<UsageRecord> {
       this.serviceOfferingId = serviceOfferingId;
       this.templateId = templateId;
       this.ipAddress = ipAddress;
-      isSourceNAT = sourceNAT;
+      this.isSourceNAT = isSourceNAT;
       this.rawUsageHours = rawUsageHours;
       this.usage = usage;
       this.type = type;
@@ -265,152 +389,149 @@ public class UsageRecord implements Comparable<UsageRecord> {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
+   @Nullable
    public String getAccountId() {
-      return accountId;
+      return this.accountId;
    }
 
+   @Nullable
    public String getAccountName() {
-      return accountName;
+      return this.accountName;
    }
 
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
+   @Nullable
    public Date getStartDate() {
-      return startDate;
+      return this.startDate;
    }
 
+   @Nullable
    public Date getEndDate() {
-      return endDate;
+      return this.endDate;
    }
 
+   @Nullable
    public Date getAssignDate() {
-      return assignDate;
+      return this.assignDate;
    }
 
+   @Nullable
    public String getReleaseDate() {
-      return releaseDate;
+      return this.releaseDate;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getVirtualMachineId() {
-      return virtualMachineId;
+      return this.virtualMachineId;
    }
 
+   @Nullable
    public String getVirtualMachineName() {
-      return virtualMachineName;
+      return this.virtualMachineName;
    }
 
+   @Nullable
    public String getServiceOfferingId() {
-      return serviceOfferingId;
+      return this.serviceOfferingId;
    }
 
+   @Nullable
    public String getTemplateId() {
-      return templateId;
+      return this.templateId;
    }
 
+   @Nullable
    public String getIpAddress() {
-      return ipAddress;
+      return this.ipAddress;
    }
 
    public boolean isSourceNAT() {
-      return isSourceNAT;
+      return this.isSourceNAT;
    }
 
    public double getRawUsageHours() {
-      return rawUsageHours;
+      return this.rawUsageHours;
    }
 
+   @Nullable
    public String getUsage() {
-      return usage;
+      return this.usage;
    }
 
+   @Nullable
    public String getType() {
-      return type;
+      return this.type;
    }
 
+   @Nullable
    public UsageType getUsageType() {
-      return usageType;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      UsageRecord that = (UsageRecord) o;
-
-      if (!Objects.equal(accountId, that.accountId)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(isSourceNAT, that.isSourceNAT)) return false;
-      if (!Objects.equal(rawUsageHours, that.rawUsageHours)) return false;
-      if (!Objects.equal(releaseDate, that.releaseDate)) return false;
-      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
-      if (!Objects.equal(templateId, that.templateId)) return false;
-      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(accountName, that.accountName)) return false;
-      if (!Objects.equal(assignDate, that.assignDate)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(endDate, that.endDate)) return false;
-      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
-      if (!Objects.equal(startDate, that.startDate)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-      if (!Objects.equal(usage, that.usage)) return false;
-      if (!Objects.equal(usageType, that.usageType)) return false;
-      if (!Objects.equal(virtualMachineName, that.virtualMachineName)) return false;
-
-      return true;
+      return this.usageType;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(accountId, domainId, id, isSourceNAT, rawUsageHours, releaseDate,
-                               serviceOfferingId, templateId, virtualMachineId, zoneId, accountName,
-                               assignDate, description, endDate, ipAddress, startDate, type, usage,
-                               usageType, virtualMachineName);
+      return Objects.hashCode(id, description, accountId, accountName, domainId, startDate, endDate, assignDate, releaseDate,
+            zoneId, virtualMachineId, virtualMachineName, serviceOfferingId, templateId, ipAddress, isSourceNAT, rawUsageHours,
+            usage, type, usageType);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      UsageRecord that = UsageRecord.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.accountId, that.accountId)
+               && Objects.equal(this.accountName, that.accountName)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.startDate, that.startDate)
+               && Objects.equal(this.endDate, that.endDate)
+               && Objects.equal(this.assignDate, that.assignDate)
+               && Objects.equal(this.releaseDate, that.releaseDate)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+               && Objects.equal(this.virtualMachineName, that.virtualMachineName)
+               && Objects.equal(this.serviceOfferingId, that.serviceOfferingId)
+               && Objects.equal(this.templateId, that.templateId)
+               && Objects.equal(this.ipAddress, that.ipAddress)
+               && Objects.equal(this.isSourceNAT, that.isSourceNAT)
+               && Objects.equal(this.rawUsageHours, that.rawUsageHours)
+               && Objects.equal(this.usage, that.usage)
+               && Objects.equal(this.type, that.type)
+               && Objects.equal(this.usageType, that.usageType);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("description", description).add("accountId", accountId).add("accountName", accountName)
+            .add("domainId", domainId).add("startDate", startDate).add("endDate", endDate).add("assignDate", assignDate)
+            .add("releaseDate", releaseDate).add("zoneId", zoneId).add("virtualMachineId", virtualMachineId)
+            .add("virtualMachineName", virtualMachineName).add("serviceOfferingId", serviceOfferingId).add("templateId", templateId)
+            .add("ipAddress", ipAddress).add("isSourceNAT", isSourceNAT).add("rawUsageHours", rawUsageHours).add("usage", usage)
+            .add("type", type).add("usageType", usageType);
+   }
+   
    @Override
    public String toString() {
-      return "UsageRecord{" +
-         "id=" + id +
-         ", description='" + description + '\'' +
-         ", accountId=" + accountId +
-         ", accountName='" + accountName + '\'' +
-         ", domainId=" + domainId +
-         ", startDate=" + startDate +
-         ", endDate=" + endDate +
-         ", assignDate=" + assignDate +
-         ", releaseDate=" + releaseDate +
-         ", zoneId=" + zoneId +
-         ", virtualMachineId=" + virtualMachineId +
-         ", virtualMachineName='" + virtualMachineName + '\'' +
-         ", serviceOfferingId=" + serviceOfferingId +
-         ", templateId=" + templateId +
-         ", ipAddress='" + ipAddress + '\'' +
-         ", isSourceNAT=" + isSourceNAT +
-         ", rawUsageHours=" + rawUsageHours +
-         ", usage='" + usage + '\'' +
-         ", type='" + type + '\'' +
-         ", usageType=" + usageType +
-         '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(UsageRecord other) {
-      return this.id.compareTo(other.id);
-   }
 }

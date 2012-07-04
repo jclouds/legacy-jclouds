@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,73 +18,115 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * The result of an operation.
- *
+ * 
  * A handful of Cloudstack API calls return this structure when there is no domain model data to return - for example,
  * when deleting an object.
- *
+ * 
  * @author Richard Downer
- */
-public class JobResult implements Comparable<JobResult> {
+*/
+public class JobResult {
 
-   private boolean success;
-   @SerializedName("displaytext")
-   private String displayText;
-
-   /**
-    * present only for the serializer
-    */
-   JobResult() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromJobResult(this);
    }
 
-   public JobResult(boolean success, String displayText) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected boolean success;
+      protected String displayText;
+   
+      /** 
+       * @see JobResult#isSuccess()
+       */
+      public T success(boolean success) {
+         this.success = success;
+         return self();
+      }
+
+      /** 
+       * @see JobResult#getDisplayText()
+       */
+      public T displayText(String displayText) {
+         this.displayText = displayText;
+         return self();
+      }
+
+      public JobResult build() {
+         return new JobResult(success, displayText);
+      }
+      
+      public T fromJobResult(JobResult in) {
+         return this
+                  .success(in.isSuccess())
+                  .displayText(in.getDisplayText());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final boolean success;
+   @Named("displaytext")
+   private final String displayText;
+
+   @ConstructorProperties({
+      "success", "displaytext"
+   })
+   protected JobResult(boolean success, @Nullable String displayText) {
       this.success = success;
       this.displayText = displayText;
    }
 
-   public boolean getSuccess() {
-      return success;
+   public boolean isSuccess() {
+      return this.success;
    }
 
+   @Nullable
    public String getDisplayText() {
-      return displayText;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      JobResult that = (JobResult) o;
-
-      if (!Objects.equal(success, that.success)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-
-      return true;
+      return this.displayText;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(success, displayText);
+      return Objects.hashCode(success, displayText);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      JobResult that = JobResult.class.cast(obj);
+      return Objects.equal(this.success, that.success)
+               && Objects.equal(this.displayText, that.displayText);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).add("success", success).add("displayText", displayText);
+   }
+   
    @Override
    public String toString() {
-      return "JobResult{" +
-            "success=" + success +
-            ", displayText='" + displayText + '\'' +
-            '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(JobResult other) {
-      int comparison = Boolean.valueOf(success).compareTo(other.success);
-      if (comparison == 0)
-         comparison = displayText.compareTo(other.displayText);
-      return comparison;
-   }
 }

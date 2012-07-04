@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,20 +18,30 @@
  */
 package org.jclouds.openstack.glance.v1_0.domain;
 
+import java.beans.ConstructorProperties;
+import java.util.Set;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * An image the Glance server knows about
- * 
+ *
  * @author Adrian Cole
  * @see <a href= "http://glance.openstack.org/glanceapi.html" />
  * @see <a href= "https://github.com/openstack/glance/blob/master/glance/api/v1/images.py" />
  */
 public class Image extends Resource {
+
+   /**
+    */
    public static enum Status {
 
       UNRECOGNIZED, ACTIVE, SAVING, QUEUED, KILLED, PENDING_DELETE, DELETED;
@@ -49,7 +59,7 @@ public class Image extends Resource {
       }
 
    }
-   
+
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
@@ -58,16 +68,16 @@ public class Image extends Resource {
       return new ConcreteBuilder().fromImage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
-      private Optional<ContainerFormat> containerFormat = Optional.absent();
-      private Optional<DiskFormat> diskFormat = Optional.absent();
-      private Optional<Long> size = Optional.absent();
-      private Optional<String> checksum = Optional.absent();
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
+      protected ContainerFormat containerFormat;
+      protected DiskFormat diskFormat;
+      protected Long size;
+      protected String checksum;
 
       /**
        * @see Image#getContainerFormat()
        */
-      public T containerFormat(Optional<ContainerFormat> containerFormat) {
+      public T containerFormat(ContainerFormat containerFormat) {
          this.containerFormat = containerFormat;
          return self();
       }
@@ -75,7 +85,7 @@ public class Image extends Resource {
       /**
        * @see Image#getDiskFormat()
        */
-      public T diskFormat(Optional<DiskFormat> diskFormat) {
+      public T diskFormat(DiskFormat diskFormat) {
          this.diskFormat = diskFormat;
          return self();
       }
@@ -83,56 +93,30 @@ public class Image extends Resource {
       /**
        * @see Image#getSize()
        */
-      public T size(Optional<Long> size) {
+      public T size(Long size) {
          this.size = size;
          return self();
       }
 
       /**
-       * @see Image#getSize()
+       * @see Image#getChecksum()
        */
-      public T checksum(Optional<String> checksum) {
+      public T checksum(String checksum) {
          this.checksum = checksum;
          return self();
       }
 
-      /**
-       * @see Image#getContainerFormat()
-       */
-      public T containerFormat(ContainerFormat containerFormat) {
-         return containerFormat(Optional.of(containerFormat));
-      }
-
-      /**
-       * @see Image#getDiskFormat()
-       */
-      public T diskFormat(DiskFormat diskFormat) {
-         return diskFormat(Optional.of(diskFormat));
-      }
-
-      /**
-       * @see Image#getSize()
-       */
-      public T size(long size) {
-         return size(Optional.of(size));
-      }
-
-      /**
-       * @see Image#getSize()
-       */
-      public T checksum(String checksum) {
-         return checksum(Optional.of(checksum));
-      }
-
       public Image build() {
-         return new Image(this);
+         return new Image(id, name, links, containerFormat, diskFormat, size, checksum);
       }
 
       public T fromImage(Image in) {
-         return super.fromResource(in).containerFormat(in.getContainerFormat()).diskFormat(in.getDiskFormat()).size(
-                  in.getSize()).checksum(in.getChecksum());
+         return super.fromResource(in)
+               .containerFormat(in.getContainerFormat().orNull())
+               .diskFormat(in.getDiskFormat().orNull())
+               .size(in.getSize().orNull())
+               .checksum(in.getChecksum().orNull());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -142,29 +126,23 @@ public class Image extends Resource {
       }
    }
 
-   protected Image() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
+   @Named("container_format")
+   private final Optional<ContainerFormat> containerFormat;
+   @Named("disk_format")
+   private final Optional<DiskFormat> diskFormat;
+   private final Optional<Long> size;
+   private final Optional<String> checksum;
 
-   // | container_format | varchar(20) | YES | | NULL | |
-   @SerializedName("container_format")
-   private Optional<ContainerFormat> containerFormat = Optional.absent();
-   // | disk_format | varchar(20) | YES | | NULL | |
-   @SerializedName("disk_format")
-   private Optional<DiskFormat> diskFormat = Optional.absent();
-   // | size | bigint(20) | YES | | NULL | |
-   private Optional<Long> size = Optional.absent();
-   // | checksum | varchar(32) | YES | | NULL | |
-   private Optional<String> checksum = Optional.absent();
-
-   protected Image(Builder<?> builder) {
-      super(builder);
-      this.containerFormat = builder.containerFormat;
-      this.diskFormat = builder.diskFormat;
-      this.size = builder.size;
-      this.checksum = builder.checksum;
+   @ConstructorProperties({
+         "id", "name", "links", "container_format", "disk_format", "size", "checksum"
+   })
+   protected Image(String id, @Nullable String name, Set<Link> links, @Nullable ContainerFormat containerFormat,
+                   @Nullable DiskFormat diskFormat, @Nullable Long size, @Nullable String checksum) {
+      super(id, name, links);
+      this.containerFormat = Optional.fromNullable(containerFormat);
+      this.diskFormat = Optional.fromNullable(diskFormat);
+      this.size = Optional.fromNullable(size);
+      this.checksum = Optional.fromNullable(checksum);
    }
 
    public Optional<ContainerFormat> getContainerFormat() {
@@ -180,12 +158,28 @@ public class Image extends Resource {
    }
 
    public Optional<String> getChecksum() {
-      return checksum;
+      return this.checksum;
    }
 
    @Override
-   protected Objects.ToStringHelper string() {
-      return super.string().add("containerFormat", containerFormat).add("diskFormat", diskFormat).add("size", size)
-               .add("checksum", checksum);
+   public int hashCode() {
+      return Objects.hashCode(containerFormat, diskFormat, size, checksum);
    }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Image that = Image.class.cast(obj);
+      return super.equals(that) && Objects.equal(this.containerFormat, that.containerFormat)
+            && Objects.equal(this.diskFormat, that.diskFormat)
+            && Objects.equal(this.size, that.size)
+            && Objects.equal(this.checksum, that.checksum);
+   }
+
+   protected ToStringHelper string() {
+      return super.string()
+            .add("containerFormat", containerFormat).add("diskFormat", diskFormat).add("size", size).add("checksum", checksum);
+   }
+
 }

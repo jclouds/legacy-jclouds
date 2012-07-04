@@ -1,0 +1,16 @@
+<GetUserResponse>
+   <GetUserResult>
+      <User>
+         <Path>/division_abc/subdivision_xyz/</Path>
+         <UserName>Bob</UserName>
+         <UserId>AIDACKCEVSQ6C2EXAMPLE</UserId>
+         <Arn>
+         arn:aws:iam::123456789012:user/division_abc/subdivision_xyz/Bob
+         </Arn>
+         <CreateDate>2009-03-06T21:47:48Z</CreateDate>
+      </User>
+   </GetUserResult>
+   <ResponseMetadata>
+      <RequestId>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE</RequestId>
+   </ResponseMetadata>
+</GetUserResponse>

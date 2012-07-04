@@ -33,6 +33,7 @@ import org.jclouds.openstack.nova.v2_0.domain.Image.Status;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ImageInZone;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 
 /**
@@ -62,5 +63,10 @@ public class ImageInZoneToImage implements Function<ImageInZone, Image> {
       return new ImageBuilder().id(imageInZone.slashEncode()).providerId(image.getId()).name(image.getName())
                .userMetadata(image.getMetadata()).operatingSystem(imageToOs.apply(image)).description(image.getName())
                .location(location).status(toPortableImageStatus.get(image.getStatus())).build();
+   }
+   
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).toString();
    }
 }

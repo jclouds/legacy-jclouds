@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,33 +20,36 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a Virtual Interface (VIF)
- *
+ * 
  * @author Adam Lowe
  * @see org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceClient
- */
+*/
 public class VirtualInterface {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromVirtualInterface(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String id;
-      private String macAddress;
-
-      /**
+      protected String id;
+      protected String macAddress;
+   
+      /** 
        * @see VirtualInterface#getId()
        */
       public T id(String id) {
@@ -54,7 +57,7 @@ public class VirtualInterface {
          return self();
       }
 
-      /**
+      /** 
        * @see VirtualInterface#getMacAddress()
        */
       public T macAddress(String macAddress) {
@@ -63,16 +66,14 @@ public class VirtualInterface {
       }
 
       public VirtualInterface build() {
-         return new VirtualInterface(this);
+         return new VirtualInterface(id, macAddress);
       }
-
+      
       public T fromVirtualInterface(VirtualInterface in) {
          return this
-               .id(in.getId())
-               .macAddress(in.getMacAddress())
-               ;
+                  .id(in.getId())
+                  .macAddress(in.getMacAddress());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -82,25 +83,22 @@ public class VirtualInterface {
       }
    }
 
-   protected VirtualInterface() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   private String id;
-   @SerializedName(value="mac_address")
-   private String macAddress;
+   private final String id;
+   @Named("mac_address")
+   private final String macAddress;
 
-   protected VirtualInterface(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
-      this.macAddress = checkNotNull(builder.macAddress, "macAddress");
+   @ConstructorProperties({
+      "id", "mac_address"
+   })
+   protected VirtualInterface(String id, String macAddress) {
+      this.id = checkNotNull(id, "id");
+      this.macAddress = checkNotNull(macAddress, "macAddress");
    }
 
    public String getId() {
       return this.id;
    }
-   
+
    public String getMacAddress() {
       return this.macAddress;
    }
@@ -116,17 +114,14 @@ public class VirtualInterface {
       if (obj == null || getClass() != obj.getClass()) return false;
       VirtualInterface that = VirtualInterface.class.cast(obj);
       return Objects.equal(this.id, that.id)
-            && Objects.equal(this.macAddress, that.macAddress)
-            ;
+               && Objects.equal(this.macAddress, that.macAddress);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("")
-            .add("id", id)
-            .add("macAddress", macAddress)
-            ;
+      return Objects.toStringHelper(this)
+            .add("id", id).add("macAddress", macAddress);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

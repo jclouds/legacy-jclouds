@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,221 +20,239 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Detailed information about a server such as cpuCores, hardware configuration
  * (cpu, memory and disk), ip adresses, cost, transfer, os and more.
- * 
+ *
  * @author Adrian Cole
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_details" />
  */
 public class ServerDetails extends Server {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder extends Server.Builder {
-      private Server.State state;
-      private String description;
-      private String templateName;
-      private int cpuCores;
-      private int memorySizeMB;
-      private int diskSizeGB;
-      private int transferGB;
-      private Cost cost;
-      private Set<Ip> ips = ImmutableSet.of();
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServerDetails(this);
+   }
 
-      public Builder state(Server.State state) {
-         this.state = state;
-         return this;
+   public static abstract class Builder<T extends Builder<T>> extends Server.Builder<T> {
+      protected Server.State state;
+      protected String description;
+      protected String templateName;
+      protected int cpuCores;
+      protected int memorySizeMB;
+      protected int diskSizeGB;
+      protected int transferGB;
+      protected Cost cost;
+      protected Set<Ip> ips = ImmutableSet.of();
+
+      /**
+       * @see ServerDetails#getState()
+       */
+      public T state(Server.State state) {
+         this.state = checkNotNull(state, "state");
+         return self();
       }
 
-      public Builder description(String description) {
-         this.description = description;
-         return this;
+      /**
+       * @see ServerDetails#getDescription()
+       */
+      public T description(String description) {
+         this.description = checkNotNull(description, "description");
+         return self();
       }
 
-      public Builder templateName(String templateName) {
-         this.templateName = templateName;
-         return this;
+      /**
+       * @see ServerDetails#getTemplateName()
+       */
+      public T templateName(String templateName) {
+         this.templateName = checkNotNull(templateName, "templateName");
+         return self();
       }
 
-      public Builder cpuCores(int cpuCores) {
+      /**
+       * @see ServerDetails#getCpuCores()
+       */
+      public T cpuCores(int cpuCores) {
          this.cpuCores = cpuCores;
-         return this;
+         return self();
       }
 
-      public Builder memorySizeMB(int memorySizeMB) {
+      /**
+       * @see ServerDetails#getMemorySizeMB()
+       */
+      public T memorySizeMB(int memorySizeMB) {
          this.memorySizeMB = memorySizeMB;
-         return this;
+         return self();
       }
 
-      public Builder diskSizeGB(int diskSizeGB) {
+      /**
+       * @see ServerDetails#getDiskSizeGB()
+       */
+      public T diskSizeGB(int diskSizeGB) {
          this.diskSizeGB = diskSizeGB;
-         return this;
+         return self();
       }
 
-      public Builder transferGB(int transferGB) {
+      /**
+       * @see ServerDetails#getTransferGB()
+       */
+      public T transferGB(int transferGB) {
          this.transferGB = transferGB;
-         return this;
+         return self();
       }
 
-      public Builder cost(Cost cost) {
-         this.cost = cost;
-         return this;
+      /**
+       * @see ServerDetails#getCost()
+       */
+      public T cost(Cost cost) {
+         this.cost = checkNotNull(cost, "cost");
+         return self();
       }
 
-      public Builder ips(Ip... ips) {
-         return ips(ImmutableSet.copyOf(ips));
+      /**
+       * @see ServerDetails#getIps()
+       */
+      public T ips(Set<Ip> ips) {
+         this.ips = ImmutableSet.copyOf(checkNotNull(ips, "ips"));
+         return self();
       }
 
-      public Builder ips(Iterable<Ip> ips) {
-         this.ips = ImmutableSet.copyOf(ips);
-         return this;
+      public T ips(Ip... in) {
+         return ips(ImmutableSet.copyOf(in));
       }
 
       public ServerDetails build() {
-         return new ServerDetails(id, hostname, datacenter, platform, state, templateName, description, cpuCores,
-               memorySizeMB, diskSizeGB, transferGB, cost, ips);
+         return new ServerDetails(id, hostname, datacenter, platform, state, description, templateName, cpuCores, memorySizeMB, diskSizeGB, transferGB, cost, ips);
       }
 
-      public Builder fromServerDetails(ServerDetails in) {
-         return fromServer(in).templateName(in.getTemplateName()).state(in.getState()).memorySizeMB(in.getMemorySizeMB())
-               .diskSizeGB(in.getDiskSizeGB()).cpuCores(in.getCpuCores()).cost(in.getCost())
-               .transferGB(in.getTransferGB()).description(in.getDescription()).ips(in.getIps());
+      public T fromServerDetails(ServerDetails in) {
+         return super.fromServer(in)
+               .state(in.getState())
+               .description(in.getDescription())
+               .templateName(in.getTemplateName())
+               .cpuCores(in.getCpuCores())
+               .memorySizeMB(in.getMemorySizeMB())
+               .diskSizeGB(in.getDiskSizeGB())
+               .transferGB(in.getTransferGB())
+               .cost(in.getCost())
+               .ips(in.getIps());
       }
+   }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder id(String id) {
-         return Builder.class.cast(super.id(id));
-      }
-
-      @Override
-      public Builder hostname(String hostname) {
-         return Builder.class.cast(super.hostname(hostname));
-      }
-
-      @Override
-      public Builder datacenter(String datacenter) {
-         return Builder.class.cast(super.datacenter(datacenter));
-      }
-
-      @Override
-      public Builder platform(String platform) {
-         return Builder.class.cast(super.platform(platform));
-      }
-
-      @Override
-      public Builder fromServer(Server in) {
-         return Builder.class.cast(super.fromServer(in));
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
    private final Server.State state;
    private final String description;
-   @SerializedName("templatename")
    private final String templateName;
-   @SerializedName("cpucores")
    private final int cpuCores;
-   @SerializedName("memorysize")
    private final int memorySizeMB;
-   @SerializedName("disksize")
    private final int diskSizeGB;
-   @SerializedName("transfer")
    private final int transferGB;
    private final Cost cost;
-   @SerializedName("iplist")
    private final Set<Ip> ips;
 
-   public ServerDetails(String id, String hostname, String datacenter, String platform, Server.State state,
-         String templateName, String description, int cpuCores, int memorySizeMB, int diskSizeGB, int transferGB,
-         Cost cost, Set<Ip> ips) {
+   @ConstructorProperties({
+         "serverid", "hostname", "datacenter", "platform", "state", "description", "templatename", "cpucores",
+         "memorysize", "disksize", "transfer", "cost", "iplist"
+   })
+   protected ServerDetails(String id, String hostname, String datacenter, String platform, @Nullable Server.State state,
+                           @Nullable String description, String templateName, int cpuCores, int memorySizeMB,
+                           int diskSizeGB, int transferGB, Cost cost, @Nullable Set<Ip> ips) {
       super(id, hostname, datacenter, platform);
       this.state = state;
-      this.templateName = checkNotNull(templateName, "template");
       this.description = description;
+      this.templateName = checkNotNull(templateName, "templateName");
       this.cpuCores = cpuCores;
       this.memorySizeMB = memorySizeMB;
       this.diskSizeGB = diskSizeGB;
       this.transferGB = transferGB;
       this.cost = checkNotNull(cost, "cost");
-      this.ips = ImmutableSet.<Ip> copyOf(ips);
+      this.ips = ips == null ? ImmutableSet.<Ip>of() : ImmutableSet.copyOf(checkNotNull(ips, "ips"));
    }
 
    /**
     * @return the state of the server (e.g. "running")
     */
    public Server.State getState() {
-      return state;
+      return this.state;
    }
 
    /**
     * @return the user-specified description of the server
     */
    public String getDescription() {
-      return description;
-   }
-
-   /**
-    * @return number of cores on the server
-    */
-   public int getCpuCores() {
-      return cpuCores;
-   }
-
-   /**
-    * @return the disk of the server in GB
-    */
-   public int getDiskSizeGB() {
-      return diskSizeGB;
-   }
-
-   /**
-    * @return the memory of the server in MB
-    */
-   public int getMemorySizeMB() {
-      return memorySizeMB;
-   }
-
-   /**
-    * @return the transfer of the server
-    */
-   public int getTransferGB() {
-      return transferGB;
-   }
-
-   /**
-    * @return details of the cost of the server
-    */
-   public Cost getCost() {
-      return cost;
-   }
-
-   /**
-    * @return the ip addresses assigned to the server
-    */
-   public Set<Ip> getIps() {
-      return ips;
+      return this.description;
    }
 
    /**
     * @return the name of the template used to create the server
     */
    public String getTemplateName() {
-      return templateName;
+      return this.templateName;
    }
 
-   @Override
-   public String toString() {
-      return String
-            .format(
-                  "[id=%s, hostname=%s, datacenter=%s, platform=%s, templateName=%s, state=%s, description=%s, cpuCores=%d, memorySizeMB=%d, diskSizeGB=%d, transferGB=%d, cost=%s, ips=%s]",
-                  id, hostname, datacenter, platform, templateName, state, description, cpuCores, memorySizeMB,
-                  diskSizeGB, transferGB, cost, ips);
+   /**
+    * @return number of cores on the server
+    */
+   public int getCpuCores() {
+      return this.cpuCores;
+   }
+
+   /**
+    * @return the memory of the server in MB
+    */
+   public int getMemorySizeMB() {
+      return this.memorySizeMB;
+   }
+
+   /**
+    * @return the disk of the server in GB
+    */
+   public int getDiskSizeGB() {
+      return this.diskSizeGB;
+   }
+
+   /**
+    * @return the transfer of the server
+    */
+   public int getTransferGB() {
+      return this.transferGB;
+   }
+
+   /**
+    * @return details of the cost of the server
+    */
+   public Cost getCost() {
+      return this.cost;
+   }
+
+   /**
+    * @return the ip addresses assigned to the server
+    */
+   public Set<Ip> getIps() {
+      return this.ips;
+   }
+
+   protected ToStringHelper string() {
+      return super.string().add("state", state).add("description", description).add("templateName", templateName)
+            .add("cpuCores", cpuCores).add("memorySizeMB", memorySizeMB).add("diskSizeGB", diskSizeGB)
+            .add("transferGB", transferGB).add("cost", cost).add("ips", ips);
    }
 
 }

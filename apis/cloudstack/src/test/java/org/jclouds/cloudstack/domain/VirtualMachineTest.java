@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.domain;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
@@ -35,17 +36,18 @@ public class VirtualMachineTest {
    @Test(groups = "unit", enabled = true)
    public void testCpuUsed() {
       // Class under test should detect if the % is missing off the end
-      boolean caught = false;
-      try { VirtualMachine.builder().cpuUsed("23.4").build(); } catch (Exception e) { caught = true; }
-      assertTrue(caught);
+      try { 
+         VirtualMachine.builder().id("1").cpuUsed("23.4").build();
+         fail("Should have thrown an exception due to % being missing!");
+      } catch (Exception e) { 
+      }
 
       // If CpuUsed is not specified at all, that's OK
-      caught = false;
-      try { VirtualMachine.builder().build(); } catch (Exception e) { caught = true; }
-      assertFalse(caught);
+      VirtualMachine vm = VirtualMachine.builder().id("2").build();
+      assertEquals(vm.getCpuUsed(), 0.0f);
 
       // Retrieving CpuUsed should just give us a straightforward float
-      VirtualMachine vm = VirtualMachine.builder().cpuUsed("23.4%").build();
+      vm = VirtualMachine.builder().id("3").cpuUsed("23.4%").build();
       assertEquals(vm.getCpuUsed(), 23.4, 0.01);
    }
 

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListZonesOptions;
 import org.testng.annotations.Test;
 

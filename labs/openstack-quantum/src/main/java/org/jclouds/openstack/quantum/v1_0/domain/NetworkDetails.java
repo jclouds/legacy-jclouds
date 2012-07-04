@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +20,7 @@ package org.jclouds.openstack.quantum.v1_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import com.google.common.base.Objects;
@@ -29,28 +29,28 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Details of a Quantum network
- *
+ * 
  * @author Adam Lowe
  * @see <a href="http://docs.openstack.org/api/openstack-network/1.0/content/Networks.html">api doc</a>
- */
+*/
 public class NetworkDetails extends Network {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromNetworkDetails(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> extends Network.Builder<T>  {
-      private Set<Port> ports = ImmutableSet.of();
-
-      /**
+      protected Set<Port> ports = ImmutableSet.of();
+   
+      /** 
        * @see NetworkDetails#getPorts()
        */
       public T ports(Set<Port> ports) {
-         this.ports = ports;
+         this.ports = ImmutableSet.copyOf(checkNotNull(ports, "ports"));      
          return self();
       }
 
@@ -59,11 +59,12 @@ public class NetworkDetails extends Network {
       }
 
       public NetworkDetails build() {
-         return new NetworkDetails(this);
+         return new NetworkDetails(id, name, ports);
       }
-
+      
       public T fromNetworkDetails(NetworkDetails in) {
-         return super.fromNetwork(in).ports(in.getPorts());
+         return super.fromNetwork(in)
+                  .ports(in.getPorts());
       }
    }
 
@@ -76,20 +77,16 @@ public class NetworkDetails extends Network {
 
    private final Set<Port> ports;
 
-   protected NetworkDetails(Builder<?> builder) {
-      super(builder);
-      this.ports = ImmutableSet.copyOf(checkNotNull(builder.ports, "ports"));
+   @ConstructorProperties({
+      "id", "name", "ports"
+   })
+   protected NetworkDetails(String id, String name, Set<Port> ports) {
+      super(id, name);
+      this.ports = ImmutableSet.copyOf(checkNotNull(ports, "ports"));      
    }
 
-   protected NetworkDetails() {
-      // for GSON
-      this.ports = ImmutableSet.of();
-   }
-
-   /**
-    */
    public Set<Port> getPorts() {
-      return Collections.unmodifiableSet(this.ports);
+      return this.ports;
    }
 
    @Override
@@ -104,9 +101,10 @@ public class NetworkDetails extends Network {
       NetworkDetails that = NetworkDetails.class.cast(obj);
       return super.equals(that) && Objects.equal(this.ports, that.ports);
    }
-
+   
    protected ToStringHelper string() {
-      return super.string().add("ports", ports);
+      return super.string()
+            .add("ports", ports);
    }
-
+   
 }

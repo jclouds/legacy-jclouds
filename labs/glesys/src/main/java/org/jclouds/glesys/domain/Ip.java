@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,107 +16,145 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.glesys.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents an ip address used by a server.
  *
  * @author Adam Lowe
- * @see ServerCreated
+ * @see Server
  * @see ServerDetails
  */
 public class Ip {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromIp(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
       protected String ip;
       protected int version;
       protected double cost;
+      protected String currency;
 
-      protected Builder version(int version) {
-         this.version = version;
-         return this;
+      /**
+       * @see Ip#getIp()
+       */
+      public T ip(String ip) {
+         this.ip = checkNotNull(ip, "ip");
+         return self();
       }
 
-      public Builder version4() {
+      /**
+       * @see Ip#getVersion()
+       */
+      protected T version(int version) {
+         this.version = version;
+         return self();
+      }
+
+      /**
+       * @see Ip#getVersion()
+       */
+      public T version4() {
          return version(4);
       }
 
-      public Builder version6() {
+      /**
+       * @see Ip#getVersion()
+       */
+      public T version6() {
          return version(6);
       }
-      
-      public Builder ip(String ip) {
-         this.ip = ip;
-         return this;
+
+      /**
+       * @see Ip#getCost()
+       */
+      public T cost(double cost) {
+         this.cost = cost;
+         return self();
       }
 
-      public Builder cost(double cost) {
-         this.cost = cost;
-         return this;
+      /**
+       * @see Ip#getCurrency()
+       */
+      public T currency(String currency) {
+         this.currency = currency;
+         return self();
       }
 
       public Ip build() {
-         return new Ip(ip, version, cost);
+         return new Ip(ip, version, cost, currency);
       }
 
-      public Builder fromIpCreated(Ip from) {
-         return ip(from.getIp()).version(from.getVersion()).cost(from.getCost());
+      public T fromIp(Ip in) {
+         return this.ip(in.getIp()).version(in.getVersion()).cost(in.getCost());
       }
    }
-   
-   @SerializedName("ipaddress")
-   protected final String ip;
-   protected final int version;
-   protected final double cost;
 
-   public Ip(String ip, int version, double cost) {
-      this.ip = ip;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String ip;
+   private final int version;
+   private final double cost;
+   private final String currency;
+
+   @ConstructorProperties({
+         "ipaddress", "version", "cost", "currency"
+   })
+   protected Ip(String ip, int version, double cost, String currency) {
+      this.ip = checkNotNull(ip, "ip");
       this.version = version;
       this.cost = cost;
+      this.currency = checkNotNull(currency, "currency");
    }
 
    /**
     * @return the IP version, ex. 4
     */
-   public int getVersion() {
-      return version;
+   public String getIp() {
+      return this.ip;
    }
 
    /**
     * @return the ip address of the new server
     */
-   public String getIp() {
-      return ip;
+   public int getVersion() {
+      return this.version;
    }
 
    /**
     * @return the cost of the ip address allocated to the new server
+    * @see #getCurrency()
     */
    public double getCost() {
-      return cost;
+      return this.cost;
    }
 
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Ip) {
-         final Ip other = (Ip) object;
-         return Objects.equal(ip, other.ip)
-               && Objects.equal(version, other.version)
-               && Objects.equal(cost, other.cost);
-      } else {
-         return false;
-      }
+   /**
+    * @return the currency of the cost
+    * @see #getCost() 
+    */
+   public String getCurrency() {
+      return currency;
    }
 
    @Override
@@ -125,8 +163,24 @@ public class Ip {
    }
 
    @Override
-   public String toString() {
-      return String.format("[ip=%s, version=%d, cost=%f]",
-            ip, version, cost);
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Ip that = Ip.class.cast(obj);
+      return Objects.equal(this.ip, that.ip)
+            && Objects.equal(this.version, that.version)
+            && Objects.equal(this.cost, that.cost)
+            && Objects.equal(this.currency, that.currency);
    }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("ip", ip).add("version", version).add("cost", cost).add("currency", currency);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

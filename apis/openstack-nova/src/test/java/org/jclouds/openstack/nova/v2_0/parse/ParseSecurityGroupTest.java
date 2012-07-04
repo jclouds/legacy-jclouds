@@ -57,7 +57,7 @@ public class ParseSecurityGroupTest extends BaseItemParserTest<SecurityGroup> {
             SecurityGroupRule.builder().fromPort(22)
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("28")
                   .ipRange("10.2.6.0/24").id("108").build(),
-            SecurityGroupRule.builder().fromPort(22).group(new TenantIdAndName("admin", "11111"))
+            SecurityGroupRule.builder().fromPort(22).group(TenantIdAndName.builder().name("11111").tenantId("admin").build())
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("28")
                   .id("109").build());
 

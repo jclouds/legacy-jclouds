@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,13 +20,18 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Map;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Information about a dimension of the capacity
@@ -35,67 +40,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Capacity implements Comparable<Capacity> {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-
-      private long capacityTotal;
-      private long capacityUsed;
-      private double percentUsed;
-      private String podId;
-      private String podName;
-      private Type type;
-      private String zoneId;
-      private String zoneName;
-
-      public Builder capacityTotal(long capacityTotal) {
-         this.capacityTotal = capacityTotal;
-         return this;
-      }
-
-      public Builder capacityUsed(long capacityUsed) {
-         this.capacityUsed = capacityUsed;
-         return this;
-      }
-
-      public Builder percentUsed(double percentUsed) {
-         this.percentUsed = percentUsed;
-         return this;
-      }
-
-      public Builder podId(String podId) {
-         this.podId = podId;
-         return this;
-      }
-
-      public Builder podName(String podName) {
-         this.podName = podName;
-         return this;
-      }
-
-      public Builder type(Type type) {
-         this.type = type;
-         return this;
-      }
-
-      public Builder zoneId(String zoneId) {
-         this.zoneId = zoneId;
-         return this;
-      }
-
-      public Builder zoneName(String zoneName) {
-         this.zoneName = zoneName;
-         return this;
-      }
-
-      public Capacity build() {
-         return new Capacity(capacityTotal, capacityUsed, percentUsed, podId, podName, type, zoneId, zoneName);
-      }
-   }
-
-   public enum Type {
+   /**
+    */
+   public static enum Type {
       MEMORY_ALLOCATED_BYTES(0),
       CPU_ALLOCATED_MHZ(1),
       PRIMARY_STORAGE_USED_BYTES(2),
@@ -111,14 +58,14 @@ public class Capacity implements Comparable<Capacity> {
       private int code;
 
       private static final Map<Integer, Type> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(Type.values()),
-         new Function<Type, Integer>() {
+            new Function<Type, Integer>() {
 
-            @Override
-            public Integer apply(Type input) {
-               return input.code;
-            }
+               @Override
+               public Integer apply(Type input) {
+                  return input.code;
+               }
 
-         });
+            });
 
       Type(int code) {
          this.code = code;
@@ -135,27 +82,135 @@ public class Capacity implements Comparable<Capacity> {
       }
    }
 
-   @SerializedName("capacitytotal")
-   private long capacityTotal;
-   @SerializedName("capacityused")
-   private long capacityUsed;
-   @SerializedName("percentused")
-   private double percentUsed;
-   @SerializedName("podid")
-   private String podId;
-   @SerializedName("podname")
-   private String podName;
-   private Capacity.Type type;
-   @SerializedName("zoneid")
-   private String zoneId;
-   @SerializedName("zonename")
-   private String zoneName;
-   
-   /* exists for the deserializer, only */
-   Capacity() {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Capacity(long capacityTotal, long capacityUsed, double percentUsed, String podId, String podName, Type type, String zoneId, String zoneName) {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromCapacity(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected long capacityTotal;
+      protected long capacityUsed;
+      protected double percentUsed;
+      protected String podId;
+      protected String podName;
+      protected Capacity.Type type;
+      protected String zoneId;
+      protected String zoneName;
+
+      /**
+       * @see Capacity#getCapacityTotal()
+       */
+      public T capacityTotal(long capacityTotal) {
+         this.capacityTotal = capacityTotal;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getCapacityUsed()
+       */
+      public T capacityUsed(long capacityUsed) {
+         this.capacityUsed = capacityUsed;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getPercentUsed()
+       */
+      public T percentUsed(double percentUsed) {
+         this.percentUsed = percentUsed;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getPodId()
+       */
+      public T podId(String podId) {
+         this.podId = podId;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getPodName()
+       */
+      public T podName(String podName) {
+         this.podName = podName;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getType()
+       */
+      public T type(Capacity.Type type) {
+         this.type = type;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getZoneId()
+       */
+      public T zoneId(String zoneId) {
+         this.zoneId = zoneId;
+         return self();
+      }
+
+      /**
+       * @see Capacity#getZoneName()
+       */
+      public T zoneName(String zoneName) {
+         this.zoneName = zoneName;
+         return self();
+      }
+
+      public Capacity build() {
+         return new Capacity(capacityTotal, capacityUsed, percentUsed, podId, podName, type, zoneId, zoneName);
+      }
+
+      public T fromCapacity(Capacity in) {
+         return this
+               .capacityTotal(in.getCapacityTotal())
+               .capacityUsed(in.getCapacityUsed())
+               .percentUsed(in.getPercentUsed())
+               .podId(in.getPodId())
+               .podName(in.getPodName())
+               .type(in.getType())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   @Named("capacitytotal")
+   private final long capacityTotal;
+   @Named("capacityused")
+   private final long capacityUsed;
+   @Named("percentused")
+   private final double percentUsed;
+   @Named("podid")
+   private final String podId;
+   @Named("podname")
+   private final String podName;
+   private final Capacity.Type type;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+
+   @ConstructorProperties({
+         "capacitytotal", "capacityused", "percentused", "podid", "podname", "type", "zoneid", "zonename"
+   })
+   protected Capacity(long capacityTotal, long capacityUsed, double percentUsed, @Nullable String podId,
+                      @Nullable String podName, @Nullable Capacity.Type type, @Nullable String zoneId, @Nullable String zoneName) {
       this.capacityTotal = capacityTotal;
       this.capacityUsed = capacityUsed;
       this.percentUsed = percentUsed;
@@ -167,83 +222,78 @@ public class Capacity implements Comparable<Capacity> {
    }
 
    public long getCapacityTotal() {
-      return capacityTotal;
+      return this.capacityTotal;
    }
 
    public long getCapacityUsed() {
-      return capacityUsed;
+      return this.capacityUsed;
    }
 
    public double getPercentUsed() {
-      return percentUsed;
+      return this.percentUsed;
    }
 
+   @Nullable
    public String getPodId() {
-      return podId;
+      return this.podId;
    }
 
+   @Nullable
    public String getPodName() {
-      return podName;
+      return this.podName;
    }
 
-   public Type getType() {
-      return type;
+   @Nullable
+   public Capacity.Type getType() {
+      return this.type;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getZoneName() {
-      return zoneName;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Capacity that = (Capacity) o;
-
-      if (!Objects.equal(capacityTotal, that.capacityTotal)) return false;
-      if (!Objects.equal(capacityUsed, that.capacityUsed)) return false;
-      if (!Objects.equal(percentUsed, that.percentUsed)) return false;
-      if (!Objects.equal(podId, that.podId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(podName, that.podName)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.zoneName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(capacityTotal, capacityUsed, percentUsed, podId, podName,
-                               type, zoneId, zoneName);
+      return Objects.hashCode(capacityTotal, capacityUsed, percentUsed, podId, podName, type, zoneId, zoneName);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Capacity that = Capacity.class.cast(obj);
+      return Objects.equal(this.capacityTotal, that.capacityTotal)
+            && Objects.equal(this.capacityUsed, that.capacityUsed)
+            && Objects.equal(this.percentUsed, that.percentUsed)
+            && Objects.equal(this.podId, that.podId)
+            && Objects.equal(this.podName, that.podName)
+            && Objects.equal(this.type, that.type)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("capacityTotal", capacityTotal).add("capacityUsed", capacityUsed).add("percentUsed", percentUsed)
+            .add("podId", podId).add("podName", podName).add("type", type).add("zoneId", zoneId).add("zoneName", zoneName);
    }
 
    @Override
    public String toString() {
-      return "Capacity{" +
-            "capacityTotal=" + capacityTotal +
-            ", capacityUsed=" + capacityUsed +
-            ", percentUsed=" + percentUsed +
-            ", podId=" + podId +
-            ", podName='" + podName + '\'' +
-            ", type=" + type +
-            ", zoneId=" + zoneId +
-            ", zoneName='" + zoneName + '\'' +
-            '}';
+      return string().toString();
    }
 
    @Override
    public int compareTo(Capacity other) {
       int comparison = this.zoneId.compareTo(other.zoneId);
-      if (comparison != 0) return comparison;
-      comparison = this.podId.compareTo(other.podId);
-      if (comparison != 0) return comparison;
-      return Integer.valueOf(this.type.code).compareTo(other.type.code);
+      if (comparison == 0) comparison = this.podId.compareTo(other.podId);
+      if (comparison == 0) Integer.valueOf(this.type.code).compareTo(other.type.code);
+      return comparison;
    }
-
 }

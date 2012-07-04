@@ -38,7 +38,7 @@ public class ListCapabilitiesResponseTest extends BaseItemParserTest<Capabilitie
    @Override
    @SelectJson("capability")
    public Capabilities expected() {
-      return Capabilities.builder().securityGroupsEnabled(true).sharedTemplatesEnabled(true).cloudStackVersion("2.2")
+      return Capabilities.builder().securityGroupsEnabled(true).canShareTemplates(true).cloudStackVersion("2.2")
             .build();
    }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,10 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Representation of the API configuration entry response
@@ -28,106 +34,136 @@ import com.google.common.base.Objects;
  */
 public class ConfigurationEntry implements Comparable<ConfigurationEntry> {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromConfigurationEntry(this);
+   }
 
-      private String category;
-      private String description;
-      private String name;
-      private String value;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder category(String category) {
+      protected String category;
+      protected String description;
+      protected String name;
+      protected String value;
+
+      /**
+       * @see ConfigurationEntry#getCategory()
+       */
+      public T category(String category) {
          this.category = category;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see ConfigurationEntry#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see ConfigurationEntry#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder value(String value) {
+      /**
+       * @see ConfigurationEntry#getValue()
+       */
+      public T value(String value) {
          this.value = value;
-         return this;
+         return self();
       }
 
       public ConfigurationEntry build() {
          return new ConfigurationEntry(category, description, name, value);
       }
+
+      public T fromConfigurationEntry(ConfigurationEntry in) {
+         return this
+               .category(in.getCategory())
+               .description(in.getDescription())
+               .name(in.getName())
+               .value(in.getValue());
+      }
    }
 
-   // for deserialization
-   ConfigurationEntry() {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   private String category;
-   private String description;
-   private String name;
-   private String value;
+   private final String category;
+   private final String description;
+   private final String name;
+   private final String value;
 
-   public ConfigurationEntry(String category, String description, String name, String value) {
+   @ConstructorProperties({
+         "category", "description", "name", "value"
+   })
+   protected ConfigurationEntry(@Nullable String category, @Nullable String description, String name, @Nullable String value) {
       this.category = category;
       this.description = description;
-      this.name = name;
+      this.name = checkNotNull(name, "name");
       this.value = value;
    }
 
-   @Override
-   public int compareTo(ConfigurationEntry arg0) {
-      return name.compareTo(arg0.getName());
-   }
-
+   @Nullable
    public String getCategory() {
-      return category;
+      return this.category;
    }
 
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    public String getName() {
-      return name;
+      return this.name;
    }
 
+   @Nullable
    public String getValue() {
-      return value;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ConfigurationEntry that = (ConfigurationEntry) o;
-
-      if (!Objects.equal(category, that.category)) return false;
-      if (!Objects.equal(description, that.description)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(value, that.value)) return false;
-
-      return true;
+      return this.value;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(category, description, name, value);
+      return Objects.hashCode(category, description, name, value);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ConfigurationEntry that = ConfigurationEntry.class.cast(obj);
+      return Objects.equal(this.category, that.category)
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.value, that.value);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("category", category).add("description", description).add("name", name).add("value", value);
    }
 
    @Override
    public String toString() {
-      return "ConfigurationEntry{" +
-         "category='" + category + '\'' +
-         ", description='" + description + '\'' +
-         ", name='" + name + '\'' +
-         ", value='" + value + '\'' +
-         '}';
+      return string().toString();
+   }
+
+   @Override
+   public int compareTo(ConfigurationEntry other) {
+      return name.compareTo(other.getName());
    }
 }

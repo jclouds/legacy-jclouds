@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,32 +20,34 @@ package org.jclouds.openstack.quantum.v1_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A wrapper around an id in the quantum api
- *
+ * 
  * @author Adam Lowe
  * @see <a href="http://docs.openstack.org/api/openstack-network/1.0/content/Networks.html">api doc</a>
- */
+*/
 public class Reference {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromReference(this);
    }
 
    public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
-      private String id;
-
-      /**
-       * @see org.jclouds.openstack.quantum.v1_0.domain.Reference#getId()
+      protected String id;
+   
+      /** 
+       * @see Reference#getId()
        */
       public T id(String id) {
          this.id = id;
@@ -53,11 +55,12 @@ public class Reference {
       }
 
       public Reference build() {
-         return new Reference(this);
+         return new Reference(id);
       }
-
+      
       public T fromReference(Reference in) {
-         return this.id(in.getId());
+         return this
+                  .id(in.getId());
       }
    }
 
@@ -70,21 +73,16 @@ public class Reference {
 
    private final String id;
 
-   protected Reference(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
+   @ConstructorProperties({
+      "id"
+   })
+   protected Reference(String id) {
+      this.id = checkNotNull(id, "id");
    }
 
-   protected Reference() {
-      // for GSON
-      this.id = null;
-   }
-
-   /**
-    */
    public String getId() {
       return this.id;
    }
-
 
    @Override
    public int hashCode() {
@@ -98,11 +96,12 @@ public class Reference {
       Reference that = Reference.class.cast(obj);
       return Objects.equal(this.id, that.id);
    }
-
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", id);
+      return Objects.toStringHelper(this)
+            .add("id", id);
    }
-
+   
    @Override
    public String toString() {
       return string().toString();

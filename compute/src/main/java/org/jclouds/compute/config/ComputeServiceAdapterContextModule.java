@@ -48,6 +48,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.LocationsSupplier;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
@@ -88,6 +89,11 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
                Iterable<L> locations = filter(adapter.listLocations(), notNull());
                return ImmutableSet.<Location> copyOf(transform(locations, transformer));
             }
+
+            @Override
+            public String toString() {
+               return Objects.toStringHelper(adapter).add("method", "listLocations").toString();
+            }
          };
       }
    }
@@ -102,7 +108,12 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
          public Iterable<H> get() {
             return adapter.listHardwareProfiles();
          }
-
+         
+         @Override
+         public String toString() {
+            return Objects.toStringHelper(adapter).add("method", "listHardwareProfiles").toString();
+         }
+         
       }, transformer);
    }
 
@@ -116,7 +127,12 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
          public Iterable<I> get() {
             return filter(adapter.listImages(), notNull());
          }
-
+         
+         @Override
+         public String toString() {
+            return Objects.toStringHelper(adapter).add("method", "listImages").toString();
+         }
+         
       }, compose(addDefaultCredentialsToImage, transformer));
    }
 
@@ -139,7 +155,7 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
 
       @Override
       public String toString() {
-         return "addDefaultCredentialsToImage()";
+         return Objects.toStringHelper(this).add("credsForImage", credsForImage).toString();
       }
    }
 

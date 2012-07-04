@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,172 +18,249 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import org.jclouds.cloudstack.domain.Account.Type;
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class User
  * 
  * @author Adrian Cole
- */
-public class User implements Comparable<User> {
+*/
+public class User {
 
+   /**
+    */
    public static enum State {
       ENABLED,
       DISABLED,
       UNKNOWN;
-
+      
       public static State fromValue(String value) {
-         try {
-            return valueOf(value.toUpperCase());
-         } catch(IllegalArgumentException e) {
-            return UNKNOWN;
-         }
+      try {
+      return valueOf(value.toUpperCase());
+      } catch(IllegalArgumentException e) {
+      return UNKNOWN;
       }
-
+      }
+      
       @Override
       public String toString() {
-         return name().toLowerCase();
+      return name().toLowerCase();
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromUser(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String name;
-      private String firstName;
-      private String lastName;
-      private String email;
-      private Date created;
-      private State state;
-      private String account;
-      private Account.Type accountType;
-      private String domain;
-      private String domainId;
-      private String timeZone;
-      private String apiKey;
-      private String secretKey;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected String name;
+      protected String firstName;
+      protected String lastName;
+      protected String email;
+      protected Date created;
+      protected User.State state;
+      protected String account;
+      protected Account.Type accountType;
+      protected String domain;
+      protected String domainId;
+      protected String timeZone;
+      protected String apiKey;
+      protected String secretKey;
+   
+      /** 
+       * @see User#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see User#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder firstName(String firstName) {
+      /** 
+       * @see User#getFirstName()
+       */
+      public T firstName(String firstName) {
          this.firstName = firstName;
-         return this;
+         return self();
       }
 
-      public Builder lastName(String lastName) {
+      /** 
+       * @see User#getLastName()
+       */
+      public T lastName(String lastName) {
          this.lastName = lastName;
-         return this;
+         return self();
       }
 
-      public Builder email(String email) {
+      /** 
+       * @see User#getEmail()
+       */
+      public T email(String email) {
          this.email = email;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /** 
+       * @see User#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder state(State state) {
+      /** 
+       * @see User#getState()
+       */
+      public T state(User.State state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see User#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder accountType(Account.Type accountType) {
+      /** 
+       * @see User#getAccountType()
+       */
+      public T accountType(Account.Type accountType) {
          this.accountType = accountType;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see User#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see User#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder timeZone(String timeZone) {
+      /** 
+       * @see User#getTimeZone()
+       */
+      public T timeZone(String timeZone) {
          this.timeZone = timeZone;
-         return this;
+         return self();
       }
 
-      public Builder apiKey(String apiKey) {
+      /** 
+       * @see User#getApiKey()
+       */
+      public T apiKey(String apiKey) {
          this.apiKey = apiKey;
-         return this;
+         return self();
       }
 
-      public Builder secretKey(String secretKey) {
+      /** 
+       * @see User#getSecretKey()
+       */
+      public T secretKey(String secretKey) {
          this.secretKey = secretKey;
-         return this;
+         return self();
       }
 
       public User build() {
-         return new User(id, name, firstName, lastName, email, created, state, account, accountType, domain, domainId,
-               timeZone, apiKey, secretKey);
+         return new User(id, name, firstName, lastName, email, created, state, account, accountType, domain, domainId, timeZone, apiKey, secretKey);
+      }
+      
+      public T fromUser(User in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .firstName(in.getFirstName())
+                  .lastName(in.getLastName())
+                  .email(in.getEmail())
+                  .created(in.getCreated())
+                  .state(in.getState())
+                  .account(in.getAccount())
+                  .accountType(in.getAccountType())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .timeZone(in.getTimeZone())
+                  .apiKey(in.getApiKey())
+                  .secretKey(in.getSecretKey());
       }
    }
 
-   /**
-    * present only for serializer
-    * 
-    */
-   User() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   private String id;
-   @SerializedName("username")
-   private String name;
-   @SerializedName("firstname")
-   private String firstName;
-   @SerializedName("lastname")
-   private String lastName;
-   private String email;
-   private Date created;
-   private State state;
-   private String account;
-   @SerializedName("accounttype")
-   private Account.Type accountType;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("timezone")
-   private String timeZone;
-   @SerializedName("apikey")
-   private String apiKey;
-   @SerializedName("secretkey")
-   private String secretKey;
+   private final String id;
+   @Named("username")
+   private final String name;
+   @Named("firstname")
+   private final String firstName;
+   @Named("lastname")
+   private final String lastName;
+   private final String email;
+   private final Date created;
+   private final User.State state;
+   private final String account;
+   @Named("accounttype")
+   private final Account.Type accountType;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("timezone")
+   private final String timeZone;
+   @Named("apikey")
+   private final String apiKey;
+   @Named("secretkey")
+   private final String secretKey;
 
-   public User(String id, String name, String firstname, String lastname, String email, Date created, State state,
-         String account, Type accountType, String domain, String domainId, String timeZone, String apiKey,
-         String secretKey) {
-      this.id = id;
+   @ConstructorProperties({
+      "id", "username", "firstname", "lastname", "email", "created", "state", "account", "accounttype", "domain",
+         "domainid", "timezone", "apikey", "secretkey"
+   })
+   protected User(String id, @Nullable String name, @Nullable String firstName, @Nullable String lastName,
+                  @Nullable String email, @Nullable Date created, @Nullable User.State state, @Nullable String account,
+                  @Nullable Account.Type accountType, @Nullable String domain, @Nullable String domainId, @Nullable String timeZone,
+                  @Nullable String apiKey, @Nullable String secretKey) {
+      this.id = checkNotNull(id, "id");
       this.name = name;
-      this.firstName = firstname;
-      this.lastName = lastname;
+      this.firstName = firstName;
+      this.lastName = lastName;
       this.email = email;
       this.created = created;
       this.state = state;
@@ -197,159 +274,152 @@ public class User implements Comparable<User> {
    }
 
    /**
-    * 
     * @return the user ID
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
-    * 
     * @return the user name
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
-    * 
     * @return the user firstname
     */
+   @Nullable
    public String getFirstName() {
-      return firstName;
+      return this.firstName;
    }
 
    /**
-    * 
     * @return the user lastname
     */
+   @Nullable
    public String getLastName() {
-      return lastName;
+      return this.lastName;
    }
 
    /**
-    * 
     * @return the user email address
     */
+   @Nullable
    public String getEmail() {
-      return email;
+      return this.email;
    }
 
    /**
-    * 
     * @return the date and time the user account was created
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
-    * 
     * @return the user state
     */
-   public State getState() {
-      return state;
+   @Nullable
+   public User.State getState() {
+      return this.state;
    }
 
    /**
-    * 
     * @return the account name of the user
     */
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
    /**
-    * 
     * @return the account type of the user
     */
+   @Nullable
    public Account.Type getAccountType() {
-      return accountType;
+      return this.accountType;
    }
 
    /**
-    * 
     * @return the domain name of the user
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
-    * 
     * @return the domain ID of the user
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
-    * 
     * @return the timezone user was created in
     */
+   @Nullable
    public String getTimeZone() {
-      return timeZone;
+      return this.timeZone;
    }
 
    /**
-    * 
     * @return the api key of the user
     */
+   @Nullable
    public String getApiKey() {
-      return apiKey;
+      return this.apiKey;
    }
 
    /**
-    * 
     * @return the secret key of the user
     */
+   @Nullable
    public String getSecretKey() {
-      return secretKey;
-   }
-
-   @Override
-   public int compareTo(User arg0) {
-       return id.compareTo(arg0.getId());
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      User that = (User) o;
-
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-
-      return true;
+      return this.secretKey;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(account, domainId, id);
+      return Objects.hashCode(id, name, firstName, lastName, email, created, state, account, accountType, domain, domainId, timeZone, apiKey, secretKey);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      User that = User.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.firstName, that.firstName)
+               && Objects.equal(this.lastName, that.lastName)
+               && Objects.equal(this.email, that.email)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.accountType, that.accountType)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.timeZone, that.timeZone)
+               && Objects.equal(this.apiKey, that.apiKey)
+               && Objects.equal(this.secretKey, that.secretKey);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("firstName", firstName).add("lastName", lastName).add("email", email)
+            .add("created", created).add("state", state).add("account", account).add("accountType", accountType).add("domain", domain)
+            .add("domainId", domainId).add("timeZone", timeZone).add("apiKey", apiKey).add("secretKey", secretKey);
+   }
+   
+   @Override
    public String toString() {
-      return "User{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", email='" + email + '\'' +
-            ", created=" + created +
-            ", state='" + state + '\'' +
-            ", account='" + account + '\'' +
-            ", accountType=" + accountType +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", timeZone='" + timeZone + '\'' +
-            ", apiKey='" + apiKey + '\'' +
-            ", secretKey='" + secretKey + '\'' +
-            '}';
+      return string().toString();
    }
 
 }

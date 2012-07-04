@@ -430,52 +430,6 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-            <!-- make sure we generate src jars too -->
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8.1</version>
-                <executions>
-                    <execution>
-                        <id>javadoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <additionalJOption>-J-Xmx256m</additionalJOption>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <quiet>true</quiet>
-                    <links>
-                        <link>http://download.oracle.com/javase/6/docs/api/</link>
-                    </links>
-                    <footer><![CDATA[
-                     <!-- Google Analytics -->
-<script type='text/javascript'>
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type='text/javascript'>
-try {
-var pageTracker = _gat._getTracker("UA-8638379-1");
-pageTracker._trackPageview();
-} catch(err) {}</script>
-                     ]]></footer>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>1.1</version>
@@ -613,6 +567,9 @@ pageTracker._trackPageview();
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.3.1</version>
+                    <configuration>
+                      <releaseProfiles>doc</releaseProfiles>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-pmd-plugin</artifactId>
@@ -746,6 +703,32 @@ pageTracker._trackPageview();
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-javadoc-plugin</artifactId>
+                  <version>2.8.1</version>
+                  <configuration>
+                    <additionalJOption>-J-Xmx256m</additionalJOption>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <quiet>true</quiet>
+                    <links>
+                      <link>http://download.oracle.com/javase/6/docs/api/</link>
+                    </links>
+                    <footer><![CDATA[
+                    <!-- Google Analytics -->
+<script type='text/javascript'>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type='text/javascript'>
+try {
+var pageTracker = _gat._getTracker("UA-8638379-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+]]>
+                    </footer>
+                  </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -914,6 +897,46 @@ pageTracker._trackPageview();
                     </plugin>        
                 </plugins>            
             </build>
+        </profile>
+        <profile>
+          <id>doc</id>
+          <build>
+            <plugins>
+              <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                  <execution>
+                    <id>javadoc</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>jar</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
+        <profile>
+          <id>src</id>
+          <build>
+            <plugins>
+              <!-- make sure we generate src jars too -->
+              <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                  <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
         </profile>
     </profiles>
 </project>

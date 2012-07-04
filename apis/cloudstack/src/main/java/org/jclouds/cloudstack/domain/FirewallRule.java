@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,18 +18,29 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Set;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class FirewallRule
+ *
  * @author Andrei Savu
  */
 public class FirewallRule implements Comparable<FirewallRule> {
 
+   /**
+    */
    public static enum Protocol {
       TCP,
       UDP,
@@ -73,105 +84,164 @@ public class FirewallRule implements Comparable<FirewallRule> {
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String id;
-      private Set<String> CIDRs;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromFirewallRule(this);
+   }
 
-      private int startPort;
-      private int endPort;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private String icmpCode;
-      private String icmpType;
+      protected String id;
+      protected Set<String> CIDRs = ImmutableSet.of();
+      protected int startPort;
+      protected int endPort;
+      protected String icmpCode;
+      protected String icmpType;
+      protected String ipAddress;
+      protected String ipAddressId;
+      protected FirewallRule.Protocol protocol;
+      protected FirewallRule.State state;
 
-      private String ipAddress;
-      private String ipAddressId;
-
-      private Protocol protocol;
-      private State state;
-
-      public Builder id(String id) {
+      /**
+       * @see FirewallRule#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder CIDRs(Set<String> CIDRs) {
-         this.CIDRs = ImmutableSet.copyOf(CIDRs);
-         return this;
+      /**
+       * @see FirewallRule#getCIDRs()
+       */
+      public T CIDRs(Set<String> CIDRs) {
+         this.CIDRs = ImmutableSet.copyOf(checkNotNull(CIDRs, "CIDRs"));
+         return self();
       }
 
-      public Builder startPort(int startPort) {
+      public T CIDRs(String... in) {
+         return CIDRs(ImmutableSet.copyOf(in));
+      }
+
+      /**
+       * @see FirewallRule#getStartPort()
+       */
+      public T startPort(int startPort) {
          this.startPort = startPort;
-         return this;
+         return self();
       }
 
-      public Builder endPort(int endPort) {
+      /**
+       * @see FirewallRule#getEndPort()
+       */
+      public T endPort(int endPort) {
          this.endPort = endPort;
-         return this;
+         return self();
       }
 
-      public Builder icmpCode(String icmpCode) {
+      /**
+       * @see FirewallRule#getIcmpCode()
+       */
+      public T icmpCode(String icmpCode) {
          this.icmpCode = icmpCode;
-         return this;
+         return self();
       }
 
-      public Builder icmpType(String icmpType) {
+      /**
+       * @see FirewallRule#getIcmpType()
+       */
+      public T icmpType(String icmpType) {
          this.icmpType = icmpType;
-         return this;
+         return self();
       }
 
-      public Builder ipAddress(String ipAddress) {
+      /**
+       * @see FirewallRule#getIpAddress()
+       */
+      public T ipAddress(String ipAddress) {
          this.ipAddress = ipAddress;
-         return this;
+         return self();
       }
 
-      public Builder ipAddressId(String ipAddressId) {
+      /**
+       * @see FirewallRule#getIpAddressId()
+       */
+      public T ipAddressId(String ipAddressId) {
          this.ipAddressId = ipAddressId;
-         return this;
+         return self();
       }
 
-      public Builder protocol(Protocol protocol) {
+      /**
+       * @see FirewallRule#getProtocol()
+       */
+      public T protocol(FirewallRule.Protocol protocol) {
          this.protocol = protocol;
-         return this;
+         return self();
       }
 
-      public Builder state(State state) {
+      /**
+       * @see FirewallRule#getState()
+       */
+      public T state(FirewallRule.State state) {
          this.state = state;
-         return this;
+         return self();
       }
 
       public FirewallRule build() {
-         return new FirewallRule(id, CIDRs, startPort, endPort, icmpCode,
-            icmpType, ipAddress, ipAddressId, protocol, state);
+         return new FirewallRule(id, CIDRs, startPort, endPort, icmpCode, icmpType, ipAddress, ipAddressId, protocol, state);
+      }
+
+      public T fromFirewallRule(FirewallRule in) {
+         return this
+               .id(in.getId())
+               .CIDRs(in.getCIDRs())
+               .startPort(in.getStartPort())
+               .endPort(in.getEndPort())
+               .icmpCode(in.getIcmpCode())
+               .icmpType(in.getIcmpType())
+               .ipAddress(in.getIpAddress())
+               .ipAddressId(in.getIpAddressId())
+               .protocol(in.getProtocol())
+               .state(in.getState());
       }
    }
 
-   private String id;
-   @SerializedName("cidrlist")
-   private Set<String> CIDRs;
-   @SerializedName("startport")
-   private int startPort;
-   @SerializedName("endport")
-   private int endPort;
-   @SerializedName("icmpcode")
-   private String icmpCode;
-   @SerializedName("icmptype")
-   private String icmpType;
-   @SerializedName("ipaddress")
-   private String ipAddress;
-   @SerializedName("ipaddressid")
-   private String ipAddressId;
-   private Protocol protocol;
-   private State state;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public FirewallRule(String id, Set<String> CIDRs, int startPort, int endPort,
-         String icmpCode, String icmpType, String ipAddress, String ipAddressId,
-         Protocol protocol, State state) {
-      this.id = id;
-      this.CIDRs = ImmutableSet.copyOf(CIDRs);
+   private final String id;
+   @Named("cidrlist")
+   private final Set<String> CIDRs;
+   @Named("startport")
+   private final int startPort;
+   @Named("endport")
+   private final int endPort;
+   @Named("icmpcode")
+   private final String icmpCode;
+   @Named("icmptype")
+   private final String icmpType;
+   @Named("ipaddress")
+   private final String ipAddress;
+   @Named("ipaddressid")
+   private final String ipAddressId;
+   private final FirewallRule.Protocol protocol;
+   private final FirewallRule.State state;
+
+   @ConstructorProperties({
+         "id", "cidrlist", "startport", "endport", "icmpcode", "icmptype", "ipaddress", "ipaddressid", "protocol", "state"
+   })
+   protected FirewallRule(String id, @Nullable Set<String> CIDRs, int startPort, int endPort, @Nullable String icmpCode,
+                          @Nullable String icmpType, @Nullable String ipAddress, @Nullable String ipAddressId,
+                          @Nullable FirewallRule.Protocol protocol, @Nullable FirewallRule.State state) {
+      this.id = checkNotNull(id, "id");
+      this.CIDRs = CIDRs == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(CIDRs);
       this.startPort = startPort;
       this.endPort = endPort;
       this.icmpCode = icmpCode;
@@ -182,90 +252,88 @@ public class FirewallRule implements Comparable<FirewallRule> {
       this.state = state;
    }
 
-   @Override
-   public int compareTo(FirewallRule arg0) {
-      return id.compareTo(arg0.getId());
-   }
-
    public String getId() {
-      return id;
+      return this.id;
    }
 
    public Set<String> getCIDRs() {
-      return CIDRs;
+      return this.CIDRs;
    }
 
    public int getStartPort() {
-      return startPort;
+      return this.startPort;
    }
 
    public int getEndPort() {
-      return endPort;
+      return this.endPort;
    }
 
+   @Nullable
    public String getIcmpCode() {
-      return icmpCode;
+      return this.icmpCode;
    }
 
+   @Nullable
    public String getIcmpType() {
-      return icmpType;
+      return this.icmpType;
    }
 
+   @Nullable
    public String getIpAddress() {
-      return ipAddress;
+      return this.ipAddress;
    }
 
+   @Nullable
    public String getIpAddressId() {
-      return ipAddressId;
+      return this.ipAddressId;
    }
 
-   public Protocol getProtocol() {
-      return protocol;
+   @Nullable
+   public FirewallRule.Protocol getProtocol() {
+      return this.protocol;
    }
 
-   public State getState() {
-      return state;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      FirewallRule that = (FirewallRule) o;
-
-      if (!Objects.equal(endPort, that.endPort)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(startPort, that.startPort)) return false;
-      if (!Objects.equal(CIDRs, that.CIDRs)) return false;
-      if (!Objects.equal(icmpCode, that.icmpCode)) return false;
-      if (!Objects.equal(icmpType, that.icmpType)) return false;
-      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
-      if (!Objects.equal(ipAddressId, that.ipAddressId)) return false;
-      if (!Objects.equal(protocol, that.protocol)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-
-      return true;
+   @Nullable
+   public FirewallRule.State getState() {
+      return this.state;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(endPort, id, startPort, CIDRs, icmpCode, icmpType, ipAddress, ipAddressId, protocol, state);
+      return Objects.hashCode(id, CIDRs, startPort, endPort, icmpCode, icmpType, ipAddress, ipAddressId, protocol, state);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      FirewallRule that = FirewallRule.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.CIDRs, that.CIDRs)
+            && Objects.equal(this.startPort, that.startPort)
+            && Objects.equal(this.endPort, that.endPort)
+            && Objects.equal(this.icmpCode, that.icmpCode)
+            && Objects.equal(this.icmpType, that.icmpType)
+            && Objects.equal(this.ipAddress, that.ipAddress)
+            && Objects.equal(this.ipAddressId, that.ipAddressId)
+            && Objects.equal(this.protocol, that.protocol)
+            && Objects.equal(this.state, that.state);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("CIDRs", CIDRs).add("startPort", startPort).add("endPort", endPort).add("icmpCode", icmpCode)
+            .add("icmpType", icmpType).add("ipAddress", ipAddress).add("ipAddressId", ipAddressId).add("protocol", protocol).add("state", state);
    }
 
    @Override
    public String toString() {
-      return "FirewallRule{" +
-         "id=" + id +
-         ", CIDRs='" + CIDRs + '\'' +
-         ", startPort=" + startPort +
-         ", endPort=" + endPort +
-         ", icmpCode='" + icmpCode + '\'' +
-         ", icmpType='" + icmpType + '\'' +
-         ", ipAddress='" + ipAddress + '\'' +
-         ", ipAddressId='" + ipAddressId + '\'' +
-         ", protocol='" + protocol + '\'' +
-         ", state='" + state + '\'' +
-         '}';
+      return string().toString();
    }
+
+   @Override
+   public int compareTo(FirewallRule other) {
+      return id.compareTo(other.getId());
+   }
+
 }

@@ -26,6 +26,7 @@ import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -61,11 +62,11 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -209,7 +210,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Image>> provideImageMap(@Memoized Supplier<Set<? extends Image>> images) {
-      return Suppliers.compose(new Function<Set<? extends Image>, Map<String, ? extends Image>>() {
+      return Suppliers2.compose(new Function<Set<? extends Image>, Map<String, ? extends Image>>() {
 
          @Override
          public Map<String, ? extends Image> apply(Set<? extends Image> from) {
@@ -244,13 +245,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    protected Supplier<Set<? extends Image>> supplyImageCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException,
-            seconds, new Supplier<Set<? extends Image>>() {
-               @Override
-               public Set<? extends Image> get() {
-                  return imageSupplier.get();
-               }
-            });
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, imageSupplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    /**
@@ -264,7 +260,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Hardware>> provideSizeMap(@Memoized Supplier<Set<? extends Hardware>> sizes) {
-      return Suppliers.compose(new Function<Set<? extends Hardware>, Map<String, ? extends Hardware>>() {
+      return Suppliers2.compose(new Function<Set<? extends Hardware>, Map<String, ? extends Hardware>>() {
 
          @Override
          public Map<String, ? extends Hardware> apply(Set<? extends Hardware> from) {
@@ -286,13 +282,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Hardware>> hardwareSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException,
-            seconds, new Supplier<Set<? extends Hardware>>() {
-               @Override
-               public Set<? extends Hardware> get() {
-                  return hardwareSupplier.get();
-               }
-            });
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, hardwareSupplier,
+               seconds, TimeUnit.SECONDS);
    }
 
    @Provides

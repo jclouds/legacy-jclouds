@@ -67,15 +67,13 @@ public class KeystoneRestClientModule<S extends KeystoneClient, A extends Keysto
          RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-            .put(ServiceClient.class, ServiceAsyncClient.class)
-            .put(TokenClient.class, TokenAsyncClient.class)
-            .put(UserClient.class, UserAsyncClient.class)
-            .put(TenantClient.class, TenantAsyncClient.class).build();
+            .put(ServiceClient.class, ServiceAsyncClient.class).put(TokenClient.class, TokenAsyncClient.class)
+            .put(UserClient.class, UserAsyncClient.class).put(TenantClient.class, TenantAsyncClient.class).build();
 
    @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
-      super((TypeToken) TypeToken.of(KeystoneClient.class), (TypeToken) TypeToken.of(KeystoneAsyncClient.class),
-               DELEGATE_MAP);
+      super(TypeToken.class.cast(TypeToken.of(KeystoneClient.class)), TypeToken.class.cast(TypeToken
+               .of(KeystoneAsyncClient.class)), DELEGATE_MAP);
    }
 
    protected KeystoneRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
@@ -83,23 +81,11 @@ public class KeystoneRestClientModule<S extends KeystoneClient, A extends Keysto
       super(syncClientType, asyncClientType, sync2Async);
    }
 
-   @Override
-   protected void configure() {
-      install(new KeystoneParserModule());
-      super.configure();
-   }
-
-   @Override
-   protected void installLocations() {
-      install(new KeystoneAuthenticationModule(new KeystoneAdminURLModule()));
-      super.installLocations();
-   }
-
    public static class KeystoneAdminURLModule extends AbstractModule {
 
       @Override
       protected void configure() {
-         bind(ImplicitOptionalConverter.class).to(PresentWhenAdminURLExistsForIdentityService.class); 
+         bind(ImplicitOptionalConverter.class).to(PresentWhenAdminURLExistsForIdentityService.class);
          install(new FactoryModuleBuilder().implement(RegionIdToAdminURISupplier.class,
                   RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
       }

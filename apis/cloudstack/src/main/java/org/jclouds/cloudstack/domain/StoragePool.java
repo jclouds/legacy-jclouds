@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,17 +20,22 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents a storage pool in CloudStack
- *
+ * 
  * @author Richard Downer
- */
+*/
 public class StoragePool implements Comparable<StoragePool> {
 
    public enum State {
@@ -56,7 +61,7 @@ public class StoragePool implements Comparable<StoragePool> {
       }
    }
 
-   public static enum Type {
+   public enum Type {
       FILESYSTEM,
       NETWORK_FILESYSTEM,
       ISCSI_LUN,
@@ -70,169 +75,264 @@ public class StoragePool implements Comparable<StoragePool> {
       EXT,
       OCFS2,
       UNRECOGNIZED;
-
+      
       @Override
       public String toString() {
-         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
       }
-
+      
       public static Type fromValue(String type) {
-         try {
-            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "type")));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
+      try {
+      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "type")));
+      } catch (IllegalArgumentException e) {
+      return UNRECOGNIZED;
+      }
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromStoragePool(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      private Builder() {
-      }
-
-      private String id;
-      private String name;
-      private String path;
-      private String tags;
-      private State state;
-      private Type type;
-      private String zoneId;
-      private String zoneName;
-      private String podId;
-      private String podName;
-      private String clusterId;
-      private String clusterName;
-      private Date created;
-      private long diskSizeAllocated;
-      private long diskSizeTotal;
-      private String ipAddress;
-      private String jobId;
-      private String jobStatus;
-
-      public Builder id(String id) {
+      protected String id;
+      protected String name;
+      protected String path;
+      protected String tags;
+      protected StoragePool.State state;
+      protected StoragePool.Type type;
+      protected String zoneId;
+      protected String zoneName;
+      protected String podId;
+      protected String podName;
+      protected String clusterId;
+      protected String clusterName;
+      protected Date created;
+      protected long diskSizeAllocated;
+      protected long diskSizeTotal;
+      protected String ipAddress;
+      protected String jobId;
+      protected String jobStatus;
+   
+      /** 
+       * @see StoragePool#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see StoragePool#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder path(String path) {
+      /** 
+       * @see StoragePool#getPath()
+       */
+      public T path(String path) {
          this.path = path;
-         return this;
+         return self();
       }
 
-      public Builder tags(String tags) {
+      /** 
+       * @see StoragePool#getTags()
+       */
+      public T tags(String tags) {
          this.tags = tags;
-         return this;
+         return self();
       }
 
-      public Builder state(State state) {
+      /** 
+       * @see StoragePool#getState()
+       */
+      public T state(StoragePool.State state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder type(Type type) {
+      /** 
+       * @see StoragePool#getType()
+       */
+      public T type(StoragePool.Type type) {
          this.type = type;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /** 
+       * @see StoragePool#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder zoneName(String zoneName) {
+      /** 
+       * @see StoragePool#getZoneName()
+       */
+      public T zoneName(String zoneName) {
          this.zoneName = zoneName;
-         return this;
+         return self();
       }
 
-      public Builder podId(String podId) {
+      /** 
+       * @see StoragePool#getPodId()
+       */
+      public T podId(String podId) {
          this.podId = podId;
-         return this;
+         return self();
       }
 
-      public Builder podName(String podName) {
+      /** 
+       * @see StoragePool#getPodName()
+       */
+      public T podName(String podName) {
          this.podName = podName;
-         return this;
+         return self();
       }
 
-      public Builder clusterId(String clusterId) {
+      /** 
+       * @see StoragePool#getClusterId()
+       */
+      public T clusterId(String clusterId) {
          this.clusterId = clusterId;
-         return this;
+         return self();
       }
 
-      public Builder clusterName(String clusterName) {
+      /** 
+       * @see StoragePool#getClusterName()
+       */
+      public T clusterName(String clusterName) {
          this.clusterName = clusterName;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /** 
+       * @see StoragePool#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder diskSizeAllocated(long diskSizeAllocated) {
+      /** 
+       * @see StoragePool#getDiskSizeAllocated()
+       */
+      public T diskSizeAllocated(long diskSizeAllocated) {
          this.diskSizeAllocated = diskSizeAllocated;
-         return this;
+         return self();
       }
 
-      public Builder diskSizeTotal(long diskSizeTotal) {
+      /** 
+       * @see StoragePool#getDiskSizeTotal()
+       */
+      public T diskSizeTotal(long diskSizeTotal) {
          this.diskSizeTotal = diskSizeTotal;
-         return this;
+         return self();
       }
 
-      public Builder ipAddress(String ipAddress) {
+      /** 
+       * @see StoragePool#getIpAddress()
+       */
+      public T ipAddress(String ipAddress) {
          this.ipAddress = ipAddress;
-         return this;
+         return self();
       }
 
-      public Builder jobId(String jobId) {
+      /** 
+       * @see StoragePool#getJobId()
+       */
+      public T jobId(String jobId) {
          this.jobId = jobId;
-         return this;
+         return self();
       }
 
-      public Builder jobStatus(String jobStatus) {
+      /** 
+       * @see StoragePool#getJobStatus()
+       */
+      public T jobStatus(String jobStatus) {
          this.jobStatus = jobStatus;
-         return this;
+         return self();
       }
 
       public StoragePool build() {
          return new StoragePool(id, name, path, tags, state, type, zoneId, zoneName, podId, podName, clusterId, clusterName, created, diskSizeAllocated, diskSizeTotal, ipAddress, jobId, jobStatus);
       }
+      
+      public T fromStoragePool(StoragePool in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .path(in.getPath())
+                  .tags(in.getTags())
+                  .state(in.getState())
+                  .type(in.getType())
+                  .zoneId(in.getZoneId())
+                  .zoneName(in.getZoneName())
+                  .podId(in.getPodId())
+                  .podName(in.getPodName())
+                  .clusterId(in.getClusterId())
+                  .clusterName(in.getClusterName())
+                  .created(in.getCreated())
+                  .diskSizeAllocated(in.getDiskSizeAllocated())
+                  .diskSizeTotal(in.getDiskSizeTotal())
+                  .ipAddress(in.getIpAddress())
+                  .jobId(in.getJobId())
+                  .jobStatus(in.getJobStatus());
+      }
    }
 
-   private String id;
-   private String name;
-   private String path;
-   private String tags;
-   private State state;
-   private Type type;
-   @SerializedName("zoneid") private String zoneId;
-   @SerializedName("zonename") private String zoneName;
-   @SerializedName("podid") private String podId;
-   @SerializedName("podname") private String podName;
-   @SerializedName("clusterid") private String clusterId;
-   @SerializedName("clustername") private String clusterName;
-   private Date created;
-   @SerializedName("disksizeallocated") private long diskSizeAllocated;
-   @SerializedName("disksizetotal") private long diskSizeTotal;
-   @SerializedName("ipaddress") private String ipAddress;
-   @SerializedName("jobid") private String jobId;
-   @SerializedName("jobstatus") private String jobStatus;
-
-   /* Exists only for the serializer */
-   StoragePool() {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public StoragePool(String id, String name, String path, String tags, State state, Type type, String zoneId, String zoneName, String podId, String podName, String clusterId, String clusterName, Date created, long diskSizeAllocated, long diskSizeTotal, String ipAddress, String jobId, String jobStatus) {
-      this.id = id;
+   private final String id;
+   private final String name;
+   private final String path;
+   private final String tags;
+   private final StoragePool.State state;
+   private final StoragePool.Type type;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+   @Named("podid")
+   private final String podId;
+   @Named("podname")
+   private final String podName;
+   @Named("clusterid")
+   private final String clusterId;
+   @Named("clustername")
+   private final String clusterName;
+   private final Date created;
+   @Named("disksizeallocated")
+   private final long diskSizeAllocated;
+   @Named("disksizetotal")
+   private final long diskSizeTotal;
+   @Named("ipaddress")
+   private final String ipAddress;
+   @Named("jobid")
+   private final String jobId;
+   @Named("jobstatus")
+   private final String jobStatus;
+
+   @ConstructorProperties({
+      "id", "name", "path", "tags", "state", "type", "zoneid", "zonename", "podid", "podname", "clusterid", "clustername", "created", "disksizeallocated", "disksizetotal", "ipaddress", "jobid", "jobstatus"
+   })
+   protected StoragePool(String id, @Nullable String name, @Nullable String path, @Nullable String tags, @Nullable StoragePool.State state, @Nullable StoragePool.Type type, @Nullable String zoneId, @Nullable String zoneName, @Nullable String podId, @Nullable String podName, @Nullable String clusterId, @Nullable String clusterName, @Nullable Date created, long diskSizeAllocated, long diskSizeTotal, @Nullable String ipAddress, @Nullable String jobId, @Nullable String jobStatus) {
+      this.id = checkNotNull(id, "id");
       this.name = name;
       this.path = path;
       this.tags = tags;
@@ -253,137 +353,132 @@ public class StoragePool implements Comparable<StoragePool> {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
+   @Nullable
    public String getPath() {
-      return path;
+      return this.path;
    }
 
+   @Nullable
    public String getTags() {
-      return tags;
+      return this.tags;
    }
 
-   public State getState() {
-      return state;
+   @Nullable
+   public StoragePool.State getState() {
+      return this.state;
    }
 
-   public Type getType() {
-      return type;
+   @Nullable
+   public StoragePool.Type getType() {
+      return this.type;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getZoneName() {
-      return zoneName;
+      return this.zoneName;
    }
 
+   @Nullable
    public String getPodId() {
-      return podId;
+      return this.podId;
    }
 
+   @Nullable
    public String getPodName() {
-      return podName;
+      return this.podName;
    }
 
+   @Nullable
    public String getClusterId() {
-      return clusterId;
+      return this.clusterId;
    }
 
+   @Nullable
    public String getClusterName() {
-      return clusterName;
+      return this.clusterName;
    }
 
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    public long getDiskSizeAllocated() {
-      return diskSizeAllocated;
+      return this.diskSizeAllocated;
    }
 
    public long getDiskSizeTotal() {
-      return diskSizeTotal;
+      return this.diskSizeTotal;
    }
 
+   @Nullable
    public String getIpAddress() {
-      return ipAddress;
+      return this.ipAddress;
    }
 
+   @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
+   @Nullable
    public String getJobStatus() {
-      return jobStatus;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      StoragePool that = (StoragePool) o;
-
-      if (!Objects.equal(clusterId, that.clusterId)) return false;
-      if (!Objects.equal(diskSizeAllocated, that.diskSizeAllocated)) return false;
-      if (!Objects.equal(diskSizeTotal, that.diskSizeTotal)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(podId, that.podId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(clusterName, that.clusterName)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(ipAddress, that.ipAddress)) return false;
-      if (!Objects.equal(jobId, that.jobId)) return false;
-      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(path, that.path)) return false;
-      if (!Objects.equal(podName, that.podName)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(tags, that.tags)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.jobStatus;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(clusterId, diskSizeAllocated, diskSizeTotal, id, podId, zoneId,
-                               clusterName, created, ipAddress, jobId, jobStatus, name, path,
-                               podName, state, tags, type, zoneName);
+      return Objects.hashCode(id, name, path, tags, state, type, zoneId, zoneName, podId, podName, clusterId, clusterName, created, diskSizeAllocated, diskSizeTotal, ipAddress, jobId, jobStatus);
    }
 
    @Override
-   public String toString() {
-      return "StoragePool{" +
-         "id=" + id +
-         ", name='" + name + '\'' +
-         ", path='" + path + '\'' +
-         ", tags='" + tags + '\'' +
-         ", state=" + state +
-         ", type=" + type +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         ", podId=" + podId +
-         ", podName='" + podName + '\'' +
-         ", clusterId=" + clusterId +
-         ", clusterName='" + clusterName + '\'' +
-         ", created=" + created +
-         ", diskSizeAllocated=" + diskSizeAllocated +
-         ", diskSizeTotal=" + diskSizeTotal +
-         ", ipAddress='" + ipAddress + '\'' +
-         ", jobId=" + jobId +
-         ", jobStatus='" + jobStatus + '\'' +
-         '}';
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      StoragePool that = StoragePool.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.path, that.path)
+               && Objects.equal(this.tags, that.tags)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.type, that.type)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.zoneName, that.zoneName)
+               && Objects.equal(this.podId, that.podId)
+               && Objects.equal(this.podName, that.podName)
+               && Objects.equal(this.clusterId, that.clusterId)
+               && Objects.equal(this.clusterName, that.clusterName)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.diskSizeAllocated, that.diskSizeAllocated)
+               && Objects.equal(this.diskSizeTotal, that.diskSizeTotal)
+               && Objects.equal(this.ipAddress, that.ipAddress)
+               && Objects.equal(this.jobId, that.jobId)
+               && Objects.equal(this.jobStatus, that.jobStatus);
    }
-
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("path", path).add("tags", tags).add("state", state).add("type", type).add("zoneId", zoneId).add("zoneName", zoneName).add("podId", podId).add("podName", podName).add("clusterId", clusterId).add("clusterName", clusterName).add("created", created).add("diskSizeAllocated", diskSizeAllocated).add("diskSizeTotal", diskSizeTotal).add("ipAddress", ipAddress).add("jobId", jobId).add("jobStatus", jobStatus);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+   
    @Override
    public int compareTo(StoragePool other) {
       return this.id.compareTo(other.id);

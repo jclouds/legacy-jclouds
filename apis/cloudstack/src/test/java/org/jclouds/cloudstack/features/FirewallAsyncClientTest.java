@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;

@@ -21,7 +21,6 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.notNull;
-import static com.google.common.base.Suppliers.compose;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getLast;
@@ -35,8 +34,9 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEO
 
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -58,6 +58,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
@@ -110,15 +111,15 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationSettingDataHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -151,15 +152,19 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             AtomicReference<AuthorizationException> authException, final VCloudLoginClient login) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
                new Supplier<VCloudSession>() {
 
                   @Override
                   public VCloudSession get() {
                      return login.login();
                   }
-
-               });
+                  
+                  @Override
+                  public String toString() {
+                     return Objects.toStringHelper(login).add("method", "login").toString();
+                  }
+               }, seconds, TimeUnit.SECONDS);
    }
 
    @Override
@@ -219,7 +224,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    @org.jclouds.vcloud.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(Supplier<Map<String, Org>> orgNameToOrgSuppier) {
-      return compose(new Function<Map<String, Org>, Map<String, String>>() {
+      return Suppliers2.compose(new Function<Map<String, Org>, Map<String, String>>() {
 
          @Override
          public Map<String, String> apply(Map<String, Org> arg0) {
@@ -239,15 +244,15 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    protected Supplier<Map<String, Org>> provideOrgMapCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             AtomicReference<AuthorizationException> authException, OrgMapSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Org>>(authException, seconds,
-               supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @OrgList
    protected Supplier<URI> provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
-      return Suppliers.compose(new Function<VCloudSession, URI>() {
+      return Suppliers2.compose(new Function<VCloudSession, URI>() {
 
          @Override
          public URI apply(VCloudSession arg0) {
@@ -318,7 +323,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Provides
    @Singleton
    Supplier<String> provideVCloudToken(Supplier<VCloudSession> cache) {
-      return Suppliers.compose(new Function<VCloudSession, String>() {
+      return Suppliers2.compose(new Function<VCloudSession, String>() {
 
          @Override
          public String apply(VCloudSession input) {
@@ -332,8 +337,8 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    protected Supplier<Map<String, ReferenceType>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             AtomicReference<AuthorizationException> authException, OrgNameToOrgSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(
-               authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides
@@ -341,8 +346,8 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    protected Supplier<Map<URI, VDC>> provideURIToVDC(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
             URItoVDC supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, VDC>>(
-               authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Singleton
@@ -411,7 +416,6 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    private static class OrgNameToOrgSupplier implements Supplier<Map<String, ReferenceType>> {
       private final Supplier<VCloudSession> sessionSupplier;
 
-      @SuppressWarnings("unused")
       @Inject
       OrgNameToOrgSupplier(Supplier<VCloudSession> sessionSupplier) {
          this.sessionSupplier = sessionSupplier;
@@ -428,7 +432,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    protected Supplier<Org> provideOrg(final Supplier<Map<String, Org>> orgSupplier,
          @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers.compose(new Function<ReferenceType, Org>() {
+      return Suppliers2.compose(new Function<ReferenceType, Org>() {
 
          @Override
          public Org apply(ReferenceType input) {
@@ -450,8 +454,8 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    protected Supplier<Map<String, Map<String, Catalog>>> provideOrgCatalogItemMapSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
             OrgCatalogSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Catalog>>>(
-               authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides
@@ -459,8 +463,8 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    protected Supplier<Map<String, Map<String, VDC>>> provideOrgVDCSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
             OrgVDCSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, VDC>>>(
-               authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Singleton
@@ -533,8 +537,8 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    protected Supplier<Map<String, Map<String, Map<String, CatalogItem>>>> provideOrgCatalogItemSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
             OrgCatalogItemSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, CatalogItem>>>>(
-               authException, seconds, supplier);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, supplier, seconds,
+               TimeUnit.SECONDS);
    }
 
    @Provides

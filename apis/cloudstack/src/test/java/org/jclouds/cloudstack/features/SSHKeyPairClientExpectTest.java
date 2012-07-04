@@ -25,6 +25,7 @@ import java.net.URI;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.SshKeyPair;
+import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;

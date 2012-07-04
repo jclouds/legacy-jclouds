@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,11 +18,16 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A Floating IP is an IP address that can be created and associated with a
@@ -31,68 +36,90 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Jeremy Daggett
  * @author chamerling
- */
+*/
 public class FloatingIP implements Comparable<FloatingIP> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromFloatingIP(this);
    }
 
-   public Builder toBuilder() {
-      return builder().fromFloatingIp(this);
-   }
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-   public static class Builder {
-      private String id;
-      private String ip;
-      private String fixedIp;
-      private String instanceId;
-
-      public Builder id(String id) {
+      protected String id;
+      protected String ip;
+      protected String fixedIp;
+      protected String instanceId;
+   
+      /** 
+       * @see FloatingIP#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder ip(String ip) {
+      /** 
+       * @see FloatingIP#getIp()
+       */
+      public T ip(String ip) {
          this.ip = ip;
-         return this;
+         return self();
       }
 
-      public Builder fixedIp(String fixedIp) {
+      /** 
+       * @see FloatingIP#getFixedIp()
+       */
+      public T fixedIp(String fixedIp) {
          this.fixedIp = fixedIp;
-         return this;
+         return self();
       }
 
-      public Builder instanceId(String instanceId) {
+      /** 
+       * @see FloatingIP#getInstanceId()
+       */
+      public T instanceId(String instanceId) {
          this.instanceId = instanceId;
-         return this;
+         return self();
       }
 
       public FloatingIP build() {
          return new FloatingIP(id, ip, fixedIp, instanceId);
       }
-
-      public Builder fromFloatingIp(FloatingIP in) {
-         return id(in.getId()).ip(in.getIp()).fixedIp(in.getFixedIp()).instanceId(in.getInstanceId());
+      
+      public T fromFloatingIP(FloatingIP in) {
+         return this
+                  .id(in.getId())
+                  .ip(in.getIp())
+                  .fixedIp(in.getFixedIp())
+                  .instanceId(in.getInstanceId());
       }
-
    }
-   
-   protected FloatingIP() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   private String id;
-   private String ip;
-   @SerializedName("fixed_ip")
-   private String fixedIp;
-   @SerializedName("instance_id")
-   private String instanceId;
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   private final String ip;
+   @Named("fixed_ip")
+   private final String fixedIp;
+   @Named("instance_id")
+   private final String instanceId;
+
+   @ConstructorProperties({
+      "id", "ip", "fixed_ip", "instance_id"
+   })
    protected FloatingIP(String id, String ip, @Nullable String fixedIp, @Nullable String instanceId) {
-      this.id = id;
-      this.ip = ip;
+      this.id = checkNotNull(id, "id");
+      this.ip = checkNotNull(ip, "ip");
       this.fixedIp = fixedIp;
       this.instanceId = instanceId;
    }
@@ -105,66 +132,44 @@ public class FloatingIP implements Comparable<FloatingIP> {
       return this.ip;
    }
 
+   @Nullable
    public String getFixedIp() {
       return this.fixedIp;
    }
 
+   @Nullable
    public String getInstanceId() {
       return this.instanceId;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, ip, fixedIp, instanceId);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      FloatingIP that = FloatingIP.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.ip, that.ip)
+               && Objects.equal(this.fixedIp, that.fixedIp)
+               && Objects.equal(this.instanceId, that.instanceId);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("ip", ip).add("fixedIp", fixedIp).add("instanceId", instanceId);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
    @Override
    public int compareTo(FloatingIP o) {
       return this.id.compareTo(o.getId());
    }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((fixedIp == null) ? 0 : fixedIp.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
-      result = prime * result + ((ip == null) ? 0 : ip.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      FloatingIP other = (FloatingIP) obj;
-      if (fixedIp == null) {
-         if (other.fixedIp != null)
-            return false;
-      } else if (!fixedIp.equals(other.fixedIp))
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (instanceId == null) {
-         if (other.instanceId != null)
-            return false;
-      } else if (!instanceId.equals(other.instanceId))
-         return false;
-      if (ip == null) {
-         if (other.ip != null)
-            return false;
-      } else if (!ip.equals(other.ip))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return toStringHelper("").add("id", id).add("ip", ip).add("fixedIp", fixedIp).add("instanceId", instanceId)
-            .toString();
-   }
-
 }

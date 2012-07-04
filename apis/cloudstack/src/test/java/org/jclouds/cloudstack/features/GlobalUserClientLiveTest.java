@@ -33,6 +33,7 @@ import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,699 +20,772 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class ISO
+ * 
  * @author Richard Downer
- */
-public class ISO implements Comparable<ISO> {
-
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-
-      private String id;
-      private String account;
-      private String accountId;
-      private boolean bootable;
-      private String checksum;
-      private Date created;
-      private boolean crossZones;
-      private String displayText;
-      private String domain;
-      private String domainid;
-      private String format;
-      private String hostId;
-      private String hostName;
-      private String hypervisor;
-      private boolean isExtractable;
-      private boolean isFeatured;
-      private boolean isPublic;
-      private boolean isReady;
-      private String jobId;
-      private String jobStatus;
-      private String name;
-      private String osTypeId;
-      private String osTypeName;
-      private boolean passwordEnabled;
-      private Date removed;
-      private long size;
-      private String sourceTemplateId;
-      private String status;
-      private String templateTag;
-      private String templateType;
-      private String zoneId;
-      private String zoneName;
-
-      /**
-       * @param id the template ID
-       */
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @param account the account name to which the template belongs
-       */
-      public Builder account(String account) {
-         this.account = account;
-         return this;
-      }
-
-      /**
-       * @param accountId the account id to which the template belongs
-       */
-      public Builder accountId(String accountId) {
-         this.accountId = accountId;
-         return this;
-      }
-
-      /**
-       * @param bootable true if the ISO is bootable, false otherwise
-       */
-      public Builder bootable(boolean bootable) {
-         this.bootable = bootable;
-         return this;
-      }
-
-      /**
-       * @param checksum checksum of the template
-       */
-      public Builder checksum(String checksum) {
-         this.checksum = checksum;
-         return this;
-      }
-
-      /**
-       * @param created the date this template was created
-       */
-      public Builder created(Date created) {
-         this.created = created;
-         return this;
-      }
-
-      /**
-       * @param crossZones true if the template is managed across all Zones, false otherwise
-       */
-      public Builder crossZones(boolean crossZones) {
-         this.crossZones = crossZones;
-         return this;
-      }
-
-      /**
-       * @param displayText the template display text
-       */
-      public Builder displayText(String displayText) {
-         this.displayText = displayText;
-         return this;
-      }
-
-      /**
-       * @param domain the name of the domain to which the template belongs
-       */
-      public Builder domain(String domain) {
-         this.domain = domain;
-         return this;
-      }
-
-      /**
-       * @param domainid the ID of the domain to which the template belongs
-       */
-      public Builder domainid(String domainid) {
-         this.domainid = domainid;
-         return this;
-      }
-
-      /**
-       * @param format the format of the template.
-       */
-      public Builder format(String format) {
-         this.format = format;
-         return this;
-      }
-
-      /**
-       * @param hostId the ID of the secondary storage host for the template
-       */
-      public Builder hostId(String hostId) {
-         this.hostId = hostId;
-         return this;
-      }
-
-      /**
-       * @param hostName the name of the secondary storage host for the template
-       */
-      public Builder hostName(String hostName) {
-         this.hostName = hostName;
-         return this;
-      }
-
-      /**
-       * @param hypervisor the hypervisor on which the template runs
-       */
-      public Builder hypervisor(String hypervisor) {
-         this.hypervisor = hypervisor;
-         return this;
-      }
-
-      /**
-       * @param isExtractable true if the template is extractable, false otherwise
-       */
-      public Builder isExtractable(boolean isExtractable) {
-         this.isExtractable = isExtractable;
-         return this;
-      }
-
-      /**
-       * @param isFeatured true if this template is a featured template, false otherwise
-       */
-      public Builder isFeatured(boolean isFeatured) {
-         this.isFeatured = isFeatured;
-         return this;
-      }
-
-      /**
-       * @param isPublic true if this template is a public template, false otherwise
-       */
-      public Builder isPublic(boolean isPublic) {
-         this.isPublic = isPublic;
-         return this;
-      }
-
-      /**
-       * @param isReady true if the template is ready to be deployed from, false otherwise.
-       */
-      public Builder isReady(boolean isReady) {
-         this.isReady = isReady;
-         return this;
-      }
-
-      /**
-       * @param jobId shows the current pending asynchronous job ID. This tag is not returned if no current pending jobs are acting on the template
-       */
-      public Builder jobId(String jobId) {
-         this.jobId = jobId;
-         return this;
-      }
-
-      /**
-       * @param jobStatus shows the current pending asynchronous job status
-       */
-      public Builder jobStatus(String jobStatus) {
-         this.jobStatus = jobStatus;
-         return this;
-      }
-
-      /**
-       * @param name the template name
-       */
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @param osTypeId the ID of the OS type for this template.
-       */
-      public Builder osTypeId(String osTypeId) {
-         this.osTypeId = osTypeId;
-         return this;
-      }
-
-      /**
-       * @param osTypeName the name of the OS type for this template.
-       */
-      public Builder osTypeName(String osTypeName) {
-         this.osTypeName = osTypeName;
-         return this;
-      }
-
-      /**
-       * @param passwordEnabled true if the reset password feature is enabled, false otherwise
-       */
-      public Builder passwordEnabled(boolean passwordEnabled) {
-         this.passwordEnabled = passwordEnabled;
-         return this;
-      }
-
-      /**
-       * @param removed the date this template was removed
-       */
-      public Builder removed(Date removed) {
-         this.removed = removed;
-         return this;
-      }
-
-      /**
-       * @param size the size of the template
-       */
-      public Builder size(long size) {
-         this.size = size;
-         return this;
-      }
-
-      /**
-       * @param sourceTemplateId the template ID of the parent template if present
-       */
-      public Builder sourceTemplateId(String sourceTemplateId) {
-         this.sourceTemplateId = sourceTemplateId;
-         return this;
-      }
-
-      /**
-       * @param status the status of the template
-       */
-      public Builder status(String status) {
-         this.status = status;
-         return this;
-      }
-
-      /**
-       * @param templateTag the tag of this template
-       */
-      public Builder templateTag(String templateTag) {
-         this.templateTag = templateTag;
-         return this;
-      }
-
-      /**
-       * @param templateType the type of the template
-       */
-      public Builder templateType(String templateType) {
-         this.templateType = templateType;
-         return this;
-      }
-
-      /**
-       * @param zoneId the ID of the zone for this template
-       */
-      public Builder zoneId(String zoneId) {
-         this.zoneId = zoneId;
-         return this;
-      }
-
-      /**
-       * @param zoneName the name of the zone for this template
-       */
-      public Builder zoneName(String zoneName) {
-         this.zoneName = zoneName;
-         return this;
-      }
-
-   }
-
-   private String id;
-   private String account;
-   @SerializedName("accountid")
-   private String accountId;
-   private boolean bootable;
-   private String checksum;
-   private Date created;
-   private boolean crossZones;
-   @SerializedName("displaytext")
-   private String displayText;
-   private String domain;
-   @SerializedName("domainId")
-   private String domainid;
-   private String format;
-   @SerializedName("hostid")
-   private String hostId;
-   @SerializedName("hostname")
-   private String hostName;
-   private String hypervisor;
-   @SerializedName("isextractable")
-   private boolean isExtractable;
-   @SerializedName("isfeatured")
-   private boolean isFeatured;
-   @SerializedName("ispublic")
-   private boolean isPublic;
-   @SerializedName("isready")
-   private boolean isReady;
-   @SerializedName("jobid")
-   private String jobId;
-   @SerializedName("jobstatus")
-   private String jobStatus;
-   private String name;
-   @SerializedName("ostypeid")
-   private String osTypeId;
-   @SerializedName("ostypename")
-   private String osTypeName;
-   @SerializedName("passwordenabled")
-   private boolean passwordEnabled;
-   private Date removed;
-   private long size;
-   @SerializedName("sourcetemplateid")
-   private String sourceTemplateId;
-   private String status;
-   @SerializedName("templatetag")
-   private String templateTag;
-   @SerializedName("templatetype")
-   private String templateType;
-   @SerializedName("zoneid")
-   private String zoneId;
-   @SerializedName("zonename")
-   private String zoneName;
+*/
+public class ISO {
 
    /**
-    * present only for serializer
     */
-   ISO() {
+   public static enum ISOFilter {
+      
+      featured, self, self_executable, executable, community, UNRECOGNIZED;
+      
+      public static ISOFilter fromValue(String format) {
+      try {
+      return valueOf(checkNotNull(format, "format"));
+      } catch (IllegalArgumentException e) {
+      return UNRECOGNIZED;
+      }
+      }
+   }
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromISO(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String id;
+      protected String account;
+      protected String accountId;
+      protected boolean bootable;
+      protected String checksum;
+      protected Date created;
+      protected boolean crossZones;
+      protected String displayText;
+      protected String domain;
+      protected String domainid;
+      protected String format;
+      protected String hostId;
+      protected String hostName;
+      protected String hypervisor;
+      protected boolean isExtractable;
+      protected boolean isFeatured;
+      protected boolean isPublic;
+      protected boolean isReady;
+      protected String jobId;
+      protected String jobStatus;
+      protected String name;
+      protected String osTypeId;
+      protected String osTypeName;
+      protected boolean passwordEnabled;
+      protected Date removed;
+      protected long size;
+      protected String sourceTemplateId;
+      protected String status;
+      protected String templateTag;
+      protected String templateType;
+      protected String zoneId;
+      protected String zoneName;
+   
+      /** 
+       * @see ISO#getId()
+       */
+      public T id(String id) {
+         this.id = id;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getAccount()
+       */
+      public T account(String account) {
+         this.account = account;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getAccountId()
+       */
+      public T accountId(String accountId) {
+         this.accountId = accountId;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isBootable()
+       */
+      public T bootable(boolean bootable) {
+         this.bootable = bootable;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getChecksum()
+       */
+      public T checksum(String checksum) {
+         this.checksum = checksum;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getCreated()
+       */
+      public T created(Date created) {
+         this.created = created;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isCrossZones()
+       */
+      public T crossZones(boolean crossZones) {
+         this.crossZones = crossZones;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getDisplayText()
+       */
+      public T displayText(String displayText) {
+         this.displayText = displayText;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getDomain()
+       */
+      public T domain(String domain) {
+         this.domain = domain;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getDomainid()
+       */
+      public T domainid(String domainid) {
+         this.domainid = domainid;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getFormat()
+       */
+      public T format(String format) {
+         this.format = format;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getHostId()
+       */
+      public T hostId(String hostId) {
+         this.hostId = hostId;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getHostName()
+       */
+      public T hostName(String hostName) {
+         this.hostName = hostName;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getHypervisor()
+       */
+      public T hypervisor(String hypervisor) {
+         this.hypervisor = hypervisor;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isExtractable()
+       */
+      public T isExtractable(boolean isExtractable) {
+         this.isExtractable = isExtractable;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isFeatured()
+       */
+      public T isFeatured(boolean isFeatured) {
+         this.isFeatured = isFeatured;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isPublic()
+       */
+      public T isPublic(boolean isPublic) {
+         this.isPublic = isPublic;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isReady()
+       */
+      public T isReady(boolean isReady) {
+         this.isReady = isReady;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getJobId()
+       */
+      public T jobId(String jobId) {
+         this.jobId = jobId;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getJobStatus()
+       */
+      public T jobStatus(String jobStatus) {
+         this.jobStatus = jobStatus;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getOsTypeId()
+       */
+      public T osTypeId(String osTypeId) {
+         this.osTypeId = osTypeId;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getOsTypeName()
+       */
+      public T osTypeName(String osTypeName) {
+         this.osTypeName = osTypeName;
+         return self();
+      }
+
+      /** 
+       * @see ISO#isPasswordEnabled()
+       */
+      public T passwordEnabled(boolean passwordEnabled) {
+         this.passwordEnabled = passwordEnabled;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getRemoved()
+       */
+      public T removed(Date removed) {
+         this.removed = removed;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getSize()
+       */
+      public T size(long size) {
+         this.size = size;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getSourceTemplateId()
+       */
+      public T sourceTemplateId(String sourceTemplateId) {
+         this.sourceTemplateId = sourceTemplateId;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getStatus()
+       */
+      public T status(String status) {
+         this.status = status;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getTemplateTag()
+       */
+      public T templateTag(String templateTag) {
+         this.templateTag = templateTag;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getTemplateType()
+       */
+      public T templateType(String templateType) {
+         this.templateType = templateType;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getZoneId()
+       */
+      public T zoneId(String zoneId) {
+         this.zoneId = zoneId;
+         return self();
+      }
+
+      /** 
+       * @see ISO#getZoneName()
+       */
+      public T zoneName(String zoneName) {
+         this.zoneName = zoneName;
+         return self();
+      }
+
+      public ISO build() {
+         return new ISO(id, account, accountId, bootable, checksum, created, crossZones, displayText, domain, domainid,
+               format, hostId, hostName, hypervisor, isExtractable, isFeatured, isPublic, isReady, jobId, jobStatus, name,
+               osTypeId, osTypeName, passwordEnabled, removed, size, sourceTemplateId, status, templateTag, templateType,
+               zoneId, zoneName);
+      }
+      
+      public T fromISO(ISO in) {
+         return this
+                  .id(in.getId())
+                  .account(in.getAccount())
+                  .accountId(in.getAccountId())
+                  .bootable(in.isBootable())
+                  .checksum(in.getChecksum())
+                  .created(in.getCreated())
+                  .crossZones(in.isCrossZones())
+                  .displayText(in.getDisplayText())
+                  .domain(in.getDomain())
+                  .domainid(in.getDomainid())
+                  .format(in.getFormat())
+                  .hostId(in.getHostId())
+                  .hostName(in.getHostName())
+                  .hypervisor(in.getHypervisor())
+                  .isExtractable(in.isExtractable())
+                  .isFeatured(in.isFeatured())
+                  .isPublic(in.isPublic())
+                  .isReady(in.isReady())
+                  .jobId(in.getJobId())
+                  .jobStatus(in.getJobStatus())
+                  .name(in.getName())
+                  .osTypeId(in.getOsTypeId())
+                  .osTypeName(in.getOsTypeName())
+                  .passwordEnabled(in.isPasswordEnabled())
+                  .removed(in.getRemoved())
+                  .size(in.getSize())
+                  .sourceTemplateId(in.getSourceTemplateId())
+                  .status(in.getStatus())
+                  .templateTag(in.getTemplateTag())
+                  .templateType(in.getTemplateType())
+                  .zoneId(in.getZoneId())
+                  .zoneName(in.getZoneName());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   private final String account;
+   @Named("accountid")
+   private final String accountId;
+   private final boolean bootable;
+   private final String checksum;
+   private final Date created;
+   private final boolean crossZones;
+   @Named("displaytext")
+   private final String displayText;
+   private final String domain;
+   @Named("domainId")
+   private final String domainid;
+   private final String format;
+   @Named("hostid")
+   private final String hostId;
+   @Named("hostname")
+   private final String hostName;
+   private final String hypervisor;
+   @Named("isextractable")
+   private final boolean isExtractable;
+   @Named("isfeatured")
+   private final boolean isFeatured;
+   @Named("ispublic")
+   private final boolean isPublic;
+   @Named("isready")
+   private final boolean isReady;
+   @Named("jobid")
+   private final String jobId;
+   @Named("jobstatus")
+   private final String jobStatus;
+   private final String name;
+   @Named("ostypeid")
+   private final String osTypeId;
+   @Named("ostypename")
+   private final String osTypeName;
+   @Named("passwordenabled")
+   private final boolean passwordEnabled;
+   private final Date removed;
+   private final long size;
+   @Named("sourcetemplateid")
+   private final String sourceTemplateId;
+   private final String status;
+   @Named("templatetag")
+   private final String templateTag;
+   @Named("templatetype")
+   private final String templateType;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+
+   @ConstructorProperties({
+      "id", "account", "accountid", "bootable", "checksum", "created", "crossZones", "displaytext", "domain", "domainId", "format", "hostid", "hostname", "hypervisor", "isextractable", "isfeatured", "ispublic", "isready", "jobid", "jobstatus", "name", "ostypeid", "ostypename", "passwordenabled", "removed", "size", "sourcetemplateid", "status", "templatetag", "templatetype", "zoneid", "zonename"
+   })
+   protected ISO(String id, @Nullable String account, @Nullable String accountId, boolean bootable, @Nullable String checksum,
+                 @Nullable Date created, boolean crossZones, @Nullable String displayText, @Nullable String domain,
+                 @Nullable String domainid, @Nullable String format, @Nullable String hostId, @Nullable String hostName,
+                 @Nullable String hypervisor, boolean isExtractable, boolean isFeatured, boolean isPublic, boolean isReady,
+                 @Nullable String jobId, @Nullable String jobStatus, @Nullable String name, @Nullable String osTypeId,
+                 @Nullable String osTypeName, boolean passwordEnabled, @Nullable Date removed, long size, @Nullable String sourceTemplateId,
+                 @Nullable String status, @Nullable String templateTag, @Nullable String templateType, @Nullable String zoneId, @Nullable String zoneName) {
+      this.id = checkNotNull(id, "id");
+      this.account = account;
+      this.accountId = accountId;
+      this.bootable = bootable;
+      this.checksum = checksum;
+      this.created = created;
+      this.crossZones = crossZones;
+      this.displayText = displayText;
+      this.domain = domain;
+      this.domainid = domainid;
+      this.format = format;
+      this.hostId = hostId;
+      this.hostName = hostName;
+      this.hypervisor = hypervisor;
+      this.isExtractable = isExtractable;
+      this.isFeatured = isFeatured;
+      this.isPublic = isPublic;
+      this.isReady = isReady;
+      this.jobId = jobId;
+      this.jobStatus = jobStatus;
+      this.name = name;
+      this.osTypeId = osTypeId;
+      this.osTypeName = osTypeName;
+      this.passwordEnabled = passwordEnabled;
+      this.removed = removed;
+      this.size = size;
+      this.sourceTemplateId = sourceTemplateId;
+      this.status = status;
+      this.templateTag = templateTag;
+      this.templateType = templateType;
+      this.zoneId = zoneId;
+      this.zoneName = zoneName;
    }
 
    /**
     * @return the template ID
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the account name to which the template belongs
     */
+   @Nullable
    public String getAccount() {
-      return account;
+      return this.account;
    }
 
    /**
     * @return the account id to which the template belongs
     */
+   @Nullable
    public String getAccountId() {
-      return accountId;
+      return this.accountId;
    }
 
-   /**
-    * @return true if the ISO is bootable, false otherwise
-    */
-   public boolean getBootable() {
-      return bootable;
+   public boolean isBootable() {
+      return this.bootable;
    }
 
    /**
     * @return checksum of the template
     */
+   @Nullable
    public String getChecksum() {
-      return checksum;
+      return this.checksum;
    }
 
    /**
     * @return the date this template was created
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
-   /**
-    * @return true if the template is managed across all Zones, false otherwise
-    */
-   public boolean getCrossZones() {
-      return crossZones;
+   public boolean isCrossZones() {
+      return this.crossZones;
    }
 
    /**
     * @return the template display text
     */
+   @Nullable
    public String getDisplayText() {
-      return displayText;
+      return this.displayText;
    }
 
    /**
     * @return the name of the domain to which the template belongs
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the ID of the domain to which the template belongs
     */
+   @Nullable
    public String getDomainid() {
-      return domainid;
+      return this.domainid;
    }
 
    /**
     * @return the format of the template.
     */
+   @Nullable
    public String getFormat() {
-      return format;
+      return this.format;
    }
 
    /**
     * @return the ID of the secondary storage host for the template
     */
+   @Nullable
    public String getHostId() {
-      return hostId;
+      return this.hostId;
    }
 
    /**
     * @return the name of the secondary storage host for the template
     */
+   @Nullable
    public String getHostName() {
-      return hostName;
+      return this.hostName;
    }
 
    /**
     * @return the hypervisor on which the template runs
     */
+   @Nullable
    public String getHypervisor() {
-      return hypervisor;
+      return this.hypervisor;
    }
 
-   /**
-    * @return true if the template is extractable, false otherwise
-    */
-   public boolean getIsExtractable() {
-      return isExtractable;
+   public boolean isExtractable() {
+      return this.isExtractable;
    }
 
-   /**
-    * @return true if this template is a featured template, false otherwise
-    */
-   public boolean getIsFeatured() {
-      return isFeatured;
+   public boolean isFeatured() {
+      return this.isFeatured;
    }
 
-   /**
-    * @return true if this template is a public template, false otherwise
-    */
-   public boolean getIsPublic() {
-      return isPublic;
+   public boolean isPublic() {
+      return this.isPublic;
    }
 
-   /**
-    * @return true if the template is ready to be deployed from, false otherwise.
-    */
-   public boolean getIsReady() {
-      return isReady;
+   public boolean isReady() {
+      return this.isReady;
    }
 
    /**
     * @return shows the current pending asynchronous job ID. This tag is not returned if no current pending jobs are acting on the template
     */
+   @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
    /**
     * @return shows the current pending asynchronous job status
     */
+   @Nullable
    public String getJobStatus() {
-      return jobStatus;
+      return this.jobStatus;
    }
 
    /**
     * @return the template name
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return the ID of the OS type for this template.
     */
+   @Nullable
    public String getOsTypeId() {
-      return osTypeId;
+      return this.osTypeId;
    }
 
    /**
     * @return the name of the OS type for this template.
     */
+   @Nullable
    public String getOsTypeName() {
-      return osTypeName;
+      return this.osTypeName;
    }
 
-   /**
-    * @return true if the reset password feature is enabled, false otherwise
-    */
-   public boolean getPasswordEnabled() {
-      return passwordEnabled;
+   public boolean isPasswordEnabled() {
+      return this.passwordEnabled;
    }
 
    /**
     * @return the date this template was removed
     */
+   @Nullable
    public Date getRemoved() {
-      return removed;
+      return this.removed;
    }
 
    /**
     * @return the size of the template
     */
    public long getSize() {
-      return size;
+      return this.size;
    }
 
    /**
     * @return the template ID of the parent template if present
     */
+   @Nullable
    public String getSourceTemplateId() {
-      return sourceTemplateId;
+      return this.sourceTemplateId;
    }
 
    /**
     * @return the status of the template
     */
+   @Nullable
    public String getStatus() {
-      return status;
+      return this.status;
    }
 
    /**
     * @return the tag of this template
     */
+   @Nullable
    public String getTemplateTag() {
-      return templateTag;
+      return this.templateTag;
    }
 
    /**
     * @return the type of the template
     */
+   @Nullable
    public String getTemplateType() {
-      return templateType;
+      return this.templateType;
    }
 
    /**
     * @return the ID of the zone for this template
     */
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
    /**
     * @return the name of the zone for this template
     */
+   @Nullable
    public String getZoneName() {
-      return zoneName;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ISO that = (ISO) o;
-
-      if (!Objects.equal(accountId, that.accountId)) return false;
-      if (!Objects.equal(bootable, that.bootable)) return false;
-      if (!Objects.equal(crossZones, that.crossZones)) return false;
-      if (!Objects.equal(domainid, that.domainid)) return false;
-      if (!Objects.equal(hostId, that.hostId)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(isExtractable, that.isExtractable)) return false;
-      if (!Objects.equal(isPublic, that.isPublic)) return false;
-      if (!Objects.equal(isReady, that.isReady)) return false;
-      if (!Objects.equal(jobId, that.jobId)) return false;
-      if (!Objects.equal(osTypeId, that.osTypeId)) return false;
-      if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
-      if (!Objects.equal(size, that.size)) return false;
-      if (!Objects.equal(sourceTemplateId, that.sourceTemplateId)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(checksum, that.checksum)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(format, that.format)) return false;
-      if (!Objects.equal(hostName, that.hostName)) return false;
-      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
-      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(osTypeName, that.osTypeName)) return false;
-      if (!Objects.equal(removed, that.removed)) return false;
-      if (!Objects.equal(status, that.status)) return false;
-      if (!Objects.equal(templateTag, that.templateTag)) return false;
-      if (!Objects.equal(templateType, that.templateType)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.zoneName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(accountId, bootable, crossZones, domainid, hostId, id, isExtractable,
-                               isPublic, isReady, jobId, osTypeId, passwordEnabled, size, sourceTemplateId,
-                               zoneId, account, checksum, created, displayText, domain, format, hostName,
-                               hypervisor, jobStatus, name, osTypeName, removed, status, templateTag,
-                               templateType, zoneName);
+      return Objects.hashCode(id, account, accountId, bootable, checksum, created, crossZones, displayText, domain,
+            domainid, format, hostId, hostName, hypervisor, isExtractable, isFeatured, isPublic, isReady, jobId, jobStatus,
+            name, osTypeId, osTypeName, passwordEnabled, removed, size, sourceTemplateId, status, templateTag, templateType, zoneId, zoneName);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ISO that = ISO.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.accountId, that.accountId)
+               && Objects.equal(this.bootable, that.bootable)
+               && Objects.equal(this.checksum, that.checksum)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.crossZones, that.crossZones)
+               && Objects.equal(this.displayText, that.displayText)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainid, that.domainid)
+               && Objects.equal(this.format, that.format)
+               && Objects.equal(this.hostId, that.hostId)
+               && Objects.equal(this.hostName, that.hostName)
+               && Objects.equal(this.hypervisor, that.hypervisor)
+               && Objects.equal(this.isExtractable, that.isExtractable)
+               && Objects.equal(this.isFeatured, that.isFeatured)
+               && Objects.equal(this.isPublic, that.isPublic)
+               && Objects.equal(this.isReady, that.isReady)
+               && Objects.equal(this.jobId, that.jobId)
+               && Objects.equal(this.jobStatus, that.jobStatus)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.osTypeId, that.osTypeId)
+               && Objects.equal(this.osTypeName, that.osTypeName)
+               && Objects.equal(this.passwordEnabled, that.passwordEnabled)
+               && Objects.equal(this.removed, that.removed)
+               && Objects.equal(this.size, that.size)
+               && Objects.equal(this.sourceTemplateId, that.sourceTemplateId)
+               && Objects.equal(this.status, that.status)
+               && Objects.equal(this.templateTag, that.templateTag)
+               && Objects.equal(this.templateType, that.templateType)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.zoneName, that.zoneName);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("accountId", accountId).add("bootable", bootable)
+            .add("checksum", checksum).add("created", created).add("crossZones", crossZones).add("displayText", displayText)
+            .add("domain", domain).add("domainid", domainid).add("format", format).add("hostId", hostId).add("hostName", hostName)
+            .add("hypervisor", hypervisor).add("isExtractable", isExtractable).add("isFeatured", isFeatured).add("isPublic", isPublic)
+            .add("isReady", isReady).add("jobId", jobId).add("jobStatus", jobStatus).add("name", name).add("osTypeId", osTypeId)
+            .add("osTypeName", osTypeName).add("passwordEnabled", passwordEnabled).add("removed", removed).add("size", size)
+            .add("sourceTemplateId", sourceTemplateId).add("status", status).add("templateTag", templateTag).add("templateType", templateType)
+            .add("zoneId", zoneId).add("zoneName", zoneName);
+   }
+   
    @Override
    public String toString() {
-      return "ISO{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", accountId=" + accountId +
-            ", bootable=" + bootable +
-            ", checksum='" + checksum + '\'' +
-            ", created=" + created +
-            ", crossZones=" + crossZones +
-            ", displayText='" + displayText + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainid=" + domainid +
-            ", format='" + format + '\'' +
-            ", hostId=" + hostId +
-            ", hostName='" + hostName + '\'' +
-            ", hypervisor='" + hypervisor + '\'' +
-            ", isExtractable=" + isExtractable +
-            ", isFeatured=" + isFeatured +
-            ", isPublic=" + isPublic +
-            ", isReady=" + isReady +
-            ", jobId=" + jobId +
-            ", jobStatus='" + jobStatus + '\'' +
-            ", name='" + name + '\'' +
-            ", osTypeId=" + osTypeId +
-            ", osTypeName='" + osTypeName + '\'' +
-            ", passwordEnabled=" + passwordEnabled +
-            ", removed=" + removed +
-            ", size=" + size +
-            ", sourceTemplateId=" + sourceTemplateId +
-            ", status='" + status + '\'' +
-            ", templateTag='" + templateTag + '\'' +
-            ", templateType='" + templateType + '\'' +
-            ", zoneId=" + zoneId +
-            ", zoneName='" + zoneName + '\'' +
-            '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(ISO other) {
-      return id.compareTo(other.getId());
-   }
-
-   public enum ISOFilter {
-
-      featured, self, self_executable, executable, community, UNRECOGNIZED;
-
-      public static ISOFilter fromValue(String format) {
-         try {
-            return valueOf(checkNotNull(format, "format"));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
 }

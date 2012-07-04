@@ -1,9 +1,9 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Name 2.0 (the
+ * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,17 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ComparisonChain;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A personality that a user assumes when performing a specific set of operations. A role includes a
@@ -35,22 +34,23 @@ import com.google.common.collect.ComparisonChain;
  * In Keystone, a token that is issued to a user includes the list of roles that user can assume.
  * Services that are being called by that user determine how they interpret the set of roles a user
  * has and which operations or resources each roles grants access to.
- * 
+ *
  * @author AdrianCole
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Service-Concepts-e1362.html"
- *      />
+/>
  */
-public class Role implements Comparable<Role> {
+public class Role {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return builder().fromRole(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromRole(this);
    }
 
-   public static class Builder {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
       protected String id;
       protected String name;
       protected String description;
@@ -60,97 +60,104 @@ public class Role implements Comparable<Role> {
       /**
        * @see Role#getId()
        */
-      public Builder id(String id) {
-         this.id = checkNotNull(id, "id");
-         return this;
+      public T id(String id) {
+         this.id = id;
+         return self();
       }
 
       /**
        * @see Role#getName()
        */
-      public Builder name(String name) {
-         this.name = checkNotNull(name, "name");
-         return this;
+      public T name(String name) {
+         this.name = name;
+         return self();
       }
-      
+
       /**
        * @see Role#getDescription()
        */
-      public Builder description(String description) {
-         this.description = checkNotNull(description, "description");
-         return this;
+      public T description(String description) {
+         this.description = description;
+         return self();
       }
-      
+
       /**
        * @see Role#getServiceId()
        */
-      public Builder serviceId(@Nullable String serviceId) {
+      public T serviceId(String serviceId) {
          this.serviceId = serviceId;
-         return this;
+         return self();
       }
 
       /**
        * @see Role#getTenantId()
        */
-      public Builder tenantId(@Nullable String tenantId) {
+      public T tenantId(String tenantId) {
          this.tenantId = tenantId;
-         return this;
+         return self();
       }
 
       public Role build() {
-         return new Role(id, name, description, serviceId, tenantId);
+         return new Role(id, name, description, serviceId, tenantId, null);
       }
 
-      public Builder fromRole(Role from) {
-         return id(from.getId()).name(from.getName()).description(from.getName()).serviceId(from.getServiceId()).tenantId(from.getTenantId());
+      public T fromRole(Role in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .description(in.getDescription())
+               .serviceId(in.getServiceId())
+               .tenantId(in.getTenantId());
       }
    }
-   
-   protected Role() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-   
-   protected String id;
-   protected String name;
-   protected String description;
-   protected String serviceId;
-   // renamed half-way through
-   @Deprecated
-   protected String tenantName;
-   protected String tenantId;
 
-   protected Role(String id, String name, @Nullable String description, @Nullable String serviceId, @Nullable String tenantId) {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String id;
+   private final String name;
+   private final String description;
+   private final String serviceId;
+   private final String tenantId;
+
+   @ConstructorProperties({
+         "id", "name", "description", "serviceId", "tenantId", "tenantName"
+   })
+   protected Role(String id, String name, @Nullable String description, @Nullable String serviceId, @Nullable String tenantId,
+                  @Nullable String tenantName) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.description = description;
       this.serviceId = serviceId;
-      this.tenantId = tenantId;
+      this.tenantId = tenantId != null ? tenantId :  tenantName;
    }
 
    /**
     * When providing an ID, it is assumed that the role exists in the current OpenStack deployment
-    * 
+    *
     * @return the id of the role in the current OpenStack deployment
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the name of the role
     */
    public String getName() {
-      return name;
+      return this.name;
    }
-   
+
    /**
     * @return the description of the role
     */
    @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    /**
@@ -158,7 +165,7 @@ public class Role implements Comparable<Role> {
     */
    @Nullable
    public String getServiceId() {
-      return serviceId;
+      return this.serviceId;
    }
 
    /**
@@ -166,37 +173,34 @@ public class Role implements Comparable<Role> {
     */
    @Nullable
    public String getTenantId() {
-      return tenantId != null ? tenantId : tenantName;
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof Role) {
-         final Role other = Role.class.cast(object);
-         return equal(id, other.id) && equal(name, other.name) && equal(serviceId, other.serviceId)
-                  && equal(getTenantId(), other.getTenantId());
-      } else {
-         return false;
-      }
+      return this.tenantId;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name, serviceId, getTenantId());
+      return Objects.hashCode(id, name, description, serviceId, tenantId);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Role that = Role.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.serviceId, that.serviceId)
+            && Objects.equal(this.tenantId, that.tenantId);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("description", description).add("serviceId", serviceId).add("tenantId", tenantId);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("description", description).add("serviceId", serviceId).add("tenantId", getTenantId())
-               .toString();
-   }
-   
-   @Override
-   public int compareTo(Role that) {
-      return ComparisonChain.start().compare(this.id, that.id).result();
+      return string().toString();
    }
 
 }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.features;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -26,11 +27,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.EmailAccount;
+import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.domain.EmailOverviewDomain;
-import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
+import org.jclouds.glesys.internal.BaseGleSYSClientWithAServerLiveTest;
 import org.jclouds.glesys.options.CreateAccountOptions;
-import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.glesys.options.EditAccountOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
@@ -38,6 +39,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code EmailClient}
@@ -45,14 +47,12 @@ import com.google.common.base.Predicate;
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "EmailClientLiveTest", singleThreaded = true)
-public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
+public class EmailClientLiveTest extends BaseGleSYSClientWithAServerLiveTest {
 
    @BeforeGroups(groups = {"live"})
-   public void setupContext() {
-      super.setupContext();
+   public void setupDomains() {
+      testDomain = identity + ".test.jclouds.org";
       client = gleContext.getApi().getEmailClient();
-
-      serverId = createServer("test-email-jclouds").getServerId();
 
       createDomain(testDomain);
 
@@ -61,24 +61,26 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
                public boolean apply(Integer value) {
                   return client.listAccounts(testDomain).size() == value;
                }
-            }, 90, 5, TimeUnit.SECONDS);
+            }, 180, 5, TimeUnit.SECONDS);
 
       assertTrue(emailAccountCounter.apply(0));
+      
+      try {
+         client.delete("test2@" + testDomain);
+      } catch(Exception e) {
+      }
    }
 
    @AfterGroups(groups = {"live"})
-   public void tearDownContext() {
+   public void tearDownDomains() {
       client.delete("test@" + testDomain);
       client.delete("test1@" + testDomain);
       assertTrue(emailAccountCounter.apply(0));
       gleContext.getApi().getDomainClient().deleteDomain(testDomain);
-      gleContext.getApi().getServerClient().destroyServer(serverId, DestroyServerOptions.Builder.discardIp());
-      super.tearDownContext();
    }
 
    private EmailClient client;
-   private String serverId;
-   private final String testDomain = "email-test.jclouds.org";
+   private String testDomain;
    private RetryablePredicate<Integer> emailAccountCounter;
 
    @Test
@@ -95,14 +97,24 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testAliases() {
-      client.createAlias("test2@" + testDomain, "test@" + testDomain);
+      assertTrue(client.listAliases(testDomain).isEmpty());
+
+      EmailAlias alias = client.createAlias("test2@" + testDomain, "test@" + testDomain);
+      assertEquals(alias.getAlias(), "test2@" + testDomain);
+      assertEquals(alias.getForwardTo(), "test@" + testDomain);
+
+      EmailAlias aliasFromList = Iterables.getOnlyElement(client.listAliases(testDomain));
+      assertEquals(aliasFromList, alias);
+      
       EmailOverview overview = client.getEmailOverview();
       assertTrue(overview.getSummary().getAliases() == 1);
 
-      // TODO verify the result of editing the alias
-      client.editAlias("test2@" + testDomain, "test1@" + testDomain);
+      alias = client.editAlias("test2@" + testDomain, "test1@" + testDomain);
       overview = client.getEmailOverview();
       assertTrue(overview.getSummary().getAliases() == 1);
+      
+      aliasFromList = Iterables.getOnlyElement(client.listAliases(testDomain));
+      assertEquals(aliasFromList, alias);
 
       client.delete("test2@" + testDomain);
       overview = client.getEmailOverview();
@@ -113,8 +125,8 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
    public void testOverview() throws Exception {
       EmailOverview overview = client.getEmailOverview();
       assertNotNull(overview.getSummary());
-      assertTrue(overview.getSummary().getAccounts() >= 1);
-      assertTrue(overview.getSummary().getAliases() == 0);
+      assertTrue(overview.getSummary().getAccounts() > 0);
+      assertTrue(overview.getSummary().getAliases() > -1);
       assertTrue(overview.getSummary().getMaxAccounts() > 0);
       assertTrue(overview.getSummary().getMaxAliases() > 0);
       assertNotNull(overview.getDomains());
@@ -135,7 +147,7 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
       Set<EmailAccount> accounts = client.listAccounts(testDomain);
       for (EmailAccount account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
-            assertTrue(account.getAntiVirus());
+            assertTrue(account.isAntiVirus());
          }
       }
 
@@ -144,7 +156,7 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
       accounts = client.listAccounts(testDomain);
       for (EmailAccount account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
-            assertFalse(account.getAntiVirus());
+            assertFalse(account.isAntiVirus());
          }
       }
    }

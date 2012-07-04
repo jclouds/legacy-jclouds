@@ -23,9 +23,10 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.glesys.domain.GleSYSBoolean;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.functions.internal.GleSYSTypeAdapters;
-import org.jclouds.glesys.functions.internal.GlesysDateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 
 import com.google.common.collect.ImmutableMap;
@@ -34,18 +35,20 @@ import com.google.inject.Provides;
 
 /**
  * @author Adrian Cole
+ * @author Adam Lowe
  */
 public class GleSYSParserModule extends AbstractModule {
 
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Server.State.class, new GleSYSTypeAdapters.ServerStateAdapter());
+      return ImmutableMap.<Type, Object>of(Server.State.class, new GleSYSTypeAdapters.ServerStateAdapter(),
+                                           GleSYSBoolean.class, new GleSYSTypeAdapters.GleSYSBooleanAdapter());
    }
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(GlesysDateAdapter.class);
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
    }
 
 }

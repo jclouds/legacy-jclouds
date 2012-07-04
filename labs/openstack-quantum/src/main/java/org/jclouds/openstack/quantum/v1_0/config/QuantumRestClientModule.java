@@ -60,7 +60,7 @@ public class QuantumRestClientModule extends RestClientModule<QuantumClient, Qua
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }
-
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(QuantumErrorHandler.class);

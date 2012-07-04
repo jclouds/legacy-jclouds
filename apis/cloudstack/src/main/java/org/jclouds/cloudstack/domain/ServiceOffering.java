@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,180 +20,275 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Set;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class ServiceOffering
+ *
  * @author Adrian Cole
  */
 public class ServiceOffering implements Comparable<ServiceOffering> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServiceOffering(this);
+   }
 
-      private String id;
-      private String name;
-      private String displayText;
-      private Date created;
-      private String domain;
-      private String domainId;
-      private int cpuNumber;
-      private int cpuSpeed;
-      private int memory;
-      private boolean haSupport;
-      private StorageType storageType;
-      private boolean defaultUse;
-      private String hostTags;
-      private boolean systemOffering;
-      private boolean cpuUseLimited;
-      private long networkRate;
-      private boolean systemVmType;
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
 
+      protected String id;
+      protected String name;
+      protected String displayText;
+      protected Date created;
+      protected String domain;
+      protected String domainId;
+      protected int cpuNumber;
+      protected int cpuSpeed;
+      protected int memory;
+      protected boolean haSupport;
+      protected StorageType storageType;
+      protected boolean defaultUse;
+      protected String hostTags;
+      protected boolean systemOffering;
+      protected boolean cpuUseLimited;
+      protected long networkRate;
+      protected boolean systemVmType;
       private Set<String> tags = ImmutableSet.of();
 
-      public Builder id(String id) {
+      /**
+       * @see ServiceOffering#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see ServiceOffering#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder displayText(String displayText) {
+      /**
+       * @see ServiceOffering#getDisplayText()
+       */
+      public T displayText(String displayText) {
          this.displayText = displayText;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /**
+       * @see ServiceOffering#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /**
+       * @see ServiceOffering#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /**
+       * @see ServiceOffering#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder cpuNumber(int cpuNumber) {
+      /**
+       * @see ServiceOffering#getCpuNumber()
+       */
+      public T cpuNumber(int cpuNumber) {
          this.cpuNumber = cpuNumber;
-         return this;
+         return self();
       }
 
-      public Builder cpuSpeed(int cpuSpeed) {
+      /**
+       * @see ServiceOffering#getCpuSpeed()
+       */
+      public T cpuSpeed(int cpuSpeed) {
          this.cpuSpeed = cpuSpeed;
-         return this;
+         return self();
       }
 
-      public Builder memory(int memory) {
+      /**
+       * @see ServiceOffering#getMemory()
+       */
+      public T memory(int memory) {
          this.memory = memory;
-         return this;
+         return self();
       }
 
-      public Builder haSupport(boolean haSupport) {
+      /**
+       * @see ServiceOffering#supportsHA()
+       */
+      public T supportsHA(boolean haSupport) {
          this.haSupport = haSupport;
-         return this;
+         return self();
       }
 
-      public Builder storageType(StorageType storageType) {
+      /**
+       * @see ServiceOffering#getStorageType()
+       */
+      public T storageType(StorageType storageType) {
          this.storageType = storageType;
-         return this;
+         return self();
       }
 
-      public Builder tags(Set<String> tags) {
+      /**
+       * @see ServiceOffering#getTags()
+       */
+      public T tags(Set<String> tags) {
          this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
-         return this;
+         return self();
       }
 
-      public Builder defaultUse(boolean defaultUse) {
+      /**
+       * @see ServiceOffering#isDefaultUse()
+       */
+      public T defaultUse(boolean defaultUse) {
          this.defaultUse = defaultUse;
-         return this;
+         return self();
       }
 
-      public Builder hostTags(String hostTags) {
+      /**
+       * @see ServiceOffering#getHostTags()
+       */
+      public T hostTags(String hostTags) {
          this.hostTags = hostTags;
-         return this;
+         return self();
       }
 
-      public Builder systemOffering(boolean systemOffering) {
+      /**
+       * @see ServiceOffering#isSystemOffering()
+       */
+      public T systemOffering(boolean systemOffering) {
          this.systemOffering = systemOffering;
-         return this;
+         return self();
       }
 
-      public Builder cpuUseLimited(boolean cpuUseLimited) {
+      /**
+       * @see ServiceOffering#isCpuUseLimited()
+       */
+      public T cpuUseLimited(boolean cpuUseLimited) {
          this.cpuUseLimited = cpuUseLimited;
-         return this;
+         return self();
       }
 
-      public Builder networkRate(long networkRate) {
+      /**
+       * @see ServiceOffering#getNetworkRate()
+       */
+      public T networkRate(long networkRate) {
          this.networkRate = networkRate;
-         return this;
+         return self();
       }
 
-      public Builder systemVmType(boolean systemVmType) {
+      /**
+       * @see ServiceOffering#isSystemVmType()
+       */
+      public T systemVmType(boolean systemVmType) {
          this.systemVmType = systemVmType;
-         return this;
+         return self();
       }
-
 
       public ServiceOffering build() {
-         return new ServiceOffering(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory,
-               haSupport, storageType, tags, defaultUse, hostTags, systemOffering, cpuUseLimited, networkRate,
-               systemVmType);
+         return new ServiceOffering(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory, haSupport, storageType,
+               Joiner.on(",").join(tags), defaultUse, hostTags, systemOffering, cpuUseLimited, networkRate, systemVmType);
+      }
+
+      public T fromServiceOffering(ServiceOffering in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .displayText(in.getDisplayText())
+               .created(in.getCreated())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .cpuNumber(in.getCpuNumber())
+               .cpuSpeed(in.getCpuSpeed())
+               .memory(in.getMemory())
+               .supportsHA(in.supportsHA())
+               .storageType(in.getStorageType())
+               .tags(in.getTags())
+               .defaultUse(in.isDefaultUse())
+               .hostTags(in.getHostTags())
+               .systemOffering(in.isSystemOffering())
+               .cpuUseLimited(in.isCpuUseLimited())
+               .networkRate(in.getNetworkRate())
+               .systemVmType(in.isSystemVmType());
       }
    }
 
-   private String id;
-   private String name;
-   @SerializedName("displaytext")
-   private String displayText;
-   private Date created;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("cpunumber")
-   private int cpuNumber;
-   @SerializedName("cpuspeed")
-   private int cpuSpeed;
-   private int memory;
-   @SerializedName("offerha")
-   private boolean haSupport;
-   @SerializedName("storagetype")
-   private StorageType storageType;
-   private String tags;
-   @SerializedName("defaultuse")
-   private boolean defaultUse;
-   @SerializedName("hosttags")
-   private String hostTags;
-   @SerializedName("issystem")
-   private boolean systemOffering;
-   @SerializedName("limitcpuuse")
-   private boolean cpuUseLimited;
-   @SerializedName("networkrate")
-   private long networkRate;
-   @SerializedName("systemvmtype")
-   private boolean systemVmType;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
+   private final String id;
+   private final String name;
+   @Named("displaytext")
+   private final String displayText;
+   private final Date created;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("cpunumber")
+   private final int cpuNumber;
+   @Named("cpuspeed")
+   private final int cpuSpeed;
+   private final int memory;
+   @Named("offerha")
+   private final boolean haSupport;
+   @Named("storagetype")
+   private final StorageType storageType;
+   private final String tags;
+   @Named("defaultuse")
+   private final boolean defaultUse;
+   @Named("hosttags")
+   private final String hostTags;
+   @Named("issystem")
+   private final boolean systemOffering;
+   @Named("limitcpuuse")
+   private final boolean cpuUseLimited;
+   @Named("networkrate")
+   private final long networkRate;
+   @Named("systemvmtype")
+   private final boolean systemVmType;
 
-   public ServiceOffering(String id, String name, String displayText, Date created, String domain, String domainId,
-                          int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags,
-                          boolean defaultUse, String hostTags, boolean systemOffering, boolean cpuUseLimited, long networkRate,
-                          boolean systemVmType) {
-      this.id = id;
+   @ConstructorProperties({
+         "id", "name", "displaytext", "created", "domain", "domainid", "cpunumber", "cpuspeed", "memory", "offerha", "storagetype", "tags", "defaultuse", "hosttags", "issystem", "limitcpuuse", "networkrate", "systemvmtype"
+   })
+   protected ServiceOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created,
+                             @Nullable String domain, @Nullable String domainId, int cpuNumber, int cpuSpeed, int memory,
+                             boolean haSupport, @Nullable StorageType storageType, @Nullable String tags, boolean defaultUse,
+                             @Nullable String hostTags, boolean systemOffering, boolean cpuUseLimited, long networkRate, boolean systemVmType) {
+      this.id = checkNotNull(id, "id");
       this.name = name;
       this.displayText = displayText;
       this.created = created;
@@ -204,198 +299,191 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       this.memory = memory;
       this.haSupport = haSupport;
       this.storageType = storageType;
-      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
-   }
-
-   /**
-    * present only for serializer
-    */
-   ServiceOffering() {
-
+      this.tags = tags;
+      this.defaultUse = defaultUse;
+      this.hostTags = hostTags;
+      this.systemOffering = systemOffering;
+      this.cpuUseLimited = cpuUseLimited;
+      this.networkRate = networkRate;
+      this.systemVmType = systemVmType;
    }
 
    /**
     * @return the id of the service offering
     */
    public String getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return the name of the service offering
     */
-
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return an alternate display text of the service offering.
     */
+   @Nullable
    public String getDisplayText() {
-      return displayText;
+      return this.displayText;
    }
 
    /**
     * @return the date this service offering was created
     */
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    /**
     * @return Domain name for the offering
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the domain id of the service offering
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
    /**
     * @return the number of CPU
     */
    public int getCpuNumber() {
-      return cpuNumber;
+      return this.cpuNumber;
    }
 
    /**
     * @return the clock rate CPU speed in Mhz
     */
    public int getCpuSpeed() {
-      return cpuSpeed;
+      return this.cpuSpeed;
    }
 
    /**
     * @return the memory in MB
     */
    public int getMemory() {
-      return memory;
+      return this.memory;
    }
 
-   /**
-    * @return the ha support in the service offering
-    */
    public boolean supportsHA() {
-      return haSupport;
+      return this.haSupport;
    }
 
    /**
     * @return the storage type for this service offering
     */
+   @Nullable
    public StorageType getStorageType() {
-      return storageType;
-   }
-
-   /**
-    * @return whether this is a default system vm offering
-    */
-   public boolean isDefaultUse() {
-      return defaultUse;
-   }
-
-   /**
-    * @return the host tag for the service offering
-    */
-   public String getHostTags() {
-      return hostTags;
-   }
-
-   /**
-    * @return whether this is a system vm offering
-    */
-   public boolean isSystemOffering() {
-      return systemOffering;
-   }
-
-   /**
-    * @return whether restrict the CPU usage to committed service offering
-    */
-   public boolean isCpuUseLimited() {
-      return cpuUseLimited;
-   }
-
-   /**
-    * @return data transfer rate in megabits per second allowed.
-    */
-   public long getNetworkRate() {
-      return networkRate;
-   }
-
-   /**
-    * @return whether this is a the systemvm type for system vm offering
-    */
-   public boolean isSystemVmType() {
-      return systemVmType;
+      return this.storageType;
    }
 
    /**
     * @return the tags for the service offering
     */
    public Set<String> getTags() {
-      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String>of();
+      return tags == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(Splitter.on(',').split(tags));
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+   /**
+    * @return whether this is a default system vm offering
+    */
+   public boolean isDefaultUse() {
+      return this.defaultUse;
+   }
 
-      ServiceOffering that = (ServiceOffering) o;
+   /**
+    * @return the host tag for the service offering
+    */
+   @Nullable
+   public String getHostTags() {
+      return this.hostTags;
+   }
 
-      if (!Objects.equal(cpuNumber, that.cpuNumber)) return false;
-      if (!Objects.equal(cpuSpeed, that.cpuSpeed)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(haSupport, that.haSupport)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(memory, that.memory)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(storageType, that.storageType)) return false;
-      if (!Objects.equal(tags, that.tags)) return false;
+   /**
+    * @return whether this is a system vm offering
+    */
+   public boolean isSystemOffering() {
+      return this.systemOffering;
+   }
 
-      return true;
+   /**
+    * @return whether restrict the CPU usage to committed service offering
+    */
+   public boolean isCpuUseLimited() {
+      return this.cpuUseLimited;
+   }
+
+   /**
+    * @return data transfer rate in megabits per second allowed.
+    */
+   public long getNetworkRate() {
+      return this.networkRate;
+   }
+
+   /**
+    * @return whether this is a the systemvm type for system vm offering
+    */
+   public boolean isSystemVmType() {
+      return this.systemVmType;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(cpuNumber, cpuSpeed, created, displayText, domain, domainId, haSupport, id, memory, name, storageType, tags);
+      return Objects.hashCode(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory, haSupport, storageType, tags, defaultUse, hostTags, systemOffering, cpuUseLimited, networkRate, systemVmType);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ServiceOffering that = ServiceOffering.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.cpuNumber, that.cpuNumber)
+            && Objects.equal(this.cpuSpeed, that.cpuSpeed)
+            && Objects.equal(this.memory, that.memory)
+            && Objects.equal(this.haSupport, that.haSupport)
+            && Objects.equal(this.storageType, that.storageType)
+            && Objects.equal(this.getTags(), that.getTags())
+            && Objects.equal(this.defaultUse, that.defaultUse)
+            && Objects.equal(this.hostTags, that.hostTags)
+            && Objects.equal(this.systemOffering, that.systemOffering)
+            && Objects.equal(this.cpuUseLimited, that.cpuUseLimited)
+            && Objects.equal(this.networkRate, that.networkRate)
+            && Objects.equal(this.systemVmType, that.systemVmType);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("displayText", displayText).add("created", created).add("domain", domain)
+            .add("domainId", domainId).add("cpuNumber", cpuNumber).add("cpuSpeed", cpuSpeed).add("memory", memory)
+            .add("haSupport", haSupport).add("storageType", storageType).add("tags", getTags()).add("defaultUse", defaultUse)
+            .add("hostTags", hostTags).add("systemOffering", systemOffering).add("cpuUseLimited", cpuUseLimited)
+            .add("networkRate", networkRate).add("systemVmType", systemVmType);
    }
 
    @Override
    public String toString() {
-      return "ServiceOffering{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", displayText='" + displayText + '\'' +
-            ", created=" + created +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", cpuNumber=" + cpuNumber +
-            ", cpuSpeed=" + cpuSpeed +
-            ", memory=" + memory +
-            ", haSupport=" + haSupport +
-            ", storageType=" + storageType +
-            ", tags='" + tags + '\'' +
-            ", defaultUse=" + defaultUse +
-            ", hostTags='" + hostTags + '\'' +
-            ", systemOffering=" + systemOffering +
-            ", cpuUseLimited=" + cpuUseLimited +
-            ", networkRate=" + networkRate +
-            ", systemVmType=" + systemVmType +
-            '}';
+      return string().toString();
    }
 
    @Override
-   public int compareTo(ServiceOffering arg0) {
-      return id.compareTo(arg0.getId());
+   public int compareTo(ServiceOffering o) {
+      return id.compareTo(o.getId());
    }
 
 }

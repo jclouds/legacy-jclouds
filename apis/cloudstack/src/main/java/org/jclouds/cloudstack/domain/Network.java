@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,296 +20,428 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
-import javax.annotation.Nullable;
+import javax.inject.Named;
 
-import com.google.common.base.Joiner;
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class Network
+ * 
  * @author Adrian Cole
- */
-public class Network implements Comparable<Network> {
-   public static Builder builder() {
-      return new Builder();
+*/
+public class Network {
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromNetwork(this);
    }
 
-   public static class Builder {
-      private String id;
-      private String broadcastDomainType;
-      private URI broadcastURI;
-      private String displayText;
-      private List<String> DNS = ImmutableList.of();
-      private String domain;
-      private String endIP;
-      private String gateway;
-      private boolean isDefault;
-      private boolean isShared;
-      private boolean isSystem;
-      private String netmask;
-      private String networkDomain;
-      private String networkOfferingAvailability;
-      private String networkOfferingDisplayText;
-      private String networkOfferingId;
-      private String networkOfferingName;
-      private String related;
-      private String startIP;
-      private String name;
-      private String state;
-      private GuestIPType guestIPType;
-      private String VLAN;
-      private TrafficType trafficType;
-      private String zoneId;
-      private Set<? extends NetworkService> services = ImmutableSet.<NetworkService>of();
-      private String account;
-      private String domainId;
-      private boolean securityGroupEnabled;
-      private Set<String> tags = ImmutableSet.of();
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-
-      public Builder id(String id) {
+      protected String id;
+      protected String account;
+      protected String broadcastDomainType;
+      protected URI broadcastURI;
+      protected String displayText;
+      protected String DNS1;
+      protected String DNS2;
+      protected String domain;
+      protected String domainId;
+      protected String endIP;
+      protected String gateway;
+      protected boolean isDefault;
+      protected boolean isShared;
+      protected boolean isSystem;
+      protected String netmask;
+      protected String networkDomain;
+      protected String networkOfferingAvailability;
+      protected String networkOfferingDisplayText;
+      protected String networkOfferingId;
+      protected String networkOfferingName;
+      protected String related;
+      protected String startIP;
+      protected String name;
+      protected String state;
+      protected GuestIPType guestIPType;
+      protected String VLAN;
+      protected TrafficType trafficType;
+      protected String zoneId;
+      protected String tags;
+      protected boolean securityGroupEnabled;
+      protected Set<? extends NetworkService> services = ImmutableSortedSet.of();
+   
+      /** 
+       * @see Network#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see Network#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
-         this.domainId = domainId;
-         return this;
-      }
-
-      public Builder broadcastDomainType(String broadcastDomainType) {
+      /** 
+       * @see Network#getBroadcastDomainType()
+       */
+      public T broadcastDomainType(String broadcastDomainType) {
          this.broadcastDomainType = broadcastDomainType;
-         return this;
+         return self();
       }
 
-      public Builder broadcastURI(URI broadcastURI) {
+      /** 
+       * @see Network#getBroadcastURI()
+       */
+      public T broadcastURI(URI broadcastURI) {
          this.broadcastURI = broadcastURI;
-         return this;
+         return self();
       }
 
-      public Builder displayText(String displayText) {
+      /** 
+       * @see Network#getDisplayText()
+       */
+      public T displayText(String displayText) {
          this.displayText = displayText;
-         return this;
+         return self();
       }
 
-      public Builder DNS(List<String> DNS) {
-         this.DNS = ImmutableList.copyOf(checkNotNull(DNS, "DNS"));
-         return this;
+      /**
+       * @return the DNS for the Network
+       */
+      public T DNS(List<String> DNS) {
+         if (!DNS.isEmpty()) this.DNS1 = DNS.get(0);
+         if (DNS.size() > 1) this.DNS2 = DNS.get(1);
+         return self();
       }
-
-      public Builder domain(String domain) {
+      /** 
+       * @see Network#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder endIP(String endIP) {
+      /** 
+       * @see Network#getDomainId()
+       */
+      public T domainId(String domainId) {
+         this.domainId = domainId;
+         return self();
+      }
+
+      /** 
+       * @see Network#getEndIP()
+       */
+      public T endIP(String endIP) {
          this.endIP = endIP;
-         return this;
+         return self();
       }
 
-      public Builder gateway(String gateway) {
+      /** 
+       * @see Network#getGateway()
+       */
+      public T gateway(String gateway) {
          this.gateway = gateway;
-         return this;
+         return self();
       }
 
-      public Builder isDefault(boolean isDefault) {
+      /** 
+       * @see Network#isDefault()
+       */
+      public T isDefault(boolean isDefault) {
          this.isDefault = isDefault;
-         return this;
+         return self();
       }
 
-      public Builder isShared(boolean isShared) {
+      /** 
+       * @see Network#isShared()
+       */
+      public T isShared(boolean isShared) {
          this.isShared = isShared;
-         return this;
+         return self();
       }
 
-      public Builder isSystem(boolean isSystem) {
+      /** 
+       * @see Network#isSystem()
+       */
+      public T isSystem(boolean isSystem) {
          this.isSystem = isSystem;
-         return this;
+         return self();
       }
 
-      public Builder netmask(String netmask) {
+      /** 
+       * @see Network#getNetmask()
+       */
+      public T netmask(String netmask) {
          this.netmask = netmask;
-         return this;
+         return self();
       }
 
-      public Builder networkDomain(String networkDomain) {
+      /** 
+       * @see Network#getNetworkDomain()
+       */
+      public T networkDomain(String networkDomain) {
          this.networkDomain = networkDomain;
-         return this;
+         return self();
       }
 
-      public Builder networkOfferingAvailability(String networkOfferingAvailability) {
+      /** 
+       * @see Network#getNetworkOfferingAvailability()
+       */
+      public T networkOfferingAvailability(String networkOfferingAvailability) {
          this.networkOfferingAvailability = networkOfferingAvailability;
-         return this;
+         return self();
       }
 
-      public Builder networkOfferingDisplayText(String networkOfferingDisplayText) {
+      /** 
+       * @see Network#getNetworkOfferingDisplayText()
+       */
+      public T networkOfferingDisplayText(String networkOfferingDisplayText) {
          this.networkOfferingDisplayText = networkOfferingDisplayText;
-         return this;
+         return self();
       }
 
-      public Builder networkOfferingId(String networkOfferingId) {
+      /** 
+       * @see Network#getNetworkOfferingId()
+       */
+      public T networkOfferingId(String networkOfferingId) {
          this.networkOfferingId = networkOfferingId;
-         return this;
+         return self();
       }
 
-      public Builder networkOfferingName(String networkOfferingName) {
+      /** 
+       * @see Network#getNetworkOfferingName()
+       */
+      public T networkOfferingName(String networkOfferingName) {
          this.networkOfferingName = networkOfferingName;
-         return this;
+         return self();
       }
 
-      public Builder related(String related) {
+      /** 
+       * @see Network#getRelated()
+       */
+      public T related(String related) {
          this.related = related;
-         return this;
+         return self();
       }
 
-      public Builder startIP(String startIP) {
+      /** 
+       * @see Network#getStartIP()
+       */
+      public T startIP(String startIP) {
          this.startIP = startIP;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see Network#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder state(String state) {
+      /** 
+       * @see Network#getState()
+       */
+      public T state(String state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder guestIPType(GuestIPType guestIPType) {
+      /** 
+       * @see Network#getGuestIPType()
+       */
+      public T guestIPType(GuestIPType guestIPType) {
          this.guestIPType = guestIPType;
-         return this;
+         return self();
       }
 
-      public Builder VLAN(String VLAN) {
+      /** 
+       * @see Network#getVLAN()
+       */
+      public T VLAN(String VLAN) {
          this.VLAN = VLAN;
-         return this;
+         return self();
       }
 
-      public Builder trafficType(TrafficType trafficType) {
+      /** 
+       * @see Network#getTrafficType()
+       */
+      public T trafficType(TrafficType trafficType) {
          this.trafficType = trafficType;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /** 
+       * @see Network#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder services(Set<? extends NetworkService> services) {
-         this.services = ImmutableSet.<NetworkService>copyOf(checkNotNull(services, "services"));
-         return this;
+      /** 
+       * @see Network#getTags()
+       */
+      public T tags(String tags) {
+         this.tags = tags;
+         return self();
       }
 
-      public Builder tags(Set<String> tags) {
-         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
-         return this;
-      }
-
-      public Builder securityGroupEnabled(boolean securityGroupEnabled) {
+      /** 
+       * @see Network#isSecurityGroupEnabled()
+       */
+      public T securityGroupEnabled(boolean securityGroupEnabled) {
          this.securityGroupEnabled = securityGroupEnabled;
-         return this;
+         return self();
+      }
+
+      /** 
+       * @see Network#getServices()
+       */
+      public T services(Set<? extends NetworkService> services) {
+         this.services = services;
+         return self();
       }
 
       public Network build() {
-         return new Network(id, broadcastDomainType, broadcastURI, displayText, DNS, domain, domainId, endIP,
-               gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability,
-               networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state,
-               guestIPType, VLAN, trafficType, zoneId, services, tags, securityGroupEnabled, account);
+         return new Network(id, account, broadcastDomainType, broadcastURI, displayText, DNS1, DNS2, domain, domainId, endIP, gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability, networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state, guestIPType, VLAN, trafficType, zoneId, tags, securityGroupEnabled, services);
+      }
+      
+      public T fromNetwork(Network in) {
+         return this
+                  .id(in.getId())
+                  .account(in.getAccount())
+                  .broadcastDomainType(in.getBroadcastDomainType())
+                  .broadcastURI(in.getBroadcastURI())
+                  .displayText(in.getDisplayText())
+                  .DNS(in.getDNS())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .endIP(in.getEndIP())
+                  .gateway(in.getGateway())
+                  .isDefault(in.isDefault())
+                  .isShared(in.isShared())
+                  .isSystem(in.isSystem())
+                  .netmask(in.getNetmask())
+                  .networkDomain(in.getNetworkDomain())
+                  .networkOfferingAvailability(in.getNetworkOfferingAvailability())
+                  .networkOfferingDisplayText(in.getNetworkOfferingDisplayText())
+                  .networkOfferingId(in.getNetworkOfferingId())
+                  .networkOfferingName(in.getNetworkOfferingName())
+                  .related(in.getRelated())
+                  .startIP(in.getStartIP())
+                  .name(in.getName())
+                  .state(in.getState())
+                  .guestIPType(in.getGuestIPType())
+                  .VLAN(in.getVLAN())
+                  .trafficType(in.getTrafficType())
+                  .zoneId(in.getZoneId())
+                  .tags(in.getTags())
+                  .securityGroupEnabled(in.isSecurityGroupEnabled())
+                  .services(in.getServices());
       }
    }
 
-   private String id;
-   private String account;
-   @SerializedName("broadcastdomaintype")
-   private String broadcastDomainType;
-   @SerializedName("broadcasturi")
-   private URI broadcastURI;
-   @SerializedName("displaytext")
-   private String displayText;
-   @SerializedName("dns1")
-   private String DNS1;
-   @SerializedName("dns2")
-   private String DNS2;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   @SerializedName("endip")
-   private String endIP;
-   private String gateway;
-   @SerializedName("isdefault")
-   private boolean isDefault;
-   @SerializedName("isshared")
-   private boolean isShared;
-   @SerializedName("issystem")
-   private boolean isSystem;
-   private String netmask;
-   @Nullable
-   @SerializedName("networkdomain")
-   private String networkDomain;
-   @SerializedName("networkofferingavailability")
-   private String networkOfferingAvailability;
-   @SerializedName("networkofferingdisplaytext")
-   private String networkOfferingDisplayText;
-   @SerializedName("networkofferingid")
-   private String networkOfferingId;
-   @SerializedName("networkofferingname")
-   private String networkOfferingName;
-   private String related;
-   @SerializedName("startip")
-   private String startIP;
-   private String name;
-   private String state;
-   @SerializedName("type")
-   private GuestIPType guestIPType;
-   @SerializedName("vlan")
-   private String VLAN;
-   @SerializedName("traffictype")
-   private TrafficType trafficType;
-   @SerializedName("zoneid")
-   private String zoneId;
-   private String tags;
-   @SerializedName("securitygroupenabled")
-   private boolean securityGroupEnabled;
-   // so tests and serialization comes out expected
-   @SerializedName("service")
-   private SortedSet<? extends NetworkService> services = ImmutableSortedSet.<NetworkService>of();
-
-   /**
-    * present only for serializer
-    */
-   Network() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public Network(String id, String broadcastDomainType, URI broadcastURI, String displayText,
-                  List<String> DNS, String domain, String domainId, String endIP, String gateway, boolean isDefault,
-                  boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
-                  String networkOfferingDisplayText, String networkOfferingId, String networkOfferingName, String related,
-                  String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
-                  String zoneId, Set<? extends NetworkService> services, Set<String> tags, boolean securityGroupEnabled,
-                  String account) {
-      this.id = id;
+   private final String id;
+   private final String account;
+   @Named("broadcastdomaintype")
+   private final String broadcastDomainType;
+   @Named("broadcasturi")
+   private final URI broadcastURI;
+   @Named("displaytext")
+   private final String displayText;
+   @Named("dns1")
+   private final String DNS1;
+   @Named("dns2")
+   private final String DNS2;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   @Named("endip")
+   private final String endIP;
+   private final String gateway;
+   @Named("isdefault")
+   private final boolean isDefault;
+   @Named("isshared")
+   private final boolean isShared;
+   @Named("issystem")
+   private final boolean isSystem;
+   private final String netmask;
+   @Named("networkdomain")
+   private final String networkDomain;
+   @Named("networkofferingavailability")
+   private final String networkOfferingAvailability;
+   @Named("networkofferingdisplaytext")
+   private final String networkOfferingDisplayText;
+   @Named("networkofferingid")
+   private final String networkOfferingId;
+   @Named("networkofferingname")
+   private final String networkOfferingName;
+   private final String related;
+   @Named("startip")
+   private final String startIP;
+   private final String name;
+   private final String state;
+   @Named("type")
+   private final GuestIPType guestIPType;
+   @Named("vlan")
+   private final String VLAN;
+   @Named("traffictype")
+   private final TrafficType trafficType;
+   @Named("zoneid")
+   private final String zoneId;
+   private final String tags;
+   @Named("securitygroupenabled")
+   private final boolean securityGroupEnabled;
+   @Named("service")
+   private final Set<? extends NetworkService> services;
+
+   @ConstructorProperties({
+      "id", "account", "broadcastdomaintype", "broadcasturi", "displaytext", "dns1", "dns2", "domain", "domainid", "endip", "gateway", "isdefault", "isshared", "issystem", "netmask", "networkdomain", "networkofferingavailability", "networkofferingdisplaytext", "networkofferingid", "networkofferingname", "related", "startip", "name", "state", "type", "vlan", "traffictype", "zoneid", "tags", "securitygroupenabled", "service"
+   })
+   protected Network(String id, @Nullable String account, @Nullable String broadcastDomainType, @Nullable URI broadcastURI,
+                     @Nullable String displayText, @Nullable String DNS1, @Nullable String DNS2, @Nullable String domain, @Nullable String domainId,
+                     @Nullable String endIP, @Nullable String gateway, boolean isDefault, boolean isShared, boolean isSystem,
+                     @Nullable String netmask, @Nullable String networkDomain, @Nullable String networkOfferingAvailability,
+                     @Nullable String networkOfferingDisplayText, @Nullable String networkOfferingId, @Nullable String networkOfferingName,
+                     @Nullable String related, @Nullable String startIP, @Nullable String name, @Nullable String state,
+                     @Nullable GuestIPType guestIPType, @Nullable String VLAN, @Nullable TrafficType trafficType,
+                     @Nullable String zoneId, @Nullable String tags, boolean securityGroupEnabled, Set<? extends NetworkService> services) {
+      this.id = checkNotNull(id, "id");
+      this.account = account;
       this.broadcastDomainType = broadcastDomainType;
       this.broadcastURI = broadcastURI;
       this.displayText = displayText;
-      this.DNS1 = checkNotNull(DNS, "DNS").size() > 0 ? DNS.get(0) : null;
-      this.DNS2 = DNS.size() > 1 ? DNS.get(1) : null;
+      this.DNS1 = DNS1;
+      this.DNS2 = DNS2;
       this.domain = domain;
       this.domainId = domainId;
       this.endIP = endIP;
@@ -327,47 +459,54 @@ public class Network implements Comparable<Network> {
       this.startIP = startIP;
       this.name = name;
       this.state = state;
-      this.guestIPType = type;
-      this.VLAN = vLAN;
+      this.guestIPType = guestIPType;
+      this.VLAN = VLAN;
       this.trafficType = trafficType;
       this.zoneId = zoneId;
-      this.services = ImmutableSortedSet.copyOf(checkNotNull(services, "services"));
-      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
+      this.tags = tags;
       this.securityGroupEnabled = securityGroupEnabled;
-      this.account = account;
+      this.services = ImmutableSortedSet.copyOf(services);
    }
 
    /**
     * @return network id
     */
    public String getId() {
-      return id;
+      return this.id;
+   }
+
+   /**
+    * @return the account associated with the network
+    */
+   @Nullable
+   public String getAccount() {
+      return this.account;
    }
 
    /**
     * @return Broadcast domain type of the network
     */
+   @Nullable
    public String getBroadcastDomainType() {
-      return broadcastDomainType;
+      return this.broadcastDomainType;
    }
 
    /**
     * @return broadcast uri of the network
     */
+   @Nullable
    public URI getBroadcastURI() {
-      return broadcastURI;
+      return this.broadcastURI;
    }
 
    /**
     * @return the display text of the zone
     */
+   @Nullable
    public String getDisplayText() {
-      return displayText;
+      return this.displayText;
    }
 
-   /**
-    * @return the external DNS for the network
-    */
    public List<String> getDNS() {
       ImmutableList.Builder<String> builder = ImmutableList.builder();
       if (DNS1 != null && !"".equals(DNS1))
@@ -380,266 +519,247 @@ public class Network implements Comparable<Network> {
    /**
     * @return Domain name for the Network
     */
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
    /**
     * @return the domain id of the Network
     */
+   @Nullable
    public String getDomainId() {
-      return domainId;
-   }
-
-   /**
-    * @return the account associated with the network
-    */
-   public String getAccount() {
-      return account;
+      return this.domainId;
    }
 
    /**
     * @return the end ip of the network
     */
+   @Nullable
    public String getEndIP() {
-      return endIP;
+      return this.endIP;
    }
 
    /**
     * @return the network's gateway
     */
+   @Nullable
    public String getGateway() {
-      return gateway;
+      return this.gateway;
    }
 
    /**
     * @return true if network offering is default, false otherwise
     */
    public boolean isDefault() {
-      return isDefault;
+      return this.isDefault;
    }
 
    /**
     * @return true if network offering is shared, false otherwise
     */
    public boolean isShared() {
-      return isShared;
+      return this.isShared;
    }
 
    /**
     * @return true if network offering is system, false otherwise
     */
    public boolean isSystem() {
-      return isSystem;
+      return this.isSystem;
+   }
+
+   /**
+    * @return the network's netmask
+    */
+   @Nullable
+   public String getNetmask() {
+      return this.netmask;
+   }
+
+   /**
+    * @return the network domain
+    */
+   @Nullable
+   public String getNetworkDomain() {
+      return this.networkDomain;
+   }
+
+   /**
+    * @return availability of the network offering the network is created from
+    */
+   @Nullable
+   public String getNetworkOfferingAvailability() {
+      return this.networkOfferingAvailability;
+   }
+
+   /**
+    * @return display text of the network offering the network is created from
+    */
+   @Nullable
+   public String getNetworkOfferingDisplayText() {
+      return this.networkOfferingDisplayText;
+   }
+
+   /**
+    * @return network offering id the network is created from
+    */
+   @Nullable
+   public String getNetworkOfferingId() {
+      return this.networkOfferingId;
+   }
+
+   /**
+    * @return name of the network offering the network is created from
+    */
+   @Nullable
+   public String getNetworkOfferingName() {
+      return this.networkOfferingName;
+   }
+
+   /**
+    * @return related to what other network configuration
+    */
+   @Nullable
+   public String getRelated() {
+      return this.related;
+   }
+
+   /**
+    * @return the start ip of the network
+    */
+   @Nullable
+   public String getStartIP() {
+      return this.startIP;
    }
 
    /**
     * @return network name
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
+   }
+
+   /**
+    * @return state of the network
+    */
+   @Nullable
+   public String getState() {
+      return this.state;
    }
 
    /**
     * @return the GuestIPType of the network
     */
    public GuestIPType getGuestIPType() {
-      return guestIPType;
-   }
-
-   /**
-    * @return state of the network
-    */
-   public String getState() {
-      return state;
+      return this.guestIPType;
    }
 
    /**
     * @return the vlan range of the zone
     */
+   @Nullable
    public String getVLAN() {
-      return VLAN;
+      return this.VLAN;
    }
 
    /**
     * @return the traffic type for this network offering
     */
+   @Nullable
    public TrafficType getTrafficType() {
-      return trafficType;
-   }
-
-   /**
-    * @return the network's netmask
-    */
-   public String getNetmask() {
-      return netmask;
-   }
-
-   /**
-    * @return the network domain
-    */
-   public String getNetworkDomain() {
-      return networkDomain;
-   }
-
-   /**
-    * @return availability of the network offering the network is created from
-    */
-   public String getNetworkOfferingAvailability() {
-      return networkOfferingAvailability;
-   }
-
-   /**
-    * @return display text of the network offering the network is created from
-    */
-   public String getNetworkOfferingDisplayText() {
-      return networkOfferingDisplayText;
-   }
-
-   /**
-    * @return network offering id the network is created from
-    */
-   public String getNetworkOfferingId() {
-      return networkOfferingId;
-   }
-
-   /**
-    * @return name of the network offering the network is created from
-    */
-   public String getNetworkOfferingName() {
-      return networkOfferingName;
-   }
-
-   /**
-    * @return related to what other network configuration
-    */
-   public String getRelated() {
-      return related;
-   }
-
-   /**
-    * @return the start ip of the network
-    */
-   public String getStartIP() {
-      return startIP;
+      return this.trafficType;
    }
 
    /**
     * @return zone id of the network
     */
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
    /**
-    * @return the list of services
+    * @return the tags for the Network
     */
-   public Set<? extends NetworkService> getServices() {
-      return services;
+   @Nullable
+   public String getTags() {
+      return this.tags;
    }
 
    /**
     * @return true if security group is enabled, false otherwise
     */
    public boolean isSecurityGroupEnabled() {
-      return securityGroupEnabled;
+      return this.securityGroupEnabled;
    }
 
    /**
-    * @return the tags for the Network
+    * @return the list of services
     */
-   public Set<String> getTags() {
-      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String>of();
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Network that = (Network) o;
-
-      if (!Objects.equal(DNS1, that.DNS1)) return false;
-      if (!Objects.equal(DNS2, that.DNS2)) return false;
-      if (!Objects.equal(VLAN, that.VLAN)) return false;
-      if (!Objects.equal(broadcastDomainType, that.broadcastDomainType)) return false;
-      if (!Objects.equal(broadcastURI, that.broadcastURI)) return false;
-      if (!Objects.equal(displayText, that.displayText)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(endIP, that.endIP)) return false;
-      if (!Objects.equal(gateway, that.gateway)) return false;
-      if (!Objects.equal(guestIPType, that.guestIPType)) return false;
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(isDefault, that.isDefault)) return false;
-      if (!Objects.equal(isShared, that.isShared)) return false;
-      if (!Objects.equal(isSystem, that.isSystem)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(netmask, that.netmask)) return false;
-      if (!Objects.equal(networkDomain, that.networkDomain)) return false;
-      if (!Objects.equal(networkOfferingAvailability, that.networkOfferingAvailability)) return false;
-      if (!Objects.equal(networkOfferingDisplayText, that.networkOfferingDisplayText)) return false;
-      if (!Objects.equal(networkOfferingId, that.networkOfferingId)) return false;
-      if (!Objects.equal(networkOfferingName, that.networkOfferingName)) return false;
-      if (!Objects.equal(related, that.related)) return false;
-      if (!Objects.equal(services, that.services)) return false;
-      if (!Objects.equal(startIP, that.startIP)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(trafficType, that.trafficType)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(tags, that.tags)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-
-      return true;
+   public Set<? extends NetworkService> getServices() {
+      return this.services;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(DNS1, DNS2, VLAN, broadcastDomainType, broadcastURI, displayText, domain,
-                               endIP, gateway, guestIPType, id, isDefault, isShared, isSystem, name,
-                               netmask, networkDomain, networkOfferingAvailability, networkOfferingDisplayText,
-                               networkOfferingId, networkOfferingName, related, services, startIP, state,
-                               trafficType, zoneId, tags, domainId);
+      return Objects.hashCode(id, account, broadcastDomainType, broadcastURI, displayText, DNS1, DNS2, domain, domainId, endIP, gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability, networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state, guestIPType, VLAN, trafficType, zoneId, tags, securityGroupEnabled, services);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Network that = Network.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.broadcastDomainType, that.broadcastDomainType)
+               && Objects.equal(this.broadcastURI, that.broadcastURI)
+               && Objects.equal(this.displayText, that.displayText)
+               && Objects.equal(this.DNS1, that.DNS1)
+               && Objects.equal(this.DNS2, that.DNS2)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.endIP, that.endIP)
+               && Objects.equal(this.gateway, that.gateway)
+               && Objects.equal(this.isDefault, that.isDefault)
+               && Objects.equal(this.isShared, that.isShared)
+               && Objects.equal(this.isSystem, that.isSystem)
+               && Objects.equal(this.netmask, that.netmask)
+               && Objects.equal(this.networkDomain, that.networkDomain)
+               && Objects.equal(this.networkOfferingAvailability, that.networkOfferingAvailability)
+               && Objects.equal(this.networkOfferingDisplayText, that.networkOfferingDisplayText)
+               && Objects.equal(this.networkOfferingId, that.networkOfferingId)
+               && Objects.equal(this.networkOfferingName, that.networkOfferingName)
+               && Objects.equal(this.related, that.related)
+               && Objects.equal(this.startIP, that.startIP)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.guestIPType, that.guestIPType)
+               && Objects.equal(this.VLAN, that.VLAN)
+               && Objects.equal(this.trafficType, that.trafficType)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.tags, that.tags)
+               && Objects.equal(this.securityGroupEnabled, that.securityGroupEnabled)
+               && Objects.equal(this.services, that.services);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("broadcastDomainType", broadcastDomainType).add("broadcastURI", broadcastURI)
+            .add("displayText", displayText).add("DNS1", DNS1).add("DNS2", DNS2).add("domain", domain).add("domainId", domainId)
+            .add("endIP", endIP).add("gateway", gateway).add("isDefault", isDefault).add("isShared", isShared).add("isSystem", isSystem)
+            .add("netmask", netmask).add("networkDomain", networkDomain).add("networkOfferingAvailability", networkOfferingAvailability)
+            .add("networkOfferingDisplayText", networkOfferingDisplayText).add("networkOfferingId", networkOfferingId)
+            .add("networkOfferingName", networkOfferingName).add("related", related).add("startIP", startIP).add("name", name)
+            .add("state", state).add("guestIPType", guestIPType).add("VLAN", VLAN).add("trafficType", trafficType)
+            .add("zoneId", zoneId).add("tags", tags).add("securityGroupEnabled", securityGroupEnabled).add("services", services);
+   }
+   
    @Override
    public String toString() {
-      return "Network{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", broadcastDomainType='" + broadcastDomainType + '\'' +
-            ", broadcastURI=" + broadcastURI +
-            ", displayText='" + displayText + '\'' +
-            ", DNS1='" + DNS1 + '\'' +
-            ", DNS2='" + DNS2 + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", endIP='" + endIP + '\'' +
-            ", gateway='" + gateway + '\'' +
-            ", isDefault=" + isDefault +
-            ", isShared=" + isShared +
-            ", isSystem=" + isSystem +
-            ", netmask='" + netmask + '\'' +
-            ", networkDomain='" + networkDomain + '\'' +
-            ", networkOfferingAvailability='" + networkOfferingAvailability + '\'' +
-            ", networkOfferingDisplayText='" + networkOfferingDisplayText + '\'' +
-            ", networkOfferingId=" + networkOfferingId +
-            ", networkOfferingName='" + networkOfferingName + '\'' +
-            ", related=" + related +
-            ", startIP='" + startIP + '\'' +
-            ", name='" + name + '\'' +
-            ", state='" + state + '\'' +
-            ", guestIPType=" + guestIPType +
-            ", VLAN='" + VLAN + '\'' +
-            ", trafficType=" + trafficType +
-            ", zoneId=" + zoneId +
-            ", tags='" + tags + '\'' +
-            ", securityGroupEnabled=" + securityGroupEnabled +
-            ", services=" + services +
-            '}';
+      return string().toString();
    }
 
-   @Override
-   public int compareTo(Network arg0) {
-      return id.compareTo(arg0.getId());
-   }
 }

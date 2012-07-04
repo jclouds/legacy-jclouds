@@ -23,6 +23,7 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -47,11 +48,12 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
@@ -81,13 +83,17 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
    @Singleton
    protected Supplier<Set<? extends DeltacloudCollection>> provideCollections(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, final DeltacloudClient client) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends DeltacloudCollection>>(
-            authException, seconds, new Supplier<Set<? extends DeltacloudCollection>>() {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(
+            authException, new Supplier<Set<? extends DeltacloudCollection>>() {
                @Override
                public Set<? extends DeltacloudCollection> get() {
                   return client.getCollections();
                }
-            });
+               @Override
+               public String toString() {
+                  return Objects.toStringHelper(client).add("method", "getCollections").toString();
+               }
+            }, seconds, TimeUnit.SECONDS);
    }
 
    /**
@@ -97,7 +103,7 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
    @Provides
    @Images
    protected Supplier<URI> provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("images"), collectionSupplier);
+      return Suppliers2.compose(new FindCollectionWithRelAndReturnHref("images"), collectionSupplier);
    }
 
    public static class FindCollectionWithRelAndReturnHref implements Function<Set<? extends DeltacloudCollection>, URI> {
@@ -128,24 +134,24 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
    @Provides
    @HardwareProfiles
    protected Supplier<URI> provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("hardware_profiles"), collectionSupplier);
+      return Suppliers2.compose(new FindCollectionWithRelAndReturnHref("hardware_profiles"), collectionSupplier);
    }
 
    @Provides
    @Instances
    protected Supplier<URI> provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("instances"), collectionSupplier);
+      return Suppliers2.compose(new FindCollectionWithRelAndReturnHref("instances"), collectionSupplier);
    }
 
    @Provides
    @Realms
    protected Supplier<URI> provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("realms"), collectionSupplier);
+      return Suppliers2.compose(new FindCollectionWithRelAndReturnHref("realms"), collectionSupplier);
    }
 
    @Provides
    @InstanceStates
    protected Supplier<URI> provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("instance_states"), collectionSupplier);
+      return Suppliers2.compose(new FindCollectionWithRelAndReturnHref("instance_states"), collectionSupplier);
    }
 }

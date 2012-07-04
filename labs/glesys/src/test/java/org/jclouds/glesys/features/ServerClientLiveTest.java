@@ -26,21 +26,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
-import org.jclouds.glesys.domain.Console;
-import org.jclouds.glesys.domain.OSTemplate;
-import org.jclouds.glesys.domain.ResourceUsage;
-import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.glesys.domain.ServerLimit;
-import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
+import org.jclouds.glesys.domain.*;
+import org.jclouds.glesys.internal.BaseGleSYSClientWithAServerLiveTest;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
+import org.jclouds.glesys.options.EditServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -52,31 +45,23 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@Test(groups = "live", testName = "ServerClientLiveTest")
-public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
-   public static final String testHostName1 = "jclouds-test";
+@Test(groups = "live", testName = "ServerClientLiveTest", singleThreaded = true)
+public class ServerClientLiveTest extends BaseGleSYSClientWithAServerLiveTest {
    public static final String testHostName2 = "jclouds-test2";
    
-   @BeforeGroups(groups = {"live"})
-   public void setupContext() {
-      super.setupContext();
+   @BeforeMethod
+   public void setupClient() {
       client = gleContext.getApi().getServerClient();
-      serverStatusChecker = createServer(testHostName1);
-      testServerId = serverStatusChecker.getServerId();
    }
 
    @AfterGroups(groups = {"live"})
-   public void tearDownContext() {
-      client.destroyServer(testServerId, DestroyServerOptions.Builder.discardIp());
+   public void deleteExtraServer() {
       if (testServerId2 != null) {
          client.destroyServer(testServerId2, DestroyServerOptions.Builder.discardIp());
       }
-      super.tearDownContext();
    }
 
    private ServerClient client;
-   private ServerStatusChecker serverStatusChecker;
-   private String testServerId;
    private String testServerId2;
 
    @BeforeMethod
@@ -107,7 +92,6 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assert t.getTransfersInGB().size() > 0 : t;
    }
    
-   @Test
    public void testListTemplates() throws Exception {
       Set<OSTemplate> oSTemplates = client.listTemplates();
 
@@ -126,7 +110,6 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assert t.getMinMemSize() > 0 : t;
     }
    
-   @Test
    public void testListServers() throws Exception {
       Set<Server> response = client.listServers();
       assertNotNull(response);
@@ -142,9 +125,8 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       }
    }
 
-   @Test
    public void testServerDetails() throws Exception {
-      ServerDetails details = client.getServerDetails(testServerId);
+      ServerDetails details = client.getServerDetails(serverId);
       checkServer(details);
       assertEquals("Ubuntu 10.04 LTS 32-bit", details.getTemplateName());
       assertEquals("Falkenberg", details.getDatacenter());
@@ -155,48 +137,50 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertEquals(50, details.getTransferGB());
    }
 
-   @Test
    public void testServerStatus() throws Exception {
-      ServerStatus newStatus = client.getServerStatus(testServerId);
+      ServerStatus newStatus = client.getServerStatus(serverId);
       checkStatus(newStatus);
    }
 
-   @Test(enabled=false) // TODO work a better plan
+   public void testEditServer() throws Exception {
+      ServerDetails edited = client.editServer(serverId, EditServerOptions.Builder.description("this is a different description!"));
+      assertEquals(edited.getDescription(), "this is a different description!");
+
+      edited = client.editServer(serverId, EditServerOptions.Builder.description("another description!"), EditServerOptions.Builder.hostname("host-name1"));
+      assertEquals(edited.getDescription(), "another description!");
+      assertEquals(edited.getHostname(), "host-name1");
+
+      edited = client.resetPassword(serverId, "anotherpass");
+      assertEquals(edited.getHostname(), "host-name1");
+
+      edited = client.editServer(serverId, EditServerOptions.Builder.hostname(hostName));
+      assertEquals(edited.getHostname(), hostName);
+   }
+
+   @Test
    public void testRebootServer() throws Exception {
-      long uptime = 0;
-      
-      while(uptime < 20) {
-         uptime = client.getServerStatus(testServerId).getUptime().getCurrent();
-      }
-      
-      assertTrue(uptime > 19);
-      
-      client.rebootServer(testServerId);
-      
-      Thread.sleep(1000);
+      assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
 
-      uptime = client.getServerStatus(testServerId).getUptime().getCurrent();
+      client.rebootServer(serverId);
       
-      assertTrue(uptime < 20);
-
       assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
    }
 
-   @Test(enabled=false) // TODO
+   @Test
    public void testStopAndStartServer() throws Exception {
-      client.stopServer(testServerId);
+      assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
+
+      client.stopServer(serverId);
 
       assertTrue(serverStatusChecker.apply(Server.State.STOPPED));
 
-      client.startServer(testServerId);
+      client.startServer(serverId);
 
       assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
    }
 
-
-   @Test
    public void testServerLimits() throws Exception {
-      Map<String, ServerLimit> limits = client.getServerLimits(testServerId);
+      Map<String, ServerLimit> limits = client.getServerLimits(serverId);
       assertNotNull(limits);
       for (Map.Entry<String, ServerLimit> entry : limits.entrySet()) {
          assertNotNull(entry.getKey());
@@ -210,19 +194,31 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       }
    }
 
-   @Test
+   public void testResourceUsage() throws Exception {
+      // test server has only been in existence for less than a minute - check all servers
+      for (Server server : client.listServers()) {
+         ResourceUsage usage = client.getResourceUsage(server.getId(), "diskioread", "minute");
+         assertEquals(usage.getInfo().getResource(), "diskioread");
+         assertEquals(usage.getInfo().getResolution(), "minute");
+
+         usage = client.getResourceUsage(server.getId(), "cpuusage", "minute");
+         assertEquals(usage.getInfo().getResource(), "cpuusage");
+         assertEquals(usage.getInfo().getResolution(), "minute");
+      }
+   }
+
    public void testConsole() throws Exception {
-      Console console = client.getConsole(testServerId);
+      Console console = client.getConsole(serverId);
       assertNotNull(console);
       assertNotNull(console.getHost());
       assertTrue(console.getPort() > 0 && console.getPort() < 65537);
       assertNotNull(console.getPassword());
    }
 
-   // takes a few minutes and requires an extra server (using 2 already)
+   // takes a few minutes and requires an extra server (used 1 already)
    @Test(enabled=false)
    public void testCloneServer() throws Exception {
-      ServerDetails testServer2 = client.cloneServer(testServerId, testHostName2, CloneServerOptions.Builder.cpucores(1));
+      ServerDetails testServer2 = client.cloneServer(serverId, testHostName2, CloneServerOptions.Builder.cpucores(1));
 
       assertNotNull(testServer2.getId());
       assertEquals(testServer2.getHostname(), "jclouds-test2");
@@ -249,11 +245,9 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
                   return false;
                }
 
-            }, 300, 10, TimeUnit.SECONDS);
+            }, 600, 30, TimeUnit.SECONDS);
 
-      assertTrue(cloneChecker.apply(Server.State.RUNNING)
-
-      );
+      assertTrue(cloneChecker.apply(Server.State.RUNNING));
    }
 
    private void checkServer(ServerDetails server) {
@@ -273,7 +267,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertNotNull(status.getUptime());
 
       
-      for (ResourceUsage usage : new ResourceUsage[] { status.getCpu(), status.getDisk(), status.getMemory() }) {
+      for (ResourceStatus usage : new ResourceStatus[] { status.getCpu(), status.getDisk(), status.getMemory() }) {
          assertNotNull(usage);
          assert usage.getMax() >= 0.0 : status;
          assert usage.getUsage() >= 0.0 : status;

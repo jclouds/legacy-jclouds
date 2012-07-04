@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudstack.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Map;
@@ -26,7 +25,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -56,7 +54,6 @@ import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.ZoneIdToZone;
-import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
@@ -70,17 +67,16 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -127,14 +123,18 @@ public class CloudStackComputeServiceContextModule extends
    @Memoized
    public Supplier<Map<String, String>> listOSCategories(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final CloudStackClient client) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException,
-            seconds, new Supplier<Map<String, String>>() {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+            new Supplier<Map<String, String>>() {
                @Override
                public Map<String, String> get() {
                   GuestOSClient guestOSClient = client.getGuestOSClient();
                   return guestOSClient.listOSCategories();
                }
-            });
+               @Override
+               public String toString() {
+                  return Objects.toStringHelper(client.getGuestOSClient()).add("method", "listOSCategories").toString();
+               }
+            }, seconds, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -142,8 +142,8 @@ public class CloudStackComputeServiceContextModule extends
    @Memoized
    public Supplier<Map<String, OSType>> listOSTypes(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final CloudStackClient client) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, OSType>>(authException,
-            seconds, new Supplier<Map<String, OSType>>() {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+            new Supplier<Map<String, OSType>>() {
                @Override
                public Map<String, OSType> get() {
                   GuestOSClient guestOSClient = client.getGuestOSClient();
@@ -155,7 +155,11 @@ public class CloudStackComputeServiceContextModule extends
                      }
                   });
                }
-            });
+               @Override
+               public String toString() {
+                  return Objects.toStringHelper(client.getGuestOSClient()).add("method", "listOSTypes").toString();
+               }
+            }, seconds, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -163,8 +167,8 @@ public class CloudStackComputeServiceContextModule extends
    @Memoized
    public Supplier<Map<String, Network>> listNetworks(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final NetworksForCurrentUser networksForCurrentUser) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Network>>(authException,
-            seconds, networksForCurrentUser);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, networksForCurrentUser,
+               seconds, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -172,8 +176,8 @@ public class CloudStackComputeServiceContextModule extends
    @Memoized
    public Supplier<User> getCurrentUser(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final GetCurrentUser getCurrentUser) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<User>(authException, seconds,
-            getCurrentUser);
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, getCurrentUser,
+               seconds, TimeUnit.SECONDS);
    }
 
    @Provides

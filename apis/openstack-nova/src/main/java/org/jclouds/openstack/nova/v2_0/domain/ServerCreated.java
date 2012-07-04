@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,8 +18,16 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+import java.util.Set;
+
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
@@ -27,23 +35,23 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  * @author Adam Lowe
  * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Get_Server_Details-d1e2623.html"
- *      />
- */
+      "http://docs.openstack.org/api/openstack-compute/1.1/content/Get_Server_Details-d1e2623.html"
+      />
+*/
 public class ServerCreated extends Resource {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromServerCreated(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
-      private String adminPass;
-
-      /**
+      protected String adminPass;
+   
+      /** 
        * @see ServerCreated#getAdminPass()
        */
       public T adminPass(String adminPass) {
@@ -51,12 +59,13 @@ public class ServerCreated extends Resource {
          return self();
       }
 
-      public T fromServerCreated(ServerCreated in) {
-         return super.fromResource(in).adminPass(in.getAdminPass());
-      }
-
       public ServerCreated build() {
-         return new ServerCreated(this);
+         return new ServerCreated(id, name, links, adminPass);
+      }
+      
+      public T fromServerCreated(ServerCreated in) {
+         return super.fromResource(in)
+                  .adminPass(in.getAdminPass());
       }
    }
 
@@ -66,31 +75,40 @@ public class ServerCreated extends Resource {
          return this;
       }
    }
-   
-   protected ServerCreated() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   private String adminPass;
 
-   protected ServerCreated(Builder<?> builder) {
-      super(builder);
-      this.adminPass = builder.adminPass;
+   private final String adminPass;
+
+   @ConstructorProperties({
+      "id", "name", "links", "adminPass"
+   })
+   protected ServerCreated(String id, @Nullable String name, Set<Link> links, String adminPass) {
+      super(id, name, links);
+      this.adminPass = checkNotNull(adminPass, "adminPass");
    }
 
    /**
     * @return the administrative password for this server. Note: this is not available in Server responses.
     */
    public String getAdminPass() {
-      return adminPass;
+      return this.adminPass;
    }
-
-   // hashCode/equals from super is ok
 
    @Override
-   protected ToStringHelper string() {
-      return super.string().add("adminPass", adminPass);
+   public int hashCode() {
+      return Objects.hashCode(adminPass);
    }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ServerCreated that = ServerCreated.class.cast(obj);
+      return super.equals(that) && Objects.equal(this.adminPass, that.adminPass);
+   }
+   
+   protected ToStringHelper string() {
+      return super.string()
+            .add("adminPass", adminPass);
+   }
+   
 }

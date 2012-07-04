@@ -26,6 +26,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;

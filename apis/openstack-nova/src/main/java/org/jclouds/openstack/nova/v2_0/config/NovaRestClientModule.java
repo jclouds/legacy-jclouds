@@ -29,8 +29,6 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.location.suppliers.ImplicitLocationSupplier;
-import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.nova.v2_0.NovaAsyncClient;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
 import org.jclouds.openstack.nova.v2_0.domain.Extension;
@@ -81,7 +79,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 
 /**
  * Configures the Nova connection.
@@ -120,12 +117,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(ImplicitOptionalConverter.class).to(
             PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
       super.configure();
-   }
-
-   @Override
-   protected void installLocations() {
-      super.installLocations();
-      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 
    @Provides

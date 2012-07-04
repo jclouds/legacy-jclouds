@@ -58,58 +58,51 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", singleThreaded = true, testName = "TemplateBuilderImplTest")
 public class TemplateBuilderImplTest {
-   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
+   protected Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
 
-   protected Location region = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description("us-east-1")
-         .parent(provider).build();
-   
-   protected Location region2 = new LocationBuilder().scope(LocationScope.REGION).id("us-east-2").description("us-east-2")
-         .parent(provider).build();
+   protected Location region = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
+            .description("us-east-1").parent(provider).build();
+
+   protected Location region2 = new LocationBuilder().scope(LocationScope.REGION).id("us-east-2")
+            .description("us-east-2").parent(provider).build();
+
+   protected OperatingSystem os = OperatingSystem.builder().name("osName").version("osVersion")
+            .description("osDescription").arch("X86_32").build();
+
+   protected Image image = new ImageBuilder().id("us-east-1/imageId").providerId("imageId").name("imageName")
+            .description("imageDescription").version("imageVersion").operatingSystem(os).status(Image.Status.AVAILABLE)
+            .location(region).build();
+
+   protected Image image2 = ImageBuilder.fromImage(image).operatingSystem(os.toBuilder().arch("X86_64").build()).build();
    
    @SuppressWarnings("unchecked")
    public void testLocationPredicateWhenComputeMetadataIsNotLocationBound() {
-      Image image = createMock(Image.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
 
       Hardware hardware = new HardwareBuilder().id("hardwareId").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(region));
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-               image));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(image));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
-      expect(image.getLocation()).andReturn(region).anyTimes();
-      expect(image.getProviderId()).andReturn("imageId").anyTimes();
 
-      replay(image);
-      replay(os);
-      replay(defaultTemplate);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultTemplate, optionsProvider, templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
       assert template.locationPredicate.apply(hardware);
 
-      verify(image);
-      verify(os);
-      verify(defaultTemplate);
-      verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultTemplate, optionsProvider, templateBuilderProvider);
    }
    
    @SuppressWarnings("unchecked")
    @Test
    public void testResolveImages() {
-      Image image = createMock(Image.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
-      Image image2 = createMock(Image.class);
-      OperatingSystem os2 = createMock(OperatingSystem.class);
+
 
       Hardware hardware = new HardwareBuilder().id("hardwareId").build();
 
@@ -123,56 +116,19 @@ public class TemplateBuilderImplTest {
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
-      expect(image.getName()).andReturn("imageName");
-      expect(image2.getName()).andReturn("imageName");
-      expect(image.getDescription()).andReturn("imageDescription");
-      expect(image2.getDescription()).andReturn("imageDescription");
-      expect(image.getVersion()).andReturn("imageVersion");
-      expect(image2.getVersion()).andReturn("imageVersion");
-      expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
-      expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
-      expect(image.getLocation()).andReturn(region).anyTimes();
-      expect(image2.getLocation()).andReturn(region).anyTimes();
-      expect(image.getProviderId()).andReturn("imageId").anyTimes();
-      expect(image2.getProviderId()).andReturn("imageId2").anyTimes();
-      expect(os.getName()).andReturn("osName");
-      expect(os2.getName()).andReturn("osName");
-      expect(os.getVersion()).andReturn("osVersion");
-      expect(os2.getVersion()).andReturn("osVersion");
-      expect(os.getDescription()).andReturn("osDescription");
-      expect(os2.getDescription()).andReturn("osDescription");
-      expect(os.getArch()).andReturn("X86_64").atLeastOnce();
-      expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
-      
-      replay(image);
-      replay(image2);
-      replay(os);
-      replay(os2);
-      replay(defaultTemplate);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultTemplate, optionsProvider, templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       assertEquals(template.resolveImage(hardware, images.get()), image2);
 
-      verify(image);
-      verify(image2);
-      verify(os);
-      verify(os2);
-      verify(defaultTemplate);
-      verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultTemplate, optionsProvider, templateBuilderProvider);
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testArchWins() {
-      Image image = createMock(Image.class);
-      Image image2 = createMock(Image.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
-      OperatingSystem os2 = createMock(OperatingSystem.class);
 
       Hardware hardware = new HardwareBuilder().id("hardwareId").build();
 
@@ -188,45 +144,19 @@ public class TemplateBuilderImplTest {
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
 
-      
-      expect(image.getLocation()).andReturn(region).atLeastOnce();
-      expect(image2.getLocation()).andReturn(region).atLeastOnce();
-      expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
-      expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
-      expect(image.getId()).andReturn("us-east-1/1").atLeastOnce();
-      expect(image.getProviderId()).andReturn("1").anyTimes();
-      expect(image2.getProviderId()).andReturn("2").anyTimes();
-
-      expect(os.getArch()).andReturn("X86_32").atLeastOnce();
-      expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
-
-      replay(image);
-      replay(image2);
-      replay(os);
-      replay(os2);
-      replay(defaultTemplate);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultTemplate, optionsProvider, templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       assertEquals(template.smallest().osArchMatches("X86_32").build().getImage(), image);
 
-      verify(image);
-      verify(image2);
-      verify(os);
-      verify(os2);
-      verify(defaultTemplate);
-      verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultTemplate, optionsProvider, templateBuilderProvider);
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testHardwareWithImageIdPredicateOnlyAcceptsImage() {
-      Image image = createMock(Image.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
 
       Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("us-east-1/imageId"))
                .build();
@@ -242,25 +172,7 @@ public class TemplateBuilderImplTest {
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
-      expect(image.getId()).andReturn("us-east-1/imageId").atLeastOnce();
-      expect(image.getLocation()).andReturn(region).atLeastOnce();
-      expect(image.getName()).andReturn(null).atLeastOnce();
-      expect(image.getDescription()).andReturn(null).atLeastOnce();
-      expect(image.getVersion()).andReturn(null).atLeastOnce();
-      expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
-      expect(image.getProviderId()).andReturn("imageId").anyTimes();
-      
 
-      expect(os.getName()).andReturn(null).atLeastOnce();
-      expect(os.getVersion()).andReturn(null).atLeastOnce();
-      expect(os.getFamily()).andReturn(null).atLeastOnce();
-      expect(os.getDescription()).andReturn(null).atLeastOnce();
-      expect(os.getArch()).andReturn(null).atLeastOnce();
-      expect(os.is64Bit()).andReturn(false).atLeastOnce();
-
-
-      replay(image);
-      replay(os);
       replay(defaultTemplate);
       replay(optionsProvider);
       replay(templateBuilderProvider);
@@ -270,8 +182,6 @@ public class TemplateBuilderImplTest {
 
       template.imageId("us-east-1/imageId").build();
 
-      verify(image);
-      verify(os);
       verify(defaultTemplate);
       verify(optionsProvider);
       verify(templateBuilderProvider);
@@ -280,8 +190,6 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testHardwareWithImageIdPredicateOnlyAcceptsImageWhenLocationNull() {
-      Image image = createMock(Image.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
 
       Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("us-east-1/imageId"))
                .build();
@@ -297,37 +205,21 @@ public class TemplateBuilderImplTest {
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
-      expect(image.getId()).andReturn("us-east-1/imageId").atLeastOnce();
-      expect(image.getLocation()).andReturn(null).atLeastOnce();
-      expect(image.getName()).andReturn(null).atLeastOnce();
-      expect(image.getDescription()).andReturn(null).atLeastOnce();
-      expect(image.getVersion()).andReturn(null).atLeastOnce();
-      expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
-      expect(image.getProviderId()).andReturn("imageId").anyTimes();
-      
-      expect(os.getName()).andReturn(null).atLeastOnce();
-      expect(os.getVersion()).andReturn(null).atLeastOnce();
-      expect(os.getFamily()).andReturn(null).atLeastOnce();
-      expect(os.getDescription()).andReturn(null).atLeastOnce();
-      expect(os.getArch()).andReturn(null).atLeastOnce();
-      expect(os.is64Bit()).andReturn(false).atLeastOnce();
 
-      replay(image, os, defaultTemplate, optionsProvider, templateBuilderProvider);
+      replay(defaultTemplate, optionsProvider, templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       template.imageId("us-east-1/imageId").build();
 
-      verify(image, os, defaultTemplate, optionsProvider, templateBuilderProvider);
+      verify(defaultTemplate, optionsProvider, templateBuilderProvider);
 
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testHardwareWithImageIdPredicateOnlyDoesntImage() {
-      Image image = createMock(Image.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
 
       Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("differentImageId"))
                .build();
@@ -343,43 +235,18 @@ public class TemplateBuilderImplTest {
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
-      expect(image.getId()).andReturn("us-east-1/imageId").atLeastOnce();
-      expect(image.getLocation()).andReturn(region).atLeastOnce();
-      expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
-      expect(image.getName()).andReturn(null).atLeastOnce();
-      expect(image.getDescription()).andReturn(null).atLeastOnce();
-      expect(image.getVersion()).andReturn(null).atLeastOnce();
-      expect(image.getProviderId()).andReturn("imageId").anyTimes();
       
-
-      expect(os.getName()).andReturn(null).atLeastOnce();
-      expect(os.getVersion()).andReturn(null).atLeastOnce();
-      expect(os.getFamily()).andReturn(null).atLeastOnce();
-      expect(os.getDescription()).andReturn(null).atLeastOnce();
-      expect(os.getArch()).andReturn(null).atLeastOnce();
-      expect(os.is64Bit()).andReturn(false).atLeastOnce();
-
-      replay(image);
-      replay(os);
-      replay(defaultTemplate);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
-
+      replay(defaultTemplate, optionsProvider, templateBuilderProvider);
+      
       TemplateBuilderImpl template = createTemplateBuilder(image, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
       try {
          template.imageId("us-east-1/imageId").build();
          assert false;
       } catch (NoSuchElementException e) {
-         // make sure big data is not in the exception message
-         assertEquals(
-                  e.getMessage(),
-                  "no hardware profiles support images matching params: {imageId=us-east-1/imageId, locationId=us-east-1, os64Bit=false}");
-         verify(image);
-         verify(os);
-         verify(defaultTemplate);
-         verify(optionsProvider);
-         verify(templateBuilderProvider);
+         // make sure message is succinct
+         assertEquals(e.getMessage(), "no hardware profiles support images matching params: idEquals(differentImageId)");
+         verify(defaultTemplate, optionsProvider, templateBuilderProvider);
       }
    }
 
@@ -468,80 +335,47 @@ public class TemplateBuilderImplTest {
    public void testSuppliedImageLocationWiderThanDefault() {
       TemplateOptions from = provideTemplateOptions();
 
-      Image image = createMock(Image.class);
-
-      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("us-east-1/foo")).build();
+      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals(image.getId())).build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(region));
+               .<Location> of(provider, region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
                .<Image> of(image));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(hardware));
-      Location imageLocation = createMock(Location.class);
-      OperatingSystem os = createMock(OperatingSystem.class);
 
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
       expect(optionsProvider.get()).andReturn(from).atLeastOnce();
 
-
-      expect(image.getId()).andReturn("us-east-1/foo").atLeastOnce();
-      expect(image.getLocation()).andReturn(region).atLeastOnce();
-      expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
-      expect(image.getName()).andReturn(null).atLeastOnce();
-      expect(image.getDescription()).andReturn(null).atLeastOnce();
-      expect(image.getVersion()).andReturn(null).atLeastOnce();
-      expect(image.getProviderId()).andReturn("foo").anyTimes();
-      
-      expect(os.getName()).andReturn(null).atLeastOnce();
-      expect(os.getVersion()).andReturn(null).atLeastOnce();
-      expect(os.getFamily()).andReturn(null).atLeastOnce();
-      expect(os.getDescription()).andReturn(null).atLeastOnce();
-      expect(os.getArch()).andReturn(null).atLeastOnce();
-      expect(os.is64Bit()).andReturn(false).atLeastOnce();
-
-
-      replay(defaultOptions);
-      replay(imageLocation);
-      replay(image);
-      replay(os);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultOptions, optionsProvider, templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
-      assertEquals(template.imageId("us-east-1/foo").locationId(region.getId()).build().getLocation(), region);
+      assertEquals(template.imageId(image.getId()).locationId(provider.getId()).build().getLocation(), region);
 
-      verify(defaultOptions);
-      verify(imageLocation);
-      verify(image);
-      verify(os);
-      verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultOptions, optionsProvider, templateBuilderProvider);
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testSuppliedLocationWithNoOptions() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+               .<Location> of(region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of());
-      Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
 
       replay(defaultOptions);
-      replay(defaultLocation);
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       try {
@@ -552,7 +386,6 @@ public class TemplateBuilderImplTest {
       }
 
       verify(defaultOptions);
-      verify(defaultLocation);
       verify(optionsProvider);
       verify(templateBuilderProvider);
    }
@@ -563,21 +396,19 @@ public class TemplateBuilderImplTest {
       TemplateOptions from = provideTemplateOptions();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+               .<Location> of(region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of());
-      Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
 
       expect(optionsProvider.get()).andReturn(from).atLeastOnce();
 
-      replay(defaultLocation);
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       try {
@@ -587,83 +418,124 @@ public class TemplateBuilderImplTest {
 
       }
 
-      verify(defaultLocation);
       verify(optionsProvider);
       verify(templateBuilderProvider);
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testImagesMustBePresentWhenQuerying() {
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(region));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(createMock(Hardware.class)));
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateOptions defaultOptions = createMock(TemplateOptions.class);
+
+      expect(optionsProvider.get()).andReturn(defaultOptions);
+
+      replay(defaultOptions, optionsProvider, templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
+               optionsProvider, templateBuilderProvider);
+
+      try {
+         template.os64Bit(true).build();
+         assert false;
+      } catch (IllegalStateException e) {
+         assertEquals(e.getMessage(), "no images present!");
+      }
+
+      verify(defaultOptions, optionsProvider, templateBuilderProvider);
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testHardwareProfilesMustBePresentWhenQuerying() {
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(region));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(image));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of());
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateOptions defaultOptions = createMock(TemplateOptions.class);
+
+      expect(optionsProvider.get()).andReturn(defaultOptions);
+
+      replay(defaultOptions, optionsProvider, templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
+               optionsProvider, templateBuilderProvider);
+
+      try {
+         template.os64Bit(true).build();
+         assert false;
+      } catch (IllegalStateException e) {
+         assertEquals(e.getMessage(), "no hardware profiles present!");
+      }
+
+      verify(defaultOptions, optionsProvider, templateBuilderProvider);
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testDefaultLocationWithNoOptionsNoSuchElement() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
+               .<Location> of(region));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(image));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
-      Location defaultLocation = createMock(Location.class);
+               .<Hardware> of(createMock(Hardware.class)));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      replay(defaultOptions);
-      replay(defaultLocation);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultOptions, optionsProvider, templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       try {
-         template.imageId("region/imageId").build();
+         template.imageId("region/imageId2").build();
          assert false;
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
-         assertEquals(e.getMessage(), "imageId(region/imageId) not found");
+         assertEquals(e.getMessage(), "imageId(region/imageId2) not found");
       }
 
-      verify(defaultOptions);
-      verify(defaultLocation);
-      verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultOptions, optionsProvider, templateBuilderProvider);
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testDefaultLocationWithUnmatchedPredicateExceptionMessageAndLocationNotCalled() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
+               .<Location> of(region));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(image));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
-      Location defaultLocation = createMock(Location.class);
+               .<Hardware> of(createMock(Hardware.class)));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      replay(defaultOptions);
-      replay(defaultLocation);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultOptions, optionsProvider, templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
 
       try {
-         template.imageDescriptionMatches("description").build();
+         template.imageDescriptionMatches("notDescription").build();
          assert false;
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
-         assertEquals(e.getMessage(), "no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),imageDescription(description))");
+         assertEquals(e.getMessage(), "no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),imageDescription(notDescription))");
       }
 
-      verify(defaultOptions);
-      verify(defaultLocation);
-      verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultOptions, optionsProvider, templateBuilderProvider);
    }
 
    protected TemplateOptions provideTemplateOptions() {
@@ -675,9 +547,9 @@ public class TemplateBuilderImplTest {
    public void testDefaultLocationWithOptions() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of());
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(image));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+               .<Hardware> of(createMock(Hardware.class)));
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       TemplateOptions from = provideTemplateOptions();
@@ -685,11 +557,7 @@ public class TemplateBuilderImplTest {
 
       expect(optionsProvider.get()).andReturn(from);
 
-      expect(from.getInboundPorts()).andReturn(new int[] { 22 });
-
-      replay(defaultLocation);
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
+      replay(defaultLocation, optionsProvider, templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
                optionsProvider, templateBuilderProvider);
@@ -701,9 +569,7 @@ public class TemplateBuilderImplTest {
 
       }
 
-      verify(defaultLocation);
-      // verify(optionsProvider);
-      verify(templateBuilderProvider);
+      verify(defaultLocation, optionsProvider, templateBuilderProvider);
    }
 
    @SuppressWarnings("unchecked")

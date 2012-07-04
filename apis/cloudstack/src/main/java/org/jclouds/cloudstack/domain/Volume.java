@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,288 +16,508 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Vijay Kiran
- */
-public class Volume implements Comparable<Volume> {
+*/
+public class Volume {
 
-   public static Builder builder() {
-      return new Builder();
+   /**
+    */
+   public static enum State {
+      
+      /**
+      * indicates that the volume record is created in the DB, but not on the backend
+      */
+      ALLOCATED,
+      /**
+      * the volume is being created on the backend
+      */
+      CREATING,
+      /**
+      * the volume is ready to be used
+      */
+      READY,
+      /**
+      * the volume is destroyed (either as a result of deleteVolume command for DataDisk or as a part of destroyVm)
+      */
+      DESTROYED,
+      /**
+      * the volume has failed somehow, e.g. during creation (in cloudstack development)
+      */
+      FAILED,
+      
+      UNRECOGNIZED;
+      
+      @Override
+      public String toString() {
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+      
+      public static State fromValue(String state) {
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
    }
 
+   /**
+    */
+   public static enum Type {
+      ROOT(0),
+      DATADISK(1),
+      UNRECOGNIZED(Integer.MAX_VALUE);
+      
+      private int code;
+      
+      private static final Map<Integer, Type> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(Type.values()),
+      new Function<Type, Integer>() {
+      
+      @Override
+      public Integer apply(Type input) {
+      return input.code;
+      }
+      
+      });
+      
+      Type(int code) {
+      this.code = code;
+      }
+      
+      @Override
+      public String toString() {
+      return name().toLowerCase();
+      }
+      
+      public static Type fromValue(String resourceType) {
+      Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
+      return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
+      }
+      
+   }
 
-   public static class Builder {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromVolume(this);
+   }
 
-      private String id;
-      private String account;
-      private Date attached;
-      private Date created;
-      private boolean destroyed;
-      private String deviceId;
-      private String diskOfferingDisplayText;
-      private String diskOfferingId;
-      private String diskOfferingName;
-      private String domain;
-      private String domainId;
-      private String hypervisor;
-      private boolean isExtractable;
-      private String jobId;
-      private String jobStatus;
-      private String name;
-      private String serviceOfferingDisplayText;
-      private String serviceOfferingId;
-      private String serviceOfferingName;
-      private long size;
-      private String snapshotId;
-      private State state;
-      private String storage;
-      private String storageType;
-      private Type type;
-      private String virtualMachineId;
-      private String vmDisplayName;
-      private String vmName;
-      private VirtualMachine.State vmState;
-      private String zoneId;
-      private String zoneName;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-      public Builder id(String id) {
+      protected String id;
+      protected String account;
+      protected Date attached;
+      protected Date created;
+      protected boolean destroyed;
+      protected String deviceId;
+      protected String diskOfferingDisplayText;
+      protected String diskOfferingId;
+      protected String diskOfferingName;
+      protected String domain;
+      protected String domainId;
+      protected String hypervisor;
+      protected boolean isExtractable;
+      protected String jobId;
+      protected String jobStatus;
+      protected String name;
+      protected String serviceOfferingDisplayText;
+      protected String serviceOfferingId;
+      protected String serviceOfferingName;
+      protected long size;
+      protected String snapshotId;
+      protected Volume.State state;
+      protected String storage;
+      protected String storageType;
+      protected Volume.Type type;
+      protected String virtualMachineId;
+      protected String vmDisplayName;
+      protected String vmName;
+      protected VirtualMachine.State vmState;
+      protected String zoneId;
+      protected String zoneName;
+   
+      /** 
+       * @see Volume#getId()
+       */
+      public T id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder account(String account) {
+      /** 
+       * @see Volume#getAccount()
+       */
+      public T account(String account) {
          this.account = account;
-         return this;
+         return self();
       }
 
-      public Builder attached(Date attached) {
+      /** 
+       * @see Volume#getAttached()
+       */
+      public T attached(Date attached) {
          this.attached = attached;
-         return this;
+         return self();
       }
 
-      public Builder created(Date created) {
+      /** 
+       * @see Volume#getCreated()
+       */
+      public T created(Date created) {
          this.created = created;
-         return this;
+         return self();
       }
 
-      public Builder destroyed(boolean destroyed) {
+      /** 
+       * @see Volume#isDestroyed()
+       */
+      public T destroyed(boolean destroyed) {
          this.destroyed = destroyed;
-         return this;
+         return self();
       }
 
-      public Builder deviceId(String deviceId) {
+      /** 
+       * @see Volume#getDeviceId()
+       */
+      public T deviceId(String deviceId) {
          this.deviceId = deviceId;
-         return this;
+         return self();
       }
 
-      public Builder diskOfferingDisplayText(String diskOfferingDisplayText) {
+      /** 
+       * @see Volume#getDiskOfferingDisplayText()
+       */
+      public T diskOfferingDisplayText(String diskOfferingDisplayText) {
          this.diskOfferingDisplayText = diskOfferingDisplayText;
-         return this;
+         return self();
       }
 
-      public Builder diskOfferingId(String diskOfferingId) {
+      /** 
+       * @see Volume#getDiskOfferingId()
+       */
+      public T diskOfferingId(String diskOfferingId) {
          this.diskOfferingId = diskOfferingId;
-         return this;
+         return self();
       }
 
-      public Builder diskOfferingName(String diskOfferingName) {
+      /** 
+       * @see Volume#getDiskOfferingName()
+       */
+      public T diskOfferingName(String diskOfferingName) {
          this.diskOfferingName = diskOfferingName;
-         return this;
+         return self();
       }
 
-      public Builder domain(String domain) {
+      /** 
+       * @see Volume#getDomain()
+       */
+      public T domain(String domain) {
          this.domain = domain;
-         return this;
+         return self();
       }
 
-      public Builder domainId(String domainId) {
+      /** 
+       * @see Volume#getDomainId()
+       */
+      public T domainId(String domainId) {
          this.domainId = domainId;
-         return this;
+         return self();
       }
 
-      public Builder hypervisor(String hypervisor) {
+      /** 
+       * @see Volume#getHypervisor()
+       */
+      public T hypervisor(String hypervisor) {
          this.hypervisor = hypervisor;
-         return this;
+         return self();
       }
 
-      public Builder isExtractable(boolean isExtractable) {
+      /** 
+       * @see Volume#isExtractable()
+       */
+      public T isExtractable(boolean isExtractable) {
          this.isExtractable = isExtractable;
-         return this;
+         return self();
       }
 
-      public Builder jobId(String jobId) {
+      /** 
+       * @see Volume#getJobId()
+       */
+      public T jobId(String jobId) {
          this.jobId = jobId;
-         return this;
+         return self();
       }
 
-      public Builder jobStatus(String jobStatus) {
+      /** 
+       * @see Volume#getJobStatus()
+       */
+      public T jobStatus(String jobStatus) {
          this.jobStatus = jobStatus;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /** 
+       * @see Volume#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder serviceOfferingDisplayText(String serviceOfferingDisplayText) {
+      /** 
+       * @see Volume#getServiceOfferingDisplayText()
+       */
+      public T serviceOfferingDisplayText(String serviceOfferingDisplayText) {
          this.serviceOfferingDisplayText = serviceOfferingDisplayText;
-         return this;
+         return self();
       }
 
-      public Builder serviceOfferingId(String serviceOfferingId) {
+      /** 
+       * @see Volume#getServiceOfferingId()
+       */
+      public T serviceOfferingId(String serviceOfferingId) {
          this.serviceOfferingId = serviceOfferingId;
-         return this;
+         return self();
       }
 
-      public Builder serviceOfferingName(String serviceOfferingName) {
+      /** 
+       * @see Volume#getServiceOfferingName()
+       */
+      public T serviceOfferingName(String serviceOfferingName) {
          this.serviceOfferingName = serviceOfferingName;
-         return this;
+         return self();
       }
 
-      public Builder size(long size) {
+      /** 
+       * @see Volume#getSize()
+       */
+      public T size(long size) {
          this.size = size;
-         return this;
+         return self();
       }
 
-      public Builder snapshotId(String snapshotId) {
+      /** 
+       * @see Volume#getSnapshotId()
+       */
+      public T snapshotId(String snapshotId) {
          this.snapshotId = snapshotId;
-         return this;
+         return self();
       }
 
-      public Builder state(State state) {
+      /** 
+       * @see Volume#getState()
+       */
+      public T state(Volume.State state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder storage(String storage) {
+      /** 
+       * @see Volume#getStorage()
+       */
+      public T storage(String storage) {
          this.storage = storage;
-         return this;
+         return self();
       }
 
-      public Builder storageType(String storageType) {
+      /** 
+       * @see Volume#getStorageType()
+       */
+      public T storageType(String storageType) {
          this.storageType = storageType;
-         return this;
+         return self();
       }
 
-      public Builder type(Type type) {
+      /** 
+       * @see Volume#getType()
+       */
+      public T type(Volume.Type type) {
          this.type = type;
-         return this;
+         return self();
       }
 
-      public Builder virtualMachineId(String virtualMachineId) {
+      /** 
+       * @see Volume#getVirtualMachineId()
+       */
+      public T virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
-         return this;
+         return self();
       }
 
-      public Builder vmDisplayName(String vmDisplayName) {
+      /** 
+       * @see Volume#getVmDisplayName()
+       */
+      public T vmDisplayName(String vmDisplayName) {
          this.vmDisplayName = vmDisplayName;
-         return this;
+         return self();
       }
 
-      public Builder vmName(String vmName) {
+      /** 
+       * @see Volume#getVmName()
+       */
+      public T vmName(String vmName) {
          this.vmName = vmName;
-         return this;
+         return self();
       }
 
-      public Builder vmState(VirtualMachine.State vmState) {
+      /** 
+       * @see Volume#getVmState()
+       */
+      public T vmState(VirtualMachine.State vmState) {
          this.vmState = vmState;
-         return this;
+         return self();
       }
 
-      public Builder zoneId(String zoneId) {
+      /** 
+       * @see Volume#getZoneId()
+       */
+      public T zoneId(String zoneId) {
          this.zoneId = zoneId;
-         return this;
+         return self();
       }
 
-      public Builder zoneName(String zoneName) {
+      /** 
+       * @see Volume#getZoneName()
+       */
+      public T zoneName(String zoneName) {
          this.zoneName = zoneName;
-         return this;
+         return self();
       }
 
       public Volume build() {
-         return new Volume(id, account, attached, created, destroyed, deviceId, diskOfferingDisplayText, diskOfferingId,
-               diskOfferingName, domain, domainId, hypervisor, isExtractable, jobId, jobStatus, name,
-               serviceOfferingDisplayText, serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage,
-               storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId, zoneName);
+         return new Volume(id, account, attached, created, destroyed, deviceId, diskOfferingDisplayText, diskOfferingId, diskOfferingName, domain, domainId, hypervisor, isExtractable, jobId, jobStatus, name, serviceOfferingDisplayText, serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage, storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId, zoneName);
+      }
+      
+      public T fromVolume(Volume in) {
+         return this
+                  .id(in.getId())
+                  .account(in.getAccount())
+                  .attached(in.getAttached())
+                  .created(in.getCreated())
+                  .destroyed(in.isDestroyed())
+                  .deviceId(in.getDeviceId())
+                  .diskOfferingDisplayText(in.getDiskOfferingDisplayText())
+                  .diskOfferingId(in.getDiskOfferingId())
+                  .diskOfferingName(in.getDiskOfferingName())
+                  .domain(in.getDomain())
+                  .domainId(in.getDomainId())
+                  .hypervisor(in.getHypervisor())
+                  .isExtractable(in.isExtractable())
+                  .jobId(in.getJobId())
+                  .jobStatus(in.getJobStatus())
+                  .name(in.getName())
+                  .serviceOfferingDisplayText(in.getServiceOfferingDisplayText())
+                  .serviceOfferingId(in.getServiceOfferingId())
+                  .serviceOfferingName(in.getServiceOfferingName())
+                  .size(in.getSize())
+                  .snapshotId(in.getSnapshotId())
+                  .state(in.getState())
+                  .storage(in.getStorage())
+                  .storageType(in.getStorageType())
+                  .type(in.getType())
+                  .virtualMachineId(in.getVirtualMachineId())
+                  .vmDisplayName(in.getVmDisplayName())
+                  .vmName(in.getVmName())
+                  .vmState(in.getVmState())
+                  .zoneId(in.getZoneId())
+                  .zoneName(in.getZoneName());
       }
    }
 
-   private String id;
-   private String account;
-   private Date attached;
-   private Date created;
-   private boolean destroyed;
-   @SerializedName("deviceid")
-   private String deviceId;
-   @SerializedName("diskofferingdisplaytext")
-   private String diskOfferingDisplayText;
-   @SerializedName("diskofferingid")
-   private String diskOfferingId;
-   @SerializedName("diskofferingname")
-   private String diskOfferingName;
-   private String domain;
-   @SerializedName("domainid")
-   private String domainId;
-   private String hypervisor;
-   @SerializedName("isextractable")
-   private boolean isExtractable;
-   @SerializedName("jobid")
-   private String jobId;
-   @SerializedName("jobstatus")
-   private String jobStatus;
-   private String name;
-   @SerializedName("serviceofferingdisplaytext")
-   private String serviceOfferingDisplayText;
-   @SerializedName("serviceofferingid")
-   private String serviceOfferingId;
-   @SerializedName("serviceofferingname")
-   private String serviceOfferingName;
-   private long size;
-   @SerializedName("snapshotid")
-   private String snapshotId;
-   private State state;
-   private String storage;
-   @SerializedName("storagetype")
-   // MAYDO: this should perhaps be an enum; only value I have seen is "shared"
-   private String storageType;
-   private Type type;
-   @SerializedName("virtualmachineid")
-   private String virtualMachineId;
-   @SerializedName("vmdisplayname")
-   private String vmDisplayName;
-   @SerializedName("vmname")
-   private String vmName;
-   @SerializedName("vmstate")
-   private VirtualMachine.State vmState;
-   @SerializedName("zoneid")
-   private String zoneId;
-   @SerializedName("zonename")
-   private String zoneName;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public Volume(String id,String account,  Date attached, Date created, boolean destroyed, String deviceId,
-                 String diskOfferingDisplayText, String diskOfferingId, String diskOfferingName,
-                 String domain, String domainId, String hypervisor, boolean extractable, String jobId,
-                 String jobStatus, String name, String serviceOfferingDisplayText, String serviceOfferingId,
-                 String serviceOfferingName, long size, String snapshotId, State state, String storage,
-                 String storageType, Type type, String virtualMachineId, String vmDisplayName, String vmName,
-                 VirtualMachine.State vmState, String zoneId, String zoneName) {
-      this.id = id;
+   private final String id;
+   private final String account;
+   private final Date attached;
+   private final Date created;
+   private final boolean destroyed;
+   @Named("deviceid")
+   private final String deviceId;
+   @Named("diskofferingdisplaytext")
+   private final String diskOfferingDisplayText;
+   @Named("diskofferingid")
+   private final String diskOfferingId;
+   @Named("diskofferingname")
+   private final String diskOfferingName;
+   private final String domain;
+   @Named("domainid")
+   private final String domainId;
+   private final String hypervisor;
+   @Named("isextractable")
+   private final boolean isExtractable;
+   @Named("jobid")
+   private final String jobId;
+   @Named("jobstatus")
+   private final String jobStatus;
+   private final String name;
+   @Named("serviceofferingdisplaytext")
+   private final String serviceOfferingDisplayText;
+   @Named("serviceofferingid")
+   private final String serviceOfferingId;
+   @Named("serviceofferingname")
+   private final String serviceOfferingName;
+   private final long size;
+   @Named("snapshotid")
+   private final String snapshotId;
+   private final Volume.State state;
+   private final String storage;
+   @Named("storagetype")
+   private final String storageType;
+   private final Volume.Type type;
+   @Named("virtualmachineid")
+   private final String virtualMachineId;
+   @Named("vmdisplayname")
+   private final String vmDisplayName;
+   @Named("vmname")
+   private final String vmName;
+   @Named("vmstate")
+   private final VirtualMachine.State vmState;
+   @Named("zoneid")
+   private final String zoneId;
+   @Named("zonename")
+   private final String zoneName;
+
+   @ConstructorProperties({
+      "id", "account", "attached", "created", "destroyed", "deviceid", "diskofferingdisplaytext", "diskofferingid", "diskofferingname", "domain", "domainid", "hypervisor", "isextractable", "jobid", "jobstatus", "name", "serviceofferingdisplaytext", "serviceofferingid", "serviceofferingname", "size", "snapshotid", "state", "storage", "storagetype", "type", "virtualmachineid", "vmdisplayname", "vmname", "vmstate", "zoneid", "zonename"
+   })
+   protected Volume(String id, @Nullable String account, @Nullable Date attached, @Nullable Date created, boolean destroyed,
+                    @Nullable String deviceId, @Nullable String diskOfferingDisplayText, @Nullable String diskOfferingId,
+                    @Nullable String diskOfferingName, @Nullable String domain, @Nullable String domainId, @Nullable String hypervisor,
+                    boolean isExtractable, @Nullable String jobId, @Nullable String jobStatus, @Nullable String name,
+                    @Nullable String serviceOfferingDisplayText, @Nullable String serviceOfferingId, @Nullable String serviceOfferingName,
+                    long size, @Nullable String snapshotId, @Nullable Volume.State state, @Nullable String storage,
+                    @Nullable String storageType, @Nullable Volume.Type type, @Nullable String virtualMachineId,
+                    @Nullable String vmDisplayName, @Nullable String vmName, @Nullable VirtualMachine.State vmState,
+                    @Nullable String zoneId, @Nullable String zoneName) {
+      this.id = checkNotNull(id, "id");
       this.account = account;
       this.attached = attached;
       this.created = created;
@@ -309,7 +529,7 @@ public class Volume implements Comparable<Volume> {
       this.domain = domain;
       this.domainId = domainId;
       this.hypervisor = hypervisor;
-      isExtractable = extractable;
+      this.isExtractable = isExtractable;
       this.jobId = jobId;
       this.jobStatus = jobStatus;
       this.name = name;
@@ -330,299 +550,215 @@ public class Volume implements Comparable<Volume> {
       this.zoneName = zoneName;
    }
 
-   // for deserialization
-   Volume() {
-   }
-
    public String getId() {
-      return id;
+      return this.id;
    }
 
+   @Nullable
+   public String getAccount() {
+      return this.account;
+   }
+
+   @Nullable
    public Date getAttached() {
-      return attached;
+      return this.attached;
    }
 
+   @Nullable
    public Date getCreated() {
-      return created;
+      return this.created;
    }
 
    public boolean isDestroyed() {
-      return destroyed;
+      return this.destroyed;
    }
 
+   @Nullable
    public String getDeviceId() {
-      return deviceId;
+      return this.deviceId;
    }
 
+   @Nullable
    public String getDiskOfferingDisplayText() {
-      return diskOfferingDisplayText;
+      return this.diskOfferingDisplayText;
    }
 
+   @Nullable
    public String getDiskOfferingId() {
-      return diskOfferingId;
+      return this.diskOfferingId;
    }
 
+   @Nullable
    public String getDiskOfferingName() {
-      return diskOfferingName;
+      return this.diskOfferingName;
    }
 
+   @Nullable
    public String getDomain() {
-      return domain;
+      return this.domain;
    }
 
+   @Nullable
    public String getDomainId() {
-      return domainId;
+      return this.domainId;
    }
 
+   @Nullable
    public String getHypervisor() {
-      return hypervisor;
+      return this.hypervisor;
    }
 
    public boolean isExtractable() {
-      return isExtractable;
+      return this.isExtractable;
    }
 
+   @Nullable
    public String getJobId() {
-      return jobId;
+      return this.jobId;
    }
 
+   @Nullable
    public String getJobStatus() {
-      return jobStatus;
+      return this.jobStatus;
    }
 
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
+   @Nullable
    public String getServiceOfferingDisplayText() {
-      return serviceOfferingDisplayText;
+      return this.serviceOfferingDisplayText;
    }
 
+   @Nullable
    public String getServiceOfferingId() {
-      return serviceOfferingId;
+      return this.serviceOfferingId;
    }
 
+   @Nullable
    public String getServiceOfferingName() {
-      return serviceOfferingName;
+      return this.serviceOfferingName;
    }
 
    public long getSize() {
-      return size;
+      return this.size;
    }
 
+   @Nullable
    public String getSnapshotId() {
-      return snapshotId;
+      return this.snapshotId;
    }
 
-   public State getState() {
-      return state;
+   @Nullable
+   public Volume.State getState() {
+      return this.state;
    }
 
+   @Nullable
    public String getStorage() {
-      return storage;
+      return this.storage;
    }
 
+   @Nullable
    public String getStorageType() {
-      return storageType;
+      return this.storageType;
    }
 
-   public Type getType() {
-      return type;
+   @Nullable
+   public Volume.Type getType() {
+      return this.type;
    }
 
+   @Nullable
    public String getVirtualMachineId() {
-      return virtualMachineId;
+      return this.virtualMachineId;
    }
 
+   @Nullable
    public String getVmDisplayName() {
-      return vmDisplayName;
+      return this.vmDisplayName;
    }
 
+   @Nullable
    public String getVmName() {
-      return vmName;
+      return this.vmName;
    }
 
+   @Nullable
    public VirtualMachine.State getVmState() {
-      return vmState;
+      return this.vmState;
    }
 
+   @Nullable
    public String getZoneId() {
-      return zoneId;
+      return this.zoneId;
    }
 
+   @Nullable
    public String getZoneName() {
-      return zoneName;
-   }
-
-   public String getAccount() {
-      return account;
-   }
-
-   @Override
-   public int compareTo(Volume volume) {
-      return this.id.compareTo(volume.id);
-   }
-
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Volume that = (Volume) o;
-
-      if (!Objects.equal(id, that.id)) return false;
-      if (!Objects.equal(account, that.account)) return false;
-      if (!Objects.equal(attached, that.attached)) return false;
-      if (!Objects.equal(created, that.created)) return false;
-      if (!Objects.equal(destroyed, that.destroyed)) return false;
-      if (!Objects.equal(deviceId, that.deviceId)) return false;
-      if (!Objects.equal(diskOfferingDisplayText, that.diskOfferingDisplayText)) return false;
-      if (!Objects.equal(diskOfferingId, that.diskOfferingId)) return false;
-      if (!Objects.equal(diskOfferingName, that.diskOfferingName)) return false;
-      if (!Objects.equal(domain, that.domain)) return false;
-      if (!Objects.equal(domainId, that.domainId)) return false;
-      if (!Objects.equal(hypervisor, that.hypervisor)) return false;
-      if (!Objects.equal(isExtractable, that.isExtractable)) return false;
-      if (!Objects.equal(jobId, that.jobId)) return false;
-      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
-      if (!Objects.equal(name, that.name)) return false;
-      if (!Objects.equal(serviceOfferingDisplayText, that.serviceOfferingDisplayText)) return false;
-      if (!Objects.equal(serviceOfferingId, that.serviceOfferingId)) return false;
-      if (!Objects.equal(serviceOfferingName, that.serviceOfferingName)) return false;
-      if (!Objects.equal(size, that.size)) return false;
-      if (!Objects.equal(snapshotId, that.snapshotId)) return false;
-      if (!Objects.equal(state, that.state)) return false;
-      if (!Objects.equal(storage, that.storage)) return false;
-      if (!Objects.equal(storageType, that.storageType)) return false;
-      if (!Objects.equal(type, that.type)) return false;
-      if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
-      if (!Objects.equal(vmDisplayName, that.vmDisplayName)) return false;
-      if (!Objects.equal(vmName, that.vmName)) return false;
-      if (!Objects.equal(vmState, that.vmState)) return false;
-      if (!Objects.equal(zoneId, that.zoneId)) return false;
-      if (!Objects.equal(zoneName, that.zoneName)) return false;
-
-      return true;
+      return this.zoneName;
    }
 
    @Override
    public int hashCode() {
-       return Objects.hashCode(id, account, attached, created, destroyed, deviceId, diskOfferingDisplayText,
-                               diskOfferingId, diskOfferingName, domain, domainId, hypervisor,
-                               isExtractable, jobId, jobStatus, name, serviceOfferingDisplayText,
-                               serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage,
-                               storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId,
-                               zoneName);
+      return Objects.hashCode(id, account, attached, created, destroyed, deviceId, diskOfferingDisplayText, diskOfferingId, diskOfferingName, domain, domainId, hypervisor, isExtractable, jobId, jobStatus, name, serviceOfferingDisplayText, serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage, storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId, zoneName);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Volume that = Volume.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.account, that.account)
+               && Objects.equal(this.attached, that.attached)
+               && Objects.equal(this.created, that.created)
+               && Objects.equal(this.destroyed, that.destroyed)
+               && Objects.equal(this.deviceId, that.deviceId)
+               && Objects.equal(this.diskOfferingDisplayText, that.diskOfferingDisplayText)
+               && Objects.equal(this.diskOfferingId, that.diskOfferingId)
+               && Objects.equal(this.diskOfferingName, that.diskOfferingName)
+               && Objects.equal(this.domain, that.domain)
+               && Objects.equal(this.domainId, that.domainId)
+               && Objects.equal(this.hypervisor, that.hypervisor)
+               && Objects.equal(this.isExtractable, that.isExtractable)
+               && Objects.equal(this.jobId, that.jobId)
+               && Objects.equal(this.jobStatus, that.jobStatus)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.serviceOfferingDisplayText, that.serviceOfferingDisplayText)
+               && Objects.equal(this.serviceOfferingId, that.serviceOfferingId)
+               && Objects.equal(this.serviceOfferingName, that.serviceOfferingName)
+               && Objects.equal(this.size, that.size)
+               && Objects.equal(this.snapshotId, that.snapshotId)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.storage, that.storage)
+               && Objects.equal(this.storageType, that.storageType)
+               && Objects.equal(this.type, that.type)
+               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+               && Objects.equal(this.vmDisplayName, that.vmDisplayName)
+               && Objects.equal(this.vmName, that.vmName)
+               && Objects.equal(this.vmState, that.vmState)
+               && Objects.equal(this.zoneId, that.zoneId)
+               && Objects.equal(this.zoneName, that.zoneName);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("account", account).add("attached", attached).add("created", created).add("destroyed", destroyed)
+            .add("deviceId", deviceId).add("diskOfferingDisplayText", diskOfferingDisplayText).add("diskOfferingId", diskOfferingId)
+            .add("diskOfferingName", diskOfferingName).add("domain", domain).add("domainId", domainId).add("hypervisor", hypervisor)
+            .add("isExtractable", isExtractable).add("jobId", jobId).add("jobStatus", jobStatus).add("name", name)
+            .add("serviceOfferingDisplayText", serviceOfferingDisplayText).add("serviceOfferingId", serviceOfferingId)
+            .add("serviceOfferingName", serviceOfferingName).add("size", size).add("snapshotId", snapshotId).add("state", state)
+            .add("storage", storage).add("storageType", storageType).add("type", type).add("virtualMachineId", virtualMachineId)
+            .add("vmDisplayName", vmDisplayName).add("vmName", vmName).add("vmState", vmState).add("zoneId", zoneId).add("zoneName", zoneName);
+   }
+   
+   @Override
    public String toString() {
-      return "Volume{" +
-            "id=" + id +
-            ", account='" + account + '\'' +
-            ", attached=" + attached +
-            ", created=" + created +
-            ", destroyed=" + destroyed +
-            ", deviceId=" + deviceId +
-            ", diskOfferingDisplayText='" + diskOfferingDisplayText + '\'' +
-            ", diskOfferingId=" + diskOfferingId +
-            ", diskOfferingName='" + diskOfferingName + '\'' +
-            ", domain='" + domain + '\'' +
-            ", domainId=" + domainId +
-            ", hypervisor='" + hypervisor + '\'' +
-            ", isExtractable=" + isExtractable +
-            ", jobId=" + jobId +
-            ", jobStatus='" + jobStatus + '\'' +
-            ", name='" + name + '\'' +
-            ", serviceOfferingDisplayText='" + serviceOfferingDisplayText + '\'' +
-            ", serviceOfferingId=" + serviceOfferingId +
-            ", serviceOfferingName='" + serviceOfferingName + '\'' +
-            ", size=" + size +
-            ", snapshotId=" + snapshotId +
-            ", state=" + state +
-            ", storage='" + storage + '\'' +
-            ", storageType='" + storageType + '\'' +
-            ", type=" + type +
-            ", virtualMachineId=" + virtualMachineId +
-            ", vmDisplayName='" + vmDisplayName + '\'' +
-            ", vmName='" + vmName + '\'' +
-            ", vmState=" + vmState +
-            ", zoneId=" + zoneId +
-            ", zoneName='" + zoneName + '\'' +
-            '}';
-   }
-
-   public enum State {
-
-      /**
-       * indicates that the volume record is created in the DB, but not on the backend
-       */
-      ALLOCATED,
-      /**
-       * the volume is being created on the backend
-       */
-      CREATING,
-      /**
-       * the volume is ready to be used
-       */
-      READY,
-      /**
-       * the volume is destroyed (either as a result of deleteVolume command for DataDisk or as a part of destroyVm)
-       */
-      DESTROYED,
-      /**
-       * the volume has failed somehow, e.g. during creation (in cloudstack development)
-       */
-      FAILED,
-
-      UNRECOGNIZED;
-
-      @Override
-      public String toString() {
-         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
-      }
-
-      public static State fromValue(String state) {
-         try {
-            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
-
-   public enum Type {
-      ROOT(0),
-      DATADISK(1),
-      UNRECOGNIZED(Integer.MAX_VALUE);
-
-      private int code;
-
-      private static final Map<Integer, Type> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(Type.values()),
-            new Function<Type, Integer>() {
-
-               @Override
-               public Integer apply(Type input) {
-                  return input.code;
-               }
-
-            });
-
-      Type(int code) {
-         this.code = code;
-      }
-
-      @Override
-      public String toString() {
-         return name().toLowerCase();
-      }
-
-      public static Type fromValue(String resourceType) {
-         Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
-         return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
-      }
-
+      return string().toString();
    }
 
 }

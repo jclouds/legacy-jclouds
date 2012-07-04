@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.v2_0.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
@@ -55,6 +56,7 @@ import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.predicates.ImagePredicates;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
@@ -154,9 +156,29 @@ public class NovaComputeServiceAdapter implements
    @Override
    public Iterable<ImageInZone> listImages() {
       Builder<ImageInZone> builder = ImmutableSet.builder();
-      for (final String zoneId : zoneIds.get()) {
-         builder.addAll(transform(filter(novaClient.getImageClientForZone(zoneId).listImagesInDetail(), ImagePredicates
-                  .statusEquals(Image.Status.ACTIVE)), new Function<Image, ImageInZone>() {
+      Set<String> zones = zoneIds.get();
+      checkState(zones.size() > 0, "no zones found in supplier %s", zoneIds);
+      for (final String zoneId : zones) {
+         Set<Image> images = novaClient.getImageClientForZone(zoneId).listImagesInDetail();
+         if (images.size() == 0) {
+            logger.debug("no images found in zone %s", zoneId);
+            continue;
+         }
+         Iterable<Image> active = filter(images, ImagePredicates.statusEquals(Image.Status.ACTIVE));
+         if (images.size() == 0) {
+            logger.debug("no images with status active in zone %s; non-active: %s", zoneId,
+                     transform(active, new Function<Image, String>() {
+
+                        @Override
+                        public String apply(Image input) {
+                           return Objects.toStringHelper("").add("id", input.getId()).add("status", input.getStatus())
+                                    .toString();
+                        }
+
+                     }));
+            continue;
+         }
+         builder.addAll(transform(active, new Function<Image, ImageInZone>() {
 
             @Override
             public ImageInZone apply(Image arg0) {

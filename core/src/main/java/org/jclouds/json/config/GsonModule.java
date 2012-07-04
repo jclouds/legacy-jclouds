@@ -18,6 +18,7 @@
  */
 package org.jclouds.json.config;
 
+import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -35,20 +36,32 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
+import org.jclouds.json.internal.DeserializationConstructorAndReflectiveTypeAdapterFactory;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
+import org.jclouds.json.internal.IgnoreNullMapTypeAdapterFactory;
+import org.jclouds.json.internal.IgnoreNullMultimapTypeAdapterFactory;
+import org.jclouds.json.internal.IgnoreNullSetTypeAdapterFactory;
+import org.jclouds.json.internal.NamingStrategies.AnnotationConstructorNamingStrategy;
+import org.jclouds.json.internal.NamingStrategies.AnnotationOrNameFieldNamingStrategy;
+import org.jclouds.json.internal.NamingStrategies.ExtractNamed;
+import org.jclouds.json.internal.NamingStrategies.ExtractSerializedName;
 import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
 import org.jclouds.json.internal.OptionalTypeAdapterFactory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Bytes;
+import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
+import com.google.gson.internal.ConstructorConstructor;
+import com.google.gson.internal.Excluder;
 import com.google.gson.internal.JsonReaderInternalAccess;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -69,8 +82,12 @@ public class GsonModule extends AbstractModule {
    @Singleton
    Gson provideGson(TypeAdapter<JsonBall> jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
             ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings)
-            throws ClassNotFoundException, Exception {
-      GsonBuilder builder = new GsonBuilder();
+            throws Exception {
+
+      FieldNamingStrategy serializationPolicy = new AnnotationOrNameFieldNamingStrategy(new ExtractSerializedName(),
+            new ExtractNamed());
+
+      GsonBuilder builder = new GsonBuilder().setFieldNamingStrategy(serializationPolicy);
 
       // simple (type adapters)
       builder.registerTypeAdapter(Properties.class, propertiesAdapter.nullSafe());
@@ -80,6 +97,17 @@ public class GsonModule extends AbstractModule {
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
       builder.registerTypeAdapterFactory(new OptionalTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(new IgnoreNullSetTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(new IgnoreNullMapTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(new IgnoreNullMultimapTypeAdapterFactory());
+
+      AnnotationConstructorNamingStrategy deserializationPolicy =
+            new AnnotationConstructorNamingStrategy(
+                  ImmutableSet.of(ConstructorProperties.class, Inject.class), ImmutableSet.of(new ExtractNamed()));
+
+      builder.registerTypeAdapterFactory(
+            new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(),
+            serializationPolicy, Excluder.DEFAULT, deserializationPolicy));
 
       // complicated (serializers/deserializers as they need context to operate)
       builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());

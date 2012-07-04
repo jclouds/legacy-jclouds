@@ -76,7 +76,7 @@ public class OSCategoryInTest {
    @Test
    public void testTemplateInAcceptableCategory() {
       assertTrue(new OSCategoryIn(client).apply(acceptableCategories).apply(
-         Template.builder().OSTypeId("10").build()
+         Template.builder().id("1").OSTypeId("10").build()
       ));
       verify(client, guestOSClient);
    }
@@ -84,7 +84,7 @@ public class OSCategoryInTest {
    @Test
    public void testTemplateNotInAcceptableCategory() {
       assertFalse(new OSCategoryIn(client).apply(acceptableCategories).apply(
-         Template.builder().OSTypeId("30").build()
+         Template.builder().id("2").OSTypeId("30").build()
       ));
       verify(client, guestOSClient);
    }

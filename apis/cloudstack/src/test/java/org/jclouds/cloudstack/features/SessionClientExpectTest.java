@@ -28,6 +28,7 @@ import java.net.URLEncoder;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
+import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;

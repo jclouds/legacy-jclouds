@@ -18,18 +18,22 @@
  */
 package org.jclouds.cloudstack.parse;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Set;
 
 import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.json.BaseParserTest;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -37,7 +41,11 @@ import com.google.inject.Injector;
  * @author Andrei Savu
  */
 @Test(groups = "unit")
-public class ListHostsResponseTest extends BaseSetParserTest<Host> {
+public class ListHostsResponseTest extends BaseParserTest<Set<Host>, Set<Host>> {
+
+   public void compare(Set<Host> expects, Set<Host> response) {
+      assertEquals(response.toString(), expects.toString());
+   }
 
    @Override
    protected Injector injector() {

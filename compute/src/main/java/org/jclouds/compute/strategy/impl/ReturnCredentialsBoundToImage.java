@@ -33,6 +33,8 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+
 /**
  * @author Adrian Cole
  */
@@ -66,5 +68,10 @@ public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCreden
       } else {
          return LoginCredentials.builder().user("root").build();
       }
+   }
+   
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).toString();
    }
 }

@@ -72,13 +72,13 @@ import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneSecurityGroupNameAn
 import org.jclouds.openstack.nova.v2_0.predicates.FindSecurityGroupWithNameAndReturnTrue;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.util.Suppliers2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -124,7 +124,7 @@ public class NovaComputeServiceContextModule extends
 
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
 
       bind(TemplateOptions.class).to(NovaTemplateOptions.class);
 
@@ -200,7 +200,7 @@ public class NovaComputeServiceContextModule extends
    @Singleton
    protected Supplier<Map<String, Location>> createLocationIndexedById(
             @Memoized Supplier<Set<? extends Location>> locations) {
-      return Suppliers.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
+      return Suppliers2.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
 
          @SuppressWarnings("unchecked")
          @Override

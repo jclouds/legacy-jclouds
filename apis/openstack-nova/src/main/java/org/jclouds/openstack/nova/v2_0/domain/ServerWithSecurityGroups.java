@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,51 +20,65 @@ package org.jclouds.openstack.nova.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
+import java.beans.ConstructorProperties;
+import java.util.Date;
+import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.v2_0.domain.Link;
+import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.collect.Multimap;
 
 /**
  * Extended server returned by ServerWithSecurityGroupsClient
- *
+ * 
  * @author Adam Lowe
  * @see <a href=
 "http://docs.openstack.org/api/openstack-compute/1.1/content/Get_Server_Details-d1e2623.html"
 />
- */
+*/
 public class ServerWithSecurityGroups extends Server {
 
-   public static Builder<?> builder() {
+   public static Builder<?> builder() { 
       return new ConcreteBuilder();
    }
-
-   public Builder<?> toBuilder() {
+   
+   public Builder<?> toBuilder() { 
       return new ConcreteBuilder().fromServerWithSecurityGroups(this);
    }
 
    public static abstract class Builder<T extends Builder<T>> extends Server.Builder<T>  {
-      private Set<String> securityGroupNames = ImmutableSet.of();
-
-      /**
+      protected Set<String> securityGroupNames = ImmutableSet.of();
+   
+      /** 
        * @see ServerWithSecurityGroups#getSecurityGroupNames()
        */
       public T securityGroupNames(Set<String> securityGroupNames) {
-         this.securityGroupNames = securityGroupNames;
+         this.securityGroupNames = ImmutableSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames"));      
          return self();
       }
 
+      public T securityGroupNames(String... in) {
+         return securityGroupNames(ImmutableSet.copyOf(in));
+      }
+
       public ServerWithSecurityGroups build() {
-         return new ServerWithSecurityGroups(this);
+         return new ServerWithSecurityGroups(id, name, links, uuid, tenantId, userId, updated, created, hostId,
+               accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses,
+               metadata, extendedStatus, extendedAttributes, diskConfig, securityGroupNames);
       }
-
+      
       public T fromServerWithSecurityGroups(ServerWithSecurityGroups in) {
-         return super.fromServer(in).securityGroupNames(in.getSecurityGroupNames());
+         return super.fromServer(in)
+                  .securityGroupNames(in.getSecurityGroupNames());
       }
-
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -73,25 +87,26 @@ public class ServerWithSecurityGroups extends Server {
          return this;
       }
    }
-   
-   protected ServerWithSecurityGroups() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
-  
-   @SerializedName(value="security_groups")
-   private Set<String> securityGroupNames = ImmutableSet.of();
 
-   protected ServerWithSecurityGroups(Builder<?> builder) {
-      super(builder);
-      this.securityGroupNames = ImmutableSet.copyOf(checkNotNull(builder.securityGroupNames, "securityGroupNames"));
+   @Named("security_groups")
+   private final Set<String> securityGroupNames;
+
+   @ConstructorProperties({
+      "id", "name", "links", "uuid", "tenant_id", "user_id", "updated", "created", "hostId", "accessIPv4", "accessIPv6", "status", "image", "flavor", "key_name", "config_drive", "addresses", "metadata", "extendedStatus", "extendedAttributes", "OS-DCF:diskConfig", "security_groups"
+   })
+   protected ServerWithSecurityGroups(String id, @Nullable String name, Set<Link> links, @Nullable String uuid,
+                                      String tenantId, String userId, Date updated, Date created, @Nullable String hostId,
+                                      @Nullable String accessIPv4, @Nullable String accessIPv6, Server.Status status, Resource image,
+                                      Resource flavor, @Nullable String keyName, @Nullable String configDrive,
+                                      Multimap<String, Address> addresses, Map<String, String> metadata, 
+                                      @Nullable ServerExtendedStatus extendedStatus, @Nullable ServerExtendedAttributes extendedAttributes,
+                                      @Nullable String diskConfig, Set<String> securityGroupNames) {
+      super(id, name, links, uuid, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status, image, flavor, keyName, configDrive, addresses, metadata, extendedStatus, extendedAttributes, diskConfig);
+      this.securityGroupNames = ImmutableSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames"));      
    }
 
-   /**
-    */
    public Set<String> getSecurityGroupNames() {
-      return Collections.unmodifiableSet(this.securityGroupNames);
+      return this.securityGroupNames;
    }
 
    @Override
@@ -106,10 +121,10 @@ public class ServerWithSecurityGroups extends Server {
       ServerWithSecurityGroups that = ServerWithSecurityGroups.class.cast(obj);
       return super.equals(that) && Objects.equal(this.securityGroupNames, that.securityGroupNames);
    }
-
+   
    protected ToStringHelper string() {
       return super.string()
             .add("securityGroupNames", securityGroupNames);
    }
-
+   
 }

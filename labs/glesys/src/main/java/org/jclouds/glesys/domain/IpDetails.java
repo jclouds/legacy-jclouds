@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,187 +16,311 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.glesys.domain;
 
-import java.util.Arrays;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.List;
 
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Represents detailed information about an IP address.
  */
 public class IpDetails {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromIpDetails(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
       protected String datacenter;
-      protected String ipversion;
+      protected int ipversion;
       protected String ptr;
       protected String platform;
       protected String address;
       protected String netmask;
       protected String broadcast;
       protected String gateway;
-      protected List<String> nameservers;
+      protected List<String> nameServers = ImmutableList.of();
+      protected String serverId;
+      protected Cost cost;
+      protected boolean reserved;
 
-      public Builder datacenter(String datacenter) {
-         this.datacenter = datacenter;
-         return this;
+      /**
+       * @see IpDetails#getDatacenter()
+       */
+      public T datacenter(String datacenter) {
+         this.datacenter = checkNotNull(datacenter, "datacenter");
+         return self();
       }
 
-      public Builder ipversion(String ipversion) {
+      protected T version(int ipversion) {
          this.ipversion = ipversion;
-         return this;
+         return self();
       }
 
-      public Builder ptr(String ptr) {
-         this.ptr = ptr;
-         return this;
+      /*
+      * @see IpDetails#getVersion()
+      */
+      public T version4() {
+         return version(4);
       }
 
-      public Builder platform(String platform) {
-         this.platform = platform;
-         return this;
+      /*
+      * @see IpDetails#getVersion()
+      */
+      public T version6() {
+         return version(6);
+      }
+
+      /**
+       * @see IpDetails#getPtr()
+       */
+      public T ptr(String ptr) {
+         this.ptr = checkNotNull(ptr, "ptr");
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getPlatform()
+       */
+      public T platform(String platform) {
+         this.platform = checkNotNull(platform, "platform");
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getAddress()
+       */
+      public T address(String address) {
+         this.address = address;
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getNetmask()
+       */
+      public T netmask(String netmask) {
+         this.netmask = netmask;
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getBroadcast()
+       */
+      public T broadcast(String broadcast) {
+         this.broadcast = broadcast;
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getGateway()
+       */
+      public T gateway(String gateway) {
+         this.gateway = gateway;
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getNameServers()
+       */
+      public T nameServers(List<String> nameservers) {
+         this.nameServers = ImmutableList.copyOf(checkNotNull(nameservers, "nameServers"));
+         return self();
+      }
+
+      public T nameServers(String... in) {
+         return nameServers(ImmutableList.copyOf(in));
+      }
+
+      /**
+       * @see IpDetails#getServerId()
+       */
+      public T serverId(String serverId) {
+         this.serverId = serverId;
+         return self();
+      }
+
+      /**
+       * @see IpDetails#getCost()
+       */
+      public T cost(Cost cost) {
+         this.cost = cost;
+         return self();
+      }
+
+      /**
+       * @see IpDetails#isReserved()
+       */
+      public T reserved(boolean reserved) {
+         this.reserved = reserved;
+         return self();
       }
 
       public IpDetails build() {
-         return new IpDetails(datacenter, ipversion, ptr, platform,
-                 address, netmask, broadcast, gateway, nameservers);
+         return new IpDetails(datacenter, ipversion, ptr, platform, address, netmask, broadcast, gateway, nameServers,
+               serverId, cost, new GleSYSBoolean(reserved));
       }
 
-      public Builder address(String address) {
-         this.address = address;
-         return this;
+      public T fromIpDetails(IpDetails in) {
+         return this.datacenter(in.getDatacenter())
+               .version(in.getVersion())
+               .ptr(in.getPtr())
+               .platform(in.getPlatform())
+               .address(in.getAddress())
+               .netmask(in.getNetmask())
+               .broadcast(in.getBroadcast())
+               .gateway(in.getGateway())
+               .nameServers(in.getNameServers())
+               .serverId(in.getServerId())
+               .cost(in.getCost())
+               .reserved(in.isReserved());
       }
+   }
 
-      public Builder netmask(String netmask) {
-         this.netmask = netmask;
-         return this;
-      }
-
-      public Builder broadcast(String broadcast) {
-         this.broadcast = broadcast;
-         return this;
-      }
-
-      public Builder gateway(String gateway) {
-         this.gateway = gateway;
-         return this;
-      }
-
-      public Builder nameServers(String... nameServers) {
-         this.nameservers = Arrays.asList(nameServers);
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
          return this;
       }
    }
 
-   protected String datacenter;
-   protected String ipversion;
-   @SerializedName("PTR")
-   protected String ptr;
-   protected String platform;
-   protected String address;
-   protected String netmask;
-   protected String broadcast;
-   protected String gateway;
-   protected List<String> nameservers;
+   private final String datacenter;
+   private final int version;
+   private final String ptr;
+   private final String platform;
+   private final String address;
+   private final String netmask;
+   private final String broadcast;
+   private final String gateway;
+   private final List<String> nameServers;
+   private final String serverId;
+   private final Cost cost;
+   private final boolean reserved;
 
-   public IpDetails(String datacenter, String ipversion, String ptr, String platform,
-                    @Nullable String address, @Nullable String netmask,
-                    @Nullable String broadcast, @Nullable String gateway,
-                    @Nullable List<String> nameservers) {
-      this.datacenter = datacenter;
-      this.ipversion = ipversion;
-      this.ptr = ptr;
-      this.platform = platform;
+   @ConstructorProperties({
+         "datacenter", "ipversion", "ptr", "platform", "ipaddress", "netmask", "broadcast", "gateway", "nameservers",
+         "serverid", "cost", "reserved"
+   })
+   protected IpDetails(String datacenter, int version, String ptr, String platform, String address,
+                       @Nullable String netmask, @Nullable String broadcast, @Nullable String gateway,
+                       List<String> nameServers, @Nullable String serverId, Cost cost, GleSYSBoolean reserved) {
+      this.datacenter = checkNotNull(datacenter, "datacenter");
+      this.version = checkNotNull(version, "version");
+      this.ptr = checkNotNull(ptr, "ptr");
+      this.platform = checkNotNull(platform, "platform");
       this.address = address;
       this.netmask = netmask;
       this.broadcast = broadcast;
       this.gateway = gateway;
-      this.nameservers = nameservers;
+      this.nameServers = ImmutableList.copyOf(nameServers);
+      this.serverId = serverId;
+      this.cost = checkNotNull(cost, "cost");
+      this.reserved = checkNotNull(reserved, "reserved").getValue();
    }
 
    public String getDatacenter() {
-      return datacenter;
+      return this.datacenter;
    }
 
-   public String getIpversion() {
-      return ipversion;
+   /**
+    * @return the IP version, ex. 4
+    */
+   public int getVersion() {
+      return this.version;
    }
 
    public String getPtr() {
-      return ptr;
+      return this.ptr;
    }
 
    public String getPlatform() {
-      return platform;
+      return this.platform;
    }
 
    public String getAddress() {
-      return address;
+      return this.address;
    }
 
+   @Nullable
    public String getNetmask() {
-      return netmask;
+      return this.netmask;
    }
 
+   @Nullable
    public String getBroadcast() {
-      return broadcast;
+      return this.broadcast;
    }
 
+   @Nullable
    public String getGateway() {
-      return gateway;
+      return this.gateway;
    }
 
    public List<String> getNameServers() {
-      return nameservers;
+      return this.nameServers;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+   @Nullable
+   public String getServerId() {
+      return serverId;
+   }
 
-      IpDetails ipDetails = (IpDetails) o;
+   public Cost getCost() {
+      return cost;
+   }
 
-      if (address != null ? !address.equals(ipDetails.address) : ipDetails.address != null) return false;
-      if (broadcast != null ? !broadcast.equals(ipDetails.broadcast) : ipDetails.broadcast != null) return false;
-      if (datacenter != null ? !datacenter.equals(ipDetails.datacenter) : ipDetails.datacenter != null) return false;
-      if (gateway != null ? !gateway.equals(ipDetails.gateway) : ipDetails.gateway != null) return false;
-      if (ipversion != null ? !ipversion.equals(ipDetails.ipversion) : ipDetails.ipversion != null) return false;
-      if (netmask != null ? !netmask.equals(ipDetails.netmask) : ipDetails.netmask != null) return false;
-      if (platform != null ? !platform.equals(ipDetails.platform) : ipDetails.platform != null) return false;
-      if (ptr != null ? !ptr.equals(ipDetails.ptr) : ipDetails.ptr != null) return false;
-      if (nameservers != null ? !nameservers.equals(ipDetails.nameservers) : ipDetails.nameservers != null)
-         return false;
-
-      return true;
+   public boolean isReserved() {
+      return reserved;
    }
 
    @Override
    public int hashCode() {
-      int result = datacenter != null ? datacenter.hashCode() : 0;
-      result = 31 * result + (ipversion != null ? ipversion.hashCode() : 0);
-      result = 31 * result + (ptr != null ? ptr.hashCode() : 0);
-      result = 31 * result + (platform != null ? platform.hashCode() : 0);
-      result = 31 * result + (address != null ? address.hashCode() : 0);
-      result = 31 * result + (netmask != null ? netmask.hashCode() : 0);
-      result = 31 * result + (broadcast != null ? broadcast.hashCode() : 0);
-      result = 31 * result + (gateway != null ? gateway.hashCode() : 0);
-      return result;
+      return Objects.hashCode(datacenter, version, ptr, platform, address, netmask, broadcast, gateway, nameServers,
+            serverId, cost, reserved);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      IpDetails that = IpDetails.class.cast(obj);
+      return Objects.equal(this.datacenter, that.datacenter)
+            && Objects.equal(this.version, that.version)
+            && Objects.equal(this.ptr, that.ptr)
+            && Objects.equal(this.platform, that.platform)
+            && Objects.equal(this.address, that.address)
+            && Objects.equal(this.netmask, that.netmask)
+            && Objects.equal(this.broadcast, that.broadcast)
+            && Objects.equal(this.gateway, that.gateway)
+            && Objects.equal(this.nameServers, that.nameServers)
+            && Objects.equal(this.serverId, that.serverId)
+            && Objects.equal(this.cost, that.cost)
+            && Objects.equal(this.reserved, that.reserved);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("")
+            .add("datacenter", datacenter).add("ipversion", version).add("ptr", ptr).add("platform", platform)
+            .add("address", address).add("netmask", netmask).add("broadcast", broadcast).add("gateway", gateway)
+            .add("nameServers", nameServers).add("serverId", serverId).add("cost", cost).add("reserved", reserved);
    }
 
    @Override
    public String toString() {
-      return String.format("IpDetails[datacenter=%s, ipversion=%s, platform=%s, PTR=%s, " +
-              "address=%s, netmask=%s, broadcast=%s, gateway=%s",
-              datacenter, ipversion, platform, ptr, address, netmask, broadcast, gateway);
+      return string().toString();
    }
+
 }

@@ -27,7 +27,6 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v2_0.domain.Volume;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeSnapshot;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeOptions;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeSnapshotOptions;
@@ -128,7 +127,6 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
       if (volumeOption.isPresent()) {
          Set<Volume> volumes = volumeOption.get().listVolumesInDetail();
          assertNotNull(volumes);
-         assertTrue(volumes.contains(testVolume));
          boolean foundIt = false;
          for (Volume vol : volumes) {
             Volume details = volumeOption.get().getVolume(vol.getId());
@@ -239,7 +237,7 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return volumeOption.get().listAttachmentsOnServer(serverId).size() == before + 1;
+                  return volumeOption.get().listAttachmentsOnServer(serverId).size() > before;
                }
             }, 60 * 1000L).apply(volumeOption.get()));
 
