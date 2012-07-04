@@ -1,5 +1,6 @@
-alias apt-get-install="apt-get install -f -y -qq --force-yes"
 alias apt-get-update="apt-get update -qq"
+alias apt-get-install="apt-get install -f -y -qq --force-yes"
+alias yum-install="yum --quiet --nogpgcheck -y install"
 
 function ensure_cmd_or_install_package_apt(){
   local cmd=$1
@@ -11,7 +12,7 @@ function ensure_cmd_or_install_package_apt(){
 function ensure_cmd_or_install_package_yum(){
   local cmd=$1
   local pkg=$2
-  hash $cmd 2>/dev/null || yum --nogpgcheck -y install $pkg
+  hash $cmd 2>/dev/null || yum-install $pkg
 }
 
 function ensure_netutils_apt() {
