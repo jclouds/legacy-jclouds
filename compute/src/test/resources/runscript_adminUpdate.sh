@@ -101,7 +101,7 @@ END_OF_JCLOUDS_SCRIPT
 	exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
 	PermitRootLogin no
 	" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
-	hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload
+	hash service 2>&- && service ssh reload 2>&- || /etc/init.d/ssh* reload
 	awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
 	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 	

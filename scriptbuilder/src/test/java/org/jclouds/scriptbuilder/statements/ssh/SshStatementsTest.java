@@ -38,7 +38,7 @@ public class SshStatementsTest {
                .append("PasswordAuthentication no").append("\n")//
                .append("PermitRootLogin no").append("\n")//
                .append("\" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3").append("\n")//
-               .append("hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload").append("\n").toString());
+               .append("hash service 2>&- && service ssh reload 2>&- || /etc/init.d/ssh* reload").append("\n").toString());
    }
 
    public void testSshdConfigUNIX() {
@@ -46,7 +46,7 @@ public class SshStatementsTest {
                new StringBuilder().append("exec 3<> /etc/ssh/sshd_config && awk -v TEXT=\"")//
                         .append("AddressFamily inet6").append("\n")//
                         .append("\" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3").append("\n")//
-                        .append("hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload").append("\n").toString());
+                        .append("hash service 2>&- && service ssh reload 2>&- || /etc/init.d/ssh* reload").append("\n").toString());
    }
 
 }

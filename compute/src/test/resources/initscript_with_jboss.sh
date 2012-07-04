@@ -83,20 +83,21 @@ END_OF_JCLOUDS_SCRIPT
    echo "aborting: $@" 1>&2
    exit 1
 }
+alias apt-get-update="apt-get update -qq"
 alias apt-get-install="apt-get install -f -y -qq --force-yes"
-alias apt-get-upgrade="(apt-get update -qq&&apt-get upgrade -y -qq)"
+alias yum-install="yum --quiet --nogpgcheck -y install"
 
 function ensure_cmd_or_install_package_apt(){
   local cmd=$1
   local pkg=$2
   
-  hash $cmd 2>/dev/null || apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )
+  hash $cmd 2>/dev/null || ( apt-get-update && apt-get-install $pkg )
 }
 
 function ensure_cmd_or_install_package_yum(){
   local cmd=$1
   local pkg=$2
-  hash $cmd 2>/dev/null || yum --nogpgcheck -y install $pkg
+  hash $cmd 2>/dev/null || yum-install $pkg
 }
 
 function ensure_netutils_apt() {
@@ -133,44 +134,56 @@ function setupPublicCurl() {
   ensure_can_resolve_public_dns
   return 0  
 }
+# adds JAVA_HOME and into PATH in global and user-specific profiles
 function setupJavaHomeInProfile() {
-  test -n \"$SUDO_USER\" && cat >> `getent passwd $SUDO_USER| cut -f6 -d:`/.bashrc <<-'END_OF_JCLOUDS_FILE'
+  PROFILES=(/etc/bashrc $HOME/.bashrc /etc/skel/.bashrc)
+  test -n "$SUDO_USER" &&
+    PROFILES=(${PROFILES[*]} `getent passwd $SUDO_USER| cut -f6 -d:`/.bashrc)
+  for PROFILE in ${PROFILES[*]}; do
+    cat >> $PROFILE <<-'END_OF_JCLOUDS_FILE'
 	export JAVA_HOME=/usr/local/jdk
 	export PATH=$JAVA_HOME/bin:$PATH
 END_OF_JCLOUDS_FILE
-  cat >> /etc/bashrc <<-'END_OF_JCLOUDS_FILE'
-	export JAVA_HOME=/usr/local/jdk
-	export PATH=$JAVA_HOME/bin:$PATH
-END_OF_JCLOUDS_FILE
-  cat >> $HOME/.bashrc <<-'END_OF_JCLOUDS_FILE'
-	export JAVA_HOME=/usr/local/jdk
-	export PATH=$JAVA_HOME/bin:$PATH
-END_OF_JCLOUDS_FILE
-  cat >> /etc/skel/.bashrc <<-'END_OF_JCLOUDS_FILE'
-	export JAVA_HOME=/usr/local/jdk
-	export PATH=$JAVA_HOME/bin:$PATH
-END_OF_JCLOUDS_FILE
+  done
 }
 
+# resets JAVA_HOME to what an openjdk installer created
+function findOpenJDK() {
+  local oldJavaHome=$JAVA_HOME
+  unset JAVA_HOME
+  for CANDIDATE in $oldJavaHome `ls -d /usr/lib/jvm/java-1.6.0-openjdk-* /usr/lib/jvm/java-6-openjdk-* /usr/lib/jvm/java-6-openjdk 2>&-`; do
+    if [ -n "$CANDIDATE" -a -x "$CANDIDATE/bin/java" ]; then
+      export JAVA_HOME=$CANDIDATE
+      break
+    fi
+  done
+}
+
+# assures JDK installed and JAVA_HOME to a link at /usr/local/jdk
 function installOpenJDK() {
-  if hash apt-get 2>/dev/null; then
-    pkg=openjdk-7-jdk
-    (apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )) &&
-      export JAVA_HOME=`ls -d /usr/lib/jvm/java-7-openjdk*|grep -v common`
-    # ex. lucid where jdk 7 is not present
-    export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-6-openjdk}
-    test -d $JAVA_HOME || apt-get-install openjdk-6-jdk
-  elif hash yum 2>/dev/null; then
-    #TODO: find a jdk7 yum repo
-    export pkg=java-1.6.0-openjdk-devel
-    yum --nogpgcheck -y install $pkg &&
-    export JAVA_HOME=`ls -d /usr/lib/jvm/java-1.6.0-openjdk-*`
-  else
-    abort "we only support apt-get and yum right now... please contribute!"
-    return 1
+  if [ "$JAVA_HOME" == "/usr/local/jdk" ]; then
+    echo skipping as JAVA_HOME is already set to /usr/local/jdk
+    return 0
   fi
-  test -n "$JAVA_HOME" || abort "JDK installation failed!"
-  ln -Fs $JAVA_HOME /usr/local/jdk 
+  if [ -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
+    echo reusing JAVA_HOME $JAVA_HOME
+  else
+    if hash apt-get 2>/dev/null; then
+      apt-get-update && apt-get-install openjdk-6-jdk
+    elif hash yum 2>/dev/null; then
+      yum-install java-1.6.0-openjdk-devel
+    else
+      abort "we only support apt-get and yum right now... please contribute"
+    fi
+    findOpenJDK
+    if [ -n "$JAVA_HOME" ]; then
+      echo installed JAVA_HOME $JAVA_HOME
+    else
+      abort "JDK installation failed"
+    fi
+  fi
+  rm -rf /usr/local/jdk
+  ln -Fs $JAVA_HOME /usr/local/jdk
   /usr/local/jdk/bin/java -version || abort "cannot run java"
   setupJavaHomeInProfile
 }
@@ -199,7 +212,7 @@ END_OF_JCLOUDS_SCRIPT
 	exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
 	PermitRootLogin no
 	" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
-	hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload
+	hash service 2>&- && service ssh reload 2>&- || /etc/init.d/ssh* reload
 	awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
 	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 	setupPublicCurl || return 1

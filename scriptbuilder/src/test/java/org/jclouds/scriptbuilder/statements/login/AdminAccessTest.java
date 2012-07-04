@@ -33,7 +33,7 @@ import com.google.common.io.Resources;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", singleThreaded = true)
+@Test(groups = "unit", singleThreaded = true, testName = "AdminAccessTest")
 public class AdminAccessTest {
 
    public void testStandardUNIX() throws IOException {
