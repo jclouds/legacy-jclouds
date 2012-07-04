@@ -27,6 +27,7 @@ import javax.inject.Named;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;
 
@@ -46,11 +47,11 @@ public class RemoveFloatingIpFromNodeAndDeallocate implements Function<ZoneAndId
    protected Logger logger = Logger.NULL;
 
    private final NovaClient novaClient;
-   private final LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache;
+   private final LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache;
 
    @Inject
    public RemoveFloatingIpFromNodeAndDeallocate(NovaClient novaClient,
-            @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache) {
+            @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache) {
       this.novaClient = checkNotNull(novaClient, "novaClient");
       this.floatingIpCache = checkNotNull(floatingIpCache, "floatingIpCache");
    }
@@ -58,11 +59,11 @@ public class RemoveFloatingIpFromNodeAndDeallocate implements Function<ZoneAndId
    @Override
    public ZoneAndId apply(ZoneAndId id) {
       FloatingIPClient floatingIpClient = novaClient.getFloatingIPExtensionForZone(id.getZone()).get();
-      for (String ip : floatingIpCache.getUnchecked(id)) {
+      for (FloatingIP ip : floatingIpCache.getUnchecked(id)) {
          logger.debug(">> removing floatingIp(%s) from node(%s)", ip, id);
-         floatingIpClient.removeFloatingIPFromServer(ip, id.getId());
+         floatingIpClient.removeFloatingIPFromServer(ip.getIp(), id.getId());
          logger.debug(">> deallocating floatingIp(%s)", ip);
-         floatingIpClient.deallocate(ip);
+         floatingIpClient.deallocate(ip.getId());
       }
       floatingIpCache.invalidate(id);
       return id;
