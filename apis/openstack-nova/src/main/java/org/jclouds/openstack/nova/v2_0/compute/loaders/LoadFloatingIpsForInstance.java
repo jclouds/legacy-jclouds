@@ -41,7 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adam Lowe
  */
 @Singleton
-public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<String>> {
+public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<FloatingIP>> {
    private final NovaClient client;
 
    @Inject
@@ -50,22 +50,17 @@ public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<
    }
 
    @Override
-   public Iterable<String> load(final ZoneAndId key) throws Exception {
+   public Iterable<FloatingIP> load(final ZoneAndId key) throws Exception {
       String zone = key.getZone();
       Optional<FloatingIPClient> ipClientOptional = client.getFloatingIPExtensionForZone(zone);
       if (ipClientOptional.isPresent()) {
-         return Iterables.transform(Iterables.filter(ipClientOptional.get().listFloatingIPs(),
+         return Iterables.filter(ipClientOptional.get().listFloatingIPs(),
                   new Predicate<FloatingIP>() {
                      @Override
                      public boolean apply(FloatingIP input) {
                         return key.getId().equals(input.getInstanceId());
                      }
-                  }), new Function<FloatingIP, String>() {
-            @Override
-            public String apply(FloatingIP input) {
-               return input.getIp();
-            }
-         });
+                  });
       }
       return ImmutableSet.of();
    }

@@ -45,18 +45,17 @@ public class LoadFloatingIpsForInstanceTest {
    public void testReturnsPublicIpOnMatch() throws Exception {
       NovaClient client = createMock(NovaClient.class);
       FloatingIPClient ipClient = createMock(FloatingIPClient.class);
+      FloatingIP testIp = FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build();
 
       expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
-      expect(ipClient.listFloatingIPs()).andReturn(
-            ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build()))
-            .atLeastOnce();
+      expect(ipClient.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
 
       replay(client);
       replay(ipClient);
 
       LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
 
-      assertEquals(ImmutableSet.copyOf(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah"))), ImmutableSet.of("1.1.1.1"));
+      assertEquals(ImmutableSet.copyOf(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah"))), ImmutableSet.of(testIp));
 
       verify(client);
       verify(ipClient);

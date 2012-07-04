@@ -60,6 +60,7 @@ import org.jclouds.openstack.nova.v2_0.compute.loaders.LoadFloatingIpsForInstanc
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.compute.predicates.GetImageWhenImageInZoneHasActiveStatusPredicateWithResult;
 import org.jclouds.openstack.nova.v2_0.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
+import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.FlavorInZone;
@@ -128,7 +129,7 @@ public class NovaComputeServiceContextModule extends
 
       bind(TemplateOptions.class).to(NovaTemplateOptions.class);
 
-      bind(new TypeLiteral<CacheLoader<ZoneAndId, Iterable<String>>>() {
+      bind(new TypeLiteral<CacheLoader<ZoneAndId, Iterable<FloatingIP>>>() {
       }).annotatedWith(Names.named("FLOATINGIP")).to(LoadFloatingIpsForInstance.class);
 
       bind(new TypeLiteral<Function<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone>>() {
@@ -162,8 +163,8 @@ public class NovaComputeServiceContextModule extends
    @Provides
    @Singleton
    @Named("FLOATINGIP")
-   protected LoadingCache<ZoneAndId, Iterable<String>> instanceToFloatingIps(
-            @Named("FLOATINGIP") CacheLoader<ZoneAndId, Iterable<String>> in) {
+   protected LoadingCache<ZoneAndId, Iterable<FloatingIP>> instanceToFloatingIps(
+            @Named("FLOATINGIP") CacheLoader<ZoneAndId, Iterable<FloatingIP>> in) {
       return CacheBuilder.newBuilder().build(in);
    }
 
