@@ -210,5 +210,10 @@
             <artifactId>trystack-nova</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rackspace-cloudservers-us</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

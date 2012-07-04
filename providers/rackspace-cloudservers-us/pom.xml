@@ -27,7 +27,7 @@
     <version>1.5.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.provider</groupId>
   <artifactId>rackspace-cloudservers-us</artifactId>
   <name>jclouds Rackspace Next Generation Cloud Servers provider</name>
   <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers</description>

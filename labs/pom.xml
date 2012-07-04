@@ -48,7 +48,6 @@
        <module>joyent-sdc</module>
        <module>joyentcloud</module>
        <module>openstack-quantum</module>
-       <module>rackspace-cloudservers-us</module>
        <module>greenqloud-compute</module>
        <module>greenqloud-storage</module>
        <module>iam</module>
