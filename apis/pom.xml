@@ -53,5 +53,6 @@
        <module>cloudwatch</module>
        <module>cloudsigma</module>
        <module>cloudstack</module>
+       <module>rackspace-cloudidentity</module>
     </modules>
 </project>

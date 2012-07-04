@@ -51,7 +51,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jclouds.labs</groupId>
+      <groupId>org.jclouds.api</groupId>
       <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -75,7 +75,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.labs</groupId>
+      <groupId>org.jclouds.api</groupId>
       <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
