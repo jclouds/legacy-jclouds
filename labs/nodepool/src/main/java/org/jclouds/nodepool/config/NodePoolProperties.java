@@ -23,11 +23,20 @@ package org.jclouds.nodepool.config;
  */
 public interface NodePoolProperties {
 
-
    /**
     * Property to set the name of the backend group used for pooled nodes.
     */
    public static final String BACKEND_GROUP = "jclouds.nodepool.backend-group";
+
+   /**
+    * Property to set the user that will be installed in the nodes pre-frontend allocation.
+    */
+   public static final String POOL_NODE_USER = "jclouds.nodepool.node-user";
+
+   /**
+    * Property to set the password that will be installed in the nodes pre-frontend allocation.
+    */
+   public static final String POOL_NODE_PASSWORD = "jclouds.nodepool.node-password";
 
    /**
     * Property to set the provider or api of backend the pool
@@ -43,7 +52,7 @@ public interface NodePoolProperties {
     * Property to set the basedir where metadata will be stored
     */
    public static final String BASEDIR = "jclouds.nodepool.basedir";
-   
+
    /**
     * Property to set the container where metadata will be stored
     */

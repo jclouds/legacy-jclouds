@@ -18,7 +18,7 @@
  */
 package org.jclouds.nodepool;
 
-import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
+import static org.jclouds.nodepool.config.NodePoolProperties.*;
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_MODULES;
 import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.METADATA_CONTAINER;
@@ -69,6 +69,8 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
       properties.setProperty(MAX_SIZE, 10 + "");
       properties.setProperty(MIN_SIZE, 5 + "");
       properties.setProperty(REMOVE_DESTROYED, "false");
+      properties.setProperty(POOL_NODE_USER, System.getProperty("user.name"));
+      properties.setProperty(POOL_NODE_PASSWORD, "n0d3pu!!");
       return properties;
    }
 

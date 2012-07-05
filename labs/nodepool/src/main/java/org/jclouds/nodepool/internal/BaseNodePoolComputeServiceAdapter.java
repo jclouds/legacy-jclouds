@@ -20,6 +20,8 @@ package org.jclouds.nodepool.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_NODE_PASSWORD;
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_NODE_USER;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -36,6 +38,7 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.nodepool.Backend;
 import org.jclouds.nodepool.NodePoolComputeServiceAdapter;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -55,20 +58,23 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
    protected final Supplier<Template> backendTemplate;
    protected final String poolGroupName;
    protected final NodeMetadataStore metadataStore;
+   protected final AdminAccess initialCrendentials;
 
    public BaseNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
             @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupNamePrefix,
-            NodeMetadataStore metadataStore) {
+            NodeMetadataStore metadataStore, @Named(POOL_NODE_USER) String poolNodeUser,
+            @Named(POOL_NODE_PASSWORD) String poolNodePassword, AdminAccess.Configuration configuration) {
       this.backendComputeService = backendComputeService;
       this.poolGroupName = poolGroupNamePrefix;
       this.backendTemplate = backendTemplate;
       this.metadataStore = metadataStore;
+      this.initialCrendentials = new AdminAccess.Builder().build().init(configuration);
    }
 
    @Override
    public NodeMetadata getNode(String id) {
       NodeMetadata backendMetadata = backendComputeService.get().getNodeMetadata(id);
-      checkState(backendMetadata.getGroup().equals(backendMetadata));
+      checkState(backendMetadata.getGroup().equals(poolGroupName));
       return metadataStore.load(backendMetadata);
    }
 
@@ -131,7 +137,9 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
 
    protected void addToPool(int number) {
       try {
-         backendComputeService.get().createNodesInGroup(poolGroupName, number, backendTemplate.get());
+         Template template = backendTemplate.get().clone();
+         template.getOptions().runScript(initialCrendentials);
+         backendComputeService.get().createNodesInGroup(poolGroupName, number, template);
       } catch (RunNodesException e) {
          throw Throwables.propagate(e);
       }

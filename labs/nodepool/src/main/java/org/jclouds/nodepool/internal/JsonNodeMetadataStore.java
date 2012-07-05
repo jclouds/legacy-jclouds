@@ -1,6 +1,7 @@
 package org.jclouds.nodepool.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +60,8 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       checkNotNull(backendNodeMetadata);
       checkNotNull(userGroup);
       checkNotNull(userOptions);
+      checkNotNull(userOptions.getLoginUser());
+      checkState(userOptions.getLoginPassword() != null || userOptions.getLoginPrivateKey() != null);
       JsonUserNodeMetadata jsonMetadata = new JsonUserNodeMetadata();
       jsonMetadata.user = userOptions.getLoginUser();
       jsonMetadata.password = userOptions.getLoginPassword();

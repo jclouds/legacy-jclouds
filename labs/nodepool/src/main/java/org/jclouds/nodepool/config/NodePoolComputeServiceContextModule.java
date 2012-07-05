@@ -24,6 +24,7 @@ public class NodePoolComputeServiceContextModule extends JCloudsNativeComputeSer
       bind(ApiMetadata.class).to(NodePoolApiMetadata.class);
       install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>() {
       });
+      
    }
 
 }

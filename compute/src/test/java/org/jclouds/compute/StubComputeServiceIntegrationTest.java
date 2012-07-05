@@ -36,6 +36,7 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
+import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
@@ -65,9 +66,9 @@ import com.google.inject.Module;
 @Test(groups = "live", testName = "StubComputeServiceIntegrationTest")
 public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
 
-   private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
-   private static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
-   private static final ExecResponse EXEC_RC_GOOD = new ExecResponse("0", "", 0);
+   protected static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
+   protected static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
+   protected static final ExecResponse EXEC_RC_GOOD = new ExecResponse("0", "", 0);
 
    public StubComputeServiceIntegrationTest() {
       provider = "stub";
@@ -434,6 +435,14 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
          replay(client7);
 
          bind(SshClient.Factory.class).toInstance(factory);
+
+         bind(OpenSocketFinder.class).toInstance(new OpenSocketFinder() {
+            @Override
+            public HostAndPort findOpenSocketOnNode(NodeMetadata node, int port, long timeoutValue, TimeUnit timeUnits) {
+               return HostAndPort.fromParts("0.0.0.0", port);
+            }
+         });
+         
       }
 
       private void runScriptAndService(SshClient client, SshClient clientNew) {

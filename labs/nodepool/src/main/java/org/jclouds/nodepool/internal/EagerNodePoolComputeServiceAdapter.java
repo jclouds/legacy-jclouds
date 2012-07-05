@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
 import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_NODE_PASSWORD;
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_NODE_USER;
 import static org.jclouds.nodepool.config.NodePoolProperties.REMOVE_DESTROYED;
 
 import java.util.Set;
@@ -36,9 +38,12 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.nodepool.Backend;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
@@ -61,17 +66,20 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
 
    private final int maxSize;
    private final int minSize;
-   private final boolean reuseDestroyed;
+   private final boolean removeDestroyed;
 
    @Inject
    public EagerNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
             @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupPrefix,
             @Named(MAX_SIZE) int maxSize, @Named(MIN_SIZE) int minSize,
-            @Named(REMOVE_DESTROYED) boolean readdDestroyed, NodeMetadataStore storage) {
-      super(backendComputeService, backendTemplate, poolGroupPrefix, storage);
+            @Named(REMOVE_DESTROYED) boolean removeDestroyed, NodeMetadataStore storage,
+            @Named(POOL_NODE_USER) String poolNodeUser, @Named(POOL_NODE_PASSWORD) String poolNodePassword,
+            AdminAccess.Configuration configuration) {
+      super(backendComputeService, backendTemplate, poolGroupPrefix, storage, poolNodeUser, poolNodePassword,
+               configuration);
       this.maxSize = maxSize;
       this.minSize = minSize;
-      this.reuseDestroyed = readdDestroyed;
+      this.removeDestroyed = removeDestroyed;
    }
 
    @PostConstruct
@@ -93,14 +101,33 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
       int count = 1;
       synchronized (this) {
          Set<NodeMetadata> backendNodes = getBackendNodes();
+         checkState(!backendNodes.isEmpty());
          Set<NodeMetadata> frontendNodes = metadataStore.loadAll(backendNodes);
-
-         checkState(frontendNodes.size() + count < maxSize,
+         checkState(frontendNodes.size() + count <= maxSize,
                   "cannot add more nodes to pool [requested: %s, current: %s, max: %s]", count, frontendNodes.size(),
                   maxSize);
 
          SetView<NodeMetadata> availableNodes = Sets.difference(backendNodes, frontendNodes);
-         NodeMetadata node = metadataStore.store(Iterables.get(availableNodes, 0), template.getOptions(), group);
+
+         NodeMetadata userNode = Iterables.get(availableNodes, 0);
+         TemplateOptions options = template.getOptions().clone();
+
+         // if the user provided a user to use with the node we may need to change the original user
+         if (template.getOptions().getLoginUser() != null) {
+            // TODO Handle when the frontend provides the used directly (we'll need to re-run
+            // AdminAccess)
+            throw new UnsupportedOperationException();
+         } else {
+            LoginCredentials creds = LoginCredentials.builder(initialCrendentials.getAdminCredentials()).build();
+            options.overrideLoginUser(creds.getUser());
+            if (creds.getPassword() == null) {
+               options.overrideLoginPrivateKey(creds.getPrivateKey());
+            } else {
+               options.overrideLoginPassword(creds.getPassword());
+            }
+         }
+
+         NodeMetadata node = metadataStore.store(userNode, options, group);
          return new NodeWithInitialCredentials(node);
       }
    }
@@ -109,8 +136,7 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
    public synchronized void destroyNode(String id) {
       checkState(getNode(id) != null);
       metadataStore.deleteMapping(id);
-
-      if (!reuseDestroyed) {
+      if (removeDestroyed) {
          backendComputeService.get().destroyNode(id);
          addToPool(1);
       }
