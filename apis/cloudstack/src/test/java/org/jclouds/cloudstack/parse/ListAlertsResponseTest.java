@@ -22,7 +22,6 @@ import java.util.Calendar;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.Alert;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
@@ -42,7 +41,7 @@ public class ListAlertsResponseTest extends BaseSetParserTest<Alert> {
 
    @Override
    protected Injector injector() {
-      return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
+      return Guice.createInjector(new GsonModule() {
 
          @Override
          protected void configure() {

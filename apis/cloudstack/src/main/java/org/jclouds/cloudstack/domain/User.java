@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,9 +30,9 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class User
- * 
+ *
  * @author Adrian Cole
-*/
+ */
 public class User {
 
    /**
@@ -43,30 +41,30 @@ public class User {
       ENABLED,
       DISABLED,
       UNKNOWN;
-      
+
       public static State fromValue(String value) {
-      try {
-      return valueOf(value.toUpperCase());
-      } catch(IllegalArgumentException e) {
-      return UNKNOWN;
+         try {
+            return valueOf(value.toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNKNOWN;
+         }
       }
-      }
-      
+
       @Override
       public String toString() {
-      return name().toLowerCase();
+         return name().toLowerCase();
       }
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromUser(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -83,8 +81,8 @@ public class User {
       protected String timeZone;
       protected String apiKey;
       protected String secretKey;
-   
-      /** 
+
+      /**
        * @see User#getId()
        */
       public T id(String id) {
@@ -92,7 +90,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getName()
        */
       public T name(String name) {
@@ -100,7 +98,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getFirstName()
        */
       public T firstName(String firstName) {
@@ -108,7 +106,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getLastName()
        */
       public T lastName(String lastName) {
@@ -116,7 +114,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getEmail()
        */
       public T email(String email) {
@@ -124,7 +122,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getCreated()
        */
       public T created(Date created) {
@@ -132,7 +130,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getState()
        */
       public T state(User.State state) {
@@ -140,7 +138,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getAccount()
        */
       public T account(String account) {
@@ -148,7 +146,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getAccountType()
        */
       public T accountType(Account.Type accountType) {
@@ -156,7 +154,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getDomain()
        */
       public T domain(String domain) {
@@ -164,7 +162,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getDomainId()
        */
       public T domainId(String domainId) {
@@ -172,7 +170,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getTimeZone()
        */
       public T timeZone(String timeZone) {
@@ -180,7 +178,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getApiKey()
        */
       public T apiKey(String apiKey) {
@@ -188,7 +186,7 @@ public class User {
          return self();
       }
 
-      /** 
+      /**
        * @see User#getSecretKey()
        */
       public T secretKey(String secretKey) {
@@ -199,23 +197,23 @@ public class User {
       public User build() {
          return new User(id, name, firstName, lastName, email, created, state, account, accountType, domain, domainId, timeZone, apiKey, secretKey);
       }
-      
+
       public T fromUser(User in) {
          return this
-                  .id(in.getId())
-                  .name(in.getName())
-                  .firstName(in.getFirstName())
-                  .lastName(in.getLastName())
-                  .email(in.getEmail())
-                  .created(in.getCreated())
-                  .state(in.getState())
-                  .account(in.getAccount())
-                  .accountType(in.getAccountType())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .timeZone(in.getTimeZone())
-                  .apiKey(in.getApiKey())
-                  .secretKey(in.getSecretKey());
+               .id(in.getId())
+               .name(in.getName())
+               .firstName(in.getFirstName())
+               .lastName(in.getLastName())
+               .email(in.getEmail())
+               .created(in.getCreated())
+               .state(in.getState())
+               .account(in.getAccount())
+               .accountType(in.getAccountType())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .timeZone(in.getTimeZone())
+               .apiKey(in.getApiKey())
+               .secretKey(in.getSecretKey());
       }
    }
 
@@ -227,30 +225,22 @@ public class User {
    }
 
    private final String id;
-   @Named("username")
    private final String name;
-   @Named("firstname")
    private final String firstName;
-   @Named("lastname")
    private final String lastName;
    private final String email;
    private final Date created;
    private final User.State state;
    private final String account;
-   @Named("accounttype")
    private final Account.Type accountType;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("timezone")
    private final String timeZone;
-   @Named("apikey")
    private final String apiKey;
-   @Named("secretkey")
    private final String secretKey;
 
    @ConstructorProperties({
-      "id", "username", "firstname", "lastname", "email", "created", "state", "account", "accounttype", "domain",
+         "id", "username", "firstname", "lastname", "email", "created", "state", "account", "accounttype", "domain",
          "domainid", "timezone", "apikey", "secretkey"
    })
    protected User(String id, @Nullable String name, @Nullable String firstName, @Nullable String lastName,
@@ -395,28 +385,28 @@ public class User {
       if (obj == null || getClass() != obj.getClass()) return false;
       User that = User.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.firstName, that.firstName)
-               && Objects.equal(this.lastName, that.lastName)
-               && Objects.equal(this.email, that.email)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.state, that.state)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.accountType, that.accountType)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.timeZone, that.timeZone)
-               && Objects.equal(this.apiKey, that.apiKey)
-               && Objects.equal(this.secretKey, that.secretKey);
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.firstName, that.firstName)
+            && Objects.equal(this.lastName, that.lastName)
+            && Objects.equal(this.email, that.email)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.accountType, that.accountType)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.timeZone, that.timeZone)
+            && Objects.equal(this.apiKey, that.apiKey)
+            && Objects.equal(this.secretKey, that.secretKey);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("name", name).add("firstName", firstName).add("lastName", lastName).add("email", email)
             .add("created", created).add("state", state).add("account", account).add("accountType", accountType).add("domain", domain)
             .add("domainId", domainId).add("timeZone", timeZone).add("apiKey", apiKey).add("secretKey", secretKey);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

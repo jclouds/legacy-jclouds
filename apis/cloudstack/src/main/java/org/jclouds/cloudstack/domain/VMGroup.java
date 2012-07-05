@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,20 +30,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class VMGroup
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class VMGroup {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromVMGroup(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -54,8 +52,8 @@ public class VMGroup {
       protected String domain;
       protected String domainId;
       protected String name;
-   
-      /** 
+
+      /**
        * @see VMGroup#getId()
        */
       public T id(String id) {
@@ -63,7 +61,7 @@ public class VMGroup {
          return self();
       }
 
-      /** 
+      /**
        * @see VMGroup#getAccount()
        */
       public T account(String account) {
@@ -71,7 +69,7 @@ public class VMGroup {
          return self();
       }
 
-      /** 
+      /**
        * @see VMGroup#getCreated()
        */
       public T created(Date created) {
@@ -79,7 +77,7 @@ public class VMGroup {
          return self();
       }
 
-      /** 
+      /**
        * @see VMGroup#getDomain()
        */
       public T domain(String domain) {
@@ -87,7 +85,7 @@ public class VMGroup {
          return self();
       }
 
-      /** 
+      /**
        * @see VMGroup#getDomainId()
        */
       public T domainId(String domainId) {
@@ -95,7 +93,7 @@ public class VMGroup {
          return self();
       }
 
-      /** 
+      /**
        * @see VMGroup#getName()
        */
       public T name(String name) {
@@ -106,15 +104,15 @@ public class VMGroup {
       public VMGroup build() {
          return new VMGroup(id, account, created, domain, domainId, name);
       }
-      
+
       public T fromVMGroup(VMGroup in) {
          return this
-                  .id(in.getId())
-                  .account(in.getAccount())
-                  .created(in.getCreated())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .name(in.getName());
+               .id(in.getId())
+               .account(in.getAccount())
+               .created(in.getCreated())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .name(in.getName());
       }
    }
 
@@ -129,12 +127,11 @@ public class VMGroup {
    private final String account;
    private final Date created;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
    private final String name;
 
    @ConstructorProperties({
-      "id", "account", "created", "domain", "domainid", "name"
+         "id", "account", "created", "domain", "domainid", "name"
    })
    protected VMGroup(String id, @Nullable String account, @Nullable Date created, @Nullable String domain,
                      @Nullable String domainId, @Nullable String name) {
@@ -203,18 +200,18 @@ public class VMGroup {
       if (obj == null || getClass() != obj.getClass()) return false;
       VMGroup that = VMGroup.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.name, that.name);
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.name, that.name);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("account", account).add("created", created).add("domain", domain).add("domainId", domainId).add("name", name);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

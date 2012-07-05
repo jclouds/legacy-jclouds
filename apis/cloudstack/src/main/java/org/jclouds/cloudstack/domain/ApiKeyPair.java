@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.domain;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -42,7 +40,7 @@ public class ApiKeyPair {
       return new ConcreteBuilder().fromApiKeyPair(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String apiKey;
@@ -82,9 +80,7 @@ public class ApiKeyPair {
       }
    }
 
-   @Named("apikey")
    private final String apiKey;
-   @Named("secretkey")
    private final String secretKey;
 
    @ConstructorProperties({

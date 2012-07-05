@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,20 +30,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class ISOExtraction
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class ISOExtraction {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromISOExtraction(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -61,8 +59,8 @@ public class ISOExtraction {
       protected String url;
       protected String zoneId;
       protected String zoneName;
-   
-      /** 
+
+      /**
        * @see ISOExtraction#getId()
        */
       public T id(String id) {
@@ -70,7 +68,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getAccountId()
        */
       public T accountId(String accountId) {
@@ -78,7 +76,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getCreated()
        */
       public T created(Date created) {
@@ -86,7 +84,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getExtractId()
        */
       public T extractId(String extractId) {
@@ -94,7 +92,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getExtractMode()
        */
       public T extractMode(ExtractMode extractMode) {
@@ -102,7 +100,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getName()
        */
       public T name(String name) {
@@ -110,7 +108,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getState()
        */
       public T state(String state) {
@@ -118,7 +116,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getStatus()
        */
       public T status(String status) {
@@ -126,7 +124,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getStorageType()
        */
       public T storageType(String storageType) {
@@ -134,7 +132,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getUploadPercentage()
        */
       public T uploadPercentage(int uploadPercentage) {
@@ -142,7 +140,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getUrl()
        */
       public T url(String url) {
@@ -150,7 +148,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -158,7 +156,7 @@ public class ISOExtraction {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOExtraction#getZoneName()
        */
       public T zoneName(String zoneName) {
@@ -169,22 +167,22 @@ public class ISOExtraction {
       public ISOExtraction build() {
          return new ISOExtraction(id, accountId, created, extractId, extractMode, name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
       }
-      
+
       public T fromISOExtraction(ISOExtraction in) {
          return this
-                  .id(in.getId())
-                  .accountId(in.getAccountId())
-                  .created(in.getCreated())
-                  .extractId(in.getExtractId())
-                  .extractMode(in.getExtractMode())
-                  .name(in.getName())
-                  .state(in.getState())
-                  .status(in.getStatus())
-                  .storageType(in.getStorageType())
-                  .uploadPercentage(in.getUploadPercentage())
-                  .url(in.getUrl())
-                  .zoneId(in.getZoneId())
-                  .zoneName(in.getZoneName());
+               .id(in.getId())
+               .accountId(in.getAccountId())
+               .created(in.getCreated())
+               .extractId(in.getExtractId())
+               .extractMode(in.getExtractMode())
+               .name(in.getName())
+               .state(in.getState())
+               .status(in.getStatus())
+               .storageType(in.getStorageType())
+               .uploadPercentage(in.getUploadPercentage())
+               .url(in.getUrl())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName());
       }
    }
 
@@ -196,7 +194,6 @@ public class ISOExtraction {
    }
 
    private final String id;
-   @Named("accountid")
    private final String accountId;
    private final Date created;
    private final String extractId;
@@ -204,18 +201,14 @@ public class ISOExtraction {
    private final String name;
    private final String state;
    private final String status;
-   @Named("storagetype")
    private final String storageType;
-   @Named("uploadpercentage")
    private final int uploadPercentage;
    private final String url;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
 
    @ConstructorProperties({
-      "id", "accountid", "created", "extractId", "extractMode", "name", "state", "status", "storagetype", "uploadpercentage", "url", "zoneid", "zonename"
+         "id", "accountid", "created", "extractId", "extractMode", "name", "state", "status", "storagetype", "uploadpercentage", "url", "zoneid", "zonename"
    })
    protected ISOExtraction(String id, @Nullable String accountId, @Nullable Date created, @Nullable String extractId,
                            @Nullable ExtractMode extractMode, @Nullable String name, @Nullable String state, @Nullable String status,
@@ -349,27 +342,27 @@ public class ISOExtraction {
       if (obj == null || getClass() != obj.getClass()) return false;
       ISOExtraction that = ISOExtraction.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.accountId, that.accountId)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.extractId, that.extractId)
-               && Objects.equal(this.extractMode, that.extractMode)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.state, that.state)
-               && Objects.equal(this.status, that.status)
-               && Objects.equal(this.storageType, that.storageType)
-               && Objects.equal(this.uploadPercentage, that.uploadPercentage)
-               && Objects.equal(this.url, that.url)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.zoneName, that.zoneName);
+            && Objects.equal(this.accountId, that.accountId)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.extractId, that.extractId)
+            && Objects.equal(this.extractMode, that.extractMode)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.status, that.status)
+            && Objects.equal(this.storageType, that.storageType)
+            && Objects.equal(this.uploadPercentage, that.uploadPercentage)
+            && Objects.equal(this.url, that.url)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("accountId", accountId).add("created", created).add("extractId", extractId).add("extractMode", extractMode)
             .add("name", name).add("state", state).add("status", status).add("storageType", storageType).add("uploadPercentage", uploadPercentage)
             .add("url", url).add("zoneId", zoneId).add("zoneName", zoneName);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

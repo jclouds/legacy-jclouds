@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
@@ -261,23 +259,15 @@ public class Snapshot {
    private final String account;
    private final Date created;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("intervaltype")
    private final Snapshot.Interval interval;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final String jobStatus;
    private final String name;
-   @Named("snapshottype")
    private final Snapshot.Type snapshotType;
    private final Snapshot.State state;
-   @Named("volumeid")
    private final String volumeId;
-   @Named("volumename")
    private final String volumeName;
-   @Named("volumetype")
    private final Volume.Type volumeType;
 
    @ConstructorProperties({

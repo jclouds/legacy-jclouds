@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 
 /**
- * 
  * @author Adrian Cole
  * @see NetworkOfferingClient#listNetworkOfferings
  */
@@ -54,6 +53,7 @@ public enum TrafficType {
    CONTROL,
 
    UNRECOGNIZED;
+
    @Override
    public String toString() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());

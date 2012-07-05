@@ -24,8 +24,6 @@ import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
@@ -37,39 +35,40 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Class VirtualMachine
- * 
+ *
  * @author Adrian Cole
-*/
+ */
 public class VirtualMachine {
 
    /**
     */
    public static enum State {
       STARTING, RUNNING, STOPPING, STOPPED, DESTROYED, EXPUNGING, MIGRATING, ERROR, UNKNOWN, SHUTDOWNED, UNRECOGNIZED;
+
       @Override
       public String toString() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
       }
-      
+
       public static State fromValue(String state) {
-      try {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-      } catch (IllegalArgumentException e) {
-      return UNRECOGNIZED;
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
-      }
-      
+
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromVirtualMachine(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -115,8 +114,8 @@ public class VirtualMachine {
       protected Set<NIC> nics = ImmutableSet.of();
       protected String hypervisor;
       protected Set<SecurityGroup> securityGroups = ImmutableSet.of();
-   
-      /** 
+
+      /**
        * @see VirtualMachine#getId()
        */
       public T id(String id) {
@@ -124,7 +123,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getAccount()
        */
       public T account(String account) {
@@ -132,7 +131,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getCpuCount()
        */
       public T cpuCount(long cpuCount) {
@@ -140,7 +139,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getCpuSpeed()
        */
       public T cpuSpeed(long cpuSpeed) {
@@ -148,7 +147,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getCpuUsed()
        */
       public T cpuUsed(String cpuUsed) {
@@ -156,7 +155,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getDisplayName()
        */
       public T displayName(String displayName) {
@@ -164,7 +163,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getCreated()
        */
       public T created(Date created) {
@@ -172,7 +171,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getDomain()
        */
       public T domain(String domain) {
@@ -180,7 +179,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getDomainId()
        */
       public T domainId(String domainId) {
@@ -188,7 +187,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#usesVirtualNetwork()
        */
       public T usesVirtualNetwork(boolean usesVirtualNetwork) {
@@ -196,7 +195,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getGroup()
        */
       public T group(String group) {
@@ -204,7 +203,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getGroupId()
        */
       public T groupId(String groupId) {
@@ -212,7 +211,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getGuestOSId()
        */
       public T guestOSId(String guestOSId) {
@@ -220,7 +219,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#isHAEnabled()
        */
       public T isHAEnabled(boolean HAEnabled) {
@@ -228,7 +227,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getHostId()
        */
       public T hostId(String hostId) {
@@ -236,7 +235,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getHostname()
        */
       public T hostname(String hostname) {
@@ -244,7 +243,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getIPAddress()
        */
       public T IPAddress(String IPAddress) {
@@ -252,7 +251,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getISODisplayText()
        */
       public T ISODisplayText(String ISODisplayText) {
@@ -260,7 +259,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getISOId()
        */
       public T ISOId(String ISOId) {
@@ -268,7 +267,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getISOName()
        */
       public T ISOName(String ISOName) {
@@ -276,7 +275,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getJobId()
        */
       public T jobId(String jobId) {
@@ -284,7 +283,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getJobStatus()
        */
       public T jobStatus(Integer jobStatus) {
@@ -292,7 +291,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getMemory()
        */
       public T memory(long memory) {
@@ -300,7 +299,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getName()
        */
       public T name(String name) {
@@ -308,7 +307,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getNetworkKbsRead()
        */
       public T networkKbsRead(Long networkKbsRead) {
@@ -316,7 +315,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getNetworkKbsWrite()
        */
       public T networkKbsWrite(Long networkKbsWrite) {
@@ -324,7 +323,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getPassword()
        */
       public T password(String password) {
@@ -332,7 +331,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#isPasswordEnabled()
        */
       public T passwordEnabled(boolean passwordEnabled) {
@@ -340,7 +339,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getPublicIP()
        */
       public T publicIP(String publicIP) {
@@ -348,7 +347,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getPublicIPId()
        */
       public T publicIPId(String publicIPId) {
@@ -356,7 +355,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getRootDeviceId()
        */
       public T rootDeviceId(String rootDeviceId) {
@@ -364,7 +363,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getRootDeviceType()
        */
       public T rootDeviceType(String rootDeviceType) {
@@ -372,7 +371,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getServiceOfferingId()
        */
       public T serviceOfferingId(String serviceOfferingId) {
@@ -380,7 +379,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getServiceOfferingName()
        */
       public T serviceOfferingName(String serviceOfferingName) {
@@ -388,7 +387,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getState()
        */
       public T state(VirtualMachine.State state) {
@@ -396,7 +395,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getTemplateDisplayText()
        */
       public T templateDisplayText(String templateDisplayText) {
@@ -404,7 +403,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getTemplateId()
        */
       public T templateId(String templateId) {
@@ -412,7 +411,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getTemplateName()
        */
       public T templateName(String templateName) {
@@ -420,7 +419,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -428,7 +427,7 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getZoneName()
        */
       public T zoneName(String zoneName) {
@@ -436,11 +435,11 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getNICs()
        */
       public T nics(Set<NIC> nics) {
-         this.nics = ImmutableSet.copyOf(checkNotNull(nics, "nics"));      
+         this.nics = ImmutableSet.copyOf(checkNotNull(nics, "nics"));
          return self();
       }
 
@@ -448,7 +447,7 @@ public class VirtualMachine {
          return nics(ImmutableSet.copyOf(in));
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getHypervisor()
        */
       public T hypervisor(String hypervisor) {
@@ -456,11 +455,11 @@ public class VirtualMachine {
          return self();
       }
 
-      /** 
+      /**
        * @see VirtualMachine#getSecurityGroups()
        */
       public T securityGroups(Set<SecurityGroup> securityGroups) {
-         this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));      
+         this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
          return self();
       }
 
@@ -475,52 +474,52 @@ public class VirtualMachine {
                publicIPId, rootDeviceId, rootDeviceType, serviceOfferingId, serviceOfferingName, state, templateDisplayText,
                templateId, templateName, zoneId, zoneName, nics, hypervisor, securityGroups);
       }
-      
+
       public T fromVirtualMachine(VirtualMachine in) {
          return this
-                  .id(in.getId())
-                  .account(in.getAccount())
-                  .cpuCount(in.getCpuCount())
-                  .cpuSpeed(in.getCpuSpeed())
-                  .cpuUsed(in.getCpuUsedAsString())
-                  .displayName(in.getDisplayName())
-                  .created(in.getCreated())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .usesVirtualNetwork(in.usesVirtualNetwork())
-                  .group(in.getGroup())
-                  .groupId(in.getGroupId())
-                  .guestOSId(in.getGuestOSId())
-                  .isHAEnabled(in.isHAEnabled())
-                  .hostId(in.getHostId())
-                  .hostname(in.getHostname())
-                  .IPAddress(in.getIPAddress())
-                  .ISODisplayText(in.getISODisplayText())
-                  .ISOId(in.getISOId())
-                  .ISOName(in.getISOName())
-                  .jobId(in.getJobId())
-                  .jobStatus(in.getJobStatus())
-                  .memory(in.getMemory())
-                  .name(in.getName())
-                  .networkKbsRead(in.getNetworkKbsRead())
-                  .networkKbsWrite(in.getNetworkKbsWrite())
-                  .password(in.getPassword())
-                  .passwordEnabled(in.isPasswordEnabled())
-                  .publicIP(in.getPublicIP())
-                  .publicIPId(in.getPublicIPId())
-                  .rootDeviceId(in.getRootDeviceId())
-                  .rootDeviceType(in.getRootDeviceType())
-                  .serviceOfferingId(in.getServiceOfferingId())
-                  .serviceOfferingName(in.getServiceOfferingName())
-                  .state(in.getState())
-                  .templateDisplayText(in.getTemplateDisplayText())
-                  .templateId(in.getTemplateId())
-                  .templateName(in.getTemplateName())
-                  .zoneId(in.getZoneId())
-                  .zoneName(in.getZoneName())
-                  .nics(in.getNICs())
-                  .hypervisor(in.getHypervisor())
-                  .securityGroups(in.getSecurityGroups());
+               .id(in.getId())
+               .account(in.getAccount())
+               .cpuCount(in.getCpuCount())
+               .cpuSpeed(in.getCpuSpeed())
+               .cpuUsed(in.getCpuUsedAsString())
+               .displayName(in.getDisplayName())
+               .created(in.getCreated())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .usesVirtualNetwork(in.usesVirtualNetwork())
+               .group(in.getGroup())
+               .groupId(in.getGroupId())
+               .guestOSId(in.getGuestOSId())
+               .isHAEnabled(in.isHAEnabled())
+               .hostId(in.getHostId())
+               .hostname(in.getHostname())
+               .IPAddress(in.getIPAddress())
+               .ISODisplayText(in.getISODisplayText())
+               .ISOId(in.getISOId())
+               .ISOName(in.getISOName())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus())
+               .memory(in.getMemory())
+               .name(in.getName())
+               .networkKbsRead(in.getNetworkKbsRead())
+               .networkKbsWrite(in.getNetworkKbsWrite())
+               .password(in.getPassword())
+               .passwordEnabled(in.isPasswordEnabled())
+               .publicIP(in.getPublicIP())
+               .publicIPId(in.getPublicIPId())
+               .rootDeviceId(in.getRootDeviceId())
+               .rootDeviceType(in.getRootDeviceType())
+               .serviceOfferingId(in.getServiceOfferingId())
+               .serviceOfferingName(in.getServiceOfferingName())
+               .state(in.getState())
+               .templateDisplayText(in.getTemplateDisplayText())
+               .templateId(in.getTemplateId())
+               .templateName(in.getTemplateName())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName())
+               .nics(in.getNICs())
+               .hypervisor(in.getHypervisor())
+               .securityGroups(in.getSecurityGroups());
       }
    }
 
@@ -533,82 +532,50 @@ public class VirtualMachine {
 
    private final String id;
    private final String account;
-   @Named("cpunumber")
    private final long cpuCount;
-   @Named("cpuspeed")
    private final long cpuSpeed;
-   @Named("cpuused")
    private final String cpuUsed;
-   @Named("displayname")
    private final String displayName;
    private final Date created;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("forvirtualnetwork")
    private final boolean usesVirtualNetwork;
    private final String group;
-   @Named("groupid")
    private final String groupId;
-   @Named("guestosid")
    private final String guestOSId;
-   @Named("haenable")
    private final boolean HAEnabled;
-   @Named("hostid")
    private final String hostId;
    private final String hostname;
-   @Named("ipaddress")
    private final String IPAddress;
-   @Named("isodisplaytext")
    private final String ISODisplayText;
-   @Named("isoid")
    private final String ISOId;
-   @Named("isoname")
    private final String ISOName;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final Integer jobStatus;
    private final long memory;
    private final String name;
-   @Named("networkkbsread")
    private final Long networkKbsRead;
-   @Named("networkkbswrite")
    private final Long networkKbsWrite;
    private final String password;
-   @Named("passwordenabled")
    private final boolean passwordEnabled;
-   @Named("publicip")
    private final String publicIP;
-   @Named("publicipid")
    private final String publicIPId;
-   @Named("rootdeviceid")
    private final String rootDeviceId;
-   @Named("rootdevicetype")
    private final String rootDeviceType;
-   @Named("serviceofferingid")
    private final String serviceOfferingId;
-   @Named("serviceofferingname")
    private final String serviceOfferingName;
    private final VirtualMachine.State state;
-   @Named("templatedisplaytext")
    private final String templateDisplayText;
-   @Named("templateid")
    private final String templateId;
-   @Named("templatename")
    private final String templateName;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
-   @Named("nic")
    private final Set<NIC> nics;
    private final String hypervisor;
-   @Named("securitygroup")
    private final Set<SecurityGroup> securityGroups;
 
    @ConstructorProperties({
-      "id", "account", "cpunumber", "cpuspeed", "cpuused", "displayname", "created", "domain", "domainid", "forvirtualnetwork", "group", "groupid", "guestosid", "haenable", "hostid", "hostname", "ipaddress", "isodisplaytext", "isoid", "isoname", "jobid", "jobstatus", "memory", "name", "networkkbsread", "networkkbswrite", "password", "passwordenabled", "publicip", "publicipid", "rootdeviceid", "rootdevicetype", "serviceofferingid", "serviceofferingname", "state", "templatedisplaytext", "templateid", "templatename", "zoneid", "zonename", "nic", "hypervisor", "securitygroup"
+         "id", "account", "cpunumber", "cpuspeed", "cpuused", "displayname", "created", "domain", "domainid", "forvirtualnetwork", "group", "groupid", "guestosid", "haenable", "hostid", "hostname", "ipaddress", "isodisplaytext", "isoid", "isoname", "jobid", "jobstatus", "memory", "name", "networkkbsread", "networkkbswrite", "password", "passwordenabled", "publicip", "publicipid", "rootdeviceid", "rootdevicetype", "serviceofferingid", "serviceofferingname", "state", "templatedisplaytext", "templateid", "templatename", "zoneid", "zonename", "nic", "hypervisor", "securitygroup"
    })
    protected VirtualMachine(String id, @Nullable String account, long cpuCount, long cpuSpeed, @Nullable String cpuUsed,
                             @Nullable String displayName, @Nullable Date created, @Nullable String domain, @Nullable String domainId,
@@ -662,9 +629,9 @@ public class VirtualMachine {
       this.templateName = templateName;
       this.zoneId = zoneId;
       this.zoneName = zoneName;
-      this.nics = nics == null ? ImmutableSet.<NIC>of() : ImmutableSet.copyOf(nics);      
+      this.nics = nics == null ? ImmutableSet.<NIC>of() : ImmutableSet.copyOf(nics);
       this.hypervisor = hypervisor;
-      this.securityGroups = securityGroups == null ? ImmutableSet.<SecurityGroup>of() : ImmutableSet.copyOf(securityGroups);      
+      this.securityGroups = securityGroups == null ? ImmutableSet.<SecurityGroup>of() : ImmutableSet.copyOf(securityGroups);
    }
 
    /**
@@ -707,10 +674,10 @@ public class VirtualMachine {
       return cpuUsed;
    }
 
-      /**
-      * @return user generated name. The name of the virtual machine is returned
-           if no displayname exists.
-      */
+   /**
+    * @return user generated name. The name of the virtual machine is returned
+    *         if no displayname exists.
+    */
    @Nullable
    public String getDisplayName() {
       return this.displayName;
@@ -804,7 +771,7 @@ public class VirtualMachine {
 
    /**
     * @return an alternate display text of the ISO attached to the virtual
-         machine
+    *         machine
     */
    @Nullable
    public String getISODisplayText() {
@@ -829,8 +796,8 @@ public class VirtualMachine {
 
    /**
     * @return shows the current pending asynchronous job ID. This tag is not
-         returned if no current pending jobs are acting on the virtual
-         machine
+    *         returned if no current pending jobs are acting on the virtual
+    *         machine
     */
    @Nullable
    public String getJobId() {
@@ -957,7 +924,7 @@ public class VirtualMachine {
 
    /**
     * @return the ID of the template for the virtual machine. A -1 is returned
-         if the virtual machine was created from an ISO file.
+    *         if the virtual machine was created from an ISO file.
     */
    @Nullable
    public String getTemplateId() {
@@ -1018,50 +985,50 @@ public class VirtualMachine {
       if (obj == null || getClass() != obj.getClass()) return false;
       VirtualMachine that = VirtualMachine.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.cpuCount, that.cpuCount)
-               && Objects.equal(this.cpuSpeed, that.cpuSpeed)
-               && Objects.equal(this.cpuUsed, that.cpuUsed)
-               && Objects.equal(this.displayName, that.displayName)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.usesVirtualNetwork, that.usesVirtualNetwork)
-               && Objects.equal(this.group, that.group)
-               && Objects.equal(this.groupId, that.groupId)
-               && Objects.equal(this.guestOSId, that.guestOSId)
-               && Objects.equal(this.HAEnabled, that.HAEnabled)
-               && Objects.equal(this.hostId, that.hostId)
-               && Objects.equal(this.hostname, that.hostname)
-               && Objects.equal(this.IPAddress, that.IPAddress)
-               && Objects.equal(this.ISODisplayText, that.ISODisplayText)
-               && Objects.equal(this.ISOId, that.ISOId)
-               && Objects.equal(this.ISOName, that.ISOName)
-               && Objects.equal(this.jobId, that.jobId)
-               && Objects.equal(this.jobStatus, that.jobStatus)
-               && Objects.equal(this.memory, that.memory)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.networkKbsRead, that.networkKbsRead)
-               && Objects.equal(this.networkKbsWrite, that.networkKbsWrite)
-               && Objects.equal(this.password, that.password)
-               && Objects.equal(this.passwordEnabled, that.passwordEnabled)
-               && Objects.equal(this.publicIP, that.publicIP)
-               && Objects.equal(this.publicIPId, that.publicIPId)
-               && Objects.equal(this.rootDeviceId, that.rootDeviceId)
-               && Objects.equal(this.rootDeviceType, that.rootDeviceType)
-               && Objects.equal(this.serviceOfferingId, that.serviceOfferingId)
-               && Objects.equal(this.serviceOfferingName, that.serviceOfferingName)
-               && Objects.equal(this.state, that.state)
-               && Objects.equal(this.templateDisplayText, that.templateDisplayText)
-               && Objects.equal(this.templateId, that.templateId)
-               && Objects.equal(this.templateName, that.templateName)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.zoneName, that.zoneName)
-               && Objects.equal(this.nics, that.nics)
-               && Objects.equal(this.hypervisor, that.hypervisor)
-               && Objects.equal(this.securityGroups, that.securityGroups);
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.cpuCount, that.cpuCount)
+            && Objects.equal(this.cpuSpeed, that.cpuSpeed)
+            && Objects.equal(this.cpuUsed, that.cpuUsed)
+            && Objects.equal(this.displayName, that.displayName)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.usesVirtualNetwork, that.usesVirtualNetwork)
+            && Objects.equal(this.group, that.group)
+            && Objects.equal(this.groupId, that.groupId)
+            && Objects.equal(this.guestOSId, that.guestOSId)
+            && Objects.equal(this.HAEnabled, that.HAEnabled)
+            && Objects.equal(this.hostId, that.hostId)
+            && Objects.equal(this.hostname, that.hostname)
+            && Objects.equal(this.IPAddress, that.IPAddress)
+            && Objects.equal(this.ISODisplayText, that.ISODisplayText)
+            && Objects.equal(this.ISOId, that.ISOId)
+            && Objects.equal(this.ISOName, that.ISOName)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus)
+            && Objects.equal(this.memory, that.memory)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.networkKbsRead, that.networkKbsRead)
+            && Objects.equal(this.networkKbsWrite, that.networkKbsWrite)
+            && Objects.equal(this.password, that.password)
+            && Objects.equal(this.passwordEnabled, that.passwordEnabled)
+            && Objects.equal(this.publicIP, that.publicIP)
+            && Objects.equal(this.publicIPId, that.publicIPId)
+            && Objects.equal(this.rootDeviceId, that.rootDeviceId)
+            && Objects.equal(this.rootDeviceType, that.rootDeviceType)
+            && Objects.equal(this.serviceOfferingId, that.serviceOfferingId)
+            && Objects.equal(this.serviceOfferingName, that.serviceOfferingName)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.templateDisplayText, that.templateDisplayText)
+            && Objects.equal(this.templateId, that.templateId)
+            && Objects.equal(this.templateName, that.templateName)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName)
+            && Objects.equal(this.nics, that.nics)
+            && Objects.equal(this.hypervisor, that.hypervisor)
+            && Objects.equal(this.securityGroups, that.securityGroups);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("account", account).add("cpuCount", cpuCount).add("cpuSpeed", cpuSpeed).add("cpuUsed", cpuUsed)
@@ -1076,7 +1043,7 @@ public class VirtualMachine {
             .add("templateDisplayText", templateDisplayText).add("templateId", templateId).add("templateName", templateName)
             .add("zoneId", zoneId).add("zoneName", zoneName).add("nics", nics).add("hypervisor", hypervisor).add("securityGroups", securityGroups);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

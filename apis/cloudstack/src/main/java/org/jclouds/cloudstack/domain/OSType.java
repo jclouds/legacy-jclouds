@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -44,7 +42,7 @@ public class OSType implements Comparable<OSType> {
       return new ConcreteBuilder().fromOSType(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -95,7 +93,6 @@ public class OSType implements Comparable<OSType> {
    }
 
    private final String id;
-   @Named("oscategoryid")
    private final String OSCategoryId;
    private final String description;
 

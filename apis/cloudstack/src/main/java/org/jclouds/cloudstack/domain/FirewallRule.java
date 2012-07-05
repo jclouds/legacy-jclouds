@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
@@ -50,7 +48,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       public static Protocol fromValue(String value) {
          try {
             return valueOf(value.toUpperCase());
-         } catch(IllegalArgumentException e) {
+         } catch (IllegalArgumentException e) {
             return UNKNOWN;
          }
       }
@@ -63,17 +61,17 @@ public class FirewallRule implements Comparable<FirewallRule> {
 
    public static enum State {
       STAGED,     // Rule been created but has never got through network rule conflict detection.
-                  // Rules in this state can not be sent to network elements.
+      // Rules in this state can not be sent to network elements.
       ADD,        // Add means the rule has been created and has gone through network rule conflict detection.
       ACTIVE,     // Rule has been sent to the network elements and reported to be active.
       DELETING,   // Revoke means this rule has been revoked. If this rule has been sent to the
-                  // network elements, the rule will be deleted from database.
+      // network elements, the rule will be deleted from database.
       UNKNOWN;
 
       public static State fromValue(String value) {
          try {
             return valueOf(value.toUpperCase());
-         } catch(IllegalArgumentException e) {
+         } catch (IllegalArgumentException e) {
             return UNKNOWN;
          }
       }
@@ -92,7 +90,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       return new ConcreteBuilder().fromFirewallRule(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -217,19 +215,12 @@ public class FirewallRule implements Comparable<FirewallRule> {
    }
 
    private final String id;
-   @Named("cidrlist")
    private final Set<String> CIDRs;
-   @Named("startport")
    private final int startPort;
-   @Named("endport")
    private final int endPort;
-   @Named("icmpcode")
    private final String icmpCode;
-   @Named("icmptype")
    private final String icmpType;
-   @Named("ipaddress")
    private final String ipAddress;
-   @Named("ipaddressid")
    private final String ipAddressId;
    private final FirewallRule.Protocol protocol;
    private final FirewallRule.State state;
@@ -237,7 +228,19 @@ public class FirewallRule implements Comparable<FirewallRule> {
    @ConstructorProperties({
          "id", "cidrlist", "startport", "endport", "icmpcode", "icmptype", "ipaddress", "ipaddressid", "protocol", "state"
    })
-   protected FirewallRule(String id, @Nullable Set<String> CIDRs, int startPort, int endPort, @Nullable String icmpCode,
+   @SuppressWarnings("unused")
+   private FirewallRule(String id, @Nullable String CIDRs, int startPort, int endPort, @Nullable String icmpCode,
+                        @Nullable String icmpType, @Nullable String ipAddress, @Nullable String ipAddressId,
+                        @Nullable Protocol protocol, @Nullable State state) {
+      this(id, splitStringOnCommas(CIDRs), startPort, endPort, icmpCode, icmpType, ipAddress, ipAddressId, protocol, state);
+   }
+
+   private static Set<String> splitStringOnCommas(String in) {
+      return in == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(in.split(","));
+   }
+
+
+   protected FirewallRule(String id, @Nullable Iterable<String> CIDRs, int startPort, int endPort, @Nullable String icmpCode,
                           @Nullable String icmpType, @Nullable String ipAddress, @Nullable String ipAddressId,
                           @Nullable FirewallRule.Protocol protocol, @Nullable FirewallRule.State state) {
       this.id = checkNotNull(id, "id");

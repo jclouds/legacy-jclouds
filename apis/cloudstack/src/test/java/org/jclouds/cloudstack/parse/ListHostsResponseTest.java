@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -49,7 +48,7 @@ public class ListHostsResponseTest extends BaseParserTest<Set<Host>, Set<Host>> 
 
    @Override
    protected Injector injector() {
-      return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
+      return Guice.createInjector(new GsonModule() {
 
          @Override
          protected void configure() {

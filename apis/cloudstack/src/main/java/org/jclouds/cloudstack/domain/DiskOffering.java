@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -45,7 +43,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
       return new ConcreteBuilder().fromDiskOffering(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -157,15 +155,11 @@ public class DiskOffering implements Comparable<DiskOffering> {
 
    private final String id;
    private final String name;
-   @Named("displaytext")
    private final String displayText;
    private final Date created;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("disksize")
    private final int diskSize;
-   @Named("iscustomized")
    private final boolean customized;
    private final String tags;
 

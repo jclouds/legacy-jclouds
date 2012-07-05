@@ -29,20 +29,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class TemplateMetadata
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class TemplateMetadata {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromTemplateMetadata(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String name;
@@ -52,8 +52,8 @@ public class TemplateMetadata {
       protected String volumeId;
       protected String virtualMachineId;
       protected Boolean passwordEnabled;
-   
-      /** 
+
+      /**
        * @see TemplateMetadata#getName()
        */
       public T name(String name) {
@@ -61,7 +61,7 @@ public class TemplateMetadata {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateMetadata#getOsTypeId()
        */
       public T osTypeId(String osTypeId) {
@@ -69,7 +69,7 @@ public class TemplateMetadata {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateMetadata#getDisplayText()
        */
       public T displayText(String displayText) {
@@ -77,7 +77,7 @@ public class TemplateMetadata {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateMetadata#getSnapshotId()
        */
       public T snapshotId(String snapshotId) {
@@ -85,7 +85,7 @@ public class TemplateMetadata {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateMetadata#getVolumeId()
        */
       public T volumeId(String volumeId) {
@@ -93,7 +93,7 @@ public class TemplateMetadata {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateMetadata#getVirtualMachineId()
        */
       public T virtualMachineId(String virtualMachineId) {
@@ -101,7 +101,7 @@ public class TemplateMetadata {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateMetadata#isPasswordEnabled()
        */
       public T passwordEnabled(Boolean passwordEnabled) {
@@ -112,16 +112,16 @@ public class TemplateMetadata {
       public TemplateMetadata build() {
          return new TemplateMetadata(name, osTypeId, displayText, snapshotId, volumeId, virtualMachineId, passwordEnabled);
       }
-      
+
       public T fromTemplateMetadata(TemplateMetadata in) {
          return this
-                  .name(in.getName())
-                  .osTypeId(in.getOsTypeId())
-                  .displayText(in.getDisplayText())
-                  .snapshotId(in.getSnapshotId())
-                  .volumeId(in.getVolumeId())
-                  .virtualMachineId(in.getVirtualMachineId())
-                  .passwordEnabled(in.isPasswordEnabled());
+               .name(in.getName())
+               .osTypeId(in.getOsTypeId())
+               .displayText(in.getDisplayText())
+               .snapshotId(in.getSnapshotId())
+               .volumeId(in.getVolumeId())
+               .virtualMachineId(in.getVirtualMachineId())
+               .passwordEnabled(in.isPasswordEnabled());
       }
    }
 
@@ -141,7 +141,7 @@ public class TemplateMetadata {
    private final Boolean passwordEnabled;
 
    @ConstructorProperties({
-      "name", "osTypeId", "displayText", "snapshotId", "volumeId", "virtualMachineId", "passwordEnabled"
+         "name", "osTypeId", "displayText", "snapshotId", "volumeId", "virtualMachineId", "passwordEnabled"
    })
    protected TemplateMetadata(String name, @Nullable String osTypeId, @Nullable String displayText, @Nullable String snapshotId,
                               @Nullable String volumeId, String virtualMachineId, Boolean passwordEnabled) {
@@ -217,20 +217,20 @@ public class TemplateMetadata {
       if (obj == null || getClass() != obj.getClass()) return false;
       TemplateMetadata that = TemplateMetadata.class.cast(obj);
       return Objects.equal(this.name, that.name)
-               && Objects.equal(this.osTypeId, that.osTypeId)
-               && Objects.equal(this.displayText, that.displayText)
-               && Objects.equal(this.snapshotId, that.snapshotId)
-               && Objects.equal(this.volumeId, that.volumeId)
-               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
-               && Objects.equal(this.passwordEnabled, that.passwordEnabled);
+            && Objects.equal(this.osTypeId, that.osTypeId)
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.snapshotId, that.snapshotId)
+            && Objects.equal(this.volumeId, that.volumeId)
+            && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+            && Objects.equal(this.passwordEnabled, that.passwordEnabled);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("name", name).add("osTypeId", osTypeId).add("displayText", displayText).add("snapshotId", snapshotId)
             .add("volumeId", volumeId).add("virtualMachineId", virtualMachineId).add("passwordEnabled", passwordEnabled);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.domain;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -29,20 +27,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Representation of the login API call response
- * 
+ *
  * @author Andrei Savu
-*/
+ */
 public class LoginResponse {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromLoginResponse(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String username;
@@ -59,8 +57,8 @@ public class LoginResponse {
       protected String timezoneOffset;
       protected String sessionKey;
       protected String jSessionId;
-   
-      /** 
+
+      /**
        * @see LoginResponse#getUsername()
        */
       public T username(String username) {
@@ -68,7 +66,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getUserId()
        */
       public T userId(String userId) {
@@ -76,7 +74,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getPassword()
        */
       public T password(String password) {
@@ -84,7 +82,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getDomainId()
        */
       public T domainId(String domainId) {
@@ -92,7 +90,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getTimeout()
        */
       public T timeout(long timeout) {
@@ -100,7 +98,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#isRegistered()
        */
       public T registered(boolean registered) {
@@ -108,7 +106,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getAccountName()
        */
       public T accountName(String accountName) {
@@ -116,7 +114,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getFirstName()
        */
       public T firstName(String firstName) {
@@ -124,7 +122,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getLastName()
        */
       public T lastName(String lastName) {
@@ -132,7 +130,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getAccountType()
        */
       public T accountType(Account.Type accountType) {
@@ -140,7 +138,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getTimezone()
        */
       public T timezone(String timezone) {
@@ -148,7 +146,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getTimezoneOffset()
        */
       public T timezoneOffset(String timezoneOffset) {
@@ -156,7 +154,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getSessionKey()
        */
       public T sessionKey(String sessionKey) {
@@ -164,7 +162,7 @@ public class LoginResponse {
          return self();
       }
 
-      /** 
+      /**
        * @see LoginResponse#getJSessionId()
        */
       public T jSessionId(String jSessionId) {
@@ -175,23 +173,23 @@ public class LoginResponse {
       public LoginResponse build() {
          return new LoginResponse(username, userId, password, domainId, timeout, registered, accountName, firstName, lastName, accountType, timezone, timezoneOffset, sessionKey, jSessionId);
       }
-      
+
       public T fromLoginResponse(LoginResponse in) {
          return this
-                  .username(in.getUsername())
-                  .userId(in.getUserId())
-                  .password(in.getPassword())
-                  .domainId(in.getDomainId())
-                  .timeout(in.getTimeout())
-                  .registered(in.isRegistered())
-                  .accountName(in.getAccountName())
-                  .firstName(in.getFirstName())
-                  .lastName(in.getLastName())
-                  .accountType(in.getAccountType())
-                  .timezone(in.getTimezone())
-                  .timezoneOffset(in.getTimezoneOffset())
-                  .sessionKey(in.getSessionKey())
-                  .jSessionId(in.getJSessionId());
+               .username(in.getUsername())
+               .userId(in.getUserId())
+               .password(in.getPassword())
+               .domainId(in.getDomainId())
+               .timeout(in.getTimeout())
+               .registered(in.isRegistered())
+               .accountName(in.getAccountName())
+               .firstName(in.getFirstName())
+               .lastName(in.getLastName())
+               .accountType(in.getAccountType())
+               .timezone(in.getTimezone())
+               .timezoneOffset(in.getTimezoneOffset())
+               .sessionKey(in.getSessionKey())
+               .jSessionId(in.getJSessionId());
       }
    }
 
@@ -203,30 +201,22 @@ public class LoginResponse {
    }
 
    private final String username;
-   @Named("userid")
    private final String userId;
    private final String password;
-   @Named("domainid")
    private final String domainId;
    private final long timeout;
    private final boolean registered;
-   @Named("account")
    private final String accountName;
-   @Named("firstname")
    private final String firstName;
-   @Named("lastname")
    private final String lastName;
-   @Named("type")
    private final Account.Type accountType;
    private final String timezone;
-   @Named("timezoneoffset")
    private final String timezoneOffset;
-   @Named("sessionkey")
    private final String sessionKey;
    private final String jSessionId;
 
    @ConstructorProperties({
-      "username", "userid", "password", "domainid", "timeout", "registered", "account", "firstname", "lastname", "type", "timezone", "timezoneoffset", "sessionkey", "jSessionId"
+         "username", "userid", "password", "domainid", "timeout", "registered", "account", "firstname", "lastname", "type", "timezone", "timezoneoffset", "sessionkey", "jSessionId"
    })
    protected LoginResponse(@Nullable String username, @Nullable String userId, @Nullable String password, @Nullable String domainId, long timeout, boolean registered, @Nullable String accountName, @Nullable String firstName, @Nullable String lastName, @Nullable Account.Type accountType, @Nullable String timezone, @Nullable String timezoneOffset, @Nullable String sessionKey, @Nullable String jSessionId) {
       this.username = username;
@@ -324,26 +314,26 @@ public class LoginResponse {
       if (obj == null || getClass() != obj.getClass()) return false;
       LoginResponse that = LoginResponse.class.cast(obj);
       return Objects.equal(this.username, that.username)
-               && Objects.equal(this.userId, that.userId)
-               && Objects.equal(this.password, that.password)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.timeout, that.timeout)
-               && Objects.equal(this.registered, that.registered)
-               && Objects.equal(this.accountName, that.accountName)
-               && Objects.equal(this.firstName, that.firstName)
-               && Objects.equal(this.lastName, that.lastName)
-               && Objects.equal(this.accountType, that.accountType)
-               && Objects.equal(this.timezone, that.timezone)
-               && Objects.equal(this.timezoneOffset, that.timezoneOffset)
-               && Objects.equal(this.sessionKey, that.sessionKey)
-               && Objects.equal(this.jSessionId, that.jSessionId);
+            && Objects.equal(this.userId, that.userId)
+            && Objects.equal(this.password, that.password)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.timeout, that.timeout)
+            && Objects.equal(this.registered, that.registered)
+            && Objects.equal(this.accountName, that.accountName)
+            && Objects.equal(this.firstName, that.firstName)
+            && Objects.equal(this.lastName, that.lastName)
+            && Objects.equal(this.accountType, that.accountType)
+            && Objects.equal(this.timezone, that.timezone)
+            && Objects.equal(this.timezoneOffset, that.timezoneOffset)
+            && Objects.equal(this.sessionKey, that.sessionKey)
+            && Objects.equal(this.jSessionId, that.jSessionId);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("username", username).add("userId", userId).add("password", password).add("domainId", domainId).add("timeout", timeout).add("registered", registered).add("accountName", accountName).add("firstName", firstName).add("lastName", lastName).add("accountType", accountType).add("timezone", timezone).add("timezoneOffset", timezoneOffset).add("sessionKey", sessionKey).add("jSessionId", jSessionId);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

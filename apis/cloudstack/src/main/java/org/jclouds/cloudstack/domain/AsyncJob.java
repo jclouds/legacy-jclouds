@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -41,9 +39,9 @@ public class AsyncJob<S> {
     * Valid job result codes
     */
    public static enum ResultCode {
-      SUCCESS (0),
-      FAIL (530),
-      UNKNOWN (-1);
+      SUCCESS(0),
+      FAIL(530),
+      UNKNOWN(-1);
 
       private final int code;
 
@@ -51,7 +49,9 @@ public class AsyncJob<S> {
          this.code = code;
       }
 
-      public int code() { return this.code; }
+      public int code() {
+         return this.code;
+      }
 
       public static ResultCode fromValue(String value) {
          try {
@@ -64,7 +64,7 @@ public class AsyncJob<S> {
                default:
                   return UNKNOWN;
             }
-         } catch(NumberFormatException e) {
+         } catch (NumberFormatException e) {
             return UNKNOWN;
          }
       }
@@ -74,10 +74,10 @@ public class AsyncJob<S> {
     * Valid async job statuses
     */
    public static enum Status {
-      IN_PROGRESS (0),
-      SUCCEEDED (1),
-      FAILED (2),
-      UNKNOWN (-1);
+      IN_PROGRESS(0),
+      SUCCEEDED(1),
+      FAILED(2),
+      UNKNOWN(-1);
 
       private final int code;
 
@@ -85,7 +85,9 @@ public class AsyncJob<S> {
          this.code = code;
       }
 
-      public int code() { return this.code; }
+      public int code() {
+         return this.code;
+      }
 
       public static Status fromValue(String value) {
          try {
@@ -106,7 +108,7 @@ public class AsyncJob<S> {
       }
    }
 
-   public static <T> Builder<?,T> builder() {
+   public static <T> Builder<?, T> builder() {
       return new ConcreteBuilder<T>();
    }
 
@@ -114,7 +116,7 @@ public class AsyncJob<S> {
       return new ConcreteBuilder<S>().fromAsyncJob(this);
    }
 
-   public static abstract class Builder<T extends Builder<T,S>, S>  {
+   public static abstract class Builder<T extends Builder<T, S>, S> {
       protected abstract T self();
 
       protected String accountId;
@@ -262,34 +264,24 @@ public class AsyncJob<S> {
       }
    }
 
-   private static class ConcreteBuilder<T> extends Builder<ConcreteBuilder<T>,T> {
+   private static class ConcreteBuilder<T> extends Builder<ConcreteBuilder<T>, T> {
       @Override
       protected ConcreteBuilder<T> self() {
          return this;
       }
    }
 
-   @Named("accountid")
    private final String accountId;
    private final String cmd;
    private final Date created;
-   @Named("jobid")
    private final String id;
-   @Named("jobinstanceid")
    private final String instanceId;
-   @Named("jobinstancetype")
    private final String instanceType;
-   @Named("jobprocstatus")
    private final int progress;
-   @Named("jobresult")
    private final S result;
-   @Named("jobresultcode")
    private final AsyncJob.ResultCode resultCode;
-   @Named("jobresulttype")
    private final String resultType;
-   @Named("jobstatus")
    private final AsyncJob.Status status;
-   @Named("userid")
    private final String userId;
    private final AsyncJobError error;
 
@@ -412,7 +404,7 @@ public class AsyncJob<S> {
 
    /**
     * @return the error related to this command, or null if no error or error
-   not yet encountered.
+    *         not yet encountered.
     */
    @Nullable
    public AsyncJobError getError() {

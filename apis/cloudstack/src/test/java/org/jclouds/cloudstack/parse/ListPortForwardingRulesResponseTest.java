@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.parse;
 
 import java.util.Set;
 
-import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
@@ -40,7 +39,7 @@ public class ListPortForwardingRulesResponseTest extends BaseSetParserTest<PortF
 
    @Override
    protected Injector injector() {
-      return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
+      return Guice.createInjector(new GsonModule() {
 
          @Override
          protected void configure() {

@@ -30,7 +30,7 @@ public enum AllocationState {
    UNKNOWN;
 
    public static AllocationState fromValue(String value) {
-      try{
+      try {
          return valueOf(value.toUpperCase());
       } catch (IllegalArgumentException e) {
          return UNKNOWN;

@@ -24,8 +24,6 @@ import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
@@ -36,9 +34,9 @@ import com.google.common.collect.Maps;
 
 /**
  * Represents a usage record from CloudStack
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class UsageRecord {
 
    /**
@@ -59,44 +57,44 @@ public class UsageRecord {
       NETWORK_OFFERING(13),
       VPN_USERS(14),
       UNRECOGNIZED(0);
-      
+
       private int code;
-      
+
       private static final Map<Integer, UsageType> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(UsageType.values()),
-      new Function<UsageType, Integer>() {
-      
-      @Override
-      public Integer apply(UsageType input) {
-      return input.code;
-      }
-      
-      });
-      
+            new Function<UsageType, Integer>() {
+
+               @Override
+               public Integer apply(UsageType input) {
+                  return input.code;
+               }
+
+            });
+
       UsageType(int code) {
-      this.code = code;
+         this.code = code;
       }
-      
+
       @Override
       public String toString() {
-      return "" + code;
+         return "" + code;
       }
-      
+
       public static UsageType fromValue(String usageType) {
-      Integer code = new Integer(checkNotNull(usageType, "usageType"));
-      return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
+         Integer code = new Integer(checkNotNull(usageType, "usageType"));
+         return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
-      
+
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromUsageRecord(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -119,8 +117,8 @@ public class UsageRecord {
       protected String usage;
       protected String type;
       protected UsageType usageType;
-   
-      /** 
+
+      /**
        * @see UsageRecord#getId()
        */
       public T id(String id) {
@@ -128,7 +126,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getDescription()
        */
       public T description(String description) {
@@ -136,7 +134,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getAccountId()
        */
       public T accountId(String accountId) {
@@ -144,7 +142,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getAccountName()
        */
       public T accountName(String accountName) {
@@ -152,7 +150,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getDomainId()
        */
       public T domainId(String domainId) {
@@ -160,7 +158,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getStartDate()
        */
       public T startDate(Date startDate) {
@@ -168,7 +166,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getEndDate()
        */
       public T endDate(Date endDate) {
@@ -176,7 +174,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getAssignDate()
        */
       public T assignDate(Date assignDate) {
@@ -184,7 +182,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getReleaseDate()
        */
       public T releaseDate(String releaseDate) {
@@ -192,7 +190,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -200,7 +198,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getVirtualMachineId()
        */
       public T virtualMachineId(String virtualMachineId) {
@@ -208,7 +206,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getVirtualMachineName()
        */
       public T virtualMachineName(String virtualMachineName) {
@@ -216,7 +214,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getServiceOfferingId()
        */
       public T serviceOfferingId(String serviceOfferingId) {
@@ -224,7 +222,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getTemplateId()
        */
       public T templateId(String templateId) {
@@ -232,7 +230,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getIpAddress()
        */
       public T ipAddress(String ipAddress) {
@@ -240,7 +238,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#isSourceNAT()
        */
       public T isSourceNAT(boolean isSourceNAT) {
@@ -248,7 +246,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getRawUsageHours()
        */
       public T rawUsageHours(double rawUsageHours) {
@@ -256,7 +254,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getUsage()
        */
       public T usage(String usage) {
@@ -264,7 +262,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getType()
        */
       public T type(String type) {
@@ -272,7 +270,7 @@ public class UsageRecord {
          return self();
       }
 
-      /** 
+      /**
        * @see UsageRecord#getUsageType()
        */
       public T usageType(UsageType usageType) {
@@ -285,29 +283,29 @@ public class UsageRecord {
                zoneId, virtualMachineId, virtualMachineName, serviceOfferingId, templateId, ipAddress, isSourceNAT, rawUsageHours,
                usage, type, usageType);
       }
-      
+
       public T fromUsageRecord(UsageRecord in) {
          return this
-                  .id(in.getId())
-                  .description(in.getDescription())
-                  .accountId(in.getAccountId())
-                  .accountName(in.getAccountName())
-                  .domainId(in.getDomainId())
-                  .startDate(in.getStartDate())
-                  .endDate(in.getEndDate())
-                  .assignDate(in.getAssignDate())
-                  .releaseDate(in.getReleaseDate())
-                  .zoneId(in.getZoneId())
-                  .virtualMachineId(in.getVirtualMachineId())
-                  .virtualMachineName(in.getVirtualMachineName())
-                  .serviceOfferingId(in.getServiceOfferingId())
-                  .templateId(in.getTemplateId())
-                  .ipAddress(in.getIpAddress())
-                  .isSourceNAT(in.isSourceNAT())
-                  .rawUsageHours(in.getRawUsageHours())
-                  .usage(in.getUsage())
-                  .type(in.getType())
-                  .usageType(in.getUsageType());
+               .id(in.getId())
+               .description(in.getDescription())
+               .accountId(in.getAccountId())
+               .accountName(in.getAccountName())
+               .domainId(in.getDomainId())
+               .startDate(in.getStartDate())
+               .endDate(in.getEndDate())
+               .assignDate(in.getAssignDate())
+               .releaseDate(in.getReleaseDate())
+               .zoneId(in.getZoneId())
+               .virtualMachineId(in.getVirtualMachineId())
+               .virtualMachineName(in.getVirtualMachineName())
+               .serviceOfferingId(in.getServiceOfferingId())
+               .templateId(in.getTemplateId())
+               .ipAddress(in.getIpAddress())
+               .isSourceNAT(in.isSourceNAT())
+               .rawUsageHours(in.getRawUsageHours())
+               .usage(in.getUsage())
+               .type(in.getType())
+               .usageType(in.getUsageType());
       }
    }
 
@@ -318,46 +316,29 @@ public class UsageRecord {
       }
    }
 
-   @Named("usageid")
    private final String id;
    private final String description;
-   @Named("accountid")
    private final String accountId;
-   @Named("account")
    private final String accountName;
-   @Named("domainid")
    private final String domainId;
-   @Named("startdate")
    private final Date startDate;
-   @Named("enddate")
    private final Date endDate;
-   @Named("assigndate")
    private final Date assignDate;
-   @Named("releasedate")
    private final String releaseDate;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("virtualmachineid")
    private final String virtualMachineId;
-   @Named("name")
    private final String virtualMachineName;
-   @Named("offeringid")
    private final String serviceOfferingId;
-   @Named("templateid")
    private final String templateId;
-   @Named("ipaddress")
    private final String ipAddress;
-   @Named("issourcenat")
    private final boolean isSourceNAT;
-   @Named("rawusage")
    private final double rawUsageHours;
    private final String usage;
    private final String type;
-   @Named("usagetype")
    private final UsageType usageType;
 
    @ConstructorProperties({
-      "usageid", "description", "accountid", "account", "domainid", "startdate", "enddate", "assigndate", "releasedate",
+         "usageid", "description", "accountid", "account", "domainid", "startdate", "enddate", "assigndate", "releasedate",
          "zoneid", "virtualmachineid", "name", "offeringid", "templateid", "ipaddress", "issourcenat", "rawusage", "usage",
          "type", "usagetype"
    })
@@ -498,27 +479,27 @@ public class UsageRecord {
       if (obj == null || getClass() != obj.getClass()) return false;
       UsageRecord that = UsageRecord.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.description, that.description)
-               && Objects.equal(this.accountId, that.accountId)
-               && Objects.equal(this.accountName, that.accountName)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.startDate, that.startDate)
-               && Objects.equal(this.endDate, that.endDate)
-               && Objects.equal(this.assignDate, that.assignDate)
-               && Objects.equal(this.releaseDate, that.releaseDate)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
-               && Objects.equal(this.virtualMachineName, that.virtualMachineName)
-               && Objects.equal(this.serviceOfferingId, that.serviceOfferingId)
-               && Objects.equal(this.templateId, that.templateId)
-               && Objects.equal(this.ipAddress, that.ipAddress)
-               && Objects.equal(this.isSourceNAT, that.isSourceNAT)
-               && Objects.equal(this.rawUsageHours, that.rawUsageHours)
-               && Objects.equal(this.usage, that.usage)
-               && Objects.equal(this.type, that.type)
-               && Objects.equal(this.usageType, that.usageType);
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.accountId, that.accountId)
+            && Objects.equal(this.accountName, that.accountName)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.startDate, that.startDate)
+            && Objects.equal(this.endDate, that.endDate)
+            && Objects.equal(this.assignDate, that.assignDate)
+            && Objects.equal(this.releaseDate, that.releaseDate)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+            && Objects.equal(this.virtualMachineName, that.virtualMachineName)
+            && Objects.equal(this.serviceOfferingId, that.serviceOfferingId)
+            && Objects.equal(this.templateId, that.templateId)
+            && Objects.equal(this.ipAddress, that.ipAddress)
+            && Objects.equal(this.isSourceNAT, that.isSourceNAT)
+            && Objects.equal(this.rawUsageHours, that.rawUsageHours)
+            && Objects.equal(this.usage, that.usage)
+            && Objects.equal(this.type, that.type)
+            && Objects.equal(this.usageType, that.usageType);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("description", description).add("accountId", accountId).add("accountName", accountName)
@@ -528,7 +509,7 @@ public class UsageRecord {
             .add("ipAddress", ipAddress).add("isSourceNAT", isSourceNAT).add("rawUsageHours", rawUsageHours).add("usage", usage)
             .add("type", type).add("usageType", usageType);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

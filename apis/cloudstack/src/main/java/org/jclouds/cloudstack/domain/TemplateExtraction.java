@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,18 +30,18 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * @author Richard Downer
-*/
+ */
 public class TemplateExtraction implements Comparable<TemplateExtraction> {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromTemplateExtraction(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -59,8 +57,8 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       protected String url;
       protected String zoneId;
       protected String zoneName;
-   
-      /** 
+
+      /**
        * @see TemplateExtraction#getId()
        */
       public T id(String id) {
@@ -68,7 +66,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getAccountId()
        */
       public T accountId(String accountId) {
@@ -76,7 +74,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getCreated()
        */
       public T created(Date created) {
@@ -84,7 +82,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getExtractId()
        */
       public T extractId(String extractId) {
@@ -92,7 +90,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getExtractMode()
        */
       public T extractMode(ExtractMode extractMode) {
@@ -100,7 +98,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getName()
        */
       public T name(String name) {
@@ -108,7 +106,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getState()
        */
       public T state(String state) {
@@ -116,7 +114,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getStatus()
        */
       public T status(String status) {
@@ -124,7 +122,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getStorageType()
        */
       public T storageType(String storageType) {
@@ -132,7 +130,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getUploadPercentage()
        */
       public T uploadPercentage(int uploadPercentage) {
@@ -140,7 +138,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getUrl()
        */
       public T url(String url) {
@@ -148,7 +146,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -156,7 +154,7 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplateExtraction#getZoneName()
        */
       public T zoneName(String zoneName) {
@@ -167,22 +165,22 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       public TemplateExtraction build() {
          return new TemplateExtraction(id, accountId, created, extractId, extractMode, name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
       }
-      
+
       public T fromTemplateExtraction(TemplateExtraction in) {
          return this
-                  .id(in.getId())
-                  .accountId(in.getAccountId())
-                  .created(in.getCreated())
-                  .extractId(in.getExtractId())
-                  .extractMode(in.getExtractMode())
-                  .name(in.getName())
-                  .state(in.getState())
-                  .status(in.getStatus())
-                  .storageType(in.getStorageType())
-                  .uploadPercentage(in.getUploadPercentage())
-                  .url(in.getUrl())
-                  .zoneId(in.getZoneId())
-                  .zoneName(in.getZoneName());
+               .id(in.getId())
+               .accountId(in.getAccountId())
+               .created(in.getCreated())
+               .extractId(in.getExtractId())
+               .extractMode(in.getExtractMode())
+               .name(in.getName())
+               .state(in.getState())
+               .status(in.getStatus())
+               .storageType(in.getStorageType())
+               .uploadPercentage(in.getUploadPercentage())
+               .url(in.getUrl())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName());
       }
    }
 
@@ -194,7 +192,6 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    }
 
    private final String id;
-   @Named("accountid")
    private final String accountId;
    private final Date created;
    private final String extractId;
@@ -202,18 +199,14 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    private final String name;
    private final String state;
    private final String status;
-   @Named("storagetype")
    private final String storageType;
-   @Named("uploadpercentage")
    private final int uploadPercentage;
    private final String url;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
 
    @ConstructorProperties({
-      "id", "accountid", "created", "extractId", "extractMode", "name", "state", "status", "storagetype", "uploadpercentage", "url", "zoneid", "zonename"
+         "id", "accountid", "created", "extractId", "extractMode", "name", "state", "status", "storagetype", "uploadpercentage", "url", "zoneid", "zonename"
    })
    protected TemplateExtraction(String id, @Nullable String accountId, @Nullable Date created, @Nullable String extractId,
                                 @Nullable ExtractMode extractMode, @Nullable String name, @Nullable String state, @Nullable String status,
@@ -347,25 +340,25 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
       if (obj == null || getClass() != obj.getClass()) return false;
       TemplateExtraction that = TemplateExtraction.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.accountId, that.accountId)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.extractId, that.extractId)
-               && Objects.equal(this.extractMode, that.extractMode)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.state, that.state)
-               && Objects.equal(this.status, that.status)
-               && Objects.equal(this.storageType, that.storageType)
-               && Objects.equal(this.uploadPercentage, that.uploadPercentage)
-               && Objects.equal(this.url, that.url)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.zoneName, that.zoneName);
+            && Objects.equal(this.accountId, that.accountId)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.extractId, that.extractId)
+            && Objects.equal(this.extractMode, that.extractMode)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.status, that.status)
+            && Objects.equal(this.storageType, that.storageType)
+            && Objects.equal(this.uploadPercentage, that.uploadPercentage)
+            && Objects.equal(this.url, that.url)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("accountId", accountId).add("created", created).add("extractId", extractId).add("extractMode", extractMode).add("name", name).add("state", state).add("status", status).add("storageType", storageType).add("uploadPercentage", uploadPercentage).add("url", url).add("zoneId", zoneId).add("zoneName", zoneName);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

@@ -24,8 +24,6 @@ import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Joiner;
@@ -252,33 +250,21 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
    private final String id;
    private final String name;
-   @Named("displaytext")
    private final String displayText;
    private final Date created;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("cpunumber")
    private final int cpuNumber;
-   @Named("cpuspeed")
    private final int cpuSpeed;
    private final int memory;
-   @Named("offerha")
    private final boolean haSupport;
-   @Named("storagetype")
    private final StorageType storageType;
    private final String tags;
-   @Named("defaultuse")
    private final boolean defaultUse;
-   @Named("hosttags")
    private final String hostTags;
-   @Named("issystem")
    private final boolean systemOffering;
-   @Named("limitcpuuse")
    private final boolean cpuUseLimited;
-   @Named("networkrate")
    private final long networkRate;
-   @Named("systemvmtype")
    private final boolean systemVmType;
 
    @ConstructorProperties({

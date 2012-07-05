@@ -43,7 +43,7 @@ public class Event implements Comparable<Event> {
       return new ConcreteBuilder().fromEvent(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -213,7 +213,7 @@ public class Event implements Comparable<Event> {
 
    /**
     * @return the account name for the account that owns the object being acted on in the event
-   (e.g. the owner of the virtual machine, ip address, or security group)
+    *         (e.g. the owner of the virtual machine, ip address, or security group)
     */
    @Nullable
    public String getAccount() {
@@ -286,7 +286,7 @@ public class Event implements Comparable<Event> {
 
    /**
     * @return the name of the user who performed the action (can be different from the account if
-   an admin is performing an action for a user, e.g. starting/stopping a user's virtual machine)
+    *         an admin is performing an action for a user, e.g. starting/stopping a user's virtual machine)
     */
    @Nullable
    public String getUsername() {
