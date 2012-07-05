@@ -24,8 +24,6 @@ import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.SshjSshClient;
@@ -45,7 +43,6 @@ public class SshjSshClientModule extends AbstractModule {
 
    protected void configure() {
       bind(SshClient.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
-      bind(SocketOpen.class).to(InetSocketAddressConnect.class).in(Scopes.SINGLETON);
    }
 
    private static class Factory implements SshClient.Factory {
