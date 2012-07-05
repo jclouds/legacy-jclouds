@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -33,28 +31,28 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Class ISOPermissions
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class ISOPermissions {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromISOPermissions(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
       protected Set<String> accounts = ImmutableSet.of();
       protected String domainId;
       protected boolean isPublic;
-   
-      /** 
+
+      /**
        * @see ISOPermissions#getId()
        */
       public T id(String id) {
@@ -62,11 +60,11 @@ public class ISOPermissions {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOPermissions#getAccounts()
        */
       public T accounts(Set<String> accounts) {
-         this.accounts = ImmutableSet.copyOf(checkNotNull(accounts, "accounts"));      
+         this.accounts = ImmutableSet.copyOf(checkNotNull(accounts, "accounts"));
          return self();
       }
 
@@ -74,7 +72,7 @@ public class ISOPermissions {
          return accounts(ImmutableSet.copyOf(in));
       }
 
-      /** 
+      /**
        * @see ISOPermissions#getDomainId()
        */
       public T domainId(String domainId) {
@@ -82,7 +80,7 @@ public class ISOPermissions {
          return self();
       }
 
-      /** 
+      /**
        * @see ISOPermissions#isPublic()
        */
       public T isPublic(boolean isPublic) {
@@ -93,13 +91,13 @@ public class ISOPermissions {
       public ISOPermissions build() {
          return new ISOPermissions(id, accounts, domainId, isPublic);
       }
-      
+
       public T fromISOPermissions(ISOPermissions in) {
          return this
-                  .id(in.getId())
-                  .accounts(in.getAccounts())
-                  .domainId(in.getDomainId())
-                  .isPublic(in.isPublic());
+               .id(in.getId())
+               .accounts(in.getAccounts())
+               .domainId(in.getDomainId())
+               .isPublic(in.isPublic());
       }
    }
 
@@ -111,19 +109,16 @@ public class ISOPermissions {
    }
 
    private final String id;
-   @Named("account")
    private final Set<String> accounts;
-   @Named("domainid")
    private final String domainId;
-   @Named("ispublic")
    private final boolean isPublic;
 
    @ConstructorProperties({
-      "id", "account", "domainid", "ispublic"
+         "id", "account", "domainid", "ispublic"
    })
-   protected ISOPermissions(String id, @Nullable Set<String> accounts,  @Nullable String domainId, boolean isPublic) {
+   protected ISOPermissions(String id, @Nullable Set<String> accounts, @Nullable String domainId, boolean isPublic) {
       this.id = checkNotNull(id, "id");
-      this.accounts = accounts == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(accounts);      
+      this.accounts = accounts == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(accounts);
       this.domainId = domainId;
       this.isPublic = isPublic;
    }
@@ -168,16 +163,16 @@ public class ISOPermissions {
       if (obj == null || getClass() != obj.getClass()) return false;
       ISOPermissions that = ISOPermissions.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.accounts, that.accounts)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.isPublic, that.isPublic);
+            && Objects.equal(this.accounts, that.accounts)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.isPublic, that.isPublic);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("accounts", accounts).add("domainId", domainId).add("isPublic", isPublic);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

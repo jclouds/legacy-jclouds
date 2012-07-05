@@ -24,8 +24,6 @@ import java.beans.ConstructorProperties;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -52,7 +50,7 @@ public class NetworkService implements Comparable<NetworkService> {
          return new ConcreteBuilder().fromCapability(this);
       }
 
-      public static abstract class Builder<T extends Builder<T>>  {
+      public static abstract class Builder<T extends Builder<T>> {
          protected abstract T self();
 
          protected String name;
@@ -83,7 +81,7 @@ public class NetworkService implements Comparable<NetworkService> {
                   .name(in.getName())
                   .value(in.getValue());
          }
-         
+
       }
 
       private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -142,7 +140,7 @@ public class NetworkService implements Comparable<NetworkService> {
          return name.compareTo(o.getName());
       }
    }
-   
+
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
@@ -194,7 +192,6 @@ public class NetworkService implements Comparable<NetworkService> {
    }
 
    private final String name;
-   @Named("capability")
    private final Set<Capability> capabilities;
 
    @ConstructorProperties({
@@ -217,7 +214,7 @@ public class NetworkService implements Comparable<NetworkService> {
       }
       return returnVal.build();
    }
-   
+
    @Override
    public int hashCode() {
       return Objects.hashCode(name, capabilities);

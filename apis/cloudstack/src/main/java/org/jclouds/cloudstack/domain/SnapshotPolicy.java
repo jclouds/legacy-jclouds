@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -31,20 +29,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class SnapshotPolicy
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class SnapshotPolicy {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromSnapshotPolicy(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -53,8 +51,8 @@ public class SnapshotPolicy {
       protected String schedule;
       protected String timezone;
       protected String volumeId;
-   
-      /** 
+
+      /**
        * @see SnapshotPolicy#getId()
        */
       public T id(String id) {
@@ -62,7 +60,7 @@ public class SnapshotPolicy {
          return self();
       }
 
-      /** 
+      /**
        * @see SnapshotPolicy#getInterval()
        */
       public T interval(Snapshot.Interval interval) {
@@ -70,7 +68,7 @@ public class SnapshotPolicy {
          return self();
       }
 
-      /** 
+      /**
        * @see SnapshotPolicy#getNumberToRetain()
        */
       public T numberToRetain(long numberToRetain) {
@@ -78,7 +76,7 @@ public class SnapshotPolicy {
          return self();
       }
 
-      /** 
+      /**
        * @see SnapshotPolicy#getSchedule()
        */
       public T schedule(String schedule) {
@@ -86,7 +84,7 @@ public class SnapshotPolicy {
          return self();
       }
 
-      /** 
+      /**
        * @see SnapshotPolicy#getTimezone()
        */
       public T timezone(String timezone) {
@@ -94,7 +92,7 @@ public class SnapshotPolicy {
          return self();
       }
 
-      /** 
+      /**
        * @see SnapshotPolicy#getVolumeId()
        */
       public T volumeId(String volumeId) {
@@ -105,15 +103,15 @@ public class SnapshotPolicy {
       public SnapshotPolicy build() {
          return new SnapshotPolicy(id, interval, numberToRetain, schedule, timezone, volumeId);
       }
-      
+
       public T fromSnapshotPolicy(SnapshotPolicy in) {
          return this
-                  .id(in.getId())
-                  .interval(in.getInterval())
-                  .numberToRetain(in.getNumberToRetain())
-                  .schedule(in.getSchedule())
-                  .timezone(in.getTimezone())
-                  .volumeId(in.getVolumeId());
+               .id(in.getId())
+               .interval(in.getInterval())
+               .numberToRetain(in.getNumberToRetain())
+               .schedule(in.getSchedule())
+               .timezone(in.getTimezone())
+               .volumeId(in.getVolumeId());
       }
    }
 
@@ -125,17 +123,14 @@ public class SnapshotPolicy {
    }
 
    private final String id;
-   @Named("intervaltype")
    private final Snapshot.Interval interval;
-   @Named("maxsnaps")
    private final long numberToRetain;
    private final String schedule;
    private final String timezone;
-   @Named("volumeid")
    private final String volumeId;
 
    @ConstructorProperties({
-      "id", "intervaltype", "maxsnaps", "schedule", "timezone", "volumeid"
+         "id", "intervaltype", "maxsnaps", "schedule", "timezone", "volumeid"
    })
    protected SnapshotPolicy(String id, @Nullable Snapshot.Interval interval, long numberToRetain, @Nullable String schedule,
                             @Nullable String timezone, @Nullable String volumeId) {
@@ -204,19 +199,19 @@ public class SnapshotPolicy {
       if (obj == null || getClass() != obj.getClass()) return false;
       SnapshotPolicy that = SnapshotPolicy.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.interval, that.interval)
-               && Objects.equal(this.numberToRetain, that.numberToRetain)
-               && Objects.equal(this.schedule, that.schedule)
-               && Objects.equal(this.timezone, that.timezone)
-               && Objects.equal(this.volumeId, that.volumeId);
+            && Objects.equal(this.interval, that.interval)
+            && Objects.equal(this.numberToRetain, that.numberToRetain)
+            && Objects.equal(this.schedule, that.schedule)
+            && Objects.equal(this.timezone, that.timezone)
+            && Objects.equal(this.volumeId, that.volumeId);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("interval", interval).add("numberToRetain", numberToRetain).add("schedule", schedule).add("timezone", timezone)
             .add("volumeId", volumeId);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

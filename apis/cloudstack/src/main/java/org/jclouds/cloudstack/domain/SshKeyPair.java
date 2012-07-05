@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -31,27 +29,27 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class SshKeyPair
- * 
+ *
  * @author Vijay Kiran
-*/
+ */
 public class SshKeyPair {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromSshKeyPair(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String fingerprint;
       protected String name;
       protected String privateKey;
-   
-      /** 
+
+      /**
        * @see SshKeyPair#getFingerprint()
        */
       public T fingerprint(String fingerprint) {
@@ -59,7 +57,7 @@ public class SshKeyPair {
          return self();
       }
 
-      /** 
+      /**
        * @see SshKeyPair#getName()
        */
       public T name(String name) {
@@ -67,7 +65,7 @@ public class SshKeyPair {
          return self();
       }
 
-      /** 
+      /**
        * @see SshKeyPair#getPrivateKey()
        */
       public T privateKey(String privateKey) {
@@ -78,12 +76,12 @@ public class SshKeyPair {
       public SshKeyPair build() {
          return new SshKeyPair(fingerprint, name, privateKey);
       }
-      
+
       public T fromSshKeyPair(SshKeyPair in) {
          return this
-                  .fingerprint(in.getFingerprint())
-                  .name(in.getName())
-                  .privateKey(in.getPrivateKey());
+               .fingerprint(in.getFingerprint())
+               .name(in.getName())
+               .privateKey(in.getPrivateKey());
       }
    }
 
@@ -96,11 +94,10 @@ public class SshKeyPair {
 
    private final String fingerprint;
    private final String name;
-   @Named("privatekey")
    private final String privateKey;
 
    @ConstructorProperties({
-      "fingerprint", "name", "privatekey"
+         "fingerprint", "name", "privatekey"
    })
    protected SshKeyPair(@Nullable String fingerprint, String name, @Nullable String privateKey) {
       this.fingerprint = fingerprint;
@@ -133,15 +130,15 @@ public class SshKeyPair {
       if (obj == null || getClass() != obj.getClass()) return false;
       SshKeyPair that = SshKeyPair.class.cast(obj);
       return Objects.equal(this.fingerprint, that.fingerprint)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.privateKey, that.privateKey);
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.privateKey, that.privateKey);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("fingerprint", fingerprint).add("name", name).add("privateKey", privateKey);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

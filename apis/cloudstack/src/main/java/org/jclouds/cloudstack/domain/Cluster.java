@@ -24,8 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -48,7 +46,7 @@ public class Cluster implements Comparable<Cluster> {
       UNRECOGNIZED;
 
       public static ManagedState fromValue(String value) {
-         try{
+         try {
             return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
          } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
@@ -69,7 +67,7 @@ public class Cluster implements Comparable<Cluster> {
       return new ConcreteBuilder().fromCluster(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -190,22 +188,14 @@ public class Cluster implements Comparable<Cluster> {
    }
 
    private final String id;
-   @Named("allocationstate")
    private final AllocationState allocationState;
-   @Named("clustertype")
    private final Host.ClusterType clusterType;
-   @Named("hypervisortype")
    private final String hypervisor;
-   @Named("managedstate")
    private final Cluster.ManagedState managedState;
    private final String name;
-   @Named("podid")
    private final String podId;
-   @Named("podname")
    private final String podName;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
 
    @ConstructorProperties({

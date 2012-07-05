@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Map;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
@@ -35,9 +33,9 @@ import com.google.common.collect.Maps;
 
 /**
  * Class ResourceLimit
- * 
+ *
  * @author Vijay Kiran
-*/
+ */
 public class ResourceLimit {
 
    /**
@@ -83,7 +81,7 @@ public class ResourceLimit {
          this.code = code;
       }
 
-      public int getCode(){
+      public int getCode() {
          return code;
       }
 
@@ -98,15 +96,15 @@ public class ResourceLimit {
       }
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromResourceLimit(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String account;
@@ -114,8 +112,8 @@ public class ResourceLimit {
       protected String domainId;
       protected int max;
       protected ResourceType resourceType;
-   
-      /** 
+
+      /**
        * @see ResourceLimit#getAccount()
        */
       public T account(String account) {
@@ -123,7 +121,7 @@ public class ResourceLimit {
          return self();
       }
 
-      /** 
+      /**
        * @see ResourceLimit#getDomain()
        */
       public T domain(String domain) {
@@ -131,7 +129,7 @@ public class ResourceLimit {
          return self();
       }
 
-      /** 
+      /**
        * @see ResourceLimit#getDomainId()
        */
       public T domainId(String domainId) {
@@ -139,7 +137,7 @@ public class ResourceLimit {
          return self();
       }
 
-      /** 
+      /**
        * @see ResourceLimit#getMax()
        */
       public T max(int max) {
@@ -147,7 +145,7 @@ public class ResourceLimit {
          return self();
       }
 
-      /** 
+      /**
        * @see ResourceLimit#getResourceType()
        */
       public T resourceType(ResourceType resourceType) {
@@ -158,14 +156,14 @@ public class ResourceLimit {
       public ResourceLimit build() {
          return new ResourceLimit(account, domain, domainId, max, resourceType);
       }
-      
+
       public T fromResourceLimit(ResourceLimit in) {
          return this
-                  .account(in.getAccount())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .max(in.getMax())
-                  .resourceType(in.getResourceType());
+               .account(in.getAccount())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .max(in.getMax())
+               .resourceType(in.getResourceType());
       }
    }
 
@@ -178,14 +176,12 @@ public class ResourceLimit {
 
    private final String account;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
    private final int max;
-   @Named("resourcetype")
    private final ResourceLimit.ResourceType resourceType;
 
    @ConstructorProperties({
-      "account", "domain", "domainid", "max", "resourcetype"
+         "account", "domain", "domainid", "max", "resourcetype"
    })
    protected ResourceLimit(@Nullable String account, @Nullable String domain, @Nullable String domainId, int max,
                            @Nullable ResourceType resourceType) {
@@ -231,17 +227,17 @@ public class ResourceLimit {
       if (obj == null || getClass() != obj.getClass()) return false;
       ResourceLimit that = ResourceLimit.class.cast(obj);
       return Objects.equal(this.account, that.account)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.max, that.max)
-               && Objects.equal(this.resourceType, that.resourceType);
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.max, that.max)
+            && Objects.equal(this.resourceType, that.resourceType);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("account", account).add("domain", domain).add("domainId", domainId).add("max", max).add("resourceType", resourceType);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -33,18 +31,18 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * @author Adrian Cole, Andrei Savu
-*/
+ */
 public class Zone implements Comparable<Zone> {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromZone(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -64,8 +62,8 @@ public class Zone implements Comparable<Zone> {
       protected AllocationState allocationState;
       protected String dhcpProvider;
       protected String zoneToken;
-   
-      /** 
+
+      /**
        * @see Zone#getId()
        */
       public T id(String id) {
@@ -73,7 +71,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getDescription()
        */
       public T description(String description) {
@@ -81,7 +79,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getDisplayText()
        */
       public T displayText(String displayText) {
@@ -89,7 +87,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getDNS()
        */
       public T DNS(List<String> DNS) {
@@ -98,7 +96,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getDomain()
        */
       public T domain(String domain) {
@@ -106,7 +104,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getDomainId()
        */
       public T domainId(String domainId) {
@@ -114,7 +112,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getGuestCIDRAddress()
        */
       public T guestCIDRAddress(String guestCIDRAddress) {
@@ -122,7 +120,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getInternalDNS()
        */
       public T internalDNS(List<String> DNS) {
@@ -131,7 +129,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getName()
        */
       public T name(String name) {
@@ -139,7 +137,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getNetworkType()
        */
       public T networkType(NetworkType networkType) {
@@ -147,7 +145,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getVLAN()
        */
       public T VLAN(String VLAN) {
@@ -155,7 +153,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#isSecurityGroupsEnabled()
        */
       public T securityGroupsEnabled(boolean securityGroupsEnabled) {
@@ -163,7 +161,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getAllocationState()
        */
       public T allocationState(AllocationState allocationState) {
@@ -171,7 +169,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getDhcpProvider()
        */
       public T dhcpProvider(String dhcpProvider) {
@@ -179,7 +177,7 @@ public class Zone implements Comparable<Zone> {
          return self();
       }
 
-      /** 
+      /**
        * @see Zone#getZoneToken()
        */
       public T zoneToken(String zoneToken) {
@@ -191,24 +189,24 @@ public class Zone implements Comparable<Zone> {
          return new Zone(id, description, displayText, DNS1, DNS2, domain, domainId, guestCIDRAddress, internalDNS1, internalDNS2,
                name, networkType, VLAN, securityGroupsEnabled, allocationState, dhcpProvider, zoneToken);
       }
-      
+
       public T fromZone(Zone in) {
          return this
-                  .id(in.getId())
-                  .description(in.getDescription())
-                  .displayText(in.getDisplayText())
-                  .DNS(in.getDNS())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .guestCIDRAddress(in.getGuestCIDRAddress())
-                  .internalDNS(in.getInternalDNS())
-                  .name(in.getName())
-                  .networkType(in.getNetworkType())
-                  .VLAN(in.getVLAN())
-                  .securityGroupsEnabled(in.isSecurityGroupsEnabled())
-                  .allocationState(in.getAllocationState())
-                  .dhcpProvider(in.getDhcpProvider())
-                  .zoneToken(in.getZoneToken());
+               .id(in.getId())
+               .description(in.getDescription())
+               .displayText(in.getDisplayText())
+               .DNS(in.getDNS())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .guestCIDRAddress(in.getGuestCIDRAddress())
+               .internalDNS(in.getInternalDNS())
+               .name(in.getName())
+               .networkType(in.getNetworkType())
+               .VLAN(in.getVLAN())
+               .securityGroupsEnabled(in.isSecurityGroupsEnabled())
+               .allocationState(in.getAllocationState())
+               .dhcpProvider(in.getDhcpProvider())
+               .zoneToken(in.getZoneToken());
       }
    }
 
@@ -221,41 +219,28 @@ public class Zone implements Comparable<Zone> {
 
    private final String id;
    private final String description;
-   @Named("displaytext")
    private final String displayText;
-   @Named("dns1")
    private final String DNS1;
-   @Named("dns2")
    private final String DNS2;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("guestcidraddress")
    private final String guestCIDRAddress;
-   @Named("internaldns1")
    private final String internalDNS1;
-   @Named("internaldns2")
    private final String internalDNS2;
    private final String name;
-   @Named("networktype")
    private final NetworkType networkType;
-   @Named("vlan")
    private final String VLAN;
-   @Named("securitygroupsenabled")
    private final boolean securityGroupsEnabled;
-   @Named("allocationstate")
    private final AllocationState allocationState;
-   @Named("dhcpprovider")
    private final String dhcpProvider;
-   @Named("zonetoken")
    private final String zoneToken;
 
    @ConstructorProperties({
-      "id", "description", "displaytext", "dns1", "dns2", "domain", "domainid", "guestcidraddress", "internaldns1", "internaldns2", "name", "networktype", "vlan", "securitygroupsenabled", "allocationstate", "dhcpprovider", "zonetoken"
+         "id", "description", "displaytext", "dns1", "dns2", "domain", "domainid", "guestcidraddress", "internaldns1", "internaldns2", "name", "networktype", "vlan", "securitygroupsenabled", "allocationstate", "dhcpprovider", "zonetoken"
    })
    protected Zone(String id, @Nullable String description, @Nullable String displayText, @Nullable String DNS1, @Nullable String DNS2,
                   @Nullable String domain, @Nullable String domainId, @Nullable String guestCIDRAddress, @Nullable String internalDNS1,
-                  @Nullable String internalDNS2, @Nullable String name, @Nullable NetworkType networkType, @Nullable String VLAN, 
+                  @Nullable String internalDNS2, @Nullable String name, @Nullable NetworkType networkType, @Nullable String VLAN,
                   boolean securityGroupsEnabled, @Nullable AllocationState allocationState, @Nullable String dhcpProvider,
                   @Nullable String zoneToken) {
       this.id = checkNotNull(id, "id");
@@ -415,24 +400,24 @@ public class Zone implements Comparable<Zone> {
       if (obj == null || getClass() != obj.getClass()) return false;
       Zone that = Zone.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.description, that.description)
-               && Objects.equal(this.displayText, that.displayText)
-               && Objects.equal(this.DNS1, that.DNS1)
-               && Objects.equal(this.DNS2, that.DNS2)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.guestCIDRAddress, that.guestCIDRAddress)
-               && Objects.equal(this.internalDNS1, that.internalDNS1)
-               && Objects.equal(this.internalDNS2, that.internalDNS2)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.networkType, that.networkType)
-               && Objects.equal(this.VLAN, that.VLAN)
-               && Objects.equal(this.securityGroupsEnabled, that.securityGroupsEnabled)
-               && Objects.equal(this.allocationState, that.allocationState)
-               && Objects.equal(this.dhcpProvider, that.dhcpProvider)
-               && Objects.equal(this.zoneToken, that.zoneToken);
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.DNS1, that.DNS1)
+            && Objects.equal(this.DNS2, that.DNS2)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.guestCIDRAddress, that.guestCIDRAddress)
+            && Objects.equal(this.internalDNS1, that.internalDNS1)
+            && Objects.equal(this.internalDNS2, that.internalDNS2)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.networkType, that.networkType)
+            && Objects.equal(this.VLAN, that.VLAN)
+            && Objects.equal(this.securityGroupsEnabled, that.securityGroupsEnabled)
+            && Objects.equal(this.allocationState, that.allocationState)
+            && Objects.equal(this.dhcpProvider, that.dhcpProvider)
+            && Objects.equal(this.zoneToken, that.zoneToken);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("description", description).add("displayText", displayText).add("DNS1", DNS1).add("DNS2", DNS2)
@@ -441,7 +426,7 @@ public class Zone implements Comparable<Zone> {
             .add("securityGroupsEnabled", securityGroupsEnabled).add("allocationState", allocationState).add("dhcpProvider", dhcpProvider)
             .add("zoneToken", zoneToken);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

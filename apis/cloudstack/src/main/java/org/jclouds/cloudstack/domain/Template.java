@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,57 +30,57 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * @author Adrian Cole
-*/
+ */
 public class Template implements Comparable<Template> {
    public enum Status {
-      
+
       /**
-      * status of download is not known. Example - When the job for downloading doesn't exist
-      * during progress check.
-      */
+       * status of download is not known. Example - When the job for downloading doesn't exist
+       * during progress check.
+       */
       UNKNOWN,
       /**
-      * the download has been cancelled/aborted.
-      */
+       * the download has been cancelled/aborted.
+       */
       ABANDONED,
       /**
-      * the download has reached an error state. Example - there is not route to ssvm agent
-      */
+       * the download has reached an error state. Example - there is not route to ssvm agent
+       */
       DOWNLOAD_ERROR,
       /**
-      * the download hasn't started.
-      */
+       * the download hasn't started.
+       */
       NOT_DOWNLOADED,
       /**
-      * the download is in progress
-      */
+       * the download is in progress
+       */
       DOWNLOAD_IN_PROGRESS,
       /**
-      * the resource has been downloaded on secondary storage.
-      */
+       * the resource has been downloaded on secondary storage.
+       */
       DOWNLOADED,
-      
+
       // These states are specifically used for extraction of resources out of CS(ironically shown
       // as download template in the UI, API - extractTemplate ). Some of the generic states (like
       // abandoned, unknown) above are used for the extraction tasks as well.
-      
+
       /**
-      * the resource has been uploaded
-      */
+       * the resource has been uploaded
+       */
       UPLOADED,
       /**
-      * the resource upload work hasn't started yet
-      */
+       * the resource upload work hasn't started yet
+       */
       NOT_UPLOADED,
       /**
-      * the resource upload has reached error.
-      */
+       * the resource upload has reached error.
+       */
       UPLOAD_ERROR,
       /**
-      * the resource upload is in progress.
-      */
+       * the resource upload is in progress.
+       */
       UPLOAD_IN_PROGRESS, UNRECOGNIZED;
-      
+
       public static Status fromValue(String state) {
          if (state.equals("Download Complete")) {
             return DOWNLOADED;
@@ -93,45 +91,45 @@ public class Template implements Comparable<Template> {
             return UNRECOGNIZED;
          }
       }
-      
+
    }
 
    public static enum Type {
-      
+
       USER, BUILTIN, UNRECOGNIZED;
-      
+
       //TODO do we need camel case routines (e.g. see enums in VirtualMachine) ?
       public static Type fromValue(String type) {
-      try {
-      return valueOf(checkNotNull(type, "type"));
-      } catch (IllegalArgumentException e) {
-      return UNRECOGNIZED;
-      }
+         try {
+            return valueOf(checkNotNull(type, "type"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
    public enum Format {
-      
+
       VHD, QCOW2, OVA, UNRECOGNIZED;
-      
+
       public static Format fromValue(String format) {
-      try {
-      return valueOf(checkNotNull(format, "format"));
-      } catch (IllegalArgumentException e) {
-      return UNRECOGNIZED;
-      }
+         try {
+            return valueOf(checkNotNull(format, "format"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromTemplate(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -166,8 +164,8 @@ public class Template implements Comparable<Template> {
       protected String hostName;
       protected String sourceTemplateId;
       protected String templateTag;
-   
-      /** 
+
+      /**
        * @see Template#getId()
        */
       public T id(String id) {
@@ -175,7 +173,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getDisplayText()
        */
       public T displayText(String displayText) {
@@ -183,7 +181,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getDomain()
        */
       public T domain(String domain) {
@@ -191,7 +189,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getDomainId()
        */
       public T domainId(String domainId) {
@@ -199,7 +197,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getAccount()
        */
       public T account(String account) {
@@ -207,7 +205,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getAccountId()
        */
       public T accountId(String accountId) {
@@ -215,7 +213,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getZone()
        */
       public T zone(String zone) {
@@ -223,7 +221,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -231,7 +229,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getOSType()
        */
       public T OSType(String OSType) {
@@ -239,7 +237,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getOSTypeId()
        */
       public T OSTypeId(String OSTypeId) {
@@ -247,7 +245,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getName()
        */
       public T name(String name) {
@@ -255,7 +253,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getType()
        */
       public T type(Template.Type type) {
@@ -263,7 +261,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getStatus()
        */
       public T status(Template.Status status) {
@@ -271,7 +269,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getFormat()
        */
       public T format(Template.Format format) {
@@ -279,7 +277,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getHypervisor()
        */
       public T hypervisor(String hypervisor) {
@@ -287,7 +285,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getSize()
        */
       public T size(Long size) {
@@ -295,7 +293,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getCreated()
        */
       public T created(Date created) {
@@ -303,7 +301,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getRemoved()
        */
       public T removed(Date removed) {
@@ -311,7 +309,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#isCrossZones()
        */
       public T crossZones(boolean crossZones) {
@@ -319,7 +317,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#isBootable()
        */
       public T bootable(boolean bootable) {
@@ -327,7 +325,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#isExtractable()
        */
       public T extractable(boolean extractable) {
@@ -335,7 +333,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#isFeatured()
        */
       public T featured(boolean featured) {
@@ -343,7 +341,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#ispublic()
        */
       public T isPublic(boolean isPublic) {
@@ -351,7 +349,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#isReady()
        */
       public T ready(boolean ready) {
@@ -359,7 +357,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#isPasswordEnabled()
        */
       public T passwordEnabled(boolean passwordEnabled) {
@@ -367,7 +365,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getJobId()
        */
       public T jobId(String jobId) {
@@ -375,7 +373,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getJobStatus()
        */
       public T jobStatus(String jobStatus) {
@@ -383,7 +381,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getChecksum()
        */
       public T checksum(String checksum) {
@@ -391,7 +389,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getHostId()
        */
       public T hostId(String hostId) {
@@ -399,7 +397,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getHostName()
        */
       public T hostName(String hostName) {
@@ -407,7 +405,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getSourceTemplateId()
        */
       public T sourceTemplateId(String sourceTemplateId) {
@@ -415,7 +413,7 @@ public class Template implements Comparable<Template> {
          return self();
       }
 
-      /** 
+      /**
        * @see Template#getTemplateTag()
        */
       public T templateTag(String templateTag) {
@@ -426,41 +424,41 @@ public class Template implements Comparable<Template> {
       public Template build() {
          return new Template(id, displayText, domain, domainId, account, accountId, zone, zoneId, OSType, OSTypeId, name, type, status, format, hypervisor, size, created, removed, crossZones, bootable, extractable, featured, isPublic, ready, passwordEnabled, jobId, jobStatus, checksum, hostId, hostName, sourceTemplateId, templateTag);
       }
-      
+
       public T fromTemplate(Template in) {
          return this
-                  .id(in.getId())
-                  .displayText(in.getDisplayText())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .account(in.getAccount())
-                  .accountId(in.getAccountId())
-                  .zone(in.getZone())
-                  .zoneId(in.getZoneId())
-                  .OSType(in.getOSType())
-                  .OSTypeId(in.getOSTypeId())
-                  .name(in.getName())
-                  .type(in.getType())
-                  .status(in.getStatus())
-                  .format(in.getFormat())
-                  .hypervisor(in.getHypervisor())
-                  .size(in.getSize())
-                  .created(in.getCreated())
-                  .removed(in.getRemoved())
-                  .crossZones(in.isCrossZones())
-                  .bootable(in.isBootable())
-                  .extractable(in.isExtractable())
-                  .featured(in.isFeatured())
-                  .isPublic(in.ispublic())
-                  .ready(in.isReady())
-                  .passwordEnabled(in.isPasswordEnabled())
-                  .jobId(in.getJobId())
-                  .jobStatus(in.getJobStatus())
-                  .checksum(in.getChecksum())
-                  .hostId(in.getHostId())
-                  .hostName(in.getHostName())
-                  .sourceTemplateId(in.getSourceTemplateId())
-                  .templateTag(in.getTemplateTag());
+               .id(in.getId())
+               .displayText(in.getDisplayText())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .account(in.getAccount())
+               .accountId(in.getAccountId())
+               .zone(in.getZone())
+               .zoneId(in.getZoneId())
+               .OSType(in.getOSType())
+               .OSTypeId(in.getOSTypeId())
+               .name(in.getName())
+               .type(in.getType())
+               .status(in.getStatus())
+               .format(in.getFormat())
+               .hypervisor(in.getHypervisor())
+               .size(in.getSize())
+               .created(in.getCreated())
+               .removed(in.getRemoved())
+               .crossZones(in.isCrossZones())
+               .bootable(in.isBootable())
+               .extractable(in.isExtractable())
+               .featured(in.isFeatured())
+               .isPublic(in.ispublic())
+               .ready(in.isReady())
+               .passwordEnabled(in.isPasswordEnabled())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus())
+               .checksum(in.getChecksum())
+               .hostId(in.getHostId())
+               .hostName(in.getHostName())
+               .sourceTemplateId(in.getSourceTemplateId())
+               .templateTag(in.getTemplateTag());
       }
    }
 
@@ -472,24 +470,16 @@ public class Template implements Comparable<Template> {
    }
 
    private final String id;
-   @Named("displaytext")
    private final String displayText;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
    private final String account;
-   @Named("accountid")
    private final String accountId;
-   @Named("zonename")
    private final String zone;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("ostypename")
    private final String OSType;
-   @Named("ostypeid")
    private final String OSTypeId;
    private final String name;
-   @Named("templatetype")
    private final Template.Type type;
    private final Template.Status status;
    private final Template.Format format;
@@ -499,33 +489,24 @@ public class Template implements Comparable<Template> {
    private final Date removed;
    private final boolean crossZones;
    private final boolean bootable;
-   @Named("isextractable")
    private final boolean extractable;
-   @Named("isfeatured")
    private final boolean featured;
    private final boolean ispublic;
-   @Named("isready")
    private final boolean ready;
-   @Named("passwordenabled")
    private final boolean passwordEnabled;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final String jobStatus;
    private final String checksum;
    private final String hostId;
-   @Named("hostname")
    private final String hostName;
-   @Named("sourcetemplateid")
    private final String sourceTemplateId;
-   @Named("templatetag")
    private final String templateTag;
 
    @ConstructorProperties({
-      "id", "displaytext", "domain", "domainid", "account", "accountid", "zonename", "zoneid", "ostypename", "ostypeid",
-      "name", "templatetype", "status", "format", "hypervisor", "size", "created", "removed", "crossZones", "bootable",
-      "isextractable", "isfeatured", "ispublic", "isready", "passwordenabled", "jobid", "jobstatus", "checksum", "hostId",
-      "hostname", "sourcetemplateid", "templatetag"
+         "id", "displaytext", "domain", "domainid", "account", "accountid", "zonename", "zoneid", "ostypename", "ostypeid",
+         "name", "templatetype", "status", "format", "hypervisor", "size", "created", "removed", "crossZones", "bootable",
+         "isextractable", "isfeatured", "ispublic", "isready", "passwordenabled", "jobid", "jobstatus", "checksum", "hostId",
+         "hostname", "sourcetemplateid", "templatetag"
    })
    protected Template(String id, @Nullable String displayText, @Nullable String domain, @Nullable String domainId,
                       @Nullable String account, @Nullable String accountId, @Nullable String zone, @Nullable String zoneId,
@@ -760,7 +741,7 @@ public class Template implements Comparable<Template> {
 
    /**
     * @return shows the current pending asynchronous job ID, or null if current
-         pending jobs are acting on the template
+    *         pending jobs are acting on the template
     */
    @Nullable
    public String getJobId() {
@@ -826,44 +807,44 @@ public class Template implements Comparable<Template> {
       if (obj == null || getClass() != obj.getClass()) return false;
       Template that = Template.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.displayText, that.displayText)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.accountId, that.accountId)
-               && Objects.equal(this.zone, that.zone)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.OSType, that.OSType)
-               && Objects.equal(this.OSTypeId, that.OSTypeId)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.type, that.type)
-               && Objects.equal(this.status, that.status)
-               && Objects.equal(this.format, that.format)
-               && Objects.equal(this.hypervisor, that.hypervisor)
-               && Objects.equal(this.size, that.size)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.removed, that.removed)
-               && Objects.equal(this.crossZones, that.crossZones)
-               && Objects.equal(this.bootable, that.bootable)
-               && Objects.equal(this.extractable, that.extractable)
-               && Objects.equal(this.featured, that.featured)
-               && Objects.equal(this.ispublic, that.ispublic)
-               && Objects.equal(this.ready, that.ready)
-               && Objects.equal(this.passwordEnabled, that.passwordEnabled)
-               && Objects.equal(this.jobId, that.jobId)
-               && Objects.equal(this.jobStatus, that.jobStatus)
-               && Objects.equal(this.checksum, that.checksum)
-               && Objects.equal(this.hostId, that.hostId)
-               && Objects.equal(this.hostName, that.hostName)
-               && Objects.equal(this.sourceTemplateId, that.sourceTemplateId)
-               && Objects.equal(this.templateTag, that.templateTag);
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.accountId, that.accountId)
+            && Objects.equal(this.zone, that.zone)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.OSType, that.OSType)
+            && Objects.equal(this.OSTypeId, that.OSTypeId)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.type, that.type)
+            && Objects.equal(this.status, that.status)
+            && Objects.equal(this.format, that.format)
+            && Objects.equal(this.hypervisor, that.hypervisor)
+            && Objects.equal(this.size, that.size)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.removed, that.removed)
+            && Objects.equal(this.crossZones, that.crossZones)
+            && Objects.equal(this.bootable, that.bootable)
+            && Objects.equal(this.extractable, that.extractable)
+            && Objects.equal(this.featured, that.featured)
+            && Objects.equal(this.ispublic, that.ispublic)
+            && Objects.equal(this.ready, that.ready)
+            && Objects.equal(this.passwordEnabled, that.passwordEnabled)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus)
+            && Objects.equal(this.checksum, that.checksum)
+            && Objects.equal(this.hostId, that.hostId)
+            && Objects.equal(this.hostName, that.hostName)
+            && Objects.equal(this.sourceTemplateId, that.sourceTemplateId)
+            && Objects.equal(this.templateTag, that.templateTag);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("displayText", displayText).add("domain", domain).add("domainId", domainId).add("account", account).add("accountId", accountId).add("zone", zone).add("zoneId", zoneId).add("OSType", OSType).add("OSTypeId", OSTypeId).add("name", name).add("type", type).add("status", status).add("format", format).add("hypervisor", hypervisor).add("size", size).add("created", created).add("removed", removed).add("crossZones", crossZones).add("bootable", bootable).add("extractable", extractable).add("featured", featured).add("ispublic", ispublic).add("ready", ready).add("passwordEnabled", passwordEnabled).add("jobId", jobId).add("jobStatus", jobStatus).add("checksum", checksum).add("hostId", hostId).add("hostName", hostName).add("sourceTemplateId", sourceTemplateId).add("templateTag", templateTag);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

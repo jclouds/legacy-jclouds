@@ -28,26 +28,26 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * Describes the schedule of a snapshot policy.
  *
- * @see org.jclouds.cloudstack.util.SnapshotPolicySchedules
  * @author Richard Downer
-*/
+ * @see org.jclouds.cloudstack.util.SnapshotPolicySchedules
+ */
 public class SnapshotPolicySchedule {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromSnapshotPolicySchedule(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected Snapshot.Interval interval;
       protected String time;
-   
-      /** 
+
+      /**
        * @see SnapshotPolicySchedule#getInterval()
        */
       public T interval(Snapshot.Interval interval) {
@@ -55,7 +55,7 @@ public class SnapshotPolicySchedule {
          return self();
       }
 
-      /** 
+      /**
        * @see SnapshotPolicySchedule#getTime()
        */
       public T time(String time) {
@@ -66,11 +66,11 @@ public class SnapshotPolicySchedule {
       public SnapshotPolicySchedule build() {
          return new SnapshotPolicySchedule(interval, time);
       }
-      
+
       public T fromSnapshotPolicySchedule(SnapshotPolicySchedule in) {
          return this
-                  .interval(in.getInterval())
-                  .time(in.getTime());
+               .interval(in.getInterval())
+               .time(in.getTime());
       }
    }
 
@@ -85,7 +85,7 @@ public class SnapshotPolicySchedule {
    private final String time;
 
    @ConstructorProperties({
-      "interval", "time"
+         "interval", "time"
    })
    protected SnapshotPolicySchedule(@Nullable Snapshot.Interval interval, @Nullable String time) {
       this.interval = interval;
@@ -113,14 +113,14 @@ public class SnapshotPolicySchedule {
       if (obj == null || getClass() != obj.getClass()) return false;
       SnapshotPolicySchedule that = SnapshotPolicySchedule.class.cast(obj);
       return Objects.equal(this.interval, that.interval)
-               && Objects.equal(this.time, that.time);
+            && Objects.equal(this.time, that.time);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("interval", interval).add("time", time);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

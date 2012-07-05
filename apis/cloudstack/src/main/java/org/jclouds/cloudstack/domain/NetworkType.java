@@ -25,7 +25,6 @@ import org.jclouds.cloudstack.features.TemplateClient;
 import com.google.common.base.CaseFormat;
 
 /**
- * 
  * @author Adrian Cole
  * @see TemplateClient#listZones
  */

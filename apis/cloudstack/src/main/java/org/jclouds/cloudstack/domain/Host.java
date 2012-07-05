@@ -25,8 +25,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -75,7 +73,7 @@ public class Host implements Comparable<Host> {
       public static State fromValue(String value) {
          try {
             return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
-         } catch(IllegalArgumentException e) {
+         } catch (IllegalArgumentException e) {
             return UNKNOWN;
          }
       }
@@ -108,7 +106,7 @@ public class Host implements Comparable<Host> {
             }
             return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
 
-         } catch(IllegalArgumentException e) {
+         } catch (IllegalArgumentException e) {
             return UNKNOWN;
          }
       }
@@ -572,77 +570,46 @@ public class Host implements Comparable<Host> {
    }
 
    private final String id;
-   @Named("allocationstate")
    private final AllocationState allocationState;
-   @Named("averageload")
    private final int averageLoad;
    private final String capabilities;
-   @Named("clusterid")
    private final String clusterId;
-   @Named("clustername")
    private final String clusterName;
-   @Named("clustertype")
    private final Host.ClusterType clusterType;
-   @Named("cpuallocated")
    private final String cpuAllocated;
-   @Named("cpunumber")
    private final int cpuNumber;
-   @Named("cpuspeed")
    private final int cpuSpeed;
-   @Named("cpuused")
    private final String cpuUsed;
-   @Named("cpuwithoverprovisioning")
    private final float cpuWithOverProvisioning;
    private final Date created;
    private final Date disconnected;
-   @Named("disksizeallocated")
    private final long diskSizeAllocated;
-   @Named("disksizetotal")
    private final long diskSizeTotal;
    private final String events;
-   @Named("hasenoughcapacity")
    private final boolean hasEnoughCapacity;
-   @Named("hosttags")
    private final String hostTags;
    private final String hypervisor;
-   @Named("ipaddress")
    private final String ipAddress;
-   @Named("islocalstorageactive")
    private final boolean localStorageActive;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final AsyncJob.Status jobStatus;
-   @Named("lastpinged")
    private final Date lastPinged;
-   @Named("managementserverid")
    private final String managementServerId;
-   @Named("memoryallocated")
    private final long memoryAllocated;
-   @Named("memorytotal")
    private final long memoryTotal;
-   @Named("memoryused")
    private final long memoryUsed;
    private final String name;
-   @Named("networkkbsread")
    private final long networkKbsRead;
-   @Named("networkkbswrite")
    private final long networkKbsWrite;
-   @Named("oscategoryid")
    private final String osCategoryId;
-   @Named("oscategoryname")
    private final String osCategoryName;
-   @Named("podid")
    private final String podId;
-   @Named("podname")
    private final String podName;
    private final Date removed;
    private final Host.State state;
    private final Host.Type type;
    private final String version;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
 
    @ConstructorProperties({
@@ -835,7 +802,7 @@ public class Host implements Comparable<Host> {
    public long getMemoryUsed() {
       return this.memoryUsed;
    }
-   
+
    @Nullable
    public String getName() {
       return this.name;

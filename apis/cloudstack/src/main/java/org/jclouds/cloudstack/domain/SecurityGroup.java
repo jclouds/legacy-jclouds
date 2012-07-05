@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -34,20 +32,20 @@ import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Class SecurityGroup
- * 
+ *
  * @author Adrian Cole
-*/
+ */
 public class SecurityGroup implements Comparable<SecurityGroup> {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromSecurityGroup(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -59,8 +57,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       protected String jobId;
       protected Integer jobStatus;
       protected Set<IngressRule> ingressRules;
-   
-      /** 
+
+      /**
        * @see SecurityGroup#getId()
        */
       public T id(String id) {
@@ -68,7 +66,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getAccount()
        */
       public T account(String account) {
@@ -76,7 +74,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getName()
        */
       public T name(String name) {
@@ -84,7 +82,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getDescription()
        */
       public T description(String description) {
@@ -92,7 +90,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getDomain()
        */
       public T domain(String domain) {
@@ -100,7 +98,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getDomainId()
        */
       public T domainId(String domainId) {
@@ -108,7 +106,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getJobId()
        */
       public T jobId(String jobId) {
@@ -116,7 +114,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getJobStatus()
        */
       public T jobStatus(Integer jobStatus) {
@@ -124,7 +122,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return self();
       }
 
-      /** 
+      /**
        * @see SecurityGroup#getIngressRules()
        */
       public T ingressRules(Set<IngressRule> ingressRules) {
@@ -135,18 +133,18 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       public SecurityGroup build() {
          return new SecurityGroup(id, account, name, description, domain, domainId, jobId, jobStatus, ingressRules);
       }
-      
+
       public T fromSecurityGroup(SecurityGroup in) {
          return this
-                  .id(in.getId())
-                  .account(in.getAccount())
-                  .name(in.getName())
-                  .description(in.getDescription())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .jobId(in.getJobId())
-                  .jobStatus(in.getJobStatus())
-                  .ingressRules(in.getIngressRules());
+               .id(in.getId())
+               .account(in.getAccount())
+               .name(in.getName())
+               .description(in.getDescription())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus())
+               .ingressRules(in.getIngressRules());
       }
    }
 
@@ -162,17 +160,13 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    private final String name;
    private final String description;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final Integer jobStatus;
-   @Named("ingressrule")
    private final Set<IngressRule> ingressRules;
 
    @ConstructorProperties({
-      "id", "account", "name", "description", "domain", "domainid", "jobid", "jobstatus", "ingressrule"
+         "id", "account", "name", "description", "domain", "domainid", "jobid", "jobstatus", "ingressrule"
    })
    protected SecurityGroup(String id, @Nullable String account, @Nullable String name, @Nullable String description,
                            @Nullable String domain, @Nullable String domainId, @Nullable String jobId, @Nullable Integer jobStatus,
@@ -237,8 +231,8 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
 
    /**
     * @return shows the current pending asynchronous job ID. This tag is not
-         returned if no current pending jobs are acting on the virtual
-         machine
+    *         returned if no current pending jobs are acting on the virtual
+    *         machine
     */
    @Nullable
    public String getJobId() {
@@ -271,21 +265,21 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       if (obj == null || getClass() != obj.getClass()) return false;
       SecurityGroup that = SecurityGroup.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.description, that.description)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.jobId, that.jobId)
-               && Objects.equal(this.jobStatus, that.jobStatus)
-               && Objects.equal(this.ingressRules, that.ingressRules);
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus)
+            && Objects.equal(this.ingressRules, that.ingressRules);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).add("id", id).add("account", account).add("name", name).add("description", description)
             .add("domain", domain).add("domainId", domainId).add("jobId", jobId).add("jobStatus", jobStatus).add("ingressRules", ingressRules);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();
