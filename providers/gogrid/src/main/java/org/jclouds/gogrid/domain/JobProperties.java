@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,92 +18,153 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * State of a job.
- *
+ * 
  * @see <a href="http://wiki.gogrid.com/wiki/index.php/API:Job_State_(Object)"/>
- *
  * @author Oleksiy Yarmula
- */
+*/
 public class JobProperties implements Comparable<JobProperties> {
 
-    private long id;
-    @SerializedName("updatedon")
-    private Date updatedOn;
-    private JobState state;
-    private String note;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromJobProperties(this);
+   }
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public JobProperties() {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-    }
+      protected long id;
+      protected Date updatedOn;
+      protected JobState state;
+      protected String note;
+   
+      /** 
+       * @see JobProperties#getId()
+       */
+      public T id(long id) {
+         this.id = id;
+         return self();
+      }
 
-    public JobProperties(long id, Date updatedOn, JobState state, String note) {
-        this.id = id;
-        this.updatedOn = updatedOn;
-        this.state = state;
-        this.note = note;
-    }
+      /** 
+       * @see JobProperties#getUpdatedOn()
+       */
+      public T updatedOn(Date updatedOn) {
+         this.updatedOn = updatedOn;
+         return self();
+      }
 
-    public long getId() {
-        return id;
-    }
+      /** 
+       * @see JobProperties#getState()
+       */
+      public T state(JobState state) {
+         this.state = state;
+         return self();
+      }
 
-    public Date getUpdatedOn() {
-        return updatedOn;
-    }
+      /** 
+       * @see JobProperties#getNote()
+       */
+      public T note(String note) {
+         this.note = note;
+         return self();
+      }
 
-    public JobState getState() {
-        return state;
-    }
+      public JobProperties build() {
+         return new JobProperties(id, updatedOn, state, note);
+      }
+      
+      public T fromJobProperties(JobProperties in) {
+         return this
+                  .id(in.getId())
+                  .updatedOn(in.getUpdatedOn())
+                  .state(in.getState())
+                  .note(in.getNote());
+      }
+   }
 
-    public String getNote() {
-        return note;
-    }
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   private final long id;
+   private final Date updatedOn;
+   private final JobState state;
+   private final String note;
 
-        JobProperties jobState = (JobProperties) o;
+   @ConstructorProperties({
+      "id", "updatedon", "state", "note"
+   })
+   protected JobProperties(long id, Date updatedOn, JobState state, @Nullable String note) {
+      this.id = id;
+      this.updatedOn = checkNotNull(updatedOn, "updatedOn");
+      this.state = checkNotNull(state, "state");
+      this.note = note;
+   }
 
-        if (id != jobState.id) return false;
-        if (note != null ? !note.equals(jobState.note) : jobState.note != null) return false;
-        if (state != null ? !state.equals(jobState.state) : jobState.state != null) return false;
-        if (updatedOn != null ? !updatedOn.equals(jobState.updatedOn) : jobState.updatedOn != null) return false;
+   public long getId() {
+      return this.id;
+   }
 
-        return true;
-    }
+   public Date getUpdatedOn() {
+      return this.updatedOn;
+   }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (updatedOn != null ? updatedOn.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (note != null ? note.hashCode() : 0);
-        return result;
-    }
+   public JobState getState() {
+      return this.state;
+   }
 
-    @Override
-    public String toString() {
-        return "JobState{" +
-                "id=" + id +
-                ", updatedOn=" + updatedOn +
-                ", state=" + state +
-                ", note='" + note + '\'' +
-                '}';
-    }
+   @Nullable
+   public String getNote() {
+      return this.note;
+   }
 
-    @Override
-    public int compareTo(JobProperties o) {
-        return Longs.compare(id, o.getId());
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, updatedOn, state, note);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      JobProperties that = JobProperties.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.updatedOn, that.updatedOn)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.note, that.note);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("updatedOn", updatedOn).add("state", state).add("note", note);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   @Override
+   public int compareTo(JobProperties o) {
+      return Longs.compare(id, o.getId());
+   }
 }

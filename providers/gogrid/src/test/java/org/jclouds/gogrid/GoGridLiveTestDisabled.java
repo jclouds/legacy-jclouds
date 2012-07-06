@@ -37,16 +37,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.gogrid.domain.Ip;
-import org.jclouds.gogrid.domain.IpPortPair;
-import org.jclouds.gogrid.domain.Job;
-import org.jclouds.gogrid.domain.LoadBalancer;
-import org.jclouds.gogrid.domain.LoadBalancerPersistenceType;
-import org.jclouds.gogrid.domain.LoadBalancerType;
-import org.jclouds.gogrid.domain.PowerCommand;
-import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.domain.ServerImage;
-import org.jclouds.gogrid.domain.ServerImageType;
+import org.jclouds.gogrid.domain.*;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetImageListOptions;
@@ -117,7 +108,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       String ram = Iterables.get(client.getServerServices().getRamSizes(), 0).getName();
       StringBuilder builder = new StringBuilder();
 
-      for (int i = 0; i < 1 * 500; i++)
+      for (int i = 0; i < 500; i++)
          builder.append('a');
 
       String description = builder.toString();
@@ -251,7 +242,8 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       AddLoadBalancerOptions options = new AddLoadBalancerOptions.Builder().create(LoadBalancerType.LEAST_CONNECTED,
                LoadBalancerPersistenceType.SOURCE_ADDRESS);
       LoadBalancer createdLoadBalancer = client.getLoadBalancerServices().addLoadBalancer(nameOfLoadBalancer,
-               new IpPortPair(vip, 80), Arrays.asList(new IpPortPair(realIp1, 80), new IpPortPair(realIp2, 80)),
+               IpPortPair.builder().ip(vip).port(80).build(), Arrays.asList(IpPortPair.builder().ip(realIp1).port(80).build(),
+               IpPortPair.builder().ip(realIp2).port(80).build()),
                options);
       assertNotNull(createdLoadBalancer);
       assert loadBalancerLatestJobCompleted.apply(createdLoadBalancer);
@@ -266,7 +258,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       assertEquals(createdLoadBalancer.getVirtualIp().getIp().getIp(), vip.getIp());
 
       LoadBalancer editedLoadBalancer = client.getLoadBalancerServices().editLoadBalancerNamed(nameOfLoadBalancer,
-               Arrays.asList(new IpPortPair(realIp3, 8181)));
+               Arrays.asList(IpPortPair.builder().ip(realIp3).port(8181).build()));
       assert loadBalancerLatestJobCompleted.apply(editedLoadBalancer);
       assertNotNull(editedLoadBalancer.getRealIpList());
       assertEquals(editedLoadBalancer.getRealIpList().size(), 1);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,79 +18,138 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
 
 /**
+ * Class Option
+ * 
  * @author Oleksiy Yarmula
- */
+*/
 public class Option implements Comparable<Option> {
 
-    private Long id;
-    private String name;
-    private String description;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromOption(this);
+   }
+   
+   public static Option createWithIdNameAndDescription(Long id, String name, String description) {
+      return new Option(id, name, description);
+   }
 
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public Option() {
-    }
+      protected Long id;
+      protected String name;
+      protected String description;
+   
+      /** 
+       * @see Option#getId()
+       */
+      public T id(Long id) {
+         this.id = id;
+         return self();
+      }
 
-    public Option(Long id) {
-        this(id, null, null);
-    }
+      /** 
+       * @see Option#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
 
-    public Option(String name) {
-        this(null, name, null);
-    }
+      /** 
+       * @see Option#getDescription()
+       */
+      public T description(String description) {
+         this.description = description;
+         return self();
+      }
 
-    public Option(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
+      public Option build() {
+         return new Option(id, name, description);
+      }
+      
+      public T fromOption(Option in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .description(in.getDescription());
+      }
+   }
 
-    public long getId() {
-        return id;
-    }
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-    public String getName() {
-        return name;
-    }
+   private final Long id;
+   private final String name;
+   private final String description;
 
-    public String getDescription() {
-        return description;
-    }
+   @ConstructorProperties({
+      "id", "name", "description"
+   })
+   protected Option(Long id, String name, @Nullable String description) {
+      this.id = checkNotNull(id, "id");
+      this.name = checkNotNull(name, "name");
+      this.description = description;
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   public Long getId() {
+      return this.id;
+   }
 
-        Option option = (Option) o;
+   public String getName() {
+      return this.name;
+   }
 
-        if (description != null ? !description.equals(option.description) : option.description != null) return false;
-        if (id != null ? !id.equals(option.id) : option.id != null) return false;
-        if (name != null ? !name.equals(option.name) : option.name != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public int compareTo(Option o) {
-        return Longs.compare(id, o.id);
-    }
+   @Nullable
+   public String getDescription() {
+      return this.description;
+   }
 
    @Override
+   public int hashCode() {
+      return Objects.hashCode(id, name, description);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Option that = Option.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.description, that.description);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("description", description);
+   }
+   
+   @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", description=" + description + "]";
+      return string().toString();
+   }
+
+   @Override
+   public int compareTo(Option o) {
+      return Longs.compare(id, o.id);
    }
 }

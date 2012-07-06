@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -56,18 +57,19 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
    @SelectJson("list")
    @OnlyElement
    public Server expected() {
-      Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
-      Option centOs = new Option(13L, "CentOS 5.2 (32-bit)", "CentOS 5.2 (32-bit)");
-      Option webServer = new Option(1L, "Web Server", "Web or Application Server");
-      return new Server(75245L, dc, false, "PowerServer", "server to test the api. created by Alex",
-               ServerState.ON, webServer, new Option(1L, "512MB", "Server with 512MB RAM"), centOs, new Ip(1313079L,
-                        "204.51.240.178", "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED, dc), new ServerImage(
-                        1946L, "GSI-f8979644-e646-4711-ad58-d98a5fa3612c", "BitNami Gallery 2.3.1-0",
-                        "http://bitnami.org/stack/gallery", centOs, null, ServerImageType.WEB_APPLICATION_SERVER,
-                        ServerImageState.AVAILABLE, 0.0, "24732/GSI-f8979644-e646-4711-ad58-d98a5fa3612c.img", true, true,
-                        new Date(1261504577971L), new Date(1262649582180L), ImmutableSortedSet.of(new BillingToken(38L,
-                              "CentOS 5.2 32bit", 0.0), new BillingToken(56L, "BitNami: Gallery", 0.0)), new Customer(24732L,
-                              "BitRock")));
+      Option dc = Option.createWithIdNameAndDescription(1l, "US-West-1", "US West 1 Datacenter");
+      Option centOs = Option.createWithIdNameAndDescription(13L, "CentOS 5.2 (32-bit)", "CentOS 5.2 (32-bit)");
+      Option webServer = Option.createWithIdNameAndDescription(1L, "Web Server", "Web or Application Server");
+      return Server.builder().id(75245L).datacenter(dc).isSandbox(false).name("PowerServer").description("server to test the api. created by Alex")
+            .state(ServerState.ON).type(webServer).ram(Option.createWithIdNameAndDescription(1L, "512MB", "Server with 512MB RAM"))
+            .os(centOs).ip(Ip.builder().id(1313079L).ip("204.51.240.178").subnet("204.51.240.176/255.255.255.240").isPublic(true).state(IpState.ASSIGNED).datacenter(dc).build())
+            .image(ServerImage.builder().id(1946L).name("GSI-f8979644-e646-4711-ad58-d98a5fa3612c").friendlyName("BitNami Gallery 2.3.1-0")
+                  .description("http://bitnami.org/stack/gallery").os(centOs).type(ServerImageType.WEB_APPLICATION_SERVER)
+                  .state(ServerImageState.AVAILABLE).location("24732/GSI-f8979644-e646-4711-ad58-d98a5fa3612c.img").isPublic(true)
+                  .isActive(true).createdTime(new Date(1261504577971L)).updatedTime(new Date(1262649582180L)).billingTokens(
+                        BillingToken.builder().id(38L).name("CentOS 5.2 32bit").build(),
+                        BillingToken.builder().id(56L).name("BitNami: Gallery").build()).owner(
+                        Customer.builder().id(24732L).name("BitRock").build()).build()).build();
    }
 
    protected Injector injector() {
