@@ -69,7 +69,7 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
       assert image.getArchitecture() != null : image;
       assert image.getBillingTokens() != null : image;
       if (image.getCreatedTime() == null)
-         Logger.getAnonymousLogger().warning("image " + image.getId() + " is missing the createdon field");
+         Logger.getAnonymousLogger().warning("image " + image.getId() + " is missing the createdTime field");
       assert image.getDescription() != null : image;
       assert image.getFriendlyName() != null : image;
       assert image.getId() >= 0 : image;
@@ -81,7 +81,7 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
       assert image.getState() != null : image;
       assert image.getType() != null : image;
       if (image.getUpdatedTime() == null)
-         Logger.getAnonymousLogger().warning("image " + image.getId() + " is missing the updatedon field");
+         Logger.getAnonymousLogger().warning("image " + image.getId() + " is missing the updatedTime field");
    }
 
    @Test
@@ -92,7 +92,7 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
       final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
       ServerImage image = null;
       try {
-         Set<Ip> availableIps = restContext.getApi().getIpServices().getUnassignedIpList();
+         Set<Ip> availableIps = restContext.getApi().getIpServices().getUnassignedPublicIpList();
          Ip availableIp = Iterables.getLast(availableIps);
 
          Server createdServer = restContext.getApi().getServerServices()
@@ -112,9 +112,10 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
          assertEventuallyImageStateEquals(image, ServerImageState.AVAILABLE);
          
          restContext.getApi().getImageServices().deleteById(image.getId());
-         
+
          assertEventuallyImageStateEquals(image, ServerImageState.TRASH);
          
+         image = null;
       } finally {
          if (image != null)
             try {
@@ -138,6 +139,6 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
                   .getApi()
                   .getImageServices().getImagesById(input.getId())).getState() == state;
          }
-      }, 300, 1, TimeUnit.SECONDS).apply(image));
+      }, 600, 1, TimeUnit.SECONDS).apply(image));
    }
 }
