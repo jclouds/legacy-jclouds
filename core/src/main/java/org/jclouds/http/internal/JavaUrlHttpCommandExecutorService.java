@@ -89,7 +89,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    private final HostnameVerifier verifier;
    private final Field methodField;
    @Inject(optional = true)
-   Supplier<SSLContext> trustedSSLContextProvider;
+   Supplier<SSLContext> sslContextSupplier;
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
@@ -186,12 +186,12 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;
          if (utils.relaxHostname())
             sslCon.setHostnameVerifier(verifier);
-         if (utils.trustAllCerts()) {
-             sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
-         } else if (trustedSSLContextProvider != null) {
-             // used for providers which use certs for authentication (like FGCP)
+         if (sslContextSupplier != null) {
+             // used for providers which e.g. use certs for authentication (like FGCP)
              // Provider provides SSLContext impl (which inits context with key manager)
-             sslCon.setSSLSocketFactory(trustedSSLContextProvider.get().getSocketFactory());
+             sslCon.setSSLSocketFactory(sslContextSupplier.get().getSocketFactory());
+         } else if (utils.trustAllCerts()) {
+             sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
          }
       }
       connection.setConnectTimeout(utils.getConnectionTimeout());
