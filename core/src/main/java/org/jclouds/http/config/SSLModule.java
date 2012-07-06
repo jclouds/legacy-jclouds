@@ -62,7 +62,7 @@ public class SSLModule extends AbstractModule {
     * @author Adrian Cole
     */
    @Singleton
-   static class LogToMapHostnameVerifier implements HostnameVerifier {
+   public static class LogToMapHostnameVerifier implements HostnameVerifier {
       @Resource
       private Logger logger = Logger.NULL;
       private final Map<String, String> sslMap = Maps.newHashMap();;
@@ -104,7 +104,7 @@ public class SSLModule extends AbstractModule {
     * @author Adrian Cole
     */
    @Singleton
-   static class TrustAllCerts implements X509TrustManager {
+   public static class TrustAllCerts implements X509TrustManager {
       public X509Certificate[] getAcceptedIssuers() {
          return null;
       }
