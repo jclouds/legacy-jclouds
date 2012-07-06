@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,64 +18,116 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 /**
+ * Class IpPortPair
+ * 
  * @author Oleksiy Yarmula
- */
+*/
 public class IpPortPair implements Comparable<IpPortPair> {
 
-    private Ip ip;
-    private int port;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromIpPortPair(this);
+   }
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public IpPortPair() {
-    }
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-    public IpPortPair(Ip ip, int port) {
-        this.ip = ip;
-        this.port = port;
-    }
+      protected Ip ip;
+      protected int port;
+   
+      /** 
+       * @see IpPortPair#getIp()
+       */
+      public T ip(Ip ip) {
+         this.ip = ip;
+         return self();
+      }
 
-    public Ip getIp() {
-        return ip;
-    }
+      /** 
+       * @see IpPortPair#getPort()
+       */
+      public T port(int port) {
+         this.port = port;
+         return self();
+      }
 
-    public int getPort() {
-        return port;
-    }
+      public IpPortPair build() {
+         return new IpPortPair(ip, port);
+      }
+      
+      public T fromIpPortPair(IpPortPair in) {
+         return this
+                  .ip(in.getIp())
+                  .port(in.getPort());
+      }
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-        IpPortPair that = (IpPortPair) o;
+   private final Ip ip;
+   private final int port;
 
-        if (port != that.port) return false;
-        if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
+   @ConstructorProperties({
+      "ip", "port"
+   })
+   protected IpPortPair(Ip ip, int port) {
+      this.ip = checkNotNull(ip, "ip");
+      this.port = port;
+   }
 
-        return true;
-    }
+   public Ip getIp() {
+      return this.ip;
+   }
 
-    @Override
-    public int hashCode() {
-        int result = ip != null ? ip.hashCode() : 0;
-        result = 31 * result + port;
-        return result;
-    }
-
-    @Override
-    public int compareTo(IpPortPair o) {
-        if(ip != null && o.getIp() != null) return Longs.compare(ip.getId(), o.getIp().getId());
-        return Ints.compare(port, o.getPort());
-    }
+   public int getPort() {
+      return this.port;
+   }
 
    @Override
+   public int hashCode() {
+      return Objects.hashCode(ip, port);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      IpPortPair that = IpPortPair.class.cast(obj);
+      return Objects.equal(this.ip, that.ip)
+               && Objects.equal(this.port, that.port);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("ip", ip).add("port", port);
+   }
+   
+   @Override
    public String toString() {
-      return "IpPortPair [ip=" + ip + ", port=" + port + "]";
+      return string().toString();
+   }
+
+   @Override
+   public int compareTo(IpPortPair o) {
+      if(ip != null && o.getIp() != null) return Longs.compare(ip.getId(), o.getIp().getId());
+      return Ints.compare(port, o.getPort());
    }
 }

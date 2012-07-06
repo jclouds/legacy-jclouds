@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,160 +18,269 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.primitives.Longs;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents any job in GoGrid system
  * (jobs include server creation, stopping, etc)
  *
- * @see <a href="http://wiki.gogrid.com/wiki/index.php/API:Job_(Object)" />
  * @author Oleksiy Yarmula
+ * @see <a href="http://wiki.gogrid.com/wiki/index.php/API:Job_(Object)" />
  */
 public class Job implements Comparable<Job> {
 
-    private long id;
-    private Option command;
-    @SerializedName("objecttype")
-    private ObjectType objectType;
-    @SerializedName("createdon")
-    private Date createdOn;
-    @SerializedName("lastupdatedon")
-    private Date lastUpdatedOn;
-    @SerializedName("currentstate")
-    private JobState currentState;
-    private int attempts;
-    private String owner;
-    private Set<JobProperties> history;
-    @SerializedName("detail") /*NOTE: as of Feb 28, 10,
-                                      there is a contradiction b/w the name in
-                                      documentation (details) and actual param
-                                      name (detail)*/
-    private Map<String, String> details;
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public Job() {
-    }
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromJob(this);
+   }
 
-    public Job(long id, Option command, ObjectType objectType,
-               Date createdOn, Date lastUpdatedOn, JobState currentState,
-               int attempts, String owner, SortedSet<JobProperties> history,
-               Map<String, String> details) {
-        this.id = id;
-        this.command = command;
-        this.objectType = objectType;
-        this.createdOn = createdOn;
-        this.lastUpdatedOn = lastUpdatedOn;
-        this.currentState = currentState;
-        this.attempts = attempts;
-        this.owner = owner;
-        this.history = history;
-        this.details = details;
-    }
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
 
-    public long getId() {
-        return id;
-    }
+      protected long id;
+      protected Option command;
+      protected ObjectType objectType;
+      protected Date createdOn;
+      protected Date lastUpdatedOn;
+      protected JobState currentState;
+      protected int attempts;
+      protected String owner;
+      protected Set<JobProperties> history = ImmutableSet.of();
+      protected Map<String, String> details = ImmutableMap.of();
 
-    public Option getCommand() {
-        return command;
-    }
+      /**
+       * @see Job#getId()
+       */
+      public T id(long id) {
+         this.id = id;
+         return self();
+      }
 
-    public ObjectType getObjectType() {
-        return objectType;
-    }
+      /**
+       * @see Job#getCommand()
+       */
+      public T command(Option command) {
+         this.command = command;
+         return self();
+      }
 
-    public Date getCreatedOn() {
-        return createdOn;
-    }
+      /**
+       * @see Job#getObjectType()
+       */
+      public T objectType(ObjectType objectType) {
+         this.objectType = objectType;
+         return self();
+      }
 
-    public Date getLastUpdatedOn() {
-        return lastUpdatedOn;
-    }
+      /**
+       * @see Job#getCreatedOn()
+       */
+      public T createdOn(Date createdOn) {
+         this.createdOn = createdOn;
+         return self();
+      }
 
-    public JobState getCurrentState() {
-        return currentState;
-    }
+      /**
+       * @see Job#getLastUpdatedOn()
+       */
+      public T lastUpdatedOn(Date lastUpdatedOn) {
+         this.lastUpdatedOn = lastUpdatedOn;
+         return self();
+      }
 
-    public int getAttempts() {
-        return attempts;
-    }
+      /**
+       * @see Job#getCurrentState()
+       */
+      public T currentState(JobState currentState) {
+         this.currentState = currentState;
+         return self();
+      }
 
-    public String getOwner() {
-        return owner;
-    }
+      /**
+       * @see Job#getAttempts()
+       */
+      public T attempts(int attempts) {
+         this.attempts = attempts;
+         return self();
+      }
 
-    public Set<JobProperties> getHistory() {
-        return history;
-    }
+      /**
+       * @see Job#getOwner()
+       */
+      public T owner(String owner) {
+         this.owner = owner;
+         return self();
+      }
 
-    public Map<String, String> getDetails() {
-        return details;
-    }
+      /**
+       * @see Job#getHistory()
+       */
+      public T history(Set<JobProperties> history) {
+         this.history = ImmutableSet.copyOf(checkNotNull(history, "history"));
+         return self();
+      }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+      public T history(JobProperties... in) {
+         return history(ImmutableSet.copyOf(in));
+      }
 
-        Job job = (Job) o;
+      /**
+       * @see Job#getDetails()
+       */
+      public T details(Map<String, String> details) {
+         this.details = ImmutableMap.copyOf(checkNotNull(details, "details"));
+         return self();
+      }
 
-        if (attempts != job.attempts) return false;
-        if (id != job.id) return false;
-        if (command != null ? !command.equals(job.command) : job.command != null) return false;
-        if (createdOn != null ? !createdOn.equals(job.createdOn) : job.createdOn != null) return false;
-        if (currentState != null ? !currentState.equals(job.currentState) : job.currentState != null) return false;
-        if (details != null ? !details.equals(job.details) : job.details != null) return false;
-        if (history != null ? !history.equals(job.history) : job.history != null) return false;
-        if (lastUpdatedOn != null ? !lastUpdatedOn.equals(job.lastUpdatedOn) : job.lastUpdatedOn != null) return false;
-        if (objectType != null ? !objectType.equals(job.objectType) : job.objectType != null) return false;
-        if (owner != null ? !owner.equals(job.owner) : job.owner != null) return false;
+      public Job build() {
+         return new Job(id, command, objectType, createdOn, lastUpdatedOn, currentState, attempts, owner, history, details);
+      }
 
-        return true;
-    }
+      public T fromJob(Job in) {
+         return this
+               .id(in.getId())
+               .command(in.getCommand())
+               .objectType(in.getObjectType())
+               .createdOn(in.getCreatedOn())
+               .lastUpdatedOn(in.getLastUpdatedOn())
+               .currentState(in.getCurrentState())
+               .attempts(in.getAttempts())
+               .owner(in.getOwner())
+               .history(in.getHistory())
+               .details(in.getDetails());
+      }
+   }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (command != null ? command.hashCode() : 0);
-        result = 31 * result + (objectType != null ? objectType.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
-        result = 31 * result + (lastUpdatedOn != null ? lastUpdatedOn.hashCode() : 0);
-        result = 31 * result + (currentState != null ? currentState.hashCode() : 0);
-        result = 31 * result + attempts;
-        result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        result = 31 * result + (history != null ? history.hashCode() : 0);
-        result = 31 * result + (details != null ? details.hashCode() : 0);
-        return result;
-    }
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-    @Override
-    public int compareTo(Job o) {
-        if(createdOn != null && o.getCreatedOn() != null)
-            return Longs.compare(createdOn.getTime(), o.getCreatedOn().getTime());
-        return Longs.compare(id, o.getId());
-    }
+   private final long id;
+   private final Option command;
+   private final ObjectType objectType;
+   private final Date createdOn;
+   private final Date lastUpdatedOn;
+   private final JobState currentState;
+   private final int attempts;
+   private final String owner;
+   private final Set<JobProperties> history;
+   private final Map<String, String> details;
 
-    @Override
-    public String toString() {
-        return "Job{" +
-                "id=" + id +
-                ", command=" + command +
-                ", objectType=" + objectType +
-                ", createdOn=" + createdOn +
-                ", lastUpdatedOn=" + lastUpdatedOn +
-                ", currentState=" + currentState +
-                ", attempts=" + attempts +
-                ", owner='" + owner + '\'' +
-                ", history=" + history +
-                ", details=" + details +
-                '}';
-    }
+   /* NOTE: as of Feb 28, 10, there is a contradiction b/w the name in  documentation (details) and actual param name (detail)*/
+   @ConstructorProperties({
+         "id", "command", "objecttype", "createdon", "lastupdatedon", "currentstate", "attempts", "owner", "history", "detail"
+   })
+   protected Job(long id, Option command, ObjectType objectType, Date createdOn, @Nullable Date lastUpdatedOn,
+                 JobState currentState, int attempts, String owner, Set<JobProperties> history, Map<String, String> details) {
+      this.id = id;
+      this.command = checkNotNull(command, "command");
+      this.objectType = checkNotNull(objectType, "objectType");
+      this.createdOn = checkNotNull(createdOn, "createdOn");
+      this.lastUpdatedOn = lastUpdatedOn;
+      this.currentState = checkNotNull(currentState, "currentState");
+      this.attempts = attempts;
+      this.owner = checkNotNull(owner, "owner");
+      this.history = ImmutableSet.copyOf(checkNotNull(history, "history"));
+      this.details = ImmutableMap.copyOf(checkNotNull(details, "details"));
+   }
+
+   public long getId() {
+      return this.id;
+   }
+
+   public Option getCommand() {
+      return this.command;
+   }
+
+   public ObjectType getObjectType() {
+      return this.objectType;
+   }
+
+   public Date getCreatedOn() {
+      return this.createdOn;
+   }
+
+   @Nullable
+   public Date getLastUpdatedOn() {
+      return this.lastUpdatedOn;
+   }
+
+   public JobState getCurrentState() {
+      return this.currentState;
+   }
+
+   public int getAttempts() {
+      return this.attempts;
+   }
+
+   public String getOwner() {
+      return this.owner;
+   }
+
+   public Set<JobProperties> getHistory() {
+      return this.history;
+   }
+
+   public Map<String, String> getDetails() {
+      return this.details;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, command, objectType, createdOn, lastUpdatedOn, currentState, attempts, owner, history, details);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Job that = Job.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+            && Objects.equal(this.command, that.command)
+            && Objects.equal(this.objectType, that.objectType)
+            && Objects.equal(this.createdOn, that.createdOn)
+            && Objects.equal(this.lastUpdatedOn, that.lastUpdatedOn)
+            && Objects.equal(this.currentState, that.currentState)
+            && Objects.equal(this.attempts, that.attempts)
+            && Objects.equal(this.owner, that.owner)
+            && Objects.equal(this.history, that.history)
+            && Objects.equal(this.details, that.details);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("command", command).add("objectType", objectType).add("createdOn", createdOn).add("lastUpdatedOn", lastUpdatedOn).add("currentState", currentState).add("attempts", attempts).add("owner", owner).add("history", history).add("details", details);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   @Override
+   public int compareTo(Job o) {
+      if(createdOn != null && o.getCreatedOn() != null)
+         return Longs.compare(createdOn.getTime(), o.getCreatedOn().getTime());
+      return Longs.compare(id, o.getId());
+   }
+
 }

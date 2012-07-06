@@ -62,8 +62,8 @@ public class ServerToNodeMetadataTest {
 
       Map<ServerState, Status> serverStateToNodeStatus = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
-      Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
-      Option ram = new Option(1l, "512MB", "Server with 512MB RAM");
+      Option dc = Option.createWithIdNameAndDescription(1l, "US-West-1", "US West 1 Datacenter");
+      Option ram = Option.createWithIdNameAndDescription(1l, "512MB", "Server with 512MB RAM");
 
       Set<? extends org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Server server = createMock(Server.class);
@@ -77,7 +77,7 @@ public class ServerToNodeMetadataTest {
       Location location = new LocationBuilder().scope(LocationScope.ZONE).id("1").description("US-West-1").build();
       Set< ? extends Location> locations = ImmutableSet.< Location> of( location);
       
-      expect(server.getIp()).andReturn(new Ip("127.0.0.1"));
+      expect(server.getIp()).andReturn(Ip.builder().ip("127.0.0.1").build());
 
       ServerImage image = createMock(ServerImage.class);
       expect(server.getImage()).andReturn(image).atLeastOnce();

@@ -43,7 +43,6 @@ import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
@@ -64,14 +63,19 @@ public class ParseLoadBalancersFromJsonResponseTest {
       ParseLoadBalancerListFromJsonResponse parser = i.getInstance(ParseLoadBalancerListFromJsonResponse.class);
       SortedSet<LoadBalancer> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
-      Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
+      Option dc = Option.createWithIdNameAndDescription(1l, "US-West-1", "US West 1 Datacenter");
 
-      LoadBalancer loadBalancer = new LoadBalancer(6372L, "Balancer", null, new IpPortPair(new Ip(1313082L,
-            "204.51.240.181", "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED, dc), 80), ImmutableSortedSet
-            .of(new IpPortPair(new Ip(1313086L, "204.51.240.185", "204.51.240.176/255.255.255.240", true,
-                  IpState.ASSIGNED, dc), 80), new IpPortPair(new Ip(1313089L, "204.51.240.188",
-                  "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED, dc), 80)), LoadBalancerType.ROUND_ROBIN,
-            LoadBalancerPersistenceType.NONE, LoadBalancerOs.F5, LoadBalancerState.ON, dc);
+      LoadBalancer loadBalancer = LoadBalancer.builder().id(6372L).name("Balancer")
+            .virtualIp(IpPortPair.builder().ip(Ip.builder().id(1313082L)
+                  .ip("204.51.240.181").subnet("204.51.240.176/255.255.255.240").isPublic(true).state(IpState.ASSIGNED).datacenter(dc).build()).port(80).build())
+            .realIpList(
+                  IpPortPair.builder().ip(Ip.builder().id(1313086L).ip("204.51.240.185").subnet("204.51.240.176/255.255.255.240")
+                        .isPublic(true).state(IpState.ASSIGNED).datacenter(dc).build()).port(80).build(),
+                  IpPortPair.builder().ip(Ip.builder().id(1313089L).ip("204.51.240.188").subnet("204.51.240.176/255.255.255.240")
+                        .isPublic(true).state(IpState.ASSIGNED).datacenter(dc).build()).port(80).build())
+            .type(LoadBalancerType.ROUND_ROBIN).persistence(LoadBalancerPersistenceType.NONE)
+            .os(LoadBalancerOs.F5).state(LoadBalancerState.ON).datacenter(dc).build();
+
       assertEquals(Iterables.getOnlyElement(response), loadBalancer);
    }
 
@@ -84,7 +88,7 @@ public class ParseLoadBalancersFromJsonResponseTest {
 
       @Provides
       @Singleton
-      @SuppressWarnings( { "unused" })
+      @SuppressWarnings({"unused"})
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
