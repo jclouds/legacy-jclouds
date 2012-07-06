@@ -12,7 +12,7 @@ jclouds is an open source library that helps you get started in the cloud and ut
 or [Clojure](http://clojure.org) development skills. The jclouds API gives you the freedom to use portable abstractions or cloud-specific features. 
 
 jclouds tests support of 30 cloud providers and cloud software stacks including Amazon, GoGrid, Ninefold, vCloud, OpenStack, and Azure.  Please see the
-complete list of [jclouds supported providers](http://www.jclouds.org/documentation/reference/supported-providers/) that are promoted by the jclouds API.
+complete list of [jclouds supported providers](http://www.jclouds.org/documentation/reference/supported-providers/) that are supported by the jclouds API.
 
 jclouds offers several API abstractions as Java and Clojure libraries. The most mature of these are BlobStore and ComputeService.
 
@@ -28,8 +28,8 @@ ComputeService streamlines the task of managing instances in the cloud by enabli
 Programming against cloud environments can be challenging. jclouds focuses on the following areas so that you can get started in the cloud sooner.
 
 ### SIMPLE INTERFACE
-Get started without dealing with REST-like APIs or WS.  Instead of creating new object types, jclouds reuses concepts like maps so that the programming 
-model is familiar. 
+Get started without dealing with REST-like APIs or WebServices.  Instead of creating new object types, jclouds reuses concepts like maps so that the 
+programming model is familiar. 
 
 ### RUNTIME PORTABILITY
 jclouds drivers enable you to operate in restricted environments like Google App Engine. There are very few required dependencies, so jclouds is unlikely 
