@@ -91,7 +91,23 @@ public interface ServerClient {
     * @return True if successful, False otherwise
     */
    Boolean deleteServer(String id);
+  
+   /**
+    * Start a server
+    * 
+    * @param id
+    *           id of the server
+    */
+   void startServer(String id);
 
+   /**
+    * Stop a server
+    * 
+    * @param id
+    *           id of the server
+    */
+   void stopServer(String id);
+   
    /**
     * Reboot a server.
     * 
