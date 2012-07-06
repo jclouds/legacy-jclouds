@@ -105,6 +105,7 @@ public class LoadBalancer {
       protected HealthCheck healthCheck;
       protected ImmutableSet.Builder<String> instanceIds = ImmutableSet.<String> builder();
       protected ImmutableSet.Builder<ListenerWithPolicies> listeners = ImmutableSet.<ListenerWithPolicies> builder();
+      protected ImmutableSet.Builder<String> availabilityZones = ImmutableSet.<String> builder();
       protected Optional<Scheme> scheme = Optional.absent();
       protected Optional<String> VPCId = Optional.absent();
 
@@ -173,6 +174,22 @@ public class LoadBalancer {
       }
 
       /**
+       * @see LoadBalancer#getAvailabilityZones()
+       */
+      public T availabilityZones(Iterable<String> availabilityZones) {
+         this.availabilityZones.addAll(checkNotNull(availabilityZones, "availabilityZones"));
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getAvailabilityZones()
+       */
+      public T availabilityZone(String availabilityZone) {
+         this.availabilityZones.add(checkNotNull(availabilityZone, "availabilityZone"));
+         return self();
+      }
+
+      /**
        * @see LoadBalancer#getScheme()
        */
       public T scheme(Scheme scheme) {
@@ -190,13 +207,14 @@ public class LoadBalancer {
 
       public LoadBalancer build() {
          return new LoadBalancer(name, createdTime, dnsName, healthCheck, instanceIds.build(), listeners.build(),
-                  scheme, VPCId);
+                  availabilityZones.build(), scheme, VPCId);
       }
 
       public T fromLoadBalancer(LoadBalancer in) {
          return this.name(in.getName()).createdTime(in.getCreatedTime()).dnsName(in.getDnsName())
                   .healthCheck(in.getHealthCheck()).listeners(in.getListeners()).instanceIds(in.getInstanceIds())
-                  .scheme(in.getScheme().orNull()).VPCId(in.getVPCId().orNull());
+                  .availabilityZones(in.getAvailabilityZones()).scheme(in.getScheme().orNull())
+                  .VPCId(in.getVPCId().orNull());
       }
    }
 
@@ -213,18 +231,20 @@ public class LoadBalancer {
    protected final HealthCheck healthCheck;
    protected final Set<String> instanceIds;
    protected final Set<ListenerWithPolicies> listeners;
+   protected final Set<String> availabilityZones;
    protected final Optional<Scheme> scheme;
    protected final Optional<String> VPCId;
 
    protected LoadBalancer(String name, Date createdTime, String dnsName, HealthCheck healthCheck,
-            Iterable<String> instanceIds, Iterable<ListenerWithPolicies> listeners, Optional<Scheme> scheme,
-            Optional<String> VPCId) {
+            Iterable<String> instanceIds, Iterable<ListenerWithPolicies> listeners, Iterable<String> availabilityZones,
+            Optional<Scheme> scheme, Optional<String> VPCId) {
       this.name = checkNotNull(name, "name");
       this.createdTime = checkNotNull(createdTime, "createdTime");
       this.dnsName = checkNotNull(dnsName, "dnsName");
       this.healthCheck = checkNotNull(healthCheck, "healthCheck");
       this.instanceIds = ImmutableSet.copyOf(checkNotNull(instanceIds, "instanceIds"));
       this.listeners = ImmutableSet.copyOf(checkNotNull(listeners, "listeners"));
+      this.availabilityZones = ImmutableSet.copyOf(checkNotNull(availabilityZones, "availabilityZones"));
       this.scheme = checkNotNull(scheme, "scheme");
       this.VPCId = checkNotNull(VPCId, "VPCId");
    }
@@ -273,6 +293,13 @@ public class LoadBalancer {
    }
 
    /**
+    * Specifies a list of Availability Zones.
+    */
+   public Set<String> getAvailabilityZones() {
+      return availabilityZones;
+   }
+
+   /**
     * Type of the loadbalancer; This option is only available for LoadBalancers attached to an
     * Amazon VPC.
     */
@@ -315,9 +342,10 @@ public class LoadBalancer {
     */
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().add("name", name).add("createdTime", createdTime).add(
-               "dnsName", dnsName).add("healthCheck", healthCheck).add("instanceIds", instanceIds).add("listeners",
-               listeners).add("scheme", scheme.orNull()).add("VPCId", VPCId.orNull()).toString();
+      return Objects.toStringHelper(this).omitNullValues().add("name", name).add("createdTime", createdTime)
+               .add("dnsName", dnsName).add("healthCheck", healthCheck).add("instanceIds", instanceIds)
+               .add("listeners", listeners).add("availabilityZones", availabilityZones).add("scheme", scheme.orNull())
+               .add("VPCId", VPCId.orNull()).toString();
    }
 
 }

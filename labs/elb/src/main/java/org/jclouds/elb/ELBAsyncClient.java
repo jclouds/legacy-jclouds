@@ -29,25 +29,19 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.elb.binders.BindAvailabilityZonesToIndexedFormParams;
-import org.jclouds.elb.binders.BindInstanceIdsToIndexedFormParams;
-import org.jclouds.elb.binders.BindLoadBalancerNamesToIndexedFormParams;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.features.InstanceAsyncClient;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.features.PolicyAsyncClient;
 import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
-import org.jclouds.elb.xml.DescribeLoadBalancersResponseHandler;
-import org.jclouds.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -85,6 +79,12 @@ public interface ELBAsyncClient {
    @Delegate
    PolicyAsyncClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
+   /**
+    * Provides asynchronous access to Instance features.
+    */
+   @Delegate
+   InstanceAsyncClient getInstanceClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
    /// old stuff
    public static final String VERSION = "2012-06-01";
 
@@ -116,40 +116,5 @@ public interface ELBAsyncClient {
    ListenableFuture<Void> deleteLoadBalancerInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name);
-
-   /**
-    * @see ELBClient#registerInstancesWithLoadBalancerInRegion
-    */
-   @POST
-   @Path("/")
-   @XMLResponseParser(RegisterInstancesWithLoadBalancerResponseHandler.class)
-   @FormParams(keys = ACTION, values = "RegisterInstancesWithLoadBalancer")
-   ListenableFuture<Set<String>> registerInstancesWithLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
-
-   /**
-    * @see ELBClient#deregisterInstancesWithLoadBalancerInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
-   ListenableFuture<Void> deregisterInstancesWithLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
-
-   /**
-    * @see ELBClient#describeLoadBalancersInRegion
-    */
-   @POST
-   @Path("/")
-   @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
-   @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<? extends CrappyLoadBalancer>> describeLoadBalancersInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindLoadBalancerNamesToIndexedFormParams.class) String... loadbalancerNames);
 
 }

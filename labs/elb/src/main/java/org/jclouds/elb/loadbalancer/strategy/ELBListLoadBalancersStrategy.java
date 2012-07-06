@@ -33,9 +33,10 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.elb.ELBAsyncClient;
-import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.ListLoadBalancersStrategy;
@@ -44,6 +45,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -56,17 +58,15 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
    @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ELBClient client;
    private final ELBAsyncClient aclient;
-   private final Function<CrappyLoadBalancer, LoadBalancerMetadata> converter;
+   private final Function<LoadBalancerInRegion, LoadBalancerMetadata> converter;
    private final ExecutorService executor;
    private final Supplier<Set<String>> regions;
 
    @Inject
-   protected ELBListLoadBalancersStrategy(ELBClient client, ELBAsyncClient aclient,
-            Function<CrappyLoadBalancer, LoadBalancerMetadata> converter,
+   protected ELBListLoadBalancersStrategy(ELBAsyncClient aclient,
+            Function<LoadBalancerInRegion, LoadBalancerMetadata> converter,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Region Supplier<Set<String>> regions) {
-      this.client = checkNotNull(client, "client");
       this.aclient = checkNotNull(aclient, "aclient");
       this.regions = checkNotNull(regions, "regions");
       this.converter = checkNotNull(converter, "converter");
@@ -75,19 +75,32 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
 
    @Override
    public Iterable<LoadBalancerMetadata> listLoadBalancers() {
-      Iterable<? extends CrappyLoadBalancer> loadBalancers;
-      Set<String> regions = this.regions.get();
-      if (regions.size() > 0)
-         loadBalancers = concat(transformParallel(regions, new Function<String, Future<? extends Set<? extends CrappyLoadBalancer>>>() {
 
-            @Override
-            public ListenableFuture<Set<? extends CrappyLoadBalancer>> apply(String from) {
-               return aclient.describeLoadBalancersInRegion(from);
-            }
+      Iterable<LoadBalancerInRegion> loadBalancers = concat(transformParallel(regions.get(),
+               new Function<String, Future<? extends Iterable<LoadBalancerInRegion>>>() {
 
-         }, executor, null, logger, "loadbalancers"));
-      else
-         loadBalancers = client.describeLoadBalancersInRegion(null);
+                  @Override
+                  public ListenableFuture<? extends Iterable<LoadBalancerInRegion>> apply(final String from) {
+                     // TODO: ELB.listLoadBalancers
+                     return Futures.compose(aclient.getLoadBalancerClientForRegion(from).list(),
+                              new Function<Iterable<LoadBalancer>, Iterable<LoadBalancerInRegion>>() {
+
+                                 @Override
+                                 public Iterable<LoadBalancerInRegion> apply(Iterable<LoadBalancer> input) {
+                                    return Iterables.transform(input,
+                                             new Function<LoadBalancer, LoadBalancerInRegion>() {
+
+                                                @Override
+                                                public LoadBalancerInRegion apply(LoadBalancer lb) {
+                                                   return new LoadBalancerInRegion(lb, from);
+                                                }
+                                             });
+                                 }
+
+                              }, executor);
+                  }
+
+               }, executor, null, logger, "loadbalancers"));
       return transform(loadBalancers, converter);
    }
 }

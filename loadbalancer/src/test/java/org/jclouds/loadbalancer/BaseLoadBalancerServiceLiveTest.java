@@ -21,12 +21,9 @@ package org.jclouds.loadbalancer;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
 import org.jclouds.ContextBuilder;
@@ -34,15 +31,15 @@ import org.jclouds.apis.BaseViewLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.TemplateBuilderSpec;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.ssh.SshClient;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -60,12 +57,10 @@ import com.google.inject.Module;
 @Test(groups = "live", singleThreaded = true)
 public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<LoadBalancerServiceContext> {
 
-   protected String imageId;
-   protected String loginUser;
-   protected String authenticateSudo;
+   protected TemplateBuilderSpec template;
    protected LoginCredentials loginCredentials = LoginCredentials.builder().user("root").build();
-   
-    protected Properties setupComputeProperties() {
+
+   protected Properties setupComputeProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
@@ -75,33 +70,28 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
       computeEndpoint = setIfTestSystemPropertyPresent(overrides, provider + ".compute.endpoint");
       computeApiversion = setIfTestSystemPropertyPresent(overrides, provider + ".compute.api-version");
       computeBuildversion = setIfTestSystemPropertyPresent(overrides, provider + ".compute.build-version");
-      imageId = setIfTestSystemPropertyPresent(overrides, provider + ".compute.image-id");
-      loginUser = setIfTestSystemPropertyPresent(overrides, provider + ".compute.image.login-user");
-      authenticateSudo = setIfTestSystemPropertyPresent(overrides, provider + ".compute.image.authenticate-sudo");
-
-      if (loginUser != null) {
-         Iterable<String> userPass = Splitter.on(':').split(loginUser);
-         Builder loginCredentialsBuilder = LoginCredentials.builder();
-         loginCredentialsBuilder.user(Iterables.get(userPass, 0));
-         if (Iterables.size(userPass) == 2)
-            loginCredentialsBuilder.password(Iterables.get(userPass, 1));
-         if (authenticateSudo != null)
-            loginCredentialsBuilder.authenticateSudo(Boolean.valueOf(authenticateSudo));
-         loginCredentials = loginCredentialsBuilder.build();
+      String spec = setIfTestSystemPropertyPresent(overrides, provider + ".compute.template");
+      if (spec != null) {
+         template = TemplateBuilderSpec.parse(spec);
+         if (template.getLoginUser() != null) {
+            Iterable<String> userPass = Splitter.on(':').split(template.getLoginUser());
+            Builder loginCredentialsBuilder = LoginCredentials.builder();
+            loginCredentialsBuilder.user(Iterables.get(userPass, 0));
+            if (Iterables.size(userPass) == 2)
+               loginCredentialsBuilder.password(Iterables.get(userPass, 1));
+            if (template.getAuthenticateSudo() != null)
+               loginCredentialsBuilder.authenticateSudo(template.getAuthenticateSudo());
+            loginCredentials = loginCredentialsBuilder.build();
+         }
       }
       return overrides;
    }
 
-   protected SshClient.Factory sshFactory;
    protected String group;
 
    protected RetryablePredicate<HostAndPort> socketTester;
    protected Set<? extends NodeMetadata> nodes;
-   protected Template template;
-   protected Map<String, String> keyPair;
    protected LoadBalancerMetadata loadbalancer;
-
-   protected LoadBalancerServiceContext context;
 
    protected String computeProvider;
    protected String computeIdentity;
@@ -114,27 +104,29 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
    @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setupContext() {
-      setServiceDefaults();
+      super.setupContext();
       if (group == null)
          group = checkNotNull(provider, "provider");
       // groups need to work with hyphens in them, so let's make sure there is
-      // one!
+      // one, without making it the first or last character
       if (group.indexOf('-') == -1)
-         group = group + "-";
-      super.setupContext();
+         group = new StringBuilder(group).insert(1, "-").toString();
       initializeComputeContext();
       buildSocketTester();
    }
 
-   public void setServiceDefaults() {
-
-   }
-   
    protected void initializeComputeContext() {
       if (computeContext != null)
          computeContext.close();
-      computeContext = ContextBuilder.newBuilder(computeProvider).modules(setupModules()).overrides(
-            setupComputeProperties()).build(ComputeServiceContext.class);
+      Properties overrides = setupComputeProperties();
+      ContextBuilder builder = ContextBuilder.newBuilder(computeProvider)
+               .credentials(computeIdentity, computeCredential).overrides(overrides).modules(setupModules());
+      if (computeApiversion != null)
+         builder.apiVersion(computeApiversion);
+      if (computeBuildversion != null)
+         builder.buildVersion(computeBuildversion);
+
+      computeContext = builder.buildView(ComputeServiceContext.class);
    }
 
    protected void buildSocketTester() {
@@ -147,7 +139,10 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
    @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
    public void createNodes() throws RunNodesException {
       try {
-         nodes = computeContext.getComputeService().createNodesInGroup(group, 2);
+         TemplateBuilder builder = computeContext.getComputeService().templateBuilder();
+         if (template != null)
+            builder.from(template);
+         nodes = computeContext.getComputeService().createNodesInGroup(group, 2, builder.build());
       } catch (RunNodesException e) {
          nodes = e.getSuccessfulNodes();
          throw e;
@@ -158,7 +153,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
    public void testLoadBalanceNodesMatching() throws Exception {
 
       // create load balancers
-      loadbalancer = context.getLoadBalancerService().createLoadBalancerInLocation(null, group, "HTTP", 80, 80, nodes);
+      loadbalancer = view.getLoadBalancerService().createLoadBalancerInLocation(null, group, "HTTP", 80, 80, nodes);
       assertNotNull(loadbalancer);
       validateNodesInLoadBalancer();
 
@@ -169,21 +164,22 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
 
    @Test(enabled = true, dependsOnMethods = "testLoadBalanceNodesMatching")
    public void testDestroyLoadBalancers() throws Exception {
-      context.getLoadBalancerService().destroyLoadBalancer(loadbalancer.getId());
+      view.getLoadBalancerService().destroyLoadBalancer(loadbalancer.getId());
    }
-
-   @AfterTest
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
+   
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
       if (loadbalancer != null) {
-         context.getLoadBalancerService().destroyLoadBalancer(loadbalancer.getId());
+         view.getLoadBalancerService().destroyLoadBalancer(loadbalancer.getId());
       }
       if (nodes != null) {
          computeContext.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
       }
       computeContext.close();
-      context.close();
+      super.tearDownContext();
    }
-   
+
    @Override
    protected TypeToken<LoadBalancerServiceContext> viewType() {
       return TypeToken.of(LoadBalancerServiceContext.class);

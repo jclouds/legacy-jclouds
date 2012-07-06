@@ -53,6 +53,7 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
 
    private boolean inHealthCheck;
    private boolean inListeners;
+   private boolean inAvailabilityZones;
 
    protected int memberDepth;
 
@@ -79,7 +80,10 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          inHealthCheck = true;
       } else if (equalsOrSuffix(qName, "ListenerDescriptions")) {
          inListeners = true;
+      } else if (equalsOrSuffix(qName, "AvailabilityZones")) {
+         inAvailabilityZones = true;
       }
+      
       if (inListeners) {
          listenerHandler.startElement(url, name, qName, attributes);
       }
@@ -95,6 +99,8 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          memberDepth--;
       } else if (equalsOrSuffix(qName, "ListenerDescriptions")) {
          inListeners = false;
+      } else if (equalsOrSuffix(qName, "AvailabilityZones")) {
+         inAvailabilityZones = false;
       } else if (equalsOrSuffix(qName, "HealthCheck")) {
          builder.healthCheck(healthCheckHandler.getResult());
          inHealthCheck = false;
@@ -121,6 +127,8 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
    protected void endMember(String uri, String name, String qName) throws SAXException {
       if (inListeners) {
          builder.listener(listenerHandler.getResult());
+      } else if (inAvailabilityZones) {
+         builder.availabilityZone(currentOrNull(currentText));
       }
    }
 

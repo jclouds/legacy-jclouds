@@ -16,44 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.elb.xml;
+package org.jclouds.elb.parse;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Set;
 
+import org.jclouds.elb.xml.InstancesResultHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests behavior of {@code RegisterInstancesWithLoadBalancerResponseHandler}
- * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "RegisterInstancesWithLoadBalancerResponseHandlerTest")
-public class RegisterInstancesWithLoadBalancerResponseHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "InstancesResultHandlerTest")
+public class InstancesResultHandlerTest extends BaseHandlerTest {
 
-   public void testParse() {
-      InputStream is = getClass().getResourceAsStream("/register_instances_with_loadbalancer.xml");
+   public void test() {
+      InputStream is = getClass().getResourceAsStream("/instances.xml");
 
-      Set<String> instanceIds = Sets.newHashSet();
-      instanceIds.add("i-6055fa09");
-      instanceIds.add("i-9055fa55");
+      Set<String> expected = expected();
 
-      Set<String> result = parseXML(is);
-
-      assertEquals(result, instanceIds);
-   }
-
-   private Set<String> parseXML(InputStream is) {
-      RegisterInstancesWithLoadBalancerResponseHandler handler = injector
-            .getInstance(RegisterInstancesWithLoadBalancerResponseHandler.class);
+      InstancesResultHandler handler = injector.getInstance(InstancesResultHandler.class);
       Set<String> result = factory.create(handler).parse(is);
-      return result;
+
+      assertEquals(result.toString(), expected.toString());
+
    }
 
+   public Set<String> expected() {
+      return ImmutableSet.of("i-6055fa09", "i-9055fa55");
+   }
 }

@@ -20,21 +20,11 @@ package org.jclouds.elb.xml;
 
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Sets;
 
-public class RegisterInstancesWithLoadBalancerResponseHandler extends ParseSax.HandlerWithResult<Set<String>> {
-   @Inject
-   public RegisterInstancesWithLoadBalancerResponseHandler() {
-   }
-
-   @Resource
-   protected Logger logger = Logger.NULL;
+public class InstancesResultHandler extends ParseSax.HandlerWithResult<Set<String>> {
 
    private Set<String> instanceIds = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
@@ -42,7 +32,6 @@ public class RegisterInstancesWithLoadBalancerResponseHandler extends ParseSax.H
    public void endElement(String uri, String localName, String qName) {
       if (qName.equals("InstanceId"))
          instanceIds.add(currentText.toString().trim());
-
       currentText = new StringBuilder();
    }
 

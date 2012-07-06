@@ -68,6 +68,7 @@ public class DescribeLoadBalancersResponseTest extends BaseHandlerTest {
                     .instanceIds(ImmutableSet.of("i-5b33e630", "i-8f26d7e4", "i-5933e632"))
                     .listener(ListenerWithPolicies.builder().protocol(Protocol.HTTP).port(80).instancePort(80).build())
                     .listener(ListenerWithPolicies.builder().protocol(Protocol.TCP).port(443).instancePort(443).build())
+                    .availabilityZone("us-east-1a")
                     .build()));
    }
 

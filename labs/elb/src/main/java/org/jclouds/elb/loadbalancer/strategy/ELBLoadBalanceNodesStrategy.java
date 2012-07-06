@@ -19,10 +19,12 @@
 package org.jclouds.elb.loadbalancer.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.filter;
 import static org.jclouds.aws.util.AWSUtils.getRegionFromLocationOrNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -33,15 +35,14 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -53,33 +54,40 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
    @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final ELBClient client;
-   protected final Function<CrappyLoadBalancer, LoadBalancerMetadata> converter;
+   protected final Function<LoadBalancerInRegion, LoadBalancerMetadata> converter;
 
    @Inject
-   protected ELBLoadBalanceNodesStrategy(ELBClient client, Function<CrappyLoadBalancer, LoadBalancerMetadata> converter) {
+   protected ELBLoadBalanceNodesStrategy(ELBClient client,
+            Function<LoadBalancerInRegion, LoadBalancerMetadata> converter) {
       this.client = checkNotNull(client, "client");
       this.converter = checkNotNull(converter, "converter");
    }
 
    @Override
    public LoadBalancerMetadata createLoadBalancerInLocation(Location location, String name, String protocol,
-         int loadBalancerPort, int instancePort, Iterable<? extends NodeMetadata> nodes) {
+            int loadBalancerPort, int instancePort, Iterable<? extends NodeMetadata> nodes) {
       checkNotNull(location, "location");
       String region = getRegionFromLocationOrNull(location);
 
-      List<String> availabilityZones = Lists.newArrayList(Iterables.transform(nodes,
-            new Function<NodeMetadata, String>() {
+      Set<String> availabilityZones = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {
 
-               @Override
-               public String apply(NodeMetadata from) {
-                  return from.getLocation().getId();
-               }
-            }));
+         @Override
+         public String apply(NodeMetadata from) {
+            return from.getLocation().getId();
+         }
+      }));
 
-      client.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort, instancePort,
-            availabilityZones.toArray(new String[] {}));
+      logger.debug(">> creating loadBalancer(%s)", name);
+      try {
+         String dnsName = client.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort, instancePort,
+                  availabilityZones.toArray(new String[] {}));
+         logger.debug("<< created loadBalancer(%s) dnsName(%s)", name, dnsName);
+      } catch (IllegalStateException e) {
+         logger.debug("<< reusing loadBalancer(%s)", name);
+         // TODO: converge availability zones
+      }
 
-      List<String> instanceIds = Lists.newArrayList(Iterables.transform(nodes, new Function<NodeMetadata, String>() {
+      Set<String> instanceIds = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {
 
          @Override
          public String apply(NodeMetadata from) {
@@ -87,22 +95,17 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
          }
       }));
 
-      String[] instanceIdArray = instanceIds.toArray(new String[] {});
+      logger.debug(">> converging loadBalancer(%s) to instances(%s)", name, instanceIds);
+      Set<String> registeredInstanceIds = client.getInstanceClientForRegion(region).registerInstancesWithLoadBalancer(
+               instanceIds, name);
 
-      Set<String> registeredInstanceIds = client.registerInstancesWithLoadBalancerInRegion(region, name,
-            instanceIdArray);
-
-      // deregister instances
-      boolean changed = registeredInstanceIds.removeAll(instanceIds);
-      if (changed) {
-         List<String> list = new ArrayList<String>(registeredInstanceIds);
-         instanceIdArray = new String[list.size()];
-         for (int i = 0; i < list.size(); i++) {
-            instanceIdArray[i] = list.get(i);
-         }
-         if (instanceIdArray.length > 0)
-            client.deregisterInstancesWithLoadBalancerInRegion(region, name, instanceIdArray);
+      Set<String> instancesToRemove = filter(registeredInstanceIds, not(in(instanceIds)));
+      if (instancesToRemove.size() > 0) {
+         logger.debug(">> deregistering instances(%s) from loadBalancer(%s)", instancesToRemove, name);
+         client.getInstanceClientForRegion(region).deregisterInstancesFromLoadBalancer(instancesToRemove, name);
       }
-      return converter.apply(Iterables.getOnlyElement(client.describeLoadBalancersInRegion(region, name)));
+      logger.debug("<< converged loadBalancer(%s) ", name);
+
+      return converter.apply(new LoadBalancerInRegion(client.getLoadBalancerClientForRegion(region).get(name), region));
    }
 }

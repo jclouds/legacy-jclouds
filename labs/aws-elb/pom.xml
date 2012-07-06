@@ -35,13 +35,13 @@
 
     <properties>
         <test.aws-elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.aws-elb.endpoint>
-        <test.aws-elb.api-version>2010-07-01</test.aws-elb.api-version>
+        <test.aws-elb.api-version>2012-06-01</test.aws-elb.api-version>
         <test.aws-elb.build-version></test.aws-elb.build-version>
         <test.aws-elb.identity>${test.aws.identity}</test.aws-elb.identity>
         <test.aws-elb.credential>${test.aws.credential}</test.aws-elb.credential>
         <test.aws-elb.compute.provider>aws-ec2</test.aws-elb.compute.provider>
-        <test.aws-elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-elb.compute.endpoint>
-        <test.aws-elb.compute.api-version>2010-06-15</test.aws-elb.compute.api-version>
+        <test.aws-elb.compute.endpoint></test.aws-elb.compute.endpoint>
+        <test.aws-elb.compute.api-version></test.aws-elb.compute.api-version>
         <test.aws-elb.compute.build-version></test.aws-elb.compute.build-version>
         <test.aws-elb.compute.identity>${test.aws.identity}</test.aws-elb.compute.identity>
         <test.aws-elb.compute.credential>${test.aws.credential}</test.aws-elb.compute.credential>
@@ -94,14 +94,20 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
+            <artifactId>jclouds-sshj</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-sshj</artifactId>
+            <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

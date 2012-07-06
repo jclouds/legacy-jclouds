@@ -16,22 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.elb.config;
+package org.jclouds.aws.elb.features;
 
-import org.jclouds.elb.loadbalancer.ELBLoadBalancerServiceLiveTest;
+import org.jclouds.elb.features.LoadBalancerClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "AWSELBLoadBalancerServiceLiveTest")
-public class AWSELBLoadBalancerServiceLiveTest extends ELBLoadBalancerServiceLiveTest {
+@Test(groups = "live", testName = "AWSLoadBalancerClientLiveTest")
+public class AWSLoadBalancerClientLiveTest extends LoadBalancerClientLiveTest {
 
-   public AWSELBLoadBalancerServiceLiveTest() {
+   public AWSLoadBalancerClientLiveTest() {
       provider = "aws-elb";
-      computeProvider = "aws-ec2";
-      group = "elb";
    }
 
 }

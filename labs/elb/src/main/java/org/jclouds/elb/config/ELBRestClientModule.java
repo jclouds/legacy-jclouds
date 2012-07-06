@@ -23,6 +23,8 @@ import java.util.Map;
 import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
+import org.jclouds.elb.features.InstanceAsyncClient;
+import org.jclouds.elb.features.InstanceClient;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.features.LoadBalancerClient;
 import org.jclouds.elb.features.PolicyAsyncClient;
@@ -42,6 +44,7 @@ public class ELBRestClientModule extends FormSigningRestClientModule<ELBClient, 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
             .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)
             .put(PolicyClient.class, PolicyAsyncClient.class)
+            .put(InstanceClient.class, InstanceAsyncClient.class)
             .build();
 
    public ELBRestClientModule() {

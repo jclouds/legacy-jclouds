@@ -16,26 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.elb.loadbalancer.config;
+package org.jclouds.aws.elb.loadbalancer;
 
-import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
-import org.jclouds.elb.loadbalancer.functions.LoadBalancerToLoadBalancerMetadata;
-import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
-
-import com.google.common.base.Function;
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
+import org.jclouds.elb.loadbalancer.ELBLoadBalancerServiceLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ELBLoadBalancerServiceDependenciesModule extends AbstractModule {
+@Test(groups = "live", singleThreaded = true, testName = "AWSELBLoadBalancerServiceLiveTest")
+public class AWSELBLoadBalancerServiceLiveTest extends ELBLoadBalancerServiceLiveTest {
 
-   @Override
-   protected void configure() {
-      bind(new TypeLiteral<Function<LoadBalancerInRegion, LoadBalancerMetadata>>() {
-      }).to(LoadBalancerToLoadBalancerMetadata.class);
+   public AWSELBLoadBalancerServiceLiveTest() {
+      provider = "aws-elb";
+      computeProvider = "aws-ec2";
+      group = "elb";
    }
 
 }

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.features.InstanceClient;
 import org.jclouds.elb.features.LoadBalancerClient;
 import org.jclouds.elb.features.PolicyClient;
 import org.jclouds.location.Region;
@@ -64,6 +64,12 @@ public interface ELBClient {
     */
    @Delegate
    PolicyClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides synchronous access to Instance features.
+    */
+   @Delegate
+   InstanceClient getInstanceClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
    
    /// old stuff
    /**
@@ -96,42 +102,5 @@ public interface ELBClient {
     */
    void deleteLoadBalancerInRegion(@Nullable String region, String name);
 
-   /**
-    * Register instances with an existing load balancer
-    * 
-    * @param name
-    *           Load Balancer name
-    * @param instanceIds
-    *           Set of instance Ids to register with load balancer
-    * @return instanceIds registered with load balancer
-    * 
-    * @see <a
-    *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
-    */
-   Set<String> registerInstancesWithLoadBalancerInRegion(@Nullable String region, String name, String... instanceIds);
-
-   /**
-    * Deregister instances with an existing load balancer
-    * 
-    * @param name
-    *           Load Balancer name
-    * @param instanceIds
-    *           Set of instance Ids to deregister with load balancer
-    * @return
-    * 
-    * @see <a
-    *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
-    */
-   void deregisterInstancesWithLoadBalancerInRegion(@Nullable String region, String name, String... instanceIds);
-
-   /**
-    * Returns a set of elastic load balancers
-    * 
-    * @param region
-    * @param loadbalancerNames
-    *           names associated with the LoadBalancers at creation time.
-    * @return
-    */
-   Set<? extends CrappyLoadBalancer> describeLoadBalancersInRegion(@Nullable String region, String... loadbalancerNames);
 
 }

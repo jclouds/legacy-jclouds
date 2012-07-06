@@ -16,6 +16,14 @@
         </encoder>
     </appender>
 
+    <appender name="LBFILE" class="ch.qos.logback.core.FileAppender">
+        <file>target/test-data/jclouds-loadbalancer.log</file>
+
+        <encoder>
+            <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
+        </encoder>
+    </appender>
+
     <appender name="COMPUTEFILE" class="ch.qos.logback.core.FileAppender">
         <file>target/test-data/jclouds-compute.log</file>
 
@@ -54,6 +62,11 @@
     <logger name="jclouds.compute">
         <level value="DEBUG" />
         <appender-ref ref="COMPUTEFILE" />
+    </logger>
+    
+    <logger name="jclouds.loadbalancer">
+        <level value="DEBUG" />
+        <appender-ref ref="LBFILE" />
     </logger>
     
     <logger name="jclouds.ssh">

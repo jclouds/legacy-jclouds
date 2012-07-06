@@ -19,19 +19,19 @@
 package org.jclouds.elb.loadbalancer;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.jclouds.collect.PaginatedSet;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.loadbalancer.BaseLoadBalancerServiceLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
@@ -39,10 +39,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", singleThreaded = true, testName = "ELBLoadBalancerServiceLiveTest")
 public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveTest {
-
    public ELBLoadBalancerServiceLiveTest() {
       provider = "elb";
-      computeProvider = "ec2";
    }
 
    @Override
@@ -52,22 +50,21 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
 
    @Override
    protected void validateNodesInLoadBalancer() {
-      RestContext<ELBClient, ELBAsyncClient> elbContext = context.unwrap();
+      RestContext<ELBClient, ELBAsyncClient> elbContext = view.unwrap();
       // TODO create a LoadBalancer object and an appropriate list method so that this
       // does not have to be EC2 specific code
       ELBClient elbClient = elbContext.getApi();
 
-      Set<String> instanceIds = new HashSet<String>();
+      Builder<String> instanceIds = ImmutableSet.<String> builder();
       for (NodeMetadata node : nodes) {
          instanceIds.add(node.getProviderId());
       }
-      Set<? extends CrappyLoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(null);
-      assertNotNull(elbs);
-      for (CrappyLoadBalancer elb : elbs) {
+
+      PaginatedSet<LoadBalancer> elbs = elbClient.getLoadBalancerClientForRegion(null).list();
+      for (LoadBalancer elb : elbs) {
          if (elb.getName().equals(group))
-            assertEquals(elb.getInstanceIds(), instanceIds);
+            assertEquals(elb.getInstanceIds(), instanceIds.build());
       }
    }
-
 
 }

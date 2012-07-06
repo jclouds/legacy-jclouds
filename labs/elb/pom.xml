@@ -34,15 +34,14 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.elb.zone>us-east-1a</test.elb.zone>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
         <test.elb.api-version>2012-06-01</test.elb.api-version>
         <test.elb.build-version></test.elb.build-version>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
         <test.elb.compute.provider>aws-ec2</test.elb.compute.provider>
-        <test.elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.elb.compute.endpoint>
-        <test.elb.compute.api-version>2010-06-15</test.elb.compute.api-version>
+        <test.elb.compute.endpoint></test.elb.compute.endpoint>
+        <test.elb.compute.api-version></test.elb.compute.api-version>
         <test.elb.compute.build-version></test.elb.compute.build-version>
         <test.elb.compute.identity>${test.aws.identity}</test.elb.compute.identity>
         <test.elb.compute.credential>${test.aws.credential}</test.elb.compute.credential>
@@ -128,7 +127,6 @@
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <test.elb.zone>${test.elb.zone}</test.elb.zone>
                                         <test.elb.endpoint>${test.elb.endpoint}</test.elb.endpoint>
                                         <test.elb.api-version>${test.elb.api-version}</test.elb.api-version>
                                         <test.elb.build-version>${test.elb.build-version}</test.elb.build-version>

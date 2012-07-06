@@ -19,16 +19,14 @@
 package org.jclouds.elb.loadbalancer.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.aws.util.AWSUtils.parseHandle;
-
-import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.domain.LoadBalancer;
+import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.strategy.GetLoadBalancerMetadataStrategy;
 
@@ -42,10 +40,11 @@ import com.google.common.base.Function;
 public class ELBGetLoadBalancerMetadataStrategy implements GetLoadBalancerMetadataStrategy {
 
    private final ELBClient client;
-   private final Function<CrappyLoadBalancer, LoadBalancerMetadata> converter;
+   private final Function<LoadBalancerInRegion, LoadBalancerMetadata> converter;
 
    @Inject
-   protected ELBGetLoadBalancerMetadataStrategy(ELBClient client, Function<CrappyLoadBalancer, LoadBalancerMetadata> converter) {
+   protected ELBGetLoadBalancerMetadataStrategy(ELBClient client,
+            Function<LoadBalancerInRegion, LoadBalancerMetadata> converter) {
       this.client = checkNotNull(client, "client");
       this.converter = checkNotNull(converter, "converter");
    }
@@ -55,11 +54,8 @@ public class ELBGetLoadBalancerMetadataStrategy implements GetLoadBalancerMetada
       String[] parts = parseHandle(id);
       String region = parts[0];
       String name = parts[1];
-      try {
-         return converter.apply(getOnlyElement(client.describeLoadBalancersInRegion(region, name)));
-      } catch (NoSuchElementException e) {
-         return null;
-      }
+      LoadBalancer input = client.getLoadBalancerClientForRegion(region).get(name);
+      return input != null ? converter.apply(new LoadBalancerInRegion(input, region)) : null;
    }
 
 }

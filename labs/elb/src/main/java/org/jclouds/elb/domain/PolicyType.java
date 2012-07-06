@@ -20,10 +20,15 @@ package org.jclouds.elb.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -128,6 +133,21 @@ public class PolicyType {
     */
    public Set<AttributeMetadata<?>> getAttributeMetadata() {
       return attributeMetadata;
+   }
+   
+   /**
+    * convenience method
+    * @see #getAttributeMetadata()
+    */
+   public Map<String, AttributeMetadata<?>> getAttributeMetadataByName() {
+      return Maps.uniqueIndex(attributeMetadata, new Function<AttributeMetadata<?>, String>(){
+
+         @Override
+         public String apply(@Nullable AttributeMetadata<?> input) {
+            return input.getName();
+         }
+         
+      });
    }
 
    /**
