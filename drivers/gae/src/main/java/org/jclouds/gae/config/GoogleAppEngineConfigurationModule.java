@@ -27,6 +27,8 @@ import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.predicates.SocketOpen;
+import org.jclouds.predicates.SocketOpenUnsupported;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
@@ -35,6 +37,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * Configures {@link GaeHttpCommandExecutorService}.
@@ -75,6 +78,7 @@ public class GoogleAppEngineConfigurationModule extends AbstractModule {
    protected void configure() {
       install(executorServiceModule);
       bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class);
+      bind(SocketOpen.class).to(SocketOpenUnsupported.class).in(Scopes.SINGLETON);
       bindHttpCommandExecutorService();
    }
 
