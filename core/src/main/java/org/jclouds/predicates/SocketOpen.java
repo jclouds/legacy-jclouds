@@ -28,7 +28,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(SocketOpenUnsupported.class)
+@ImplementedBy(InetSocketAddressConnect.class)
 public interface SocketOpen extends Predicate<HostAndPort> {
 
 }
