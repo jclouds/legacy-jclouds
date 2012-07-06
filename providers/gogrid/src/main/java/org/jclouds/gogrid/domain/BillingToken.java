@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,72 +18,127 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
 
 /**
+ * Class BillingToken
+ * 
  * @author Oleksiy Yarmula
- */
+*/
 public class BillingToken implements Comparable<BillingToken> {
 
-   private long id;
-   private String name;
-   private double price;
-
-   /**
-    * A no-args constructor is required for deserialization
-    */
-   public BillingToken() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromBillingToken(this);
    }
 
-   public BillingToken(long id, String name, double price) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected long id;
+      protected String name;
+      protected double price;
+   
+      /** 
+       * @see BillingToken#getId()
+       */
+      public T id(long id) {
+         this.id = id;
+         return self();
+      }
+
+      /** 
+       * @see BillingToken#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /** 
+       * @see BillingToken#getPrice()
+       */
+      public T price(double price) {
+         this.price = price;
+         return self();
+      }
+
+      public BillingToken build() {
+         return new BillingToken(id, name, price);
+      }
+      
+      public T fromBillingToken(BillingToken in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .price(in.getPrice());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final long id;
+   private final String name;
+   private final double price;
+
+   @ConstructorProperties({
+      "id", "name", "price"
+   })
+   protected BillingToken(long id, String name, double price) {
       this.id = id;
-      this.name = name;
+      this.name = checkNotNull(name, "name");
       this.price = price;
    }
 
    public long getId() {
-      return id;
+      return this.id;
    }
 
    public String getName() {
-      return name;
+      return this.name;
    }
 
    public double getPrice() {
-      return price;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      BillingToken other = (BillingToken) obj;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (Double.doubleToLongBits(price) != Double.doubleToLongBits(other.price))
-         return false;
-      return true;
+      return this.price;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      long temp;
-      temp = Double.doubleToLongBits(price);
-      result = prime * result + (int) (temp ^ (temp >>> 32));
-      return result;
+      return Objects.hashCode(id, name, price);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      BillingToken that = BillingToken.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.price, that.price);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("price", price);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
    @Override
@@ -91,8 +146,4 @@ public class BillingToken implements Comparable<BillingToken> {
       return Longs.compare(id, o.getId());
    }
 
-   @Override
-   public String toString() {
-      return "BillingToken{" + "id=" + id + ", name='" + name + '\'' + ", price=" + price + '}';
-   }
 }

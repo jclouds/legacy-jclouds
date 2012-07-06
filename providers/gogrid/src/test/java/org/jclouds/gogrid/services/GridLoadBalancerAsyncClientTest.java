@@ -20,7 +20,6 @@ package org.jclouds.gogrid.services;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jclouds.gogrid.domain.Ip;
@@ -34,12 +33,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GridLoadBalancerAsyncClient}
- * 
+ *
  * @author Oleksiy Yarmula
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
@@ -73,8 +73,10 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       Method method = GridLoadBalancerAsyncClient.class.getMethod("addLoadBalancer", String.class, IpPortPair.class,
             List.class, AddLoadBalancerOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, "BalanceIt",
-            new IpPortPair(new Ip("127.0.0.1"), 80), Arrays.asList(new IpPortPair(new Ip("127.0.0.1"), 8080),
-                  new IpPortPair(new Ip("127.0.0.1"), 9090)), new AddLoadBalancerOptions.Builder().create(
+            IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(80).build(),
+            ImmutableList.of(IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
+                  IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(9090).build()),
+            new AddLoadBalancerOptions.Builder().create(
                   LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SSL_STICKY));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
@@ -105,8 +107,9 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    @Test
    public void testEditLoadBalancer() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancer", long.class, List.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1l, Arrays
-            .asList(new IpPortPair(new Ip("127.0.0.1"), 8080), new IpPortPair(new Ip("127.0.0.1"), 9090)));
+      HttpRequest httpRequest = processor.createRequest(method, 1l, ImmutableList.of(
+            IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
+            IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(9090).build()));
 
       assertRequestLineEquals(
             httpRequest,
@@ -131,8 +134,9 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    @Test
    public void testEditLoadBalancerNamed() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancerNamed", String.class, List.class);
-      HttpRequest httpRequest = processor.createRequest(method, "BalanceIt",
-            Arrays.asList(new IpPortPair(new Ip("127.0.0.1"), 8080), new IpPortPair(new Ip("127.0.0.1"), 9090)));
+      HttpRequest httpRequest = processor.createRequest(method, "BalanceIt", ImmutableList.of(
+            IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
+            IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(9090).build()));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
             + "edit?v=1.5&name=BalanceIt&realiplist.0.ip=127.0.0.1&"
