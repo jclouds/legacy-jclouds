@@ -96,10 +96,12 @@ public class DateServiceDateCodecFactory implements DateCodecFactory {
 
    }
 
+   @Override
    public DateCodec rfc1123() {
       return rfc1123Codec;
    }
-
+   
+   @Override
    public DateCodec iso8601() {
       return iso8601Codec;
    }
