@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import org.jclouds.blobstore.attr.BlobScope;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.QueryParams;
@@ -55,9 +56,10 @@ public interface WalrusAsyncClient extends S3AsyncClient {
    @Override
    @GET
    @Path("/")
+   @Endpoint(Bucket.class)
    @QueryParams(keys = "max-keys", values = "0")
    @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> bucketExists(
-            @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName);
+            @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName);
 
 }

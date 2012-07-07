@@ -36,6 +36,7 @@ import com.google.common.base.Function;
 @Singleton
 public class ReturnTrueOn404OrNotFoundFalseOnIllegalState implements Function<Exception, Boolean> {
 
+   //TODO: invalidate
    public Boolean apply(Exception from) {
       if (getFirstThrowableOfType(from, IllegalStateException.class) != null) {
          return false;

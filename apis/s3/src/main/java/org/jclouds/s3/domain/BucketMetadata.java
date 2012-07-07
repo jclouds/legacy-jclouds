@@ -27,8 +27,8 @@ import java.util.Date;
  */
 public class BucketMetadata implements Comparable<BucketMetadata> {
    private final Date creationDate;
-   private final CanonicalUser owner;
    private final String name;
+   private final CanonicalUser owner;
 
    public BucketMetadata(String name, Date creationDate, CanonicalUser owner) {
       this.name = name;

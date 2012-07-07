@@ -22,8 +22,8 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -41,11 +41,9 @@ import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import java.util.concurrent.Future;
+import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
 
 /**
@@ -97,16 +95,14 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       for (int i = 0; i < maxErrors; ) {
          // fetch partial directory listing
          try {
-            listing = connection.list(containerName, options).get();
-         } catch (ExecutionException ee) {
+            listing = Futures.getUnchecked(connection.list(containerName, options));
+         } catch (RuntimeException ee) {
             ++i;
             if (i == maxErrors) {
-               throw new BlobRuntimeException("list error", ee.getCause());
+               throw Throwables.propagate(ee.getCause());
             }
             retryHandler.imposeBackoffExponentialDelay(i, message);
             continue;
-         } catch (InterruptedException ie) {
-            throw Throwables.propagate(ie);
          }
 
          // recurse on subdirectories

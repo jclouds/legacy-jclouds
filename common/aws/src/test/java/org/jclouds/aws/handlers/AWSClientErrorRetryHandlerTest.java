@@ -23,9 +23,16 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import java.net.URI;
+
+import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.io.Payloads;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -33,29 +40,60 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "AWSClientErrorRetryHandlerTest")
 public class AWSClientErrorRetryHandlerTest {
    @Test
    public void test401DoesNotRetry() {
 
       AWSUtils utils = createMock(AWSUtils.class);
+      BackoffLimitedRetryHandler backoffLimitedRetryHandler = createMock(BackoffLimitedRetryHandler.class);
       HttpCommand command = createMock(HttpCommand.class);
-      HttpResponse response = createMock(HttpResponse.class);
 
-      expect(command.getFailureCount()).andReturn(0);
-      expect(response.getStatusCode()).andReturn(401).atLeastOnce();
+      replay(utils, backoffLimitedRetryHandler, command);
 
-      replay(utils);
-      replay(command);
-      replay(response);
+      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler);
 
-      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils);
+      assert !retry.shouldRetryRequest(command, HttpResponse.builder().statusCode(401).build());
 
-      assert !retry.shouldRetryRequest(command, response);
-
-      verify(utils);
-      verify(command);
-      verify(response);
+      verify(utils, backoffLimitedRetryHandler, command);
 
    }
+
+   @DataProvider(name = "codes")
+   public Object[][] createData() {
+      return new Object[][] { { "RequestTimeout" }, { "OperationAborted" }, { "SignatureDoesNotMatch" } };
+   }
+
+   @Test(dataProvider = "codes")
+   public void test409DoesBackoffAndRetryForCode(String code) {
+
+      AWSUtils utils = createMock(AWSUtils.class);
+      BackoffLimitedRetryHandler backoffLimitedRetryHandler = createMock(BackoffLimitedRetryHandler.class);
+      HttpCommand command = createMock(HttpCommand.class);
+
+      HttpRequest putBucket = HttpRequest.builder().method("PUT")
+               .endpoint(URI.create("https://adriancole-blobstore113.s3.amazonaws.com/")).build();
+
+      HttpResponse operationAborted = HttpResponse.builder().statusCode(409)
+               .payload(Payloads.newStringPayload(String.format("<Error><Code>%s</Code></Error>", code))).build();
+
+      expect(command.getCurrentRequest()).andReturn(putBucket);
+
+      AWSError error = new AWSError();
+      error.setCode(code);
+
+      expect(utils.parseAWSErrorFromContent(putBucket, operationAborted)).andReturn(error);
+
+      expect(backoffLimitedRetryHandler.shouldRetryRequest(command, operationAborted)).andReturn(Boolean.TRUE);
+
+      replay(utils, backoffLimitedRetryHandler, command);
+
+      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler);
+
+      assert retry.shouldRetryRequest(command, operationAborted);
+
+      verify(utils, backoffLimitedRetryHandler, command);
+
+   }
+
 }

@@ -20,17 +20,14 @@ package org.jclouds.aws.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.logging.Logger;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
@@ -40,35 +37,25 @@ import com.google.inject.Inject;
  */
 public class AWSClientErrorRetryHandler implements HttpRetryHandler {
 
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_MAX_RETRIES)
-   private int retryCountLimit = 5;
-
    private final AWSUtils utils;
-
-   @Resource
-   protected Logger logger = Logger.NULL;
+   private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
    @Inject
-   public AWSClientErrorRetryHandler(AWSUtils utils) {
+   public AWSClientErrorRetryHandler(AWSUtils utils, BackoffLimitedRetryHandler backoffLimitedRetryHandler) {
       this.utils = utils;
+      this.backoffLimitedRetryHandler = backoffLimitedRetryHandler;
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      if (command.getFailureCount() > retryCountLimit)
-         return false;
-      if (response.getStatusCode() == 400 || response.getStatusCode() == 403
-               || response.getStatusCode() == 409) {
-         command.incrementFailureCount();
+      if (response.getStatusCode() == 400 || response.getStatusCode() == 403 || response.getStatusCode() == 409) {
          // Content can be null in the case of HEAD requests
          if (response.getPayload() != null) {
             closeClientButKeepContentStream(response);
             AWSError error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response);
             if (error != null
-                     && ("RequestTimeout".equals(error.getCode())
-                              || "OperationAborted".equals(error.getCode()) || "SignatureDoesNotMatch"
-                              .equals(error.getCode()))) {
-               return true;
+                     && ImmutableSet.of("RequestTimeout", "OperationAborted", "SignatureDoesNotMatch").contains(
+                              error.getCode())) {
+               return backoffLimitedRetryHandler.shouldRetryRequest(command, response);
             }
          }
       }

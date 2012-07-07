@@ -25,6 +25,7 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.ObjectMetadata;
@@ -42,12 +43,14 @@ import com.google.common.cache.LoadingCache;
 public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlobMetadata> {
    private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    private final LoadingCache<String, AccessControlList> bucketAcls;
+   private final Function<String, Location> locationOfBucket;
 
    @Inject
    public ObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-            LoadingCache<String, AccessControlList> bucketAcls) {
+            LoadingCache<String, AccessControlList> bucketAcls,Function<String, Location> locationOfBucket) {
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.bucketAcls = bucketAcls;
+      this.locationOfBucket = locationOfBucket;
    }
 
    public MutableBlobMetadata apply(ObjectMetadata from) {
@@ -68,6 +71,7 @@ public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlo
       to.setName(from.getKey());
       to.setLastModified(from.getLastModified());
       to.setUserMetadata(from.getUserMetadata());
+      to.setLocation(locationOfBucket.apply(from.getBucket()));
       String directoryName = ifDirectoryReturnName.execute(to);
       if (directoryName != null) {
          to.setName(directoryName);

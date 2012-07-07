@@ -18,35 +18,65 @@
  */
 package org.jclouds.aws.s3;
 
-import com.google.common.collect.ImmutableMultimap;
+import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
+
+import java.net.URI;
+
 import org.jclouds.aws.s3.internal.BaseAWSS3ClientExpectTest;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
-import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.Injector;
 
 /**
  * @author Andrei Savu
  */
 @Test
 public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
-
+   HttpRequest bucketLocationRequest = HttpRequest.builder()
+                                                  .method("GET")
+                                                  .endpoint(URI.create("https://test.s3.amazonaws.com/?location"))
+                                                  .headers(ImmutableMultimap.of(
+                                                      "Host", "test.s3.amazonaws.com",
+                                                      "Date", CONSTANT_DATE,
+                                                      "Authorization", "AWS identity:D1rymKrEdvzvhmZXeg+Z0R+tiug="
+                                                   ))
+                                                  .build();
+   
+   HttpResponse bucketLocationResponse = HttpResponse.builder()
+                                                     .statusCode(200)
+                                                     .payload(
+                                                              payloadFromStringWithContentType("<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">eu-west-1</LocationConstraint>", "application/xml"))
+                                                     .headers(ImmutableMultimap.of(
+                                                         "x-amz-id-2", "BtioT9wIK04YkE2DPgWUrQFiAbjwJVP8cLyfOkJ1FHMbn2hVjBZvkMMuXPDHfGVw",
+                                                         "x-amz-request-id", "51BF4F45D49B1B34",
+                                                         "Date", CONSTANT_DATE,
+                                                         "Server", "AmazonS3"
+                                                      ))
+                                                     .build();
    @Test
    public void testPutWithReducedRedundancy() {
-      AWSS3Client client = requestSendsResponse(
+      Injector injector = createInjector(Functions.forMap(ImmutableMap.<HttpRequest, HttpResponse>of()), createModule(), setupProperties());
+
+      Blob blob = injector.getInstance(BlobBuilder.class).name("test").payload("content").build();
+      BlobToObject blobToObject = injector.getInstance(BlobToObject.class);
+      
+      AWSS3Client client = requestsSendResponses(bucketLocationRequest, bucketLocationResponse,
          HttpRequest.builder()
             .method("PUT")
-            .endpoint(URI.create("https://test.s3.amazonaws.com/test"))
+            .endpoint(URI.create("https://test.s3-eu-west-1.amazonaws.com/test"))
             .headers(ImmutableMultimap.of(
                "x-amz-storage-class", "REDUCED_REDUNDANCY",
-               "Host", "test.s3.amazonaws.com",
+               "Host", "test.s3-eu-west-1.amazonaws.com",
                "Date", CONSTANT_DATE,
                "Authorization", "AWS identity:1mJrW85/mqZpYTFIK5Ebtt2MM6E="
             ))
@@ -64,14 +94,7 @@ public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
             .build()
       );
 
-      Blob blob = blobStore.blobBuilder("test").payload("content").build();
-      BlobToObject blobToObject = getInstance(BlobToObject.class);
-
       client.putObject("test", blobToObject.apply(blob),
          storageClass(StorageClass.REDUCED_REDUNDANCY));
-   }
-
-   public <T> T getInstance(Class<T> klass) {
-      return blobStoreContext.utils().injector().getInstance(klass);
    }
 }

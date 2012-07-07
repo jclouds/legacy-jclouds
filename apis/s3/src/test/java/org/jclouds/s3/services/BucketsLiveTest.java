@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.AccessControlList;
@@ -171,17 +170,6 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   public void testDefaultBucketLocation() throws Exception {
-
-      String bucketName = getContainerName();
-      try {
-         String location = getApi().getBucketLocation(bucketName);
-         assert location.equals(Region.US_STANDARD) : "bucket: " + bucketName + " location: " + location;
-      } finally {
-         returnContainer(bucketName);
-      }
-   }
-
    public void testBucketPayer() throws Exception {
       final String bucketName = getContainerName();
       try {
@@ -268,33 +256,6 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       acl.addPermission(GroupGranteeURI.LOG_DELIVERY, Permission.WRITE);
       acl.addPermission(GroupGranteeURI.LOG_DELIVERY, Permission.READ_ACP);
       assertTrue(getApi().putBucketACL(targetBucket, acl));
-   }
-
-   /**
-    * using scratch bucketName as we are changing location
-    */
-   public void testEu() throws Exception {
-      final String bucketName = getScratchContainerName();
-      try {
-         getApi().putBucketInRegion(Region.EU, bucketName + "eu", withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
-         assertConsistencyAware(new Runnable() {
-            public void run() {
-               try {
-                  AccessControlList acl = getApi().getBucketACL(bucketName + "eu");
-                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
-               } catch (Exception e) {
-                  Throwables.propagateIfPossible(e);
-               }
-            }
-         });
-         assertEquals(Region.EU, getApi().getBucketLocation(bucketName + "eu"));
-         // TODO: I believe that the following should work based on the above acl assertion passing.
-         // However, it fails on 403
-         // URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));
-         // Utils.toStringAndClose(url.openStream());
-      } finally {
-         destroyContainer(bucketName + "eu");
-      }
    }
 
    void bucketExists() throws Exception {

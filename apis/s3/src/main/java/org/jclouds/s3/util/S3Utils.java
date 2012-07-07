@@ -20,11 +20,19 @@ package org.jclouds.s3.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.any;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3Client;
 import org.jclouds.util.Patterns;
+
+import com.google.common.base.Predicate;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.
@@ -56,4 +64,27 @@ public class S3Utils {
       sync.deleteBucketIfEmpty(container);
       return sync.bucketExists(container);
    }
+   
+   private static final Predicate<Annotation> ANNOTATIONTYPE_BUCKET = new Predicate<Annotation>() {
+      public boolean apply(Annotation input) {
+         return input.annotationType().equals(Bucket.class);
+      }
+   };
+
+   public static String getBucketName(HttpRequest req) {
+      checkArgument(req instanceof GeneratedHttpRequest<?>, "this should be a generated http request");
+      GeneratedHttpRequest<?> request = GeneratedHttpRequest.class.cast(req);
+
+      String bucketName = null;
+
+      for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
+         if (any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]), ANNOTATIONTYPE_BUCKET)) {
+            bucketName = (String) request.getArgs().get(i);
+            break;
+         }
+      }
+
+      return bucketName;
+   }
+
 }

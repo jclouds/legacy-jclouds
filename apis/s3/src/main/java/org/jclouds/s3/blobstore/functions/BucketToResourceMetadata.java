@@ -36,10 +36,10 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class BucketToResourceMetadata implements Function<BucketMetadata, StorageMetadata> {
-   private final Function<BucketMetadata, Location> locationOfBucket;
+   private final Function<String, Location> locationOfBucket;
 
    @Inject
-   BucketToResourceMetadata(Function<BucketMetadata, Location> locationOfBucket) {
+   BucketToResourceMetadata(Function<String, Location> locationOfBucket) {
       this.locationOfBucket = locationOfBucket;
    }
 
@@ -47,7 +47,7 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
       MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
       to.setType(StorageType.CONTAINER);
-      to.setLocation(locationOfBucket.apply(from));
+      to.setLocation(locationOfBucket.apply(from.getName()));
       return to;
    }
 }

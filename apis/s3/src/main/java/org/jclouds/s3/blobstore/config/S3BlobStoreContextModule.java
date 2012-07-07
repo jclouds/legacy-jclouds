@@ -35,7 +35,7 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3BlobStore;
-import org.jclouds.s3.blobstore.functions.LocationFromBucketLocation;
+import org.jclouds.s3.blobstore.functions.LocationFromBucketName;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.BucketMetadata;
 
@@ -63,17 +63,13 @@ public class S3BlobStoreContextModule extends AbstractModule {
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
       bindContext();
       bind(BlobRequestSigner.class).to(S3BlobRequestSigner.class);
-      bindBucketLocationStrategy();
+      bind(new TypeLiteral<Function<String, Location>>() {
+      }).to(LocationFromBucketName.class);
    }
 
    protected void bindContext() {
       bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
       }).in(Scopes.SINGLETON);
-   }
-
-   protected void bindBucketLocationStrategy() {
-      bind(new TypeLiteral<Function<BucketMetadata, Location>>() {
-      }).to(LocationFromBucketLocation.class);
    }
 
    @Provides

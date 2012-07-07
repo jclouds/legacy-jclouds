@@ -20,8 +20,6 @@ package org.jclouds.s3.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.jclouds.aws.domain.Region;
@@ -29,6 +27,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.s3.Bucket;
+
+import com.google.common.base.Optional;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Parses the response from Amazon S3 GET Bucket Location
@@ -41,13 +42,13 @@ import org.jclouds.s3.Bucket;
  * @author Adrian Cole
  */
 public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String> {
-   private final Map<String, String> bucketToRegion;
+   private final LoadingCache<String, Optional<String>> bucketToRegion;
    private StringBuilder currentText = new StringBuilder();
    private String region;
    private String bucket;
 
    @Inject
-   public LocationConstraintHandler(@Bucket Map<String, String> bucketToRegion) {
+   public LocationConstraintHandler(@Bucket LoadingCache<String, Optional<String>> bucketToRegion) {
       this.bucketToRegion = bucketToRegion;
    }
 
@@ -57,7 +58,7 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
 
    public void endElement(String uri, String name, String qName) {
       region = fromValue(currentOrNull(currentText));
-      bucketToRegion.put(bucket, region);
+      bucketToRegion.put(bucket, Optional.fromNullable(region));
    }
 
    @Override
@@ -79,6 +80,8 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
    public static String fromValue(String v) {
       if (v == null || "".equals(v))
          return Region.US_STANDARD;
+      if ("EU".equals(v))
+         return "eu-west-1";
       return v;
    }
 

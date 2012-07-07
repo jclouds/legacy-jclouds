@@ -34,6 +34,8 @@ import org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
@@ -45,12 +47,15 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
-import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.s3.domain.AccessControlList;
+import org.jclouds.s3.domain.BucketMetadata;
+import org.jclouds.s3.domain.CannedAccessPolicy;
+import org.jclouds.s3.domain.ObjectMetadata;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -73,12 +78,13 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
    public AWSS3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AWSS3AsyncClient async, AWSS3Client sync,
-            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, LoadingCache<String, AccessControlList> bucketAcls,
+            Function<Set<BucketMetadata>, PageSet<? extends StorageMetadata>> convertBucketsToStorageMetadata,
+            ContainerToBucketListOptions container2BucketListOptions, BucketToResourceList bucket2ResourceList,
+            ObjectToBlob object2Blob, BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
+            LoadingCache<String, AccessControlList> bucketAcls,
             Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
-      super(context, blobUtils, service, defaultLocation, locations, async, sync, bucket2ResourceMd,
+      super(context, blobUtils, service, defaultLocation, locations, async, sync, convertBucketsToStorageMetadata,
                container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,
                object2BlobMd, fetchBlobMetadataProvider, bucketAcls);
       this.multipartUploadStrategy = multipartUploadStrategy;

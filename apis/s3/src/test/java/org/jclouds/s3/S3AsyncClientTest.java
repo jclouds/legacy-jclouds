@@ -52,7 +52,7 @@ import org.jclouds.s3.domain.Payer;
 import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
+import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists;
 import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseOnIllegalState;
 import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.jclouds.s3.options.CopyObjectOptions;
@@ -88,7 +88,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array.newInstance(
                PutBucketOptions.class, 0).getClass());
       for (String region : Region.DEFAULT_S3) {
-         processor.createRequest(method, region, "bucket-name");
+         processor.createRequest(method, region, "bucket-" + region);
       }
    }
 
@@ -384,7 +384,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists.class);
 
       checkFilters(request);
    }

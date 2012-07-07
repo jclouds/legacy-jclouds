@@ -48,6 +48,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
