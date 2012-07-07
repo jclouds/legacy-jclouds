@@ -196,7 +196,7 @@ public interface S3Client {
     * 
     */
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
-   boolean putBucketInRegion(@Nullable String region, String bucketName, PutBucketOptions... options);
+   boolean putBucketInRegion(@Nullable String region, @Bucket String bucketName, PutBucketOptions... options);
 
    /**
     * Deletes the bucket, if it is empty.

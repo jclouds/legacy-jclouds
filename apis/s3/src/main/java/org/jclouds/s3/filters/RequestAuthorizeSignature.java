@@ -18,8 +18,6 @@
  */
 package org.jclouds.s3.filters;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.get;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
@@ -29,8 +27,6 @@ import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 import static org.jclouds.util.Strings2.toInputStream;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -57,11 +53,9 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.s3.Bucket;
+import org.jclouds.s3.util.S3Utils;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -81,11 +75,6 @@ import com.google.common.collect.TreeMultimap;
  */
 @Singleton
 public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSigner {
-   private static final Predicate<Annotation> ANNOTATIONTYPE_BUCKET = new Predicate<Annotation>() {
-      public boolean apply(Annotation input) {
-         return input.annotationType().equals(Bucket.class);
-      }
-   };
 
    private static final Collection<String> FIRST_HEADERS_TO_SIGN = ImmutableList.of(HttpHeaders.DATE);
 
@@ -231,7 +220,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    @VisibleForTesting
    void appendBucketName(HttpRequest req, StringBuilder toSign) {
-      String bucketName = getBucketName(req);
+      String bucketName = S3Utils.getBucketName(req);
 
       // If we have a payload/bucket/container that is not all lowercase, vhost-style URLs are not an option and must be
       // automatically converted to their path-based equivalent.  This should only be possible for AWS-S3 since it is
@@ -264,22 +253,6 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
             separator = '&';
          }
       }
-   }
-
-   private String getBucketName(HttpRequest req) {
-      checkArgument(req instanceof GeneratedHttpRequest<?>, "this should be a generated http request");
-      GeneratedHttpRequest<?> request = GeneratedHttpRequest.class.cast(req);
-
-      String bucketName = null;
-
-      for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
-         if (any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]), ANNOTATIONTYPE_BUCKET)) {
-            bucketName = (String) request.getArgs().get(i);
-            break;
-         }
-      }
-
-      return bucketName;
    }
 
 }

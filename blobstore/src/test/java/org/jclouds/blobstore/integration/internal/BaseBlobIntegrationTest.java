@@ -48,6 +48,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
@@ -239,6 +240,23 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    }
 
+   @Test(groups = { "integration", "live" })
+   public void testCreateBlobWithExpiry() throws InterruptedException {
+      String container = getContainerName();
+      BlobStore blobStore = view.getBlobStore();
+      try {
+         final String blobName = "hello";
+         final Date expires = new Date((System.currentTimeMillis() / 1000) * 1000 + 60 * 1000);
+
+         blobStore.putBlob(container, blobStore.blobBuilder(blobName).payload(TEST_STRING).expires(expires).build());
+
+         assertConsistencyAwareBlobExpiryMetadata(container, blobName, expires);
+
+      } finally {
+         returnContainer(container);
+      }
+   }
+   
    @Test(groups = { "integration", "live" })
    public void testGetIfUnmodifiedSince() throws InterruptedException {
       String container = getContainerName();

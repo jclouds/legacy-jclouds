@@ -18,9 +18,6 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
 import org.testng.annotations.Test;
 
@@ -31,11 +28,5 @@ import org.testng.annotations.Test;
 public class HPCloudObjectStorageContainerLiveTest extends BaseContainerLiveTest {
    public HPCloudObjectStorageContainerLiveTest() {
       provider = "hpcloud-objectstorage";
-   }
-
-	@Test(enabled = false)
-   //@Test(expectedExceptions=UnsupportedOperationException.class)
-   public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
-      super.testPublicAccess();
    }
 }

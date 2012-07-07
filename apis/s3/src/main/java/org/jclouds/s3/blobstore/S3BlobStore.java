@@ -27,11 +27,11 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.CreateContainerOptions;
@@ -45,7 +45,6 @@ import org.jclouds.http.options.GetOptions;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
-import org.jclouds.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
@@ -64,7 +63,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -73,7 +71,7 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class S3BlobStore extends BaseBlobStore {
    private final S3Client sync;
-   private final BucketToResourceMetadata bucket2ResourceMd;
+   private final Function<Set<BucketMetadata>, PageSet<? extends StorageMetadata>> convertBucketsToStorageMetadata;
    private final ContainerToBucketListOptions container2BucketListOptions;
    private final BucketToResourceList bucket2ResourceList;
    private final ObjectToBlob object2Blob;
@@ -85,15 +83,16 @@ public class S3BlobStore extends BaseBlobStore {
 
    @Inject
    protected S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-         @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
-         BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
-         BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
-         BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider, LoadingCache<String, AccessControlList> bucketAcls) {
+            @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
+            Function<Set<BucketMetadata>, PageSet<? extends StorageMetadata>> convertBucketsToStorageMetadata,
+            ContainerToBucketListOptions container2BucketListOptions, BucketToResourceList bucket2ResourceList,
+            ObjectToBlob object2Blob, BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
+            LoadingCache<String, AccessControlList> bucketAcls) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
-      this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
+      this.convertBucketsToStorageMetadata = checkNotNull(convertBucketsToStorageMetadata, "convertBucketsToStorageMetadata");
       this.container2BucketListOptions = checkNotNull(container2BucketListOptions, "container2BucketListOptions");
       this.bucket2ResourceList = checkNotNull(bucket2ResourceList, "bucket2ResourceList");
       this.object2Blob = checkNotNull(object2Blob, "object2Blob");
@@ -108,11 +107,7 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public PageSet<? extends StorageMetadata> list() {
-      return new Function<Set<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
-         public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(Set<BucketMetadata> from) {
-            return new PageSetImpl<StorageMetadata>(Iterables.transform(from, bucket2ResourceMd), null);
-         }
-      }.apply(sync.listOwnedBuckets());
+      return convertBucketsToStorageMetadata.apply(sync.listOwnedBuckets());
    }
 
    /**
@@ -169,10 +164,15 @@ public class S3BlobStore extends BaseBlobStore {
     */
    public void clearAndDeleteContainer(final String container) {
       try {
+         //TODO: probably it is better to use a retryable predicate
          if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
-               clearContainer(container);
-               return sync.deleteBucketIfEmpty(container);
+               try {
+                  clearContainer(container);
+                  return sync.deleteBucketIfEmpty(container);
+               } catch (ContainerNotFoundException e) {
+                  return true;
+               }
             }
          }, 30000)) {
             throw new IllegalStateException(container + " still exists after deleting!");

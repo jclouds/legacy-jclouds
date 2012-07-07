@@ -18,29 +18,42 @@
  */
 package org.jclouds.s3.functions;
 
+import java.net.URI;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
-import org.jclouds.util.Throwables2;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.s3.Bucket;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
+import com.google.common.base.Optional;
+import com.google.common.cache.LoadingCache;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState implements Function<Exception, Boolean> {
+public class DefaultEndpointThenInvalidateRegion implements Function<Object, URI> {
 
-   public Boolean apply(Exception from) {
-      AWSResponseException exception = Throwables2.getFirstThrowableOfType(from, AWSResponseException.class);
-      if (exception != null && exception.getError() != null
-            && exception.getError().getCode().equals("BucketAlreadyOwnedByYou")) {
-         return false;
-      } else if (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null) {
-         return false;
+   private final LoadingCache<String, Optional<String>> bucketToRegionCache;
+   private final RegionToEndpointOrProviderIfNull r2;
+
+   @Inject
+   public DefaultEndpointThenInvalidateRegion(RegionToEndpointOrProviderIfNull r2,
+            @Bucket LoadingCache<String, Optional<String>> bucketToRegionCache) {
+      this.r2 = r2;
+      this.bucketToRegionCache = bucketToRegionCache;
+   }
+
+   @Override
+   public URI apply(@Nullable Object from) {
+      try {
+         return r2.apply(null);
+      } finally {
+         bucketToRegionCache.invalidate(from.toString());
       }
-      throw Throwables.propagate(from);
    }
 }

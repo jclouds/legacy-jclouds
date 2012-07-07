@@ -21,8 +21,10 @@ package org.jclouds.aws.s3;
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Map;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -35,11 +37,13 @@ import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.ObjectMetadataKey;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
 import org.jclouds.blobstore.attr.BlobScope;
+import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.ParamValidators;
@@ -55,8 +59,11 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
+import org.jclouds.s3.functions.AssignCorrectHostnameForBucket;
 import org.jclouds.s3.functions.BindRegionToXmlPayload;
-import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
+import org.jclouds.s3.functions.DefaultEndpointThenInvalidateRegion;
+import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists;
+import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseOnIllegalState;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
 import org.jclouds.s3.predicates.validators.BucketNameValidator;
@@ -73,32 +80,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(RequestAuthorizeSignature.class)
 @BlobScope(CONTAINER)
 public interface AWSS3AsyncClient extends S3AsyncClient {
-
-   /**
-    * @see S3Client#putBucketInRegion
-    */
-   @Override
-   @PUT
-   @Path("/")
-   @Endpoint(Bucket.class)
-   @ExceptionParser(ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class)
-   ListenableFuture<Boolean> putBucketInRegion(
-         @BinderParam(BindRegionToXmlPayload.class) @Nullable String region,
-         @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({ BucketNameValidator.class }) String bucketName,
-         PutBucketOptions... options);
-
-   /**
-    * @see S3Client#getBucketLocation
-    */
-   @Override
-   @GET
-   @QueryParams(keys = "location")
-   @Path("/")
-   @Endpoint(Bucket.class)
-   @XMLResponseParser(LocationConstraintHandler.class)
-   ListenableFuture<String> getBucketLocation(
-         @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({ BucketNameValidator.class }) String bucketName);
-
+   
    /**
     * @see AWSS3Client#initiateMultipartUpload
     */
@@ -107,9 +89,9 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    @Path("/{key}")
    @ResponseParser(UploadIdFromHttpResponseViaRegex.class)
    ListenableFuture<String> initiateMultipartUpload(
-         @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({ BucketNameValidator.class }) String bucketName,
-         @PathParam("key") @ParamParser(ObjectMetadataKey.class) @BinderParam(BindObjectMetadataToRequest.class) ObjectMetadata objectMetadata,
-         PutObjectOptions... options);
+            @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
+            @PathParam("key") @ParamParser(ObjectMetadataKey.class) @BinderParam(BindObjectMetadataToRequest.class) ObjectMetadata objectMetadata,
+            PutObjectOptions... options);
 
    /**
     * @see AWSS3Client#abortMultipartUpload
@@ -118,8 +100,8 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    @Path("/{key}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> abortMultipartUpload(
-         @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({ BucketNameValidator.class }) String bucketName,
-         @PathParam("key") String key, @QueryParam("uploadId") String uploadId);
+            @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
+            @PathParam("key") String key, @QueryParam("uploadId") String uploadId);
 
    /**
     * @see AWSS3Client#uploadPart
@@ -128,9 +110,9 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    @Path("/{key}")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> uploadPart(
-         @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({ BucketNameValidator.class }) String bucketName,
-         @PathParam("key") String key, @QueryParam("partNumber") int partNumber,
-         @QueryParam("uploadId") String uploadId, Payload part);
+            @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
+            @PathParam("key") String key, @QueryParam("partNumber") int partNumber,
+            @QueryParam("uploadId") String uploadId, Payload part);
 
    /**
     * @see AWSS3Client#completeMultipartUpload
@@ -139,8 +121,8 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    @Path("/{key}")
    @ResponseParser(ETagFromHttpResponseViaRegex.class)
    ListenableFuture<String> completeMultipartUpload(
-         @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({ BucketNameValidator.class }) String bucketName,
-         @PathParam("key") String key, @QueryParam("uploadId") String uploadId,
-         @BinderParam(BindPartIdsAndETagsToRequest.class) Map<Integer, String> parts);
+            @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
+            @PathParam("key") String key, @QueryParam("uploadId") String uploadId,
+            @BinderParam(BindPartIdsAndETagsToRequest.class) Map<Integer, String> parts);
 
 }

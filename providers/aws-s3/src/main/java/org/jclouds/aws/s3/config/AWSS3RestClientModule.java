@@ -19,24 +19,17 @@
 package org.jclouds.aws.s3.config;
 
 import static org.jclouds.aws.domain.Region.US_STANDARD;
-import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 
-import java.net.URI;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
-import org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfigured;
 import org.jclouds.aws.s3.predicates.validators.AWSS3BucketNameValidator;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
-import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
 import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.s3.predicates.validators.BucketNameValidator;
 
@@ -61,19 +54,11 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    protected Supplier<String> defaultRegionForBucket(@Region Supplier<String> defaultRegion) {
       return Suppliers.ofInstance(US_STANDARD);
    }
-
+   
    @Override
    protected void configure() {
-      bind(BindAsHostPrefixIfConfigured.class).to(AssignCorrectHostnameAndBindAsHostPrefixIfConfigured.class);
       bind(BucketNameValidator.class).to(AWSS3BucketNameValidator.class);
       super.configure();
-   }
-   
-   @Provides
-   @Singleton
-   @Bucket
-   protected Supplier<URI> provideBucketURI(@Named(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT) String endpoint){
-      return Suppliers.ofInstance(URI.create(endpoint));
    }
   
    @Singleton
