@@ -35,6 +35,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.elb.ELBClient;
+import org.jclouds.elb.domain.Listener;
+import org.jclouds.elb.domain.Protocol;
 import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
@@ -79,8 +81,10 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
 
       logger.debug(">> creating loadBalancer(%s)", name);
       try {
-         String dnsName = client.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort, instancePort,
-                  availabilityZones.toArray(new String[] {}));
+         String dnsName = client.getLoadBalancerClientForRegion(region).createLoadBalancerListeningInAvailabilityZones(
+                  name,
+                  ImmutableSet.of(Listener.builder().port(loadBalancerPort).instancePort(instancePort)
+                           .protocol(Protocol.valueOf(protocol)).build()), availabilityZones);
          logger.debug("<< created loadBalancer(%s) dnsName(%s)", name, dnsName);
       } catch (IllegalStateException e) {
          logger.debug("<< reusing loadBalancer(%s)", name);

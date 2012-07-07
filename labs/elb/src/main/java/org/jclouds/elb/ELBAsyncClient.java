@@ -18,33 +18,22 @@
  */
 package org.jclouds.elb;
 
-import static org.jclouds.aws.reference.FormParameters.ACTION;
-
 import java.util.Set;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.elb.binders.BindAvailabilityZonesToIndexedFormParams;
 import org.jclouds.elb.features.InstanceAsyncClient;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.features.PolicyAsyncClient;
-import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
-import org.jclouds.rest.annotations.XMLResponseParser;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
 /**
@@ -53,7 +42,7 @@ import com.google.inject.Provides;
  * 
  * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference/">ELB
  *      documentation</a>
- * @author Lili Nader
+ * @author Adrian Cole
  */
 @Beta
 @RequestFilters(FormSigner.class)
@@ -66,55 +55,26 @@ public interface ELBAsyncClient {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
-   
+
    /**
     * Provides asynchronous access to LoadBalancer features.
     */
    @Delegate
-   LoadBalancerAsyncClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   LoadBalancerAsyncClient getLoadBalancerClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Policy features.
     */
    @Delegate
-   PolicyAsyncClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   PolicyAsyncClient getPolicyClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Instance features.
     */
    @Delegate
-   InstanceAsyncClient getInstanceClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
-
-   /// old stuff
-   public static final String VERSION = "2012-06-01";
-
-   // TODO: there are a lot of missing methods
-
-   /**
-    * @see ELBClient#createLoadBalancerInRegion
-    */
-   @POST
-   @Path("/")
-   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
-   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-   @Beta
-   // TODO:The way this handles arguments needs to be refactored. it needs to deal with collections
-   // of listeners.
-   ListenableFuture<String> createLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name, @FormParam("Listeners.member.1.Protocol") String protocol,
-            @FormParam("Listeners.member.1.LoadBalancerPort") int loadBalancerPort,
-            @FormParam("Listeners.member.1.InstancePort") int instancePort,
-            @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) String... availabilityZones);
-
-   /**
-    * @see ELBClient#deleteLoadBalancerInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
-   ListenableFuture<Void> deleteLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name);
+   InstanceAsyncClient getInstanceClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

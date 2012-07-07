@@ -26,15 +26,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
 /**
- * Binds the Iterable<String> to form parameters named with AvailabilityZones.member.N
+ * Binds the Iterable<String> to form parameters named with Subnets.member.N
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BindAvailabilityZonesToIndexedFormParams implements Binder {
+public class BindSubnetsToIndexedFormParams implements Binder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      return indexIterableToFormValuesWithPrefix(request, "AvailabilityZones.member", input);
+      return indexIterableToFormValuesWithPrefix(request, "Subnets.member", input);
    }
 
 }

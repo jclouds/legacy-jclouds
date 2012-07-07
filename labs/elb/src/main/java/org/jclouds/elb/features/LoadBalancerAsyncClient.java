@@ -18,16 +18,25 @@
  */
 package org.jclouds.elb.features;
 
+import static org.jclouds.aws.reference.FormParameters.ACTION;
+
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.collect.PaginatedSet;
+import org.jclouds.elb.binders.BindAvailabilityZonesToIndexedFormParams;
+import org.jclouds.elb.binders.BindListenersToFormParams;
+import org.jclouds.elb.binders.BindSecurityGroupsToIndexedFormParams;
+import org.jclouds.elb.binders.BindSubnetsToIndexedFormParams;
+import org.jclouds.elb.domain.Listener;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.options.ListLoadBalancersOptions;
+import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.elb.xml.DescribeLoadBalancersResultHandler;
 import org.jclouds.elb.xml.LoadBalancerHandler;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -41,14 +50,37 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Amazon ELB via the Query API
  * <p/>
  * 
- * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference" >doc</a>
+ * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference"
+ *      >doc</a>
  * @see LoadBalancerClient
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
 @VirtualHost
 public interface LoadBalancerAsyncClient {
-   
+   /**
+    * @see LoadBalancerClient#createLoadBalancerListeningInAvailabilityZones()
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
+   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
+   ListenableFuture<String> createLoadBalancerListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
+            @BinderParam(BindListenersToFormParams.class) Iterable<Listener> listeners,
+            @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) Iterable<String> availabilityZones);
+
+   /**
+    * @see LoadBalancerClient#createLoadBalancerListeningInSubnetsAssignedToSecurityGroups()
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
+   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
+   ListenableFuture<String> createLoadBalancerListeningInSubnetsAssignedToSecurityGroups(
+            @FormParam("LoadBalancerName") String name,
+            @BinderParam(BindSubnetsToIndexedFormParams.class) Iterable<Listener> subnetIds,
+            @BinderParam(BindSecurityGroupsToIndexedFormParams.class) Iterable<String> securityGroupIds);
+
    /**
     * @see LoadBalancerClient#get()
     */
@@ -58,7 +90,7 @@ public interface LoadBalancerAsyncClient {
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<LoadBalancer> get(@FormParam("LoadBalancerNames.member.1") String name);
-   
+
    /**
     * @see LoadBalancerClient#list()
     */
@@ -77,4 +109,11 @@ public interface LoadBalancerAsyncClient {
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
    ListenableFuture<PaginatedSet<LoadBalancer>> list(ListLoadBalancersOptions options);
 
+   /**
+    * @see LoadBalancerClient#delete()
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
+   ListenableFuture<Void> delete(@FormParam("LoadBalancerName") String name);
 }

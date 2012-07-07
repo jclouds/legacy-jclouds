@@ -57,7 +57,7 @@ public class ELBDestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
-      elbClient.deleteLoadBalancerInRegion(region, instanceId);
+      elbClient.getLoadBalancerClientForRegion(region).delete(instanceId);
       return getLoadBalancer.getLoadBalancer(id);
    }
 }

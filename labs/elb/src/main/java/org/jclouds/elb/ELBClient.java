@@ -39,10 +39,10 @@ import com.google.inject.Provides;
  * Provides access to EC2 Elastic Load Balancer via their REST API.
  * <p/>
  * 
- * @author Lili Nader
+ * @author Adrian Cole
+ * @see ELBAsyncClient
  */
 @Beta
-// see ELBAsyncClient
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ELBClient {
    /**
@@ -52,55 +52,26 @@ public interface ELBClient {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
-  
+
    /**
     * Provides synchronous access to LoadBalancer features.
     */
    @Delegate
-   LoadBalancerClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   LoadBalancerClient getLoadBalancerClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Policy features.
     */
    @Delegate
-   PolicyClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   PolicyClient getPolicyClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Instance features.
     */
    @Delegate
-   InstanceClient getInstanceClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
-   
-   /// old stuff
-   /**
-    * Creates a load balancer
-    * 
-    * @param name
-    *           Name of the load balancer
-    * @param loadBalancerPort
-    *           Port for the load balancer to listen on
-    * @param instancePort
-    *           Port to forward the request to
-    * @param availabilityZones
-    *           load balancer availability zones
-    * @return dns the DNS name for the load balancer
-    * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/"
-    */
-   @Beta
-   // see ELBAsyncClient
-   String createLoadBalancerInRegion(@Nullable String region, String name, String protocol, int loadBalancerPort,
-            int instancePort, String... availabilityZones);
-
-   /**
-    * Delete load balancer
-    * 
-    * @param name
-    *           Name of the load balancer
-    * @return
-    * @see <a
-    *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
-    */
-   void deleteLoadBalancerInRegion(@Nullable String region, String name);
-
+   InstanceClient getInstanceClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }
