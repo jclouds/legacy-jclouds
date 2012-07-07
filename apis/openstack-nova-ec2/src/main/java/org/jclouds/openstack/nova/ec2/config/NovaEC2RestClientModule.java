@@ -83,7 +83,6 @@ public class NovaEC2RestClientModule extends EC2RestClientModule<NovaEC2Client, 
    
    @Override
    protected void configure() {
-      install(new NovaEC2ParserModule());
       super.configure();
       bind(CreateVolumeResponseHandler.class).to(NovaCreateVolumeResponseHandler.class).in(Scopes.SINGLETON);
       bind(DescribeImagesResponseHandler.class).to(NovaDescribeImagesResponseHandler.class);

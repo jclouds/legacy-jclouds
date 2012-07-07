@@ -23,7 +23,8 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.BundleTask;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
@@ -35,13 +36,16 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithResult<BundleTask> {
-   private StringBuilder currentText = new StringBuilder();
+   protected final DateCodec dateCodec;
+   protected final Supplier<String> defaultRegion;
 
    @Inject
-   protected DateService dateService;
-   @Inject
-   @Region
-   Supplier<String> defaultRegion;
+   protected BundleTaskHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion) {
+      this.dateCodec = dateCodecFactory.iso8601();
+      this.defaultRegion = defaultRegion;
+   }
+
+   private StringBuilder currentText = new StringBuilder();
 
    private String bundleId;
    private String code;
@@ -90,7 +94,7 @@ public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithRe
          temp = temp.substring(0, temp.length() - 1);
          progress = Integer.parseInt(temp);
       } else if (qName.equals("startTime")) {
-         startTime = dateService.iso8601DateParse(currentText.toString().trim());
+         startTime = dateCodec.toDate(currentText.toString().trim());
       } else if (qName.equals("state")) {
          state = currentText.toString().trim();
       } else if (qName.equals("bucket")) {
@@ -98,7 +102,7 @@ public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithRe
       } else if (qName.equals("prefix")) {
          prefix = currentText.toString().trim();
       } else if (qName.equals("updateTime")) {
-         updateTime = dateService.iso8601DateParse(currentText.toString().trim());
+         updateTime = dateCodec.toDate(currentText.toString().trim());
       }
       currentText = new StringBuilder();
    }

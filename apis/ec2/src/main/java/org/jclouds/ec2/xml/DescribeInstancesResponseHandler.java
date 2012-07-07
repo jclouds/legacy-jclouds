@@ -22,7 +22,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
@@ -44,9 +44,9 @@ public class DescribeInstancesResponseHandler extends
    private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
 
    @Inject
-   DescribeInstancesResponseHandler(DateService dateService, @Region Supplier<String> defaultRegion,
-            Provider<RunningInstance.Builder> builderProvider) {
-      super(dateService, defaultRegion, builderProvider);
+   DescribeInstancesResponseHandler(DateCodecFactory dateCodecFactory,
+            @Region Supplier<String> defaultRegion, Provider<RunningInstance.Builder> builderProvider) {
+      super(dateCodecFactory, defaultRegion, builderProvider);
    }
 
    @Override

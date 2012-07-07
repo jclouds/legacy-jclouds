@@ -24,11 +24,11 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import java.util.Date;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
@@ -38,7 +38,6 @@ import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.RunningInstance.Builder;
 import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
 import org.jclouds.location.Region;
-import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
 import com.google.common.base.Supplier;
@@ -51,17 +50,14 @@ import com.google.inject.Provider;
  */
 public abstract class BaseReservationHandler<T> extends HandlerForGeneratedRequestWithResult<T> {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
-
-   protected final DateService dateService;
+   protected final DateCodec dateCodec;
    protected final Supplier<String> defaultRegion;
    protected final Provider<Builder> builderProvider;
 
    @Inject
-   public BaseReservationHandler(DateService dateService, @Region Supplier<String> defaultRegion,
-         Provider<RunningInstance.Builder> builderProvider) {
-      this.dateService = dateService;
+   public BaseReservationHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
+            Provider<RunningInstance.Builder> builderProvider) {
+      this.dateCodec = dateCodecFactory.iso8601();
       this.defaultRegion = defaultRegion;
       this.builderProvider = builderProvider;
       this.builder = builderProvider.get();
@@ -148,7 +144,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (equalsOrSuffix(qName, "keyName")) {
          builder.keyName(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "launchTime")) {
-         builder.launchTime(parseDate());
+         builder.launchTime(dateCodec.toDate(currentOrNull(currentText)));
       } else if (equalsOrSuffix(qName, "availabilityZone")) {
          builder.availabilityZone(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "virtualizationType")) {
@@ -177,7 +173,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (equalsOrSuffix(qName, "status")) {
          attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
       } else if (equalsOrSuffix(qName, "attachTime")) {
-         attachTime = dateService.iso8601DateParse(currentText.toString().trim());
+         attachTime = dateCodec.toDate(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "deleteOnTermination")) {
          deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
       } else if (equalsOrSuffix(qName, "ebs")) {
@@ -189,15 +185,6 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          this.deleteOnTermination = true;
       }
       currentText = new StringBuilder();
-   }
-
-   protected Date parseDate() {
-      try {
-         return dateService.iso8601DateParse(currentOrNull(currentText));
-      } catch (RuntimeException e) {
-         // Eucalyptus
-         return dateService.iso8601SecondsDateParse(currentOrNull(currentText));
-      }
    }
 
    protected void inItem() {

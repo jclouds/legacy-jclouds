@@ -20,7 +20,8 @@ package org.jclouds.ec2.xml;
 
 import javax.inject.Inject;
 
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.http.functions.ParseSax;
 
@@ -28,10 +29,16 @@ import org.jclouds.http.functions.ParseSax;
  * @author Richard Downer
  */
 public class GetPasswordDataResponseHandler extends ParseSax.HandlerWithResult<PasswordData> {
+   protected final DateCodec dateCodec;
+
+
+   @Inject
+   protected GetPasswordDataResponseHandler(DateCodecFactory dateCodecFactory) {
+      this.dateCodec = dateCodecFactory.iso8601();
+   }
 
    private StringBuilder currentText = new StringBuilder();
    private PasswordData.Builder builder = PasswordData.builder();
-   @Inject protected DateService dateService;
 
    @Override
    public PasswordData getResult() {
@@ -44,7 +51,7 @@ public class GetPasswordDataResponseHandler extends ParseSax.HandlerWithResult<P
       } else if (qName.equals("instanceId")) {
          builder.instanceId(currentText.toString().trim());
       } else if (qName.equals("timestamp")) {
-         builder.timestamp(dateService.iso8601DateParse(currentText.toString().trim()));
+         builder.timestamp(dateCodec.toDate(currentText.toString().trim()));
       } else if (qName.equals("passwordData")) {
          builder.passwordData(currentText.toString().trim());
       }

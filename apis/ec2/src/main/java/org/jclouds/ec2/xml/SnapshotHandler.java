@@ -23,7 +23,8 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Snapshot.Status;
 import org.jclouds.http.functions.ParseSax;
@@ -38,7 +39,7 @@ import com.google.common.base.Supplier;
 public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Snapshot> {
    private StringBuilder currentText = new StringBuilder();
 
-   protected final DateService dateService;
+   protected final DateCodec dateCodec;
    protected final Supplier<String> defaultRegion;
 
    private String id;
@@ -52,8 +53,8 @@ public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    private String ownerAlias;
 
    @Inject
-   public SnapshotHandler(DateService dateService, @Region Supplier<String> defaultRegion) {
-      this.dateService = dateService;
+   public SnapshotHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion) {
+      this.dateCodec = dateCodecFactory.iso8601();
       this.defaultRegion = defaultRegion;
    }
 
@@ -85,7 +86,7 @@ public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResu
       } else if (qName.equals("status")) {
          status = Snapshot.Status.fromValue(currentText.toString().trim());
       } else if (qName.equals("startTime")) {
-         startTime = dateService.iso8601DateParse(currentText.toString().trim());
+         startTime = dateCodec.toDate(currentText.toString().trim());
       } else if (qName.equals("progress")) {
          String progressString = currentText.toString().trim();
          if (!progressString.equals("")) {

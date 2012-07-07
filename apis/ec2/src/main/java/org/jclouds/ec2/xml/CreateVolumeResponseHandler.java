@@ -25,18 +25,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
-import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
@@ -50,21 +49,22 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Volume> {
-   protected StringBuilder currentText = new StringBuilder();
+   protected final DateCodec dateCodec;
+   protected final Supplier<String> defaultRegion;
+   protected final Supplier<Map<String, Supplier<Set<String>>>> regionToZonesSupplier;
+   protected final Supplier<Set<String>> zonesSupplier;
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    @Inject
-   protected DateService dateService;
-   @Inject
-   @Region
-   protected Supplier<String> defaultRegion;
-   @Inject
-   @Zone
-   protected Supplier<Map<String, Supplier<Set<String>>>> regionToZonesSupplier;
-   @Inject
-   @Zone
-   protected Supplier<Set<String>> zonesSupplier;
+   protected CreateVolumeResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
+            @Zone Supplier<Map<String, Supplier<Set<String>>>> regionToZonesSupplier,
+            @Zone Supplier<Set<String>> zonesSupplier) {
+      this.dateCodec = dateCodecFactory.iso8601();
+      this.defaultRegion = defaultRegion;
+      this.regionToZonesSupplier = regionToZonesSupplier;
+      this.zonesSupplier = zonesSupplier;
+   }
+
+   protected StringBuilder currentText = new StringBuilder();
    
    protected String id;
    protected int size;
@@ -118,7 +118,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
             volumeStatus = Volume.Status.fromValue(currentText.toString().trim());
          }
       } else if (qName.equals("createTime")) {
-         createTime = dateService.iso8601DateParse(currentText.toString().trim());
+         createTime = dateCodec.toDate(currentText.toString().trim());
       } else if (qName.equals("attachmentSet")) {
          inAttachmentSet = false;
       } else if (qName.equals("instanceId")) {
@@ -130,7 +130,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
       } else if (qName.equals("device")) {
          device = currentText.toString().trim();
       } else if (qName.equals("attachTime")) {
-         attachTime = dateService.iso8601DateParse(currentText.toString().trim());
+         attachTime = dateCodec.toDate(currentText.toString().trim());
       } else if (qName.equals("item")) {
          if (inAttachmentSet) {
             attachments.add(new Attachment(region, volumeId, instanceId, device, attachmentStatus, attachTime));

@@ -30,6 +30,7 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.openstack.nova.ec2.config.HyphenToNullIso8601Module;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2ComputeServiceContextModule;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
 import org.jclouds.rest.RestContext;
@@ -95,7 +96,11 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
          .defaultEndpoint("http://localhost:8773/services/Cloud")
          .defaultProperties(NovaEC2ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaEC2RestClientModule.class, EC2ResolveImagesModule.class, NovaEC2ComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(NovaEC2RestClientModule.class)
+                                     .add(EC2ResolveImagesModule.class)
+                                     .add(NovaEC2ComputeServiceContextModule.class)
+                                     .add(HyphenToNullIso8601Module.class).build());
       }
       
       @Override
