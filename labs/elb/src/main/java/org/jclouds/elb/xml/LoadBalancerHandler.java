@@ -25,7 +25,8 @@ import javax.inject.Inject;
 
 import org.jclouds.date.DateService;
 import org.jclouds.elb.domain.LoadBalancer;
-import org.jclouds.elb.domain.LoadBalancer.Scheme;
+import org.jclouds.elb.domain.Scheme;
+import org.jclouds.elb.domain.SecurityGroupAndOwner;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -50,10 +51,13 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
 
    private StringBuilder currentText = new StringBuilder();
    private LoadBalancer.Builder<?> builder = LoadBalancer.builder();
+   private SecurityGroupAndOwner.Builder sourceSecurityGroupBuilder;
 
    private boolean inHealthCheck;
    private boolean inListeners;
    private boolean inAvailabilityZones;
+   private boolean inSecurityGroups;
+   private boolean inSubnets;
 
    protected int memberDepth;
 
@@ -82,6 +86,12 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          inListeners = true;
       } else if (equalsOrSuffix(qName, "AvailabilityZones")) {
          inAvailabilityZones = true;
+      } else if (equalsOrSuffix(qName, "SecurityGroups")) {
+         inSecurityGroups = true;
+      } else if (equalsOrSuffix(qName, "Subnets")) {
+         inSubnets = true;
+      } else if (equalsOrSuffix(qName, "SourceSecurityGroup")) {
+         sourceSecurityGroupBuilder = SecurityGroupAndOwner.builder();
       }
       
       if (inListeners) {
@@ -101,9 +111,17 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          inListeners = false;
       } else if (equalsOrSuffix(qName, "AvailabilityZones")) {
          inAvailabilityZones = false;
+      } else if (equalsOrSuffix(qName, "SecurityGroups")) {
+         inSecurityGroups = false;
+      } else if (equalsOrSuffix(qName, "Subnets")) {
+         inSubnets = false;         
       } else if (equalsOrSuffix(qName, "HealthCheck")) {
          builder.healthCheck(healthCheckHandler.getResult());
          inHealthCheck = false;
+      } else if (equalsOrSuffix(qName, "SourceSecurityGroup")) {
+         if (sourceSecurityGroupBuilder != null)
+            builder.sourceSecurityGroup(sourceSecurityGroupBuilder.build());
+         sourceSecurityGroupBuilder = null;
       } else if (equalsOrSuffix(qName, "LoadBalancerName")) {
          builder.name(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "CreatedTime")) {
@@ -112,10 +130,18 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
          builder.dnsName(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "InstanceId")) {
          builder.instanceId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "GroupName")) {
+         sourceSecurityGroupBuilder.name(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "OwnerAlias")) {
+         sourceSecurityGroupBuilder.owner(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Scheme")) {
          builder.scheme(Scheme.fromValue(currentOrNull(currentText)));
       } else if (equalsOrSuffix(qName, "VPCId")) {
          builder.VPCId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "CanonicalHostedZoneName")) {
+         builder.hostedZoneName(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "CanonicalHostedZoneNameID")) {
+         builder.hostedZoneId(currentOrNull(currentText));
       } else if (inHealthCheck) {
          healthCheckHandler.endElement(uri, name, qName);
       } else if (inListeners) {
@@ -126,9 +152,16 @@ public class LoadBalancerHandler extends ParseSax.HandlerForGeneratedRequestWith
 
    protected void endMember(String uri, String name, String qName) throws SAXException {
       if (inListeners) {
-         builder.listener(listenerHandler.getResult());
+         if (memberDepth == 2)
+            builder.listener(listenerHandler.getResult());
+         else
+            listenerHandler.endElement(uri, name, qName);
       } else if (inAvailabilityZones) {
          builder.availabilityZone(currentOrNull(currentText));
+      } else if (inSecurityGroups) {
+         builder.securityGroup(currentOrNull(currentText));
+      } else if (inSubnets) {
+         builder.subnet(currentOrNull(currentText));
       }
    }
 

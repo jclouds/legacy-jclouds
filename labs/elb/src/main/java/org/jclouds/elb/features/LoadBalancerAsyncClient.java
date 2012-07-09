@@ -66,9 +66,32 @@ public interface LoadBalancerAsyncClient {
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
    ListenableFuture<String> createLoadBalancerListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
+             @BinderParam(BindListenersToFormParams.class) Listener listeners,
+             @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) Iterable<String> availabilityZones);
+    
+   /**
+    * @see LoadBalancerClient#createLoadBalancerListeningInAvailabilityZones()
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
+   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
+   ListenableFuture<String> createLoadBalancerListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
             @BinderParam(BindListenersToFormParams.class) Iterable<Listener> listeners,
             @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) Iterable<String> availabilityZones);
 
+   /**
+    * @see LoadBalancerClient#createLoadBalancerListeningInSubnetAssignedToSecurityGroups()
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
+   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
+   ListenableFuture<String> createLoadBalancerListeningInSubnetAssignedToSecurityGroups(
+            @FormParam("LoadBalancerName") String name,
+            @FormParam("Subnets.member.1") String subnetId,
+            @BinderParam(BindSecurityGroupsToIndexedFormParams.class) Iterable<String> securityGroupIds);
+   
    /**
     * @see LoadBalancerClient#createLoadBalancerListeningInSubnetsAssignedToSecurityGroups()
     */
@@ -78,7 +101,7 @@ public interface LoadBalancerAsyncClient {
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
    ListenableFuture<String> createLoadBalancerListeningInSubnetsAssignedToSecurityGroups(
             @FormParam("LoadBalancerName") String name,
-            @BinderParam(BindSubnetsToIndexedFormParams.class) Iterable<Listener> subnetIds,
+            @BinderParam(BindSubnetsToIndexedFormParams.class) Iterable<String> subnetIds,
             @BinderParam(BindSecurityGroupsToIndexedFormParams.class) Iterable<String> securityGroupIds);
 
    /**

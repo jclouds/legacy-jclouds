@@ -65,6 +65,8 @@ public class Listener {
        */
       public T instancePort(int instancePort) {
          this.instancePort = instancePort;
+         if (port == -1)
+             port = instancePort;
          return self();
       }
 
@@ -73,6 +75,8 @@ public class Listener {
        */
       public T instanceProtocol(Protocol instanceProtocol) {
          this.instanceProtocol = instanceProtocol;
+         if (protocol == null)
+             protocol = instanceProtocol;
          return self();
       }
 
@@ -81,6 +85,8 @@ public class Listener {
        */
       public T port(int port) {
          this.port = port;
+         if (instancePort == -1)
+             instancePort = port;
          return self();
       }
 

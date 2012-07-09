@@ -34,16 +34,15 @@ import com.google.common.collect.Multimap;
  */
 public class Policy {
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromPolicy(this);
+   public Builder toBuilder() {
+      return builder().fromPolicy(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
-      protected abstract T self();
+   public static class Builder {
 
       protected String name;
       protected String typeName;
@@ -52,51 +51,44 @@ public class Policy {
       /**
        * @see Policy#getName()
        */
-      public T name(String name) {
+      public Builder name(String name) {
          this.name = name;
-         return self();
+         return this;
       }
 
       /**
        * @see Policy#getTypeName()
        */
-      public T typeName(String typeName) {
+      public Builder typeName(String typeName) {
          this.typeName = typeName;
-         return self();
+         return this;
       }
 
       /**
        * @see Policy#getAttributes()
        */
-      public T attributes(Multimap<String, Object> attributes) {
+      public Builder attributes(Multimap<String, Object> attributes) {
          this.attributes.putAll(checkNotNull(attributes, "attributes"));
-         return self();
+         return this;
       }
 
       /**
        * @see Policy#getAttributes()
        */
-      public T attribute(String key, Object value) {
+      public Builder attribute(String key, Object value) {
          this.attributes.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
-         return self();
+         return this;
       }
 
       public Policy build() {
          return new Policy(name, typeName, attributes.build());
       }
 
-      public T fromPolicy(Policy in) {
+      public Builder fromPolicy(Policy in) {
          return this.name(in.getName()).typeName(in.getTypeName()).attributes(in.getAttributes());
       }
    }
-
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-      @Override
-      protected ConcreteBuilder self() {
-         return this;
-      }
-   }
-
+   
    protected final String name;
    protected final String typeName;
    protected final Multimap<String, Object> attributes;

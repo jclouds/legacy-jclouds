@@ -23,71 +23,36 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 import java.util.Set;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * A load balancer is represented by a DNS name and a set of ports. The load balancer is the
- * destination to which all requests intended for your application should be directed. Each load
- * balancer can distribute requests to multiple EC2 instances. Load Balancers can span multiple
- * Availability Zones within an EC2 region, but they cannot span multiple regions.
+ * A load balancer is represented by a DNS name and a set of ports. The load
+ * balancer is the destination to which all requests intended for your
+ * application should be directed. Each load balancer can distribute requests to
+ * multiple EC2 instances. Load Balancers can span multiple Availability Zones
+ * within an EC2 region, but they cannot span multiple regions.
  * 
  * <h3>note</h3>
  * 
- * Elastic Load Balancing automatically generates a DNS name for each load balancer. You can map any
- * other domain name (such as www.example.com) to the automatically generated DNS name using CNAME.
- * Or you can use an Amazon Route 53 alias for the load balancer's DNS name. Amazon Route 53
- * provides secure and reliable routing to the infrastructure that uses AWS products, such as Amazon
- * EC2, Amazon Simple Storage Service (Amazon S3), or Elastic Load Balancing. For more information
- * on using Amazon Route 53 for your load balancer, see Using Domain Names with Elastic Load
- * Balancing. For information about CNAME records, see the CNAME Record Wikipedia article.
+ * Elastic Load Balancing automatically generates a DNS name for each load
+ * balancer. You can map any other domain name (such as www.example.com) to the
+ * automatically generated DNS name using CNAME. Or you can use an Amazon Route
+ * 53 alias for the load balancer's DNS name. Amazon Route 53 provides secure
+ * and reliable routing to the infrastructure that uses AWS products, such as
+ * Amazon EC2, Amazon Simple Storage Service (Amazon S3), or Elastic Load
+ * Balancing. For more information on using Amazon Route 53 for your load
+ * balancer, see Using Domain Names with Elastic Load Balancing. For information
+ * about CNAME records, see the CNAME Record Wikipedia article.
  * 
  * @see <a
- *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/arch-loadbalancing.html"
- *      >doc</a>
+ *     href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/arch-loadbalancing.html"
+ *     >doc</a>
  * 
  * @author Adrian Cole
  */
 public class LoadBalancer {
-   /**
-    * Specifies the type of LoadBalancer. This option is only available for LoadBalancers attached
-    * to an Amazon VPC.
-    */
-   public static enum Scheme {
-
-      /**
-       * the LoadBalancer has a publicly resolvable DNS name that resolves to public IP addresses
-       */
-      INTERNET_FACING,
-      /**
-       * the LoadBalancer has a publicly resolvable DNS name that resolves to private IP addresses.
-       */
-      INTERNAL,
-      /**
-       * The scheme was returned unrecognized.
-       */
-      UNRECOGNIZED;
-
-      public String value() {
-         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
-      }
-
-      @Override
-      public String toString() {
-         return value();
-      }
-
-      public static Scheme fromValue(String scheme) {
-         try {
-            return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(scheme, "scheme")));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
-
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
@@ -107,7 +72,12 @@ public class LoadBalancer {
       protected ImmutableSet.Builder<ListenerWithPolicies> listeners = ImmutableSet.<ListenerWithPolicies> builder();
       protected ImmutableSet.Builder<String> availabilityZones = ImmutableSet.<String> builder();
       protected Optional<Scheme> scheme = Optional.absent();
+      protected Optional<SecurityGroupAndOwner> sourceSecurityGroup = Optional.absent();
       protected Optional<String> VPCId = Optional.absent();
+      protected ImmutableSet.Builder<String> securityGroups = ImmutableSet.<String> builder();
+      protected ImmutableSet.Builder<String> subnets = ImmutableSet.<String> builder();
+      protected Optional<String> hostedZoneName = Optional.absent();
+      protected Optional<String> hostedZoneId = Optional.absent();
 
       /**
        * @see LoadBalancer#getName()
@@ -198,6 +168,14 @@ public class LoadBalancer {
       }
 
       /**
+       * @see LoadBalancer#getSourceSecurityGroup()
+       */
+      public T sourceSecurityGroup(SecurityGroupAndOwner scheme) {
+         this.sourceSecurityGroup = Optional.fromNullable(scheme);
+         return self();
+      }
+
+      /**
        * @see LoadBalancer#getVPCId()
        */
       public T VPCId(String VPCId) {
@@ -205,16 +183,67 @@ public class LoadBalancer {
          return self();
       }
 
+      /**
+       * @see LoadBalancer#getSecurityGroups()
+       */
+      public T securityGroups(Iterable<String> securityGroups) {
+         this.securityGroups.addAll(checkNotNull(securityGroups, "securityGroups"));
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getSecurityGroups()
+       */
+      public T securityGroup(String securityGroup) {
+         this.securityGroups.add(checkNotNull(securityGroup, "securityGroup"));
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getSubnets()
+       */
+      public T subnets(Iterable<String> subnets) {
+         this.subnets.addAll(checkNotNull(subnets, "subnets"));
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getSubnets()
+       */
+      public T subnet(String subnet) {
+         this.subnets.add(checkNotNull(subnet, "subnet"));
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getHostedZoneName()
+       */
+      public T hostedZoneName(String hostedZoneName) {
+         this.hostedZoneName = Optional.fromNullable(hostedZoneName);
+         return self();
+      }
+
+      /**
+       * @see LoadBalancer#getHostedZoneId()
+       */
+      public T hostedZoneId(String hostedZoneId) {
+         this.hostedZoneId = Optional.fromNullable(hostedZoneId);
+         return self();
+      }
+
       public LoadBalancer build() {
          return new LoadBalancer(name, createdTime, dnsName, healthCheck, instanceIds.build(), listeners.build(),
-                  availabilityZones.build(), scheme, VPCId);
+               availabilityZones.build(), scheme, sourceSecurityGroup, VPCId, securityGroups.build(),
+               subnets.build(), hostedZoneName, hostedZoneId);
       }
 
       public T fromLoadBalancer(LoadBalancer in) {
          return this.name(in.getName()).createdTime(in.getCreatedTime()).dnsName(in.getDnsName())
-                  .healthCheck(in.getHealthCheck()).listeners(in.getListeners()).instanceIds(in.getInstanceIds())
-                  .availabilityZones(in.getAvailabilityZones()).scheme(in.getScheme().orNull())
-                  .VPCId(in.getVPCId().orNull());
+               .healthCheck(in.getHealthCheck()).listeners(in.getListeners()).instanceIds(in.getInstanceIds())
+               .availabilityZones(in.getAvailabilityZones()).scheme(in.getScheme().orNull())
+               .sourceSecurityGroup(in.getSourceSecurityGroup().orNull()).VPCId(in.getVPCId().orNull())
+               .securityGroups(in.getSecurityGroups()).subnets(in.getSubnets())
+               .hostedZoneName(in.getHostedZoneName().orNull()).hostedZoneId(in.getHostedZoneId().orNull());
       }
    }
 
@@ -233,11 +262,18 @@ public class LoadBalancer {
    protected final Set<ListenerWithPolicies> listeners;
    protected final Set<String> availabilityZones;
    protected final Optional<Scheme> scheme;
+   protected final Optional<SecurityGroupAndOwner> sourceSecurityGroup;
    protected final Optional<String> VPCId;
+   protected final Set<String> securityGroups;
+   protected final Set<String> subnets;
+   protected final Optional<String> hostedZoneName;
+   protected final Optional<String> hostedZoneId;
 
    protected LoadBalancer(String name, Date createdTime, String dnsName, HealthCheck healthCheck,
-            Iterable<String> instanceIds, Iterable<ListenerWithPolicies> listeners, Iterable<String> availabilityZones,
-            Optional<Scheme> scheme, Optional<String> VPCId) {
+         Iterable<String> instanceIds, Iterable<ListenerWithPolicies> listeners, Iterable<String> availabilityZones,
+         Optional<Scheme> scheme, Optional<SecurityGroupAndOwner> sourceSecurityGroup, Optional<String> VPCId,
+         Iterable<String> securityGroups, Iterable<String> subnets, Optional<String> hostedZoneName,
+         Optional<String> hostedZoneId) {
       this.name = checkNotNull(name, "name");
       this.createdTime = checkNotNull(createdTime, "createdTime");
       this.dnsName = checkNotNull(dnsName, "dnsName");
@@ -246,12 +282,17 @@ public class LoadBalancer {
       this.listeners = ImmutableSet.copyOf(checkNotNull(listeners, "listeners"));
       this.availabilityZones = ImmutableSet.copyOf(checkNotNull(availabilityZones, "availabilityZones"));
       this.scheme = checkNotNull(scheme, "scheme");
+      this.sourceSecurityGroup = checkNotNull(sourceSecurityGroup, "sourceSecurityGroup");
       this.VPCId = checkNotNull(VPCId, "VPCId");
+      this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
+      this.subnets = ImmutableSet.copyOf(checkNotNull(subnets, "subnets"));
+      this.hostedZoneName = checkNotNull(hostedZoneName, "hostedZoneName");
+      this.hostedZoneId = checkNotNull(hostedZoneId, "hostedZoneId");
    }
 
    /**
-    * The name associated with the LoadBalancer. The name must be unique within your set of
-    * LoadBalancers.
+    * The name associated with the LoadBalancer. The name must be unique within
+    * your set of LoadBalancers.
     */
    public String getName() {
       return name;
@@ -272,7 +313,8 @@ public class LoadBalancer {
    }
 
    /**
-    * Specifies information regarding the various health probes conducted on the LoadBalancer.
+    * Specifies information regarding the various health probes conducted on
+    * the LoadBalancer.
     */
    public HealthCheck getHealthCheck() {
       return healthCheck;
@@ -300,11 +342,22 @@ public class LoadBalancer {
    }
 
    /**
-    * Type of the loadbalancer; This option is only available for LoadBalancers attached to an
-    * Amazon VPC.
+    * Type of the loadbalancer; This option is only available for LoadBalancers
+    * attached to an Amazon VPC.
     */
    public Optional<Scheme> getScheme() {
       return scheme;
+   }
+
+   /**
+    * The security group that you can use as part of your inbound rules for
+    * your LoadBalancer's back-end Amazon EC2 application instances. To only
+    * allow traffic from LoadBalancers, add a security group rule to your back
+    * end instance that specifies this source security group as the inbound
+    * source.
+    */
+   public Optional<SecurityGroupAndOwner> getSourceSecurityGroup() {
+      return sourceSecurityGroup;
    }
 
    /**
@@ -312,6 +365,34 @@ public class LoadBalancer {
     */
    public Optional<String> getVPCId() {
       return VPCId;
+   }
+
+   /**
+    * The security groups the LoadBalancer is a member of (VPC only).
+    */
+   public Set<String> getSecurityGroups() {
+      return securityGroups;
+   }
+
+   /**
+    * Provides a list of VPC subnet IDs for the LoadBalancer.
+    */
+   public Set<String> getSubnets() {
+      return subnets;
+   }
+   
+   /**
+    * Provides the name of the Amazon Route 53 hosted zone that is associated with the LoadBalancer
+    */
+   public Optional<String> getHostedZoneName() {
+      return hostedZoneName;
+   }
+   
+   /**
+    * Provides the ID of the Amazon Route 53 hosted zone name that is associated with the LoadBalancer.
+    */
+   public Optional<String> getHostedZoneId() {
+      return hostedZoneId;
    }
 
    /**
@@ -343,9 +424,11 @@ public class LoadBalancer {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("name", name).add("createdTime", createdTime)
-               .add("dnsName", dnsName).add("healthCheck", healthCheck).add("instanceIds", instanceIds)
-               .add("listeners", listeners).add("availabilityZones", availabilityZones).add("scheme", scheme.orNull())
-               .add("VPCId", VPCId.orNull()).toString();
+            .add("dnsName", dnsName).add("healthCheck", healthCheck).add("instanceIds", instanceIds)
+            .add("listeners", listeners).add("availabilityZones", availabilityZones).add("scheme", scheme.orNull())
+            .add("sourceSecurityGroup", sourceSecurityGroup.orNull()).add("VPCId", VPCId.orNull())
+            .add("securityGroups", securityGroups).add("subnets", subnets)
+            .add("hostedZoneName", hostedZoneName.orNull()).add("hostedZoneId", hostedZoneId.orNull()).toString();
    }
 
 }

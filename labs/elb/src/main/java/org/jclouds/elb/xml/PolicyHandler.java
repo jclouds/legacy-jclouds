@@ -37,7 +37,7 @@ import com.google.common.primitives.Ints;
 public class PolicyHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Policy> {
 
    private StringBuilder currentText = new StringBuilder();
-   private Policy.Builder<?> builder = Policy.builder();
+   private Policy.Builder builder = Policy.builder();
    private String key;
 
    /**

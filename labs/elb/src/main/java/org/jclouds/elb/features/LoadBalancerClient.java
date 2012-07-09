@@ -40,8 +40,14 @@ public interface LoadBalancerClient {
 
    String createLoadBalancerListeningInAvailabilityZones(String name, Iterable<Listener> listeners,
             Iterable<String> availabilityZones);
+   
+   String createLoadBalancerListeningInAvailabilityZones(String name, Listener listeners,
+            Iterable<String> availabilityZones);
 
-   String createLoadBalancerListeningInSubnetsAssignedToSecurityGroups(String name, Iterable<Listener> subnetIds,
+   String createLoadBalancerListeningInSubnetAssignedToSecurityGroups(String name, String subnetId,
+           Iterable<String> securityGroupIds);
+   
+   String createLoadBalancerListeningInSubnetsAssignedToSecurityGroups(String name, Iterable<String> subnetIds,
             Iterable<String> securityGroupIds);
 
 

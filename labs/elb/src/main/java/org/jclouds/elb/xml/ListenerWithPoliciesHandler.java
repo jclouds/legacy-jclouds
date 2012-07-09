@@ -23,7 +23,9 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.elb.domain.ListenerWithPolicies;
 import org.jclouds.elb.domain.Protocol;
+import org.jclouds.elb.domain.SecurityGroupAndOwner;
 import org.jclouds.http.functions.ParseSax;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,6 +39,8 @@ public class ListenerWithPoliciesHandler extends ParseSax.HandlerForGeneratedReq
 
    private StringBuilder currentText = new StringBuilder();
    private ListenerWithPolicies.Builder<?> builder = ListenerWithPolicies.builder();
+   
+   private boolean inPolicyNames;
 
    /**
     * {@inheritDoc}
@@ -54,8 +58,20 @@ public class ListenerWithPoliciesHandler extends ParseSax.HandlerForGeneratedReq
     * {@inheritDoc}
     */
    @Override
+   public void startElement(String url, String name, String qName, Attributes attributes) throws SAXException {
+      if (equalsOrSuffix(qName, "PolicyNames")) {
+         inPolicyNames = true;
+      }
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void endElement(String uri, String name, String qName) throws SAXException {
-      if (equalsOrSuffix(qName, "PolicyName")) {
+      if (equalsOrSuffix(qName, "PolicyNames")) {
+         inPolicyNames = false;
+      } else if (equalsOrSuffix(qName, "member") && inPolicyNames) {
          builder.policyName(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "InstancePort")) {
          builder.instancePort(Integer.parseInt(currentOrNull(currentText)));

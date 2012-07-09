@@ -60,6 +60,9 @@ public interface ELBAsyncClient {
     * Provides asynchronous access to LoadBalancer features.
     */
    @Delegate
+   LoadBalancerAsyncClient getLoadBalancerClient();
+   
+   @Delegate
    LoadBalancerAsyncClient getLoadBalancerClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
@@ -67,12 +70,18 @@ public interface ELBAsyncClient {
     * Provides asynchronous access to Policy features.
     */
    @Delegate
+   PolicyAsyncClient getPolicyClient();
+   
+   @Delegate
    PolicyAsyncClient getPolicyClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Instance features.
     */
+   @Delegate
+   InstanceAsyncClient getInstanceClient();
+
    @Delegate
    InstanceAsyncClient getInstanceClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);

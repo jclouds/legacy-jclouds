@@ -25,6 +25,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Binds the listeners request to the http request
@@ -43,7 +44,8 @@ public class BindListenersToFormParams implements org.jclouds.rest.Binder {
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      Iterable<Listener> listeners = (Iterable<Listener>) checkNotNull(input, "listeners must be set!");
+      Iterable<Listener> listeners = checkNotNull(input, "listeners must be set!") instanceof Listener ? ImmutableSet
+              .of(Listener.class.cast(input)) : (Iterable<Listener>) input;
 
       ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.builder();
       int listenerIndex = 1;

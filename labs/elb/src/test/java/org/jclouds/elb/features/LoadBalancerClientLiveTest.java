@@ -19,6 +19,7 @@
 package org.jclouds.elb.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import org.jclouds.collect.PaginatedSet;
 import org.jclouds.elb.domain.ListenerWithPolicies;
@@ -35,13 +36,26 @@ import org.testng.annotations.Test;
 public class LoadBalancerClientLiveTest extends BaseELBClientLiveTest {
 
    private void checkLoadBalancer(LoadBalancer loadBalancer) {
-      checkNotNull(loadBalancer.getName(), "While Name can be null for a LoadBalancer, its Optional wrapper cannot.");
-      checkNotNull(loadBalancer.getCreatedTime(), "CreatedTime cannot be null for a LoadBalancer.");
-      checkNotNull(loadBalancer.getDnsName(), "DnsName cannot be null for a LoadBalancer.");
-      checkNotNull(loadBalancer.getHealthCheck(), "HealthCheck cannot be null for a LoadBalancer.");
+      checkNotNull(loadBalancer.getName(), "While Name can be null for a LoadBalancer, its Optional wrapper cannot: %s", loadBalancer);
+      checkNotNull(loadBalancer.getCreatedTime(), "CreatedTime cannot be null for a LoadBalancer: %s", loadBalancer);
+      checkNotNull(loadBalancer.getDnsName(), "DnsName cannot be null for a LoadBalancer: %s", loadBalancer);
+      checkNotNull(loadBalancer.getHealthCheck(), "HealthCheck cannot be null for a LoadBalancer: %s", loadBalancer);
+      checkState(loadBalancer.getAvailabilityZones().size() > 0, "AvailabilityZones must have at least one zone: %s", loadBalancer);
+      checkNotNull(loadBalancer.getInstanceIds(), "While InstanceIds can be empty, it cannot be null: %s", loadBalancer);
+      checkNotNull(loadBalancer.getSourceSecurityGroup(),
+              "While SourceSecurityGroup can be null for a LoadBalancer, its Optional wrapper cannot: %s", loadBalancer);
+
+      // VPC
+      checkNotNull(loadBalancer.getVPCId(), "While VPCId can be null for a LoadBalancer, its Optional wrapper cannot: %s", loadBalancer);
       checkNotNull(loadBalancer.getScheme(),
-               "While Scheme can be null for a LoadBalancer, its Optional wrapper cannot.");
-      checkNotNull(loadBalancer.getVPCId(), "While VPCId can be null for a LoadBalancer, its Optional wrapper cannot.");
+              "While Scheme can be null for a LoadBalancer, its Optional wrapper cannot: %s", loadBalancer);
+      checkNotNull(loadBalancer.getSecurityGroups(), "While SecurityGroups can be empty, it cannot be null: %s", loadBalancer);
+      checkNotNull(loadBalancer.getSubnets(), "While Subnets can be empty, it cannot be null: %s", loadBalancer);
+
+      // Route 53
+      checkNotNull(loadBalancer.getHostedZoneId(), "While HostedZoneId can be null for a LoadBalancer, its Optional wrapper cannot: %s", loadBalancer);
+      checkNotNull(loadBalancer.getHostedZoneName(), "While HostedZoneName can be null for a LoadBalancer, its Optional wrapper cannot: %s", loadBalancer);
+
    }
 
    private void checkListener(ListenerWithPolicies listener) {

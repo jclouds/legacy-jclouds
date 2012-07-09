@@ -57,6 +57,9 @@ public interface ELBClient {
     * Provides synchronous access to LoadBalancer features.
     */
    @Delegate
+   LoadBalancerClient getLoadBalancerClient();
+
+   @Delegate
    LoadBalancerClient getLoadBalancerClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
@@ -64,12 +67,18 @@ public interface ELBClient {
     * Provides synchronous access to Policy features.
     */
    @Delegate
+   PolicyClient getPolicyClient();
+
+   @Delegate
    PolicyClient getPolicyClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Instance features.
     */
+   @Delegate
+   InstanceClient getInstanceClient();
+
    @Delegate
    InstanceClient getInstanceClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);

@@ -40,16 +40,15 @@ import com.google.common.collect.Maps;
  */
 public class PolicyType {
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromPolicyType(this);
+   public Builder toBuilder() {
+      return builder().fromPolicyType(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
-      protected abstract T self();
+   public static class Builder {
 
       protected String name;
       protected String description;
@@ -58,48 +57,41 @@ public class PolicyType {
       /**
        * @see PolicyType#getName()
        */
-      public T name(String name) {
+      public Builder name(String name) {
          this.name = name;
-         return self();
+         return this;
       }
 
       /**
        * @see PolicyType#getDescription()
        */
-      public T description(String description) {
+      public Builder description(String description) {
          this.description = description;
-         return self();
+         return this;
       }
 
       /**
        * @see PolicyType#getAttributeMetadata()
        */
-      public T attributeMetadata(Iterable<AttributeMetadata<?>> attributeMetadata) {
+      public Builder attributeMetadata(Iterable<AttributeMetadata<?>> attributeMetadata) {
          this.attributeMetadata.addAll(checkNotNull(attributeMetadata, "attributeMetadata"));
-         return self();
+         return this;
       }
 
       /**
        * @see PolicyType#getAttributeMetadata()
        */
-      public T attributeMetadata(AttributeMetadata<?> attributeMetadata) {
+      public Builder attributeMetadata(AttributeMetadata<?> attributeMetadata) {
          this.attributeMetadata.add(checkNotNull(attributeMetadata, "attributeMetadata"));
-         return self();
+         return this;
       }
 
       public PolicyType build() {
          return new PolicyType(name, description, attributeMetadata.build());
       }
 
-      public T fromPolicyType(PolicyType in) {
+      public Builder fromPolicyType(PolicyType in) {
          return this.name(in.getName()).description(in.getDescription()).attributeMetadata(in.getAttributeMetadata());
-      }
-   }
-
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-      @Override
-      protected ConcreteBuilder self() {
-         return this;
       }
    }
 
