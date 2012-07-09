@@ -424,7 +424,7 @@ public class AccessControlList {
       public static final URI ALL_USERS = URI.create("http://acs.amazonaws.com/groups/global/AllUsers");
       public static final URI AUTHENTICATED_USERS = URI
                .create("http://acs.amazonaws.com/groups/global/AuthenticatedUsers");
-      public static final URI LOG_DELIVERY = URI.create("http://acs.amazonaws.com/groups/LogDelivery");
+      public static final URI LOG_DELIVERY = URI.create("http://acs.amazonaws.com/groups/s3/LogDelivery");
    }
 
    public static class GroupGrantee extends Grantee {
