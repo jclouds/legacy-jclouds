@@ -1294,14 +1294,16 @@ public class RestAnnotationProcessor<T> {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((QueryParam) key).value();
-            String paramValue;
+            Object paramValue;
             if (extractors != null && extractors.size() > 0) {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
                paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
             } else {
-               paramValue = args[entry.getKey()].toString();
+               paramValue = args[entry.getKey()];
             }
-            queryParamValues.put(paramKey, paramValue);
+            if (paramValue != null) {
+                queryParamValues.put(paramKey, paramValue.toString());
+            }
          }
       }
 
