@@ -25,7 +25,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.elb.binders.BindAvailabilityZonesToIndexedFormParams;
 import org.jclouds.elb.binders.BindListenersToFormParams;
 import org.jclouds.elb.binders.BindSecurityGroupsToIndexedFormParams;
@@ -121,7 +121,7 @@ public interface LoadBalancerAsyncClient {
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
-   ListenableFuture<PaginatedSet<LoadBalancer>> list();
+   ListenableFuture<PaginatedIterable<LoadBalancer>> list();
 
    /**
     * @see LoadBalancerClient#list(ListLoadBalancersOptions)
@@ -130,7 +130,7 @@ public interface LoadBalancerAsyncClient {
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
-   ListenableFuture<PaginatedSet<LoadBalancer>> list(ListLoadBalancersOptions options);
+   ListenableFuture<PaginatedIterable<LoadBalancer>> list(ListLoadBalancersOptions options);
 
    /**
     * @see LoadBalancerClient#delete()

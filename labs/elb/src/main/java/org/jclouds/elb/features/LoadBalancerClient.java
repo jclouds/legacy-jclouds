@@ -20,7 +20,7 @@ package org.jclouds.elb.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.domain.Listener;
 import org.jclouds.elb.domain.LoadBalancer;
@@ -73,14 +73,14 @@ public interface LoadBalancerClient {
     * 
     * @return the response object
     */
-   PaginatedSet<LoadBalancer> list(ListLoadBalancersOptions options);
+   PaginatedIterable<LoadBalancer> list(ListLoadBalancersOptions options);
 
    /**
     * Lists the loadBalancers all load balancers
     * 
     * @return the response object
     */
-   PaginatedSet<LoadBalancer> list();
+   PaginatedIterable<LoadBalancer> list();
 
    /**
     * Deletes the specified LoadBalancer.

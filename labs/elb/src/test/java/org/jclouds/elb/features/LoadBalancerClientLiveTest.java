@@ -21,13 +21,15 @@ package org.jclouds.elb.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.elb.domain.ListenerWithPolicies;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.internal.BaseELBClientLiveTest;
 import org.jclouds.elb.options.ListLoadBalancersOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -70,7 +72,7 @@ public class LoadBalancerClientLiveTest extends BaseELBClientLiveTest {
 
    @Test
    protected void testDescribeLoadBalancers() {
-      PaginatedSet<LoadBalancer> response = client().list();
+      PaginatedIterable<LoadBalancer> response = client().list();
 
       for (LoadBalancer loadBalancer : response) {
          checkLoadBalancer(loadBalancer);
@@ -79,13 +81,13 @@ public class LoadBalancerClientLiveTest extends BaseELBClientLiveTest {
          }
       }
 
-      if (response.size() > 0) {
+      if (Iterables.size(response) > 0) {
          LoadBalancer loadBalancer = response.iterator().next();
          Assert.assertEquals(client().get(loadBalancer.getName()), loadBalancer);
       }
 
       // Test with a Marker, even if it's null
-      response = client().list(ListLoadBalancersOptions.Builder.marker(response.getNextMarker()));
+      response = client().list(ListLoadBalancersOptions.Builder.afterMarker(response.getNextMarker()));
       for (LoadBalancer loadBalancer : response) {
          checkLoadBalancer(loadBalancer);
       }

@@ -20,7 +20,7 @@ package org.jclouds.elb.loadbalancer;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
@@ -60,7 +60,7 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
          instanceIds.add(node.getProviderId());
       }
 
-      PaginatedSet<LoadBalancer> elbs = elbClient.getLoadBalancerClientForRegion(null).list();
+      PaginatedIterable<LoadBalancer> elbs = elbClient.getLoadBalancerClientForRegion(null).list();
       for (LoadBalancer elb : elbs) {
          if (elb.getName().equals(group))
             assertEquals(elb.getInstanceIds(), instanceIds.build());

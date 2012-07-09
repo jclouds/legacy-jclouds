@@ -18,7 +18,7 @@
  */
 package org.jclouds.elb.features;
 
-import static org.jclouds.elb.options.ListLoadBalancersOptions.Builder.marker;
+import static org.jclouds.elb.options.ListLoadBalancersOptions.Builder.afterMarker;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -154,7 +154,7 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(clientWhenWithOptionsExist.getLoadBalancerClientForRegion(null).list(marker("MARKER")).toString(),
+      assertEquals(clientWhenWithOptionsExist.getLoadBalancerClientForRegion(null).list(afterMarker("MARKER")).toString(),
                new DescribeLoadBalancersResponseTest().expected().toString());
    }
 }

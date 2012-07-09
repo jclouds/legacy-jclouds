@@ -22,7 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.elb.domain.HealthCheck;
 import org.jclouds.elb.domain.ListenerWithPolicies;
@@ -44,17 +45,17 @@ public class DescribeLoadBalancersResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/describe_loadbalancers.xml");
 
-      PaginatedSet<LoadBalancer> expected = expected();
+      PaginatedIterable<LoadBalancer> expected = expected();
 
       DescribeLoadBalancersResultHandler handler = injector.getInstance(DescribeLoadBalancersResultHandler.class);
-      PaginatedSet<LoadBalancer> result = factory.create(handler).parse(is);
+      PaginatedIterable<LoadBalancer> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public PaginatedSet<LoadBalancer> expected() {
-      return PaginatedSet.copyOf(ImmutableSet.of(
+   public PaginatedIterable<LoadBalancer> expected() {
+      return PaginatedIterables.forward(ImmutableSet.of(
                LoadBalancer.builder()
                     .name("my-load-balancer")
                     .createdTime(new SimpleDateFormatDateService().iso8601DateParse("2010-03-03T20:54:45.110Z"))

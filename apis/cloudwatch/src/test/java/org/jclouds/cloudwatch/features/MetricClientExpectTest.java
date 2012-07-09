@@ -78,7 +78,7 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
             listMetrics, listMetricsResponse);
 
       assertEquals(clientWhenMetricsExist.getMetricClientForRegion(null).list().toString(),
-            "PaginatedSet{contents=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
+            "{elements=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
    }
 
    // TODO: this should really be an empty set
@@ -130,8 +130,8 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
                                                                    "SOMEINSTANCEID"))
                                           .metricName(EC2Constants.MetricName.CPU_UTILIZATION)
                                           .namespace("SOMENEXTTOKEN")
-                                          .nextMarker(Namespaces.EC2)).toString(),
-         "PaginatedSet{contents=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
+                                          .afterMarker(Namespaces.EC2)).toString(),
+         "{elements=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
    }
 
    GetMetricStatistics stats = GetMetricStatistics.builder()

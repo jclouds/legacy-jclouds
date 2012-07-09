@@ -21,7 +21,8 @@ package org.jclouds.cloudwatch.xml;
 import java.util.Set;
 
 import org.jclouds.cloudwatch.domain.Metric;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
@@ -35,7 +36,7 @@ import com.google.inject.Inject;
  *
  * @author Jeremy Whitlock
  */
-public class ListMetricsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PaginatedSet<Metric>> {
+public class ListMetricsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<Metric>> {
 
    private final MetricHandler metricHandler;
 
@@ -53,8 +54,8 @@ public class ListMetricsResponseHandler extends ParseSax.HandlerForGeneratedRequ
     * {@inheritDoc}
     */
    @Override
-   public PaginatedSet<Metric> getResult() {
-      return PaginatedSet.copyOfWithMarker(metrics, nextToken);
+   public PaginatedIterable<Metric> getResult() {
+      return PaginatedIterables.forwardWithMarker(metrics, nextToken);
    }
 
    /**

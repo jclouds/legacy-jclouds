@@ -18,7 +18,7 @@
  */
 package org.jclouds.iam.options;
 
-import static org.jclouds.iam.options.ListUsersOptions.Builder.marker;
+import static org.jclouds.iam.options.ListUsersOptions.Builder.afterMarker;
 import static org.jclouds.iam.options.ListUsersOptions.Builder.maxItems;
 import static org.jclouds.iam.options.ListUsersOptions.Builder.pathPrefix;
 import static org.testng.Assert.assertEquals;
@@ -36,12 +36,12 @@ import com.google.common.collect.ImmutableSet;
 public class ListUsersOptionsTest {
 
    public void testMarker() {
-      ListUsersOptions options = new ListUsersOptions().marker("FFFFF");
+      ListUsersOptions options = new ListUsersOptions().afterMarker("FFFFF");
       assertEquals(ImmutableSet.of("FFFFF"), options.buildFormParameters().get("Marker"));
    }
 
    public void testMarkerStatic() {
-      ListUsersOptions options = marker("FFFFF");
+      ListUsersOptions options = afterMarker("FFFFF");
       assertEquals(ImmutableSet.of("FFFFF"), options.buildFormParameters().get("Marker"));
    }
 

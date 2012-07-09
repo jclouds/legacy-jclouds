@@ -5,7 +5,8 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 
 import org.easymock.EasyMock;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.features.UserClient;
 import org.jclouds.iam.options.ListUsersOptions;
@@ -28,7 +29,7 @@ public class IAMTest {
    public void testSinglePageResult() throws Exception {
       UserClient userClient = createMock(UserClient.class);
       ListUsersOptions options = new ListUsersOptions();
-      PaginatedSet<User> response = PaginatedSet.copyOf(ImmutableSet.of(createMock(User.class)));
+      PaginatedIterable<User> response = PaginatedIterables.forward(ImmutableSet.of(createMock(User.class)));
       
       expect(userClient.list(options))
             .andReturn(response)
@@ -44,8 +45,8 @@ public class IAMTest {
    public void testMultiPageResult() throws Exception {
       UserClient userClient = createMock(UserClient.class);
       ListUsersOptions options = new ListUsersOptions();
-      PaginatedSet<User> response1 = PaginatedSet.copyOfWithMarker(ImmutableSet.of(createMock(User.class)), "NEXTTOKEN");
-      PaginatedSet<User> response2 = PaginatedSet.copyOf(ImmutableSet.of(createMock(User.class)));
+      PaginatedIterable<User> response1 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(User.class)), "NEXTTOKEN");
+      PaginatedIterable<User> response2 = PaginatedIterables.forward(ImmutableSet.of(createMock(User.class)));
 
       expect(userClient.list(anyObject(ListUsersOptions.class)))
             .andReturn(response1)

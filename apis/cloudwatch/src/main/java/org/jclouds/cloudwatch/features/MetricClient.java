@@ -26,7 +26,7 @@ import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -54,9 +54,9 @@ public interface MetricClient {
     * 
     * @return the response object
     */
-   PaginatedSet<Metric> list(ListMetricsOptions options);
+   PaginatedIterable<Metric> list(ListMetricsOptions options);
 
-   PaginatedSet<Metric> list();
+   PaginatedIterable<Metric> list();
 
    /**
     * Gets statistics for the specified metric.

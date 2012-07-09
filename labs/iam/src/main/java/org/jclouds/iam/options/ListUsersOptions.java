@@ -19,7 +19,6 @@
 package org.jclouds.iam.options;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Multimap;
@@ -35,29 +34,15 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
 
    private Integer maxItems;
    private String pathPrefix;
-   private String marker;
+   private Object afterMarker;
 
    /**
-    * @see ListUsersOptions#getMarker()
+    * Use this parameter only when paginating results, and only in a subsequent request after you've
+    * received a response where the results are truncated. Set it to the value of the Marker element
+    * in the response you just received.
     */
-   public ListUsersOptions marker(String marker) {
-      this.marker = marker;
-      return this;
-   }
-
-   /**
-    * @see ListUsersOptions#getMaxItems()
-    */
-   public ListUsersOptions maxItems(Integer maxItems) {
-      this.maxItems = maxItems;
-      return this;
-   }
-
-   /**
-    * @see ListUsersOptions#getPathPrefix()
-    */
-   public ListUsersOptions pathPrefix(String pathPrefix) {
-      this.pathPrefix = pathPrefix;
+   public ListUsersOptions afterMarker(Object afterMarker) {
+      this.afterMarker = afterMarker;
       return this;
    }
 
@@ -66,9 +51,9 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
     * you want in the response. If there are additional user names beyond the maximum you specify,
     * the IsTruncated response element is true.
     */
-   @Nullable
-   public Integer getMaxItems() {
-      return maxItems;
+   public ListUsersOptions maxItems(Integer maxItems) {
+      this.maxItems = maxItems;
+      return this;
    }
 
    /**
@@ -78,39 +63,29 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
     * This parameter is optional. If it is not included, it defaults to a slash (/), listing all
     * user names.
     */
-   @Nullable
-   public String getPathPrefix() {
-      return pathPrefix;
-   }
-
-   /**
-    * Use this parameter only when paginating results, and only in a subsequent request after you've
-    * received a response where the results are truncated. Set it to the value of the Marker element
-    * in the response you just received.
-    */
-   @Nullable
-   public String getMarker() {
-      return marker;
+   public ListUsersOptions pathPrefix(String pathPrefix) {
+      this.pathPrefix = pathPrefix;
+      return this;
    }
 
    public static class Builder {
 
       /**
-       * @see ListUsersOptions#getMarker()
+       * @see ListUsersOptions#afterMarker
        */
-      public static ListUsersOptions marker(String marker) {
-         return new ListUsersOptions().marker(marker);
+      public static ListUsersOptions afterMarker(Object afterMarker) {
+         return new ListUsersOptions().afterMarker(afterMarker);
       }
 
       /**
-       * @see ListUsersOptions#getMaxItems()
+       * @see ListUsersOptions#maxItems
        */
       public static ListUsersOptions maxItems(Integer maxItems) {
          return new ListUsersOptions().maxItems(maxItems);
       }
 
       /**
-       * @see ListUsersOptions#getPathPrefix()
+       * @see ListUsersOptions#pathPrefix
        */
       public static ListUsersOptions pathPrefix(String pathPrefix) {
          return new ListUsersOptions().pathPrefix(pathPrefix);
@@ -120,8 +95,8 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
    @Override
    public Multimap<String, String> buildFormParameters() {
       Multimap<String, String> params = super.buildFormParameters();
-      if (marker != null)
-         params.put("Marker", marker);
+      if (afterMarker != null)
+         params.put("Marker", afterMarker.toString());
       if (maxItems != null)
          params.put("MaxItems", maxItems.toString());
       if (pathPrefix != null)
@@ -134,12 +109,12 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(marker, maxItems, pathPrefix);
+      return Objects.hashCode(afterMarker, maxItems, pathPrefix);
    }
 
    @Override
    public ListUsersOptions clone() {
-      return new ListUsersOptions().marker(marker).maxItems(maxItems).pathPrefix(pathPrefix);
+      return new ListUsersOptions().afterMarker(afterMarker).maxItems(maxItems).pathPrefix(pathPrefix);
    }
 
    /**
@@ -154,7 +129,7 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
       if (getClass() != obj.getClass())
          return false;
       ListUsersOptions other = ListUsersOptions.class.cast(obj);
-      return Objects.equal(this.marker, other.marker) && Objects.equal(this.maxItems, other.maxItems)
+      return Objects.equal(this.afterMarker, other.afterMarker) && Objects.equal(this.maxItems, other.maxItems)
                && Objects.equal(this.pathPrefix, other.pathPrefix);
    }
 
@@ -163,7 +138,7 @@ public class ListUsersOptions extends BaseHttpRequestOptions implements Cloneabl
     */
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().add("marker", marker).add("maxItems", maxItems).add(
+      return Objects.toStringHelper(this).omitNullValues().add("afterMarker", afterMarker).add("maxItems", maxItems).add(
                "pathPrefix", pathPrefix).toString();
    }
 }

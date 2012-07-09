@@ -20,7 +20,7 @@ package org.jclouds.iam.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.options.ListUsersOptions;
@@ -62,7 +62,7 @@ public interface UserClient {
     * 
     * @return the response object
     */
-   PaginatedSet<User> list(ListUsersOptions options);
+   PaginatedIterable<User> list(ListUsersOptions options);
 
    /**
     * Lists the users that have the specified path prefix. If there are none, the action returns an
@@ -70,6 +70,6 @@ public interface UserClient {
     * 
     * @return the response object
     */
-   PaginatedSet<User> list();
+   PaginatedIterable<User> list();
 
 }

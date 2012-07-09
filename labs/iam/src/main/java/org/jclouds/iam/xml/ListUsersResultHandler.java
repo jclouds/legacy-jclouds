@@ -20,7 +20,8 @@ package org.jclouds.iam.xml;
 
 import java.util.Set;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.iam.domain.User;
 import org.jclouds.util.SaxUtils;
@@ -35,14 +36,14 @@ import com.google.inject.Inject;
  *
  * @author Adrian Cole
  */
-public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PaginatedSet<User>> {
+public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<User>> {
 
    private final UserHandler userHandler;
 
    private StringBuilder currentText = new StringBuilder();
    private Set<User> users = Sets.newLinkedHashSet();
    private boolean inUsers;
-   private String marker;
+   private String afterMarker;
 
    @Inject
    public ListUsersResultHandler(UserHandler userHandler) {
@@ -53,8 +54,8 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
     * {@inheritDoc}
     */
    @Override
-   public PaginatedSet<User> getResult() {
-      return PaginatedSet.copyOfWithMarker(users, marker);
+   public PaginatedIterable<User> getResult() {
+      return PaginatedIterables.forwardWithMarker(users, afterMarker);
    }
 
    /**
@@ -84,7 +85,7 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
             userHandler.endElement(uri, name, qName);
          }
       } else if (qName.equals("Marker")) {
-         marker = SaxUtils.currentOrNull(currentText);
+         afterMarker = SaxUtils.currentOrNull(currentText);
       }
 
       currentText = new StringBuilder();

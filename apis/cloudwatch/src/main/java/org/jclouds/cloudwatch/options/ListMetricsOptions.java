@@ -40,7 +40,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
    private Set<Dimension> dimensions = Sets.newLinkedHashSet();
    private String metricName;
    private String namespace;
-   private String nextToken;
+   private Object nextToken;
 
    /**
     * The namespace to filter against.
@@ -97,7 +97,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
     *
     * @return this {@code Builder} object
     */
-   public ListMetricsOptions nextMarker(String nextToken) {
+   public ListMetricsOptions afterMarker(Object nextToken) {
       this.nextToken = nextToken;
       return this;
    }
@@ -131,7 +131,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
 
       // If nextToken isn't specified, don't include it
       if (nextToken != null) {
-         formParameters.put("NextToken", nextToken);
+         formParameters.put("NextToken", nextToken.toString());
       }
 
       return formParameters.build();
@@ -139,7 +139,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
    
    @Override
    public ListMetricsOptions clone() {
-      return Builder.namespace(namespace).metricName(metricName).dimensions(dimensions).nextMarker(nextToken);
+      return Builder.namespace(namespace).metricName(metricName).dimensions(dimensions).afterMarker(nextToken);
    }
    
    public static class Builder {
@@ -173,10 +173,10 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
       }
 
       /**
-       * @see ListMetricsOptions#nextMarker(String)
+       * @see ListMetricsOptions#afterMarker(String)
        */
-      public static ListMetricsOptions nextMarker(String nextToken) {
-         return new ListMetricsOptions().nextMarker(nextToken);
+      public static ListMetricsOptions afterMarker(String nextToken) {
+         return new ListMetricsOptions().afterMarker(nextToken);
       }
    }
 

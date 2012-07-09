@@ -39,7 +39,7 @@ import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchClientLiveTest;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -99,7 +99,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
          Assert.fail("Unable to gather the created CloudWatch data within the time (20m) allotted.");
       }
 
-      PaginatedSet<Metric> lmr = client().list(lmo);
+      PaginatedIterable<Metric> lmr = client().list(lmo);
       Date endTime = new Date(metricTimestampInCloudWatch.getTime() + (60 * 1000)); // Pad a minute just in case
       Date startTime = new Date(metricTimestampInCloudWatch.getTime() - (60 * 1000)); // Pad a minute just in case
 
@@ -145,10 +145,10 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
    // TODO: change this test to retrieve pre-seeded custom metrics
    @Test
    protected void testGetMetricStatistics() {
-      PaginatedSet<Metric> metricsResponse = client().list();
+      PaginatedIterable<Metric> metricsResponse = client().list();
 
       // Walk through all datapoints in all metrics until we find a metric datapoint that returns statistics
-      if (metricsResponse.size() > 0) {
+      if (Iterables.size(metricsResponse) > 0) {
          for (Metric metric : metricsResponse) {
             Set<Dimension> dimensions = metric.getDimensions();
             boolean testRan = false;
@@ -195,7 +195,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
 
    @Test
    protected void testListMetrics() {
-      PaginatedSet<Metric> response;
+      PaginatedIterable<Metric> response;
       String testNamespace = Namespaces.EC2;
       String testMetricName = EC2Constants.MetricName.CPU_UTILIZATION;
       String testDimensionName = EC2Constants.Dimension.INSTANCE_TYPE;
@@ -206,7 +206,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
 
       performDefaultMetricsTests(response);
 
-      if (response.size() > 0) {
+      if (Iterables.size(response) > 0) {
          Metric metric = response.iterator().next();
 
          testMetricName = metric.getMetricName();
@@ -236,7 +236,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       }
 
       // Test with a NextToken, even if it's null
-      response = client().list(ListMetricsOptions.Builder.nextMarker(response.getNextMarker()));
+      response = client().list(ListMetricsOptions.Builder.afterMarker(response.getNextMarker().toString()));
 
       performDefaultMetricsTests(response);
 
@@ -281,9 +281,9 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       }
    }
 
-   private void performDefaultMetricsTests(PaginatedSet<Metric> response) {
+   private void performDefaultMetricsTests(PaginatedIterable<Metric> response) {
       // If there are less than 500 metrics, NextToken should be null
-      if (response.size() < 500) {
+      if (Iterables.size(response) < 500) {
          checkArgument(response.getNextMarker() == null,
                        "NextToken should be null for response with fewer than 500 metrics.");
       }

@@ -24,8 +24,8 @@ import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.PaginatedSet;
-import org.jclouds.collect.PaginatedSets;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -46,11 +46,11 @@ public class CloudWatch {
     * @return iterable of metrics fitting the criteria
     */
    public static Iterable<Metric> listMetrics(final MetricClient metricClient, final ListMetricsOptions options) {
-      return PaginatedSets.lazyContinue(metricClient.list(options), new Function<String, PaginatedSet<Metric>>() {
+      return PaginatedIterables.lazyContinue(metricClient.list(options), new Function<Object, PaginatedIterable<Metric>>() {
 
          @Override
-         public PaginatedSet<Metric> apply(String input) {
-            return metricClient.list(options.clone().nextMarker(input));
+         public PaginatedIterable<Metric> apply(Object input) {
+            return metricClient.list(options.clone().afterMarker(input));
          }
 
          @Override

@@ -5,7 +5,8 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 
 import org.easymock.EasyMock;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.features.LoadBalancerClient;
 import org.jclouds.elb.options.ListLoadBalancersOptions;
@@ -28,7 +29,7 @@ public class ELBTest {
    public void testSinglePageResult() throws Exception {
       LoadBalancerClient loadBalancerClient = createMock(LoadBalancerClient.class);
       ListLoadBalancersOptions options = new ListLoadBalancersOptions();
-      PaginatedSet<LoadBalancer> response = PaginatedSet.copyOf(ImmutableSet.of(createMock(LoadBalancer.class)));
+      PaginatedIterable<LoadBalancer> response = PaginatedIterables.forward(ImmutableSet.of(createMock(LoadBalancer.class)));
       
       expect(loadBalancerClient.list(options))
             .andReturn(response)
@@ -44,8 +45,8 @@ public class ELBTest {
    public void testMultiPageResult() throws Exception {
       LoadBalancerClient loadBalancerClient = createMock(LoadBalancerClient.class);
       ListLoadBalancersOptions options = new ListLoadBalancersOptions();
-      PaginatedSet<LoadBalancer> response1 = PaginatedSet.copyOfWithMarker(ImmutableSet.of(createMock(LoadBalancer.class)), "NEXTTOKEN");
-      PaginatedSet<LoadBalancer> response2 = PaginatedSet.copyOf(ImmutableSet.of(createMock(LoadBalancer.class)));
+      PaginatedIterable<LoadBalancer> response1 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(LoadBalancer.class)), "NEXTTOKEN");
+      PaginatedIterable<LoadBalancer> response2 = PaginatedIterables.forward(ImmutableSet.of(createMock(LoadBalancer.class)));
 
       expect(loadBalancerClient.list(anyObject(ListLoadBalancersOptions.class)))
             .andReturn(response1)

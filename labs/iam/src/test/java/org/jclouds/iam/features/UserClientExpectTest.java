@@ -182,7 +182,7 @@ public class UserClientExpectTest extends BaseIAMClientExpectTest {
       IAMClient clientWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(clientWhenWithOptionsExist.getUserClient().list(pathPrefix("/foo").marker("MARKER")).toString(),
+      assertEquals(clientWhenWithOptionsExist.getUserClient().list(pathPrefix("/foo").afterMarker("MARKER")).toString(),
                new ListUsersResponseTest().expected().toString());
    }
 }
