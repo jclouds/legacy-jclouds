@@ -18,12 +18,15 @@
  */
 package org.jclouds.cloudwatch.options;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
+
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.javax.annotation.Nullable;
 
-import java.util.Set;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 /**
  * Options used to list available metrics.
@@ -32,169 +35,148 @@ import java.util.Set;
  *
  * @author Jeremy Whitlock
  */
-public class ListMetricsOptions extends BaseHttpRequestOptions {
+public class ListMetricsOptions extends BaseHttpRequestOptions implements Cloneable {
 
-   private final Set<Dimension> dimensions;
-   private final String metricName;
-   private final String namespace;
-   private final String nextToken;
+   private Set<Dimension> dimensions = Sets.newLinkedHashSet();
+   private String metricName;
+   private String namespace;
+   private String nextToken;
 
    /**
-    * Private constructor to enforce using {@link Builder}.
+    * The namespace to filter against.
+    *
+    * @param namespace the namespace to filter against
+    *
+    * @return this {@code Builder} object
     */
-   private ListMetricsOptions(@Nullable String namespace, @Nullable String metricName,
-                              @Nullable Set<Dimension> dimensions, @Nullable String nextToken) {
-      this.dimensions = dimensions;
-      this.metricName = metricName;
+   public ListMetricsOptions namespace(String namespace) {
       this.namespace = namespace;
+      return this;
+   }
+
+   /**
+    * The name of the metric to filter against.
+    *
+    * @param metricName the metric name to filter against
+    *
+    * @return this {@code Builder} object
+    */
+   public ListMetricsOptions metricName(String metricName) {
+      this.metricName = metricName;
+      return this;
+   }
+
+   /**
+    * A list of dimensions to filter against.
+    *
+    * @param dimensions the dimensions to filter against
+    *
+    * @return this {@code Builder} object
+    */
+   public ListMetricsOptions dimensions(Iterable<Dimension> dimensions) {
+      Iterables.addAll(this.dimensions, dimensions);
+      return this;
+   }
+
+   /**
+    * A dimension to filter the available metrics by.
+    *
+    * @param dimension a dimension to filter the returned metrics by
+    *
+    * @return this {@code Builder} object
+    */
+   public ListMetricsOptions dimension(Dimension dimension) {
+      this.dimensions.add(dimension);
+      return this;
+   }
+
+   /**
+    * The token returned by a previous call to indicate that there is more data available.
+    *
+    * @param nextToken the next token indicating that there is more data available
+    *
+    * @return this {@code Builder} object
+    */
+   public ListMetricsOptions nextMarker(String nextToken) {
       this.nextToken = nextToken;
+      return this;
    }
 
    /**
-    * return the set of dimensions for this request
+    * Returns a newly-created {@code ListMetricsOptions} based on the contents of
+    * the {@code Builder}.
     */
-   @Nullable
-   public Set<Dimension> getDimensions() {
-      return dimensions;
-   }
+   @Override
+   public Multimap<String, String> buildFormParameters() {
+      ImmutableMultimap.Builder<String, String> formParameters = ImmutableMultimap.<String, String>builder();
+      int dimensionIndex = 1;
 
-   /**
-    * return the metric name for this request
-    */
-   @Nullable
-   public String getMetricName() {
-      return metricName;
-   }
+      // If namespace isn't specified, don't include it
+      if (namespace != null) {
+         formParameters.put("Namespace", namespace);
+      }
+      // If metricName isn't specified, don't include it
+      if (metricName != null) {
+         formParameters.put("MetricName", metricName);
+      }
 
-   /**
-    * return the namespace for this request
-    */
-   @Nullable
-   public String getNamespace() {
-      return namespace;
-   }
+      // If dimensions isn't specified, don't include it
+      if (dimensions != null) {
+         for (Dimension dimension : dimensions) {
+            formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
+            formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
+            dimensionIndex++;
+         }
+      }
 
-   /**
-    * return the next token for this request
-    */
-   @Nullable
-   public String getNextToken() {
-      return nextToken;
-   }
+      // If nextToken isn't specified, don't include it
+      if (nextToken != null) {
+         formParameters.put("NextToken", nextToken);
+      }
 
-   /**
-    * Returns a new builder. The generated builder is equivalent to the builder
-    * created by the {@link Builder} constructor.
-    */
-   public static Builder builder() {
-      return new Builder();
+      return formParameters.build();
    }
-
+   
+   @Override
+   public ListMetricsOptions clone() {
+      return Builder.namespace(namespace).metricName(metricName).dimensions(dimensions).nextMarker(nextToken);
+   }
+   
    public static class Builder {
 
-      private Set<Dimension> dimensions = Sets.newLinkedHashSet();
-      private String metricName;
-      private String namespace;
-      private String nextToken;
-
       /**
-       * Creates a new builder. The returned builder is equivalent to the builder
-       * generated by {@link ListMetricsOptions#builder}.
+       * @see ListMetricsOptions#namespace(String)
        */
-      public Builder() {}
-
-      /**
-       * The namespace to filter against.
-       *
-       * @param namespace the namespace to filter against
-       *
-       * @return this {@code Builder} object
-       */
-      public Builder namespace(String namespace) {
-         this.namespace = namespace;
-         return this;
+      public static ListMetricsOptions namespace(String namespace) {
+         return new ListMetricsOptions().namespace(namespace);
       }
 
       /**
-       * The name of the metric to filter against.
-       *
-       * @param metricName the metric name to filter against
-       *
-       * @return this {@code Builder} object
+       * @see ListMetricsOptions#metricName(String)
        */
-      public Builder metricName(String metricName) {
-         this.metricName = metricName;
-         return this;
+      public static ListMetricsOptions metricName(String metricName) {
+         return new ListMetricsOptions().metricName(metricName);
       }
 
       /**
-       * A list of dimensions to filter against.
-       *
-       * @param dimensions the dimensions to filter against
-       *
-       * @return this {@code Builder} object
+       * @see ListMetricsOptions#dimensions(Iterable)
        */
-      public Builder dimensions(Set<Dimension> dimensions) {
-         this.dimensions = dimensions;
-         return this;
+      public static ListMetricsOptions dimensions(Iterable<Dimension> dimensions) {
+         return new ListMetricsOptions().dimensions(dimensions);
       }
 
       /**
-       * A dimension to filter the available metrics by.
-       *
-       * @param dimension a dimension to filter the returned metrics by
-       *
-       * @return this {@code Builder} object
+       * @see ListMetricsOptions#dimension(String)
        */
-      public Builder dimension(Dimension dimension) {
-         this.dimensions.add(dimension);
-         return this;
+      public static ListMetricsOptions dimension(Dimension dimension) {
+         return new ListMetricsOptions().dimension(dimension);
       }
 
       /**
-       * The token returned by a previous call to indicate that there is more data available.
-       *
-       * @param nextToken the next token indicating that there is more data available
-       *
-       * @return this {@code Builder} object
+       * @see ListMetricsOptions#nextMarker(String)
        */
-      public Builder nextToken(String nextToken) {
-         this.nextToken = nextToken;
-         return this;
-      }
-
-      /**
-       * Returns a newly-created {@code ListMetricsOptions} based on the contents of
-       * the {@code Builder}.
-       */
-      public ListMetricsOptions build() {
-         ListMetricsOptions lmo = new ListMetricsOptions(namespace, metricName, dimensions, nextToken);
-         int dimensionIndex = 1;
-
-         // If namespace isn't specified, don't include it
-         if (namespace != null) {
-            lmo.formParameters.put("Namespace", namespace);
-         }
-         // If metricName isn't specified, don't include it
-         if (metricName != null) {
-            lmo.formParameters.put("MetricName", metricName);
-         }
-
-         // If dimensions isn't specified, don't include it
-         if (dimensions != null) {
-            for (Dimension dimension : dimensions) {
-               lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
-               lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
-               dimensionIndex++;
-            }
-         }
-
-         // If nextToken isn't specified, don't include it
-         if (nextToken != null) {
-            lmo.formParameters.put("NextToken", nextToken);
-         }
-
-         return lmo;
+      public static ListMetricsOptions nextMarker(String nextToken) {
+         return new ListMetricsOptions().nextMarker(nextToken);
       }
    }
 

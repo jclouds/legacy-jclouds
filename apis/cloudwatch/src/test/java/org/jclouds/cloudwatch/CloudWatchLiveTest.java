@@ -67,7 +67,7 @@ public class CloudWatchLiveTest extends BaseContextLiveTest<RestContext<CloudWat
    @Test
    protected void testCloudWatchListMetrics() {
       // Just make sure there is at least one metric returned (Much better if the account you use has more than 500)
-      checkArgument(CloudWatch.listMetrics(client, null, ListMetricsOptions.builder().build()).iterator().hasNext());
+      checkArgument(CloudWatch.listMetrics(client, null, new ListMetricsOptions()).iterator().hasNext());
    }
 
    @Test
@@ -89,9 +89,8 @@ public class CloudWatchLiveTest extends BaseContextLiveTest<RestContext<CloudWat
 
       CloudWatch.putMetricData(client, null, metrics, namespace);
 
-      ListMetricsOptions lmo = ListMetricsOptions.builder().namespace(namespace)
-                                                 .dimension(new Dimension("BaseMetricName", metricName))
-                                                 .build();
+      ListMetricsOptions lmo = ListMetricsOptions.Builder.namespace(namespace)
+                                                 .dimension(new Dimension("BaseMetricName", metricName));
       boolean success = new RetryablePredicate<ListMetricsOptions>(new Predicate<ListMetricsOptions>() {
          @Override
          public boolean apply(ListMetricsOptions options) {

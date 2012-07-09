@@ -31,7 +31,6 @@ import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.Namespaces;
@@ -40,6 +39,7 @@ import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchClientLiveTest;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.collect.PaginatedSet;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -84,15 +84,14 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
                                            .value(10.0)
                                            .build();
 
-      client().putMetricData(ImmutableSet.of(metricDatum, metricDatum2), namespace);
+      client().putMetricsInNamespace(ImmutableSet.of(metricDatum, metricDatum2), namespace);
 
-      ListMetricsOptions lmo = ListMetricsOptions.builder().namespace(namespace)
-                                                 .dimension(new Dimension("BaseMetricName", metricName))
-                                                 .build();
+      ListMetricsOptions lmo = ListMetricsOptions.Builder.namespace(namespace)
+                                                 .dimension(new Dimension("BaseMetricName", metricName));
       boolean success = new RetryablePredicate<ListMetricsOptions>(new Predicate<ListMetricsOptions>() {
          @Override
          public boolean apply(ListMetricsOptions options) {
-            return Iterables.size(client().listMetrics(options)) == 2;
+            return Iterables.size(client().list(options)) == 2;
          }
       }, 20, 1, TimeUnit.MINUTES).apply(lmo);
 
@@ -100,7 +99,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
          Assert.fail("Unable to gather the created CloudWatch data within the time (20m) allotted.");
       }
 
-      ListMetricsResponse lmr = client().listMetrics(lmo);
+      PaginatedSet<Metric> lmr = client().list(lmo);
       Date endTime = new Date(metricTimestampInCloudWatch.getTime() + (60 * 1000)); // Pad a minute just in case
       Date startTime = new Date(metricTimestampInCloudWatch.getTime() - (60 * 1000)); // Pad a minute just in case
 
@@ -146,7 +145,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
    // TODO: change this test to retrieve pre-seeded custom metrics
    @Test
    protected void testGetMetricStatistics() {
-      ListMetricsResponse metricsResponse = client().listMetrics();
+      PaginatedSet<Metric> metricsResponse = client().list();
 
       // Walk through all datapoints in all metrics until we find a metric datapoint that returns statistics
       if (metricsResponse.size() > 0) {
@@ -196,14 +195,14 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
 
    @Test
    protected void testListMetrics() {
-      ListMetricsResponse response;
+      PaginatedSet<Metric> response;
       String testNamespace = Namespaces.EC2;
       String testMetricName = EC2Constants.MetricName.CPU_UTILIZATION;
       String testDimensionName = EC2Constants.Dimension.INSTANCE_TYPE;
       String testDimensionValue = "t1.micro";
 
       // Test an empty request (pulls all stored metric options across all products)
-      response = client().listMetrics();
+      response = client().list();
 
       performDefaultMetricsTests(response);
 
@@ -237,12 +236,12 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       }
 
       // Test with a NextToken, even if it's null
-      response = client().listMetrics(ListMetricsOptions.builder().nextToken(response.getNextToken()).build());
+      response = client().list(ListMetricsOptions.Builder.nextMarker(response.getNextMarker()));
 
       performDefaultMetricsTests(response);
 
       // Test with a Namespace
-      response = client().listMetrics(ListMetricsOptions.builder().namespace(testNamespace).build());
+      response = client().list(ListMetricsOptions.Builder.namespace(testNamespace));
 
       performDefaultMetricsTests(response);
 
@@ -252,7 +251,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       }
 
       // Test with a MetricName
-      response = client().listMetrics(ListMetricsOptions.builder().metricName(testMetricName).build());
+      response = client().list(ListMetricsOptions.Builder.metricName(testMetricName));
 
       performDefaultMetricsTests(response);
 
@@ -265,7 +264,7 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       if (testDimensionName != null) {
          Dimension testDimension = new Dimension(testDimensionName, testDimensionValue);
 
-         response = client().listMetrics(ListMetricsOptions.builder().dimension(testDimension).build());
+         response = client().list(ListMetricsOptions.Builder.dimension(testDimension));
 
          performDefaultMetricsTests(response);
 
@@ -282,10 +281,10 @@ public class MetricClientLiveTest extends BaseCloudWatchClientLiveTest {
       }
    }
 
-   private void performDefaultMetricsTests(ListMetricsResponse response) {
+   private void performDefaultMetricsTests(PaginatedSet<Metric> response) {
       // If there are less than 500 metrics, NextToken should be null
       if (response.size() < 500) {
-         checkArgument(response.getNextToken() == null,
+         checkArgument(response.getNextMarker() == null,
                        "NextToken should be null for response with fewer than 500 metrics.");
       }
 

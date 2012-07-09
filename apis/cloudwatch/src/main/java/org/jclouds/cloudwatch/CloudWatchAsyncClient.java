@@ -88,6 +88,9 @@ public interface CloudWatchAsyncClient {
     * Provides asynchronous access to Metric features.
     */
    @Delegate
+   MetricAsyncClient getMetricClient();
+
+   @Delegate
    MetricAsyncClient getMetricClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

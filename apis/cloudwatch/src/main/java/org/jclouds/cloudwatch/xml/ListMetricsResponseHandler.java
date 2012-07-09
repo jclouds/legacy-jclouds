@@ -18,23 +18,24 @@
  */
 package org.jclouds.cloudwatch.xml;
 
-import com.google.common.collect.Sets;
-import com.google.inject.Inject;
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
+import java.util.Set;
+
 import org.jclouds.cloudwatch.domain.Metric;
+import org.jclouds.collect.PaginatedSet;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import java.util.Set;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_ListMetrics.html" />
  *
  * @author Jeremy Whitlock
  */
-public class ListMetricsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<ListMetricsResponse> {
+public class ListMetricsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PaginatedSet<Metric>> {
 
    private final MetricHandler metricHandler;
 
@@ -52,8 +53,8 @@ public class ListMetricsResponseHandler extends ParseSax.HandlerForGeneratedRequ
     * {@inheritDoc}
     */
    @Override
-   public ListMetricsResponse getResult() {
-      return new ListMetricsResponse(metrics, nextToken);
+   public PaginatedSet<Metric> getResult() {
+      return PaginatedSet.copyOfWithMarker(metrics, nextToken);
    }
 
    /**
