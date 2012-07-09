@@ -55,25 +55,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface InstanceAsyncClient {
 
    /**
-    * @see InstanceClient#listInstanceStatesOfLoadBalancer(String)
+    * @see InstanceClient#getStateOfInstancesOfLoadBalancer(String)
     */
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeInstanceHealth")
-   ListenableFuture<Set<InstanceState>> listInstanceStatesOfLoadBalancer(
+   ListenableFuture<Set<InstanceState>> getStateOfInstancesOfLoadBalancer(
             @FormParam("LoadBalancerName") String loadBalancerName);
 
    /**
-    * @see InstanceClient#listInstanceStatesOfLoadBalancer(Iterable<String>, String)
+    * @see InstanceClient#getStateOfInstancesOfLoadBalancer(Iterable<String>, String)
     */
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeInstanceHealth")
-   ListenableFuture<Set<InstanceState>> listInstanceStatesOfLoadBalancer(
+   ListenableFuture<Set<InstanceState>> getStateOfInstancesOfLoadBalancer(
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) Iterable<String> instanceIds,
             @FormParam("LoadBalancerName") String loadBalancerName);
 
@@ -88,6 +88,18 @@ public interface InstanceAsyncClient {
    ListenableFuture<Set<String>> registerInstancesWithLoadBalancer(
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) Iterable<String> instanceIds,
             @FormParam("LoadBalancerName") String loadBalancerName);
+   
+
+   /**
+    * @see InstanceClient#registerInstanceWithLoadBalancer
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(InstancesResultHandler.class)
+   @FormParams(keys = ACTION, values = "RegisterInstancesWithLoadBalancer")
+   ListenableFuture<Set<String>> registerInstanceWithLoadBalancer(
+            @FormParam("Instances.member.1.InstanceId") String instanceId,
+            @FormParam("LoadBalancerName") String loadBalancerName);
 
    /**
     * @see InstanceClient#deregisterInstancesFromLoadBalancer
@@ -100,5 +112,14 @@ public interface InstanceAsyncClient {
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) Iterable<String> instanceIds,
             @FormParam("LoadBalancerName") String loadBalancerName);
 
-   
+   /**
+    * @see InstanceClient#deregisterInstanceFromLoadBalancer
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(InstancesResultHandler.class)
+   @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
+   ListenableFuture<Set<String>> deregisterInstanceFromLoadBalancer(
+            @FormParam("Instances.member.1.InstanceId") String instanceId,
+            @FormParam("LoadBalancerName") String loadBalancerName);
 }

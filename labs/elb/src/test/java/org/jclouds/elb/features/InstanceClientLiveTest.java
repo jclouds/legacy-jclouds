@@ -47,7 +47,7 @@ public class InstanceClientLiveTest extends BaseELBClientLiveTest {
    @Test
    protected void testListInstanceStates() {
       for (LoadBalancer loadBalancer : context.getApi().getLoadBalancerClientForRegion(null).list()) {
-         Set<InstanceState> response = client().listInstanceStatesOfLoadBalancer(loadBalancer.getName());
+         Set<InstanceState> response = client().getStateOfInstancesOfLoadBalancer(loadBalancer.getName());
 
          for (InstanceState instanceState : response) {
             checkInstanceState(instanceState);
@@ -56,7 +56,7 @@ public class InstanceClientLiveTest extends BaseELBClientLiveTest {
          if (response.size() > 0) {
             InstanceState instanceState = response.iterator().next();
             Assert.assertEquals(
-                     client().listInstanceStatesOfLoadBalancer(ImmutableSet.of(instanceState.getInstanceId()),
+                     client().getStateOfInstancesOfLoadBalancer(ImmutableSet.of(instanceState.getInstanceId()),
                               loadBalancer.getName()), instanceState);
          }
       }

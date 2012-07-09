@@ -29,6 +29,7 @@ import org.jclouds.elb.domain.InstanceState;
  * <p/>
  * 
  * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference" />
+ * @see InstanceAsyncClient
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
@@ -49,7 +50,7 @@ public interface InstanceClient {
     * 
     * @return state of all instances of the load balancer
     */
-   Set<InstanceState> listInstanceStatesOfLoadBalancer(String loadBalancerName);
+   Set<InstanceState> getStateOfInstancesOfLoadBalancer(String loadBalancerName);
 
    /**
     * Returns the current state of the instances of the specified LoadBalancer.
@@ -68,7 +69,7 @@ public interface InstanceClient {
     * 
     * @return state of all instances of the load balancer
     */
-   Set<InstanceState> listInstanceStatesOfLoadBalancer(Iterable<String> instanceIds, String loadBalancerName);
+   Set<InstanceState> getStateOfInstancesOfLoadBalancer(Iterable<String> instanceIds, String loadBalancerName);
 
    /**
     * Adds new instances to the LoadBalancer.
@@ -110,6 +111,8 @@ public interface InstanceClient {
     * @return instanceIds registered with load balancer
     */
    Set<String> registerInstancesWithLoadBalancer(Iterable<String> instanceIds, String loadBalancerName);
+   
+   Set<String> registerInstanceWithLoadBalancer(String instanceId, String loadBalancerName);
 
    /**
     * Deregisters instances from the LoadBalancer. Once the instance is deregistered, it will stop
@@ -128,4 +131,7 @@ public interface InstanceClient {
     * @return instanceIds still registered with load balancer
     */
    Set<String> deregisterInstancesFromLoadBalancer(Iterable<String> instanceIds, String loadBalancerName);
+
+   Set<String> deregisterInstanceFromLoadBalancer(String instanceId, String loadBalancerName);
+
 }

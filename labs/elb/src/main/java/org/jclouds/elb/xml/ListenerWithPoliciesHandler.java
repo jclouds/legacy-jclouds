@@ -23,7 +23,6 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.elb.domain.ListenerWithPolicies;
 import org.jclouds.elb.domain.Protocol;
-import org.jclouds.elb.domain.SecurityGroupAndOwner;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
