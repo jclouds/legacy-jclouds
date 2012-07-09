@@ -72,7 +72,7 @@ public class RunningInstanceToNodeMetadataTest {
       }
 
    }
-   
+
    @Test
    public void testPrivateIpAddressIncorrectlyInPublicAddressFieldGoesToPrivateAddressCollection() {
       RunningInstance instance = RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
@@ -98,7 +98,22 @@ public class RunningInstanceToNodeMetadataTest {
                ImmutableSet.<String> of()).publicAddresses(ImmutableSet.of("1.1.1.1")).id("us-east-1/id").imageId(
                "us-east-1/image").providerId("id").build().toString());
    }
-   
+
+   @Test
+   public void testIPAddressIsSetToDnsNameWhenIPAddressIsNull() {
+      RunningInstance instance = RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
+            .instanceState(InstanceState.RUNNING).rawState("running").region("us-east-1").dnsName("jclouds-1-1-1-1.jclouds.org").build();
+
+      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
+            .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
+
+      assertEquals(parser.apply(instance).toString(), new NodeMetadataBuilder().status(Status.RUNNING).backendStatus("running").privateAddresses(
+            ImmutableSet.<String> of()).publicAddresses(ImmutableSet.of("jclouds-1-1-1-1.jclouds.org")).id("us-east-1/id").imageId(
+            "us-east-1/image").providerId("id").build().toString());
+
+   }
+
+
    static Location provider = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
             .description("us-east-1").build();
 
@@ -145,7 +160,7 @@ public class RunningInstanceToNodeMetadataTest {
                .privateAddresses(ImmutableSet.of("10.243.42.70")).publicAddresses(ImmutableSet.of("174.129.81.68"))
                .imageId("us-east-1/ami-82e4b5c7").id("us-east-1/i-0799056f").providerId("i-0799056f")
                .location(provider).build();
-      
+
       assertEquals(parser.apply(server).toString(), expected.toString());
    }
 
@@ -246,7 +261,7 @@ public class RunningInstanceToNodeMetadataTest {
             final ImmutableSet<Location> locations, final Set<org.jclouds.compute.domain.Image> images,
             Map<String, Credentials> credentialStore) {
       Map<InstanceState, Status> instanceToNodeStatus = EC2ComputeServiceDependenciesModule.toPortableNodeStatus;
-      
+
       CacheLoader<RegionAndName, Image> getRealImage = new CacheLoader<RegionAndName, Image>() {
 
          @Override
