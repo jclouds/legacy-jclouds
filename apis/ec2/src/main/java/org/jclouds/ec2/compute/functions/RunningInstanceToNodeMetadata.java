@@ -122,6 +122,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Builder<String> addressesBuilder = ImmutableSet.builder();
       if (Strings.emptyToNull(instance.getIpAddress()) != null)
          addressesBuilder.add(instance.getIpAddress());
+      //Set ipAddress to be
+      else if(Strings.emptyToNull(instance.getDnsName()) != null)
+         addressesBuilder.add(instance.getDnsName());
       if (Strings.emptyToNull(instance.getPrivateIpAddress()) != null)
          addressesBuilder.add(instance.getPrivateIpAddress());
 
