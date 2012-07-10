@@ -50,12 +50,12 @@
   <dependencies>
     <dependency>
       <groupId>org.jclouds.labs</groupId>
-      <artifactId>joyent-sdc</artifactId>
+      <artifactId>joyent-cloudapi</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jclouds.labs</groupId>
-      <artifactId>joyent-sdc</artifactId>
+      <artifactId>joyent-cloudapi</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>

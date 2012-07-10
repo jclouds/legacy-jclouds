@@ -45,7 +45,7 @@
        <module>jenkins</module>
        <module>cdmi</module>
        <module>openstack-glance</module>
-       <module>joyent-sdc</module>
+       <module>joyent-cloudapi</module>
        <module>joyentcloud</module>
        <module>openstack-quantum</module>
        <module>greenqloud-compute</module>

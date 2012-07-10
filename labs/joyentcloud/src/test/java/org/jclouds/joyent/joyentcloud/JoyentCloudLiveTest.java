@@ -18,14 +18,14 @@
  */
 package org.jclouds.joyent.joyentcloud;
 
-import org.jclouds.joyent.sdc.v6_5.SDCClientLiveTest;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "JoyentCloudLiveTest")
-public class JoyentCloudLiveTest extends SDCClientLiveTest {
+public class JoyentCloudLiveTest extends JoyentCloudClientLiveTest {
    public JoyentCloudLiveTest() {
       provider = "joyentcloud";
    }

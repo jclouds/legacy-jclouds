@@ -25,7 +25,7 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.joyent.sdc.v6_5.SDCApiMetadata;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -70,7 +70,7 @@ public class JoyentCloudProviderMetadata extends BaseProviderMetadata {
       protected Builder() {
          id("joyentcloud")
          .name("JoyentCloud")
-         .apiMetadata(new SDCApiMetadata())
+         .apiMetadata(new JoyentCloudApiMetadata())
          .homepage(URI.create("http://www.joyent.com/products/smartdatacenter/"))
          .console(URI.create("https://my.joyentcloud.com/login"))
          .iso3166Codes("US-VA", "US-CA", "US-NV", "NL-NH")

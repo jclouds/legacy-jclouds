@@ -18,7 +18,7 @@
  */
 package org.jclouds.joyent.joyentcloud.features;
 
-import org.jclouds.joyent.sdc.v6_5.features.DatasetClientLiveTest;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatasetClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
