@@ -18,7 +18,7 @@
  */
 package org.jclouds.joyent.joyentcloud;
 
-import org.jclouds.joyent.sdc.v6_5.SDCApiMetadata;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApiMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class JoyentCloudProviderMetadataTest extends BaseProviderMetadataTest {
 
    public JoyentCloudProviderMetadataTest() {
-      super(new JoyentCloudProviderMetadata(), new SDCApiMetadata());
+      super(new JoyentCloudProviderMetadata(), new JoyentCloudApiMetadata());
    }
 }
