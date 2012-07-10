@@ -95,7 +95,7 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
             currentZones = client.getAvailabilityZoneClient().addAvailabilityZonesToLoadBalancer(zonesToAdd, name);
          Set<String> zonesToRemove = Sets.difference(currentZones, zonesDesired);
          if (zonesToRemove.size() > 0)
-            client.getAvailabilityZoneClient().addAvailabilityZonesToLoadBalancer(zonesToRemove, name);
+            client.getAvailabilityZoneClient().removeAvailabilityZonesFromLoadBalancer(zonesToRemove, name);
       }
 
       Set<String> instanceIds = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {
