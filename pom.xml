@@ -113,23 +113,23 @@
             </build>
         </profile>
         <profile>
-          <id>doc</id>
-          <build>
-            <plugins>
-              <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>javadoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>aggregate-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>                
-              </plugin>
-            </plugins>
-          </build>
+            <id>doc</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>javadoc</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
