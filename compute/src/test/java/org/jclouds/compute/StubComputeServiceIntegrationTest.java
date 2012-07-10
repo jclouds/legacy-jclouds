@@ -36,7 +36,6 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
@@ -63,12 +62,12 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "StubComputeServiceIntegrationTest")
+@Test(groups = "live", testName="StubComputeServiceIntegrationTest")
 public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
 
-   protected static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
-   protected static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
-   protected static final ExecResponse EXEC_RC_GOOD = new ExecResponse("0", "", 0);
+   private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
+   private static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
+   private static final ExecResponse EXEC_RC_GOOD = new ExecResponse("0", "", 0);
 
    public StubComputeServiceIntegrationTest() {
       provider = "stub";
@@ -97,7 +96,306 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
    @Override
    protected Module getSshModule() {
-      return new StubSshModule();
+      return new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            bind(AdminAccess.Configuration.class).toInstance(new Configuration() {
+
+               @Override
+               public Supplier<String> defaultAdminUsername() {
+                  return Suppliers.ofInstance("defaultAdminUsername");
+               }
+
+               @Override
+               public Supplier<Map<String, String>> defaultAdminSshKeys() {
+                  return Suppliers.<Map<String, String>> ofInstance(ImmutableMap.of("public", "publicKey", "private",
+                        Pems.PRIVATE_PKCS1_MARKER));
+               }
+
+               @Override
+               public Function<String, String> cryptFunction() {
+                  return new Function<String, String>() {
+
+                     @Override
+                     public String apply(String input) {
+                        return String.format("crypt(%s)", input);
+                     }
+
+                  };
+               }
+
+               public Supplier<String> passwordGenerator() {
+                  return Suppliers.ofInstance("randompassword");
+               }
+            });
+            SshClient.Factory factory = createMock(SshClient.Factory.class);
+            SshClient client1 = createMock(SshClient.class);
+            SshClient client1New = createMock(SshClient.class);
+            SshClient client2 = createMock(SshClient.class);
+            SshClient client2New = createMock(SshClient.class);
+            SshClient client2Foo = createMock(SshClient.class);
+            SshClient client3 = createMock(SshClient.class);
+            SshClient client4 = createMock(SshClient.class);
+            SshClient client5 = createMock(SshClient.class);
+            SshClient client6 = createMock(SshClient.class);
+            SshClient client7 = createMock(SshClient.class);
+
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.1", 22),
+                        LoginCredentials.builder().user("root").password("password1").build())).andReturn(client1);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.1", 22),
+                        LoginCredentials.builder().user("web").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client1New)
+                  .times(10);
+            runScriptAndService(client1, client1New);
+
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
+                        LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2)
+                  .times(4);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
+                        LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2New);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
+                        LoginCredentials.builder().user("foo").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client2Foo);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
+                        LoginCredentials.builder().user("root").password("romeo").build())).andThrow(
+                  new AuthorizationException("Auth fail", null));
+
+            // run script without backgrounding (via predicate)
+            client2.connect();
+            expect(client2.exec("hostname\n")).andReturn(new ExecResponse("stub-r\n", "", 0));
+            client2.disconnect();
+
+            // run script without backgrounding (via id)
+            client2.connect();
+            expect(client2.exec("hostname\n")).andReturn(new ExecResponse("stub-r\n", "", 0));
+            client2.disconnect();
+
+            client2.connect();
+            try {
+               runScript(client2, "runScriptWithCreds",
+                        Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
+                                 .getResourceAsStream("/runscript.sh")), 2);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
+            client2.disconnect();
+
+            client2New.connect();
+            try {
+               runScript(client2New, "adminUpdate", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/runscript_adminUpdate.sh")), 2);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
+            client2New.disconnect();
+
+            // check id
+            client2Foo.connect();
+            expect(client2Foo.getUsername()).andReturn("foo").atLeastOnce();
+            expect(client2Foo.getHostAddress()).andReturn("foo").atLeastOnce();
+            expect(client2Foo.exec("echo $USER\n")).andReturn(new ExecResponse("foo\n", "", 0));
+            client2Foo.disconnect();
+
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.3", 22),
+                        LoginCredentials.builder().user("root").password("password3").build())).andReturn(client3)
+                  .times(2);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.4", 22),
+                        LoginCredentials.builder().user("root").password("password4").build())).andReturn(client4)
+                  .times(2);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.5", 22),
+                        LoginCredentials.builder().user("root").password("password5").build())).andReturn(client5)
+                  .times(2);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.6", 22),
+                        LoginCredentials.builder().user("root").password("password6").build())).andReturn(client6)
+                  .times(2);
+            expect(
+                  factory.create(HostAndPort.fromParts("144.175.1.7", 22),
+                        LoginCredentials.builder().user("root").password("password7").build())).andReturn(client7)
+                  .times(2);
+
+            runScriptAndInstallSsh(client3, "bootstrap", 3);
+            runScriptAndInstallSsh(client4, "bootstrap", 4);
+            runScriptAndInstallSsh(client5, "bootstrap", 5);
+            runScriptAndInstallSsh(client6, "bootstrap", 6);
+            runScriptAndInstallSsh(client7, "bootstrap", 7);
+
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.1", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client1);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.2", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client2);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.3", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client3);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.4", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client4);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.5", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client5);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.6", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client6);
+            expect(
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.7", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client7);
+
+            helloAndJava(client2);
+            helloAndJava(client3);
+            helloAndJava(client4);
+            helloAndJava(client5);
+            helloAndJava(client6);
+            helloAndJava(client7);
+
+            replay(factory);
+            replay(client1);
+            replay(client1New);
+            replay(client2);
+            replay(client2New);
+            replay(client2Foo);
+            replay(client3);
+            replay(client4);
+            replay(client5);
+            replay(client6);
+            replay(client7);
+
+            bind(SshClient.Factory.class).toInstance(factory);
+         }
+
+         private void runScriptAndService(SshClient client, SshClient clientNew) {
+            client.connect();
+
+            try {
+               String scriptName = "configure-jboss";
+               client.put("/tmp/init-" + scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/initscript_with_jboss.sh")));
+               expect(client.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
+               expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
+               expect(client.getUsername()).andReturn("root").atLeastOnce();
+               expect(client.getHostAddress()).andReturn("localhost").atLeastOnce();
+               expect(client.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_GOOD);
+               // next status says the script is done, since not found.
+               expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_BAD);
+               expect(client.exec("/tmp/init-" + scriptName + " stdout")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " stderr")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " exitstatus")).andReturn(EXEC_RC_GOOD);
+
+               // note we have to reconnect here, as we updated the login user.
+               client.disconnect();
+
+               clientNew.connect();               
+               expect(clientNew.exec("ls /usr/local/jboss/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();               
+               expect(clientNew.exec("nslookup -query=a -timeout=5 download.jboss.org|grep Address|tail -1|sed 's/.* //g'\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();               
+               expect(clientNew.exec("nslookup -query=a -timeout=5 download.oracle.com|grep Address|tail -1|sed 's/.* //g'\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();               
+               expect(clientNew.exec("curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 http://checkip.amazonaws.com/\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               
+               clientNew.connect();
+               expect(clientNew.exec("java -fullversion\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+
+               clientNew.connect();
+               scriptName = "jboss";
+               clientNew.put("/tmp/init-" + scriptName, Strings2
+                        .toStringAndClose(StubComputeServiceIntegrationTest.class
+                                 .getResourceAsStream("/runscript_jboss.sh")));
+               expect(clientNew.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
+               expect(clientNew.getUsername()).andReturn("web").atLeastOnce();
+               expect(clientNew.getHostAddress()).andReturn("localhost").atLeastOnce();
+               expect(clientNew.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+               clientNew.connect();
+               expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+
+               clientNew.connect();
+               expect(clientNew.exec("/tmp/init-" + scriptName + " stop\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+
+               clientNew.connect();
+               expect(clientNew.exec("/tmp/init-" + scriptName + " start\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+
+               clientNew.connect();
+               expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
+            clientNew.disconnect();
+
+         }
+
+         private void runScriptAndInstallSsh(SshClient client, String scriptName, int nodeId) {
+            client.connect();
+
+            try {
+               runScript(client, scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/initscript_with_java.sh")), nodeId);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
+
+            client.disconnect();
+
+         }
+
+         private void runScript(SshClient client, String scriptName, String script, int nodeId) {
+            client.put("/tmp/init-" + scriptName, script);
+            expect(client.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
+            expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
+            expect(client.getUsername()).andReturn("root").atLeastOnce();
+            expect(client.getHostAddress()).andReturn(nodeId + "").atLeastOnce();
+            expect(client.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_GOOD);
+            // next status says the script is done, since not found.
+            expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_BAD);
+            expect(client.exec("/tmp/init-" + scriptName + " stdout")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " stderr")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " exitstatus")).andReturn(EXEC_RC_GOOD);
+         }
+
+         private void helloAndJava(SshClient client) {
+            client.connect();
+
+            expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
+            expect(client.exec("java -version")).andReturn(new ExecResponse("", "OpenJDK", 0));
+
+            client.disconnect();
+         }
+
+      };
    }
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
@@ -185,7 +483,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       super.testAScriptExecutionAfterBootWithBasicTemplate();
    }
-
+   
    @Test(enabled = false)
    @Override
    public void weCanCancelTasks(NodeMetadata node) throws InterruptedException, ExecutionException {
@@ -255,319 +553,6 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
-   }
-
-   public static class StubSshModule extends AbstractModule {
-      @Override
-      protected void configure() {
-         bind(AdminAccess.Configuration.class).toInstance(new Configuration() {
-
-            @Override
-            public Supplier<String> defaultAdminUsername() {
-               return Suppliers.ofInstance("defaultAdminUsername");
-            }
-
-            @Override
-            public Supplier<Map<String, String>> defaultAdminSshKeys() {
-               return Suppliers.<Map<String, String>> ofInstance(ImmutableMap.of("public", "publicKey", "private",
-                        Pems.PRIVATE_PKCS1_MARKER));
-            }
-
-            @Override
-            public Function<String, String> cryptFunction() {
-               return new Function<String, String>() {
-
-                  @Override
-                  public String apply(String input) {
-                     return String.format("crypt(%s)", input);
-                  }
-
-               };
-            }
-
-            public Supplier<String> passwordGenerator() {
-               return Suppliers.ofInstance("randompassword");
-            }
-         });
-         SshClient.Factory factory = createMock(SshClient.Factory.class);
-         SshClient client1 = createMock(SshClient.class);
-         SshClient client1New = createMock(SshClient.class);
-         SshClient client2 = createMock(SshClient.class);
-         SshClient client2New = createMock(SshClient.class);
-         SshClient client2Foo = createMock(SshClient.class);
-         SshClient client3 = createMock(SshClient.class);
-         SshClient client4 = createMock(SshClient.class);
-         SshClient client5 = createMock(SshClient.class);
-         SshClient client6 = createMock(SshClient.class);
-         SshClient client7 = createMock(SshClient.class);
-
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.1", 22), LoginCredentials.builder().user("root")
-                           .password("password1").build())).andReturn(client1);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.1", 22), LoginCredentials.builder().user("web")
-                           .privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client1New).times(10);
-         runScriptAndService(client1, client1New);
-
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.2", 22), LoginCredentials.builder().user("root")
-                           .password("password2").build())).andReturn(client2).times(4);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.2", 22), LoginCredentials.builder().user("root")
-                           .password("password2").build())).andReturn(client2New);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.2", 22), LoginCredentials.builder().user("foo")
-                           .privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client2Foo);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.2", 22), LoginCredentials.builder().user("root")
-                           .password("romeo").build())).andThrow(new AuthorizationException("Auth fail", null));
-
-         // run script without backgrounding (via predicate)
-         client2.connect();
-         expect(client2.exec("hostname\n")).andReturn(new ExecResponse("stub-r\n", "", 0));
-         client2.disconnect();
-
-         // run script without backgrounding (via id)
-         client2.connect();
-         expect(client2.exec("hostname\n")).andReturn(new ExecResponse("stub-r\n", "", 0));
-         client2.disconnect();
-
-         client2.connect();
-         try {
-            runScript(client2, "runScriptWithCreds", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/runscript.sh")), 2);
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-         client2.disconnect();
-
-         client2New.connect();
-         try {
-            runScript(client2New, "adminUpdate", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/runscript_adminUpdate.sh")), 2);
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-         client2New.disconnect();
-
-         // check id
-         client2Foo.connect();
-         expect(client2Foo.getUsername()).andReturn("foo").atLeastOnce();
-         expect(client2Foo.getHostAddress()).andReturn("foo").atLeastOnce();
-         expect(client2Foo.exec("echo $USER\n")).andReturn(new ExecResponse("foo\n", "", 0));
-         client2Foo.disconnect();
-
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.3", 22), LoginCredentials.builder().user("root")
-                           .password("password3").build())).andReturn(client3).times(2);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.4", 22), LoginCredentials.builder().user("root")
-                           .password("password4").build())).andReturn(client4).times(2);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.5", 22), LoginCredentials.builder().user("root")
-                           .password("password5").build())).andReturn(client5).times(2);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.6", 22), LoginCredentials.builder().user("root")
-                           .password("password6").build())).andReturn(client6).times(2);
-         expect(
-                  factory.create(HostAndPort.fromParts("144.175.1.7", 22), LoginCredentials.builder().user("root")
-                           .password("password7").build())).andReturn(client7).times(2);
-
-         runScriptAndInstallSsh(client3, "bootstrap", 3);
-         runScriptAndInstallSsh(client4, "bootstrap", 4);
-         runScriptAndInstallSsh(client5, "bootstrap", 5);
-         runScriptAndInstallSsh(client6, "bootstrap", 6);
-         runScriptAndInstallSsh(client7, "bootstrap", 7);
-
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.1", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client1);
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.2", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client2);
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.3", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client3);
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.4", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client4);
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.5", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client5);
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.6", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client6);
-         expect(
-                  factory.create(
-                           eq(HostAndPort.fromParts("144.175.1.7", 22)),
-                           eq(LoginCredentials.builder().user("defaultAdminUsername")
-                                    .privateKey(Pems.PRIVATE_PKCS1_MARKER).build()))).andReturn(client7);
-
-         helloAndJava(client2);
-         helloAndJava(client3);
-         helloAndJava(client4);
-         helloAndJava(client5);
-         helloAndJava(client6);
-         helloAndJava(client7);
-
-         replay(factory);
-         replay(client1);
-         replay(client1New);
-         replay(client2);
-         replay(client2New);
-         replay(client2Foo);
-         replay(client3);
-         replay(client4);
-         replay(client5);
-         replay(client6);
-         replay(client7);
-
-         bind(SshClient.Factory.class).toInstance(factory);
-
-         bind(OpenSocketFinder.class).toInstance(new OpenSocketFinder() {
-            @Override
-            public HostAndPort findOpenSocketOnNode(NodeMetadata node, int port, long timeoutValue, TimeUnit timeUnits) {
-               return HostAndPort.fromParts("0.0.0.0", port);
-            }
-         });
-         
-      }
-
-      private void runScriptAndService(SshClient client, SshClient clientNew) {
-         client.connect();
-
-         try {
-            String scriptName = "configure-jboss";
-            client.put("/tmp/init-" + scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/initscript_with_jboss.sh")));
-            expect(client.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
-            expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
-            expect(client.getUsername()).andReturn("root").atLeastOnce();
-            expect(client.getHostAddress()).andReturn("localhost").atLeastOnce();
-            expect(client.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
-            expect(client.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
-            expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_GOOD);
-            // next status says the script is done, since not found.
-            expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_BAD);
-            expect(client.exec("/tmp/init-" + scriptName + " stdout")).andReturn(EXEC_GOOD);
-            expect(client.exec("/tmp/init-" + scriptName + " stderr")).andReturn(EXEC_GOOD);
-            expect(client.exec("/tmp/init-" + scriptName + " exitstatus")).andReturn(EXEC_RC_GOOD);
-
-            // note we have to reconnect here, as we updated the login user.
-            client.disconnect();
-
-            clientNew.connect();
-            expect(
-                     clientNew.exec("ls /usr/local/jboss/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'\n"))
-                     .andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(
-                     clientNew.exec("nslookup -query=a -timeout=5 download.jboss.org|grep Address|tail -1|sed 's/.* //g'\n"))
-                     .andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(
-                     clientNew.exec("nslookup -query=a -timeout=5 download.oracle.com|grep Address|tail -1|sed 's/.* //g'\n"))
-                     .andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(
-                     clientNew.exec("curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 http://checkip.amazonaws.com/\n"))
-                     .andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(clientNew.exec("java -fullversion\n")).andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            scriptName = "jboss";
-            clientNew.put("/tmp/init-" + scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/runscript_jboss.sh")));
-            expect(clientNew.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
-            expect(clientNew.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
-            expect(clientNew.getUsername()).andReturn("web").atLeastOnce();
-            expect(clientNew.getHostAddress()).andReturn("localhost").atLeastOnce();
-            expect(clientNew.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
-            expect(clientNew.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-            clientNew.connect();
-            expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(clientNew.exec("/tmp/init-" + scriptName + " stop\n")).andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(clientNew.exec("/tmp/init-" + scriptName + " start\n")).andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-
-            clientNew.connect();
-            expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
-            clientNew.disconnect();
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-         clientNew.disconnect();
-
-      }
-
-      private void runScriptAndInstallSsh(SshClient client, String scriptName, int nodeId) {
-         client.connect();
-
-         try {
-            runScript(client, scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/initscript_with_java.sh")), nodeId);
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-
-         client.disconnect();
-
-      }
-
-      private void runScript(SshClient client, String scriptName, String script, int nodeId) {
-         client.put("/tmp/init-" + scriptName, script);
-         expect(client.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
-         expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
-         expect(client.getUsername()).andReturn("root").atLeastOnce();
-         expect(client.getHostAddress()).andReturn(nodeId + "").atLeastOnce();
-         expect(client.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
-         expect(client.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
-         expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_GOOD);
-         // next status says the script is done, since not found.
-         expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_BAD);
-         expect(client.exec("/tmp/init-" + scriptName + " stdout")).andReturn(EXEC_GOOD);
-         expect(client.exec("/tmp/init-" + scriptName + " stderr")).andReturn(EXEC_GOOD);
-         expect(client.exec("/tmp/init-" + scriptName + " exitstatus")).andReturn(EXEC_RC_GOOD);
-      }
-
-      private void helloAndJava(SshClient client) {
-         client.connect();
-
-         expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
-         expect(client.exec("java -version")).andReturn(new ExecResponse("", "OpenJDK", 0));
-
-         client.disconnect();
-      }
-
    }
 
 }

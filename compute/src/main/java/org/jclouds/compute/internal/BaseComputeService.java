@@ -597,8 +597,6 @@ public class BaseComputeService implements ComputeService {
          throw new IllegalStateException("node " + id
                + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);
-      System.out.println("node: " + node);
-      System.out.println("options: " + options);
       node = updateNodeWithCredentialsIfPresent(node, options);
       ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
       persistNodeCredentials.ifAdminAccess(runScript).apply(node);
