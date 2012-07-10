@@ -35,6 +35,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -105,9 +106,7 @@ public class CreateServerOptions implements MapBinder {
       if (sharedIpGroupId != null)
          server.sharedIpGroupId = this.sharedIpGroupId;
       if (publicIp != null) {
-         server.addresses = new Addresses();
-         server.addresses.getPublicAddresses().add(publicIp);
-         server.addresses.setPrivateAddresses(null);
+         server.addresses = Addresses.builder().publicAddresses(ImmutableSet.of(publicIp)).build();
       }
       return bindToRequest(request, ImmutableMap.of("server", server));
    }

@@ -61,7 +61,8 @@ public class ParseImageListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_images.json");
 
-      List<Image> expects = ImmutableList.of(new Image(2, "CentOS 5.2"), new Image(743, "My Server Backup"));
+      List<Image> expects = ImmutableList.of(Image.builder().id(2).name("CentOS 5.2").build(),
+            Image.builder().id(743).name("My Server Backup").build());
 
       UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {

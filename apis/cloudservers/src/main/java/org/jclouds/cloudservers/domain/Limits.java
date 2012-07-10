@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,59 +18,115 @@
  */
 package org.jclouds.cloudservers.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
+/**
+ * Class Limits
+*/
 public class Limits {
 
-   private Set<RateLimit> rate = Sets.newLinkedHashSet();
-   private Map<String, Integer> absolute = Maps.newLinkedHashMap();
-
-   public Set<RateLimit> getRate() {
-      return rate;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromLimits(this);
    }
 
-   @Override
-   public String toString() {
-      return "Limits [rate=" + rate + ", absolute=" + absolute + "]";
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected Set<RateLimit> rate = ImmutableSet.of();
+      protected Map<String, Integer> absolute = ImmutableMap.of();
+   
+      /** 
+       * @see Limits#getRate()
+       */
+      public T rate(Set<RateLimit> rate) {
+         this.rate = ImmutableSet.copyOf(checkNotNull(rate, "rate"));      
+         return self();
+      }
+
+      public T rate(RateLimit... in) {
+         return rate(ImmutableSet.copyOf(in));
+      }
+
+      /** 
+       * @see Limits#getAbsolute()
+       */
+      public T absolute(Map<String, Integer> absolute) {
+         this.absolute = ImmutableMap.copyOf(checkNotNull(absolute, "absolute"));     
+         return self();
+      }
+
+      public Limits build() {
+         return new Limits(rate, absolute);
+      }
+      
+      public T fromLimits(Limits in) {
+         return this
+                  .rate(in.getRate())
+                  .absolute(in.getAbsolute());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final Set<RateLimit> rate;
+   private final Map<String, Integer> absolute;
+
+   @ConstructorProperties({
+      "rate", "absolute"
+   })
+   protected Limits(Set<RateLimit> rate, Map<String, Integer> absolute) {
+      this.rate = ImmutableSet.copyOf(checkNotNull(rate, "rate"));      
+      this.absolute = ImmutableMap.copyOf(checkNotNull(absolute, "absolute"));     
+   }
+
+   public Set<RateLimit> getRate() {
+      return this.rate;
+   }
+
+   public Map<String, Integer> getAbsolute() {
+      return this.absolute;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((absolute == null) ? 0 : absolute.hashCode());
-      result = prime * result + ((rate == null) ? 0 : rate.hashCode());
-      return result;
+      return Objects.hashCode(rate, absolute);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Limits other = (Limits) obj;
-      if (absolute == null) {
-         if (other.absolute != null)
-            return false;
-      } else if (!absolute.equals(other.absolute))
-         return false;
-      if (rate == null) {
-         if (other.rate != null)
-            return false;
-      } else if (!rate.equals(other.rate))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Limits that = Limits.class.cast(obj);
+      return Objects.equal(this.rate, that.rate)
+               && Objects.equal(this.absolute, that.absolute);
    }
-
-   public Map<String, Integer> getAbsolute() {
-      return absolute;
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("rate", rate).add("absolute", absolute);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
 }
