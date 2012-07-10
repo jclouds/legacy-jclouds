@@ -36,13 +36,20 @@ public class NodePoolComputeServiceContext extends ComputeServiceContextImpl {
 
    @Inject
    public NodePoolComputeServiceContext(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-         ComputeService computeService, Utils utils, NodePoolComputeServiceAdapter adapter) {
+            ComputeService computeService, Utils utils, NodePoolComputeServiceAdapter adapter) {
       super(backend, backendType, computeService, utils);
       this.adapter = adapter;
    }
 
    public NodePoolStats getPoolStats() {
       return new NodePoolStats(adapter.currentSize(), adapter.idleNodes(), adapter.usedNodes(), adapter.maxNodes(),
-            adapter.minNodes());
+               adapter.minNodes());
+   }
+
+   /**
+    * Destroys all (backing nodes) in the pool and deletes all state.
+    */
+   public void destroyPool() {
+      this.adapter.destroyPool();
    }
 }

@@ -36,4 +36,6 @@ public interface NodePoolComputeServiceAdapter extends JCloudsNativeComputeServi
 
    int currentSize();
 
+   void destroyPool();
+
 }
