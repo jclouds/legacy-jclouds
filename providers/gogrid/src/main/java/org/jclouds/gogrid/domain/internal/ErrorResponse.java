@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,43 +18,109 @@
  */
 package org.jclouds.gogrid.domain.internal;
 
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Class ErrorResponse
+ *
  * @author Oleksiy Yarmula
  */
-public class ErrorResponse implements Comparable<ErrorResponse> {
+public class ErrorResponse {
 
-   private String message;
-   @SerializedName("errorcode")
-   private String errorCode;
-
-   /**
-    * A no-args constructor is required for deserialization
-    */
-   public ErrorResponse() {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public ErrorResponse(String message, String errorCode) {
-      this.message = message;
-      this.errorCode = errorCode;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromErrorResponse(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String message;
+      protected String errorCode;
+
+      /**
+       * @see ErrorResponse#getMessage()
+       */
+      public T message(String message) {
+         this.message = message;
+         return self();
+      }
+
+      /**
+       * @see ErrorResponse#getErrorCode()
+       */
+      public T errorCode(String errorCode) {
+         this.errorCode = errorCode;
+         return self();
+      }
+
+      public ErrorResponse build() {
+         return new ErrorResponse(message, errorCode);
+      }
+
+      public T fromErrorResponse(ErrorResponse in) {
+         return this
+               .message(in.getMessage())
+               .errorCode(in.getErrorCode());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String message;
+   private final String errorCode;
+
+   @ConstructorProperties({
+         "message", "errorcode"
+   })
+   protected ErrorResponse(String message, String errorCode) {
+      this.message = checkNotNull(message, "message");
+      this.errorCode = checkNotNull(errorCode, "errorCode");
    }
 
    public String getMessage() {
-      return message;
+      return this.message;
    }
 
    public String getErrorCode() {
-      return errorCode;
+      return this.errorCode;
    }
 
    @Override
-   public int compareTo(ErrorResponse o) {
-      return message.compareTo(o.getMessage());
+   public int hashCode() {
+      return Objects.hashCode(message, errorCode);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ErrorResponse that = ErrorResponse.class.cast(obj);
+      return Objects.equal(this.message, that.message)
+            && Objects.equal(this.errorCode, that.errorCode);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("message", message).add("errorCode", errorCode);
    }
 
    @Override
    public String toString() {
-      return "[errorCode=" + errorCode + ", message=" + message + "]";
+      return string().toString();
    }
+
 }

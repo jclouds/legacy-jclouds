@@ -18,27 +18,29 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.binders.GetMetricStatisticsBinder;
 import org.jclouds.cloudwatch.binders.MetricDataBinder;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
+import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandlerV2;
 import org.jclouds.cloudwatch.xml.ListMetricsResponseHandler;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
@@ -52,22 +54,22 @@ import javax.ws.rs.Path;
 public interface MetricAsyncClient {
 
    /**
-    * @see MetricClient#listMetrics()
+    * @see MetricClient#list()
     */
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
    @FormParams(keys = "Action", values = "ListMetrics")
-   ListenableFuture<? extends ListMetricsResponse> listMetrics();
+   ListenableFuture<? extends PaginatedIterable<Metric>> list();
 
    /**
-    * @see MetricClient#listMetrics(ListMetricsOptions)
+    * @see MetricClient#list(ListMetricsOptions)
     */
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
    @FormParams(keys = "Action", values = "ListMetrics")
-   ListenableFuture<? extends ListMetricsResponse> listMetrics(ListMetricsOptions options);
+   ListenableFuture<? extends PaginatedIterable<Metric>> list(ListMetricsOptions options);
 
    /**
     * @see MetricClient#getMetricStatistics(GetMetricStatistics)
@@ -91,12 +93,12 @@ public interface MetricAsyncClient {
             GetMetricStatisticsOptions options);
 
    /**
-    * @see MetricClient#putMetricData(Iterable, String)
+    * @see MetricClient#putMetricsInNamespace(Iterable, String)
     */
    @POST
    @Path("/")
    @FormParams(keys = "Action", values = "PutMetricData")
-   ListenableFuture<Void> putMetricData(@BinderParam(MetricDataBinder.class) Iterable<MetricDatum> metrics,
+   ListenableFuture<Void> putMetricsInNamespace(@BinderParam(MetricDataBinder.class) Iterable<MetricDatum> metrics,
                                         @FormParam("Namespace") String namespace);
 
 }

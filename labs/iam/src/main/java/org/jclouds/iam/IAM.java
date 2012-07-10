@@ -1,7 +1,7 @@
 package org.jclouds.iam;
 
-import org.jclouds.collect.PaginatedSet;
-import org.jclouds.collect.PaginatedSets;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.features.UserClient;
 import org.jclouds.iam.options.ListUsersOptions;
@@ -26,11 +26,11 @@ public class IAM {
     * @return iterable of users fitting the criteria
     */
    public static Iterable<User> list(final UserClient userClient, final ListUsersOptions options) {
-      return PaginatedSets.lazyContinue(userClient.list(options), new Function<String, PaginatedSet<User>>() {
+      return PaginatedIterables.lazyContinue(userClient.list(options), new Function<Object, PaginatedIterable<User>>() {
 
          @Override
-         public PaginatedSet<User> apply(String input) {
-            return userClient.list(options.clone().marker(input));
+         public PaginatedIterable<User> apply(Object input) {
+            return userClient.list(options.clone().afterMarker(input));
          }
 
          @Override

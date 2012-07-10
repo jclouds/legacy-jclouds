@@ -31,7 +31,8 @@ import javax.inject.Inject;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Hypervisor;
@@ -59,14 +60,14 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
    @Resource
    protected Logger logger = Logger.NULL;
 
-   protected final DateService dateService;
+   protected final DateCodec dateCodec;
    protected final Supplier<String> defaultRegion;
    protected final Provider<AWSRunningInstance.Builder> builderProvider;
 
    @Inject
-   public BaseAWSReservationHandler(DateService dateService, @Region Supplier<String> defaultRegion,
+   public BaseAWSReservationHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
          Provider<AWSRunningInstance.Builder> builderProvider) {
-      this.dateService = dateService;
+      this.dateCodec = dateCodecFactory.iso8601();
       this.defaultRegion = defaultRegion;
       this.builderProvider = builderProvider;
       this.builder = builderProvider.get();
@@ -170,7 +171,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
       } else if (equalsOrSuffix(qName, "keyName")) {
          builder.keyName(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "launchTime")) {
-         builder.launchTime(parseDate());
+         builder.launchTime(dateCodec.toDate(currentOrNull(currentText)));
       } else if (equalsOrSuffix(qName, "availabilityZone")) {
          builder.availabilityZone(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "virtualizationType")) {
@@ -196,7 +197,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
       } else if (equalsOrSuffix(qName, "status")) {
          attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
       } else if (equalsOrSuffix(qName, "attachTime")) {
-         attachTime = dateService.iso8601DateParse(currentText.toString().trim());
+         attachTime = dateCodec.toDate(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "deleteOnTermination")) {
          deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
       } else if (equalsOrSuffix(qName, "ebs")) {
@@ -209,11 +210,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
       }
       currentText = new StringBuilder();
    }
-
-   protected Date parseDate() {
-      return dateService.iso8601DateParse(currentOrNull(currentText));
-   }
-
+   
    protected void inItem() {
       if (endOfInstanceItem()) {
          refineBuilderBeforeAddingInstance();

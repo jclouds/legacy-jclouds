@@ -21,7 +21,6 @@ package org.jclouds.elb.options;
 import java.util.Set;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Multimap;
@@ -38,19 +37,21 @@ import com.google.common.collect.Sets;
  */
 public class ListLoadBalancersOptions extends BaseHttpRequestOptions implements Cloneable {
 
-   private String marker;
+   private Object marker;
    private Set<String> names = Sets.newLinkedHashSet();
 
    /**
-    * @see ListLoadBalancersOptions#getMarker()
+    * Use this parameter only when paginating results, and only in a subsequent request after you've
+    * received a response where the results are truncated. Set it to the value of the Marker element
+    * in the response you just received.
     */
-   public ListLoadBalancersOptions marker(String marker) {
+   public ListLoadBalancersOptions afterMarker(Object marker) {
       this.marker = marker;
       return this;
    }
 
    /**
-    * @see ListLoadBalancersOptions#getNames()
+    * list of names associated with the LoadBalancers at creation time.
     */
    public ListLoadBalancersOptions names(Set<String> names) {
       this.names = names;
@@ -58,28 +59,11 @@ public class ListLoadBalancersOptions extends BaseHttpRequestOptions implements 
    }
 
    /**
-    * @see ListLoadBalancersOptions#getNames()
+    * @see #names
     */
    public ListLoadBalancersOptions name(String name) {
       this.names.add(name);
       return this;
-   }
-
-   /**
-    * list of names associated with the LoadBalancers at creation time.
-    */
-   public Set<String> getNames() {
-      return names;
-   }
-
-   /**
-    * Use this parameter only when paginating results, and only in a subsequent request after you've
-    * received a response where the results are truncated. Set it to the value of the Marker element
-    * in the response you just received.
-    */
-   @Nullable
-   public String getMarker() {
-      return marker;
    }
 
    public static class Builder {
@@ -87,8 +71,8 @@ public class ListLoadBalancersOptions extends BaseHttpRequestOptions implements 
       /**
        * @see ListLoadBalancersOptions#getMarker()
        */
-      public static ListLoadBalancersOptions marker(String marker) {
-         return new ListLoadBalancersOptions().marker(marker);
+      public static ListLoadBalancersOptions afterMarker(Object marker) {
+         return new ListLoadBalancersOptions().afterMarker(marker);
       }
 
       /**
@@ -110,7 +94,7 @@ public class ListLoadBalancersOptions extends BaseHttpRequestOptions implements 
    public Multimap<String, String> buildFormParameters() {
       Multimap<String, String> params = super.buildFormParameters();
       if (marker != null)
-         params.put("Marker", marker);
+         params.put("Marker", marker.toString());
       if (names.size() > 0) {
          int nameIndex = 1;
          for (String name : names) {
@@ -131,7 +115,7 @@ public class ListLoadBalancersOptions extends BaseHttpRequestOptions implements 
 
    @Override
    public ListLoadBalancersOptions clone() {
-      return new ListLoadBalancersOptions().marker(marker).names(names);
+      return new ListLoadBalancersOptions().afterMarker(marker).names(names);
    }
 
    /**

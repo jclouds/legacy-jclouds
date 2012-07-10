@@ -77,7 +77,7 @@ public class ELBApiMetadata extends BaseRestApiMetadata {
          .name("Amazon Elastic Load Balancing Api")
          .identityName("Access Key ID")
          .credentialName("Secret Access Key")
-         .version(ELBAsyncClient.VERSION)
+         .version("2012-06-01")
          .defaultProperties(ELBApiMetadata.defaultProperties())
          .defaultEndpoint("https://elasticloadbalancing.us-east-1.amazonaws.com")
          .documentation(URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference"))

@@ -61,11 +61,11 @@ public class AllocateAndAddFloatingIpToNode implements
 
    private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
    private final NovaClient novaClient;
-   private final LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache;
+   private final LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache;
 
    @Inject
    public AllocateAndAddFloatingIpToNode(@Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-            NovaClient novaClient, @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache) {
+            NovaClient novaClient, @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache) {
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
       this.novaClient = checkNotNull(novaClient, "novaClient");
       this.floatingIpCache = checkNotNull(floatingIpCache, "floatingIpCache");

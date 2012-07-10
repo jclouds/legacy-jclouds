@@ -22,13 +22,10 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import javax.inject.Named;
+
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
@@ -41,21 +38,33 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.location.Region;
+import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3AsyncClientTest;
+import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
-import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
+import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
 import org.jclouds.s3.xml.LocationConstraintHandler;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Functions;
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -72,15 +81,15 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
       Method method = S3AsyncClient.class.getMethod("copyObject", String.class, String.class, String.class,
                                                     String.class,
                                                     Array.newInstance(CopyObjectOptions.class, 0).getClass());
-      processor.createRequest(method, "sourceBucket", "sourceObject", "destinationBucket", "destinationObject");
+      processor.createRequest(method, "sourceBucket", "sourceObject", "destinationbucket", "destinationObject");
    }
 
-   public void testGetBucketLocationEU() throws SecurityException, NoSuchMethodException, IOException {
+   public void testGetBucketLocationEUIsStillDefault() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
-      HttpRequest request = processor.createRequest(method, "eubucket");
+      HttpRequest request = processor.createRequest(method, "bucket-eu-west-1");
 
-      assertRequestLineEquals(request, "GET https://eubucket.s3-eu-west-1.amazonaws.com/?location HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: eubucket.s3-eu-west-1.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket-eu-west-1.s3.amazonaws.com/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket-eu-west-1.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -147,7 +156,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists.class);
 
       checkFilters(request);
    }
@@ -257,23 +266,29 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists.class);
 
       checkFilters(request);
    }
 
-      @ConfiguresRestClient
+   @ConfiguresRestClient
    private static final class TestAWSS3RestClientModule extends AWSS3RestClientModule {
 
-      public TestAWSS3RestClientModule() {
-         super();
-      }
-
       @Override
-      protected ConcurrentMap<String, String> bucketToRegion() {
-         ConcurrentMap<String, String> returnVal = Maps.newConcurrentMap();
-         returnVal.put("eubucket", "EU");
-         return returnVal;
+      protected CacheLoader<String, Optional<String>> bucketToRegion(@Region Supplier<Set<String>> regionSupplier,
+               final S3Client client) {
+         return CacheLoader.<String, Optional<String>> from(Functions.forMap(ImmutableMap
+                           .<String, Optional<String>> builder()
+                           .put("bucket", Optional.<String> absent())
+                           .put("destinationbucket", Optional.<String> absent())
+                           .put("bucket-us-standard", Optional.of("us-standard"))
+                           .put("bucket-us-west-1", Optional.of("us-west-1"))
+                           .put("bucket-us-west-2", Optional.of("us-west-2"))
+                           .put("bucket-eu-west-1", Optional.of("eu-west-1"))
+                           .put("bucket-sa-east-1", Optional.of("sa-east-1"))
+                           .put("bucket-ap-southeast-1", Optional.of("ap-southeast-1"))
+                           .put("bucket-ap-northeast-1", Optional.of("ap-northeast-1"))
+                           .build()));
       }
 
       @Override

@@ -23,7 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.options.ListUsersOptions;
 import org.jclouds.iam.xml.ListUsersResultHandler;
@@ -74,7 +74,7 @@ public interface UserAsyncClient {
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)
    @FormParams(keys = "Action", values = "ListUsers")
-   ListenableFuture<PaginatedSet<User>> list();
+   ListenableFuture<PaginatedIterable<User>> list();
 
    /**
     * @see UserClient#list(ListUsersOptions)
@@ -83,6 +83,6 @@ public interface UserAsyncClient {
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)
    @FormParams(keys = "Action", values = "ListUsers")
-   ListenableFuture<PaginatedSet<User>> list(ListUsersOptions options);
+   ListenableFuture<PaginatedIterable<User>> list(ListUsersOptions options);
 
 }

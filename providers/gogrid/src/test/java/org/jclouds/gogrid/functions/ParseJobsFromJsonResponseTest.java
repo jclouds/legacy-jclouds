@@ -41,7 +41,6 @@ import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
@@ -68,11 +67,12 @@ public class ParseJobsFromJsonResponseTest {
             "name", "ServerCreated40562",
             "type", "virtual_server");
 
-      Job job = new Job(250628L, new Option(7L, "DeleteVirtualServer", "Delete Virtual Server"),
-            ObjectType.VIRTUAL_SERVER, new Date(1267404528895L), new Date(1267404538592L), JobState.SUCCEEDED, 1,
-            "3116784158f0af2d-24076@api.gogrid.com", ImmutableSortedSet.of(new JobProperties(940263L, new Date(
-            1267404528897L), JobState.CREATED, null), new JobProperties(940264L, new Date(1267404528967L),
-            JobState.QUEUED, null)), details);
+      Job job = Job.builder().id(250628L).command(Option.createWithIdNameAndDescription(7L, "DeleteVirtualServer", "Delete Virtual Server"))
+            .objectType(ObjectType.VIRTUAL_SERVER).createdOn(new Date(1267404528895L)).lastUpdatedOn(new Date(1267404538592L))
+            .currentState(JobState.SUCCEEDED).attempts(1).owner("3116784158f0af2d-24076@api.gogrid.com").history(
+                  JobProperties.builder().id(940263L).updatedOn(new Date(1267404528897L)).state(JobState.CREATED).build(),
+                  JobProperties.builder().id(940264L).updatedOn(new Date(1267404528967L)).state(JobState.QUEUED).build())
+            .details(details).build();
       assertEquals(job, Iterables.getOnlyElement(response));
    }
 

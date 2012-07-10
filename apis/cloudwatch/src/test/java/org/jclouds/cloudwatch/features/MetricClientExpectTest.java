@@ -18,7 +18,12 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import com.google.common.collect.ImmutableMultimap;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.util.Date;
+import java.util.TimeZone;
+
 import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
@@ -34,11 +39,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.Date;
-import java.util.TimeZone;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Jeremy Whitlock, Adrian Cole
@@ -76,9 +77,8 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
       CloudWatchClient clientWhenMetricsExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      assertEquals(clientWhenMetricsExist.getMetricClientForRegion(null).listMetrics().toString(),
-            "ListMetricsResponse{metrics=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, " +
-                  "dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], nextToken=null}");
+      assertEquals(clientWhenMetricsExist.getMetricClientForRegion(null).list().toString(),
+            "{elements=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
    }
 
    // TODO: this should really be an empty set
@@ -90,7 +90,7 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
       CloudWatchClient clientWhenMetricsDontExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      clientWhenMetricsDontExist.getMetricClientForRegion(null).listMetrics();
+      clientWhenMetricsDontExist.getMetricClientForRegion(null).list();
    }
    
    public void testListMetricsWithOptionsWhenResponseIs2xx() throws Exception {
@@ -124,16 +124,14 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
                listMetricsWithOptionsResponse);
 
       assertEquals(
-               clientWhenMetricsWithOptionsExist.getMetricClientForRegion(null).listMetrics(
-                        ListMetricsOptions.builder()
+               clientWhenMetricsWithOptionsExist.getMetricClientForRegion(null).list(
+                        ListMetricsOptions.Builder
                                           .dimension(new Dimension(EC2Constants.Dimension.INSTANCE_ID,
                                                                    "SOMEINSTANCEID"))
                                           .metricName(EC2Constants.MetricName.CPU_UTILIZATION)
                                           .namespace("SOMENEXTTOKEN")
-                                          .nextToken( Namespaces.EC2)
-                                          .build()).toString(),
-         "ListMetricsResponse{metrics=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, " +
-               "dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], nextToken=null}");
+                                          .afterMarker(Namespaces.EC2)).toString(),
+         "{elements=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
    }
 
    GetMetricStatistics stats = GetMetricStatistics.builder()

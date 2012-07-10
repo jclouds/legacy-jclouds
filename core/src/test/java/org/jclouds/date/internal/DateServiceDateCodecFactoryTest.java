@@ -24,8 +24,9 @@ import static org.testng.Assert.fail;
 import java.util.Date;
 
 import org.jclouds.date.DateCodec;
+import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceIso8601Codec;
 import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceRfc1123Codec;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -38,12 +39,14 @@ public class DateServiceDateCodecFactoryTest {
 
    private DateServiceDateCodecFactory simpleDateCodecFactory;
    private DateCodec rfc1123Codec;
+   private DateCodec iso8601Codec;
 
-   @BeforeMethod
+   @BeforeTest
    public void setUp() {
       simpleDateCodecFactory = new DateServiceDateCodecFactory(new DateServiceRfc1123Codec(
-            new SimpleDateFormatDateService()));
+               new SimpleDateFormatDateService()), new DateServiceIso8601Codec(new SimpleDateFormatDateService()));
       rfc1123Codec = simpleDateCodecFactory.rfc1123();
+      iso8601Codec = simpleDateCodecFactory.iso8601();
    }
 
    @Test
@@ -58,6 +61,23 @@ public class DateServiceDateCodecFactoryTest {
    public void testCodecForRfc1123ThrowsParseExceptionWhenMalformed() {
       try {
          rfc1123Codec.toDate("wrong");
+         fail();
+      } catch (IllegalArgumentException e) {
+      }
+   }
+
+   @Test
+   public void testCodecForIso8601() {
+      Date date = new Date(1000);
+      assertEquals(iso8601Codec.toDate(iso8601Codec.toString(date)), date);
+
+      assertEquals(iso8601Codec.toDate("1994-12-01T16:00:00.000Z"), new Date(786297600000L));
+   }
+
+   @Test
+   public void testCodecForIso8601ThrowsParseExceptionWhenMalformed() {
+      try {
+         iso8601Codec.toDate("-");
          fail();
       } catch (IllegalArgumentException e) {
       }

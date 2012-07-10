@@ -18,7 +18,7 @@
  */
 package org.jclouds.elb.loadbalancer.config;
 
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.elb.loadbalancer.functions.LoadBalancerToLoadBalancerMetadata;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 
@@ -34,7 +34,7 @@ public class ELBLoadBalancerServiceDependenciesModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<CrappyLoadBalancer, LoadBalancerMetadata>>() {
+      bind(new TypeLiteral<Function<LoadBalancerInRegion, LoadBalancerMetadata>>() {
       }).to(LoadBalancerToLoadBalancerMetadata.class);
    }
 

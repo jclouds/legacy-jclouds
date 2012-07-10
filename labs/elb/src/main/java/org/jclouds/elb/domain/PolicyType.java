@@ -20,10 +20,15 @@ package org.jclouds.elb.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -35,16 +40,15 @@ import com.google.common.collect.ImmutableSet;
  */
 public class PolicyType {
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromPolicyType(this);
+   public Builder toBuilder() {
+      return builder().fromPolicyType(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
-      protected abstract T self();
+   public static class Builder {
 
       protected String name;
       protected String description;
@@ -53,48 +57,41 @@ public class PolicyType {
       /**
        * @see PolicyType#getName()
        */
-      public T name(String name) {
+      public Builder name(String name) {
          this.name = name;
-         return self();
+         return this;
       }
 
       /**
        * @see PolicyType#getDescription()
        */
-      public T description(String description) {
+      public Builder description(String description) {
          this.description = description;
-         return self();
+         return this;
       }
 
       /**
        * @see PolicyType#getAttributeMetadata()
        */
-      public T attributeMetadata(Iterable<AttributeMetadata<?>> attributeMetadata) {
+      public Builder attributeMetadata(Iterable<AttributeMetadata<?>> attributeMetadata) {
          this.attributeMetadata.addAll(checkNotNull(attributeMetadata, "attributeMetadata"));
-         return self();
+         return this;
       }
 
       /**
        * @see PolicyType#getAttributeMetadata()
        */
-      public T attributeMetadata(AttributeMetadata<?> attributeMetadata) {
+      public Builder attributeMetadata(AttributeMetadata<?> attributeMetadata) {
          this.attributeMetadata.add(checkNotNull(attributeMetadata, "attributeMetadata"));
-         return self();
+         return this;
       }
 
       public PolicyType build() {
          return new PolicyType(name, description, attributeMetadata.build());
       }
 
-      public T fromPolicyType(PolicyType in) {
+      public Builder fromPolicyType(PolicyType in) {
          return this.name(in.getName()).description(in.getDescription()).attributeMetadata(in.getAttributeMetadata());
-      }
-   }
-
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-      @Override
-      protected ConcreteBuilder self() {
-         return this;
       }
    }
 
@@ -128,6 +125,21 @@ public class PolicyType {
     */
    public Set<AttributeMetadata<?>> getAttributeMetadata() {
       return attributeMetadata;
+   }
+   
+   /**
+    * convenience method
+    * @see #getAttributeMetadata()
+    */
+   public Map<String, AttributeMetadata<?>> getAttributeMetadataByName() {
+      return Maps.uniqueIndex(attributeMetadata, new Function<AttributeMetadata<?>, String>(){
+
+         @Override
+         public String apply(@Nullable AttributeMetadata<?> input) {
+            return input.getName();
+         }
+         
+      });
    }
 
    /**

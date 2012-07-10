@@ -24,6 +24,8 @@ import java.beans.ConstructorProperties;
 
 import javax.inject.Named;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -104,8 +106,8 @@ public class Ingress {
    @ConstructorProperties({
       "ip_protocol", "from_port", "to_port"
    })
-   protected Ingress(IpProtocol ipProtocol, int fromPort, int toPort) {
-      this.ipProtocol = checkNotNull(ipProtocol, "ipProtocol");
+   protected Ingress(@Nullable IpProtocol ipProtocol, int fromPort, int toPort) {
+      this.ipProtocol = ipProtocol == null ? IpProtocol.UNRECOGNIZED : ipProtocol;
       this.fromPort = fromPort;
       this.toPort = toPort;
    }

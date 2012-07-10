@@ -18,15 +18,19 @@
  */
 package org.jclouds.elb.binders;
 
-import static org.jclouds.aws.util.AWSUtils.indexStringArrayToFormValuesWithStringFormat;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
+
 /**
- * Binds the String [] to form parameters named with InstanceId.index
+ * Binds the Iterable<String> to form parameters named with Instances.member.index.InstanceId
  * 
  * @author Adrian Cole
  */
@@ -34,7 +38,14 @@ import org.jclouds.rest.Binder;
 public class BindInstanceIdsToIndexedFormParams implements Binder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      return indexStringArrayToFormValuesWithStringFormat(request, "Instances.member.%s.InstanceId", input);
+      Iterable<?> values = Iterable.class.cast(checkNotNull(input, "instanceIds"));
+      Builder<String, String> builder = ImmutableMultimap.builder();
+      int i = 0;
+      for (Object o : values) {
+         builder.put("Instances.member." + (i++ + 1) + ".InstanceId", o.toString());
+      }
+      ImmutableMultimap<String, String> forms = builder.build();
+      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
    }
 
 }

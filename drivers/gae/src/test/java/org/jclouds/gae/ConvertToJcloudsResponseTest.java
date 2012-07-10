@@ -34,6 +34,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.internal.DateServiceDateCodecFactory;
+import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceIso8601Codec;
 import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceRfc1123Codec;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.encryption.internal.JCECrypto;
@@ -71,7 +72,8 @@ public class ConvertToJcloudsResponseTest {
    void setupClient() {
       endPoint = URI.create("http://localhost:80/foo");
       req = new ConvertToJcloudsResponse(new DefaultContentMetadataCodec(new DateServiceDateCodecFactory(
-            new DateServiceRfc1123Codec(new SimpleDateFormatDateService()))));
+               new DateServiceRfc1123Codec(new SimpleDateFormatDateService()), new DateServiceIso8601Codec(
+                        new SimpleDateFormatDateService()))));
    }
 
    @Test

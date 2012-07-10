@@ -26,7 +26,8 @@ import javax.inject.Inject;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Builder;
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodec;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
@@ -41,7 +42,7 @@ import com.google.common.base.Supplier;
 public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWithResult<SpotInstanceRequest> {
    private StringBuilder currentText = new StringBuilder();
 
-   protected final DateService dateService;
+   protected final DateCodec dateCodec;
    protected final Supplier<String> defaultRegion;
    protected final Builder builder;
    protected boolean inLaunchSpecification;
@@ -50,10 +51,10 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
    protected final TagSetHandler tagSetHandler;
 
    @Inject
-   public SpotInstanceHandler(DateService dateService, @Region Supplier<String> defaultRegion,
+   public SpotInstanceHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
          LaunchSpecificationHandler launchSpecificationHandler, TagSetHandler tagSetHandler,
          SpotInstanceRequest.Builder builder) {
-      this.dateService = dateService;
+      this.dateCodec = dateCodecFactory.iso8601();
       this.defaultRegion = defaultRegion;
       this.launchSpecificationHandler = launchSpecificationHandler;
       this.tagSetHandler = tagSetHandler;
@@ -132,7 +133,7 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
       } else if (qName.equals("createTime")) {
          String createTime = currentOrNull(currentText);
          if (createTime != null)
-            builder.createTime(dateService.iso8601DateParse(createTime));
+            builder.createTime(dateCodec.toDate(createTime));
       } else if (qName.equals("productDescription")) {
          builder.productDescription(currentOrNull(currentText));
       }

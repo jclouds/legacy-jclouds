@@ -187,5 +187,99 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 		   ;
 	   }
    }
+   
+   public void testStopServerWhenResponseIs2xx() throws Exception {
+	   String serverId = "123";
+	   HttpRequest stopServer = HttpRequest
+			   .builder()
+			   .method("POST")
+			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
+			   .headers(
+					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+					   .put("X-Auth-Token", authToken).build())
+			   .payload(payloadFromStringWithContentType(
+					   "{\"os-stop\":null}", "application/json"))
+               .build();
+
+	   HttpResponse stopServerResponse = HttpResponse.builder().statusCode(202).build();
+
+	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+	            responseWithKeystoneAccess, stopServer, stopServerResponse);
+
+	   clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").stopServer(serverId);
+   }
+   
+   public void testStopServerWhenResponseIs404() throws Exception {
+	   String serverId = "123";
+	   HttpRequest stopServer = HttpRequest
+			   .builder()
+			   .method("POST")
+			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
+			   .headers(
+					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+					   .put("X-Auth-Token", authToken).build())
+			   .payload(payloadFromStringWithContentType(
+					   "{\"os-stop\":null}", "application/json"))
+               .build();
+
+	   HttpResponse stopServerResponse = HttpResponse.builder().statusCode(404).build();
+
+	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+	            responseWithKeystoneAccess, stopServer, stopServerResponse);
+
+		try {
+			clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").stopServer(serverId);
+			fail("Expected an exception.");
+		} catch (Exception e) {
+			;
+		}
+   }
+   
+   public void testStartServerWhenResponseIs2xx() throws Exception {
+	   String serverId = "123";
+	   HttpRequest startServer = HttpRequest
+			   .builder()
+			   .method("POST")
+			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
+			   .headers(
+					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+					   .put("X-Auth-Token", authToken).build())
+			   .payload(payloadFromStringWithContentType(
+					   "{\"os-start\":null}", "application/json"))
+               .build();
+
+	   HttpResponse startServerResponse = HttpResponse.builder().statusCode(202).build();
+
+	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+	            responseWithKeystoneAccess, startServer, startServerResponse);
+
+	   clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").startServer(serverId);
+   }
+   
+   public void testStartServerWhenResponseIs404() throws Exception {
+	   String serverId = "123";
+	   HttpRequest startServer = HttpRequest
+			   .builder()
+			   .method("POST")
+			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
+			   .headers(
+					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+					   .put("X-Auth-Token", authToken).build())
+			   .payload(payloadFromStringWithContentType(
+					   "{\"os-startp\":null}", "application/json"))
+               .build();
+
+	   HttpResponse startServerResponse = HttpResponse.builder().statusCode(404).build();
+
+	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+	            responseWithKeystoneAccess, startServer, startServerResponse);
+
+		try {
+			clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").startServer(serverId);
+			fail("Expected an exception.");
+		} catch (Exception e) {
+			;
+		}
+   }
 
 }

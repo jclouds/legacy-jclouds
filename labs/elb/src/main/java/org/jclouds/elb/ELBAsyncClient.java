@@ -18,39 +18,23 @@
  */
 package org.jclouds.elb;
 
-import static org.jclouds.aws.reference.FormParameters.ACTION;
-
 import java.util.Set;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.elb.binders.BindAvailabilityZonesToIndexedFormParams;
-import org.jclouds.elb.binders.BindInstanceIdsToIndexedFormParams;
-import org.jclouds.elb.binders.BindLoadBalancerNamesToIndexedFormParams;
-import org.jclouds.elb.domain.CrappyLoadBalancer;
+import org.jclouds.elb.features.InstanceAsyncClient;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.features.PolicyAsyncClient;
-import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
-import org.jclouds.elb.xml.DescribeLoadBalancersResponseHandler;
-import org.jclouds.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
+import org.jclouds.elb.features.AvailabilityZoneAsyncClient;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
-import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
 /**
@@ -59,7 +43,7 @@ import com.google.inject.Provides;
  * 
  * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference/">ELB
  *      documentation</a>
- * @author Lili Nader
+ * @author Adrian Cole
  */
 @Beta
 @RequestFilters(FormSigner.class)
@@ -72,84 +56,45 @@ public interface ELBAsyncClient {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
-   
+
    /**
     * Provides asynchronous access to LoadBalancer features.
     */
    @Delegate
-   LoadBalancerAsyncClient getLoadBalancerClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   LoadBalancerAsyncClient getLoadBalancerClient();
+   
+   @Delegate
+   LoadBalancerAsyncClient getLoadBalancerClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Policy features.
     */
    @Delegate
-   PolicyAsyncClient getPolicyClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
-
-   /// old stuff
-   public static final String VERSION = "2012-06-01";
-
-   // TODO: there are a lot of missing methods
-
-   /**
-    * @see ELBClient#createLoadBalancerInRegion
-    */
-   @POST
-   @Path("/")
-   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
-   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-   @Beta
-   // TODO:The way this handles arguments needs to be refactored. it needs to deal with collections
-   // of listeners.
-   ListenableFuture<String> createLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name, @FormParam("Listeners.member.1.Protocol") String protocol,
-            @FormParam("Listeners.member.1.LoadBalancerPort") int loadBalancerPort,
-            @FormParam("Listeners.member.1.InstancePort") int instancePort,
-            @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) String... availabilityZones);
+   PolicyAsyncClient getPolicyClient();
+   
+   @Delegate
+   PolicyAsyncClient getPolicyClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
-    * @see ELBClient#deleteLoadBalancerInRegion
+    * Provides asynchronous access to Instance features.
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
-   ListenableFuture<Void> deleteLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name);
+   @Delegate
+   InstanceAsyncClient getInstanceClient();
+
+   @Delegate
+   InstanceAsyncClient getInstanceClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
-    * @see ELBClient#registerInstancesWithLoadBalancerInRegion
+    * Provides asynchronous access to AvailabilityZone features.
     */
-   @POST
-   @Path("/")
-   @XMLResponseParser(RegisterInstancesWithLoadBalancerResponseHandler.class)
-   @FormParams(keys = ACTION, values = "RegisterInstancesWithLoadBalancer")
-   ListenableFuture<Set<String>> registerInstancesWithLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+   @Delegate
+   AvailabilityZoneAsyncClient getAvailabilityZoneClient();
 
-   /**
-    * @see ELBClient#deregisterInstancesWithLoadBalancerInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
-   ListenableFuture<Void> deregisterInstancesWithLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("LoadBalancerName") String name,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
-
-   /**
-    * @see ELBClient#describeLoadBalancersInRegion
-    */
-   @POST
-   @Path("/")
-   @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
-   @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<? extends CrappyLoadBalancer>> describeLoadBalancersInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @BinderParam(BindLoadBalancerNamesToIndexedFormParams.class) String... loadbalancerNames);
+   @Delegate
+   AvailabilityZoneAsyncClient getAvailabilityZoneClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

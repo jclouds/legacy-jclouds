@@ -20,12 +20,14 @@ package org.jclouds.iam.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.collect.PaginatedSet;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.internal.BaseIAMClientLiveTest;
 import org.jclouds.iam.options.ListUsersOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -49,19 +51,19 @@ public class UserClientLiveTest extends BaseIAMClientLiveTest {
 
    @Test
    protected void testListUsers() {
-      PaginatedSet<User> response = client().list();
+      PaginatedIterable<User> response = client().list();
       
       for (User user : response) {
          checkUser(user);
       }
       
-      if (response.size() > 0) {
+      if (Iterables.size(response) > 0) {
          User user = response.iterator().next();
          Assert.assertEquals(client().get(user.getName().get()), user);
       }
 
       // Test with a Marker, even if it's null
-      response = client().list(ListUsersOptions.Builder.marker(response.getNextMarker()));
+      response = client().list(ListUsersOptions.Builder.afterMarker(response.getNextMarker()));
       for (User user : response) {
          checkUser(user);
       }

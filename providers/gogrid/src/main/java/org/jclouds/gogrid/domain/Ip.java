@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,129 +18,187 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
-import com.google.gson.annotations.SerializedName;
 
 /**
+ * Class Ip
+ * 
  * @author Oleksiy Yarmula
- */
+*/
 public class Ip implements Comparable<Ip> {
 
-   private long id;
-
-   private String ip;
-   private String subnet;
-   @SerializedName("public")
-   private boolean isPublic;
-   private IpState state;
-   private Option datacenter;
-
-   /**
-    * A no-args constructor is required for deserialization
-    */
-   public Ip() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromIp(this);
    }
 
-   /**
-    * Constructs a generic IP address without any additional options.
-    * 
-    * @param ip
-    *           ip address
-    */
-   public Ip(String ip) {
-      this.ip = ip;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected long id;
+      protected String ip;
+      protected String subnet;
+      protected boolean isPublic;
+      protected IpState state;
+      protected Option datacenter;
+   
+      /** 
+       * @see Ip#getId()
+       */
+      public T id(long id) {
+         this.id = id;
+         return self();
+      }
+
+      /** 
+       * @see Ip#getIp()
+       */
+      public T ip(String ip) {
+         this.ip = ip;
+         return self();
+      }
+
+      /** 
+       * @see Ip#getSubnet()
+       */
+      public T subnet(String subnet) {
+         this.subnet = subnet;
+         return self();
+      }
+
+      /** 
+       * @see Ip#isPublic()
+       */
+      public T isPublic(boolean isPublic) {
+         this.isPublic = isPublic;
+         return self();
+      }
+
+      /** 
+       * @see Ip#getState()
+       */
+      public T state(IpState state) {
+         this.state = state;
+         return self();
+      }
+
+      /** 
+       * @see Ip#getDatacenter()
+       */
+      public T datacenter(Option datacenter) {
+         this.datacenter = datacenter;
+         return self();
+      }
+
+      public Ip build() {
+         return new Ip(id, ip, subnet, isPublic, state, datacenter);
+      }
+      
+      public T fromIp(Ip in) {
+         return this
+                  .id(in.getId())
+                  .ip(in.getIp())
+                  .subnet(in.getSubnet())
+                  .isPublic(in.isPublic())
+                  .state(in.getState())
+                  .datacenter(in.getDatacenter());
+      }
    }
 
-   public Ip(long id, String ip, String subnet, boolean isPublic, IpState state, Option datacenter) {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final long id;
+   private final String ip;
+   private final String subnet;
+   private final boolean isPublic;
+   private final IpState state;
+   private final Option datacenter;
+
+   @ConstructorProperties({
+      "id", "ip", "subnet", "public", "state", "datacenter"
+   })
+   protected Ip(long id, String ip, @Nullable String subnet, boolean isPublic, @Nullable IpState state, @Nullable Option datacenter) {
       this.id = id;
-      this.ip = ip;
+      this.ip = checkNotNull(ip, "ip");
       this.subnet = subnet;
       this.isPublic = isPublic;
-      this.state = state;
+      this.state = state == null ? IpState.UNRECOGNIZED : state;
       this.datacenter = datacenter;
    }
 
    public long getId() {
-      return id;
-   }
-
-   public Option getDatacenter() {
-      return datacenter;
+      return this.id;
    }
 
    public String getIp() {
-      return ip;
+      return this.ip;
    }
 
+   @Nullable
    public String getSubnet() {
-      return subnet;
+      return this.subnet;
    }
 
    public boolean isPublic() {
-      return isPublic;
+      return this.isPublic;
    }
 
    public IpState getState() {
-      return state;
+      return this.state;
    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Ip other = (Ip) obj;
-      if (datacenter == null) {
-         if (other.datacenter != null)
-            return false;
-      } else if (!datacenter.equals(other.datacenter))
-         return false;
-      if (id != other.id)
-         return false;
-      if (ip == null) {
-         if (other.ip != null)
-            return false;
-      } else if (!ip.equals(other.ip))
-         return false;
-      if (isPublic != other.isPublic)
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
-         return false;
-      if (subnet == null) {
-         if (other.subnet != null)
-            return false;
-      } else if (!subnet.equals(other.subnet))
-         return false;
-      return true;
+   @Nullable
+   public Option getDatacenter() {
+      return this.datacenter;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((ip == null) ? 0 : ip.hashCode());
-      result = prime * result + (isPublic ? 1231 : 1237);
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
-      result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
-      return result;
+      return Objects.hashCode(id, ip, subnet, isPublic, state, datacenter);
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Ip that = Ip.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.ip, that.ip)
+               && Objects.equal(this.subnet, that.subnet)
+               && Objects.equal(this.isPublic, that.isPublic)
+               && Objects.equal(this.state, that.state)
+               && Objects.equal(this.datacenter, that.datacenter);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("ip", ip).add("subnet", subnet).add("isPublic", isPublic).add("state", state).add("datacenter", datacenter);
+   }
+   
+   @Override
    public String toString() {
-      return "Ip [datacenter=" + datacenter + ", id=" + id + ", ip=" + ip + ", isPublic="
-               + isPublic + ", state=" + state + ", subnet=" + subnet + "]";
+      return string().toString();
    }
 
    @Override
    public int compareTo(Ip o) {
       return Longs.compare(id, o.getId());
    }
+
 }

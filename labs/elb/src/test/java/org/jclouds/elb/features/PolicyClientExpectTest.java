@@ -76,7 +76,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenExist = requestSendsResponse(
             get, getResponse);
 
-      assertEquals(clientWhenExist.getPolicyClientForRegion(null).get("name").toString(), new GetPolicyResponseTest().expected().toString());
+      assertEquals(clientWhenExist.getPolicyClient().get("name").toString(), new GetPolicyResponseTest().expected().toString());
    }
 
    public void testGetWhenResponseIs404() throws Exception {
@@ -86,7 +86,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenDontExist = requestSendsResponse(
             get, getResponse);
 
-      assertNull(clientWhenDontExist.getPolicyClientForRegion(null).get("name"));
+      assertNull(clientWhenDontExist.getPolicyClient().get("name"));
    }
 
    HttpRequest list = HttpRequest.builder()
@@ -115,7 +115,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(clientWhenExist.getPolicyClientForRegion(null).list().toString(), new DescribeLoadBalancerPoliciesResponseTest().expected().toString());
+      assertEquals(clientWhenExist.getPolicyClient().list().toString(), new DescribeLoadBalancerPoliciesResponseTest().expected().toString());
    }
 
    public void testListWhenResponseIs404() throws Exception {
@@ -125,7 +125,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      clientWhenDontExist.getPolicyClientForRegion(null).list();
+      clientWhenDontExist.getPolicyClient().list();
    }
    
    public void testListWithOptionsWhenResponseIs2xx() throws Exception {
@@ -154,7 +154,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(clientWhenWithOptionsExist.getPolicyClientForRegion(null).list(loadBalancerName("moo")).toString(),
+      assertEquals(clientWhenWithOptionsExist.getPolicyClient().list(loadBalancerName("moo")).toString(),
                new DescribeLoadBalancerPoliciesResponseTest().expected().toString());
    }
    
@@ -187,7 +187,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenExist = requestSendsResponse(
             getType, getResponse);
 
-      assertEquals(clientWhenExist.getPolicyClientForRegion(null).getType("name").toString(), new GetPolicyTypeResponseTest().expected().toString());
+      assertEquals(clientWhenExist.getPolicyClient().getType("name").toString(), new GetPolicyTypeResponseTest().expected().toString());
    }
 
    public void testGetTypeWhenResponseIs404() throws Exception {
@@ -197,7 +197,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenDontExist = requestSendsResponse(
             getType, getResponse);
 
-      assertNull(clientWhenDontExist.getPolicyClientForRegion(null).getType("name"));
+      assertNull(clientWhenDontExist.getPolicyClient().getType("name"));
    }
 
    HttpRequest listTypes = HttpRequest.builder()
@@ -226,7 +226,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenExist = requestSendsResponse(
             listTypes, listResponse);
 
-      assertEquals(clientWhenExist.getPolicyClientForRegion(null).listTypes().toString(), new DescribeLoadBalancerPolicyTypesResponseTest().expected().toString());
+      assertEquals(clientWhenExist.getPolicyClient().listTypes().toString(), new DescribeLoadBalancerPolicyTypesResponseTest().expected().toString());
    }
 
    public void testListTypesWhenResponseIs404() throws Exception {
@@ -236,7 +236,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenDontExist = requestSendsResponse(
             listTypes, listResponse);
 
-      clientWhenDontExist.getPolicyClientForRegion(null).listTypes();
+      clientWhenDontExist.getPolicyClient().listTypes();
    }
    
    public void testListTypesByNamesWhenResponseIs2xx() throws Exception {
@@ -265,7 +265,7 @@ public class PolicyClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(clientWhenWithOptionsExist.getPolicyClientForRegion(null).listTypes(ImmutableSet.of("moo")).toString(),
+      assertEquals(clientWhenWithOptionsExist.getPolicyClient().listTypes(ImmutableSet.of("moo")).toString(),
                new DescribeLoadBalancerPolicyTypesResponseTest().expected().toString());
    }
 }

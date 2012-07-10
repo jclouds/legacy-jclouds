@@ -50,6 +50,7 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.date.internal.DateServiceDateCodecFactory;
+import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceIso8601Codec;
 import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceRfc1123Codec;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -124,7 +125,8 @@ public abstract class BaseRestClientExpectTest<S> {
    protected String provider = "mock";
 
    protected ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(
-            new DateServiceDateCodecFactory(new DateServiceRfc1123Codec(new SimpleDateFormatDateService())));
+            new DateServiceDateCodecFactory(new DateServiceRfc1123Codec(new SimpleDateFormatDateService()),
+                     new DateServiceIso8601Codec(new SimpleDateFormatDateService())));
    
    /**
     * Override this to supply alternative bindings for use in the test. This is commonly used to

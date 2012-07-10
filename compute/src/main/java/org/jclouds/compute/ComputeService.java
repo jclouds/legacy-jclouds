@@ -142,8 +142,13 @@ public interface ComputeService {
     * If resources such as security groups are needed, they will be reused or created for you.
     * Inbound port 22 will always be opened up.
     * 
+    * <h3>Note</h3>
+    * 
+    * While naming constraints on the group name vary per cloud, lower-case alphanumeric with
+    * hyphens and least characters practical is most compatible.
+    * 
     * @param group
-    *           - common identifier to group nodes by, cannot contain hyphens
+    *           - common identifier to group nodes by
     * @param count
     *           - how many to fire up.
     * @param template

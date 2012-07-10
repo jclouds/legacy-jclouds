@@ -44,7 +44,7 @@ public class PolicyTypeHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    }
 
    private StringBuilder currentText = new StringBuilder();
-   private PolicyType.Builder<?> builder = PolicyType.builder();
+   private PolicyType.Builder builder = PolicyType.builder();
 
    private boolean inAttributeTypes;
 

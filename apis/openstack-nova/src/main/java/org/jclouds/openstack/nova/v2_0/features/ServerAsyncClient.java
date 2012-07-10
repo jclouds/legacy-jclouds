@@ -108,6 +108,26 @@ public interface ServerAsyncClient {
    ListenableFuture<Boolean> deleteServer(@PathParam("id") String id);
 
    /**
+    * @see ServerClient#startServer
+    */
+   @POST
+   @Path("/servers/{id}/action")
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("{\"os-start\":null}")
+   ListenableFuture<Void> startServer(@PathParam("id") String id);
+
+   /**
+    * @see ServerClient#stopServer
+    */
+   @POST
+   @Path("/servers/{id}/action")
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("{\"os-stop\":null}")
+   ListenableFuture<Void> stopServer(@PathParam("id") String id);
+   
+   /**
     * @see ServerClient#rebootServer
     */
    @POST

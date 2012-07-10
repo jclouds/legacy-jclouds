@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
@@ -71,6 +70,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.io.CountingOutputStream;
+import com.google.inject.Inject;
 
 /**
  * Basic implementation of a {@link HttpCommandExecutorService}.
@@ -88,6 +88,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    private final Supplier<SSLContext> untrustedSSLContextProvider;
    private final HostnameVerifier verifier;
    private final Field methodField;
+   @Inject(optional = true)
+   Supplier<SSLContext> sslContextSupplier;
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
@@ -184,8 +186,13 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;
          if (utils.relaxHostname())
             sslCon.setHostnameVerifier(verifier);
-         if (utils.trustAllCerts())
-            sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
+         if (sslContextSupplier != null) {
+             // used for providers which e.g. use certs for authentication (like FGCP)
+             // Provider provides SSLContext impl (which inits context with key manager)
+             sslCon.setSSLSocketFactory(sslContextSupplier.get().getSocketFactory());
+         } else if (utils.trustAllCerts()) {
+             sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
+         }
       }
       connection.setConnectTimeout(utils.getConnectionTimeout());
       connection.setReadTimeout(utils.getSocketOpenTimeout());

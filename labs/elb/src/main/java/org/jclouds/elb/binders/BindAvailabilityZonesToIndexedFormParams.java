@@ -18,7 +18,7 @@
  */
 package org.jclouds.elb.binders;
 
-import static org.jclouds.aws.util.AWSUtils.indexStringArrayToFormValuesWithStringFormat;
+import static org.jclouds.aws.util.AWSUtils.indexIterableToFormValuesWithPrefix;
 
 import javax.inject.Singleton;
 
@@ -26,7 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
 /**
- * Binds the String [] to form parameters named with InstanceId.index
+ * Binds the Iterable<String> to form parameters named with AvailabilityZones.member.N
  * 
  * @author Adrian Cole
  */
@@ -34,7 +34,7 @@ import org.jclouds.rest.Binder;
 public class BindAvailabilityZonesToIndexedFormParams implements Binder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      return indexStringArrayToFormValuesWithStringFormat(request, "AvailabilityZones.member.%s", input);
+      return indexIterableToFormValuesWithPrefix(request, "AvailabilityZones.member", input);
    }
 
 }

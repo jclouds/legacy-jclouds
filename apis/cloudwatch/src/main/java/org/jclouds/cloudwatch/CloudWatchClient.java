@@ -99,5 +99,11 @@ public interface CloudWatchClient {
     * Provides synchronous access to Metric features.
     */
    @Delegate
+   MetricClient getMetricClient();
+   
+   /**
+    * Provides synchronous access to Metric features.
+    */
+   @Delegate
    MetricClient getMetricClientForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

@@ -26,11 +26,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.easymock.EasyMock;
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -56,14 +57,14 @@ public class CloudWatchTest {
    public void testSinglePageResult() throws Exception {
       CloudWatchClient client = createMock(CloudWatchClient.class);
       MetricClient metricClient = createMock(MetricClient.class);
-      ListMetricsOptions options = ListMetricsOptions.builder().build();
-      ListMetricsResponse response = new ListMetricsResponse(ImmutableSet.of(createMock(Metric.class)), null);
+      ListMetricsOptions options = new ListMetricsOptions();
+      PaginatedIterable<Metric> response = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), null);
       
       expect(client.getMetricClientForRegion(null))
             .andReturn(metricClient)
             .atLeastOnce();
 
-      expect(metricClient.listMetrics(options))
+      expect(metricClient.list(options))
             .andReturn(response)
             .once();
 
@@ -82,19 +83,19 @@ public class CloudWatchTest {
    public void testMultiPageResult() throws Exception {
       CloudWatchClient client = createMock(CloudWatchClient.class);
       MetricClient metricClient = createMock(MetricClient.class);
-      ListMetricsOptions options = ListMetricsOptions.builder().build();
-      ListMetricsResponse response1 = new ListMetricsResponse(ImmutableSet.of(createMock(Metric.class)), "NEXTTOKEN");
-      ListMetricsResponse response2 = new ListMetricsResponse(ImmutableSet.of(createMock(Metric.class)), null);
+      ListMetricsOptions options = new ListMetricsOptions();
+      PaginatedIterable<Metric> response1 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), "NEXTTOKEN");
+      PaginatedIterable<Metric> response2 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), null);
 
       // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
       expect(client.getMetricClientForRegion(EasyMock.eq("")))
             .andReturn(metricClient)
             .atLeastOnce();
       
-      expect(metricClient.listMetrics(anyObject(ListMetricsOptions.class)))
+      expect(metricClient.list(anyObject(ListMetricsOptions.class)))
             .andReturn(response1)
             .once();
-      expect(metricClient.listMetrics(anyObject(ListMetricsOptions.class)))
+      expect(metricClient.list(anyObject(ListMetricsOptions.class)))
             .andReturn(response2)
             .once();
 
@@ -126,7 +127,7 @@ public class CloudWatchTest {
             .atLeastOnce();
       
       for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
-         metricClient.putMetricData(slice, namespace);
+         metricClient.putMetricsInNamespace(slice, namespace);
       }
 
       EasyMock.replay(client, metricClient);

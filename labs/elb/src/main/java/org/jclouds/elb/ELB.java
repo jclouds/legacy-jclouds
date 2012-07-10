@@ -1,7 +1,7 @@
 package org.jclouds.elb;
 
-import org.jclouds.collect.PaginatedSet;
-import org.jclouds.collect.PaginatedSets;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.features.LoadBalancerClient;
 import org.jclouds.elb.options.ListLoadBalancersOptions;
@@ -26,11 +26,11 @@ public class ELB {
     * @return iterable of loadBalancers fitting the criteria
     */
    public static Iterable<LoadBalancer> listLoadBalancers(final LoadBalancerClient loadBalancerClient, final ListLoadBalancersOptions options) {
-      return PaginatedSets.lazyContinue(loadBalancerClient.list(options), new Function<String, PaginatedSet<LoadBalancer>>() {
+      return PaginatedIterables.lazyContinue(loadBalancerClient.list(options), new Function<Object, PaginatedIterable<LoadBalancer>>() {
 
          @Override
-         public PaginatedSet<LoadBalancer> apply(String input) {
-            return loadBalancerClient.list(options.clone().marker(input));
+         public PaginatedIterable<LoadBalancer> apply(Object input) {
+            return loadBalancerClient.list(options.clone().afterMarker(input));
          }
 
          @Override

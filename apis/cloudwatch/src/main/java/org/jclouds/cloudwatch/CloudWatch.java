@@ -18,16 +18,16 @@
  */
 package org.jclouds.cloudwatch;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricClient;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.PaginatedIterables;
 
-import com.google.common.collect.AbstractIterator;
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 /**
@@ -46,43 +46,18 @@ public class CloudWatch {
     * @return iterable of metrics fitting the criteria
     */
    public static Iterable<Metric> listMetrics(final MetricClient metricClient, final ListMetricsOptions options) {
-      return new Iterable<Metric>() {
-         public Iterator<Metric> iterator() {
-            return new AbstractIterator<Metric>() {
+      return PaginatedIterables.lazyContinue(metricClient.list(options), new Function<Object, PaginatedIterable<Metric>>() {
 
-               private ListMetricsOptions lastOptions = options;
-               private ListMetricsResponse response = metricClient.listMetrics(lastOptions);
-               private Iterator<Metric> iterator = response.iterator();
-
-               /**
-                * {@inheritDoc}
-                */
-               @Override
-               protected Metric computeNext() {
-                  while (true) {
-                     if (iterator == null) {
-                        lastOptions = ListMetricsOptions.builder()
-                                                        .namespace(lastOptions.getNamespace())
-                                                        .metricName(lastOptions.getMetricName())
-                                                        .dimensions(lastOptions.getDimensions())
-                                                        .nextToken(lastOptions.getNextToken())
-                                                        .build();
-                        response = metricClient.listMetrics(lastOptions);
-                        iterator = response.iterator();
-                     }
-                     if (iterator.hasNext()) {
-                        return iterator.next();
-                     }
-                     if (response.getNextToken() == null) {
-                        return endOfData();
-                     }
-                     iterator = null;
-                  }
-               }
-
-            };
+         @Override
+         public PaginatedIterable<Metric> apply(Object input) {
+            return metricClient.list(options.clone().afterMarker(input));
          }
-      };
+
+         @Override
+         public String toString() {
+            return "listMetrics(" + options + ")";
+         }
+      });
    }
 
    /**
@@ -112,7 +87,7 @@ public class CloudWatch {
       MetricClient metricClient = cloudWatchClient.getMetricClientForRegion(region);
 
       for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
-         metricClient.putMetricData(slice, namespace);
+         metricClient.putMetricsInNamespace(slice, namespace);
       }
    }
 

@@ -22,7 +22,6 @@ import org.jclouds.date.internal.DateServiceDateCodecFactory;
 
 import com.google.inject.ImplementedBy;
 
-
 /**
  * Codecs for converting from Date->String and vice versa.
  * 
@@ -31,5 +30,7 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(DateServiceDateCodecFactory.class)
 public interface DateCodecFactory {
 
-   public DateCodec rfc1123();
+   DateCodec rfc1123();
+
+   DateCodec iso8601();
 }

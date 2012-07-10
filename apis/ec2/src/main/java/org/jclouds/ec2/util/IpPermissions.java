@@ -73,8 +73,9 @@ public class IpPermissions extends IpPermissionImpl {
       i = 0;
       for (Entry<String, String> userIdGroupNamePair : checkNotNull(permission.getUserIdGroupPairs(),
             "userIdGroupNamePairs").entries()) {
-         headers.put(prefix + i++ + ".UserId", userIdGroupNamePair.getKey());
+         headers.put(prefix + i + ".UserId", userIdGroupNamePair.getKey());
          headers.put(prefix + i + ".GroupName", userIdGroupNamePair.getValue());
+         i++;
       }
       prefix = "IpPermissions.%d.IpRanges.";
       i = 0;

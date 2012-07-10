@@ -48,8 +48,6 @@ public class Region {
     * In Amazon S3, the EU (Ireland) Region provides read-after-write consistency for PUTS of new
     * objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS and DELETES.
     */
-   public static final String EU = "EU";
-
    public static final String EU_WEST_1 = "eu-west-1";
 
    /**
@@ -106,7 +104,7 @@ public class Region {
     */
    public static final String AP_NORTHEAST_1 = "ap-northeast-1";
 
-   public static Set<String> DEFAULT_S3 = ImmutableSet.of(EU, US_STANDARD, US_WEST_1, US_WEST_2, SA_EAST_1, AP_SOUTHEAST_1,
+   public static Set<String> DEFAULT_S3 = ImmutableSet.of(US_STANDARD, US_WEST_1, US_WEST_2, EU_WEST_1, SA_EAST_1, AP_SOUTHEAST_1,
          AP_NORTHEAST_1);
 
    public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(US_EAST_1, US_WEST_1, US_WEST_2, SA_EAST_1, EU_WEST_1,
@@ -119,7 +117,7 @@ public class Region {
       // note that due to US_STANDARD the codes include US instead of US-VA
       properties.setProperty(PROPERTY_ISO3166_CODES, "US,US-CA,US-OR,BR-SP,IE,SG,JP-13");
       properties.setProperty(PROPERTY_REGION + "." + US_STANDARD + "." + ISO3166_CODES, "US");
-      properties.setProperty(PROPERTY_REGION + "." + EU + "." + ISO3166_CODES, "IE");
+      properties.setProperty(PROPERTY_REGION + "." + EU_WEST_1 + "." + ISO3166_CODES, "IE");
       return properties;
    }
 

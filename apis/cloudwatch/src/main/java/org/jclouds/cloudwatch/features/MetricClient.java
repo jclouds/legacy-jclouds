@@ -18,15 +18,16 @@
  */
 package org.jclouds.cloudwatch.features;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
-import org.jclouds.cloudwatch.domain.ListMetricsResponse;
+import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
@@ -53,9 +54,9 @@ public interface MetricClient {
     * 
     * @return the response object
     */
-   ListMetricsResponse listMetrics(ListMetricsOptions options);
+   PaginatedIterable<Metric> list(ListMetricsOptions options);
 
-   ListMetricsResponse listMetrics();
+   PaginatedIterable<Metric> list();
 
    /**
     * Gets statistics for the specified metric.
@@ -75,6 +76,6 @@ public interface MetricClient {
     * @param metrics the metrics to publish
     * @param namespace the namespace to publish the metrics to
     */
-   void putMetricData(Iterable<MetricDatum> metrics, String namespace);
+   void putMetricsInNamespace(Iterable<MetricDatum> metrics, String namespace);
 
 }

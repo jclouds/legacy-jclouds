@@ -23,6 +23,7 @@ import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNull
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.apis.BaseViewLiveTest;
@@ -80,7 +82,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
 
    protected static volatile int containerCount = Integer.parseInt(System.getProperty("test.blobstore.container-count",
          "10"));
-   public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
+   public static final String CONTAINER_PREFIX = (System.getProperty("user.name") + "-blobstore").toLowerCase();
    /**
     * two test groups integration and live.
     */
@@ -139,7 +141,12 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
                   } else {
                      try {
                         createContainerAndEnsureEmpty(context, containerName);
-                        containerNames.put(containerName);
+                        if (context.getBlobStore().containerExists(containerName))
+                           containerNames.put(containerName);
+                        else {
+                           deleteContainerOrWarnIfUnable(context, containerName);
+                           containerCount++;
+                        }
                      } catch (Throwable e) {
                         e.printStackTrace();
                         // throw away the container and try again with the next
@@ -181,7 +188,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
                   new Predicate<StorageMetadata>() {
                      public boolean apply(StorageMetadata input) {
                         return (input.getType() == StorageType.CONTAINER || input.getType() == StorageType.FOLDER)
-                              && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
+                              && input.getName().startsWith(CONTAINER_PREFIX);
                      }
                   });
             for (StorageMetadata container : testContainers) {
@@ -339,20 +346,57 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
       });
    }
 
-   protected void assertConsistencyAwareBlobExpiryMetadata(final String containerName, final String blobName, final Date expectedExpires)
-                           throws InterruptedException {
-                        assertConsistencyAware(new Runnable() {
-                           public void run() {
-                              try {
-                                 Blob blob = view.getBlobStore().getBlob(containerName, blobName);
-                                 Date actualExpires = blob.getPayload().getContentMetadata().getExpires();
-                                 assert expectedExpires.equals(actualExpires) : "expires="+actualExpires+"; expected="+expectedExpires;
-                              } catch (Exception e) {
-                                 Throwables.propagateIfPossible(e);
-                              }
-                           }
-                        });
-                     }
+   protected void assertConsistencyAwareContainerExists(final String containerName) throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               assert view.getBlobStore().containerExists(containerName) : String.format("container %s doesn't exist", containerName);
+            } catch (Exception e) {
+               Throwables.propagate(e);
+            }
+         }
+      });
+   }
+
+   protected void assertConsistencyAwareContainerInLocation(final String containerName, final Location loc)
+            throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               StorageMetadata container = Iterables.find(view.getBlobStore().list(), new Predicate<StorageMetadata>() {
+
+                  @Override
+                  public boolean apply(@Nullable StorageMetadata input) {
+                     return input.getName().equals(containerName);
+                  }
+
+               });
+               Location actualLoc = container.getLocation();
+
+               assert loc.equals(actualLoc) : String.format("blob %s, in location %s instead of %s", containerName,
+                        actualLoc, loc);
+            } catch (Exception e) {
+               Throwables.propagate(e);
+            }
+         }
+      });
+   }
+   
+   protected void assertConsistencyAwareBlobExpiryMetadata(final String containerName, final String blobName,
+            final Date expectedExpires) throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
+         public void run() {
+            try {
+               Blob blob = view.getBlobStore().getBlob(containerName, blobName);
+               Date actualExpires = blob.getPayload().getContentMetadata().getExpires();
+               assert expectedExpires.equals(actualExpires) : "expires=" + actualExpires + "; expected="
+                        + expectedExpires;
+            } catch (Exception e) {
+               Throwables.propagateIfPossible(e);
+            }
+         }
+      });
+   }
 
    protected void assertConsistencyAwareBlobInLocation(final String containerName, final String blobName, final Location loc)
             throws InterruptedException {
@@ -452,7 +496,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
             deleteContainerOrWarnIfUnable(view, container);
          }
       });
-      String newScratchContainer = container + containerIndex.incrementAndGet();
+      String newScratchContainer = container + new SecureRandom().nextLong();
       System.err.printf("*** allocated new container %s...%n", container);
       return newScratchContainer;
    }

@@ -18,15 +18,32 @@
  */
 package org.jclouds.openstack.nova.ec2.xml;
 
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.xml.CreateVolumeResponseHandler;
+import org.jclouds.location.Region;
+import org.jclouds.location.Zone;
+
+import com.google.common.base.Supplier;
 
 /**
  *
  * @author Adam lowe
  */
 public class NovaCreateVolumeResponseHandler extends CreateVolumeResponseHandler {
+
+   @Inject
+   protected NovaCreateVolumeResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
+            @Zone Supplier<Map<String, Supplier<Set<String>>>> regionToZonesSupplier,
+            @Zone Supplier<Set<String>> zonesSupplier) {
+      super(dateCodecFactory, defaultRegion, regionToZonesSupplier, zonesSupplier);
+   }
    
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("status")) {

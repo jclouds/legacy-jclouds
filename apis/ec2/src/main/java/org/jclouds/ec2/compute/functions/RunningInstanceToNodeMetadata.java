@@ -50,6 +50,7 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -122,6 +123,10 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Builder<String> addressesBuilder = ImmutableSet.builder();
       if (Strings.emptyToNull(instance.getIpAddress()) != null)
          addressesBuilder.add(instance.getIpAddress());
+      //Add dnsName (if available) to addresses, when the IPAddress is null
+      // happens on Eucalyptus sometimes.
+      else if(Strings.emptyToNull(instance.getDnsName()) != null)
+         addressesBuilder.add(instance.getDnsName());
       if (Strings.emptyToNull(instance.getPrivateIpAddress()) != null)
          addressesBuilder.add(instance.getPrivateIpAddress());
 

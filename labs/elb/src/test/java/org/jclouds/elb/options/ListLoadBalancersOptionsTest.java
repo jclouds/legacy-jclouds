@@ -18,7 +18,7 @@
  */
 package org.jclouds.elb.options;
 
-import static org.jclouds.elb.options.ListLoadBalancersOptions.Builder.marker;
+import static org.jclouds.elb.options.ListLoadBalancersOptions.Builder.afterMarker;
 import static org.jclouds.elb.options.ListLoadBalancersOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
 
@@ -35,12 +35,12 @@ import com.google.common.collect.ImmutableSet;
 public class ListLoadBalancersOptionsTest {
 
    public void testMarker() {
-      ListLoadBalancersOptions options = new ListLoadBalancersOptions().marker("FFFFF");
+      ListLoadBalancersOptions options = new ListLoadBalancersOptions().afterMarker("FFFFF");
       assertEquals(ImmutableSet.of("FFFFF"), options.buildFormParameters().get("Marker"));
    }
 
    public void testMarkerStatic() {
-      ListLoadBalancersOptions options = marker("FFFFF");
+      ListLoadBalancersOptions options = afterMarker("FFFFF");
       assertEquals(ImmutableSet.of("FFFFF"), options.buildFormParameters().get("Marker"));
    }
 

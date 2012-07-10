@@ -20,7 +20,7 @@ package org.jclouds.ec2.xml;
 
 import javax.inject.Inject;
 
-import org.jclouds.date.DateService;
+import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
@@ -39,9 +39,9 @@ import com.google.inject.Provider;
 public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
-   RunInstancesResponseHandler(DateService dateService, @Region Supplier<String> defaultRegion,
+   RunInstancesResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
             Provider<RunningInstance.Builder> builderProvider) {
-      super(dateService, defaultRegion, builderProvider);
+      super(dateCodecFactory, defaultRegion, builderProvider);
    }
 
    @Override
