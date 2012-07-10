@@ -1,11 +1,15 @@
 package org.jclouds.nodepool.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -14,11 +18,9 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.util.Strings2;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -32,21 +34,21 @@ import com.google.inject.Singleton;
 @Singleton
 public class JsonNodeMetadataStore implements NodeMetadataStore {
 
-   private final Supplier<Map<String, InputStream>> storage;
+   private Supplier<Map<String, InputStream>> storage;
    private final Json json;
 
    private static class JsonUserNodeMetadata {
-      private String userGroup;
-      private Set<String> userTags;
+      private String group;
+      private Set<String> tags;
       private Map<String, String> userMetadata;
       private String user;
       private String password;
       private String privateKey;
-      private Boolean authenticateSudo;
+      private boolean authenticateSudo;
    }
 
    @Inject
-   public JsonNodeMetadataStore(Supplier<Map<String, InputStream>> storage, Json json) {
+   public JsonNodeMetadataStore(@Named("METADATA") Supplier<Map<String, InputStream>> storage, Json json) {
       this.storage = storage;
       this.json = json;
    }
@@ -56,14 +58,17 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       checkNotNull(backendNodeMetadata);
       checkNotNull(userGroup);
       checkNotNull(userOptions);
+      checkNotNull(userOptions.getLoginUser());
+      checkState(userOptions.getLoginPassword() != null || userOptions.getLoginPrivateKey() != null);
       JsonUserNodeMetadata jsonMetadata = new JsonUserNodeMetadata();
       jsonMetadata.user = userOptions.getLoginUser();
       jsonMetadata.password = userOptions.getLoginPassword();
       jsonMetadata.privateKey = userOptions.getLoginPrivateKey();
-      jsonMetadata.authenticateSudo = userOptions.shouldAuthenticateSudo();
+      jsonMetadata.authenticateSudo = userOptions.shouldAuthenticateSudo() != null ? userOptions
+               .shouldAuthenticateSudo().booleanValue() : false;
       jsonMetadata.userMetadata = userOptions.getUserMetadata();
-      jsonMetadata.userTags = userOptions.getTags();
-      jsonMetadata.userGroup = userGroup;
+      jsonMetadata.tags = userOptions.getTags();
+      jsonMetadata.group = userGroup;
       storage.get().put(backendNodeMetadata.getId(), Strings2.toInputStream(json.toJson(jsonMetadata)));
       return buildFromJsonAndBackendMetadata(backendNodeMetadata, jsonMetadata);
    }
@@ -83,12 +88,28 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       }
    }
 
+   @Override
+   public Set<NodeMetadata> loadAll(Set<NodeMetadata> backendNodes) {
+      if (backendNodes == null || backendNodes.isEmpty()) {
+         return Collections.emptySet();
+      }
+      final Set<NodeMetadata> loadedSet = Sets.newLinkedHashSet();
+      for (NodeMetadata input : backendNodes) {
+         NodeMetadata loaded = load(input);
+         if (loaded != null) {
+            loadedSet.add(loaded);
+         }
+
+      }
+      return loadedSet;
+   }
+
    private NodeMetadata buildFromJsonAndBackendMetadata(NodeMetadata backendNodeMetadata,
             JsonUserNodeMetadata jsonMetadata) {
       return NodeMetadataBuilder
                .fromNodeMetadata(backendNodeMetadata)
-               .tags(jsonMetadata.userTags)
-               .group(jsonMetadata.userGroup)
+               .tags(jsonMetadata.tags)
+               .group(jsonMetadata.group)
                .userMetadata(jsonMetadata.userMetadata)
                .credentials(
                         new LoginCredentials(jsonMetadata.user, jsonMetadata.password, jsonMetadata.privateKey,
@@ -105,12 +126,4 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
       storage.get().remove(backendNodeId);
    }
 
-   public Set<NodeMetadata> loadAll(Set<NodeMetadata> backendNodes) {
-      return ImmutableSet.copyOf(Iterables.transform(backendNodes, new Function<NodeMetadata, NodeMetadata>() {
-         @Override
-         public NodeMetadata apply(NodeMetadata input) {
-            return load(input);
-         }
-      }));
-   }
 }

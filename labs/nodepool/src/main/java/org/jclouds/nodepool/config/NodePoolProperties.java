@@ -18,16 +18,26 @@
  */
 package org.jclouds.nodepool.config;
 
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
+import org.jclouds.scriptbuilder.statements.login.AdminAccessBuilderSpec;
+
 /**
  * Constants for the {@link org.jclouds.nodepool.NodePoolComputeService}.
  */
 public interface NodePoolProperties {
 
-
    /**
     * Property to set the name of the backend group used for pooled nodes.
     */
    public static final String BACKEND_GROUP = "jclouds.nodepool.backend-group";
+
+   /**
+    * Property to set the {@link AdminAccess} that will be installed in the nodes pre-frontend
+    * allocation.
+    * 
+    * @see AdminAccessBuilderSpec for details on the format
+    */
+   public static final String POOL_ADMIN_ACCESS = "jclouds.nodepool.admin-access";
 
    /**
     * Property to set the provider or api of backend the pool
@@ -43,7 +53,7 @@ public interface NodePoolProperties {
     * Property to set the basedir where metadata will be stored
     */
    public static final String BASEDIR = "jclouds.nodepool.basedir";
-   
+
    /**
     * Property to set the container where metadata will be stored
     */

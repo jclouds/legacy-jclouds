@@ -92,8 +92,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       }).to(TemplateOptionsToStatement.class);
       bind(LoginCredentials.class).annotatedWith(Names.named("image")).toProvider(
             GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull.class);
-      bind(new TypeLiteral<Function<Template, LoginCredentials>>() {
-      }).to(DefaultCredentialsFromImageOrOverridingCredentials.class);
+      
+      bindCredentialsOverriderFunction();
       
       install(new FactoryModuleBuilder()
             .implement(RunScriptOnNodeUsingSsh.class, Names.named("direct"), RunScriptOnNodeUsingSsh.class)
@@ -116,6 +116,11 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       }, InitializeRunScriptOnNodeOrPlaceInBadMap.class).build(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class));
 
       install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
+   }
+   
+   protected void bindCredentialsOverriderFunction(){
+      bind(new TypeLiteral<Function<Template, LoginCredentials>>() {
+      }).to(DefaultCredentialsFromImageOrOverridingCredentials.class);
    }
 
    @Singleton

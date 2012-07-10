@@ -32,16 +32,19 @@ import java.util.Set;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName ="BYONBackendLiveTest")
+@Test(groups = "live", testName = "BYONBackendLiveTest")
 public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
 
    final String basedir = "target/" + this.getClass().getSimpleName();
@@ -49,17 +52,18 @@ public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
    public BYONBackendLiveTest() {
       provider = "nodepool";
    }
-   
+
    @Override
    protected Properties setupProperties() {
 
       Properties contextProperties = super.setupProperties();
-      
+
       contextProperties.setProperty(BACKEND_PROVIDER, "byon");
       contextProperties.setProperty(BASEDIR, basedir);
       contextProperties.setProperty(MAX_SIZE, 1 + "");
       contextProperties.setProperty(MIN_SIZE, 1 + "");
-      
+      contextProperties.setProperty("nodepool.identity", System.getProperty("user.name"));
+
       StringBuilder nodes = new StringBuilder();
       nodes.append("nodes:\n");
       nodes.append("    - id: mymachine\n");
@@ -70,7 +74,7 @@ public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
       nodes.append("      os_family: ").append(OsFamily.UNIX).append("\n");
       nodes.append("      os_description: ").append(System.getProperty("os.name")).append("\n");
       nodes.append("      os_version: ").append(System.getProperty("os.version")).append("\n");
-      nodes.append("      group: ").append("ssh").append("\n");
+      nodes.append("      group: ").append("nodepool").append("\n");
       nodes.append("      tags:\n");
       nodes.append("          - local\n");
       nodes.append("      username: ").append(System.getProperty("user.name")).append("\n");
@@ -82,20 +86,25 @@ public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
       return contextProperties;
    }
 
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
+   }
+
+   @Test(groups = "live")
    public void testCanRunCommandAsCurrentUser() throws Exception {
       Set<? extends NodeMetadata> nodes = view.getComputeService().createNodesInGroup("goo", 1);
       NodeMetadata node = Iterables.get(nodes, 0);
 
       try {
          ExecResponse response = view.getComputeService().runScriptOnNode(node.getId(), exec("id"),
-               wrapInInitScript(false).runAsRoot(false));
-
+                  wrapInInitScript(false).runAsRoot(false));
          assert response.getOutput().trim().contains(System.getProperty("user.name")) : node + ": " + response;
       } finally {
          view.getComputeService().destroyNode(node.getId());
       }
    }
-   
+
    @Override
    protected void tearDownContext() {
       super.tearDownContext();
