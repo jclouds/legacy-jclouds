@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.jclouds.elb.domain.InstanceState;
+import org.jclouds.elb.domain.InstanceHealth;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.internal.BaseELBClientLiveTest;
 import org.testng.Assert;
@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "live", testName = "InstanceClientLiveTest")
 public class InstanceClientLiveTest extends BaseELBClientLiveTest {
 
-   private void checkInstanceState(InstanceState instanceState) {
+   private void checkInstanceState(InstanceHealth instanceState) {
       checkNotNull(instanceState.getDescription(), "Description cannot be null for InstanceState");
       checkNotNull(instanceState.getInstanceId(), "InstanceId cannot be null for InstanceState");
       checkNotNull(instanceState.getReasonCode(),
@@ -46,24 +46,24 @@ public class InstanceClientLiveTest extends BaseELBClientLiveTest {
 
    @Test
    protected void testListInstanceStates() {
-      for (LoadBalancer loadBalancer : context.getApi().getLoadBalancerClientForRegion(null).list()) {
-         Set<InstanceState> response = client().getStateOfInstancesOfLoadBalancer(loadBalancer.getName());
+      for (LoadBalancer loadBalancer : context.getApi().getLoadBalancerClient().list()) {
+         Set<InstanceHealth> response = client().getHealthOfInstancesOfLoadBalancer(loadBalancer.getName());
 
-         for (InstanceState instanceState : response) {
+         for (InstanceHealth instanceState : response) {
             checkInstanceState(instanceState);
          }
 
          if (response.size() > 0) {
-            InstanceState instanceState = response.iterator().next();
+            InstanceHealth instanceState = response.iterator().next();
             Assert.assertEquals(
-                     client().getStateOfInstancesOfLoadBalancer(ImmutableSet.of(instanceState.getInstanceId()),
-                              loadBalancer.getName()), instanceState);
+                     ImmutableSet.of(client().getHealthOfInstancesOfLoadBalancer(ImmutableSet.of(instanceState.getInstanceId()),
+                              loadBalancer.getName())), instanceState);
          }
       }
 
    }
 
    protected InstanceClient client() {
-      return context.getApi().getInstanceClientForRegion(null);
+      return context.getApi().getInstanceClient();
    }
 }

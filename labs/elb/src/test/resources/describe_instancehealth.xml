@@ -1,0 +1,15 @@
+<DescribeInstanceHealthResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+  <DescribeInstanceHealthResult>
+    <InstanceStates>
+      <member>
+        <Description>Instance is in terminated state.</Description>
+        <InstanceId>i-64bd081c</InstanceId>
+        <State>OutOfService</State>
+        <ReasonCode>Instance</ReasonCode>
+      </member>
+    </InstanceStates>
+  </DescribeInstanceHealthResult>
+  <ResponseMetadata>
+    <RequestId>6fb803d5-ca15-11e1-ba7e-87298bc8b11d</RequestId>
+  </ResponseMetadata>
+</DescribeInstanceHealthResponse>

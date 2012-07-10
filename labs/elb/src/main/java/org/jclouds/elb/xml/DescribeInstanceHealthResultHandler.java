@@ -22,7 +22,7 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Set;
 
-import org.jclouds.elb.domain.InstanceState;
+import org.jclouds.elb.domain.InstanceHealth;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,12 +39,12 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class DescribeInstanceHealthResultHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<Set<InstanceState>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<Set<InstanceHealth>> {
 
    private final InstanceStateHandler instanceStateHandler;
 
    private StringBuilder currentText = new StringBuilder();
-   private Builder<InstanceState> instanceStates = ImmutableSet.<InstanceState> builder();
+   private Builder<InstanceHealth> instanceStates = ImmutableSet.<InstanceHealth> builder();
    private boolean inStates;
 
    protected int memberDepth;
@@ -58,7 +58,7 @@ public class DescribeInstanceHealthResultHandler extends
     * {@inheritDoc}
     */
    @Override
-   public Set<InstanceState> getResult() {
+   public Set<InstanceHealth> getResult() {
       return instanceStates.build();
    }
 

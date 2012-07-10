@@ -105,6 +105,6 @@ public class PolicyClientLiveTest extends BaseELBClientLiveTest {
    }
 
    protected PolicyClient client() {
-      return context.getApi().getPolicyClientForRegion(null);
+      return context.getApi().getPolicyClient();
    }
 }

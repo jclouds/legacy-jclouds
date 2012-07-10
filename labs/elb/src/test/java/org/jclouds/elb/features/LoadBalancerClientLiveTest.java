@@ -94,6 +94,6 @@ public class LoadBalancerClientLiveTest extends BaseELBClientLiveTest {
    }
 
    protected LoadBalancerClient client() {
-      return context.getApi().getLoadBalancerClientForRegion(null);
+      return context.getApi().getLoadBalancerClient();
    }
 }

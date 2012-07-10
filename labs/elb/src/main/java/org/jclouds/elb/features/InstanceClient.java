@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.elb.domain.InstanceState;
+import org.jclouds.elb.domain.InstanceHealth;
 
 /**
  * Provides access to Amazon ELB via the Query API
@@ -50,7 +50,7 @@ public interface InstanceClient {
     * 
     * @return state of all instances of the load balancer
     */
-   Set<InstanceState> getStateOfInstancesOfLoadBalancer(String loadBalancerName);
+   Set<InstanceHealth> getHealthOfInstancesOfLoadBalancer(String loadBalancerName);
 
    /**
     * Returns the current state of the instances of the specified LoadBalancer.
@@ -69,7 +69,7 @@ public interface InstanceClient {
     * 
     * @return state of all instances of the load balancer
     */
-   Set<InstanceState> getStateOfInstancesOfLoadBalancer(Iterable<String> instanceIds, String loadBalancerName);
+   Set<InstanceHealth> getHealthOfInstancesOfLoadBalancer(Iterable<String> instanceIds, String loadBalancerName);
 
    /**
     * Adds new instances to the LoadBalancer.

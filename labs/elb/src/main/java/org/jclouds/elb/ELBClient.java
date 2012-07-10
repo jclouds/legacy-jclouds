@@ -27,6 +27,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.features.InstanceClient;
 import org.jclouds.elb.features.LoadBalancerClient;
 import org.jclouds.elb.features.PolicyClient;
+import org.jclouds.elb.features.AvailabilityZoneClient;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
@@ -81,6 +82,16 @@ public interface ELBClient {
 
    @Delegate
    InstanceClient getInstanceClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   
+   /**
+    * Provides synchronous access to Zone features.
+    */
+   @Delegate
+   AvailabilityZoneClient getAvailabilityZoneClient();
+
+   @Delegate
+   AvailabilityZoneClient getAvailabilityZoneClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

@@ -28,8 +28,8 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.elb.binders.BindInstanceIdsToIndexedFormParams;
-import org.jclouds.elb.domain.InstanceState;
-import org.jclouds.elb.xml.DescribeLoadBalancerPoliciesResultHandler;
+import org.jclouds.elb.domain.InstanceHealth;
+import org.jclouds.elb.xml.DescribeInstanceHealthResultHandler;
 import org.jclouds.elb.xml.InstancesResultHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -55,25 +55,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface InstanceAsyncClient {
 
    /**
-    * @see InstanceClient#getStateOfInstancesOfLoadBalancer(String)
+    * @see InstanceClient#getHealthOfInstancesOfLoadBalancer(String)
     */
    @POST
    @Path("/")
-   @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
+   @XMLResponseParser(DescribeInstanceHealthResultHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeInstanceHealth")
-   ListenableFuture<Set<InstanceState>> getStateOfInstancesOfLoadBalancer(
+   ListenableFuture<Set<InstanceHealth>> getHealthOfInstancesOfLoadBalancer(
             @FormParam("LoadBalancerName") String loadBalancerName);
 
    /**
-    * @see InstanceClient#getStateOfInstancesOfLoadBalancer(Iterable<String>, String)
+    * @see InstanceClient#getHealthOfInstancesOfLoadBalancer(Iterable, String)
     */
    @POST
    @Path("/")
-   @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
+   @XMLResponseParser(DescribeInstanceHealthResultHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeInstanceHealth")
-   ListenableFuture<Set<InstanceState>> getStateOfInstancesOfLoadBalancer(
+   ListenableFuture<Set<InstanceHealth>> getHealthOfInstancesOfLoadBalancer(
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) Iterable<String> instanceIds,
             @FormParam("LoadBalancerName") String loadBalancerName);
 

@@ -45,6 +45,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -71,7 +72,7 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
       checkNotNull(location, "location");
       String region = getRegionFromLocationOrNull(location);
 
-      Set<String> availabilityZones = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {
+      Set<String> zonesDesired = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {
 
          @Override
          public String apply(NodeMetadata from) {
@@ -79,16 +80,22 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
          }
       }));
 
-      logger.debug(">> creating loadBalancer(%s)", name);
+      logger.debug(">> creating loadBalancer(%s) in zones(%s)", name, zonesDesired);
       try {
          String dnsName = client.getLoadBalancerClientForRegion(region).createLoadBalancerListeningInAvailabilityZones(
                   name,
                   ImmutableSet.of(Listener.builder().port(loadBalancerPort).instancePort(instancePort)
-                           .protocol(Protocol.valueOf(protocol)).build()), availabilityZones);
+                           .protocol(Protocol.valueOf(protocol)).build()), zonesDesired);
          logger.debug("<< created loadBalancer(%s) dnsName(%s)", name, dnsName);
       } catch (IllegalStateException e) {
-         logger.debug("<< reusing loadBalancer(%s)", name);
-         // TODO: converge availability zones
+         logger.debug("<< converging zones(%s) in loadBalancer(%s)", zonesDesired, name);
+         Set<String> currentZones = client.getLoadBalancerClient().get(name).getAvailabilityZones();
+         Set<String> zonesToAdd = Sets.difference(zonesDesired, currentZones);
+         if (zonesToAdd.size() > 0)
+            currentZones = client.getAvailabilityZoneClient().addAvailabilityZonesToLoadBalancer(zonesToAdd, name);
+         Set<String> zonesToRemove = Sets.difference(currentZones, zonesDesired);
+         if (zonesToRemove.size() > 0)
+            client.getAvailabilityZoneClient().addAvailabilityZonesToLoadBalancer(zonesToRemove, name);
       }
 
       Set<String> instanceIds = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {

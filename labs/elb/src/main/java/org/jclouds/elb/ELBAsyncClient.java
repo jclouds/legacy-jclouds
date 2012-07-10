@@ -26,6 +26,7 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.elb.features.InstanceAsyncClient;
 import org.jclouds.elb.features.LoadBalancerAsyncClient;
 import org.jclouds.elb.features.PolicyAsyncClient;
+import org.jclouds.elb.features.AvailabilityZoneAsyncClient;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
@@ -84,6 +85,16 @@ public interface ELBAsyncClient {
 
    @Delegate
    InstanceAsyncClient getInstanceClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides asynchronous access to AvailabilityZone features.
+    */
+   @Delegate
+   AvailabilityZoneAsyncClient getAvailabilityZoneClient();
+
+   @Delegate
+   AvailabilityZoneAsyncClient getAvailabilityZoneClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

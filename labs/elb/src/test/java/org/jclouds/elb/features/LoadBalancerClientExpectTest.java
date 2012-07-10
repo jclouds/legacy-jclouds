@@ -74,7 +74,7 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenExist = requestSendsResponse(
             get, getResponse);
 
-      assertEquals(clientWhenExist.getLoadBalancerClientForRegion(null).get("name").toString(), new GetLoadBalancerResponseTest().expected().toString());
+      assertEquals(clientWhenExist.getLoadBalancerClient().get("name").toString(), new GetLoadBalancerResponseTest().expected().toString());
    }
 
    public void testGetWhenResponseIs404() throws Exception {
@@ -84,7 +84,7 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenDontExist = requestSendsResponse(
             get, getResponse);
 
-      assertNull(clientWhenDontExist.getLoadBalancerClientForRegion(null).get("name"));
+      assertNull(clientWhenDontExist.getLoadBalancerClient().get("name"));
    }
 
    HttpRequest list = HttpRequest.builder()
@@ -113,7 +113,7 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(clientWhenExist.getLoadBalancerClientForRegion(null).list().toString(), new DescribeLoadBalancersResponseTest().expected().toString());
+      assertEquals(clientWhenExist.getLoadBalancerClient().list().toString(), new DescribeLoadBalancersResponseTest().expected().toString());
    }
 
    // TODO: this should really be an empty set
@@ -125,7 +125,7 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      clientWhenDontExist.getLoadBalancerClientForRegion(null).list();
+      clientWhenDontExist.getLoadBalancerClient().list();
    }
    
    public void testListWithOptionsWhenResponseIs2xx() throws Exception {
@@ -154,7 +154,7 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       ELBClient clientWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(clientWhenWithOptionsExist.getLoadBalancerClientForRegion(null).list(afterMarker("MARKER")).toString(),
+      assertEquals(clientWhenWithOptionsExist.getLoadBalancerClient().list(afterMarker("MARKER")).toString(),
                new DescribeLoadBalancersResponseTest().expected().toString());
    }
 }

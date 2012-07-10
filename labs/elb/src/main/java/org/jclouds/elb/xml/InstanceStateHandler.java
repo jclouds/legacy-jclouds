@@ -21,7 +21,7 @@ package org.jclouds.elb.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import org.jclouds.elb.domain.InstanceState;
+import org.jclouds.elb.domain.InstanceHealth;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.SAXException;
 
@@ -32,20 +32,20 @@ import org.xml.sax.SAXException;
  * 
  * @author Adrian Cole
  */
-public class InstanceStateHandler extends ParseSax.HandlerForGeneratedRequestWithResult<InstanceState> {
+public class InstanceStateHandler extends ParseSax.HandlerForGeneratedRequestWithResult<InstanceHealth> {
 
    private StringBuilder currentText = new StringBuilder();
-   private InstanceState.Builder builder = InstanceState.builder();
+   private InstanceHealth.Builder builder = InstanceHealth.builder();
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public InstanceState getResult() {
+   public InstanceHealth getResult() {
       try {
          return builder.build();
       } finally {
-         builder = InstanceState.builder();
+         builder = InstanceHealth.builder();
       }
    }
 

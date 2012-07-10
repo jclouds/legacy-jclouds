@@ -60,7 +60,7 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
          instanceIds.add(node.getProviderId());
       }
 
-      PaginatedIterable<LoadBalancer> elbs = elbClient.getLoadBalancerClientForRegion(null).list();
+      PaginatedIterable<LoadBalancer> elbs = elbClient.getLoadBalancerClient().list();
       for (LoadBalancer elb : elbs) {
          if (elb.getName().equals(group))
             assertEquals(elb.getInstanceIds(), instanceIds.build());

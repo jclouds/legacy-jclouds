@@ -32,7 +32,7 @@ import com.google.common.base.Optional;
  * 
  * @author Adrian Cole
  */
-public class InstanceState {
+public class InstanceHealth {
 
    public static Builder builder() {
       return new Builder();
@@ -50,7 +50,7 @@ public class InstanceState {
       protected String state;
 
       /**
-       * @see InstanceState#getDescription()
+       * @see InstanceHealth#getDescription()
        */
       public Builder description(String description) {
          this.description = description;
@@ -58,7 +58,7 @@ public class InstanceState {
       }
 
       /**
-       * @see InstanceState#getInstanceId()
+       * @see InstanceHealth#getInstanceId()
        */
       public Builder instanceId(String instanceId) {
          this.instanceId = instanceId;
@@ -66,7 +66,7 @@ public class InstanceState {
       }
 
       /**
-       * @see InstanceState#getReasonCode()
+       * @see InstanceHealth#getReasonCode()
        */
       public Builder reasonCode(String reasonCode) {
          this.reasonCode = Optional.fromNullable(reasonCode);
@@ -74,18 +74,18 @@ public class InstanceState {
       }
 
       /**
-       * @see InstanceState#getState()
+       * @see InstanceHealth#getState()
        */
       public Builder state(String state) {
          this.state = state;
          return this;
       }
 
-      public InstanceState build() {
-         return new InstanceState(description, instanceId, reasonCode, state);
+      public InstanceHealth build() {
+         return new InstanceHealth(description, instanceId, reasonCode, state);
       }
 
-      public Builder fromAttributeMetadata(InstanceState in) {
+      public Builder fromAttributeMetadata(InstanceHealth in) {
          return this.description(in.getDescription()).instanceId(in.getInstanceId())
                   .reasonCode(in.getReasonCode().orNull()).state(in.getState());
       }
@@ -96,7 +96,7 @@ public class InstanceState {
    protected final Optional<String> reasonCode;
    protected final String state;
 
-   protected InstanceState(String description, String instanceId, Optional<String> reasonCode, String state) {
+   protected InstanceHealth(String description, String instanceId, Optional<String> reasonCode, String state) {
       this.description = checkNotNull(description, "description");
       this.instanceId = checkNotNull(instanceId, "instanceId");
       this.reasonCode = checkNotNull(reasonCode, "reasonCode");
@@ -151,7 +151,7 @@ public class InstanceState {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      InstanceState other = InstanceState.class.cast(obj);
+      InstanceHealth other = InstanceHealth.class.cast(obj);
       return Objects.equal(this.description, other.description) && Objects.equal(this.instanceId, other.instanceId)
                && Objects.equal(this.reasonCode, other.reasonCode) && Objects.equal(this.state, other.state);
    }
