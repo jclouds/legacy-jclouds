@@ -53,5 +53,7 @@
        <module>iam</module>
        <module>aws-iam</module>
        <module>nodepool</module>
+       <module>rds</module>
+       <module>aws-rds</module>
     </modules>
 </project>
