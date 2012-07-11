@@ -146,7 +146,7 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
          backendComputeService.get().destroyNode(id);
          addToPool(1);
       }
-      // TODO we should the user to hook a way to "clean" the node
+      // TODO we should allow the user to hook a way to "clean" the node
       else {
 
       }

@@ -33,12 +33,13 @@ import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.RunNodesException;
@@ -59,6 +60,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 import com.google.inject.Module;
 
@@ -75,15 +77,13 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       contextProperties.setProperty(BASEDIR, basedir);
       contextProperties.setProperty(POOL_ADMIN_ACCESS, "adminUsername=pooluser,adminPassword=poolpassword");
       contextProperties.setProperty(MAX_SIZE, 2 + "");
-      contextProperties.setProperty(MIN_SIZE, 0 + "");
+      contextProperties.setProperty(MIN_SIZE, 1 + "");
       return contextProperties;
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
    protected void tearDownContext() {
-      // TODO this is failing with CCException, how can we get to the underlying ctx?
-      ((NodePoolComputeServiceContext) context).destroyPool();
       Closeables.closeQuietly(context);
    }
 
@@ -121,11 +121,6 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       watch.reset().start();
 
-      // note this is a dependency on the template resolution so we have the
-      // right process per
-      // operating system. moreover, we wish this to run as root, so that it
-      // can change ip
-      // tables rules and setup our admin user
       client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
                nameTask("configure-jboss"));
 
@@ -185,17 +180,39 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertSame(client.listNodes().size(), 2);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testIncreasePoolAllowed", expectedExceptions = ExecutionException.class)
+   @Test(enabled = true, dependsOnMethods = "testIncreasePoolAllowed")
    public void testIncreasePoolNotAllowed() throws RunNodesException {
-      client.createNodesInGroup(group, 1);
+      boolean caughtException = false;
+      try {
+         client.createNodesInGroup(group, 1);
+      } catch (Exception e) {
+         caughtException = true;
+      }
+      assertTrue(caughtException, "expected an exception to be thrown");
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testIncreasePoolNotAllowed")
+   public void testGetBackendComputeServiceContext() {
+      NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
+      assertNotNull(ctx.getBackendContext());
+      assertSame(
+               Sets.filter(ctx.getComputeService().listNodesDetailsMatching(NodePredicates.all()),
+                        NodePredicates.inGroup(ctx.getPoolGroupName())).size(), 2);
    }
 
    @Test(enabled = true, dependsOnMethods = "testIncreasePoolNotAllowed")
    public void testDestroyPoolNodes() {
       client.destroyNodesMatching(NodePredicates.inGroup(group));
       // after we destroy all nodes we should still have minsize nodes in the pool
-      // TODO assert that there is still on node in the pool.
-      assertSame(((NodePoolComputeServiceContext) context).getPoolStats().currentSize(), 1);
+      NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
+      assertSame(ctx.getPoolStats().currentSize(), 1);
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testDestroyPoolNodes")
+   public void testDestroyPool() {
+      // TODO get the ctx without the injector
+      NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
+      ctx.destroyPool();
    }
 
    @Override

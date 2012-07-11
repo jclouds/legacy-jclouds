@@ -328,6 +328,7 @@ public class BindBackendComputeService extends BindJcloudsModules {
                      return new TemplateOptions();
                   }
 
+                  @Override
                   public Template clone() {
                      return this;
                   }

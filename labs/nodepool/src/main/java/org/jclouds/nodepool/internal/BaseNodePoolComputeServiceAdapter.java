@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.inject.Named;
 
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -61,11 +62,11 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
    protected final AdminAccess.Builder initialCredentialsBuilder;
 
    public BaseNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
-            @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupNamePrefix,
+            @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupName,
             NodeMetadataStore metadataStore, @Named(POOL_ADMIN_ACCESS) String poolNodeAdminAccess,
             AdminAccess.Configuration configuration) {
       this.backendComputeService = backendComputeService;
-      this.poolGroupName = poolGroupNamePrefix;
+      this.poolGroupName = poolGroupName;
       this.backendTemplate = backendTemplate;
       this.metadataStore = metadataStore;
       this.initialCredentialsBuilder = AdminAccessBuilderSpec.parse(poolNodeAdminAccess).copyTo(
@@ -142,6 +143,11 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
       backendComputeService.get().destroyNodesMatching(NodePredicates.inGroup(poolGroupName));
    }
 
+   @Override
+   public ComputeServiceContext getBackendComputeServiceContext() {
+      return backendComputeService.get().getContext();
+   }
+
    protected void addToPool(int number) {
       try {
          Template template = backendTemplate.get().clone();
@@ -150,6 +156,11 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
       } catch (RunNodesException e) {
          throw Throwables.propagate(e);
       }
+   }
+
+   @Override
+   public String getPoolGroupName() {
+      return this.poolGroupName;
    }
 
 }
