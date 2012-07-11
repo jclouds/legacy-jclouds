@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.jclouds.jenkins.v1.domain.JobDetails;
+import org.jclouds.jenkins.v1.domain.LastBuild;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterClass;
@@ -79,9 +80,18 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
    public void testBuildJobWithParameters() throws IOException {
       Map<String, String> parameters = ImmutableMap.of("name", "test1", "password", "secret");
       getClient().buildWithParameters("jobWithParameters", parameters);
-   }   
+   }
    
-   @Test(dependsOnMethods = "testBuildJob")
+   @Test(dependsOnMethods = "testBuildJobWithParameters")
+   public void testLastBuild() throws IOException {
+      LastBuild lastBuild = getClient().lastBuild("jobWithParameters");
+      while(lastBuild == null || lastBuild.getResult() == null) {
+         lastBuild = getClient().lastBuild("jobWithParameters");
+      }
+      assertEquals(lastBuild.getResult(), "SUCCESS");
+   }      
+   
+   @Test(dependsOnMethods = "testLastBuild")
    public void testDeleteJobWithParameters() {
       getClient().delete("jobWithParameters");
    }

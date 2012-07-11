@@ -28,6 +28,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.jenkins.v1.JenkinsClient;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientExpectTest;
+import org.jclouds.jenkins.v1.parse.LastBuildTest;
 import org.jclouds.jenkins.v1.parse.ParseJobDetailsTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -148,5 +149,28 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
       HttpResponse fetchConfigResponse = HttpResponse.builder().statusCode(404).build();
       JenkinsClient getJobWhenGetd = requestSendsResponse(fetchConfig, fetchConfigResponse);
       getJobWhenGetd.getJobClient().fetchConfigXML("ddd");
+   }
+   
+   
+   HttpRequest lastBuild = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create("http://localhost:8080/job/ddd/lastBuild/api/json"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                  .put("Accept", "application/json")
+                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .build();
+   
+   public void testLastBuildWhenResponseIs2xx() {
+      HttpResponse lastBuildResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/lastBuild.json")).build();
+      JenkinsClient clientWhenJobExists = requestSendsResponse(lastBuild, lastBuildResponse);
+      assertEquals(clientWhenJobExists.getJobClient().lastBuild("ddd").toString(),
+               new LastBuildTest().expected().toString());
+   }
+   
+   public void testLastBuildWhenResponseIs404() {
+      HttpResponse lastBuildResponse = HttpResponse.builder().statusCode(404).build();
+      JenkinsClient getJobWhenGetd = requestSendsResponse(lastBuild, lastBuildResponse);
+      assertNull(getJobWhenGetd.getJobClient().lastBuild("ddd"));
    }
 }
