@@ -157,4 +157,41 @@ public class LoadBalancerClientExpectTest extends BaseELBClientExpectTest {
       assertEquals(clientWhenWithOptionsExist.getLoadBalancerClient().list(afterMarker("MARKER")).toString(),
                new DescribeLoadBalancersResponseTest().expected().toString());
    }
+   
+   HttpRequest delete = HttpRequest.builder()
+            .method("POST")
+            .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                     .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
+                     .build())
+            .payload(
+               payloadFromStringWithContentType(
+                        "Action=DeleteLoadBalancer" +
+                        "&LoadBalancerName=name" +
+                        "&Signature=LPfcRnIayHleMt9Z8QiGTMXoafF2ABKGeah3UO1eD0k%3D" +
+                        "&SignatureMethod=HmacSHA256" +
+                        "&SignatureVersion=2" +
+                        "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                        "&Version=2012-06-01" +
+                        "&AWSAccessKeyId=identity",
+                     "application/x-www-form-urlencoded"))
+            .build();
+
+   public void testDeleteWhenResponseIs2xx() throws Exception {
+
+      HttpResponse deleteResponse = HttpResponse.builder().statusCode(200).build();
+
+      ELBClient clientWhenExist = requestSendsResponse(delete, deleteResponse);
+
+      clientWhenExist.getLoadBalancerClient().delete("name");
+   }
+
+   public void testDeleteWhenResponseIs404() throws Exception {
+
+      HttpResponse deleteResponse = HttpResponse.builder().statusCode(404).build();
+
+      ELBClient clientWhenDontExist = requestSendsResponse(delete, deleteResponse);
+
+      clientWhenDontExist.getLoadBalancerClient().delete("name");
+   }
 }

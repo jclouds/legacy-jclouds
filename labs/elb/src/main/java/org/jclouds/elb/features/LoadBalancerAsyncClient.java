@@ -43,6 +43,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -137,6 +138,7 @@ public interface LoadBalancerAsyncClient {
     */
    @POST
    @Path("/")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
    ListenableFuture<Void> delete(@FormParam("LoadBalancerName") String name);
 }
