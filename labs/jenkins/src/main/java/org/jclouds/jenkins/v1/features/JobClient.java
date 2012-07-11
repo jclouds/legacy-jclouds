@@ -18,14 +18,12 @@
  */
 package org.jclouds.jenkins.v1.features;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.UriInfo;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.jenkins.v1.domain.JobDetails;
+import org.jclouds.jenkins.v1.domain.LastBuild;
 
 /**
  * Job Services
@@ -63,4 +61,5 @@ public interface JobClient {
    
    String fetchConfigXML(String displayName);
    
+   LastBuild lastBuild(String displayName);
 }
