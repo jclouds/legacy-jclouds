@@ -34,7 +34,6 @@ import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
-import static org.testng.Assert.fail;
 
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -64,8 +63,7 @@ import com.google.common.io.Closeables;
 import com.google.inject.Module;
 
 public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-
-   private final String basedir = "target/" + this.getClass().getSimpleName().toLowerCase();
+   final String basedir = "target/" + this.getClass().getSimpleName().toLowerCase();
 
    public NodePoolComputeServiceLiveTest() {
       provider = "nodepool";
@@ -102,7 +100,6 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
-      tearDownContext();
       String group = this.group + "s";
       final String configuration = Strings2.toStringAndClose(RunScriptData.class
                .getResourceAsStream("/standalone-basic.xml"));
@@ -198,7 +195,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       client.destroyNodesMatching(NodePredicates.inGroup(group));
       // after we destroy all nodes we should still have minsize nodes in the pool
       // TODO assert that there is still on node in the pool.
-      // assertSame(((NodePoolComputeServiceContext) context).getPoolStats().currentSize(), 1);
+      assertSame(((NodePoolComputeServiceContext) context).getPoolStats().currentSize(), 1);
    }
 
    @Override
