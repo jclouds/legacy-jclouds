@@ -6,7 +6,7 @@ END_OF_FILE
 chmod 0440 /etc/sudoers
 mkdir -p /home/users
 groupadd -f wheel
-useradd -s /bin/bash -g wheel -d /home/users/defaultAdminUsername -p 'crypt(0)' defaultAdminUsername
+useradd -c defaultAdminUsername -s /bin/bash -g wheel -d /home/users/defaultAdminUsername -p 'crypt(0)' defaultAdminUsername
 mkdir -p /home/users/defaultAdminUsername/.ssh
 cat >> /home/users/defaultAdminUsername/.ssh/authorized_keys <<'END_OF_FILE'
 publicKey

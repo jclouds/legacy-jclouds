@@ -186,6 +186,9 @@ public class UserAdd implements Statement {
       statements.add(Statements.exec("{md} " + homeDir.substring(0, homeDir.lastIndexOf('/'))));
 
       ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.builder();
+      // Include the username as the full name for now.
+      userAddOptions.put("-c", login);
+      
       userAddOptions.put("-s", shell);
       if (groups.size() > 0) {
          for (String group : groups)
