@@ -54,7 +54,7 @@ public class ParseFloatingIPListFromJsonResponse {
                .apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.size(), 1);
-      FloatingIP floatingIP = new FloatingIP(1, "10.0.0.3", "11.0.0.1", 12);
+      FloatingIP floatingIP = FloatingIP.builder().id(1).ip("10.0.0.3").fixedIP("11.0.0.1").instanceID(12).build();
       assertEquals(response.get(0), floatingIP);
    }
 }
