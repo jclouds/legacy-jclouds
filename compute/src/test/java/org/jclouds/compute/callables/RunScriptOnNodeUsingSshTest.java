@@ -127,7 +127,7 @@ public class RunScriptOnNodeUsingSshTest {
       expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
       expect(
             sshClient.exec("sudo sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" + "mkdir -p /home/users\n"
-                  + "useradd -s /bin/bash -m  -d /home/users/testuser testuser\n"
+                  + "useradd -c testuser -s /bin/bash -m  -d /home/users/testuser testuser\n"
                   + "chown -R testuser /home/users/testuser\n" + "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(
             new ExecResponse("done", null, 0));
       sshClient.disconnect();
