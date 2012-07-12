@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,86 +18,141 @@
  */
 package org.jclouds.openstack.swift.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ComparisonChain;
 
+/**
+ * Class ObjectInfoImpl
+ */
 public class ObjectInfoImpl implements ObjectInfo {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private String name;
-      private String container;
-      private URI uri;
-      private byte[] hash;
-      private Long bytes;
-      private String contentType;
-      private Date lastModified;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromObjectInfoImpl(this);
+   }
 
-      public Builder name(String name) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String name;
+      protected String container;
+      protected URI uri;
+      protected byte[] hash;
+      protected Long bytes;
+      protected String contentType;
+      protected Date lastModified;
+
+      /**
+       * @see ObjectInfoImpl#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder container(String container) {
+      /**
+       * @see ObjectInfoImpl#getContainer()
+       */
+      public T container(String container) {
          this.container = container;
-         return this;
+         return self();
       }
 
-      public Builder uri(URI uri) {
+      /**
+       * @see ObjectInfoImpl#getUri()
+       */
+      public T uri(URI uri) {
          this.uri = uri;
-         return this;
+         return self();
       }
 
-      public Builder hash(byte[] hash) {
+      /**
+       * @see ObjectInfoImpl#getHash()
+       */
+      public T hash(byte[] hash) {
          this.hash = hash;
-         return this;
+         return self();
       }
 
-      public Builder bytes(Long bytes) {
+      /**
+       * @see ObjectInfoImpl#getBytes()
+       */
+      public T bytes(Long bytes) {
          this.bytes = bytes;
-         return this;
+         return self();
       }
 
-      public Builder contentType(String contentType) {
+      /**
+       * @see ObjectInfoImpl#getContentType()
+       */
+      public T contentType(String contentType) {
          this.contentType = contentType;
-         return this;
+         return self();
       }
 
-      public Builder lastModified(Date lastModified) {
+      /**
+       * @see ObjectInfoImpl#getLastModified()
+       */
+      public T lastModified(Date lastModified) {
          this.lastModified = lastModified;
-         return this;
+         return self();
       }
 
       public ObjectInfoImpl build() {
-         return new ObjectInfoImpl(name, uri, container, hash, bytes, contentType, lastModified);
+         return new ObjectInfoImpl(name, container, uri, hash, bytes, contentType, lastModified);
       }
 
-      public Builder fromObjectInfo(ObjectInfo in) {
-         return name(in.getName()).container(in.getContainer()).uri(uri).hash(in.getHash()).bytes(in.getBytes())
-                  .contentType(in.getContentType()).lastModified(in.getLastModified());
+      public T fromObjectInfoImpl(ObjectInfoImpl in) {
+         return this
+               .name(in.getName())
+               .container(in.getContainer())
+               .uri(in.getUri())
+               .hash(in.getHash())
+               .bytes(in.getBytes())
+               .contentType(in.getContentType())
+               .lastModified(in.getLastModified());
       }
    }
 
-   private String name;
-   private String container;
-   private URI uri;
-   private byte[] hash;
-   private Long bytes;
-   @SerializedName("content_type")
-   private String contentType;
-   @SerializedName("last_modified")
-   private Date lastModified;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-   public ObjectInfoImpl(String name, URI uri, String container, byte[] hash, Long bytes, String contentType,
-            Date lastModified) {
-      this.name = name;
+   private final String name;
+   private final String container;
+   private final URI uri;
+   private final byte[] hash;
+   private final Long bytes;
+   @Named("content_type")
+   private final String contentType;
+   @Named("last_modified")
+   private final Date lastModified;
+
+   @ConstructorProperties({
+         "name", "container", "uri", "hash", "bytes", "content_type", "last_modified"
+   })
+   protected ObjectInfoImpl(String name, @Nullable String container, @Nullable URI uri, @Nullable byte[] hash, @Nullable Long bytes,
+                            @Nullable String contentType, @Nullable Date lastModified) {
+      this.name = checkNotNull(name, "name");
       this.container = container;
       this.uri = uri;
       this.hash = hash;
@@ -106,110 +161,88 @@ public class ObjectInfoImpl implements ObjectInfo {
       this.lastModified = lastModified;
    }
 
-   ObjectInfoImpl() {
-
-   }
-
    /**
     * {@inheritDoc}
     */
-   @Override
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * {@inheritDoc}
     */
-   @Override
+   @Nullable
    public String getContainer() {
-      return container;
+      return this.container;
    }
 
    /**
     * {@inheritDoc}
     */
-   @Override
+   @Nullable
    public URI getUri() {
-      return uri;
+      return this.uri;
    }
 
    /**
     * {@inheritDoc}
     */
-   @Override
+   @Nullable
    public byte[] getHash() {
-      return hash;
+      return this.hash;
    }
 
    /**
     * {@inheritDoc}
     */
-   @Override
+   @Nullable
    public Long getBytes() {
-      return bytes;
+      return this.bytes;
    }
 
    /**
     * {@inheritDoc}
     */
-   @Override
+   @Nullable
    public String getContentType() {
-      return contentType;
+      return this.contentType;
    }
 
    /**
     * {@inheritDoc}
     */
-   @Override
+   @Nullable
    public Date getLastModified() {
-      return lastModified;
+      return this.lastModified;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((container == null) ? 0 : container.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+      return Objects.hashCode(name, container);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ObjectInfoImpl other = (ObjectInfoImpl) obj;
-      if (container == null) {
-         if (other.container != null)
-            return false;
-      } else if (!container.equals(other.container))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ObjectInfoImpl that = ObjectInfoImpl.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+            && Objects.equal(this.container, that.container);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("name", name).add("container", container).add("uri", uri).add("hash", Arrays.toString(hash))
+            .add("bytes", bytes).add("contentType", contentType).add("lastModified", lastModified);
    }
 
    @Override
    public String toString() {
-      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s]", name,
-               container, uri, bytes, contentType, lastModified, Arrays.toString(hash));
-   }
-
-   public Builder toBuilder() {
-      return builder().fromObjectInfo(this);
+      return string().toString();
    }
 
    @Override
-   public int compareTo(ObjectInfo o) {
-      return name.compareTo(o.getName());
+   public int compareTo(ObjectInfo other) {
+      return ComparisonChain.start().compare(name, other.getName()).compare(container, other.getContainer()).result();
    }
-
 }
