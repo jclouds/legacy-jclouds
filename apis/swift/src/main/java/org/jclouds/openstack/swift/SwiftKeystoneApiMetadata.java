@@ -87,6 +87,7 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
                .identityName("tenantName:user or user")
                .credentialName("password")
                .context(CONTEXT_TOKEN)
+               .defaultProperties(SwiftKeystoneApiMetadata.defaultProperties())
                .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, KeystoneAuthenticationModule.RegionModule.class,
                      SwiftKeystoneRestClientModule.class, SwiftBlobStoreContextModule.class));
       }
