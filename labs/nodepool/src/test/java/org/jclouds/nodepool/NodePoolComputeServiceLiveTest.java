@@ -178,13 +178,13 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertEquals(((NodeMetadata) Iterables.get(client.listNodes(), 0)).getGroup(), this.group);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testRebuildPoolStateFromStore")
+   @Test(enabled = false, dependsOnMethods = "testRebuildPoolStateFromStore")
    public void testIncreasePoolAllowed() throws RunNodesException {
       client.createNodesInGroup(this.group, 1);
       assertSame(client.listNodes().size(), 2);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testIncreasePoolAllowed")
+   @Test(enabled = false, dependsOnMethods = "testIncreasePoolAllowed")
    public void testIncreasePoolNotAllowed() throws RunNodesException {
       boolean caughtException = false;
       try {
@@ -195,7 +195,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertTrue(caughtException, "expected an exception to be thrown");
    }
 
-   @Test(enabled = true, dependsOnMethods = "testIncreasePoolNotAllowed")
+   @Test(enabled = true, dependsOnMethods = "testRebuildPoolStateFromStore")
    public void testGetBackendComputeServiceContext() {
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
       assertNotNull(ctx.getBackendContext());
@@ -204,7 +204,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                         NodePredicates.inGroup(ctx.getPoolGroupName())).size(), 2);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testGetBackendComputeServiceContext")
+   @Test(enabled = false, dependsOnMethods = "testGetBackendComputeServiceContext")
    public void testDestroyPoolNodes() {
       client.destroyNodesMatching(NodePredicates.inGroup(this.group));
       // after we destroy all nodes we should still have minsize nodes in the pool
@@ -212,7 +212,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertSame(ctx.getPoolStats().currentSize(), 1);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testDestroyPoolNodes")
+   @Test(enabled = true, dependsOnMethods = "testGetBackendComputeServiceContext")
    public void testDestroyPool() {
       // TODO get the ctx without the injector
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);

@@ -44,7 +44,7 @@
   </root>
 
   <logger name="org.jclouds">
-    <level value="DEBUG" />
+    <level value="INFO" />
     <appender-ref ref="FILE" />
   </logger>
 
@@ -59,12 +59,12 @@
   </logger>
 
   <logger name="jclouds.compute">
-    <level value="DEBUG" />
+    <level value="INFO" />
     <appender-ref ref="COMPUTEFILE" />
   </logger>
 
   <logger name="jclouds.ssh">
-    <level value="DEBUG" />
+    <level value="INFO" />
     <appender-ref ref="SSHFILE" />
   </logger>
 

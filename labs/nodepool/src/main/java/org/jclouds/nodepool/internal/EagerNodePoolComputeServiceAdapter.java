@@ -141,15 +141,19 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
    @Override
    public synchronized void destroyNode(String id) {
       checkState(getNode(id) != null);
+      logger.info(">> destroying node %s", id);
       metadataStore.deleteMapping(id);
       if (removeDestroyed) {
+         logger.info(">> policy is replace detroyed node, replacing node with id %s", id);
          backendComputeService.get().destroyNode(id);
-         addToPool(1);
+         Set<? extends NodeMetadata> replacement = addToPool(1);
+         logger.info("<< node %s replaced with %s", id, Iterables.getOnlyElement(replacement));
       }
       // TODO we should allow the user to hook a way to "clean" the node
       else {
 
       }
+      logger.info("<< node destroyed %s", id);
    }
 
    @Override

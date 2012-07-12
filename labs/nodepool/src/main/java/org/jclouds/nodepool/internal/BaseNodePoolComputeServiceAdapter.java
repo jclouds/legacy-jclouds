@@ -149,11 +149,11 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
       return backendComputeService.get().getContext();
    }
 
-   protected void addToPool(int number) {
+   protected Set<? extends NodeMetadata> addToPool(int number) {
       try {
          Template template = backendTemplate.get().clone();
          template.getOptions().runScript(initialCredentialsBuilder.build());
-         backendComputeService.get().createNodesInGroup(poolGroupName, number, template);
+         return backendComputeService.get().createNodesInGroup(poolGroupName, number, template);
       } catch (RunNodesException e) {
          throw Throwables.propagate(e);
       }

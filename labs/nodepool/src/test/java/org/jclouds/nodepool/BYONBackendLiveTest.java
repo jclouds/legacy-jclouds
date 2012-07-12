@@ -22,7 +22,7 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScr
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_PROVIDER;
 import static org.jclouds.nodepool.config.NodePoolProperties.BASEDIR;
 import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
-import static org.jclouds.nodepool.config.NodePoolProperties.*;
+import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.io.File;
@@ -32,6 +32,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
@@ -90,6 +91,7 @@ public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
       return new SshjSshClientModule();
    }
 
+   @Test(groups = "live")
    public void testCanRunCommandAsCurrentUser() throws Exception {
       Set<? extends NodeMetadata> nodes = view.getComputeService().createNodesInGroup("goo", 1);
       NodeMetadata node = Iterables.get(nodes, 0);
@@ -97,7 +99,6 @@ public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
       try {
          ExecResponse response = view.getComputeService().runScriptOnNode(node.getId(), exec("id"),
                   wrapInInitScript(false).runAsRoot(false));
-
          assert response.getOutput().trim().contains(System.getProperty("user.name")) : node + ": " + response;
       } finally {
          view.getComputeService().destroyNode(node.getId());
