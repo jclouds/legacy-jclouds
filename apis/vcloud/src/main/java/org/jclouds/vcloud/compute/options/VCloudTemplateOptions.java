@@ -18,11 +18,19 @@
  */
 package org.jclouds.vcloud.compute.options;
 
+import static com.google.common.base.Objects.equal;
+
+import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.util.Preconditions2;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on
@@ -60,14 +68,45 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
             eTo.description(getDescription());
          if (getIpAddressAllocationMode() != null)
             eTo.ipAddressAllocationMode(getIpAddressAllocationMode());
+         if (getIpAddressAllocationMode() != null)
+            eTo.ipAddressAllocationMode(getIpAddressAllocationMode());
+         if (getParentNetwork() != null)
+            eTo.parentNetwork(getParentNetwork());
+         if (getFenceMode() != null)
+            eTo.fenceMode(getFenceMode());
       }
    }
 
    private String description = null;
    private String customizationScript = null;
    private IpAddressAllocationMode ipAddressAllocationMode = null;
+   private URI parentNetwork = null;
+   private FenceMode fenceMode = null;
 
-   public static final VCloudTemplateOptions NONE = new VCloudTemplateOptions();
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      VCloudTemplateOptions that = VCloudTemplateOptions.class.cast(o);
+      return super.equals(that) && equal(this.description, that.description)
+            && equal(this.customizationScript, that.customizationScript)
+            && equal(this.ipAddressAllocationMode, that.ipAddressAllocationMode)
+            && equal(this.parentNetwork, that.parentNetwork);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), description, customizationScript, ipAddressAllocationMode,
+            parentNetwork);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      return super.string().add("description", description).add("customizationScript", customizationScript)
+            .add("ipAddressAllocationMode", ipAddressAllocationMode).add("parentNetwork", parentNetwork);
+   }
 
    /**
     * Optional description. Used for the Description of the vApp created by this
@@ -96,29 +135,61 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
       return this;
    }
 
+   /**
+    * Specifies the parentNetwork to connect the the network interfaces on the
+    * VMs to.
+    * 
+    * @see InstantiateVAppTemplateOptions#addNetworkConfig
+    */
+   public VCloudTemplateOptions parentNetwork(URI parentNetwork) {
+      this.parentNetwork = parentNetwork;
+      return this;
+   }
+
+   /**
+    * How to connect to the parent network
+    * 
+    * @see InstantiateVAppTemplateOptions#addNetworkConfig
+    */
+   public VCloudTemplateOptions fenceMode(FenceMode fenceMode) {
+      this.fenceMode = fenceMode;
+      return this;
+   }
+
    public static class Builder {
       /**
        * @see VCloudTemplateOptions#description
        */
       public static VCloudTemplateOptions description(String description) {
-         VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.description(description));
+         return new VCloudTemplateOptions().description(description);
       }
 
       /**
        * @see VCloudTemplateOptions#customizationScript
        */
       public static VCloudTemplateOptions customizationScript(String customizationScript) {
-         VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.customizationScript(customizationScript));
+         return new VCloudTemplateOptions().customizationScript(customizationScript);
       }
 
       /**
        * @see VCloudTemplateOptions#ipAddressAllocationMode
        */
       public static VCloudTemplateOptions ipAddressAllocationMode(IpAddressAllocationMode ipAddressAllocationMode) {
-         VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.ipAddressAllocationMode(ipAddressAllocationMode));
+         return new VCloudTemplateOptions().ipAddressAllocationMode(ipAddressAllocationMode);
+      }
+
+      /**
+       * @see VCloudTemplateOptions#parentNetwork(URI parentNetwork)
+       */
+      public static VCloudTemplateOptions parentNetwork(URI parentNetwork) {
+         return new VCloudTemplateOptions().parentNetwork(parentNetwork);
+      }
+
+      /**
+       * @see VCloudTemplateOptions#fenceMode(FenceMode)
+       */
+      public static VCloudTemplateOptions fenceMode(FenceMode fenceMode) {
+         return new VCloudTemplateOptions().fenceMode(fenceMode);
       }
 
       // methods that only facilitate returning the correct object type
@@ -177,6 +248,20 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
       return ipAddressAllocationMode;
    }
 
+   /**
+    * @return parentNetwork to connect to the vms
+    */
+   public URI getParentNetwork() {
+      return parentNetwork;
+   }
+
+   /**
+    * @return FenceMode to connect the parent network with
+    */
+   public FenceMode getFenceMode() {
+      return fenceMode;
+   }
+
    // methods that only facilitate returning the correct object type
 
    /**
@@ -231,49 +316,6 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    @Override
    public VCloudTemplateOptions userMetadata(String key, String value) {
       return VCloudTemplateOptions.class.cast(super.userMetadata(key, value));
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((customizationScript == null) ? 0 : customizationScript.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((ipAddressAllocationMode == null) ? 0 : ipAddressAllocationMode.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VCloudTemplateOptions other = (VCloudTemplateOptions) obj;
-      if (customizationScript == null) {
-         if (other.customizationScript != null)
-            return false;
-      } else if (!customizationScript.equals(other.customizationScript))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (ipAddressAllocationMode != other.ipAddressAllocationMode)
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return "[customizationScript=" + (customizationScript != null) + ", description=" + description
-            + ", ipAddressAllocationMode=" + ipAddressAllocationMode + ", inboundPorts="
-            + inboundPorts + ", privateKey=" + (privateKey != null) + ", publicKey="
-            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-            + ", userMetadata: " + userMetadata + "]";
    }
 
 }

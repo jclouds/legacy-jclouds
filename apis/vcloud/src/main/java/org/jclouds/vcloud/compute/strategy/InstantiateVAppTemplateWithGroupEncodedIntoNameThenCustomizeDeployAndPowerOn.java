@@ -47,17 +47,17 @@ import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.domain.NetworkConnectionSection.Builder;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.NetworkConnectionSection.Builder;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 
@@ -73,31 +73,20 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    protected final VCloudClient client;
    protected final Predicate<URI> successTester;
    protected final LoadingCache<URI, VAppTemplate> vAppTemplates;
-   protected final Supplier<NetworkConfig> defaultNetworkConfig;
+   protected final NetworkConfigurationForNetworkAndOptions networkConfigurationForNetworkAndOptions;
    protected final String buildVersion;
+
 
    @Inject
    protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudClient client,
-            Predicate<URI> successTester, LoadingCache<URI, VAppTemplate> vAppTemplates,
-            Supplier<NetworkConfig> defaultNetworkConfig, @BuildVersion String buildVersion) {
+            Predicate<URI> successTester, LoadingCache<URI, VAppTemplate> vAppTemplates, NetworkConfigurationForNetworkAndOptions networkConfigurationForNetworkAndOptions,
+            @BuildVersion String buildVersion) {
       this.client = client;
       this.successTester = successTester;
       this.vAppTemplates = vAppTemplates;
-      this.defaultNetworkConfig = defaultNetworkConfig;
+      this.networkConfigurationForNetworkAndOptions = networkConfigurationForNetworkAndOptions;
       this.buildVersion = buildVersion;
    }
-
-   // TODO: filtering on "none" is a hack until we can filter on
-   // vAppTemplate.getNetworkConfigSection().getNetworkConfigs() where
-   // name = getChildren().NetworkConnectionSection.connection where ipallocationmode == none
-   Predicate<Network> networkWithNoIpAllocation = new Predicate<Network>() {
-
-      @Override
-      public boolean apply(Network input) {
-         return "none".equals(input.getName());
-      }
-
-   };
    
    /**
     * per john ellis at bluelock, vCloud Director 1.5 is more strict than earlier versions.
@@ -124,54 +113,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    public NodeAndInitialCredentials<VApp> createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       // no sense waiting until failures occur later
       ComputerNameValidator.INSTANCE.validate(name);
-      
-      URI templateId = URI.create(template.getImage().getId());
-
-      VAppTemplate vAppTemplate = vAppTemplates.getUnchecked(templateId);
-
-      if (vAppTemplate.getChildren().size() > 1)
-         throw new UnsupportedOperationException("we currently do not support multiple vms in a vAppTemplate "
-                  + vAppTemplate);
-
-      if (vAppTemplate.getNetworkSection().getNetworks().size() > 1)
-         throw new UnsupportedOperationException(
-                  "we currently do not support multiple network connections in a vAppTemplate " + vAppTemplate);
-
-      Network networkToConnect = get(vAppTemplate.getNetworkSection().getNetworks(), 0);
-
-      NetworkConfig config;
-      // if we only have a disconnected network, let's add a new section for the upstream
-      // TODO: remove the disconnected entry
-      if (networkWithNoIpAllocation.apply(networkToConnect))
-         config = defaultNetworkConfig.get();
-      else
-         config = defaultNetworkConfig.get().toBuilder().networkName(networkToConnect.getName()).build();
-
-      // note that in VCD 1.5, the network name after instantiation will be the same as the parent
-      InstantiateVAppTemplateOptions options = addNetworkConfig(config);
-
-      // TODO make disk size specifiable
-      // disk((long) ((template.getHardware().getVolumes().get(0).getSize()) *
-      // 1024 * 1024l));
-
-      String customizationScript = VCloudTemplateOptions.class.cast(template.getOptions()).getCustomizationScript();
-      IpAddressAllocationMode ipAllocationMode = VCloudTemplateOptions.class.cast(template.getOptions())
-               .getIpAddressAllocationMode();
-
-      String description = VCloudTemplateOptions.class.cast(template.getOptions()).getDescription();
-      if (description == null)
-         description = vAppTemplate.getName();
-
-      options.description(description);
-      options.deploy(false);
-      options.powerOn(false);
-
-      URI VDC = URI.create(template.getLocation().getId());
-
-      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
-
-      VApp vAppResponse = client.getVAppTemplateClient().createVAppInVDCByInstantiatingTemplate(name, VDC, templateId,
-               options);
+      VApp vAppResponse = instantiateVAppFromTemplate(name, template);
       waitForTask(vAppResponse.getTasks().get(0));
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
@@ -181,15 +123,17 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       // per above check, we know there is only a single VM
       Vm vm = get(vAppResponse.getChildren(), 0);
 
+      VCloudTemplateOptions vOptions = VCloudTemplateOptions.class.cast(template.getOptions());
+
       // note we cannot do tasks in parallel or VCD will throw "is busy" errors
 
       // note we must do this before any other customizations as there is a dependency on
       // valid naming conventions before you can perform commands such as updateCPUCount
       logger.trace(">> updating customization vm(%s) name->(%s)", vm.getName(), name);
-      waitForTask(updateVmWithNameAndCustomizationScript(vm, name, customizationScript));
+      waitForTask(updateVmWithNameAndCustomizationScript(vm, name, vOptions.getCustomizationScript()));
       logger.trace("<< updated customization vm(%s)", name);
 
-      ensureVmHasAllocationModeOrPooled(vAppResponse, ipAllocationMode);
+      ensureVmHasAllocationModeOrPooled(vAppResponse, vOptions.getIpAddressAllocationMode());
 
       int cpuCount = new Double(getCores(template.getHardware())).intValue();
       logger.trace(">> updating cpuCount(%d) vm(%s)", cpuCount, vm.getName());
@@ -213,13 +157,71 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
                getCredentialsFrom(vAppResponse));
 
    }
+  
+   @VisibleForTesting
+   protected VApp instantiateVAppFromTemplate(String name, Template template) {
+      VCloudTemplateOptions vOptions = VCloudTemplateOptions.class.cast(template.getOptions());
+      
+      URI templateId = URI.create(template.getImage().getId());
 
+      VAppTemplate vAppTemplate = vAppTemplates.getUnchecked(templateId);
+
+      if (vAppTemplate.getChildren().size() > 1)
+         throw new UnsupportedOperationException("we currently do not support multiple vms in a vAppTemplate "
+                  + vAppTemplate);
+
+      if (vAppTemplate.getNetworkSection().getNetworks().size() > 1)
+         throw new UnsupportedOperationException(
+                  "we currently do not support multiple network connections in a vAppTemplate " + vAppTemplate);
+
+      Network networkToConnect = get(vAppTemplate.getNetworkSection().getNetworks(), 0);
+
+      
+      NetworkConfig config = networkConfigurationForNetworkAndOptions.apply(networkToConnect, vOptions);
+
+      // note that in VCD 1.5, the network name after instantiation will be the same as the parent
+      InstantiateVAppTemplateOptions options = addNetworkConfig(config);
+
+      // TODO make disk size specifiable
+      // disk((long) ((template.getHardware().getVolumes().get(0).getSize()) *
+      // 1024 * 1024l));
+
+
+
+      String description = VCloudTemplateOptions.class.cast(template.getOptions()).getDescription();
+      if (description == null)
+         description = vAppTemplate.getName();
+
+      options.description(description);
+      options.deploy(false);
+      options.powerOn(false);
+
+      URI VDC = URI.create(template.getLocation().getId());
+
+      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
+
+      VApp vAppResponse = client.getVAppTemplateClient().createVAppInVDCByInstantiatingTemplate(name, VDC, templateId,
+               options);
+      return vAppResponse;
+   }
+
+   // TODO: filtering on "none" is a hack until we can filter on
+   // vAppTemplate.getNetworkConfigSection().getNetworkConfigs() where
+   // name = getChildren().NetworkConnectionSection.connection where ipallocationmode == none
+   static Predicate<Network> networkWithNoIpAllocation = new Predicate<Network>() {
+
+      @Override
+      public boolean apply(Network input) {
+         return "none".equals(input.getName());
+      }
+
+   };
+   
    public void waitForTask(Task task) {
       if (!successTester.apply(task.getHref())) {
          throw new TaskStillRunningException(task);
       }
    }
-
    /**
     * Naming constraints modifying a VM on a VApp in vCloud Director (at least v1.5) can be more
     * strict than those in a vAppTemplate. For example, while it is possible to instantiate a

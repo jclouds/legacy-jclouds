@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VApp href="http://10.150.4.49/api/v0.8/vApp/10" type="application/vnd.vmware.vcloud.vApp+xml"
-    name="centos53" status="1"
-    size="123456789" xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <Link rel="up"
-    	href="http://10.150.4.49/api/v0.8/vdc/4"
-    	type="application/vnd.vmware.vcloud.vdc+xml"/>
+<VApp xmlns="http://www.vmware.com/vcloud/v1" deployed="false" status="0" name="vcds-a47" type="application/vnd.vmware.vcloud.vApp+xml" href="https://zone01.bluelock.com/api/v1.0/vApp/vapp-dba20113-1a4a-4ec9-a5ad-52dc69ee0825" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 http://zone01.bluelock.com/api/v1.0/schema/master.xsd">
+    <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml" href="https://zone01.bluelock.com/api/v1.0/vApp/vapp-dba20113-1a4a-4ec9-a5ad-52dc69ee0825/controlAccess/"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://zone01.bluelock.com/api/v1.0/vdc/9db4ee77-33e7-4b83-96be-eee9925eaa9b"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://zone01.bluelock.com/api/v1.0/vApp/vapp-dba20113-1a4a-4ec9-a5ad-52dc69ee0825/owner"/>
+    <Description>OS-Ubuntu10.04_x64</Description>
+    <Tasks>
+        <Task status="running" startTime="2012-07-11T20:37:49.521-04:00" operation="Creating Virtual Application vcds-a47(dba20113-1a4a-4ec9-a5ad-52dc69ee0825)" expiryTime="2012-08-25T20:37:49.521-04:00" type="application/vnd.vmware.vcloud.task+xml" href="https://zone01.bluelock.com/api/v1.0/task/fee48ffc-8ba2-452e-a57f-ada0cd2eda31">
+            <Link rel="task:cancel" href="https://zone01.bluelock.com/api/v1.0/task/fee48ffc-8ba2-452e-a57f-ada0cd2eda31/action/cancel"/>
+            <Owner type="application/vnd.vmware.vcloud.vApp+xml" name="vcds-a47" href="https://zone01.bluelock.com/api/v1.0/vApp/vapp-dba20113-1a4a-4ec9-a5ad-52dc69ee0825"/>
+        </Task>
+    </Tasks>
 </VApp>
