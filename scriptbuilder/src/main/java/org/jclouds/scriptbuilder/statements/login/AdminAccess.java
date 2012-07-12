@@ -190,6 +190,14 @@ public class AdminAccess implements Statement {
          this.adminPrivateKeyFile = null;
          return this;
       }
+      
+      public AdminAccess.Builder from(AdminAccessBuilderSpec spec) {
+         return spec.copyTo(this);
+      }
+
+      public AdminAccess.Builder from(String spec) {
+         return from(AdminAccessBuilderSpec.parse(spec));
+      }
 
       public AdminAccess build() {
          return new AdminAccess(buildConfig());
@@ -219,13 +227,13 @@ public class AdminAccess implements Statement {
       private final String adminPrivateKey;
       private final String adminPassword;
       private final String loginPassword;
-      private final boolean lockSsh;
       private final boolean grantSudoToAdminUser;
-      private final boolean authorizeAdminPublicKey;
       private final boolean installAdminPrivateKey;
       private final boolean resetLoginPassword;
       private final Function<String, String> cryptFunction;
       private final Credentials adminCredentials;
+      private boolean authorizeAdminPublicKey;
+      private boolean lockSsh;
 
       protected Config(@Nullable String adminUsername, @Nullable String adminHome, @Nullable String adminPublicKey,
                @Nullable String adminPrivateKey, @Nullable String adminPassword, @Nullable String loginPassword,
@@ -245,6 +253,12 @@ public class AdminAccess implements Statement {
          this.cryptFunction = cryptFunction;
          if (adminUsername != null && authorizeAdminPublicKey && adminPrivateKey != null)
             this.adminCredentials = new Credentials(adminUsername, adminPrivateKey);
+         else if (adminUsername != null && adminPassword != null) {
+            this.adminCredentials = new Credentials(adminUsername, adminPassword);
+            // if we're using password make sure we don't auth pubkey and that we don't lock ssh
+            this.authorizeAdminPublicKey = false;
+            this.lockSsh = false;
+         }
          else
             this.adminCredentials = null;
       }
@@ -300,6 +314,24 @@ public class AdminAccess implements Statement {
       public Credentials getAdminCredentials() {
          return adminCredentials;
       }
+
+      @Override
+      public String toString() {
+         StringBuilder builder = new StringBuilder();
+         builder.append("Config [adminUsername=").append(adminUsername).append(", adminHome=").append(adminHome)
+                  .append(", adminPublicKey=").append(adminPublicKey == null ? "null" : "present")
+                  .append(", adminPrivateKey=").append(adminPrivateKey == null ? "null" : "present")
+                  .append(", adminPassword=").append(adminPassword == null ? "null" : "present")
+                  .append(", loginPassword=").append(loginPassword == null ? "null" : "present").append(", lockSsh=")
+                  .append(lockSsh).append(", grantSudoToAdminUser=").append(grantSudoToAdminUser)
+                  .append(", authorizeAdminPublicKey=").append(authorizeAdminPublicKey)
+                  .append(", installAdminPrivateKey=").append(installAdminPrivateKey).append(", resetLoginPassword=")
+                  .append(resetLoginPassword).append(", cryptFunction=").append(cryptFunction)
+                  .append(", adminCredentials=").append(adminCredentials).append("]");
+         return builder.toString();
+      }
+      
+      
    }
 
    @VisibleForTesting
@@ -396,4 +428,15 @@ public class AdminAccess implements Statement {
       }
       return new StatementList(statements.build()).render(family);
    }
+
+   @Override
+   public String toString() {
+      StringBuilder builder2 = new StringBuilder();
+      builder2.append("AdminAccess [config=").append(config).append(", getAdminCredentials()=")
+               .append(getAdminCredentials()).append(", shouldGrantSudoToAdminUser()=")
+               .append(shouldGrantSudoToAdminUser()).append("]");
+      return builder2.toString();
+   }
+   
+   
 }

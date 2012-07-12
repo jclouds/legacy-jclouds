@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Context;
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.location.Provider;
@@ -36,13 +37,39 @@ public class NodePoolComputeServiceContext extends ComputeServiceContextImpl {
 
    @Inject
    public NodePoolComputeServiceContext(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-         ComputeService computeService, Utils utils, NodePoolComputeServiceAdapter adapter) {
+            ComputeService computeService, Utils utils, NodePoolComputeServiceAdapter adapter) {
       super(backend, backendType, computeService, utils);
       this.adapter = adapter;
    }
 
+   /**
+    * Returns the statistics on the pool.
+    * 
+    * @return
+    */
    public NodePoolStats getPoolStats() {
       return new NodePoolStats(adapter.currentSize(), adapter.idleNodes(), adapter.usedNodes(), adapter.maxNodes(),
-            adapter.minNodes());
+               adapter.minNodes());
    }
+
+   /**
+    * Destroys all (backing nodes) in the pool and deletes all state.
+    */
+   public void destroyPool() {
+      this.adapter.destroyPool();
+   }
+
+   /**
+    * Returns the backend context.
+    * 
+    * @return
+    */
+   public ComputeServiceContext getBackendContext() {
+      return this.adapter.getBackendComputeServiceContext();
+   }
+
+   public String getPoolGroupName() {
+      return this.adapter.getPoolGroupName();
+   }
+
 }

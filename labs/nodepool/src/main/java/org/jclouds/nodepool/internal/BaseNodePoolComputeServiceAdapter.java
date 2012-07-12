@@ -18,8 +18,8 @@
  */
 package org.jclouds.nodepool.internal;
 
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Named;
 
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -36,6 +37,8 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.nodepool.Backend;
 import org.jclouds.nodepool.NodePoolComputeServiceAdapter;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
+import org.jclouds.scriptbuilder.statements.login.AdminAccessBuilderSpec;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -43,8 +46,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * A base class for {@link NodePoolComputeService}, takes care of keeping (not
- * changing assignments) and of everything that does not change the pool.
+ * A base class for {@link NodePoolComputeService}, takes care of keeping (not changing assignments)
+ * and of everything that does not change the pool.
  * 
  * @author David Alves
  * 
@@ -55,23 +58,29 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
    protected final Supplier<Template> backendTemplate;
    protected final String poolGroupName;
    protected final NodeMetadataStore metadataStore;
+   protected final AdminAccess.Builder initialCredentialsBuilder;
 
    public BaseNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
-         @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupNamePrefix,
-         NodeMetadataStore metadataStore) {
+            @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupName,
+            NodeMetadataStore metadataStore, @Named(POOL_ADMIN_ACCESS) String poolNodeAdminAccess,
+            AdminAccess.Configuration configuration) {
       this.backendComputeService = backendComputeService;
-      this.poolGroupName = poolGroupNamePrefix;
+      this.poolGroupName = poolGroupName;
       this.backendTemplate = backendTemplate;
       this.metadataStore = metadataStore;
+      this.initialCredentialsBuilder = AdminAccessBuilderSpec.parse(poolNodeAdminAccess).copyTo(
+               new AdminAccess.Builder());
    }
 
    @Override
    public NodeMetadata getNode(String id) {
       NodeMetadata backendMetadata = backendComputeService.get().getNodeMetadata(id);
-      checkState(backendMetadata.getGroup().equals(backendMetadata));
+      if (backendMetadata == null) {
+         return null;
+      }
       return metadataStore.load(backendMetadata);
    }
-   
+
    @Override
    public Iterable<NodeMetadata> listNodes() {
       return metadataStore.loadAll(getBackendNodes());
@@ -123,18 +132,36 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
       throw new NoSuchElementException(id);
    }
 
-
    protected Set<NodeMetadata> getBackendNodes() {
-      return ImmutableSet.copyOf(Iterables.filter(backendComputeService.get().listNodesDetailsMatching(
-            NodePredicates.all()), NodePredicates.inGroup(poolGroupName)));
+      return ImmutableSet.copyOf(Iterables.filter(
+               backendComputeService.get().listNodesDetailsMatching(NodePredicates.all()),
+               NodePredicates.inGroup(poolGroupName)));
    }
 
-   protected void addToPool(int number) {
+   @Override
+   public void destroyPool() {
+      metadataStore.deleteAllMappings();
+      backendComputeService.get().destroyNodesMatching(NodePredicates.inGroup(poolGroupName));
+   }
+
+   @Override
+   public ComputeServiceContext getBackendComputeServiceContext() {
+      return backendComputeService.get().getContext();
+   }
+
+   protected Set<? extends NodeMetadata> addToPool(int number) {
       try {
-         backendComputeService.get().createNodesInGroup(poolGroupName, number, backendTemplate.get());
+         Template template = backendTemplate.get().clone();
+         template.getOptions().runScript(initialCredentialsBuilder.build());
+         return backendComputeService.get().createNodesInGroup(poolGroupName, number, template);
       } catch (RunNodesException e) {
          throw Throwables.propagate(e);
       }
+   }
+
+   @Override
+   public String getPoolGroupName() {
+      return this.poolGroupName;
    }
 
 }
