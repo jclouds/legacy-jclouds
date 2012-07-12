@@ -21,14 +21,14 @@ package org.jclouds.rds.config;
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.rds.RDSAsyncClient;
-import org.jclouds.rds.RDSClient;
-import org.jclouds.rds.features.InstanceAsyncClient;
-import org.jclouds.rds.features.InstanceClient;
-import org.jclouds.rds.features.SecurityGroupAsyncClient;
-import org.jclouds.rds.features.SecurityGroupClient;
-import org.jclouds.rds.features.SubnetGroupAsyncClient;
-import org.jclouds.rds.features.SubnetGroupClient;
+import org.jclouds.rds.RDSAsyncApi;
+import org.jclouds.rds.RDSApi;
+import org.jclouds.rds.features.InstanceAsyncApi;
+import org.jclouds.rds.features.InstanceApi;
+import org.jclouds.rds.features.SecurityGroupAsyncApi;
+import org.jclouds.rds.features.SecurityGroupApi;
+import org.jclouds.rds.features.SubnetGroupAsyncApi;
+import org.jclouds.rds.features.SubnetGroupApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
@@ -40,14 +40,14 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class RDSRestClientModule extends FormSigningRestClientModule<RDSClient, RDSAsyncClient> {
+public class RDSRestClientModule extends FormSigningRestClientModule<RDSApi, RDSAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(InstanceClient.class, InstanceAsyncClient.class)
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
-            .put(SubnetGroupClient.class, SubnetGroupAsyncClient.class)
+            .put(InstanceApi.class, InstanceAsyncApi.class)
+            .put(SecurityGroupApi.class, SecurityGroupAsyncApi.class)
+            .put(SubnetGroupApi.class, SubnetGroupAsyncApi.class)
             .build();
 
    public RDSRestClientModule() {
-      super(TypeToken.of(RDSClient.class), TypeToken.of(RDSAsyncClient.class), DELEGATE_MAP);
+      super(TypeToken.of(RDSApi.class), TypeToken.of(RDSAsyncApi.class), DELEGATE_MAP);
    }
 }

@@ -21,16 +21,16 @@ package org.jclouds.elb.config;
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.elb.ELBAsyncClient;
-import org.jclouds.elb.ELBClient;
-import org.jclouds.elb.features.InstanceAsyncClient;
-import org.jclouds.elb.features.InstanceClient;
-import org.jclouds.elb.features.LoadBalancerAsyncClient;
-import org.jclouds.elb.features.LoadBalancerClient;
-import org.jclouds.elb.features.PolicyAsyncClient;
-import org.jclouds.elb.features.PolicyClient;
-import org.jclouds.elb.features.AvailabilityZoneAsyncClient;
-import org.jclouds.elb.features.AvailabilityZoneClient;
+import org.jclouds.elb.ELBAsyncApi;
+import org.jclouds.elb.ELBApi;
+import org.jclouds.elb.features.InstanceAsyncApi;
+import org.jclouds.elb.features.InstanceApi;
+import org.jclouds.elb.features.LoadBalancerAsyncApi;
+import org.jclouds.elb.features.LoadBalancerApi;
+import org.jclouds.elb.features.PolicyAsyncApi;
+import org.jclouds.elb.features.PolicyApi;
+import org.jclouds.elb.features.AvailabilityZoneAsyncApi;
+import org.jclouds.elb.features.AvailabilityZoneApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
@@ -42,15 +42,15 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class ELBRestClientModule extends FormSigningRestClientModule<ELBClient, ELBAsyncClient> {
+public class ELBRestClientModule extends FormSigningRestClientModule<ELBApi, ELBAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)
-            .put(PolicyClient.class, PolicyAsyncClient.class)
-            .put(InstanceClient.class, InstanceAsyncClient.class)
-            .put(AvailabilityZoneClient.class, AvailabilityZoneAsyncClient.class)
+            .put(LoadBalancerApi.class, LoadBalancerAsyncApi.class)
+            .put(PolicyApi.class, PolicyAsyncApi.class)
+            .put(InstanceApi.class, InstanceAsyncApi.class)
+            .put(AvailabilityZoneApi.class, AvailabilityZoneAsyncApi.class)
             .build();
 
    public ELBRestClientModule() {
-      super(TypeToken.of(ELBClient.class), TypeToken.of(ELBAsyncClient.class), DELEGATE_MAP);
+      super(TypeToken.of(ELBApi.class), TypeToken.of(ELBAsyncApi.class), DELEGATE_MAP);
    }
 }

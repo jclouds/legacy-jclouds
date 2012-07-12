@@ -29,7 +29,7 @@ import org.jclouds.rds.config.RDSRestClientModule;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Supplier;
@@ -40,7 +40,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseRDSExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseRDSExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    public BaseRDSExpectTest() {
       provider = "rds";

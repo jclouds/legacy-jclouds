@@ -36,7 +36,7 @@ import com.google.common.net.HostAndPort;
  * 
  * <h4>Note</h4>
  * 
- * Amazon RDS supports access from any standard SQL client application. Amazon RDS does not allow
+ * Amazon RDS supports access from any standard SQL api application. Amazon RDS does not allow
  * direct host access via Telnet, Secure Shell (SSH), or Windows Remote Desktop Connection.
  * 
  * 

@@ -34,7 +34,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
-import org.jclouds.elb.ELBClient;
+import org.jclouds.elb.ELBApi;
 import org.jclouds.elb.domain.Listener;
 import org.jclouds.elb.domain.Protocol;
 import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
@@ -56,13 +56,13 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
    @Resource
    @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final ELBClient client;
+   protected final ELBApi api;
    protected final Function<LoadBalancerInRegion, LoadBalancerMetadata> converter;
 
    @Inject
-   protected ELBLoadBalanceNodesStrategy(ELBClient client,
+   protected ELBLoadBalanceNodesStrategy(ELBApi api,
             Function<LoadBalancerInRegion, LoadBalancerMetadata> converter) {
-      this.client = checkNotNull(client, "client");
+      this.api = checkNotNull(api, "api");
       this.converter = checkNotNull(converter, "converter");
    }
 
@@ -82,20 +82,20 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
 
       logger.debug(">> creating loadBalancer(%s) in zones(%s)", name, zonesDesired);
       try {
-         String dnsName = client.getLoadBalancerClientForRegion(region).createLoadBalancerListeningInAvailabilityZones(
+         String dnsName = api.getLoadBalancerApiForRegion(region).createLoadBalancerListeningInAvailabilityZones(
                   name,
                   ImmutableSet.of(Listener.builder().port(loadBalancerPort).instancePort(instancePort)
                            .protocol(Protocol.valueOf(protocol)).build()), zonesDesired);
          logger.debug("<< created loadBalancer(%s) dnsName(%s)", name, dnsName);
       } catch (IllegalStateException e) {
          logger.debug("<< converging zones(%s) in loadBalancer(%s)", zonesDesired, name);
-         Set<String> currentZones = client.getLoadBalancerClient().get(name).getAvailabilityZones();
+         Set<String> currentZones = api.getLoadBalancerApi().get(name).getAvailabilityZones();
          Set<String> zonesToAdd = Sets.difference(zonesDesired, currentZones);
          if (zonesToAdd.size() > 0)
-            currentZones = client.getAvailabilityZoneClient().addAvailabilityZonesToLoadBalancer(zonesToAdd, name);
+            currentZones = api.getAvailabilityZoneApi().addAvailabilityZonesToLoadBalancer(zonesToAdd, name);
          Set<String> zonesToRemove = Sets.difference(currentZones, zonesDesired);
          if (zonesToRemove.size() > 0)
-            client.getAvailabilityZoneClient().removeAvailabilityZonesFromLoadBalancer(zonesToRemove, name);
+            api.getAvailabilityZoneApi().removeAvailabilityZonesFromLoadBalancer(zonesToRemove, name);
       }
 
       Set<String> instanceIds = ImmutableSet.copyOf(transform(nodes, new Function<NodeMetadata, String>() {
@@ -107,16 +107,16 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
       }));
 
       logger.debug(">> converging loadBalancer(%s) to instances(%s)", name, instanceIds);
-      Set<String> registeredInstanceIds = client.getInstanceClientForRegion(region).registerInstancesWithLoadBalancer(
+      Set<String> registeredInstanceIds = api.getInstanceApiForRegion(region).registerInstancesWithLoadBalancer(
                instanceIds, name);
 
       Set<String> instancesToRemove = filter(registeredInstanceIds, not(in(instanceIds)));
       if (instancesToRemove.size() > 0) {
          logger.debug(">> deregistering instances(%s) from loadBalancer(%s)", instancesToRemove, name);
-         client.getInstanceClientForRegion(region).deregisterInstancesFromLoadBalancer(instancesToRemove, name);
+         api.getInstanceApiForRegion(region).deregisterInstancesFromLoadBalancer(instancesToRemove, name);
       }
       logger.debug("<< converged loadBalancer(%s) ", name);
 
-      return converter.apply(new LoadBalancerInRegion(client.getLoadBalancerClientForRegion(region).get(name), region));
+      return converter.apply(new LoadBalancerInRegion(api.getLoadBalancerApiForRegion(region).get(name), region));
    }
 }

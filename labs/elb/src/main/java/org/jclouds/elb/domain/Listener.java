@@ -26,7 +26,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * Listener is a process that listens for client connection requests. It is configured with a
+ * Listener is a process that listens for api connection requests. It is configured with a
  * protocol and a port number for front-end (Load Balancer) and back-end (Back-end instance)
  * connections.
  * 

@@ -43,7 +43,7 @@ public class RDSApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -7077953935392202824L;
    
-   public static final TypeToken<RestContext<RDSClient, RDSAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<RDSClient, RDSAsyncClient>>() {
+   public static final TypeToken<RestContext<RDSApi, RDSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<RDSApi, RDSAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -53,7 +53,7 @@ public class RDSApiMetadata extends BaseRestApiMetadata {
    }
 
    public RDSApiMetadata() {
-      this(new Builder(RDSClient.class, RDSAsyncClient.class));
+      this(new Builder(RDSApi.class, RDSAsyncApi.class));
    }
 
    protected RDSApiMetadata(Builder builder) {
@@ -69,8 +69,8 @@ public class RDSApiMetadata extends BaseRestApiMetadata {
    
    public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<?> client, Class<?> asyncClient) {
-         super(client, asyncClient);
+      protected Builder(Class<?> api, Class<?> asyncApi) {
+         super(api, asyncApi);
          id("rds")
          .name("Amazon Relational Database Service Api")
          .identityName("Access Key ID")

@@ -3,7 +3,7 @@ package org.jclouds.elb;
 import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.collect.PaginatedIterables;
 import org.jclouds.elb.domain.LoadBalancer;
-import org.jclouds.elb.features.LoadBalancerClient;
+import org.jclouds.elb.features.LoadBalancerApi;
 import org.jclouds.elb.options.ListLoadBalancersOptions;
 
 import com.google.common.base.Function;
@@ -18,19 +18,19 @@ public class ELB {
    /**
     * List loadBalancers based on the criteria in the {@link ListLoadBalancersOptions} passed in.
     * 
-    * @param loadBalancerClient
-    *           the {@link LoadBalancerClient} to use for the request
+    * @param loadBalancerApi
+    *           the {@link LoadBalancerApi} to use for the request
     * @param options
     *           the {@link ListLoadBalancersOptions} describing the ListLoadBalancers request
     * 
     * @return iterable of loadBalancers fitting the criteria
     */
-   public static Iterable<LoadBalancer> listLoadBalancers(final LoadBalancerClient loadBalancerClient, final ListLoadBalancersOptions options) {
-      return PaginatedIterables.lazyContinue(loadBalancerClient.list(options), new Function<Object, PaginatedIterable<LoadBalancer>>() {
+   public static Iterable<LoadBalancer> listLoadBalancers(final LoadBalancerApi loadBalancerApi, final ListLoadBalancersOptions options) {
+      return PaginatedIterables.lazyContinue(loadBalancerApi.list(options), new Function<Object, PaginatedIterable<LoadBalancer>>() {
 
          @Override
          public PaginatedIterable<LoadBalancer> apply(Object input) {
-            return loadBalancerClient.list(options.clone().afterMarker(input));
+            return loadBalancerApi.list(options.clone().afterMarker(input));
          }
 
          @Override
@@ -40,8 +40,8 @@ public class ELB {
       });
    }
    
-   public static Iterable<LoadBalancer> listLoadBalancers(LoadBalancerClient loadBalancerClient) {
-      return listLoadBalancers(loadBalancerClient, new ListLoadBalancersOptions());
+   public static Iterable<LoadBalancer> listLoadBalancers(LoadBalancerApi loadBalancerApi) {
+      return listLoadBalancers(loadBalancerApi, new ListLoadBalancersOptions());
    }
    
 }

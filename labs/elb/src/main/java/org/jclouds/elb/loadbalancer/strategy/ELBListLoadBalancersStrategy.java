@@ -34,7 +34,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.Futures;
-import org.jclouds.elb.ELBAsyncClient;
+import org.jclouds.elb.ELBAsyncApi;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
@@ -58,16 +58,16 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
    @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ELBAsyncClient aclient;
+   private final ELBAsyncApi aapi;
    private final Function<LoadBalancerInRegion, LoadBalancerMetadata> converter;
    private final ExecutorService executor;
    private final Supplier<Set<String>> regions;
 
    @Inject
-   protected ELBListLoadBalancersStrategy(ELBAsyncClient aclient,
+   protected ELBListLoadBalancersStrategy(ELBAsyncApi aapi,
             Function<LoadBalancerInRegion, LoadBalancerMetadata> converter,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Region Supplier<Set<String>> regions) {
-      this.aclient = checkNotNull(aclient, "aclient");
+      this.aapi = checkNotNull(aapi, "aapi");
       this.regions = checkNotNull(regions, "regions");
       this.converter = checkNotNull(converter, "converter");
       this.executor = checkNotNull(executor, "executor");
@@ -82,7 +82,7 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
                   @Override
                   public ListenableFuture<? extends Iterable<LoadBalancerInRegion>> apply(final String from) {
                      // TODO: ELB.listLoadBalancers
-                     return Futures.compose(aclient.getLoadBalancerClientForRegion(from).list(),
+                     return Futures.compose(aapi.getLoadBalancerApiForRegion(from).list(),
                               new Function<Iterable<LoadBalancer>, Iterable<LoadBalancerInRegion>>() {
 
                                  @Override
