@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
@@ -36,9 +37,10 @@ import org.jclouds.rest.RestContext;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
+
 /**
  * Implementation of {@link ApiMetadata} for OpenStack Swift authenticated with KeyStone
- * 
+ *
  * @author Adrian Cole
  */
 public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
@@ -78,14 +80,15 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
    }
 
    public static class Builder extends SwiftApiMetadata.Builder {
-      protected Builder(){
+      protected Builder() {
          super(SwiftKeystoneClient.class, SwiftKeystoneAsyncClient.class);
          id("swift-keystone")
-         .name("OpenStack Swift with Keystone authentication")
-         .identityName("tenantName:user or user")
-         .credentialName("password")
-         .context(CONTEXT_TOKEN)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, SwiftKeystoneRestClientModule.class, SwiftBlobStoreContextModule.class));
+               .name("OpenStack Swift with Keystone authentication")
+               .identityName("tenantName:user or user")
+               .credentialName("password")
+               .context(CONTEXT_TOKEN)
+               .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, KeystoneAuthenticationModule.RegionModule.class,
+                     SwiftKeystoneRestClientModule.class, SwiftBlobStoreContextModule.class));
       }
 
       @Override
