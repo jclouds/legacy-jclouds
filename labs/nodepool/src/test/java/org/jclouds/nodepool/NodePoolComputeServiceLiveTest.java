@@ -25,6 +25,8 @@ import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
 import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
 import static org.jclouds.compute.RunScriptData.startJBoss;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_OPEN;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
 import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
 import static org.jclouds.compute.options.TemplateOptions.Builder.runAsRoot;
@@ -74,6 +76,8 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    protected Properties setupProperties() {
       Properties contextProperties = super.setupProperties();
+      contextProperties.setProperty(TIMEOUT_SCRIPT_COMPLETE, (1200 * 1000) + "");
+      contextProperties.setProperty(TIMEOUT_PORT_OPEN, (1200 * 1000) + "");
       contextProperties.setProperty(BASEDIR, basedir);
       contextProperties.setProperty(POOL_ADMIN_ACCESS, "adminUsername=pooluser,adminPassword=poolpassword");
       contextProperties.setProperty(MAX_SIZE, 2 + "");
@@ -100,7 +104,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
-      String group = this.group + "s";
+      this.group = this.group + "s";
       final String configuration = Strings2.toStringAndClose(RunScriptData.class
                .getResourceAsStream("/standalone-basic.xml"));
 
@@ -171,12 +175,12 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       tearDownContext();
       setupContext();
       assertSame(client.listNodes().size(), 1);
-      assertEquals(((NodeMetadata) Iterables.get(client.listNodes(), 0)).getGroup(), this.group + "s");
+      assertEquals(((NodeMetadata) Iterables.get(client.listNodes(), 0)).getGroup(), this.group);
    }
 
    @Test(enabled = true, dependsOnMethods = "testRebuildPoolStateFromStore")
    public void testIncreasePoolAllowed() throws RunNodesException {
-      client.createNodesInGroup(group, 1);
+      client.createNodesInGroup(this.group, 1);
       assertSame(client.listNodes().size(), 2);
    }
 
@@ -184,7 +188,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testIncreasePoolNotAllowed() throws RunNodesException {
       boolean caughtException = false;
       try {
-         client.createNodesInGroup(group, 1);
+         client.createNodesInGroup(this.group, 1);
       } catch (Exception e) {
          caughtException = true;
       }
@@ -196,13 +200,13 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
       assertNotNull(ctx.getBackendContext());
       assertSame(
-               Sets.filter(ctx.getComputeService().listNodesDetailsMatching(NodePredicates.all()),
+               Sets.filter(ctx.getBackendContext().getComputeService().listNodesDetailsMatching(NodePredicates.all()),
                         NodePredicates.inGroup(ctx.getPoolGroupName())).size(), 2);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testIncreasePoolNotAllowed")
+   @Test(enabled = true, dependsOnMethods = "testGetBackendComputeServiceContext")
    public void testDestroyPoolNodes() {
-      client.destroyNodesMatching(NodePredicates.inGroup(group));
+      client.destroyNodesMatching(NodePredicates.inGroup(this.group));
       // after we destroy all nodes we should still have minsize nodes in the pool
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
       assertSame(ctx.getPoolStats().currentSize(), 1);
@@ -213,6 +217,9 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       // TODO get the ctx without the injector
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
       ctx.destroyPool();
+      assertSame(
+               Sets.filter(ctx.getBackendContext().getComputeService().listNodesDetailsMatching(NodePredicates.all()),
+                        NodePredicates.inGroup(ctx.getPoolGroupName())).size(), 0);
    }
 
    @Override

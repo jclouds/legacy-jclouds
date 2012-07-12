@@ -18,7 +18,6 @@
  */
 package org.jclouds.nodepool.internal;
 
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
 import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 
@@ -76,7 +75,9 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
    @Override
    public NodeMetadata getNode(String id) {
       NodeMetadata backendMetadata = backendComputeService.get().getNodeMetadata(id);
-      checkState(backendMetadata.getGroup().equals(poolGroupName));
+      if (backendMetadata == null) {
+         return null;
+      }
       return metadataStore.load(backendMetadata);
    }
 
