@@ -33,6 +33,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.jclouds.logging.Logger;
 
+import com.google.common.collect.MapMaker;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -65,11 +66,17 @@ public class SSLModule extends AbstractModule {
    public static class LogToMapHostnameVerifier implements HostnameVerifier {
       @Resource
       private Logger logger = Logger.NULL;
-      private final Map<String, String> sslMap = Maps.newHashMap();;
+      private final Map<String, String> sslMap = new MapMaker().makeMap();
 
       public boolean verify(String hostname, SSLSession session) {
-         logger.warn("hostname was %s while session was %s", hostname, session.getPeerHost());
-         sslMap.put(hostname, session.getPeerHost());
+         String peerHost = session.getPeerHost();
+         if (!hostname.equals(peerHost)) {
+             String oldPeerHost = sslMap.get(hostname);
+             if (oldPeerHost == null || !oldPeerHost.equals(peerHost)) {
+                 logger.warn("hostname was %s while session was %s", hostname, peerHost);
+                 sslMap.put(hostname, peerHost);
+             }
+         }
          return true;
       }
    }
