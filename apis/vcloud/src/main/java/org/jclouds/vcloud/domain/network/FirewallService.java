@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.domain.network;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.List;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -61,36 +64,25 @@ public class FirewallService {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + ((firewallRules == null) ? 0 : firewallRules.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      FirewallService that = FirewallService.class.cast(o);
+      return equal(this.enabled, that.enabled) && equal(this.firewallRules, that.firewallRules);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      FirewallService other = (FirewallService) obj;
-      if (enabled != other.enabled)
-         return false;
-      if (firewallRules == null) {
-         if (other.firewallRules != null)
-            return false;
-      } else if (!firewallRules.equals(other.firewallRules))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(enabled, firewallRules);
    }
 
    @Override
    public String toString() {
-      return "[enabled=" + enabled + ", firewallRules=" + firewallRules + "]";
+      ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("enabled", enabled);
+      if (firewallRules.size() > 0)
+         helper.add("firewallRules", firewallRules);
+      return helper.toString();
    }
-
 }

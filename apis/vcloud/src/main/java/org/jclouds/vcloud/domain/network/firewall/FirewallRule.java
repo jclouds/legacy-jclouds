@@ -18,9 +18,12 @@
  */
 package org.jclouds.vcloud.domain.network.firewall;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
 
 /**
  * The FirewallRule element defines a single firewall rule.
@@ -98,58 +101,27 @@ public class FirewallRule {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((destinationIp == null) ? 0 : destinationIp.hashCode());
-      result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + ((policy == null) ? 0 : policy.hashCode());
-      result = prime * result + port;
-      result = prime * result + ((protocols == null) ? 0 : protocols.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      FirewallRule that = FirewallRule.class.cast(o);
+      return equal(this.enabled, that.enabled) && equal(this.description, that.description)
+            && equal(this.policy, that.policy) && equal(this.protocols, that.protocols) && equal(this.port, that.port)
+            && equal(this.destinationIp, that.destinationIp);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      FirewallRule other = (FirewallRule) obj;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (destinationIp == null) {
-         if (other.destinationIp != null)
-            return false;
-      } else if (!destinationIp.equals(other.destinationIp))
-         return false;
-      if (enabled != other.enabled)
-         return false;
-      if (policy == null) {
-         if (other.policy != null)
-            return false;
-      } else if (!policy.equals(other.policy))
-         return false;
-      if (port != other.port)
-         return false;
-      if (protocols == null) {
-         if (other.protocols != null)
-            return false;
-      } else if (!protocols.equals(other.protocols))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(enabled, description, policy, protocols, port, destinationIp);
    }
 
    @Override
    public String toString() {
-      return "[description=" + description + ", destinationIp=" + destinationIp + ", enabled=" + enabled + ", policy="
-               + policy + ", port=" + port + ", protocols=" + protocols + "]";
+      return Objects.toStringHelper("").omitNullValues().add("enabled", enabled).add("description", description)
+            .add("policy", policy).add("protocols", protocols).add("port", port).add("destinationIp", destinationIp)
+            .toString();
    }
 
 }

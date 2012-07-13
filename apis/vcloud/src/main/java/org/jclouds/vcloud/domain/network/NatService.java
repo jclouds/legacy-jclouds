@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.domain.network;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
@@ -27,6 +28,8 @@ import org.jclouds.vcloud.domain.network.nat.NatPolicy;
 import org.jclouds.vcloud.domain.network.nat.NatRule;
 import org.jclouds.vcloud.domain.network.nat.NatType;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -88,48 +91,27 @@ public class NatService {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + ((natRules == null) ? 0 : natRules.hashCode());
-      result = prime * result + ((policy == null) ? 0 : policy.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      NatService that = NatService.class.cast(o);
+      return equal(this.enabled, that.enabled) && equal(this.type, that.type)
+            && equal(this.policy, that.policy) && equal(this.natRules, that.natRules);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NatService other = (NatService) obj;
-      if (enabled != other.enabled)
-         return false;
-      if (natRules == null) {
-         if (other.natRules != null)
-            return false;
-      } else if (!natRules.equals(other.natRules))
-         return false;
-      if (policy == null) {
-         if (other.policy != null)
-            return false;
-      } else if (!policy.equals(other.policy))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(enabled, type, policy, natRules);
    }
 
    @Override
    public String toString() {
-      return "[enabled=" + enabled + ", natRules=" + natRules + ", policy=" + policy + ", type=" + type + "]";
+      ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("enabled", enabled)
+            .add("type", type).add("policy", policy);
+      if (natRules.size() >0)
+         helper.add("natRules", natRules);
+      return helper.toString();
    }
-
 }

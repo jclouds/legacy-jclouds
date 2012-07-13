@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.functions;
 
-import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.concurrent.ExecutorService;
@@ -33,19 +32,17 @@ import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<CatalogItem>> {
+public class CatalogsInOrg implements Function<Org, Iterable<Catalog>> {
    @Resource
    public Logger logger = Logger.NULL;
 
@@ -53,30 +50,21 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<Cata
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogItemsInCatalog(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   CatalogsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
-   public Iterable<CatalogItem> apply(Catalog from) {
+   public Iterable<Catalog> apply(final Org org) {
+      Iterable<? extends Catalog> catalogs = transformParallel(org.getCatalogs().values(),
+            new Function<ReferenceType, Future<? extends Catalog>>() {
+               @Override
+               public Future<Catalog> apply(ReferenceType from) {
+                  return aclient.getCatalogClient().getCatalog(from.getHref());
+               }
 
-      Iterable<? extends CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
-
-         @Override
-         public boolean apply(ReferenceType input) {
-            return input.getType().equals(VCloudMediaType.CATALOGITEM_XML);
-         }
-
-      }), new Function<ReferenceType, Future<? extends CatalogItem>>() {
-
-         @Override
-         public Future<CatalogItem> apply(ReferenceType from) {
-            return aclient.getCatalogClient().getCatalogItem(from.getHref());
-         }
-
-      }, executor, null, logger, "catalogItems in " + from.getHref());
-      return Iterables2.concreteCopy(catalogItems);
+            }, executor, null, logger, "catalogs in " + org.getName());
+      return Iterables2.concreteCopy(catalogs);
    }
-
 }

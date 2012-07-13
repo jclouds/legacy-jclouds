@@ -18,9 +18,14 @@
  */
 package org.jclouds.vcloud.domain.internal;
 
+import static com.google.common.base.Objects.equal;
+
 import java.net.URI;
 
 import org.jclouds.vcloud.domain.ReferenceType;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Location of a Rest resource
@@ -60,44 +65,26 @@ public class ReferenceTypeImpl implements ReferenceType {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((href == null) ? 0 : href.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      ReferenceTypeImpl that = ReferenceTypeImpl.class.cast(o);
+      return equal(this.href, that.href);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ReferenceTypeImpl other = (ReferenceTypeImpl) obj;
-      if (href == null) {
-         if (other.href != null)
-            return false;
-      } else if (!href.equals(other.href))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(href);
    }
 
    @Override
    public String toString() {
-      return "[href=" + href + ", name=" + name + ", type=" + type + "]";
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").omitNullValues().add("href", href).add("name", name).add("type", type);
    }
 }

@@ -89,9 +89,9 @@ public class TaskImpl extends ReferenceTypeImpl implements Task {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("href", getHref()).add("name", getName()).add("owner", owner).add(
-               "operation", operation).add("startTime", startTime).add("endTime", endTime)
-               .add("expiryTime", expiryTime).add("error", error).toString();
+      return Objects.toStringHelper("").omitNullValues().add("href", getHref()).add("name", getName())
+            .add("owner", owner).add("operation", operation).add("startTime", startTime).add("endTime", endTime)
+            .add("expiryTime", expiryTime).add("error", error).toString();
    }
 
    public Date getExpiryTime() {

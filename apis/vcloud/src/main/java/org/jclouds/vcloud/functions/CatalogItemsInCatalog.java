@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.functions;
 
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.concurrent.ExecutorService;
@@ -32,17 +33,19 @@ import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class AllVDCsInOrg implements Function<Org, Iterable<VDC>> {
+public class CatalogItemsInCatalog implements Function<Catalog, Iterable<CatalogItem>> {
    @Resource
    public Logger logger = Logger.NULL;
 
@@ -50,22 +53,29 @@ public class AllVDCsInOrg implements Function<Org, Iterable<VDC>> {
    private final ExecutorService executor;
 
    @Inject
-   AllVDCsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   CatalogItemsInCatalog(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
-   public Iterable<VDC> apply(final Org org) {
+   public Iterable<CatalogItem> apply(Catalog from) {
 
-      Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<ReferenceType, Future<? extends VDC>>() {
-               @Override
-               public Future<? extends VDC> apply(ReferenceType from) {
-                  return  aclient.getVDCClient().getVDC(from.getHref());
-               }
+      Iterable<? extends CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
 
-            }, executor, null, logger, "vdcs in org " + org.getName());
+         @Override
+         public boolean apply(ReferenceType input) {
+            return input.getType().equals(VCloudMediaType.CATALOGITEM_XML);
+         }
+
+      }), new Function<ReferenceType, Future<? extends CatalogItem>>() {
+
+         @Override
+         public Future<CatalogItem> apply(ReferenceType from) {
+            return aclient.getCatalogClient().getCatalogItem(from.getHref());
+         }
+
+      }, executor, null, logger, "catalogItems in " + from.getHref());
       return Iterables2.concreteCopy(catalogItems);
    }
 

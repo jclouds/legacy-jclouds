@@ -18,7 +18,11 @@
  */
 package org.jclouds.vcloud.domain.network;
 
+import static com.google.common.base.Objects.equal;
+
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
 
 /**
  * specifies the properties of the network’s DHCP service
@@ -80,48 +84,25 @@ public class DhcpService {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((defaultLeaseTime == null) ? 0 : defaultLeaseTime.hashCode());
-      result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + ((ipRange == null) ? 0 : ipRange.hashCode());
-      result = prime * result + ((maxLeaseTime == null) ? 0 : maxLeaseTime.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      DhcpService that = DhcpService.class.cast(o);
+      return equal(this.enabled, that.enabled) && equal(this.defaultLeaseTime, that.defaultLeaseTime)
+            && equal(this.maxLeaseTime, that.maxLeaseTime) && equal(this.ipRange, that.ipRange);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DhcpService other = (DhcpService) obj;
-      if (defaultLeaseTime == null) {
-         if (other.defaultLeaseTime != null)
-            return false;
-      } else if (!defaultLeaseTime.equals(other.defaultLeaseTime))
-         return false;
-      if (enabled != other.enabled)
-         return false;
-      if (ipRange == null) {
-         if (other.ipRange != null)
-            return false;
-      } else if (!ipRange.equals(other.ipRange))
-         return false;
-      if (maxLeaseTime == null) {
-         if (other.maxLeaseTime != null)
-            return false;
-      } else if (!maxLeaseTime.equals(other.maxLeaseTime))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(enabled, defaultLeaseTime, maxLeaseTime, ipRange);
    }
 
    @Override
    public String toString() {
-      return "[defaultLeaseTime=" + defaultLeaseTime + ", enabled=" + enabled + ", ipRange=" + ipRange
-               + ", maxLeaseTime=" + maxLeaseTime + "]";
+      return Objects.toStringHelper("").omitNullValues().add("enabled", enabled)
+            .add("defaultLeaseTime", defaultLeaseTime).add("maxLeaseTime", maxLeaseTime).add("ipRange", ipRange)
+            .toString();
    }
 }

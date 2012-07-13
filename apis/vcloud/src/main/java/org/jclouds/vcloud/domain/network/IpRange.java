@@ -18,7 +18,10 @@
  */
 package org.jclouds.vcloud.domain.network;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Objects;
 
 /**
  * The IpRange element defines a range of IP addresses available on a network.
@@ -52,38 +55,24 @@ public class IpRange {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((endAddress == null) ? 0 : endAddress.hashCode());
-      result = prime * result + ((startAddress == null) ? 0 : startAddress.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      IpRange that = IpRange.class.cast(o);
+      return equal(this.startAddress, that.startAddress) && equal(this.endAddress, that.endAddress);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      IpRange other = (IpRange) obj;
-      if (endAddress == null) {
-         if (other.endAddress != null)
-            return false;
-      } else if (!endAddress.equals(other.endAddress))
-         return false;
-      if (startAddress == null) {
-         if (other.startAddress != null)
-            return false;
-      } else if (!startAddress.equals(other.startAddress))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(startAddress, endAddress);
    }
 
    @Override
    public String toString() {
-      return "[startAddress=" + startAddress + ", endAddress=" + endAddress + "]";
+      return  Objects.toStringHelper("").omitNullValues().add("startAddress", startAddress)
+            .add("endAddress", endAddress).toString();
    }
+
 }

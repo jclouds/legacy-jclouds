@@ -32,14 +32,14 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class AllCatalogItemsInOrg implements Function<Org, Iterable<CatalogItem>> {
+public class CatalogItemsInOrg implements Function<Org, Iterable<CatalogItem>> {
 
    private final Function<Org, Iterable<Catalog>> allCatalogsInOrg;
 
    private final Function<Catalog, Iterable<CatalogItem>> allCatalogItemsInCatalog;
 
    @Inject
-   AllCatalogItemsInOrg(Function<Org, Iterable<Catalog>> allCatalogsInOrg,
+   CatalogItemsInOrg(Function<Org, Iterable<Catalog>> allCatalogsInOrg,
             Function<Catalog, Iterable<CatalogItem>> allCatalogItemsInCatalog) {
       this.allCatalogsInOrg = allCatalogsInOrg;
       this.allCatalogItemsInCatalog = allCatalogItemsInCatalog;

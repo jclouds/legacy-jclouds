@@ -18,7 +18,11 @@
  */
 package org.jclouds.vcloud.domain.network;
 
+import static com.google.common.base.Objects.equal;
+
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
 
 /**
  * The Features element defines the DHCP and firewall features of a network.
@@ -69,46 +73,25 @@ public class Features {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((dhcpService == null) ? 0 : dhcpService.hashCode());
-      result = prime * result + ((firewallService == null) ? 0 : firewallService.hashCode());
-      result = prime * result + ((natService == null) ? 0 : natService.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Features that = Features.class.cast(o);
+      return equal(this.dhcpService, that.dhcpService) && equal(this.firewallService, that.firewallService)
+            && equal(this.natService, that.natService);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Features other = (Features) obj;
-      if (dhcpService == null) {
-         if (other.dhcpService != null)
-            return false;
-      } else if (!dhcpService.equals(other.dhcpService))
-         return false;
-      if (firewallService == null) {
-         if (other.firewallService != null)
-            return false;
-      } else if (!firewallService.equals(other.firewallService))
-         return false;
-      if (natService == null) {
-         if (other.natService != null)
-            return false;
-      } else if (!natService.equals(other.natService))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(dhcpService, firewallService, natService);
    }
 
    @Override
    public String toString() {
-      return "[dhcpService=" + dhcpService + ", firewallService=" + firewallService + ", natService=" + natService
-               + "]";
+      return Objects.toStringHelper("").omitNullValues().add("dhcpService", dhcpService)
+            .add("firewallService", firewallService).add("natService", natService).toString();
    }
 
 }

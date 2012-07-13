@@ -32,9 +32,9 @@ import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.base.Function;
 
@@ -42,7 +42,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class AllCatalogsInOrg implements Function<Org, Iterable<Catalog>> {
+public class VDCsInOrg implements Function<Org, Iterable<VDC>> {
    @Resource
    public Logger logger = Logger.NULL;
 
@@ -50,21 +50,23 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<Catalog>> {
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   VDCsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
-   public Iterable<Catalog> apply(final Org org) {
-      Iterable<? extends Catalog> catalogs = transformParallel(org.getCatalogs().values(),
-            new Function<ReferenceType, Future<? extends Catalog>>() {
+   public Iterable<VDC> apply(final Org org) {
+
+      Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
+            new Function<ReferenceType, Future<? extends VDC>>() {
                @Override
-               public Future<Catalog> apply(ReferenceType from) {
-                  return aclient.getCatalogClient().getCatalog(from.getHref());
+               public Future<? extends VDC> apply(ReferenceType from) {
+                  return  aclient.getVDCClient().getVDC(from.getHref());
                }
 
-            }, executor, null, logger, "catalogs in " + org.getName());
-      return Iterables2.concreteCopy(catalogs);
+            }, executor, null, logger, "vdcs in org " + org.getName());
+      return Iterables2.concreteCopy(catalogItems);
    }
+
 }

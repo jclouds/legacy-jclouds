@@ -18,12 +18,15 @@
  */
 package org.jclouds.vcloud.domain.network;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -138,73 +141,30 @@ public class IpScope {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((allocatedIpAddresses == null) ? 0 : allocatedIpAddresses.hashCode());
-      result = prime * result + ((dns1 == null) ? 0 : dns1.hashCode());
-      result = prime * result + ((dns2 == null) ? 0 : dns2.hashCode());
-      result = prime * result + ((dnsSuffix == null) ? 0 : dnsSuffix.hashCode());
-      result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-      result = prime * result + (inherited ? 1231 : 1237);
-      result = prime * result + ((ipRanges == null) ? 0 : ipRanges.hashCode());
-      result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      IpScope that = IpScope.class.cast(o);
+      return equal(this.inherited, that.inherited) && equal(this.gateway, that.gateway)
+            && equal(this.netmask, that.netmask) && equal(this.dns1, that.dns1) && equal(this.dns2, that.dns2)
+            && equal(this.dnsSuffix, that.dnsSuffix) && equal(this.ipRanges, ipRanges) && equal(this.allocatedIpAddresses, allocatedIpAddresses);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      IpScope other = (IpScope) obj;
-      if (allocatedIpAddresses == null) {
-         if (other.allocatedIpAddresses != null)
-            return false;
-      } else if (!allocatedIpAddresses.equals(other.allocatedIpAddresses))
-         return false;
-      if (dns1 == null) {
-         if (other.dns1 != null)
-            return false;
-      } else if (!dns1.equals(other.dns1))
-         return false;
-      if (dns2 == null) {
-         if (other.dns2 != null)
-            return false;
-      } else if (!dns2.equals(other.dns2))
-         return false;
-      if (dnsSuffix == null) {
-         if (other.dnsSuffix != null)
-            return false;
-      } else if (!dnsSuffix.equals(other.dnsSuffix))
-         return false;
-      if (gateway == null) {
-         if (other.gateway != null)
-            return false;
-      } else if (!gateway.equals(other.gateway))
-         return false;
-      if (inherited != other.inherited)
-         return false;
-      if (ipRanges == null) {
-         if (other.ipRanges != null)
-            return false;
-      } else if (!ipRanges.equals(other.ipRanges))
-         return false;
-      if (netmask == null) {
-         if (other.netmask != null)
-            return false;
-      } else if (!netmask.equals(other.netmask))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(inherited, gateway, netmask, dns1, dns2, dnsSuffix, ipRanges, allocatedIpAddresses);
    }
 
    @Override
    public String toString() {
-      return "[allocatedIpAddresses=" + allocatedIpAddresses + ", dns1=" + dns1 + ", dns2=" + dns2 + ", dnsSuffix="
-               + dnsSuffix + ", gateway=" + gateway + ", inherited=" + inherited + ", ipRanges=" + ipRanges
-               + ", netmask=" + netmask + "]";
+      ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("inherited", inherited).add("gateway", gateway)
+            .add("netmask", netmask).add("dns1", dns1).add("dns2", dns2).add("dnsSuffix", dnsSuffix);
+      if (ipRanges.size() >0)
+         helper.add("ipRanges", ipRanges);
+      if (allocatedIpAddresses.size() >0)
+         helper.add("allocatedIpAddresses", allocatedIpAddresses);
+      return helper.toString();
    }
 }

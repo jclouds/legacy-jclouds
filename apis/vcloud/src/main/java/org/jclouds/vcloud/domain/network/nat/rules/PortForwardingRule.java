@@ -18,10 +18,13 @@
  */
 package org.jclouds.vcloud.domain.network.nat.rules;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.vcloud.domain.network.nat.NatProtocol;
 import org.jclouds.vcloud.domain.network.nat.NatRule;
+
+import com.google.common.base.Objects;
 
 /**
  * The PortForwardingRule element describes a NAT rule that maps an IP address and port in an
@@ -44,7 +47,6 @@ public class PortForwardingRule implements NatRule {
       this.internalIP = checkNotNull(internalIP, "internalIP");
       this.internalPort = internalPort;
       this.protocol = checkNotNull(protocol, "protocol");
-
    }
 
    /**
@@ -85,52 +87,27 @@ public class PortForwardingRule implements NatRule {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((externalIP == null) ? 0 : externalIP.hashCode());
-      result = prime * result + externalPort;
-      result = prime * result + ((internalIP == null) ? 0 : internalIP.hashCode());
-      result = prime * result + internalPort;
-      result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      PortForwardingRule that = PortForwardingRule.class.cast(o);
+      return equal(this.externalIP, that.externalIP) && equal(this.externalPort, that.externalPort)
+            && equal(this.internalIP, that.internalIP) && equal(this.internalPort, that.internalPort)
+            && equal(this.protocol, that.protocol);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      PortForwardingRule other = (PortForwardingRule) obj;
-      if (externalIP == null) {
-         if (other.externalIP != null)
-            return false;
-      } else if (!externalIP.equals(other.externalIP))
-         return false;
-      if (externalPort != other.externalPort)
-         return false;
-      if (internalIP == null) {
-         if (other.internalIP != null)
-            return false;
-      } else if (!internalIP.equals(other.internalIP))
-         return false;
-      if (internalPort != other.internalPort)
-         return false;
-      if (protocol == null) {
-         if (other.protocol != null)
-            return false;
-      } else if (!protocol.equals(other.protocol))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(externalIP, externalPort, internalIP, internalPort, protocol);
    }
 
    @Override
    public String toString() {
-      return "[externalIP=" + externalIP + ", externalPort=" + externalPort + ", internalIP=" + internalIP
-               + ", internalPort=" + internalPort + ", protocol=" + protocol + "]";
+      return Objects.toStringHelper("").omitNullValues().add("externalIP", externalIP)
+            .add("externalPort", externalPort).add("internalIP", internalIP).add("internalPort", internalPort)
+            .add("protocol", protocol).toString();
    }
 
 }

@@ -24,7 +24,7 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.internal.VDCImpl;
+import org.jclouds.vcloud.domain.network.internal.OrgNetworkImpl;
 
 import com.google.inject.ImplementedBy;
 
@@ -34,7 +34,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @org.jclouds.vcloud.endpoints.Network
-@ImplementedBy(VDCImpl.class)
+@ImplementedBy(OrgNetworkImpl.class)
 public interface OrgNetwork extends ReferenceType {
    /**
     * The org this network belongs to.
