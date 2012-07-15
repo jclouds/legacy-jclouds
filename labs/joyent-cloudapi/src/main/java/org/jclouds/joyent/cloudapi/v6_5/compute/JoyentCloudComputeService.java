@@ -58,12 +58,12 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.KeyAndPrivateKey;
 import org.jclouds.joyent.cloudapi.v6_5.compute.options.JoyentCloudTemplateOptions;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndName;
-import org.jclouds.joyent.cloudapi.v6_5.features.KeyClient;
+import org.jclouds.joyent.cloudapi.v6_5.features.KeyApi;
 import org.jclouds.joyent.cloudapi.v6_5.predicates.KeyPredicates;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
@@ -81,7 +81,7 @@ import com.google.common.collect.Multimap;
  */
 @Singleton
 public class JoyentCloudComputeService extends BaseComputeService {
-   protected final JoyentCloudClient novaClient;
+   protected final JoyentCloudApi novaApi;
    protected final LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache;
    protected final Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByDatacenterId;
    protected final GroupNamingConvention.Factory namingConvention;
@@ -101,7 +101,7 @@ public class JoyentCloudComputeService extends BaseComputeService {
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, JoyentCloudClient novaClient,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, JoyentCloudApi novaApi,
          LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache,
          Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByDatacenterId,
          GroupNamingConvention.Factory namingConvention, Optional<ImageExtension> imageExtension) {
@@ -110,7 +110,7 @@ public class JoyentCloudComputeService extends BaseComputeService {
             startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
             nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
             persistNodeCredentials, timeouts, executor, imageExtension);
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+      this.novaApi = checkNotNull(novaApi, "novaApi");
       this.keyCache = checkNotNull(keyCache, "keyCache");
       this.orphanedGroupsByDatacenterId = checkNotNull(orphanedGroupsByDatacenterId, "orphanedGroupsByDatacenterId");
       this.namingConvention = checkNotNull(namingConvention, "namingConvention");
@@ -125,13 +125,13 @@ public class JoyentCloudComputeService extends BaseComputeService {
    }
 
    private void cleanupOrphanedKeysInZone(Set<String> groups, String datacenterId) {
-      KeyClient keyClient = novaClient.getKeyClient();
+      KeyApi keyApi = novaApi.getKeyApi();
       for (String group : groups) {
-         for (Key key : Iterables.filter(keyClient.list(),
+         for (Key key : Iterables.filter(keyApi.list(),
                KeyPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
             DatacenterAndName datacenterAndName = DatacenterAndName.fromDatacenterAndName(datacenterId, key.getName());
             logger.debug(">> deleting key(%s)", datacenterAndName);
-            keyClient.delete(key.getName());
+            keyApi.delete(key.getName());
             // TODO: test this clear happens
             keyCache.invalidate(datacenterAndName);
             logger.debug("<< deleted key(%s)", datacenterAndName);

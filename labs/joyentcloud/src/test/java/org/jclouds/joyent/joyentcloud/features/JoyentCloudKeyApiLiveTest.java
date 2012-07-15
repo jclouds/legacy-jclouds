@@ -16,18 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.cloudapi.v6_5.internal;
+package org.jclouds.joyent.joyentcloud.features;
 
-import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import org.jclouds.joyent.cloudapi.v6_5.features.KeyApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Base class for writing JoyentCloud Expect tests
- * 
  * @author Adrian Cole
  */
-public class BaseJoyentCloudExpectTest<T> extends BaseRestApiExpectTest<T> {
-
-   public BaseJoyentCloudExpectTest() {
-      provider = "joyent-cloudapi";
+@Test(groups = "live", testName = "JoyentCloudKeyApiLiveTest")
+public class JoyentCloudKeyApiLiveTest extends KeyApiLiveTest {
+   public JoyentCloudKeyApiLiveTest() {
+      provider = "joyentcloud";
    }
 }

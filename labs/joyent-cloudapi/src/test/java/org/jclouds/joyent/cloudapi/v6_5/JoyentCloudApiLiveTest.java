@@ -16,18 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.cloudapi.v6_5.internal;
+package org.jclouds.joyent.cloudapi.v6_5;
 
-import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import static org.testng.Assert.assertEquals;
+
+import java.util.Set;
+
+import org.jclouds.joyent.cloudapi.v6_5.internal.BaseJoyentCloudApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Base class for writing JoyentCloud Expect tests
- * 
  * @author Adrian Cole
  */
-public class BaseJoyentCloudExpectTest<T> extends BaseRestApiExpectTest<T> {
+@Test(groups = "live", testName = "JoyentCloudApiLiveTest")
+public class JoyentCloudApiLiveTest extends BaseJoyentCloudApiLiveTest {
 
-   public BaseJoyentCloudExpectTest() {
-      provider = "joyent-cloudapi";
+   public void testGetDatacenters() {
+      Set<String> dcs = cloudApiContext.getApi().getConfiguredDatacenters();
+      assertEquals(dcs, cloudApiContext.getApi().getDatacenterApi().getDatacenters().keySet());
    }
 }

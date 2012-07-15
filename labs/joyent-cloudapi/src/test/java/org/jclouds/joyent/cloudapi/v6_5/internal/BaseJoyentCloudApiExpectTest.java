@@ -18,16 +18,23 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.internal;
 
-import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 
 /**
- * Base class for writing JoyentCloud Expect tests
+ * Base class for writing Cloud Api Rest Api Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseJoyentCloudExpectTest<T> extends BaseRestApiExpectTest<T> {
-
-   public BaseJoyentCloudExpectTest() {
-      provider = "joyent-cloudapi";
-   }
+public class BaseJoyentCloudApiExpectTest extends BaseJoyentCloudExpectTest<JoyentCloudApi> {
+   protected HttpRequest getDatacenters = HttpRequest.builder()
+         .method("GET")
+         .endpoint("https://api.joyentcloud.com/my/datacenters")
+         .addHeader("X-Api-Version", "~6.5")
+         .addHeader("Accept", "application/json")
+         .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
+   
+   protected HttpResponse getDatacentersResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/datacenters.json")).build();
 }

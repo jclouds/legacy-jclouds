@@ -24,18 +24,18 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.DatasetAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.DatasetClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.KeyAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.KeyClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.MachineAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.MachineClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.PackageAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.PackageClient;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatasetAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatasetApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.KeyAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.KeyApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.MachineAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.MachineApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.PackageAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.PackageApi;
 import org.jclouds.joyent.cloudapi.v6_5.handlers.JoyentCloudErrorHandler;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
@@ -50,13 +50,13 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class JoyentCloudRestClientModule extends RestClientModule<JoyentCloudClient, JoyentCloudAsyncClient> {
+public class JoyentCloudRestClientModule extends RestClientModule<JoyentCloudApi, JoyentCloudAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(DatacenterClient.class, DatacenterAsyncClient.class)
-         .put(KeyClient.class, KeyAsyncClient.class)
-         .put(MachineClient.class, MachineAsyncClient.class)
-         .put(DatasetClient.class, DatasetAsyncClient.class)
-         .put(PackageClient.class, PackageAsyncClient.class).build();
+         .put(DatacenterApi.class, DatacenterAsyncApi.class)
+         .put(KeyApi.class, KeyAsyncApi.class)
+         .put(MachineApi.class, MachineAsyncApi.class)
+         .put(DatasetApi.class, DatasetAsyncApi.class)
+         .put(PackageApi.class, PackageAsyncApi.class).build();
 
    public JoyentCloudRestClientModule() {
       super(DELEGATE_MAP);

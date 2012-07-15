@@ -44,7 +44,7 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<JoyentCloudClient, JoyentCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<JoyentCloudClient, JoyentCloudAsyncClient>>() {
+   public static final TypeToken<RestContext<JoyentCloudApi, JoyentCloudAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<JoyentCloudApi, JoyentCloudAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -70,7 +70,7 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(JoyentCloudClient.class, JoyentCloudAsyncClient.class);
+         super(JoyentCloudApi.class, JoyentCloudAsyncApi.class);
          id("joyent-cloudapi")
          .name("Joyent Cloud API")
          .identityName("username")

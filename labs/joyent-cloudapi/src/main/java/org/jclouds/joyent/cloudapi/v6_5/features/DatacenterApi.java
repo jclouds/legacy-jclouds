@@ -16,18 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.cloudapi.v6_5.internal;
+package org.jclouds.joyent.cloudapi.v6_5.features;
 
-import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
 
 /**
- * Base class for writing JoyentCloud Expect tests
+ * Datacenter Services
  * 
+ * @see DatacenterAsyncApi
  * @author Adrian Cole
+ * @see <a href="http://cloudApi.joyent.org/cloudApiapi.html">api doc</a>
  */
-public class BaseJoyentCloudExpectTest<T> extends BaseRestApiExpectTest<T> {
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface DatacenterApi {
 
-   public BaseJoyentCloudExpectTest() {
-      provider = "joyent-cloudapi";
-   }
+   /**
+    * Provides a list of all datacenters this cloud is aware of.
+    * 
+    * @return keys are the datacenter name, and the value is the URL.
+    */
+   Map<String, URI> getDatacenters();
 }

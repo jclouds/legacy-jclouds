@@ -20,9 +20,9 @@ package org.jclouds.joyent.cloudapi.v6_5.config;
 
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
-import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterAsyncClient;
-import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterClient;
-import org.jclouds.joyent.cloudapi.v6_5.suppliers.ZoneIdToURIFromDatacentersClient;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterAsyncApi;
+import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterApi;
+import org.jclouds.joyent.cloudapi.v6_5.suppliers.ZoneIdToURIFromDatacentersApi;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
@@ -40,10 +40,10 @@ public class DatacentersAreZonesModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      // datacenter client is needed for obtaining zone ids
-      bindClientAndAsyncClient(binder(), DatacenterClient.class, DatacenterAsyncClient.class);
+      // datacenter api is needed for obtaining zone ids
+      bindClientAndAsyncClient(binder(), DatacenterApi.class, DatacenterAsyncApi.class);
       bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
-      bind(ZoneIdToURISupplier.class).to(ZoneIdToURIFromDatacentersClient.class).in(Scopes.SINGLETON);
+      bind(ZoneIdToURISupplier.class).to(ZoneIdToURIFromDatacentersApi.class).in(Scopes.SINGLETON);
       bind(ZoneIdsSupplier.class).to(ZoneIdsFromZoneIdToURIKeySet.class).in(Scopes.SINGLETON);
    }
 }

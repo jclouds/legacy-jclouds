@@ -18,16 +18,22 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.internal;
 
-import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import java.util.Properties;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudAsyncApi;
+
+import com.google.common.base.Function;
+import com.google.inject.Module;
 
 /**
- * Base class for writing JoyentCloud Expect tests
+ * Base class for writing Cloud Api Rest Api Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseJoyentCloudExpectTest<T> extends BaseRestApiExpectTest<T> {
-
-   public BaseJoyentCloudExpectTest() {
-      provider = "joyent-cloudapi";
+public class BaseJoyentCloudAsyncApiExpectTest extends BaseJoyentCloudExpectTest<JoyentCloudAsyncApi> {
+   public JoyentCloudAsyncApi createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+      return createInjector(fn, module, props).getInstance(JoyentCloudAsyncApi.class);
    }
 }
