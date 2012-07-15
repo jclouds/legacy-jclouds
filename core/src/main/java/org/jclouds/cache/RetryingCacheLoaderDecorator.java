@@ -158,7 +158,7 @@ public class RetryingCacheLoaderDecorator<K, V> {
 
       @Override
       protected Objects.ToStringHelper string() {
-         return string().add("retryableThrowable", retryableThrowable).add("periodMs", periodMs).add("maxPeriodMs",
+         return Objects.toStringHelper(this).add("retryableThrowable", retryableThrowable).add("periodMs", periodMs).add("maxPeriodMs",
                   maxPeriodMs).add("maxTries", maxTries);
       }
    }
