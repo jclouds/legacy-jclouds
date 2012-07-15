@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.carrenza.vcloud.director.login;
+package org.jclouds.carrenza.vcloud.director.features;
 
-import org.jclouds.vcloud.director.v1_5.login.SessionClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.features.NetworkApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,10 +27,10 @@ import org.testng.annotations.Test;
  * @author danikov
  * @author grkvlt
  */
-@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorSessionClientLiveTest")
-public class CarrenzaVCloudDirectorSessionClientLiveTest extends SessionClientLiveTest {
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorNetworkApiLiveTest")
+public class CarrenzaVCloudDirectorNetworkApiLiveTest extends NetworkApiLiveTest {
 
-   public CarrenzaVCloudDirectorSessionClientLiveTest() {
+   public CarrenzaVCloudDirectorNetworkApiLiveTest() {
       provider = "carrenza-vcloud-director";
    }
 }

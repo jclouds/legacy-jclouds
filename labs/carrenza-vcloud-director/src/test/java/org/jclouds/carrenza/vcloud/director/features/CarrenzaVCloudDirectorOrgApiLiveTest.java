@@ -18,7 +18,7 @@
  */
 package org.jclouds.carrenza.vcloud.director.features;
 
-import org.jclouds.vcloud.director.v1_5.features.CatalogClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.features.OrgApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,10 +27,10 @@ import org.testng.annotations.Test;
  * @author danikov
  * @author grkvlt
  */
-@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorCatalogClientLiveTest")
-public class CarrenzaVCloudDirectorCatalogClientLiveTest extends CatalogClientLiveTest {
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorOrgApiLiveTest")
+public class CarrenzaVCloudDirectorOrgApiLiveTest extends OrgApiLiveTest {
 
-   public CarrenzaVCloudDirectorCatalogClientLiveTest() {
+   public CarrenzaVCloudDirectorOrgApiLiveTest() {
       provider = "carrenza-vcloud-director";
    }
 }

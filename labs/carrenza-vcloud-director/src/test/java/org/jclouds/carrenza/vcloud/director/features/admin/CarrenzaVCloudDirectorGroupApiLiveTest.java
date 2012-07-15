@@ -18,7 +18,7 @@
  */
 package org.jclouds.carrenza.vcloud.director.features.admin;
 
-import org.jclouds.vcloud.director.v1_5.features.admin.GroupClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.features.admin.GroupApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,10 +27,10 @@ import org.testng.annotations.Test;
  * @author danikov
  * @author grkvlt
  */
-@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorGroupClientLiveTest")
-public class CarrenzaVCloudDirectorGroupClientLiveTest extends GroupClientLiveTest {
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorGroupApiLiveTest")
+public class CarrenzaVCloudDirectorGroupApiLiveTest extends GroupApiLiveTest {
 
-   public CarrenzaVCloudDirectorGroupClientLiveTest() {
+   public CarrenzaVCloudDirectorGroupApiLiveTest() {
       provider = "carrenza-vcloud-director";
    }
 }

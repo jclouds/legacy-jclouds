@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.carrenza.vcloud.director.features;
+package org.jclouds.carrenza.vcloud.director.features.admin;
 
-import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,10 +27,10 @@ import org.testng.annotations.Test;
  * @author danikov
  * @author grkvlt
  */
-@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorVAppTemplateClientLiveTest")
-public class CarrenzaVCloudDirectorVAppTemplateClientLiveTest extends VAppTemplateClientLiveTest {
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorAdminQueryApiLiveTest")
+public class CarrenzaVCloudDirectorAdminQueryApiLiveTest extends AdminQueryApiLiveTest {
 
-   public CarrenzaVCloudDirectorVAppTemplateClientLiveTest() {
+   public CarrenzaVCloudDirectorAdminQueryApiLiveTest() {
       provider = "carrenza-vcloud-director";
    }
 }

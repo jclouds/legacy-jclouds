@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live", "compute" }, testName = "CarrenzaVCloudDirectorTemplateBuilderLiveTest")
 public class CarrenzaVCloudDirectorTemplateBuilderLiveTest {
-//      BaseTemplateBuilderLiveTest<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext> {
+//      BaseTemplateBuilderLiveTest<VCloudDirectorApi, VCloudDirectorAsyncApi, VCloudDirectorContext> {
 //
 //   public CarrenzaVCloudDirectorTemplateBuilderLiveTest() {
 //      provider = "carrenza-vcloud-director";
