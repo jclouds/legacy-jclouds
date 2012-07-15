@@ -21,8 +21,8 @@ package org.jclouds.snia.cdmi.v1.internal;
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.snia.cdmi.v1.CDMIApiMetadata;
-import org.jclouds.snia.cdmi.v1.CDMIAsyncClient;
-import org.jclouds.snia.cdmi.v1.CDMIClient;
+import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
+import org.jclouds.snia.cdmi.v1.CDMIApi;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -30,18 +30,18 @@ import org.testng.annotations.Test;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Tests behavior of {@code CDMIClient}
+ * Tests behavior of {@code CDMIApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseCDMIClientLiveTest extends BaseContextLiveTest<RestContext<CDMIClient, CDMIAsyncClient>> {
+public class BaseCDMIApiLiveTest extends BaseContextLiveTest<RestContext<CDMIApi, CDMIAsyncApi>> {
 
-   public BaseCDMIClientLiveTest() {
+   public BaseCDMIApiLiveTest() {
       provider = "cdmi";
    }
 
-   protected RestContext<CDMIClient, CDMIAsyncClient> cdmiContext;
+   protected RestContext<CDMIApi, CDMIAsyncApi> cdmiContext;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -57,7 +57,7 @@ public class BaseCDMIClientLiveTest extends BaseContextLiveTest<RestContext<CDMI
    }
 
    @Override
-   protected TypeToken<RestContext<CDMIClient, CDMIAsyncClient>> contextType() {
+   protected TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> contextType() {
       return CDMIApiMetadata.CONTEXT_TOKEN;
    }
 

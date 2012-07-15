@@ -22,18 +22,18 @@ import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.snia.cdmi.v1.CDMIAsyncClient;
+import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
 
 import com.google.common.base.Function;
 import com.google.inject.Module;
 
 /**
- * Base class for writing KeyStone Rest Client Expect tests
+ * Base class for writing KeyStone Rest Api Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseCDMIAsyncClientExpectTest extends BaseCDMIExpectTest<CDMIAsyncClient> {
-   public CDMIAsyncClient createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return createInjector(fn, module, props).getInstance(CDMIAsyncClient.class);
+public class BaseCDMIAsyncApiExpectTest extends BaseCDMIExpectTest<CDMIAsyncApi> {
+   public CDMIAsyncApi createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+      return createInjector(fn, module, props).getInstance(CDMIAsyncApi.class);
    }
 }

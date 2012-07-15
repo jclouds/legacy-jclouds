@@ -26,14 +26,14 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.snia.cdmi.v1.CDMIAsyncClient;
-import org.jclouds.snia.cdmi.v1.CDMIClient;
-import org.jclouds.snia.cdmi.v1.features.ContainerAsyncClient;
-import org.jclouds.snia.cdmi.v1.features.ContainerClient;
-import org.jclouds.snia.cdmi.v1.features.DataAsyncClient;
-import org.jclouds.snia.cdmi.v1.features.DataClient;
-import org.jclouds.snia.cdmi.v1.features.DomainAsyncClient;
-import org.jclouds.snia.cdmi.v1.features.DomainClient;
+import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
+import org.jclouds.snia.cdmi.v1.CDMIApi;
+import org.jclouds.snia.cdmi.v1.features.ContainerAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.ContainerApi;
+import org.jclouds.snia.cdmi.v1.features.DataAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.DataApi;
+import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.DomainApi;
 import org.jclouds.snia.cdmi.v1.handlers.CDMIErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
@@ -44,11 +44,11 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class CDMIRestClientModule extends RestClientModule<CDMIClient, CDMIAsyncClient> {
+public class CDMIRestClientModule extends RestClientModule<CDMIApi, CDMIAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder().put(
-            DomainClient.class, DomainAsyncClient.class).put(ContainerClient.class, ContainerAsyncClient.class).put(
-            DataClient.class, DataAsyncClient.class).build();
+            DomainApi.class, DomainAsyncApi.class).put(ContainerApi.class, ContainerAsyncApi.class).put(
+            DataApi.class, DataAsyncApi.class).build();
 
    public CDMIRestClientModule() {
       super(DELEGATE_MAP);

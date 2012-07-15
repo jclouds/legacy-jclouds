@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.snia.cdmi.v1.CDMIClient;
-import org.jclouds.snia.cdmi.v1.internal.BaseCDMIClientExpectTest;
+import org.jclouds.snia.cdmi.v1.CDMIApi;
+import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiExpectTest;
 import org.jclouds.snia.cdmi.v1.parse.ParseContainerTest;
 import org.testng.annotations.Test;
 
@@ -34,8 +34,8 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ContainerAsyncClientTest")
-public class ContainerClientExpectTest extends BaseCDMIClientExpectTest {
+@Test(groups = "unit", testName = "ContainerAsyncApiTest")
+public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
    
    public void testGetContainerWhenResponseIs2xx() throws Exception {
 
@@ -55,10 +55,10 @@ public class ContainerClientExpectTest extends BaseCDMIClientExpectTest {
             .payload(payloadFromResource("/container.json"))
             .build();
 
-      CDMIClient clientWhenContainersExist = requestSendsResponse(getContainer, getContainerResponse);
+      CDMIApi apiWhenContainersExist = requestSendsResponse(getContainer, getContainerResponse);
 
       assertEquals(
-            clientWhenContainersExist.getContainerClient().getContainer("MyContainer"),
+            apiWhenContainersExist.getContainerApi().getContainer("MyContainer"),
             new ParseContainerTest().expected());
    }
    

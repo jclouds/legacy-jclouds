@@ -16,42 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1;
+package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.snia.cdmi.v1.features.ContainerClient;
-import org.jclouds.snia.cdmi.v1.features.DataClient;
-import org.jclouds.snia.cdmi.v1.features.DomainClient;
+import org.jclouds.snia.cdmi.v1.domain.Container;
+import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 
 /**
- * Provides synchronous access to CDMI.
- * <p/>
+ * Container Object Resource Operations
  * 
- * @see CDMIAsyncClient
+ * @see ContainerAsyncApi
+ * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
- * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface CDMIClient {
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface ContainerApi {
+	Container createContainer(String containerName,
+			CreateContainerOptions... options);
 
-   /**
-    * Provides synchronous access to Domain Object Resource Operations.
-    */
-   @Delegate
-   DomainClient getDomainClient();
+	Container getContainer(String containerName);
 
-   /**
-    * Provides synchronous access to Container Object Resource Operations.
-    */
-   @Delegate
-   ContainerClient getContainerClient();
+	void deleteContainer(String containerName);
 
-   /**
-    * Provides synchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   DataClient getDataClient();
 }

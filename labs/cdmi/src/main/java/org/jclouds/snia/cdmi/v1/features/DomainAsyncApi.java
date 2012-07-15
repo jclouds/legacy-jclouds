@@ -16,15 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.internal;
+package org.jclouds.snia.cdmi.v1.features;
 
-import org.jclouds.snia.cdmi.v1.CDMIClient;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
+import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 
 /**
- * Base class for writing KeyStone Rest Client Expect tests
+ * Domain Object Resource Operations
  * 
+ * @see DomainApi
  * @author Adrian Cole
+ * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-public class BaseCDMIClientExpectTest extends BaseCDMIExpectTest<CDMIClient> {
+@SkipEncoding( { '/', '=' })
+@RequestFilters( { BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
+@Headers(keys="X-CDMI-Specification-Version", values = "{jclouds.api-version}")
+public interface DomainAsyncApi {
+
 
 }

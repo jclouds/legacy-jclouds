@@ -18,36 +18,40 @@
  */
 package org.jclouds.snia.cdmi.v1;
 
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.snia.cdmi.v1.features.ContainerAsyncClient;
-import org.jclouds.snia.cdmi.v1.features.DataAsyncClient;
-import org.jclouds.snia.cdmi.v1.features.DomainAsyncClient;
+import org.jclouds.snia.cdmi.v1.features.ContainerApi;
+import org.jclouds.snia.cdmi.v1.features.DataApi;
+import org.jclouds.snia.cdmi.v1.features.DomainApi;
 
 /**
- * Provides asynchronous access to CDMI via their REST API.
+ * Provides synchronous access to CDMI.
  * <p/>
  * 
- * @see CDMIClient
+ * @see CDMIAsyncApi
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  * @author Adrian Cole
  */
-public interface CDMIAsyncClient {
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+public interface CDMIApi {
 
    /**
-    * Provides asynchronous access to Domain Object Resource Operations.
+    * Provides synchronous access to Domain Object Resource Operations.
     */
    @Delegate
-   DomainAsyncClient getDomainClient();
+   DomainApi getDomainApi();
 
    /**
-    * Provides asynchronous access to Container Object Resource Operations.
+    * Provides synchronous access to Container Object Resource Operations.
     */
    @Delegate
-   ContainerAsyncClient getContainerClient();
+   ContainerApi getContainerApi();
 
    /**
-    * Provides asynchronous access to Data Object Resource Operations.
+    * Provides synchronous access to Data Object Resource Operations.
     */
    @Delegate
-   DataAsyncClient getDataClient();
+   DataApi getDataApi();
 }

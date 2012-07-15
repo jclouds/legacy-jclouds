@@ -45,17 +45,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Container Object Resource Operations
  * 
- * @see ContainerClient
+ * @see ContainerApi
  * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding( { '/', '=' })
 @RequestFilters( { BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
 @Headers(keys="X-CDMI-Specification-Version", values = "{jclouds.api-version}")
-public interface ContainerAsyncClient {
+public interface ContainerAsyncApi {
 
    /**
-    * @see ContainerClient#listContainers()
+    * @see ContainerApi#listContainers()
     */
    @GET
    @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
@@ -64,7 +64,7 @@ public interface ContainerAsyncClient {
    ListenableFuture<Container> getContainer(@PathParam("containerName") String containerName);
    
    /**
-    * @see ContainerClient#createContainer
+    * @see ContainerApi#createContainer
     */
    @PUT
    @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
@@ -75,7 +75,7 @@ public interface ContainerAsyncClient {
    					CreateContainerOptions... options);
 
    /**
-    * @see ContainerClient#createContainer()
+    * @see ContainerApi#createContainer()
     */
    @DELETE
    @Consumes( MediaType.APPLICATION_JSON )

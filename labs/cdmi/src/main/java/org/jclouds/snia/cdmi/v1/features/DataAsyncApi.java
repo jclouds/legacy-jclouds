@@ -44,16 +44,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Data Object Resource Operations
  * 
- * @see DataClient
+ * @see DataApi
  * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters({ BasicAuthenticationAndTenantId.class,
 		StripExtraAcceptHeader.class })
-public interface DataAsyncClient {
+public interface DataAsyncApi {
 	/**
-	 * @see DataClient#getDataObject()
+	 * @see DataApi#getDataObject()
 	 */
 	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@GET
@@ -65,7 +65,7 @@ public interface DataAsyncClient {
 			@PathParam("dataObjectName") String dataObjectName);
 
 	/**
-	 * @see DataClient#createDataObject
+	 * @see DataApi#createDataObject
 	 */
 	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@PUT
@@ -79,7 +79,7 @@ public interface DataAsyncClient {
 			CreateDataObjectOptions... options);
 
 	/**
-	 * @see DataClient#createDataObjectNonCDMI
+	 * @see DataApi#createDataObjectNonCDMI
 	 */
 	@PUT
 	@Consumes({ "text/plain" })
@@ -92,7 +92,7 @@ public interface DataAsyncClient {
 			CreateDataObjectNonCDMIOptions... options);
 
 	/**
-	 * @see DataClient#deleteDataObject()
+	 * @see DataApi#deleteDataObject()
 	 */
 	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@DELETE

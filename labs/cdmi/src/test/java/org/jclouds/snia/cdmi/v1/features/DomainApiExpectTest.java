@@ -18,13 +18,13 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
-import org.jclouds.snia.cdmi.v1.internal.BaseCDMIClientExpectTest;
+import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiExpectTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "DomainClientExpectTest")
-public class DomainClientExpectTest extends BaseCDMIClientExpectTest {
+@Test(groups = "unit", testName = "DomainApiExpectTest")
+public class DomainApiExpectTest extends BaseCDMIApiExpectTest {
 
 }

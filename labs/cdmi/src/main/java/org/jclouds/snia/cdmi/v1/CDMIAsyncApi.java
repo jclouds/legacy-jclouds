@@ -16,32 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.features;
+package org.jclouds.snia.cdmi.v1;
 
-import java.util.concurrent.TimeUnit;
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.snia.cdmi.v1.domain.DataObject;
-import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
-import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.snia.cdmi.v1.features.ContainerAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.DataAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
 
 /**
- * Data Object Resource Operations
+ * Provides asynchronous access to CDMI via their REST API.
+ * <p/>
  * 
- * @see DataAsyncClient
- * @author Kenneth Nagin
+ * @see CDMIApi
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
+ * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface DataClient {
-	DataObject createDataObject(String containerName, String dataObjectName,
-			CreateDataObjectOptions... options);
-	 
-	void createDataObjectNonCDMI(String containerName, String dataObjectName, 
-			CreateDataObjectNonCDMIOptions... options );
+public interface CDMIAsyncApi {
 
-	DataObject getDataObject(String containerName, String dataObjectName);
+   /**
+    * Provides asynchronous access to Domain Object Resource Operations.
+    */
+   @Delegate
+   DomainAsyncApi getDomainApi();
 
-	void deleteDataObject(String containerName, String dataObjectName);
+   /**
+    * Provides asynchronous access to Container Object Resource Operations.
+    */
+   @Delegate
+   ContainerAsyncApi getContainerApi();
 
-
+   /**
+    * Provides asynchronous access to Data Object Resource Operations.
+    */
+   @Delegate
+   DataAsyncApi getDataApi();
 }

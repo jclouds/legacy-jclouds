@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.domain.Container;
-import org.jclouds.snia.cdmi.v1.internal.BaseCDMIClientLiveTest;
+import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.testng.annotations.Test;
 
@@ -39,8 +39,8 @@ import org.testng.annotations.Test;
  * @author Kenneth Nagin
  */
 
-@Test(groups = "live", testName = "ContainerClientLiveTest")
-public class ContainerClientLiveTest extends BaseCDMIClientLiveTest {
+@Test(groups = "live", testName = "ContainerApiLiveTest")
+public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 
 	@Test
 	public void testCreateContainer() throws Exception {
@@ -52,14 +52,14 @@ public class ContainerClientLiveTest extends BaseCDMIClientLiveTest {
 		pContainerMetaDataIn.put("containerkey3", "value3");
 		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder
 				.withMetadata(pContainerMetaDataIn);
-		ContainerClient client = cdmiContext.getApi().getContainerClient();
+		ContainerApi api = cdmiContext.getApi().getContainerApi();
 		Logger.getAnonymousLogger().info("createContainer: " + pContainerName);
-		Container container = client.createContainer(pContainerName,
+		Container container = api.createContainer(pContainerName,
 				pCreateContainerOptions);
 		assertNotNull(container);
 		System.out.println(container);
 		Logger.getAnonymousLogger().info("getContainer: " + pContainerName);
-		container = client.getContainer(pContainerName);
+		container = api.getContainer(pContainerName);
 		assertNotNull(container);
 		System.out.println(container);
 		assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
@@ -96,13 +96,13 @@ public class ContainerClientLiveTest extends BaseCDMIClientLiveTest {
 		for (Map<String, String> aclMap : aclMetadataOut) {
 			System.out.println(aclMap);
 		}
-		container = client.getContainer("/");
+		container = api.getContainer("/");
 		System.out.println("root container: " + container);
 		assertEquals(container.getChildren().contains(pContainerName + "/"),
 				true);
 		Logger.getAnonymousLogger().info("deleteContainer: " + pContainerName);
-		client.deleteContainer(pContainerName);
-		container = client.getContainer("/");
+		api.deleteContainer(pContainerName);
+		container = api.getContainer("/");
 		System.out.println("root container: " + container);
 		assertEquals(container.getChildren().contains(pContainerName + "/"),
 				false);

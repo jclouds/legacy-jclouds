@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
-import org.jclouds.snia.cdmi.v1.internal.BaseCDMIClientLiveTest;
+import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
@@ -48,8 +48,8 @@ import com.google.common.io.Files;
 /**
  * @author Kenneth Nagin
  */
-@Test(groups = "live", testName = "DataClientLiveTest")
-public class DataClientLiveTest extends BaseCDMIClientLiveTest {
+@Test(groups = "live", testName = "DataApiLiveTest")
+public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 	@Test
 	public void testCreateDataObjects() throws Exception {
 
@@ -72,16 +72,16 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 
 		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder
 				.withMetadata(pContainerMetaDataIn);
-		ContainerClient containerClient = cdmiContext.getApi()
-				.getContainerClient();
-		DataClient dataClient = cdmiContext.getApi().getDataClient();
+		ContainerApi containerApi = cdmiContext.getApi()
+				.getContainerApi();
+		DataApi dataApi = cdmiContext.getApi().getDataApi();
 		Logger.getAnonymousLogger().info("createContainer: " + containerName);
-		Container container = containerClient.createContainer(containerName,
+		Container container = containerApi.createContainer(containerName,
 				pCreateContainerOptions);
 		try {
 			assertNotNull(container);
 			System.out.println(container);
-			container = containerClient.getContainer(containerName);
+			container = containerApi.getContainer(containerName);
 			assertNotNull(container);
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().isEmpty(), true);
@@ -90,10 +90,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			value = "Hello CDMI World1";
 			CreateDataObjectNonCDMIOptions pCreateDataObjectNoneCDMIOptions = CreateDataObjectNonCDMIOptions.Builder
 					.withStringPayload(value);
-			dataClient.createDataObjectNonCDMI(containerName, dataObjectNameIn,
+			dataApi.createDataObjectNonCDMI(containerName, dataObjectNameIn,
 					pCreateDataObjectNoneCDMIOptions);
-			System.out.println(containerClient.getContainer(containerName));
-			dataObject = dataClient.getDataObject(containerName,
+			System.out.println(containerApi.getContainer(containerName));
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -106,10 +106,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with value mimetype and metadata
@@ -117,10 +117,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(value).mimetype("text/plain")
 					.metadata(pDataObjectMetaDataIn);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -142,10 +142,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// verify that options order does not matter
@@ -153,10 +153,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.metadata(pDataObjectMetaDataIn).mimetype("text/plain")
 					.value(value);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -178,10 +178,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with empty metadata
@@ -190,10 +190,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(value).mimetype("text/plain")
 					.metadata(pDataObjectMetaDataIn);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -209,20 +209,20 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with null metadata
 			value = "Hello CDMI World5";
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
 					value).mimetype("text/plain");
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -238,20 +238,20 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with only value
 			value = "Hello CDMI World6";
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(value);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -266,20 +266,20 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with empty mimetype only
 			value = "";
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.mimetype(new String());
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -290,15 +290,15 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertNotNull(dataObjectMetaDataOut);
 			assertEquals(true, dataObjectMetaDataOut.isEmpty());
 
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
 
 			// exercise create data object with no value
 			value = "";
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value();
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -313,10 +313,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with byte array
@@ -328,10 +328,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			byte[] bytes = bos.toByteArray();
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(bytes);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -344,10 +344,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with an existing file
@@ -356,10 +356,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(true, inFile.isFile());
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(inFile);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -374,10 +374,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file that we create
@@ -387,10 +387,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			Files.write(value, tmpFileIn, Charsets.UTF_8);
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(tmpFileIn);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -405,10 +405,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file that we create
@@ -417,10 +417,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			Files.write(value, tmpFileIn, Charsets.UTF_8);
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
 					tmpFileIn, Charsets.UTF_8);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -435,10 +435,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file that we create
@@ -447,10 +447,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			Files.write(value, tmpFileIn, Charsets.US_ASCII);
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
 					tmpFileIn, Charsets.US_ASCII);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -465,10 +465,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file with multiple
@@ -479,10 +479,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			Files.append("\nline3", tmpFileIn, Charsets.UTF_8);
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(tmpFileIn);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -498,10 +498,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file with multiple
@@ -512,10 +512,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			Files.append("\nline3", tmpFileIn, Charsets.UTF_8);
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(new FileInputStream(tmpFileIn));
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -531,10 +531,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file with multiple
@@ -545,10 +545,10 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			Files.append("\nline3", tmpFileIn, Charsets.ISO_8859_1);
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
 					new FileInputStream(tmpFileIn), Charsets.ISO_8859_1);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -564,20 +564,20 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with an inputstream
 			is = new ByteArrayInputStream(value.getBytes());
 			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
 					.value(is);
-			dataObject = dataClient.createDataObject(containerName,
+			dataObject = dataApi.createDataObject(containerName,
 					dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
-			dataObject = dataClient.getDataObject(containerName,
+			dataObject = dataApi.getDataObject(containerName,
 					dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
@@ -592,15 +592,15 @@ public class DataClientLiveTest extends BaseCDMIClientLiveTest {
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
-			assertEquals(containerClient.getContainer(containerName)
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
-			dataClient.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerClient.getContainer(containerName)
+			dataApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
 
 		} finally {
 			tmpFileIn.delete();
-			containerClient.deleteContainer(containerName);
+			containerApi.deleteContainer(containerName);
 
 		}
 

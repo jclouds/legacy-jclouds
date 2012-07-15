@@ -18,23 +18,19 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
-import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
 
 /**
  * Domain Object Resource Operations
  * 
- * @see DomainClient
+ * @see DomainAsyncApi
  * @author Adrian Cole
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@SkipEncoding( { '/', '=' })
-@RequestFilters( { BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
-@Headers(keys="X-CDMI-Specification-Version", values = "{jclouds.api-version}")
-public interface DomainAsyncClient {
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface DomainApi {
 
 
 }

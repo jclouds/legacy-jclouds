@@ -18,19 +18,13 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
+import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Domain Object Resource Operations
- * 
- * @see DomainAsyncClient
  * @author Adrian Cole
- * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface DomainClient {
-
+@Test(groups = "live", testName = "ContainerApiLiveTest")
+public class DomainApiLiveTest extends BaseCDMIApiLiveTest {
 
 }

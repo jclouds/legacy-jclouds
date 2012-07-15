@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.features;
+package org.jclouds.snia.cdmi.v1.internal;
 
-import org.jclouds.snia.cdmi.v1.internal.BaseCDMIClientLiveTest;
-import org.testng.annotations.Test;
+import org.jclouds.snia.cdmi.v1.CDMIApi;
 
 /**
+ * Base class for writing KeyStone Rest Api Expect tests
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "ContainerClientLiveTest")
-public class DomainClientLiveTest extends BaseCDMIClientLiveTest {
+public class BaseCDMIApiExpectTest extends BaseCDMIExpectTest<CDMIApi> {
 
 }
