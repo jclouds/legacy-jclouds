@@ -34,7 +34,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
+import org.jclouds.rest.internal.BaseRestApiTest.MockModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

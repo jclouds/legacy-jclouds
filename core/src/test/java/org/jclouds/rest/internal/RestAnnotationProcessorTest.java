@@ -169,7 +169,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", testName = "RestAnnotationProcessorTest")
-public class RestAnnotationProcessorTest extends BaseRestClientTest {
+public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    @ConfiguresRestClient
    protected static class CallerModule extends RestClientModule<Caller, AsyncCaller> {

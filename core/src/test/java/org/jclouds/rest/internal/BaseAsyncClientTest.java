@@ -18,91 +18,13 @@
  */
 package org.jclouds.rest.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
-import java.util.Properties;
-
-import org.jclouds.ContextBuilder;
-import org.jclouds.apis.ApiMetadata;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.providers.ProviderMetadata;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseAsyncClientTest<T> extends BaseRestClientTest {
+public abstract class BaseAsyncClientTest<T> extends BaseAsyncApiTest<T> {
 
-   protected RestAnnotationProcessor<T> processor;
-
-   protected abstract TypeLiteral<RestAnnotationProcessor<T>> createTypeLiteral();
-
-   protected abstract void checkFilters(HttpRequest request);
-
-   protected Module createModule() {
-      return new Module() {
-
-         @Override
-         public void configure(Binder binder) {
-
-         }
-
-      };
-   }
-
-   @BeforeClass
-   protected void setupFactory() throws IOException {
-      injector = createInjector();
-      parserFactory = injector.getInstance(ParseSax.Factory.class);
-      processor = injector.getInstance(Key.get(createTypeLiteral()));
-   }
-   
-   protected String identity = "identity";
-   protected String credential = "credential";
-   
-   /**
-    * @see org.jclouds.providers.Providers#withId
-    */
-   protected ProviderMetadata createProviderMetadata() {
-      return null;
-   }
-   
-   /**
-    * @see org.jclouds.apis.Apis#withId
-    */
-   protected ApiMetadata createApiMetadata() {
-      return null;
-   }
-   
-   protected Injector createInjector() {
-      ProviderMetadata pm = createProviderMetadata();
-
-      ContextBuilder builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder
-            .newBuilder(ApiMetadata.class.cast(checkNotNull(createApiMetadata(),
-                  "either createApiMetadata or createProviderMetadata must be overridden")));
-
-      return builder.credentials(identity, credential)
-            .modules(ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()))
-            .overrides(setupProperties()).buildInjector();
-   }
-
-   /**
-    * override this to supply context-specific parameters during tests.
-    */
-   protected Properties setupProperties() {
-      return new Properties();
-   }
 }
