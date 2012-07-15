@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.elb.domain.Listener;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -62,7 +61,8 @@ public class BindListenersToFormParams implements org.jclouds.rest.Binder {
          listenerIndex++;
       }
 
-      return ModifyRequest.putFormParams(request, formParameters.build());
+      return (R) request.toBuilder().replaceFormParams(formParameters.build()).build();
+
    }
 
 }

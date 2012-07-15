@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.util.Strings2;
@@ -59,6 +58,6 @@ public class ParseContainerListFromJsonResponseTest {
       ParseJson<List<ContainerMetadata>> parser = i.getInstance(Key
                .get(new TypeLiteral<ParseJson<List<ContainerMetadata>>>() {
                }));
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is))), expects);
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build()), expects);
    }
 }

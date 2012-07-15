@@ -23,8 +23,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.NovaAsyncClient;
@@ -33,7 +31,6 @@ import org.jclouds.openstack.nova.v2_0.parse.ParseFloatingIPListTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseFloatingIPTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -70,10 +67,9 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpRequest listFloatingIPs = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_list.json")).build();
@@ -91,10 +87,9 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpRequest listFloatingIPs = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -109,10 +104,9 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpRequest getFloatingIP = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips/1"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips/1")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_details.json")).build();
@@ -128,10 +122,9 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpRequest getFloatingIP = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips/1"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips/1")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -145,10 +138,9 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpRequest allocateFloatingIP = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
       HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200)
@@ -167,10 +159,9 @@ public class FloatingIPAsyncClientExpectTest extends BaseNovaAsyncClientExpectTe
       HttpRequest allocateFloatingIP = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
       HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(404).build();

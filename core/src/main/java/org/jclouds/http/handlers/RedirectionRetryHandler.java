@@ -18,7 +18,6 @@
  */
 package org.jclouds.http.handlers;
 
-import static java.util.Collections.singletonList;
 import static javax.ws.rs.core.HttpHeaders.HOST;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
@@ -36,9 +35,10 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Multimaps2;
 
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 
 /**
@@ -89,8 +89,8 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
             if (redirectionUrl.getPort() != -1) {
                host += ":" + redirectionUrl.getPort();
             }
-            command.setCurrentRequest(ModifyRequest.replaceHeader(currentRequest, HOST,
-                  singletonList(host)).toBuilder().endpoint(redirectionUrl).build());
+            Multimap<String, String> newHeaders = Multimaps2.replaceValue(currentRequest.getHeaders(), HOST, host);
+            command.setCurrentRequest(currentRequest.toBuilder().headers(newHeaders).endpoint(redirectionUrl).build());
          } else {
             command.setCurrentRequest(currentRequest.toBuilder().endpoint(redirectionUrl).build());
          }

@@ -23,8 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.net.URI;
-
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
@@ -72,7 +70,7 @@ public class AWSClientErrorRetryHandlerTest {
       HttpCommand command = createMock(HttpCommand.class);
 
       HttpRequest putBucket = HttpRequest.builder().method("PUT")
-               .endpoint(URI.create("https://adriancole-blobstore113.s3.amazonaws.com/")).build();
+               .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/").build();
 
       HttpResponse operationAborted = HttpResponse.builder().statusCode(409)
                .payload(Payloads.newStringPayload(String.format("<Error><Code>%s</Code></Error>", code))).build();

@@ -79,9 +79,9 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       VApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
@@ -181,7 +181,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       return rootBuilder;
    }
 
-   protected VApp findVAppInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected VApp findVAppInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof VApp) {
             return (VApp) arg;
@@ -193,7 +193,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       return null;
    }
 
-   protected VAppConfiguration findConfigInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected VAppConfiguration findConfigInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof VAppConfiguration) {
             return (VAppConfiguration) arg;

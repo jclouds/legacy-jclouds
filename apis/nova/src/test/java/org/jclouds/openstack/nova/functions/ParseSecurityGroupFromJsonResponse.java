@@ -26,7 +26,6 @@ import java.io.InputStream;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.SecurityGroup;
 import org.testng.annotations.Test;
@@ -39,36 +38,33 @@ import com.google.inject.TypeLiteral;
 
 /**
  * @author chamerling
- *
+ * 
  */
 @Test(groups = "unit")
 public class ParseSecurityGroupFromJsonResponse {
-	
-	@Test
-	public void testParseSecurityGroupFromJsonResponseTest() throws IOException {
-		SecurityGroup response = parseSecurityGroup();
 
-		String json = new Gson().toJson(response);
-		assertNotNull(json);
-		
-		assertNotNull(response);
-		assertEquals(response.getId(), 0);
-		assertEquals(response.getName(), "name0");
-		assertEquals(response.getDescription(), "description0");
-		assertEquals(response.getTenantId(), "tenant0");
-	}
+   @Test
+   public void testParseSecurityGroupFromJsonResponseTest() throws IOException {
+      SecurityGroup response = parseSecurityGroup();
 
-	public static SecurityGroup parseSecurityGroup() {
-		Injector i = Guice.createInjector(new GsonModule());
+      String json = new Gson().toJson(response);
+      assertNotNull(json);
 
-		InputStream is = ParseFloatingIPFromJsonResponse.class
-				.getResourceAsStream("/test_get_security_group.json");
+      assertNotNull(response);
+      assertEquals(response.getId(), 0);
+      assertEquals(response.getName(), "name0");
+      assertEquals(response.getDescription(), "description0");
+      assertEquals(response.getTenantId(), "tenant0");
+   }
 
-		UnwrapOnlyJsonValue<SecurityGroup> parser = i.getInstance(Key
-				.get(new TypeLiteral<UnwrapOnlyJsonValue<SecurityGroup>>() {
-				}));
-		return parser.apply(new HttpResponse(200, "ok", Payloads
-				.newInputStreamPayload(is)));
-	}
+   public static SecurityGroup parseSecurityGroup() {
+      Injector i = Guice.createInjector(new GsonModule());
 
+      InputStream is = ParseFloatingIPFromJsonResponse.class.getResourceAsStream("/test_get_security_group.json");
+
+      UnwrapOnlyJsonValue<SecurityGroup> parser = i.getInstance(Key
+               .get(new TypeLiteral<UnwrapOnlyJsonValue<SecurityGroup>>() {
+               }));
+      return parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
+   }
 }

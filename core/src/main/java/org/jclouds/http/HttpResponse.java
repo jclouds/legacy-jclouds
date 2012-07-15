@@ -21,7 +21,8 @@ package org.jclouds.http;
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Multimap;
 
 /**
@@ -30,54 +31,58 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class HttpResponse extends HttpMessage {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromHttpResponse(this);
    }
 
-   public static class Builder extends HttpMessage.Builder {
-      private int statusCode;
-      private String message;
+   public static abstract class Builder<T extends Builder<T>> extends HttpMessage.Builder<T>  {
+      protected int statusCode;
+      protected String message;
 
-      public Builder message(String message) {
-         this.message = message;
-         return this;
-      }
-
-      public Builder statusCode(int statusCode) {
+      /** 
+       * @see HttpResponse#getStatusCode()
+       */
+      public T statusCode(int statusCode) {
          this.statusCode = statusCode;
-         return this;
+         return self();
       }
 
-      @Override
-      public Builder payload(Payload payload) {
-         return (Builder) super.payload(payload);
-      }
-
-      @Override
-      public Builder headers(Multimap<String, String> headers) {
-         return (Builder) super.headers(headers);
+      /** 
+       * @see HttpResponse#getMessage()
+       */
+      public T message(@Nullable String message) {
+         this.message = message;
+         return self();
       }
 
       public HttpResponse build() {
-         return new HttpResponse(statusCode, message, payload, headers);
+         return new HttpResponse(statusCode, message, headers.build(), payload);
       }
-
-      public static Builder from(HttpResponse input) {
-         return new Builder().message(input.getMessage()).statusCode(input.getStatusCode()).payload(input.getPayload())
-               .headers(input.getHeaders());
+      
+      public T fromHttpResponse(HttpResponse in) {
+         return super.fromHttpMessage(in)
+                     .statusCode(in.getStatusCode())
+                     .message(in.getMessage());
       }
-
    }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
    private final int statusCode;
    private final String message;
 
-   public HttpResponse(int statusCode, String message, @Nullable Payload payload) {
-      this(statusCode, message, payload, ImmutableMultimap.<String, String> of());
-   }
-
-   public HttpResponse(int statusCode, String message, @Nullable Payload payload, Multimap<String, String> headers) {
-      super(payload, headers);
+   protected HttpResponse(int statusCode, @Nullable String message, Multimap<String, String> headers, @Nullable Payload payload) {
+      super(headers, payload);
       this.statusCode = statusCode;
       this.message = message;
    }
@@ -86,63 +91,38 @@ public class HttpResponse extends HttpMessage {
       return statusCode;
    }
 
+   @Nullable
    public String getMessage() {
       return message;
    }
-
-   @Override
-   public String toString() {
-      return "[message=" + message + ", statusCode=" + statusCode + ", headers=" + headers + ", payload=" + payload
-            + "]";
-   }
-
+   
    public String getStatusLine() {
       return String.format("HTTP/1.1 %d %s", getStatusCode(), getMessage());
    }
-
-   @Override
-   public Builder toBuilder() {
-      return Builder.from(this);
-   }
-
+   
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
-      result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-      result = prime * result + ((message == null) ? 0 : message.hashCode());
-      result = prime * result + statusCode;
-      return result;
+      return Objects.hashCode(statusCode, message, super.hashCode());
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      HttpResponse other = (HttpResponse) obj;
-      if (payload == null) {
-         if (other.payload != null)
-            return false;
-      } else if (!payload.equals(other.payload))
-         return false;
-      if (headers == null) {
-         if (other.headers != null)
-            return false;
-      } else if (!headers.equals(other.headers))
-         return false;
-      if (message == null) {
-         if (other.message != null)
-            return false;
-      } else if (!message.equals(other.message))
-         return false;
-      if (statusCode != other.statusCode)
-         return false;
-      return true;
+      if (this == obj) return true;
+      // testing equals by value, not by type
+      if (!(obj instanceof HttpResponse)) return false;
+      HttpResponse that = HttpResponse.class.cast(obj);
+      return super.equals(that) 
+               && Objects.equal(this.statusCode, that.statusCode)
+               && Objects.equal(this.message, that.message);
+   }
+   
+   @Override
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").omitNullValues()
+                    .add("statusCode", statusCode)
+                    .add("message", message)
+                    .add("headers", headers)
+                    .add("payload", payload);
    }
 
 }

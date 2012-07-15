@@ -18,13 +18,9 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.internal;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Base class for writing Cloud Api Rest Client Expect tests
@@ -32,16 +28,12 @@ import com.google.common.collect.ImmutableMultimap;
  * @author Adrian Cole
  */
 public class BaseJoyentCloudClientExpectTest extends BaseJoyentCloudExpectTest<JoyentCloudClient> {
-   protected HttpRequest getDatacenters = HttpRequest
-         .builder()
+   protected HttpRequest getDatacenters = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("https://api.joyentcloud.com/my/datacenters"))
-         .headers(
-               ImmutableMultimap.<String, String> builder()
-                  .put("X-Api-Version", "~6.5")
-                  .put("Accept", "application/json")
-                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-                  .build()).build();
+         .endpoint("https://api.joyentcloud.com/my/datacenters")
+         .addHeader("X-Api-Version", "~6.5")
+         .addHeader("Accept", "application/json")
+         .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
    
    protected HttpResponse getDatacentersResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/datacenters.json")).build();

@@ -64,7 +64,7 @@ public class KeyPairByNameHandlerTest extends BaseHandlerTest {
    }
 
    private static KeyPairByNameHandler addOrgAndNameToHandler(KeyPairByNameHandler handler, String org, String name) {
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(org, name)).anyTimes();
       replay(request);
       handler.setContext(request);

@@ -27,7 +27,6 @@ import java.text.ParseException;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
@@ -42,7 +41,8 @@ import com.google.inject.TypeLiteral;
 public class ParseServerFromJsonNoAddressesResponseTest {
 
    @Test
-   public void testApplyInputStreamDetails() throws UnknownHostException, NoSuchMethodException, ClassNotFoundException, ParseException {
+   public void testApplyInputStreamDetails() throws UnknownHostException, NoSuchMethodException,
+            ClassNotFoundException, ParseException {
       Server response = parseServer();
 
       assertEquals(response.getId(), 847);
@@ -65,12 +65,13 @@ public class ParseServerFromJsonNoAddressesResponseTest {
          }
       });
 
-      InputStream is = ParseServerFromJsonNoAddressesResponseTest.class.getResourceAsStream("/test_get_server_detail_no_addresses.json");
+      InputStream is = ParseServerFromJsonNoAddressesResponseTest.class
+               .getResourceAsStream("/test_get_server_detail_no_addresses.json");
 
       UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
       }));
 
-      return parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
    }
 
 }

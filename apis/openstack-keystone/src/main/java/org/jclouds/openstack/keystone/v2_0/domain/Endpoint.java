@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.beans.ConstructorProperties;
 import java.net.URI;
 

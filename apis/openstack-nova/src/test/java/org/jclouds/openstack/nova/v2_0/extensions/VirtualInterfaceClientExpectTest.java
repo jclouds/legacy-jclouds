@@ -23,8 +23,8 @@ import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.VirtualInterface;
-import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -43,8 +43,8 @@ public class VirtualInterfaceClientExpectTest extends BaseNovaClientExpectTest {
       VirtualInterfaceClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/virtual_interfaces_list.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/virtual_interfaces_list.json")).build()
       ).getVirtualInterfaceExtensionForZone("az-1.region-a.geo-1").get();
 
       VirtualInterface vif = Iterables.getOnlyElement(client.listVirtualInterfacesForServer("1"));
@@ -57,8 +57,8 @@ public class VirtualInterfaceClientExpectTest extends BaseNovaClientExpectTest {
       VirtualInterfaceClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVirtualInterfaceExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.listVirtualInterfacesForServer("1").isEmpty());

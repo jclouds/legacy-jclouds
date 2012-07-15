@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -52,7 +51,7 @@ public class ParseInetAddressListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
             }));
-      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<String> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response, ImmutableList.of("67.23.10.132", "67.23.10.131"));
    }
@@ -63,7 +62,7 @@ public class ParseInetAddressListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
             }));
-      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<String> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response, ImmutableList.of("10.176.42.16"));
    }

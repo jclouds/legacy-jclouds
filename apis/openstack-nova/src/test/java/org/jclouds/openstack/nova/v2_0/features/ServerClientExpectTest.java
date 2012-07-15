@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
@@ -48,10 +46,9 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listServers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
@@ -69,10 +66,9 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listServers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -86,10 +82,9 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createServer = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType(
                      "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\"}}","application/json"))
             .build();
@@ -110,10 +105,9 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createServer = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build())
+         .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
          .payload(payloadFromStringWithContentType(
                   "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group1\"},{\"name\":\"group2\"}]}}","application/json"))
          .build();
@@ -132,154 +126,149 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
    }
 
    public void testCreateImageWhenResponseIs2xx() throws Exception {
-	   String serverId = "123";
-	   String imageId = "456";
-	   String imageName = "foo";
+      String serverId = "123";
+      String imageId = "456";
+      String imageName = "foo";
 
-	   HttpRequest createImage = HttpRequest
-			   .builder()
-			   .method("POST")
-			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
-			   .headers(
-					   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-					   .put("X-Auth-Token", authToken).build())
-			   .payload(payloadFromStringWithContentType(
-					   "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
+      HttpRequest createImage = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action")
+                     .addHeader("Accept", "application/json")
+                     .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType(
+                  "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
                .build();
 
-	   HttpResponse createImageResponse = HttpResponse.builder()
-			   .statusCode(200)
-			   .headers(
-					   ImmutableMultimap.<String, String> builder()
-					   .put("Location", "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId).build()).build();
+      HttpResponse createImageResponse = HttpResponse.builder()
+            .statusCode(200)
+            .headers(
+                  ImmutableMultimap.<String, String> builder()
+                  .put("Location", "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId).build()).build();
 
-	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-	            responseWithKeystoneAccess, createImage, createImageResponse);
+      NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, createImage, createImageResponse);
 
-	   assertEquals(clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId),
-			   imageId);
+      assertEquals(clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId),
+            imageId);
    }
 
    public void testCreateImageWhenResponseIs404IsEmpty() throws Exception {
-	   String serverId = "123";
-	   String imageName = "foo";
+      String serverId = "123";
+      String imageName = "foo";
 
-	   HttpRequest createImage = HttpRequest
-			   .builder()
-			   .method("POST")
-			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
-			   .headers(
-					   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-					   .put("X-Auth-Token", authToken)
-					   .put("Content-Type", "application/json").build())
-			   .payload(payloadFromStringWithContentType(
-					   "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
+      HttpRequest createImage = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action")
+                     .addHeader("Accept", "application/json")
+                     .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType(
+                  "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
                .build();
 
-	   HttpResponse createImageResponse = HttpResponse.builder().statusCode(404).build();
-	   NovaClient clientWhenServerDoesNotExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-	            responseWithKeystoneAccess, createImage, createImageResponse);
+      HttpResponse createImageResponse = HttpResponse.builder().statusCode(404).build();
+      NovaClient clientWhenServerDoesNotExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, createImage, createImageResponse);
 
-	   try {
-		   clientWhenServerDoesNotExist.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId);
-		   fail("Expected an exception.");
-	   } catch (Exception e) {
-		   ;
-	   }
+      try {
+         clientWhenServerDoesNotExist.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
    }
    
    public void testStopServerWhenResponseIs2xx() throws Exception {
-	   String serverId = "123";
-	   HttpRequest stopServer = HttpRequest
-			   .builder()
-			   .method("POST")
-			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
-			   .headers(
-					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
-					   .put("X-Auth-Token", authToken).build())
-			   .payload(payloadFromStringWithContentType(
-					   "{\"os-stop\":null}", "application/json"))
+      String serverId = "123";
+      HttpRequest stopServer = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType(
+                  "{\"os-stop\":null}", "application/json"))
                .build();
 
-	   HttpResponse stopServerResponse = HttpResponse.builder().statusCode(202).build();
+      HttpResponse stopServerResponse = HttpResponse.builder().statusCode(202).build();
 
-	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-	            responseWithKeystoneAccess, stopServer, stopServerResponse);
+      NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, stopServer, stopServerResponse);
 
-	   clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").stopServer(serverId);
+      clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").stopServer(serverId);
    }
    
    public void testStopServerWhenResponseIs404() throws Exception {
-	   String serverId = "123";
-	   HttpRequest stopServer = HttpRequest
-			   .builder()
-			   .method("POST")
-			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
-			   .headers(
-					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
-					   .put("X-Auth-Token", authToken).build())
-			   .payload(payloadFromStringWithContentType(
-					   "{\"os-stop\":null}", "application/json"))
+      String serverId = "123";
+      HttpRequest stopServer = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+
+            .payload(payloadFromStringWithContentType(
+                  "{\"os-stop\":null}", "application/json"))
                .build();
 
-	   HttpResponse stopServerResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse stopServerResponse = HttpResponse.builder().statusCode(404).build();
 
-	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-	            responseWithKeystoneAccess, stopServer, stopServerResponse);
+      NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, stopServer, stopServerResponse);
 
-		try {
-			clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").stopServer(serverId);
-			fail("Expected an exception.");
-		} catch (Exception e) {
-			;
-		}
+      try {
+         clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").stopServer(serverId);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
    }
    
    public void testStartServerWhenResponseIs2xx() throws Exception {
-	   String serverId = "123";
-	   HttpRequest startServer = HttpRequest
-			   .builder()
-			   .method("POST")
-			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
-			   .headers(
-					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
-					   .put("X-Auth-Token", authToken).build())
-			   .payload(payloadFromStringWithContentType(
-					   "{\"os-start\":null}", "application/json"))
+      String serverId = "123";
+      HttpRequest startServer = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+
+            .payload(payloadFromStringWithContentType(
+                  "{\"os-start\":null}", "application/json"))
                .build();
 
-	   HttpResponse startServerResponse = HttpResponse.builder().statusCode(202).build();
+      HttpResponse startServerResponse = HttpResponse.builder().statusCode(202).build();
 
-	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-	            responseWithKeystoneAccess, startServer, startServerResponse);
+      NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, startServer, startServerResponse);
 
-	   clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").startServer(serverId);
+      clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").startServer(serverId);
    }
    
    public void testStartServerWhenResponseIs404() throws Exception {
-	   String serverId = "123";
-	   HttpRequest startServer = HttpRequest
-			   .builder()
-			   .method("POST")
-			   .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action"))
-			   .headers(
-					   ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
-					   .put("X-Auth-Token", authToken).build())
-			   .payload(payloadFromStringWithContentType(
-					   "{\"os-startp\":null}", "application/json"))
+      String serverId = "123";
+      HttpRequest startServer = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/action")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType(
+                  "{\"os-startp\":null}", "application/json"))
                .build();
 
-	   HttpResponse startServerResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse startServerResponse = HttpResponse.builder().statusCode(404).build();
 
-	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-	            responseWithKeystoneAccess, startServer, startServerResponse);
+      NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, startServer, startServerResponse);
 
-		try {
-			clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").startServer(serverId);
-			fail("Expected an exception.");
-		} catch (Exception e) {
-			;
-		}
+      try {
+         clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").startServer(serverId);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
    }
 
 }

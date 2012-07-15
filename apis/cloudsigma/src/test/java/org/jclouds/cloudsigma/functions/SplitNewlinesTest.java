@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -45,7 +44,7 @@ public class SplitNewlinesTest {
 
    public void test() {
       InputStream is = SplitNewlinesTest.class.getResourceAsStream("/uuids.txt");
-      Set<String> list = createParser().apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Set<String> list = createParser().apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(list, ImmutableSortedSet.of("7e8ab721-81c9-4cb9-a651-4cafbfe1501c",
             "ea6a8fdb-dab3-4d06-86c2-41a5835e6ed9", "74744450-d338-4087-b3b8-59b505110a57"));
    }

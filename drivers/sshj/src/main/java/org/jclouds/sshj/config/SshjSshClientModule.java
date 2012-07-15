@@ -53,7 +53,6 @@ public class SshjSshClientModule extends AbstractModule {
       private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
       private final Injector injector;
 
-      @SuppressWarnings("unused")
       @Inject
       public Factory(BackoffLimitedRetryHandler backoffLimitedRetryHandler, Injector injector) {
          this.backoffLimitedRetryHandler = backoffLimitedRetryHandler;

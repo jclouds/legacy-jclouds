@@ -56,7 +56,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
          InvocationContext<ParseObjectInfoListFromJsonResponse> {
    private final Provider<UriBuilder> uriBuilders;
 
-   private GeneratedHttpRequest<?> request;
+   private GeneratedHttpRequest request;
    private String container;
 
    @Inject
@@ -97,8 +97,8 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
 
    @Override
    public ParseObjectInfoListFromJsonResponse setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
-      this.request = (GeneratedHttpRequest<?>) request;
+      checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest) request;
       return setContainer(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
    }
 

@@ -29,8 +29,8 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;

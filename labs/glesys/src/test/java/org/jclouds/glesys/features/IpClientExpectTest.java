@@ -19,11 +19,8 @@
 package org.jclouds.glesys.features;
 
 import static java.util.Collections.emptySet;
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-
-import java.net.URI;
 
 import javax.ws.rs.core.MediaType;
 
@@ -38,7 +35,6 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -51,14 +47,13 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListIpsWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(
-                  URI.create("https://api.glesys.com/ip/listown/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/ip/listown/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_list_own.json")).build())
             .getIpClient();
 
-      IpDetails.Builder builder = IpDetails.builder().datacenter("Falkenberg").version4().reserved(true)
+      IpDetails.Builder<?> builder = IpDetails.builder().datacenter("Falkenberg").version4().reserved(true)
             .platform("OpenVZ")
             .nameServers("79.99.4.100", "79.99.4.101")
             .cost(Cost.builder().amount(2.0).currency("EUR").timePeriod("month").build());
@@ -70,10 +65,9 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListIpsWhenResponseIs4xxReturnsEmpty() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(
-                  URI.create("https://api.glesys.com/ip/listown/format/json")).headers(
-                  ImmutableMultimap.<String, String>builder().put("Accept", "application/json").put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/ip/listown/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getIpClient();
 
       assertTrue(client.listIps().isEmpty());
@@ -81,10 +75,9 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetIpDetailsWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(
-                  URI.create("https://api.glesys.com/ip/details/ipaddress/31.192.227.113/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/ip/details/ipaddress/31.192.227.113/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_get_details.json")).build())
             .getIpClient();
 
@@ -102,10 +95,9 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    public void testGetIpDetailsWhenResponseIs4xxReturnsNull() {
 
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(
-                  URI.create("https://api.glesys.com/ip/details/ipaddress/31.192.227.37/format/json")).headers(
-                  ImmutableMultimap.<String, String>builder().put("Accept", "application/json").put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/ip/details/ipaddress/31.192.227.37/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getIpClient();
 
       assertEquals(client.getIp("31.192.227.37"), null);
@@ -113,13 +105,10 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testTakeWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/take/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("ipaddress", "46.21.105.186").build()
-                  )).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/take/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "46.21.105.186").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_take.json")).build())
             .getIpClient();
 
@@ -129,26 +118,20 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = HttpResponseException.class)
    public void testTakeWhenResponseIs4xxThrowsResponseException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/take/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("ipaddress", "46.21.105.186").build()
-                  )).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/take/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "46.21.105.186").build(),
             HttpResponse.builder().statusCode(400).build()).getIpClient();
       client.take("46.21.105.186");
    }
 
    public void testReleaseWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/release/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("ipaddress", "46.21.105.186").build()
-                  )).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/release/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "46.21.105.186").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_release.json")).build())
             .getIpClient();
 
@@ -158,13 +141,10 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testReleaseWhenResponseIs4xxThrowsResponseException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/release/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("ipaddress", "46.21.105.186").build()
-                  )).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/release/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "46.21.105.186").build(),
             HttpResponse.builder().statusCode(404).build())
             .getIpClient();
 
@@ -173,10 +153,9 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListFreeWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(
-                  URI.create("https://api.glesys.com/ip/listfree/ipversion/4/datacenter/Falkenberg/platform/OpenVZ/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/ip/listfree/ipversion/4/datacenter/Falkenberg/platform/OpenVZ/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_list_free.json")).build())
             .getIpClient();
 
@@ -185,10 +164,9 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListFreeWhenResponseIs404ReturnsEmptySet() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(
-                  URI.create("https://api.glesys.com/ip/listfree/ipversion/6/datacenter/Falkenberg/platform/OpenVZ/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/ip/listfree/ipversion/6/datacenter/Falkenberg/platform/OpenVZ/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build())
             .getIpClient();
 
@@ -197,14 +175,11 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testAddWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/add/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37")
-                              .put("serverid", "vz1946889").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/add/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(200).build())
             .getIpClient();
 
@@ -214,15 +189,11 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = AuthorizationException.class)
    public void testAddWhenResponseIs4xxThrowsHttpException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/add/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37")
-                              .put("serverid", "vz1946889")
-                              .build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/add/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(401).build())
             .getIpClient();
       client.addIpToServer("31.192.227.37", "vz1946889");
@@ -230,14 +201,11 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testRemoveWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/remove/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37")
-                              .put("serverid", "vz1946889").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/remove/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(200).build())
             .getIpClient();
 
@@ -247,14 +215,11 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = HttpResponseException.class)
    public void testRemoveWhenResponseIs4xxThrowsHttpException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/remove/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37")
-                              .put("serverid", "vz1946889").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/remove/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(400).build())
             .getIpClient();
 
@@ -263,15 +228,12 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testRemoveAndReleaseWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/remove/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("release", "true")
-                              .put("ipaddress", "31.192.227.37")
-                              .put("serverid", "vz1946889").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/remove/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("release", "true")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(200).build())
             .getIpClient();
 
@@ -281,15 +243,12 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = HttpResponseException.class)
    public void testRemoveAndReleaseWhenResponseIs4xxThrowsHttpException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/remove/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("release", "true")
-                              .put("ipaddress", "31.192.227.37")
-                              .put("serverid", "vz1946889").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/remove/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("release", "true")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(400).build())
             .getIpClient();
 
@@ -298,14 +257,11 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testSetPrtWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/setptr/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37")
-                              .put("data", "sommeptr.").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/setptr/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("data", "sommeptr.").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/ip_get_details.json", MediaType.APPLICATION_JSON)).build())
             .getIpClient();
 
@@ -315,14 +271,11 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testSetPtrWhenResponseIs4xxThrowsHttpException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/setptr/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37")
-                              .put("data", "sommeptr.").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/setptr/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37")
+                       .addFormParam("data", "sommeptr.").build(),
             HttpResponse.builder().statusCode(404).build())
             .getIpClient();
 
@@ -331,13 +284,10 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testResetPrtWhenResponseIs2xx() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/resetptr/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/resetptr/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/ip_get_details.json", MediaType.APPLICATION_JSON)).build())
             .getIpClient();
 
@@ -347,13 +297,10 @@ public class IpClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = AuthorizationException.class)
    public void testResetPtrWhenResponseIs4xxThrowsHttpException() {
       IpClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(
-                  URI.create("https://api.glesys.com/ip/resetptr/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder()
-                              .put("ipaddress", "31.192.227.37").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/ip/resetptr/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("ipaddress", "31.192.227.37").build(),
             HttpResponse.builder().statusCode(401).build())
             .getIpClient();
 

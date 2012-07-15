@@ -32,9 +32,7 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.snia.cdmi.v1.handlers.CDMIErrorHandler;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 /**
@@ -83,9 +81,8 @@ public class CDMIErrorHandlerTest {
       CDMIErrorHandler function = new CDMIErrorHandler();
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-               .toInputStream(content)));
+      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
+      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

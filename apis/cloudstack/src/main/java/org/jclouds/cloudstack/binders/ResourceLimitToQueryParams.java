@@ -19,16 +19,13 @@
 package org.jclouds.cloudstack.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.cloudstack.domain.ResourceLimit;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * @author Adrian Cole
@@ -38,22 +35,17 @@ import org.jclouds.rest.Binder;
  *      />
  */
 public class ResourceLimitToQueryParams implements Binder {
-   private final Provider<UriBuilder> uriBuilderProvider;
 
-   @Inject
-   public ResourceLimitToQueryParams(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
-
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(input instanceof ResourceLimit, "this binder is only valid for ResourceLimit");
       ResourceLimit limit = (ResourceLimit) input;
-      request = ModifyRequest.addQueryParam(request, "resourcetype", limit.getResourceType().getCode(),
-            uriBuilderProvider.get());
-      request = ModifyRequest.addQueryParam(request, "account", limit.getAccount(), uriBuilderProvider.get());
-      request = ModifyRequest.addQueryParam(request, "domainid", limit.getDomainId(), uriBuilderProvider.get());
-      request = ModifyRequest.addQueryParam(request, "max", limit.getMax(), uriBuilderProvider.get());
-      return request;
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      builder.put("resourcetype", limit.getResourceType().getCode() + "");
+      builder.put("account", limit.getAccount());
+      builder.put("domainid", limit.getDomainId());
+      builder.put("max", limit.getMax() + "");
+      return (R) request.toBuilder().replaceQueryParams(builder.build()).build();
    }
 }

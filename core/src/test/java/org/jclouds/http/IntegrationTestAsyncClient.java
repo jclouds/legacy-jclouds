@@ -22,7 +22,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -36,7 +35,6 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -45,7 +43,6 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -121,7 +118,6 @@ public interface IntegrationTestAsyncClient {
    static class BindToInputStreamPayload extends BindToStringPayload {
       @Override
       public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-         request = super.bindToRequest(request, payload);
          request.setPayload(Strings2.toInputStream(payload.toString()));
          request.getPayload().getContentMetadata().setContentLength((long) payload.toString().getBytes().length);
          return request;
@@ -147,11 +143,6 @@ public interface IntegrationTestAsyncClient {
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<String> postJson(@PathParam("id") String id, @PayloadParam("key") String toPut);
 
-   @POST
-   @Path("/objects/{id}/action/{action}")
-   ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
-         @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
-
    @GET
    @Path("/objects/{id}")
    @RequestFilters(Filter.class)
@@ -160,7 +151,7 @@ public interface IntegrationTestAsyncClient {
    static class Filter implements HttpRequestFilter {
       public HttpRequest filter(HttpRequest request) throws HttpException {
          if (request.getHeaders().containsKey("filterme")) {
-            request = ModifyRequest.replaceHeader(request, "test", "test");
+            request = request.toBuilder().replaceHeader("test", "test").build();
          }
          return request;
       }

@@ -35,7 +35,6 @@ import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

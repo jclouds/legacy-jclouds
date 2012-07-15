@@ -21,9 +21,6 @@ package org.jclouds.azureblob.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azureblob.AzureBlobAsyncClient;
 import org.jclouds.azureblob.AzureBlobProviderMetadata;
@@ -36,7 +33,6 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -56,13 +52,13 @@ public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<Azur
       blob.setPayload(payload);
       blob.getProperties().setName("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindAzureBlobMetadataToRequest binder = injector.getInstance(BindAzureBlobMetadataToRequest.class);
 
       assertEquals(
             binder.bindToRequest(request, blob),
-            HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost"))
-                  .headers(ImmutableMultimap.of("x-ms-blob-type", "BlockBlob")).build());
+            HttpRequest.builder().method("PUT").endpoint("http://localhost")
+                  .addHeader("x-ms-blob-type", "BlockBlob").build());
    }
 
    @Test
@@ -74,13 +70,14 @@ public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<Azur
       blob.getProperties().setName("foo");
       blob.getProperties().setMetadata(ImmutableMap.of("foo", "bar"));
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindAzureBlobMetadataToRequest binder = injector.getInstance(BindAzureBlobMetadataToRequest.class);
 
       assertEquals(
             binder.bindToRequest(request, blob),
-            HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost"))
-                  .headers(ImmutableMultimap.of("x-ms-blob-type", "BlockBlob", "x-ms-meta-foo", "bar")).build());
+            HttpRequest.builder().method("PUT").endpoint("http://localhost")
+                       .addHeader("x-ms-blob-type", "BlockBlob")
+                       .addHeader("x-ms-meta-foo", "bar").build());
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -91,7 +88,7 @@ public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<Azur
       blob.setPayload(payload);
       blob.getProperties().setName("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindAzureBlobMetadataToRequest binder = injector.getInstance(BindAzureBlobMetadataToRequest.class);
       binder.bindToRequest(request, blob);
    }
@@ -103,7 +100,7 @@ public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<Azur
       payload.getContentMetadata().setContentLength(5368709120000l);
       blob.setPayload(payload);
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindAzureBlobMetadataToRequest binder = injector.getInstance(BindAzureBlobMetadataToRequest.class);
       binder.bindToRequest(request, blob);
    }
@@ -116,21 +113,21 @@ public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<Azur
       blob.setPayload(payload);
       blob.getProperties().setName("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindAzureBlobMetadataToRequest binder = injector.getInstance(BindAzureBlobMetadataToRequest.class);
       binder.bindToRequest(request, blob);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeAzureBlob() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       injector.getInstance(BindAzureBlobMetadataToRequest.class).bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
       BindAzureBlobMetadataToRequest binder = injector.getInstance(BindAzureBlobMetadataToRequest.class);
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 

@@ -26,8 +26,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
@@ -37,7 +37,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -52,12 +51,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testGetCatalog() {
       HttpRequest catalogRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
-              .build();
+              .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token).build();
 
       HttpResponse catalogResponse = HttpResponse.builder()
               .statusCode(200)
@@ -76,11 +72,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testAddCatalogItem() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems")
+            .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
+            .addHeader("x-vcloud-authorization", token)
             .payload(payloadFromResourceWithContentType("/catalog/newCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
             .build();
 
@@ -108,11 +102,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testGetCatalogMetadata() {
       HttpRequest catalogRequest = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogResponse = HttpResponse.builder()
@@ -142,11 +134,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testGetCatalogMetadataEntry() {
       HttpRequest catalogRequest = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogResponse = HttpResponse.builder()
@@ -167,11 +157,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testGetCatalogItem() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
@@ -192,11 +180,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testUpdateCatalogItem() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("PUT")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
+            .addHeader("x-vcloud-authorization", token)
             .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
             .build();
 
@@ -217,11 +203,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testDeleteCatalogItem() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("DELETE")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
@@ -239,11 +223,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testGetCatalogItemMetadata() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
@@ -273,11 +255,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testMergeCatalogItemMetadata() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "application/vnd.vmware.vcloud.task+xml")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata")
+            .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
+            .addHeader("x-vcloud-authorization", token)
             .payload(payloadFromResourceWithContentType("/catalog/mergeCatalogItemMetadata.xml", VCloudDirectorMediaType.METADATA))
             .build();
 
@@ -301,11 +281,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testGetCatalogItemMetadataEntry() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
@@ -326,11 +304,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testSetCatalogItemMetadataEntry() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("PUT")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "application/vnd.vmware.vcloud.task+xml")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
+            .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
+            .addHeader("x-vcloud-authorization", token)
             .payload(payloadFromResourceWithContentType("/catalog/setCatalogItemMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE))
             .build();
 
@@ -354,11 +330,9 @@ public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
    public void testDeleteCatalogItemMetadataEntry() {
       HttpRequest catalogItemRequest = HttpRequest.builder()
             .method("DELETE")
-            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "application/vnd.vmware.vcloud.task+xml")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
+            .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()

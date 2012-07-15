@@ -30,10 +30,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.Volume;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeSnapshot;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeOptions;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeSnapshotOptions;
@@ -58,8 +58,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/volume_list.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<Volume> volumes = client.listVolumes();
@@ -71,8 +71,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<Volume> volumes = client.listVolumes();
@@ -84,8 +84,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/volume_list_detail.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_list_detail.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<Volume> volumes = client.listVolumesInDetail();
@@ -97,8 +97,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<Volume> volumes = client.listVolumesInDetail();
@@ -110,11 +110,11 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint)
+            authenticatedGET().endpoint(endpoint)
                   .method("POST")
                   .payload(payloadFromStringWithContentType("{\"volume\":{\"display_name\":\"jclouds-test-volume\",\"display_description\":\"description of test volume\",\"size\":1}}", MediaType.APPLICATION_JSON))
                   .build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/volume_details.json")).build()
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Volume volume = client.createVolume(1, CreateVolumeOptions.Builder.name("jclouds-test-volume").description("description of test volume"));
@@ -127,12 +127,12 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint)
+            authenticatedGET().endpoint(endpoint)
                .endpoint(endpoint)
                .method("POST")
                .payload(payloadFromStringWithContentType("{\"volume\":{\"display_name\":\"jclouds-test-volume\",\"display_description\":\"description of test volume\",\"size\":1}}", MediaType.APPLICATION_JSON))
                .build(),
-            standardResponseBuilder(404).payload(payloadFromResource("/volume_details.json")).build()
+            HttpResponse.builder().statusCode(404).payload(payloadFromResource("/volume_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       client.createVolume(1, CreateVolumeOptions.Builder.name("jclouds-test-volume").description("description of test volume"));
@@ -143,8 +143,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/volume_details.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Volume volume = client.getVolume("1");
@@ -163,8 +163,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertNull(client.getVolume("1"));
@@ -175,8 +175,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.deleteVolume("1"));
@@ -187,8 +187,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.deleteVolume("1"));
@@ -199,8 +199,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/attachment_list.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<VolumeAttachment> attachments = client.listAttachmentsOnServer("instance-1");
@@ -219,8 +219,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(401).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(401).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       client.listAttachmentsOnServer("instance-2");
@@ -231,8 +231,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       VolumeAttachment attachment = client.getAttachmentForVolumeOnServer("1", "instance-1");
@@ -244,8 +244,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
      assertNull(client.getAttachmentForVolumeOnServer("1", "instance-1"));
@@ -256,9 +256,9 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"volumeAttachment\":{\"volumeId\":\"1\",\"device\":\"/dev/vdc\"}}", MediaType.APPLICATION_JSON)).endpoint(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       VolumeAttachment result = client.attachVolumeToServerAsDevice("1", "instance-1", "/dev/vdc");
@@ -271,9 +271,9 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"volumeAttachment\":{\"volumeId\":\"1\",\"device\":\"/dev/vdc\"}}", MediaType.APPLICATION_JSON)).endpoint(endpoint).build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       client.attachVolumeToServerAsDevice("1", "instance-1","/dev/vdc");
@@ -284,8 +284,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.detachVolumeFromServer("1", "instance-1"));
@@ -296,8 +296,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.detachVolumeFromServer("1", "instance-1"));
@@ -308,8 +308,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/snapshot_list.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<VolumeSnapshot> snapshots = client.listSnapshots();
@@ -321,8 +321,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<VolumeSnapshot> snapshots = client.listSnapshots();
@@ -334,8 +334,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/snapshot_details.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       VolumeSnapshot snapshot = client.getSnapshot("1");
@@ -347,8 +347,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertNull(client.getSnapshot("1"));
@@ -359,8 +359,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/snapshot_list_detail.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_list_detail.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<VolumeSnapshot> snapshots = client.listSnapshotsInDetail();
@@ -381,8 +381,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       Set<VolumeSnapshot> snapshots = client.listSnapshotsInDetail();
@@ -394,11 +394,11 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint)
+            authenticatedGET().endpoint(endpoint)
                   .method("POST")
                   .payload(payloadFromStringWithContentType("{\"snapshot\":{\"display_name\":\"jclouds-live-test\",\"volume_id\":\"13\",\"display_description\":\"jclouds live test snapshot\",\"force\":\"true\"}}", MediaType.APPLICATION_JSON))
                   .build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/snapshot_details.json")).build()
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       VolumeSnapshot snapshot = client.createSnapshot("13", CreateVolumeSnapshotOptions.Builder.name("jclouds-live-test").description("jclouds live test snapshot").force());
@@ -411,11 +411,11 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint)
+            authenticatedGET().endpoint(endpoint)
                   .method("POST")
                   .payload(payloadFromStringWithContentType("{\"snapshot\":{\"display_name\":\"jclouds-live-test\",\"volume_id\":\"13\",\"display_description\":\"jclouds live test snapshot\",\"force\":\"true\"}}", MediaType.APPLICATION_JSON))
                   .build(),
-            standardResponseBuilder(401).build()
+            HttpResponse.builder().statusCode(401).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       client.createSnapshot("13", CreateVolumeSnapshotOptions.Builder.name("jclouds-live-test").description("jclouds live test snapshot").force());
@@ -426,8 +426,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/snapshot_details.json")).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.deleteSnapshot("1"));
@@ -439,8 +439,8 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
       VolumeClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(401).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(401).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
       client.deleteSnapshot("1");

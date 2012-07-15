@@ -18,14 +18,11 @@
  */
 package org.jclouds.openstack.swift.internal;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Base class for writing Swift Expect tests
@@ -42,12 +39,11 @@ public class BaseSwiftExpectTest<T> extends BaseRestClientExpectTest<T> {
       credential = "testing";
       authRequest = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint+ "/v1.0"))
-            .headers(ImmutableMultimap.<String, String>builder()
-                  .put("X-Auth-User", identity)
-                  .put("X-Auth-Key", credential)
-                  .put("Accept", "*/*")
-                  .put("Host", "myhost:8080").build()).build();
+            .endpoint(endpoint+ "/v1.0")
+            .addHeader("X-Auth-User", identity)
+            .addHeader("X-Auth-Key", credential)
+            .addHeader("Accept", "*/*")
+            .addHeader("Host", "myhost:8080").build();
    }
    
    protected String authToken = "AUTH_tk36dabe83ca744cc296a98ec46089ec35";
@@ -63,9 +59,8 @@ public class BaseSwiftExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpResponse authResponse = HttpResponse.builder()
          .statusCode(200)
          .message("HTTP/1.1 200 OK")
-         .headers(ImmutableMultimap.<String, String>builder()
-               .put("X-Storage-Url", swiftEndpoint)
-               .put("X-Auth-Token", authToken).build()).build();
+         .addHeader("X-Storage-Url", swiftEndpoint)
+         .addHeader("X-Auth-Token", authToken).build();
    
    protected Properties setupProperties() {
       Properties props = super.setupProperties();

@@ -20,8 +20,6 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
@@ -29,7 +27,6 @@ import org.jclouds.joyent.cloudapi.v6_5.internal.BaseJoyentCloudClientExpectTest
 import org.jclouds.joyent.cloudapi.v6_5.parse.ParsePackageListTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -37,14 +34,11 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "PackageClientExpectTest")
 public class PackageClientExpectTest extends BaseJoyentCloudClientExpectTest {
-   HttpRequest list = HttpRequest
-         .builder()
-         .method("GET")
-         .endpoint(URI.create("https://us-sw-1.api.joyentcloud.com/my/packages"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5")
-                     .put("Accept", "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-                     .build()).build();
+   HttpRequest list = HttpRequest.builder().method("GET")
+                                 .endpoint("https://us-sw-1.api.joyentcloud.com/my/packages")
+                                 .addHeader("X-Api-Version", "~6.5")
+                                 .addHeader("Accept", "application/json")
+                                 .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
    public void testListPackagesWhenResponseIs2xx() {
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)

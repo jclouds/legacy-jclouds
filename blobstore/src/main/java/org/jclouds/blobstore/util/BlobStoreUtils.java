@@ -41,7 +41,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -55,11 +54,8 @@ public class BlobStoreUtils {
       checkNotNull(returnVal, "http request");
       for (HttpRequestFilter filter : returnVal.getFilters())
          returnVal = filter.filter(returnVal);
-      HttpRequest toReturn = new HttpRequest(returnVal.getMethod(), returnVal.getEndpoint(),
-            ImmutableMultimap.copyOf(returnVal.getHeaders()));
-      if (returnVal.getPayload() != null)
-         toReturn.setPayload(returnVal.getPayload());
-      return toReturn;
+      return HttpRequest.builder().method(returnVal.getMethod()).endpoint(returnVal.getEndpoint())
+               .headers(returnVal.getHeaders()).payload(returnVal.getPayload()).build();
    }
 
    public static final ExceptionToValueOrPropagate<KeyNotFoundException, ?> keyNotFoundToNullOrPropagate = new ExceptionToValueOrPropagate<KeyNotFoundException, Object>(
@@ -112,7 +108,7 @@ public class BlobStoreUtils {
 
    private static Pattern keyFromContainer = Pattern.compile("/?[^/]+/(.*)");
 
-   public static String getNameFor(GeneratedHttpRequest<?> request) {
+   public static String getNameFor(GeneratedHttpRequest request) {
       checkNotNull(request, "request");
       // assume first params are container and key
       if (request.getArgs().size() >= 2 && request.getArgs().get(0) instanceof String

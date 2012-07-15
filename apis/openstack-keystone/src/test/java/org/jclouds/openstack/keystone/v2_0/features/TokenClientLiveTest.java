@@ -24,7 +24,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.http.HttpRequest;
@@ -52,7 +51,7 @@ public class TokenClientLiveTest extends BaseKeystoneClientLiveTest {
    @BeforeMethod
    public void grabToken() {
       AuthenticateRequest ar = keystoneContext.getUtils().getInjector().getInstance(AuthenticateRequest.class);
-      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(URI.create(endpoint)).build());
+      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(endpoint).build());
       token = Iterables.getOnlyElement(test.getHeaders().get("X-Auth-Token"));
    }
 

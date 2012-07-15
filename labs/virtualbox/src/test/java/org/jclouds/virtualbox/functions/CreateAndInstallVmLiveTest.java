@@ -20,9 +20,9 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.testng.Assert.assertTrue;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 

@@ -28,7 +28,6 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v2_0.domain.Address;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
-import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v2_0.features.ServerClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;

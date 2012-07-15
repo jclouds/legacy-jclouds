@@ -20,15 +20,11 @@ package org.jclouds.jenkins.v1;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientExpectTest;
 import org.jclouds.jenkins.v1.parse.ParseNodeTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -41,11 +37,9 @@ public class JenkinsClientExpectTest extends BaseJenkinsClientExpectTest {
       HttpRequest getMaster = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("http://localhost:8080/api/json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
+            .endpoint("http://localhost:8080/api/json")
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
       HttpResponse getMasterResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/master.json")).build();

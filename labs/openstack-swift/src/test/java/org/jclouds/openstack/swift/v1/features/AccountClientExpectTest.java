@@ -20,8 +20,6 @@ package org.jclouds.openstack.swift.v1.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.v1.SwiftClient;
@@ -30,7 +28,6 @@ import org.jclouds.openstack.swift.v1.internal.BaseSwiftClientExpectTest;
 import org.jclouds.openstack.swift.v1.parse.ParseContainerListTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -44,15 +41,12 @@ public class AccountClientExpectTest extends BaseSwiftClientExpectTest {
       HttpRequest getAccountMetadata = HttpRequest
             .builder()
             .method("HEAD")
-            .endpoint(URI.create("https://objects.jclouds.org/v1.0/40806637803162/"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listContainersResponse = HttpResponse.builder().statusCode(204)
-            .headers(ImmutableMultimap.of(
-                     "X-Account-Container-Count", "3",
-                     "X-Account-Bytes-Used", "323479")).build();
+            .addHeader("X-Account-Container-Count", "3")
+            .addHeader("X-Account-Bytes-Used", "323479").build();
 
       SwiftClient clientWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, getAccountMetadata, listContainersResponse);
@@ -67,10 +61,9 @@ public class AccountClientExpectTest extends BaseSwiftClientExpectTest {
       HttpRequest listContainers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://objects.jclouds.org/v1.0/40806637803162/?format=json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listContainersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/container_list.json")).build();
@@ -87,10 +80,9 @@ public class AccountClientExpectTest extends BaseSwiftClientExpectTest {
       HttpRequest listContainers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://objects.jclouds.org/v1.0/40806637803162/?format=json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listContainersResponse = HttpResponse.builder().statusCode(404).build();
 

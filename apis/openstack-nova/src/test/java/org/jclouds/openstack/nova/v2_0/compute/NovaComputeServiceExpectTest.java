@@ -25,7 +25,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,9 +40,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 
@@ -87,18 +85,18 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
                            payloadFromResourceWithContentType("/keystoneAuthResponse_trystack.json", "application/json"))
                      .build())
          .put(extensionsOfNovaRequest.toBuilder()
-               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/extensions")).build(),
+               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/extensions").build(),
                HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_trystack.json"))
                      .build())
          .put(listImagesDetail.toBuilder()
-               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/images/detail")).build(),
+               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/images/detail").build(),
                HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_trystack.json"))
                      .build())
          .put(listServers.toBuilder()
-               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers/detail")).build(),
+               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers/detail").build(),
                listServersResponse)
          .put(listFlavorsDetail.toBuilder()
-               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/flavors/detail")).build(),
+               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/flavors/detail").build(),
                HttpResponse.builder().statusCode(200).payload(payloadFromResource("/flavor_list_detail_trystack.json"))
                      .build()).build();
 
@@ -125,10 +123,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       HttpRequest listServers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/detail"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/detail")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -141,20 +138,18 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest listSecurityGroups = HttpRequest
          .builder()
          .method("GET")
-         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken).build();
 
    HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 
    HttpRequest createSecurityGroupWithPrefixOnGroup = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build())
+         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
          .payload(
                payloadFromStringWithContentType(
                      "{\"security_group\":{\"name\":\"jclouds-test\",\"description\":\"jclouds-test\"}}",
@@ -166,10 +161,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest createSecurityGroupRuleForDefaultPort22 = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-group-rules"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build())
+         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-group-rules")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
          .payload(
                payloadFromStringWithContentType(
                      "{\"security_group_rule\":{\"parent_group_id\":\"160\",\"cidr\":\"0.0.0.0/0\",\"ip_protocol\":\"tcp\",\"from_port\":\"22\",\"to_port\":\"22\"}}",
@@ -181,10 +175,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest getSecurityGroup = HttpRequest
          .builder()
          .method("GET")
-         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups/160"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups/160")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken).build();
 
    HttpResponse securityGroupWithPort22 = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/securitygroup_details_port22.json")).build();
@@ -192,10 +185,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest createKeyPair = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-keypairs"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build())
+         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-keypairs")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
          .payload(
                payloadFromStringWithContentType(
                      "{\"keypair\":{\"name\":\"jclouds-test-0\"}}",
@@ -207,10 +199,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest serverDetail = HttpRequest
          .builder()
          .method("GET")
-         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers/71752"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers/71752")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken).build();
 
    HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/server_details.json")).build();
@@ -234,10 +225,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       HttpRequest createServerWithGeneratedKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(
                   payloadFromStringWithContentType(
                         "{\"server\":{\"name\":\"test-1\",\"imageRef\":\"14\",\"flavorRef\":\"1\",\"key_name\":\"jclouds-test-0\",\"security_groups\":[{\"name\":\"jclouds-test\"}]}}",
@@ -289,10 +279,9 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       HttpRequest createServerWithSuppliedKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(
                   payloadFromStringWithContentType(
                         "{\"server\":{\"name\":\"test-0\",\"imageRef\":\"14\",\"flavorRef\":\"1\",\"key_name\":\"fooPair\",\"security_groups\":[{\"name\":\"jclouds-test\"}]}}",

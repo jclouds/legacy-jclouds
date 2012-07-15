@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
@@ -32,7 +30,6 @@ import org.jclouds.openstack.nova.v2_0.parse.ParseFlavorListTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseFlavorTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -47,10 +44,9 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listFlavors = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/flavor_list.json")).build();
@@ -68,10 +64,9 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listFlavors = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -87,10 +82,9 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getFlavor = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/52415800-8b69-11e0-9b19-734f1195ff37"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/52415800-8b69-11e0-9b19-734f1195ff37")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse getFlavorResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/flavor_details.json")).build();
@@ -107,10 +101,9 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getFlavor = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/123"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/flavors/123")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse getFlavorResponse = HttpResponse.builder().statusCode(404)
             .payload(payloadFromResource("/flavor_details.json")).build();

@@ -55,10 +55,7 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTe
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&" +
                "command=listSSHKeyPairs&listAll=true&apiKey=identity&signature=5d2J9u%2BdKpkQsadDbl9i9OcUSLQ%3D"))
-         .headers(
-            ImmutableMultimap.<String, String>builder()
-               .put("Accept", "application/json")
-               .build())
+            .addHeader("Accept", "application/json")
          .build(), response);
 
       assertEquals(client.listSSHKeyPairs(), ImmutableSet.of(
@@ -70,10 +67,7 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTe
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&command=listSSHKeyPairs&listAll=true&" +
                "name=jclouds-keypair&apiKey=identity&signature=hJIVCFOHhdOww3aq19tFHpeD2HI%3D"))
-         .headers(
-            ImmutableMultimap.<String, String>builder()
-               .put("Accept", "application/json")
-               .build())
+            .addHeader("Accept", "application/json")
          .build(), response);
 
       assertEquals(client.getSSHKeyPair("jclouds-keypair"),
@@ -89,10 +83,7 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=createSSHKeyPair&" +
                   "name=jclouds-keypair&apiKey=identity&signature=8wk32PZF44jrBLH2HLel22%2BqMC4%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)

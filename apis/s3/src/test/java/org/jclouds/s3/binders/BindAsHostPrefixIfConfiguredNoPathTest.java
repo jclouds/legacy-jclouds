@@ -50,7 +50,7 @@ public class BindAsHostPrefixIfConfiguredNoPathTest extends BaseS3AsyncClientTes
    public void testBucketWithHostnameStyle() throws IOException, SecurityException, NoSuchMethodException {
 
       Method method = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
-      GeneratedHttpRequest<S3AsyncClient> request = processor.createRequest(method, "testbucket.example.com", "test.jpg");
+      GeneratedHttpRequest request = processor.createRequest(method, "testbucket.example.com", "test.jpg");
       assertRequestLineEquals(request, "DELETE https://s3.amazonaws.com/testbucket.example.com/test.jpg HTTP/1.1");
    }
 

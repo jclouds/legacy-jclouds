@@ -34,8 +34,6 @@ import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpect
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * Test the {@link QueryClient} by observing its side effects.
  * 
@@ -48,11 +46,10 @@ public class QueryClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    public void testQueryAllCatalogs() {
       HttpRequest queryRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/catalogs/query"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
+              .endpoint(endpoint + "/catalogs/query")
+              .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+
               .build();
 
       HttpResponse queryResponse= HttpResponse.builder()
@@ -124,12 +121,9 @@ public class QueryClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    public void testQueryAllCatalogReferences() {
       HttpRequest queryRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/catalogs/query?format=references"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
-              .build();
+              .endpoint(endpoint + "/catalogs/query?format=references")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token).build();
 
       HttpResponse queryResponse= HttpResponse.builder()
               .statusCode(200)

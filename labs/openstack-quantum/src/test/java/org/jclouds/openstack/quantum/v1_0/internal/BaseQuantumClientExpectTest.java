@@ -18,15 +18,7 @@
  */
 package org.jclouds.openstack.quantum.v1_0.internal;
 
-import java.net.URI;
-
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.quantum.v1_0.QuantumClient;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Base class for writing Quantum Rest Client Expect tests
@@ -34,16 +26,5 @@ import com.google.common.collect.ImmutableMultimap;
  * @author Adam Lowe
  */
 public class BaseQuantumClientExpectTest extends BaseQuantumExpectTest<QuantumClient> {
-   protected String endpoint = "https://csnode.jclouds.org:9696/v1.0";
-
-   protected HttpRequest.Builder standardRequestBuilder(String endpoint) {
-      return HttpRequest.builder().method("GET")
-            .headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
-            .endpoint(URI.create(endpoint));
-   }
-
-   protected HttpResponse.Builder standardResponseBuilder(int status) {
-      return HttpResponse.builder().statusCode(status);
-   }
 
 }

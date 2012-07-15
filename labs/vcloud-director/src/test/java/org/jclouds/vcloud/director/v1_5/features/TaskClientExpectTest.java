@@ -36,8 +36,6 @@ import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpect
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * Test the {@link TaskClient} by observing its side effects.
  * 
@@ -50,11 +48,9 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    public void testTaskListForValidOrg() {
       HttpRequest taskRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
+              .endpoint(endpoint + "/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token)
               .build();
 
       HttpResponse taskResponse = HttpResponse.builder()
@@ -62,13 +58,10 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
               .payload(payloadFromResourceWithContentType("/task/taskslist.xml", VCloudDirectorMediaType.TASKS_LIST + ";version=1.5"))
               .build();
       
-      HttpRequest orgRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+      HttpRequest orgRequest = HttpRequest.builder().method("GET")
+            .endpoint(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
 		HttpResponse orgResponse = HttpResponse.builder()
@@ -91,24 +84,17 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    @Test
    public void testTaskListForInvalidOrgId() {
-      HttpRequest taskRequest = HttpRequest.builder()
-              .method("GET")
-              .endpoint(URI.create(endpoint + "/tasksList/NOTAUUID"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
-              .build();
+      HttpRequest taskRequest = HttpRequest.builder().method("GET")
+              .endpoint(endpoint + "/tasksList/NOTAUUID")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token).build();
 
       HttpResponse taskResponse = HttpResponse.builder().build();
       
-      HttpRequest orgRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(URI.create(endpoint + "/org/NOTAUUID"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+      HttpRequest orgRequest = HttpRequest.builder().method("GET")
+            .endpoint(endpoint + "/org/NOTAUUID")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse orgResponse = HttpResponse.builder()
@@ -136,24 +122,18 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    @Test
    public void testTaskListForNotFoundOrgId() {
-      HttpRequest taskRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(URI.create(endpoint + "/tasksList/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+      HttpRequest taskRequest = HttpRequest.builder().method("GET")
+            .endpoint(endpoint + "/tasksList/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse taskResponse = HttpResponse.builder().build();
       
-      HttpRequest orgRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(URI.create(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
+      HttpRequest orgRequest = HttpRequest.builder().method("GET")
+            .endpoint(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
             .build();
 
       HttpResponse orgResponse = HttpResponse.builder()
@@ -170,12 +150,9 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    public void testGetTaskForTaskRef() {
       HttpRequest taskRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
-              .build();
+              .endpoint(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token).build();
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(200)
@@ -196,12 +173,9 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    public void testCancelTaskByTaskRef() {
       HttpRequest taskRequest = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b/action/cancel"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
-                              .put("x-vcloud-authorization", token)
-                              .build())
-            .build();
+            .endpoint(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b/action/cancel")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token).build();
 
       HttpResponse taskResponse = HttpResponse.builder()
             .statusCode(200)

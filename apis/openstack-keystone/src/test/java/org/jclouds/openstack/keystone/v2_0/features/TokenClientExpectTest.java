@@ -30,6 +30,8 @@ import java.util.Set;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
@@ -40,7 +42,6 @@ import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -60,8 +61,8 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testGetToken() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/token_details.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/sometokenorother").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/token_details.json", APPLICATION_JSON)).build())
             .getTokenClient().get();
       Token token = client.get("sometokenorother");
       assertNotNull(token);
@@ -73,8 +74,8 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testGetTokenFailNotFound() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/sometokenorother").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getTokenClient().get();
       assertNull(client.get("sometokenorother"));
    }
@@ -83,16 +84,16 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testGetTokenFail500() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").build(),
-            standardResponseBuilder(500).build()).getTokenClient().get();
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/sometokenorother").build(),
+            HttpResponse.builder().statusCode(500).build()).getTokenClient().get();
       client.get("sometokenorother");
    }
    
    public void testGetUserOfToken() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/token_details.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/sometokenorother").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/token_details.json", APPLICATION_JSON)).build())
             .getTokenClient().get();
       User user = client.getUserOfToken("sometokenorother");
       assertNotNull(user);
@@ -104,17 +105,18 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testGetUserOfTokenFailNotFound() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").build(),
-            standardResponseBuilder(404).build()).getTokenClient().get();
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/sometokenorother").build(),
+            HttpResponse.builder().statusCode(404).build()).getTokenClient().get();
       assertNull(client.getUserOfToken("sometokenorother"));
    }
 
    public void testCheckTokenIsValid() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").method("HEAD")
-                  .headers(ImmutableMultimap.of("X-Auth-Token", authToken)).build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/token_details.json", APPLICATION_JSON)).build())
+            HttpRequest.builder().method("HEAD")
+                       .endpoint(endpoint + "/v2.0/tokens/sometokenorother")
+                       .addHeader("X-Auth-Token", authToken).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/token_details.json", APPLICATION_JSON)).build())
             .getTokenClient().get();
       assertTrue(client.isValid("sometokenorother"));
    }
@@ -122,9 +124,10 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testCheckTokenIsValidFailNotValid() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/sometokenorother").method("HEAD")
-                  .headers(ImmutableMultimap.of("X-Auth-Token", authToken)).build(),
-            standardResponseBuilder(404).build()).getTokenClient().get();
+            HttpRequest.builder().method("HEAD")
+                       .endpoint(endpoint + "/v2.0/tokens/sometokenorother")
+                       .addHeader("X-Auth-Token", authToken).build(),
+            HttpResponse.builder().statusCode(404).build()).getTokenClient().get();
       assertFalse(client.isValid("sometokenorother"));
    }
 
@@ -132,8 +135,8 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testGetEndpointsForToken() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/XXXXXX/endpoints").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/user_endpoints.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/XXXXXX/endpoints").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_endpoints.json", APPLICATION_JSON)).build())
             .getTokenClient().get();
       Set<Endpoint> endpoints = client.listEndpointsForToken("XXXXXX");
       
@@ -148,8 +151,8 @@ public class TokenClientExpectTest extends BaseKeystoneRestClientExpectTest<Keys
    public void testGetEndpointsForTokenFailNotFound() {
       TokenClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/tokens/XXXXXX/endpoints").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/v2.0/tokens/XXXXXX/endpoints").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getTokenClient().get();
       assertTrue(client.listEndpointsForToken("XXXXXX").isEmpty());
    }

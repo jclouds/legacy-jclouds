@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Address;
 import org.testng.annotations.Test;
@@ -39,7 +38,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseInetAddressListFromJsonResponse}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -52,13 +51,14 @@ public class ParseInetAddressListFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_list_addresses_public.json");
 
       UnwrapOnlyJsonValue<List<Address>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Address>>>() {
-            }));
-      List<Address> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+               .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Address>>>() {
+               }));
+      List<Address> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
-      assertEquals(response, ImmutableList.of(Address.valueOf("67.23.10.132"),
-            Address.valueOf("::babe:67.23.10.132"),
-            Address.valueOf("67.23.10.131"), Address.valueOf("::babe:4317:0A83")));
+      assertEquals(
+               response,
+               ImmutableList.of(Address.valueOf("67.23.10.132"), Address.valueOf("::babe:67.23.10.132"),
+                        Address.valueOf("67.23.10.131"), Address.valueOf("::babe:4317:0A83")));
    }
 
    @Test
@@ -66,14 +66,14 @@ public class ParseInetAddressListFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_list_addresses_private.json");
 
       UnwrapOnlyJsonValue<List<Address>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Address>>>() {
-            }));
-      List<Address> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+               .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Address>>>() {
+               }));
+      List<Address> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
-      assertEquals(response, ImmutableList.of(Address.valueOf("67.23.10.132"),
-            Address.valueOf("::babe:67.23.10.132"),
-            Address.valueOf("67.23.10.131"), Address.valueOf("::babe:4317:0A83")));
-
+      assertEquals(
+               response,
+               ImmutableList.of(Address.valueOf("67.23.10.132"), Address.valueOf("::babe:67.23.10.132"),
+                        Address.valueOf("67.23.10.131"), Address.valueOf("::babe:4317:0A83")));
 
    }
 }

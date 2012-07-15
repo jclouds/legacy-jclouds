@@ -21,9 +21,6 @@ package org.jclouds.blobstore.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
@@ -31,7 +28,6 @@ import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -43,7 +39,7 @@ public class BindUserMetadataToHeadersWithPrefixTest {
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       BindUserMetadataToHeadersWithPrefix binder = new BindUserMetadataToHeadersWithPrefix(
             new BindMapToHeadersWithPrefix("prefix:"));
 
@@ -53,15 +49,16 @@ public class BindUserMetadataToHeadersWithPrefixTest {
 
       assertEquals(
             binder.bindToRequest(request, blob),
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://momma"))
-                  .headers(ImmutableMultimap.of("prefix:imagename", "foo", "prefix:serverid", "2")).build());
+            HttpRequest.builder().method("GET").endpoint("http://momma")
+                       .addHeader("prefix:imagename", "foo")
+                       .addHeader("prefix:serverid", "2").build());   
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeBlob() {
       BindUserMetadataToHeadersWithPrefix binder = new BindUserMetadataToHeadersWithPrefix(
             new BindMapToHeadersWithPrefix("prefix:"));
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       binder.bindToRequest(request, new File("foo"));
    }
 
@@ -69,7 +66,7 @@ public class BindUserMetadataToHeadersWithPrefixTest {
    public void testNullIsBad() {
       BindUserMetadataToHeadersWithPrefix binder = new BindUserMetadataToHeadersWithPrefix(
             new BindMapToHeadersWithPrefix("prefix:"));
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

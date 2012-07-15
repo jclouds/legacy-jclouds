@@ -30,7 +30,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -48,10 +47,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listVlanIpRanges&listAll=true&apiKey=identity&signature=xPwCeAcMp9kDGbD5oPgztLtSdnU%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -100,10 +96,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listVlanIpRanges&listAll=true&apiKey=identity&signature=xPwCeAcMp9kDGbD5oPgztLtSdnU%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -119,10 +112,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=createVlanIpRange&startip=10.22.22.51&endip=10.22.22.100&forvirtualnetwork=false&zoneid=2&vlan=untagged&account=system&domainid=1&podid=2&gateway=10.22.22.254&netmask=255.255.255.0&networkid=209&apiKey=identity&signature=XgDjPYAQNLMVCuSMGRA6QjV8mOY%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -166,10 +156,7 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=deleteVlanIpRange&id=1&apiKey=identity&signature=tTBbpdCndgHXdR397fbbJaN1RZU%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)

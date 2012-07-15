@@ -21,7 +21,6 @@ package org.jclouds.s3.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -52,7 +51,7 @@ public class BindBucketLoggingToXmlPayloadTest  extends BaseHandlerTest {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/bucket_logging.xml"));
       
-      HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
       BindBucketLoggingToXmlPayload binder = injector
                .getInstance(BindBucketLoggingToXmlPayload.class);
 

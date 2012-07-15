@@ -28,7 +28,6 @@ import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValu
 import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
@@ -43,7 +42,6 @@ import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 
@@ -118,9 +116,12 @@ public class ComputeServiceUtilsTest {
 
    @Test
    public void testExecHttpResponse() {
-      HttpRequest request = new HttpRequest("GET", URI.create("https://adriancolehappy.s3.amazonaws.com/java/install"),
-            ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date", "Sun, 12 Sep 2010 08:25:19 GMT",
-                  "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
+      HttpRequest request = HttpRequest.builder()
+                                       .method("GET")
+                                       .endpoint("https://adriancolehappy.s3.amazonaws.com/java/install")
+                                       .addHeader("Host", "adriancolehappy.s3.amazonaws.com")
+                                       .addHeader("Date", "Sun, 12 Sep 2010 08:25:19 GMT")
+                                       .addHeader("Authorization", "AWS 0ASHDJAS82:JASHFDA=").build();
 
       assertEquals(
             ComputeServiceUtils.execHttpResponse(request).render(org.jclouds.scriptbuilder.domain.OsFamily.UNIX),
@@ -130,10 +131,13 @@ public class ComputeServiceUtilsTest {
 
    @Test
    public void testTarxzpHttpResponse() {
-      HttpRequest request = new HttpRequest("GET", URI.create("https://adriancolehappy.s3.amazonaws.com/java/install"),
-            ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date", "Sun, 12 Sep 2010 08:25:19 GMT",
-                  "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
-
+      HttpRequest request = HttpRequest.builder()
+                                       .method("GET")
+                                       .endpoint("https://adriancolehappy.s3.amazonaws.com/java/install")
+                                       .addHeader("Host", "adriancolehappy.s3.amazonaws.com")
+                                       .addHeader("Date", "Sun, 12 Sep 2010 08:25:19 GMT")
+                                       .addHeader("Authorization", "AWS 0ASHDJAS82:JASHFDA=").build();
+            
       assertEquals(
             ComputeServiceUtils.extractTargzIntoDirectory(request, "/stage/").render(
                   org.jclouds.scriptbuilder.domain.OsFamily.UNIX),

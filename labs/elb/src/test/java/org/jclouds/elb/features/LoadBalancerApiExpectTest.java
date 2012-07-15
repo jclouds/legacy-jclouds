@@ -22,7 +22,6 @@ import static org.jclouds.elb.options.ListLoadBalancersOptions.Builder.afterMark
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.net.URI;
 import java.util.TimeZone;
 
 import org.jclouds.elb.ELBApi;
@@ -33,8 +32,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adrian Cole
@@ -47,23 +44,21 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
    }
 
    HttpRequest get = HttpRequest.builder()
-                                       .method("POST")
-                                       .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                                .build())
-                                       .payload(
-                                          payloadFromStringWithContentType(
-                                                "Action=DescribeLoadBalancers" +
-                                                      "&LoadBalancerNames.member.1=name" +
-                                                      "&Signature=EYzZgYDMGi9uFZU%2BVh%2FmmsJ9KmHxm5vEAF%2BhGF12BP4%3D" +
-                                                      "&SignatureMethod=HmacSHA256" +
-                                                      "&SignatureVersion=2" +
-                                                      "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                      "&Version=2012-06-01" +
-                                                      "&AWSAccessKeyId=identity",
-                                                "application/x-www-form-urlencoded"))
-                                       .build();
+                               .method("POST")
+                               .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                               .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
+                               .payload(
+                                  payloadFromStringWithContentType(
+                                       "Action=DescribeLoadBalancers" +
+                                             "&LoadBalancerNames.member.1=name" +
+                                             "&Signature=EYzZgYDMGi9uFZU%2BVh%2FmmsJ9KmHxm5vEAF%2BhGF12BP4%3D" +
+                                             "&SignatureMethod=HmacSHA256" +
+                                             "&SignatureVersion=2" +
+                                             "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                             "&Version=2012-06-01" +
+                                             "&AWSAccessKeyId=identity",
+                                       "application/x-www-form-urlencoded"))
+                               .build();
    
    
    public void testGetWhenResponseIs2xx() throws Exception {
@@ -88,22 +83,20 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
    }
 
    HttpRequest list = HttpRequest.builder()
-                                       .method("POST")
-                                       .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                                .build())
-                                       .payload(
-                                          payloadFromStringWithContentType(
-                                                   "Action=DescribeLoadBalancers" +
-                                                   "&Signature=3pErfVJXXe4EndOr3nPMu2%2F5eO8aCvwcOaI%2BL64VMqg%3D" +
-                                                   "&SignatureMethod=HmacSHA256" +
-                                                   "&SignatureVersion=2" +
-                                                   "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                   "&Version=2012-06-01" +
-                                                   "&AWSAccessKeyId=identity",
-                                                "application/x-www-form-urlencoded"))
-                                       .build();
+                                 .method("POST")
+                                 .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                 .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
+                                 .payload(
+                                    payloadFromStringWithContentType(
+                                             "Action=DescribeLoadBalancers" +
+                                             "&Signature=3pErfVJXXe4EndOr3nPMu2%2F5eO8aCvwcOaI%2BL64VMqg%3D" +
+                                             "&SignatureMethod=HmacSHA256" +
+                                             "&SignatureVersion=2" +
+                                             "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                             "&Version=2012-06-01" +
+                                             "&AWSAccessKeyId=identity",
+                                          "application/x-www-form-urlencoded"))
+                                 .build();
    
    public void testListWhenResponseIs2xx() throws Exception {
 
@@ -132,10 +125,8 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       HttpRequest listWithOptions =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String>builder()
-                                                 .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                                 .build())
+                       .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType(
                                                   "Action=DescribeLoadBalancers" +
                                                   "&Marker=MARKER" +
@@ -159,23 +150,21 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
    }
    
    HttpRequest delete = HttpRequest.builder()
-            .method("POST")
-            .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                     .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                     .build())
-            .payload(
-               payloadFromStringWithContentType(
-                        "Action=DeleteLoadBalancer" +
-                        "&LoadBalancerName=name" +
-                        "&Signature=LPfcRnIayHleMt9Z8QiGTMXoafF2ABKGeah3UO1eD0k%3D" +
-                        "&SignatureMethod=HmacSHA256" +
-                        "&SignatureVersion=2" +
-                        "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                        "&Version=2012-06-01" +
-                        "&AWSAccessKeyId=identity",
-                     "application/x-www-form-urlencoded"))
-            .build();
+                                   .method("POST")
+                                   .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                   .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
+                                   .payload(
+                                      payloadFromStringWithContentType(
+                                               "Action=DeleteLoadBalancer" +
+                                               "&LoadBalancerName=name" +
+                                               "&Signature=LPfcRnIayHleMt9Z8QiGTMXoafF2ABKGeah3UO1eD0k%3D" +
+                                               "&SignatureMethod=HmacSHA256" +
+                                               "&SignatureVersion=2" +
+                                               "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                               "&Version=2012-06-01" +
+                                               "&AWSAccessKeyId=identity",
+                                            "application/x-www-form-urlencoded"))
+                                   .build();
 
    public void testDeleteWhenResponseIs2xx() throws Exception {
 

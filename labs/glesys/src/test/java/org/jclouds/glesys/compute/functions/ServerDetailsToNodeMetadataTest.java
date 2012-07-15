@@ -22,16 +22,14 @@ import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.glesys.compute.internal.BaseGleSYSComputeServiceExpectTest;
 import org.jclouds.glesys.features.ServerClientExpectTest;
@@ -60,10 +58,9 @@ public class ServerDetailsToNodeMetadataTest extends BaseGleSYSComputeServiceExp
                   .put(HttpRequest
                         .builder()
                         .method("POST")
-                        .endpoint(URI.create("https://api.glesys.com/server/details/format/json"))
-                        .headers(
-                              ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                        .endpoint("https://api.glesys.com/server/details/format/json")
+                        .addHeader("Accept", "application/json")
+                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                         .payload(
                               newUrlEncodedFormPayload(ImmutableMultimap.<String, String> builder()
                                     .put("serverid", "xm3276891").build())).build(),

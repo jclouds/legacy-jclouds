@@ -36,7 +36,6 @@ import org.jclouds.vcloud.domain.network.FenceMode;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -89,10 +88,9 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
      
       HttpRequest version1_0InstantiateWithNetworkNamedSameAsOrgNetwork = HttpRequest.builder()
                                                                            .method("POST")
-                                                                           .endpoint(URI.create(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate"))
-                                                                           .headers(ImmutableMultimap.<String, String> builder()
-                                                                              .put(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
-                                                                              .put(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken).build())
+                                                                           .endpoint(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate")
+                                                                           .addHeader(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
+                                                                           .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken)
                                                                            .payload(payloadFromStringWithContentType(instantiateXML, "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")).build();
                                                                         
       ComputeService compute = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> builder()
@@ -147,10 +145,9 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
      
       HttpRequest version1_0InstantiateWithCustomizedNetwork = HttpRequest.builder()
                                                                            .method("POST")
-                                                                           .endpoint(URI.create(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate"))
-                                                                           .headers(ImmutableMultimap.<String, String> builder()
-                                                                              .put(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
-                                                                              .put(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken).build())
+                                                                           .endpoint(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate")
+                                                                           .addHeader(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
+                                                                            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken)
                                                                            .payload(payloadFromStringWithContentType(instantiateXML, "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")).build();
                                                                         
       ComputeService compute = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> builder()

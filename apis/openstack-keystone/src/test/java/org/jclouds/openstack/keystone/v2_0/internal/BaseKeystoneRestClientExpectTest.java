@@ -20,7 +20,6 @@ package org.jclouds.openstack.keystone.v2_0.internal;
 
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
-import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
@@ -33,7 +32,6 @@ import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Base class for writing KeyStone 2.0 Rest Client Expect tests
@@ -60,14 +58,11 @@ public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTes
       identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
    }
 
-   protected HttpRequest.Builder standardRequestBuilder(String endpoint) {
-      return HttpRequest.builder().method("GET").headers(
-               ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken)).endpoint(
-               URI.create(endpoint));
-   }
-
-   protected HttpResponse.Builder standardResponseBuilder(int status) {
-      return HttpResponse.builder().statusCode(status);
+   protected HttpRequest.Builder<?> authenticatedGET() {
+      return HttpRequest.builder()
+                        .method("GET")
+                        .addHeader("Accept", MediaType.APPLICATION_JSON)
+                        .addHeader("X-Auth-Token", authToken);
    }
 
    @Override

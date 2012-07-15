@@ -21,10 +21,6 @@ package org.jclouds.cloudservers.options;
 import static org.jclouds.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -52,7 +48,7 @@ public class CreateSharedIpGroupOptionsTest {
 
    private HttpRequest buildRequest(CreateSharedIpGroupOptions options) {
       injector.injectMembers(options);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       options.bindToRequest(request, ImmutableMap.<String,Object>of("name", "foo"));
       return request;
    }

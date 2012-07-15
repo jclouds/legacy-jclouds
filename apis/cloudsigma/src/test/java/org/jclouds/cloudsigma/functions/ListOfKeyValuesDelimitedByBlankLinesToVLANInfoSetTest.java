@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -39,13 +38,13 @@ public class ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSetTest {
          ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet.class);
 
    public void testNone() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), ImmutableSet.<VLANInfo> of());
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))), ImmutableSet.<VLANInfo> of());
-      assertEquals(FN.apply(new HttpResponse(200, "", null)), ImmutableSet.<VLANInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("").build()), ImmutableSet.<VLANInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("\n\n").build()), ImmutableSet.<VLANInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").build()), ImmutableSet.<VLANInfo> of());
    }
 
    public void testOne() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToVLANInfoTest.class
-            .getResourceAsStream("/vlan.txt")))), ImmutableSet.<VLANInfo> of(MapToVLANInfoTest.ONE));
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload(MapToVLANInfoTest.class
+            .getResourceAsStream("/vlan.txt")).build()), ImmutableSet.<VLANInfo> of(MapToVLANInfoTest.ONE));
    }
 }

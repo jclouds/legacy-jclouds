@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -39,13 +38,13 @@ public class ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSetTest {
          ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class);
 
    public void testNone() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), ImmutableSet.<DriveInfo> of());
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))), ImmutableSet.<DriveInfo> of());
-      assertEquals(FN.apply(new HttpResponse(200, "", null)), ImmutableSet.<DriveInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("").build()), ImmutableSet.<DriveInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("\n\n").build()), ImmutableSet.<DriveInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").build()), ImmutableSet.<DriveInfo> of());
    }
 
    public void testOne() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToDriveInfoTest.class
-            .getResourceAsStream("/drive.txt")))), ImmutableSet.<DriveInfo> of(MapToDriveInfoTest.ONE));
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload(MapToDriveInfoTest.class
+            .getResourceAsStream("/drive.txt")).build()), ImmutableSet.<DriveInfo> of(MapToDriveInfoTest.ONE));
    }
 }

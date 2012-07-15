@@ -24,7 +24,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 
-import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsClient;
 import org.jclouds.openstack.nova.v2_0.features.FlavorClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.jclouds.openstack.v2_0.domain.Resource;

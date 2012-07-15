@@ -21,15 +21,11 @@ package org.jclouds.blobstore.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -41,27 +37,28 @@ public class BindMapToHeadersWithPrefixTest {
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       BindMapToHeadersWithPrefix binder = new BindMapToHeadersWithPrefix("prefix:");
 
       assertEquals(
             binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2")),
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://momma"))
-                  .headers(ImmutableMultimap.of("prefix:imagename", "foo", "prefix:serverid", "2")).build());
+            HttpRequest.builder().method("GET").endpoint("http://momma")
+                       .addHeader("prefix:imagename", "foo")
+                       .addHeader("prefix:serverid", "2").build());
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeMap() {
       BindMapToHeadersWithPrefix binder = new BindMapToHeadersWithPrefix("prefix:");
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
       BindMapToHeadersWithPrefix binder = new BindMapToHeadersWithPrefix("prefix:");
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

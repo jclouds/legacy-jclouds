@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.openstack.nova.v2_0.compute.functions.ImageToOperatingSystem;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

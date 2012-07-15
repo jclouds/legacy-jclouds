@@ -81,13 +81,10 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
       return HttpRequestComparisonType.XML;
    }
 
-   protected HttpRequest loginRequest = HttpRequest.builder()
-         .method("POST")
-         .endpoint(URI.create(endpoint + "/sessions"))
-         .headers(ImmutableMultimap.<String, String>builder()
-               .put("Accept", "*/*")
-               .put("Authorization", "Basic YWRyaWFuQGpjbG91ZHMub3JnQEpDbG91ZHM6cGFzc3dvcmQ=")
-               .build())
+   protected HttpRequest loginRequest = HttpRequest.builder().method("POST")
+         .endpoint(endpoint + "/sessions")
+         .addHeader("Accept", "*/*")
+         .addHeader("Authorization", "Basic YWRyaWFuQGpjbG91ZHMub3JnQEpDbG91ZHM6cGFzc3dvcmQ=")
          .build();
 
    protected HttpResponse sessionResponse = HttpResponse.builder()
@@ -189,13 +186,13 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
     */
    public class VcloudHttpRequestPrimer {
       private Multimap<String, String> headers = LinkedListMultimap.create();
-      private HttpRequest.Builder builder = HttpRequest.builder();
+      private HttpRequest.Builder<?> builder = HttpRequest.builder();
       
       public VcloudHttpRequestPrimer() {
       }
 
       public VcloudHttpRequestPrimer apiCommand(String method, String command) {
-         builder.method(method).endpoint(URI.create(endpoint + command));
+         builder.method(method).endpoint(endpoint + command);
          return this;
       }
       
@@ -222,7 +219,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
          return this;
       }
       
-      public HttpRequest.Builder httpRequestBuilder() {
+      public HttpRequest.Builder<?> httpRequestBuilder() {
          header("x-vcloud-authorization", token);
          builder.headers(headers);
          return builder;
@@ -230,7 +227,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
    }
    
    protected class VcloudHttpResponsePrimer {
-      private HttpResponse.Builder builder = HttpResponse.builder();
+      private HttpResponse.Builder<?> builder = HttpResponse.builder();
 
       public VcloudHttpResponsePrimer() {
       }
@@ -239,7 +236,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
          builder.payload(payloadFromResourceWithContentType(relativeFilePath, mediaType));
          return this;
       }
-      public HttpResponse.Builder httpResponseBuilder() {
+      public HttpResponse.Builder<?> httpResponseBuilder() {
          return builder;
       }
    }

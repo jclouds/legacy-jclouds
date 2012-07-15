@@ -29,8 +29,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.HostAggregate;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -50,8 +50,8 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_list.json")).build())
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_list.json")).build())
             .getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       HostAggregate result = Iterables.getOnlyElement(client.listAggregates());
@@ -62,8 +62,8 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_with_host_details.json")).build())
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_with_host_details.json")).build())
             .getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.getAggregate("1"), exampleHostAggregateWithHost());
@@ -73,8 +73,8 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertNull(client.getAggregate("1"));
    }
@@ -83,10 +83,10 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"aggregate\":{\"name\":\"ubuntu1\",\"availability_zone\":\"nova\"}}", MediaType.APPLICATION_JSON))
                   .endpoint(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_details.json")).build())
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build())
             .getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.createAggregate("ubuntu1", "nova"), exampleHostAggregate());
@@ -96,8 +96,8 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(200).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.deleteAggregate("1"));
    }
@@ -106,8 +106,8 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(404).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(404).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.deleteAggregate("1"));
    }
@@ -116,9 +116,9 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"aggregate\":{\"name\":\"newaggregatename\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.updateName("1", "newaggregatename"), exampleHostAggregate());
    }
@@ -127,9 +127,9 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"aggregate\":{\"availability_zone\":\"zone1\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.updateAvailabilityZone("1", "zone1"), exampleHostAggregate());
    }
@@ -138,9 +138,9 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1/action");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"add_host\":{\"host\":\"ubuntu\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.addHost("1", "ubuntu"), exampleHostAggregate());
    }
@@ -149,9 +149,9 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1/action");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"remove_host\":{\"host\":\"ubuntu\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.removeHost("1", "ubuntu"), exampleHostAggregate());
    }
@@ -161,9 +161,9 @@ public class HostAggregateClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-aggregates/1/action");
       HostAggregateClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"set_metadata\":{\"metadata\":{\"mykey\":\"some value or other\"}}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.setMetadata("1", ImmutableMap.of("mykey", "some value or other")), exampleHostAggregate());
    }

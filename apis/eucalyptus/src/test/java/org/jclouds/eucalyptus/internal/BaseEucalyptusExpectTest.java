@@ -18,8 +18,6 @@
  */
 package org.jclouds.eucalyptus.internal;
 
-import java.net.URI;
-
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.DateService;
@@ -32,7 +30,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
@@ -48,8 +45,8 @@ public abstract class BaseEucalyptusExpectTest<T> extends BaseRestClientExpectTe
    protected HttpRequest describeRegionsRequest = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("http://partnercloud.eucalyptus.com:8773/services/Eucalyptus/"))
-         .headers(ImmutableMultimap.of("Host", "partnercloud.eucalyptus.com:8773"))
+         .endpoint("http://partnercloud.eucalyptus.com:8773/services/Eucalyptus/")
+         .addHeader("Host", "partnercloud.eucalyptus.com:8773")
          .payload(payloadFromStringWithContentType(
                   "Action=DescribeRegions&Signature=tp9WpT8503JdxIXYu6Eu2Dmu%2Bd%2FpqviST7N7Fvr%2FyQo%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                   MediaType.APPLICATION_FORM_URLENCODED)).build();
@@ -60,8 +57,8 @@ public abstract class BaseEucalyptusExpectTest<T> extends BaseRestClientExpectTe
    
    protected HttpRequest describeAZRequest = HttpRequest.builder()
          .method("POST")
-         .endpoint(URI.create("http://eucalyptus.partner.eucalyptus.com:8773/services/Eucalyptus/"))
-         .headers(ImmutableMultimap.of("Host", "eucalyptus.partner.eucalyptus.com:8773"))
+         .endpoint("http://eucalyptus.partner.eucalyptus.com:8773/services/Eucalyptus/")
+         .addHeader("Host", "eucalyptus.partner.eucalyptus.com:8773")
          .payload(payloadFromStringWithContentType(
                 "Action=DescribeAvailabilityZones&Signature=i4OkMed1sqQV7hlF%2Fl1KdbQwmwJ4Fh4o9W32eVGayPk%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                 MediaType.APPLICATION_FORM_URLENCODED)).build();

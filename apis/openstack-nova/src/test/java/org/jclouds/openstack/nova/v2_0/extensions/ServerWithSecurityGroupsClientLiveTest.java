@@ -23,7 +23,6 @@ import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.ServerWithSecurityGroups;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsClient;
 import org.jclouds.openstack.nova.v2_0.features.ServerClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.jclouds.openstack.v2_0.domain.Resource;

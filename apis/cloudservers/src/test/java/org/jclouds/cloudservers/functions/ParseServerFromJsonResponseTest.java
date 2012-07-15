@@ -29,7 +29,6 @@ import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -75,7 +74,7 @@ public class ParseServerFromJsonResponseTest {
 
       UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
       }));
-      Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Server response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       return response;
    }
 

@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -32,8 +31,6 @@ import org.jclouds.jenkins.v1.parse.LastBuildTest;
 import org.jclouds.jenkins.v1.parse.ParseJobDetailsTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -45,9 +42,8 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
    public void testCreateJobStringWhenResponseIs2xx() throws IOException {
       HttpRequest createJob = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("http://localhost:8080/createItem?name=blagoo"))
-            .headers(ImmutableMultimap.<String, String> builder()
-               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .endpoint("http://localhost:8080/createItem?name=blagoo")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
             .payload(payloadFromResourceWithContentType("/sample_job.xml", "text/xml"))
             .build();
 
@@ -61,9 +57,8 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
    public void testDeleteJobWhenResponseIs2xx() {
       HttpRequest deleteJob = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("http://localhost:8080/job/blagoo/doDelete"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .endpoint("http://localhost:8080/job/blagoo/doDelete")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
             .build();
 
       HttpResponse deleteJobResponse = HttpResponse.builder().statusCode(200).build();
@@ -76,9 +71,8 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
    public void testDeleteJobWhenResponseIs404() {
       HttpRequest deleteJob = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("http://localhost:8080/job/blagoo/doDelete"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .endpoint("http://localhost:8080/job/blagoo/doDelete")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
             .build();
 
       HttpResponse deleteJobResponse = HttpResponse.builder().statusCode(404).build();
@@ -90,10 +84,9 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
    
    HttpRequest getJob = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/job/ddd/api/json"))
-         .headers(ImmutableMultimap.<String, String> builder()
-               .put("Accept", "application/json")
-               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+         .endpoint("http://localhost:8080/job/ddd/api/json")
+         .addHeader("Accept", "application/json")
+         .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
          .build();
 
    public void testGetJobWhenResponseIs2xx() {
@@ -112,9 +105,8 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
 
    HttpRequest buildJob = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("http://localhost:8080/job/ddd/build"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .endpoint("http://localhost:8080/job/ddd/build")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
             .build();
    
    public void testBuildJobWhenResponseIs2xx() {
@@ -131,9 +123,8 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
    
    HttpRequest fetchConfig = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create("http://localhost:8080/job/ddd/config.xml"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .endpoint("http://localhost:8080/job/ddd/config.xml")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
             .build();
    
    public void testFetchConfigXMLWhenResponseIs2xx() {
@@ -154,10 +145,9 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
    
    HttpRequest lastBuild = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create("http://localhost:8080/job/ddd/lastBuild/api/json"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", "application/json")
-                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .endpoint("http://localhost:8080/job/ddd/lastBuild/api/json")
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
             .build();
    
    public void testLastBuildWhenResponseIs2xx() {

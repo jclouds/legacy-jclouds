@@ -108,7 +108,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
       assertEquals(builder.toString(), "/?acl");
    }
 
-   private GeneratedHttpRequest<S3AsyncClient> putBucketAcl() throws NoSuchMethodException {
+   private GeneratedHttpRequest putBucketAcl() throws NoSuchMethodException {
       return processor.createRequest(S3AsyncClient.class.getMethod("putBucketACL", String.class,
                AccessControlList.class), "bucket", AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE,
                "1234"));
@@ -124,7 +124,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
       assertEquals(builder.toString(), "");
    }
 
-   private GeneratedHttpRequest<S3AsyncClient> listOwnedBuckets() throws NoSuchMethodException {
+   private GeneratedHttpRequest listOwnedBuckets() throws NoSuchMethodException {
       return processor.createRequest(S3AsyncClient.class.getMethod("listOwnedBuckets"));
    }
 

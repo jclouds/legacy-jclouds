@@ -124,7 +124,7 @@ public class BlobStoreUtilsTest {
 
    public void testGetKeyForAzureS3AndRackspace() {
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
 
       expect(request.getEndpoint()).andReturn(
             URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore0/five"));
@@ -137,7 +137,7 @@ public class BlobStoreUtilsTest {
 
    public void testGetKeyForAtmos() {
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
 
       expect(request.getEndpoint())
             .andReturn(

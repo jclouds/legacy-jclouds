@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.quantum.v1_0.domain.Attachment;
 import org.jclouds.openstack.quantum.v1_0.domain.Port;
 import org.jclouds.openstack.quantum.v1_0.domain.PortDetails;
@@ -51,8 +52,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReferencesReturns2xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports").build(),
-            standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"id\": \"a6058a59-fa8c-46cc-bac8-08904e6ff0a5\"}]}", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"id\": \"a6058a59-fa8c-46cc-bac8-08904e6ff0a5\"}]}", APPLICATION_JSON)).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
       Set<Reference> nets = client.listReferences();
@@ -62,8 +63,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReferencesReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
       assertTrue(client.listReferences().isEmpty());
@@ -72,8 +73,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReturns2xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports/detail").build(),
-            standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"state\": \"DOWN\", \"id\": \"814ae4bb-33d9-425f-8ee2-13a5c90b1465\"}]}", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports/detail").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"state\": \"DOWN\", \"id\": \"814ae4bb-33d9-425f-8ee2-13a5c90b1465\"}]}", APPLICATION_JSON)).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
       Set<Port> nets = client.list();
@@ -83,8 +84,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports/detail").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/1a104cf5-cb18-4d35-9407-2fd2646d9d0b/ports/detail").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
       assertTrue(client.list().isEmpty());
@@ -93,8 +94,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowReturns2xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/port.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/port.json", APPLICATION_JSON)).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       Port port = client.get("646c123b-871a-4124-9fa2-a94f04a582df");
@@ -104,8 +105,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       assertNull(client.get("646c123b-871a-4124-9fa2-a94f04a582df"));
@@ -114,8 +115,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowDetailsReturns2xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df/detail").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/port_details.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df/detail").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/port_details.json", APPLICATION_JSON)).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       PortDetails net = client.getDetails("646c123b-871a-4124-9fa2-a94f04a582df");
@@ -125,8 +126,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowDetailsReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df/detail").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/646c123b-871a-4124-9fa2-a94f04a582df/detail").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       assertNull(client.getDetails("646c123b-871a-4124-9fa2-a94f04a582df"));
@@ -135,8 +136,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testCreateReturns2xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports").method("POST").build(),
-            standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"port\":{\"id\":\"12345\"}}", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports").method("POST").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"port\":{\"id\":\"12345\"}}", APPLICATION_JSON)).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       Reference port = client.create();
@@ -147,8 +148,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testCreateReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports").method("POST").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports").method("POST").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       client.create();
@@ -157,9 +158,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testUpdateReturns2xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777").method("PUT")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"port\":{\"state\":\"ACTIVE\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).build())
+            HttpResponse.builder().statusCode(200).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       assertTrue(client.updateState("77777", Port.State.ACTIVE));
@@ -169,9 +170,9 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testUpdateReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777").method("PUT")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"port\":{\"state\":\"ACTIVE\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(401).build())
+            HttpResponse.builder().statusCode(401).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       client.updateState("77777", Port.State.ACTIVE);
@@ -180,8 +181,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowAttachment() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/attachment.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/attachment.json", APPLICATION_JSON)).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       Attachment attachment = client.showAttachment("77777");
@@ -191,8 +192,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowAttachmentReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       assertNull(client.showAttachment("77777"));
@@ -201,10 +202,10 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testPlugAttachment() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment")
             .payload(payloadFromStringWithContentType("{\"attachment\":{\"id\":\"jclouds-live-test\"}}", MediaType.APPLICATION_JSON))
                   .method("PUT").build(),
-            standardResponseBuilder(200).build())
+            HttpResponse.builder().statusCode(200).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       assertTrue(client.plugAttachment("77777", "jclouds-live-test"));
@@ -214,10 +215,10 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testPlugAttachmentReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment")
                   .payload(payloadFromStringWithContentType("{\"attachment\":{\"id\":\"jclouds-live-test\"}}", MediaType.APPLICATION_JSON))
                   .method("PUT").build(),
-            standardResponseBuilder(403).build())
+            HttpResponse.builder().statusCode(403).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       client.plugAttachment("77777", "jclouds-live-test");
@@ -225,8 +226,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testUnplugAttachment() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").method("DELETE").build(),
-            standardResponseBuilder(200).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       assertTrue(client.unplugAttachment("77777"));
@@ -236,8 +237,8 @@ public class PortClientExpectTest extends BaseQuantumClientExpectTest {
    public void testUnplugAttachmentReturns4xx() {
       PortClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").method("DELETE").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/ports/77777/attachment").method("DELETE").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getPortClientForRegionAndNetwork("region-a.geo-1", "16dba3bc-f3fa-4775-afdc-237e12c72f6a");
 
       client.unplugAttachment("77777");

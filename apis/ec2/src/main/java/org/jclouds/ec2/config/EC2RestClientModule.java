@@ -65,19 +65,19 @@ import com.google.inject.Scopes;
 public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> extends
          WithZonesFormSigningRestClientModule<S, A> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-   .put(AMIClient.class, AMIAsyncClient.class)//
-   .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-   .put(InstanceClient.class, InstanceAsyncClient.class)//
-   .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-   .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-   .put(WindowsClient.class, WindowsAsyncClient.class)//
-   .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-   .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-   .build();
+                        .put(AMIClient.class, AMIAsyncClient.class)//
+                        .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+                        .put(InstanceClient.class, InstanceAsyncClient.class)//
+                        .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+                        .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+                        .put(WindowsClient.class, WindowsAsyncClient.class)//
+                        .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+                        .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+                        .build();
    
    @SuppressWarnings("unchecked")
    public EC2RestClientModule() {
-      super((TypeToken) TypeToken.of(EC2Client.class), (TypeToken) TypeToken.of(EC2AsyncClient.class), DELEGATE_MAP);
+      super(TypeToken.class.cast(TypeToken.of(EC2Client.class)), TypeToken.class.cast(TypeToken.of(EC2AsyncClient.class)), DELEGATE_MAP);
    }
 
    protected EC2RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,

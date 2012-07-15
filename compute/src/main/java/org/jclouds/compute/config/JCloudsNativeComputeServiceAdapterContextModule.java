@@ -46,19 +46,19 @@ public class JCloudsNativeComputeServiceAdapterContextModule extends
     * This binds the converters to {@link IdentityFunction} as that ensure the same value is
     * returned.
     */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
       bind(new TypeLiteral<ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>>() {
       }).to(adapter);
       bind(new TypeLiteral<Function<NodeMetadata, NodeMetadata>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Image, Image>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       super.configure();
    }
 

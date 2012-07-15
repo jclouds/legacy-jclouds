@@ -21,15 +21,12 @@ package org.jclouds.openstack.filters;
 import java.util.Date;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 
 import com.google.common.base.Supplier;
 
@@ -42,17 +39,15 @@ import com.google.common.base.Supplier;
 @Singleton
 public class AddTimestampQuery implements HttpRequestFilter {
    private final Supplier<Date> dateProvider;
-   private final Provider<UriBuilder> builder;
 
    @Inject
-   public AddTimestampQuery(@TimeStamp Supplier<Date> dateProvider, Provider<UriBuilder> builder) {
-      this.builder = builder;
+   public AddTimestampQuery(@TimeStamp Supplier<Date> dateProvider) {
       this.dateProvider = dateProvider;
    }
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.addQueryParam(request, "now", dateProvider.get().getTime() + "", builder.get());
+      return request.toBuilder().replaceQueryParam("now", dateProvider.get().getTime() + "").build();
    }
 
 }

@@ -18,7 +18,6 @@
  */
 package org.jclouds.http;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -58,8 +57,6 @@ public interface IntegrationTestClient {
    Multimap<String, String> postPayloadAndReturnHeaders(String id, Payload payload);
 
    String postJson(String id, String toPut);
-
-   String action(String id, String action, Map<String, String> options);
 
    String downloadFilter(String id, String header);
 

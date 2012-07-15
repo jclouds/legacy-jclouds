@@ -27,7 +27,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.s3.domain.S3Object;
 
@@ -44,6 +43,7 @@ public class BindS3ObjectMetadataToRequest implements Binder {
       this.metadataPrefixer = checkNotNull(metadataPrefixer, "metadataPrefixer");
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof S3Object, "this binder is only valid for S3Object!, not %s", input);
@@ -59,8 +59,8 @@ public class BindS3ObjectMetadataToRequest implements Binder {
       request = metadataPrefixer.bindToRequest(request, s3Object.getMetadata().getUserMetadata());
 
       if (s3Object.getMetadata().getCacheControl() != null) {
-         request = ModifyRequest.replaceHeader(request, HttpHeaders.CACHE_CONTROL, s3Object.getMetadata()
-               .getCacheControl());
+         request = (R) request.toBuilder()
+                              .replaceHeader(HttpHeaders.CACHE_CONTROL, s3Object.getMetadata().getCacheControl()).build();
       }
       return request;
    }

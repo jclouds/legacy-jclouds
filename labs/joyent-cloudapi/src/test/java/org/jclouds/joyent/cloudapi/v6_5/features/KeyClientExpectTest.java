@@ -20,8 +20,6 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
@@ -30,7 +28,6 @@ import org.jclouds.joyent.cloudapi.v6_5.parse.ParseKeyListTest;
 import org.jclouds.joyent.cloudapi.v6_5.parse.ParseKeyTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -38,10 +35,11 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "KeyClientExpectTest")
 public class KeyClientExpectTest extends BaseJoyentCloudClientExpectTest {
-   HttpRequest list = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://api.joyentcloud.com/my/keys")).headers(
-            ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept", "application/json")
-                     .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
+   HttpRequest list = HttpRequest.builder().method("GET")
+                                 .endpoint("https://api.joyentcloud.com/my/keys")
+                                 .addHeader("X-Api-Version", "~6.5")
+                                 .addHeader("Accept", "application/json")
+                                 .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
    public void testListKeysWhenResponseIs2xx() {
       HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
@@ -61,13 +59,12 @@ public class KeyClientExpectTest extends BaseJoyentCloudClientExpectTest {
    }
 
    public void testCreateKeyWhenResponseIs202() throws Exception {
-      HttpRequest create = HttpRequest
-               .builder()
+      HttpRequest create = HttpRequest.builder()
                .method("POST")
-               .endpoint(URI.create("https://api.joyentcloud.com/my/keys"))
-               .headers(
-                        ImmutableMultimap.<String, String> builder().put("X-Api-Version", "~6.5").put("Accept",
-                                 "application/json").put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+               .endpoint("https://api.joyentcloud.com/my/keys")
+               .addHeader("X-Api-Version", "~6.5")
+               .addHeader("Accept", "application/json")
+               .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                .payload(
                      payloadFromStringWithContentType(
                            "{\"name\":\"rsa\",\"key\":\"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0A5Pf5Cq...\"}",

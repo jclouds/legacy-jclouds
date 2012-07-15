@@ -18,16 +18,14 @@
  */
 package org.jclouds.gogrid.binders;
 
+import static com.google.common.base.Functions.toStringFunction;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableList;
@@ -40,12 +38,6 @@ import com.google.common.primitives.Longs;
  */
 @Singleton
 public class BindIdsToQueryParams implements Binder {
-   private final Provider<UriBuilder> builder;
-
-   @Inject
-   BindIdsToQueryParams(Provider<UriBuilder> builder) {
-      this.builder = builder;
-   }
 
    /**
     * Binds the ids to query parameters. The pattern, as specified by GoGrid's specification, is:
@@ -57,19 +49,20 @@ public class BindIdsToQueryParams implements Binder {
     * @param input
     *           array of String params
     */
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
 
       if (checkNotNull(input, "input is null") instanceof Long[]) {
          Long[] names = (Long[]) input;
-         request = ModifyRequest.addQueryParam(request, ID_KEY, ImmutableList.copyOf(names), builder.get());
+         return (R) request.toBuilder()
+                  .replaceQueryParam(ID_KEY, transform(ImmutableList.copyOf(names), toStringFunction())).build();
       } else if (input instanceof long[]) {
          long[] names = (long[]) input;
-         request = ModifyRequest.addQueryParam(request, ID_KEY, Longs.asList(names), builder.get());
+         return (R) request.toBuilder().replaceQueryParam(ID_KEY, transform(Longs.asList(names), toStringFunction()))
+                  .build();
       } else {
-         throw new IllegalArgumentException("this binder is only valid for Long[] arguments: "
-                  + input.getClass());
+         throw new IllegalArgumentException("this binder is only valid for Long[] arguments: " + input.getClass());
       }
-      return request;
    }
 }

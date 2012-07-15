@@ -70,7 +70,7 @@ import com.google.inject.TypeLiteral;
 public class ElasticStackComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<ServerInfo, Hardware, DriveInfo, Location> {
 
-   @SuppressWarnings( { "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
       super.configure();
@@ -79,11 +79,11 @@ public class ElasticStackComputeServiceContextModule extends
       bind(new TypeLiteral<Function<ServerInfo, NodeMetadata>>() {
       }).to(ServerInfoToNodeMetadata.class);
       bind(new TypeLiteral<Function<Image, Image>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Device, Volume>>() {
       }).to(DeviceToVolume.class);
       bind(new TypeLiteral<Function<Server, String>>() {

@@ -21,7 +21,6 @@ package org.jclouds.cloudsigma.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -37,9 +36,9 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
@@ -83,7 +82,7 @@ public class BindServerToPlainTextStringTest {
    }).getInstance(BindServerToPlainTextString.class);
 
    public void testSimple() throws IOException {
-      HttpRequest request = new HttpRequest("POST", URI.create("https://host/drives/create"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("https://host/drives/create").build();
       FN.bindToRequest(request, SERVER);
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.TEXT_PLAIN);
       assertEquals(request.getPayload().getRawContent(), CREATED_SERVER);

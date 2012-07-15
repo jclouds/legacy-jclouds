@@ -49,10 +49,8 @@ public class InstancesHandlerTest extends BaseHandlerTest {
                "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"), URI
                         .create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"), URI
                         .create("http://fancycloudprovider.com/api/realms/us"), Instance.State.RUNNING, ImmutableMap
-                        .of(Instance.Action.REBOOT, new HttpRequest("POST", URI
-                                 .create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
-                                 Instance.Action.STOP, new HttpRequest("POST", URI
-                                          .create("http://fancycloudprovider.com/api/instances/inst1/stop"))), null,
+                        .of(Instance.Action.REBOOT, HttpRequest.builder().method("POST").endpoint("http://fancycloudprovider.com/api/instances/inst1/reboot").build(),
+                                 Instance.Action.STOP, HttpRequest.builder().method("POST").endpoint("http://fancycloudprovider.com/api/instances/inst1/stop").build()), null,
                ImmutableSet.of("inst1.larry.fancycloudprovider.com"), ImmutableSet.of("inst1.larry.internal")));
       assertEquals(factory.create(injector.getInstance(InstancesHandler.class)).parse(is).toString(), expects.toString());
    }

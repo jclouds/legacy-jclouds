@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.Entity;
-import org.jclouds.vcloud.director.v1_5.domain.Entity.Builder;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 
 import com.google.common.base.Function;

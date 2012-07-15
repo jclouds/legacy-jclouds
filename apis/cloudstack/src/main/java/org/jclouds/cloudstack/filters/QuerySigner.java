@@ -36,7 +36,7 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
@@ -85,7 +85,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request, "request must be present");
-      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getEndpoint().getRawQuery());
+      Multimap<String, String> decodedParams = Queries.parseQueryToMap(request.getEndpoint().getRawQuery());
       addSigningParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = sign(stringToSign);
@@ -94,7 +94,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
             .toBuilder()
             .endpoint(
                   builder.get().uri(request.getEndpoint())
-                        .replaceQuery(ModifyRequest.makeQueryLine(decodedParams, null)).build()).build();
+                        .replaceQuery(Queries.makeQueryLine(decodedParams, null)).build()).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }
@@ -142,7 +142,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(input.getEndpoint().getQuery());
+      Multimap<String, String> decodedParams = Queries.parseQueryToMap(input.getEndpoint().getQuery());
       addSigningParams(decodedParams);
       return createStringToSign(input, decodedParams);
    }

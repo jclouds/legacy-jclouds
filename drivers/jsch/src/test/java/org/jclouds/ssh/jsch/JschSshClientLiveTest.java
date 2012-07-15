@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
@@ -238,7 +237,6 @@ public class JschSshClientLiveTest {
       ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
       List<ListenableFuture<ExecResponse>> futures = new ArrayList<ListenableFuture<ExecResponse>>();
       try {
-         final AtomicInteger count = new AtomicInteger();
          for (int i = 0; i < 100; i++) {
             futures.add(executor.submit(new Callable<ExecResponse>() {
                @Override

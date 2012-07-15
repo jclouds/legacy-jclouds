@@ -32,12 +32,10 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -195,9 +193,8 @@ public class ParseAWSErrorFromXmlContentTest {
       }).getInstance(ParseAWSErrorFromXmlContent.class);
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-               .toInputStream(content)));
+      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
+      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

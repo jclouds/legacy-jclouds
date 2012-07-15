@@ -6,7 +6,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.vcloud.director.v1_5.annotations.Session;
 
 import com.google.common.base.Supplier;
@@ -27,7 +26,7 @@ public class AddVCloudAuthorizationToRequest implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, "x-vcloud-authorization", sessionSupplier.get());
+      return request.toBuilder().replaceHeader("x-vcloud-authorization", sessionSupplier.get()).build();
    }
 
 }

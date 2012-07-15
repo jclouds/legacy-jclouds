@@ -21,14 +21,10 @@ package org.jclouds.openstack.swift;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.internal.BaseSwiftExpectTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -40,10 +36,8 @@ public class SwiftClientExpectTest extends BaseSwiftExpectTest<SwiftClient> {
    public void testContainerExistsWhenResponseIs2xxReturnsTrue() throws Exception {
       HttpRequest headContainer = HttpRequest.builder()
             .method("HEAD")
-            .endpoint(URI.create(swiftEndpointWithHostReplaced + "/foo"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint(swiftEndpointWithHostReplaced + "/foo")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse headContainerResponse = HttpResponse.builder().statusCode(200).build();
 
@@ -56,10 +50,8 @@ public class SwiftClientExpectTest extends BaseSwiftExpectTest<SwiftClient> {
    public void testContainerExistsWhenResponseIs404ReturnsFalse() throws Exception {
       HttpRequest headContainer = HttpRequest.builder()
             .method("HEAD")
-            .endpoint(URI.create(swiftEndpointWithHostReplaced + "/foo"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint(swiftEndpointWithHostReplaced + "/foo")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse headContainerResponse = HttpResponse.builder().statusCode(404).build();
 

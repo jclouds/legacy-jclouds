@@ -65,9 +65,9 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String newName = checkNotNull(postParams.remove("newName"), "newName").toString();
       String vApp = checkNotNull(postParams.remove("vApp"), "vApp").toString();
@@ -107,7 +107,7 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
       return rootBuilder.asString(outputProperties);
    }
 
-   protected CloneVAppOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected CloneVAppOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof CloneVAppOptions) {
             return (CloneVAppOptions) arg;

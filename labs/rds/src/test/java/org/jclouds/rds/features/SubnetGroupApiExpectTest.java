@@ -22,7 +22,6 @@ import static org.jclouds.rds.options.ListSubnetGroupsOptions.Builder.afterMarke
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.net.URI;
 import java.util.TimeZone;
 
 import org.jclouds.http.HttpRequest;
@@ -33,8 +32,6 @@ import org.jclouds.rds.parse.DescribeDBSubnetGroupsResponseTest;
 import org.jclouds.rds.parse.GetSubnetGroupResponseTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adrian Cole
@@ -48,10 +45,8 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
 
    HttpRequest get = HttpRequest.builder()
                                        .method("POST")
-                                       .endpoint(URI.create("https://rds.us-east-1.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "rds.us-east-1.amazonaws.com")
-                                                .build())
+                                       .endpoint("https://rds.us-east-1.amazonaws.com/")
+                                       .addHeader("Host", "rds.us-east-1.amazonaws.com")
                                        .payload(
                                           payloadFromStringWithContentType(
                                                 "Action=DescribeDBSubnetGroups" +
@@ -89,10 +84,8 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
 
    HttpRequest list = HttpRequest.builder()
                                        .method("POST")
-                                       .endpoint(URI.create("https://rds.us-east-1.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "rds.us-east-1.amazonaws.com")
-                                                .build())
+                                       .endpoint("https://rds.us-east-1.amazonaws.com/")
+                                       .addHeader("Host", "rds.us-east-1.amazonaws.com")
                                        .payload(
                                           payloadFromStringWithContentType(
                                                    "Action=DescribeDBSubnetGroups" +
@@ -132,10 +125,8 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
       HttpRequest listWithOptions =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://rds.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String>builder()
-                                                 .put("Host", "rds.us-east-1.amazonaws.com")
-                                                 .build())
+                       .endpoint("https://rds.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "rds.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType(
                                                   "Action=DescribeDBSubnetGroups" +
                                                   "&Marker=MARKER" +
@@ -160,10 +151,8 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
    
    HttpRequest delete = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://rds.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                     .put("Host", "rds.us-east-1.amazonaws.com")
-                     .build())
+            .endpoint("https://rds.us-east-1.amazonaws.com/")
+            .addHeader("Host", "rds.us-east-1.amazonaws.com")
             .payload(
                payloadFromStringWithContentType(
                         "Action=DeleteDBSubnetGroup" +

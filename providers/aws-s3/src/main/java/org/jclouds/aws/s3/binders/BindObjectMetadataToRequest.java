@@ -28,7 +28,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.s3.domain.ObjectMetadata;
 
@@ -48,6 +47,7 @@ public class BindObjectMetadataToRequest implements Binder {
       this.metadataPrefixer = checkNotNull(metadataPrefixer, "metadataPrefixer");
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof ObjectMetadata,
@@ -81,7 +81,6 @@ public class BindObjectMetadataToRequest implements Binder {
          headers.put("Content-MD5", base64(md.getContentMetadata().getContentMD5()));
       }
 
-      request = ModifyRequest.replaceHeaders(request, headers.build());
-      return request;
+      return (R) request.toBuilder().replaceHeaders(headers.build()).build();
    }
 }

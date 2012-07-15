@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.Host;
 import org.jclouds.openstack.nova.v2_0.domain.HostResourceUsage;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;

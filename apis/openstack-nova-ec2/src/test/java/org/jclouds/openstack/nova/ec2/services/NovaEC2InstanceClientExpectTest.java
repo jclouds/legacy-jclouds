@@ -4,7 +4,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 
-import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.ec2.domain.BlockDevice;
@@ -15,7 +14,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.ec2.internal.BaseNovaEC2RestClientExpectTest;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -28,8 +26,8 @@ public class NovaEC2InstanceClientExpectTest extends BaseNovaEC2RestClientExpect
             describeAvailabilityZonesRequest,
             describeAvailabilityZonesResponse,
             HttpRequest.builder().method("POST")
-                  .endpoint(URI.create("http://localhost:8773/services/Cloud/"))
-                  .headers(ImmutableMultimap.of("Host", "localhost:8773"))
+                  .endpoint("http://localhost:8773/services/Cloud/")
+                  .addHeader("Host", "localhost:8773")
                   .payload(payloadFromStringWithContentType("Action=DescribeInstances&Signature=kkCE1HzyntmkICEidOizw50B9yjLdNZvAWUXVse1c8o%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nova_ec2_describe_instances.xml")).build()
       ).getInstanceServices();

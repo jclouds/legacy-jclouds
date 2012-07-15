@@ -23,8 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.net.URI;
-
 import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
@@ -46,8 +44,8 @@ public class DeltacloudRedirectionRetryHandlerTest {
    public void test302DoesNotRetryOnDelete() {
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = HttpRequest.builder().method("DELETE").endpoint(URI.create("http://localhost")).build();
-      HttpResponse response = new HttpResponse(302, "HTTP/1.1 302 Found", null);
+      HttpRequest request = HttpRequest.builder().method("DELETE").endpoint("http://localhost").build();
+      HttpResponse response = HttpResponse.builder().statusCode(302).message("HTTP/1.1 302 Found").build();
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
 
@@ -66,8 +64,8 @@ public class DeltacloudRedirectionRetryHandlerTest {
    public void test302DoesRetryOnGET() {
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-      HttpResponse response = new HttpResponse(302, "HTTP/1.1 302 Found", null);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
+      HttpResponse response = HttpResponse.builder().statusCode(302).message("HTTP/1.1 302 Found").build();
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
       expect(command.incrementRedirectCount()).andReturn(1);

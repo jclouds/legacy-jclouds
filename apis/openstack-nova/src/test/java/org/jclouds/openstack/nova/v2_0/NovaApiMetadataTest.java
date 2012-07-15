@@ -1,7 +1,6 @@
 package org.jclouds.openstack.nova.v2_0;
 
 import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
-import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
 import org.testng.annotations.Test;
 
 /**

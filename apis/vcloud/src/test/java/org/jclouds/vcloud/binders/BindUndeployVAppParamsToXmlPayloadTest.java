@@ -55,7 +55,7 @@ public class BindUndeployVAppParamsToXmlPayloadTest {
    public void testSaveStateTrue() throws IOException {
       String expected = "<UndeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\" saveState=\"true\"/>";
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       request.setPayload(expected);
       replay(request);
@@ -71,7 +71,7 @@ public class BindUndeployVAppParamsToXmlPayloadTest {
    public void testDefault() throws IOException {
       String expected = "<UndeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\"/>";
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       request.setPayload(expected);
       replay(request);

@@ -18,7 +18,6 @@
  */
 package org.jclouds.glesys.compute.internal;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
@@ -33,7 +32,6 @@ import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -84,19 +82,17 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
                   .put(HttpRequest
                         .builder()
                         .method("GET")
-                        .endpoint(URI.create("https://api.glesys.com/server/templates/format/json"))
-                        .headers(
-                              ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+                        .endpoint("https://api.glesys.com/server/templates/format/json")
+                        .addHeader("Accept", "application/json")
+                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
                         HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json"))
                               .build())
                   .put(HttpRequest
                         .builder()
                         .method("GET")
-                        .endpoint(URI.create("https://api.glesys.com/server/allowedarguments/format/json"))
-                        .headers(
-                              ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+                        .endpoint("https://api.glesys.com/server/allowedarguments/format/json")
+                        .addHeader("Accept", "application/json")
+                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
                         HttpResponse.builder().statusCode(204)
                               .payload(payloadFromResource("/server_allowed_arguments.json")).build())
                   .putAll(requestsResponses).build(), new AbstractModule() {

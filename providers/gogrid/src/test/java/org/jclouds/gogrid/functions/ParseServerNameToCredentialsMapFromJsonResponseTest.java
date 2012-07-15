@@ -34,7 +34,6 @@ import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -56,7 +55,7 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
 
       ParseServerNameToCredentialsMapFromJsonResponse parser = i
             .getInstance(ParseServerNameToCredentialsMapFromJsonResponse.class);
-      Map<String, Credentials> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Map<String, Credentials> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.size(), 6);
    }
@@ -70,7 +69,6 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
 
       @Provides
       @Singleton
-      @SuppressWarnings("unused")
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());

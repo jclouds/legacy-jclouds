@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -36,6 +35,8 @@ import com.google.common.collect.ImmutableMultimap.Builder;
  */
 @Singleton
 public class BindInstanceIdsToIndexedFormParams implements Binder {
+   
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       Iterable<?> values = Iterable.class.cast(checkNotNull(input, "instanceIds"));
@@ -45,7 +46,7 @@ public class BindInstanceIdsToIndexedFormParams implements Binder {
          builder.put("Instances.member." + (i++ + 1) + ".InstanceId", o.toString());
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return (R) (forms.size() == 0 ? request : request.toBuilder().replaceFormParams(forms).build());
    }
 
 }

@@ -22,8 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -118,7 +118,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       createServerOptions.description(name); // TODO: add to templateOptions and
                                              // set if present
 
-      ServerSpec.Builder builder = ServerSpec.builder();
+      ServerSpec.Builder<?> builder = ServerSpec.builder();
       builder.datacenter(template.getLocation().getId());
       builder.templateName(template.getImage().getId());
       builder.platform(template.getHardware().getHypervisor());

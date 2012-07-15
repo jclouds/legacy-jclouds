@@ -58,7 +58,7 @@ public class BlobToObjectMetadata implements Function<BlobMetadata, MutableObjec
 
    @Override
    public BlobToObjectMetadata setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
+      checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
       return setBucket(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
    }
 

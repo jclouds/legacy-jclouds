@@ -59,7 +59,6 @@ public abstract class BaseEC2HandlerTest extends BaseHandlerTest {
 
          }
 
-         @SuppressWarnings("unused")
          @Singleton
          @Provides
          @org.jclouds.location.Region
@@ -67,7 +66,6 @@ public abstract class BaseEC2HandlerTest extends BaseHandlerTest {
             return Suppliers.ofInstance(defaultRegion);
          }
 
-         @SuppressWarnings("unused")
          @Singleton
          @Provides
          @Zone
@@ -77,7 +75,6 @@ public abstract class BaseEC2HandlerTest extends BaseHandlerTest {
                      .<Set<String>> ofInstanceFunction()));
          }
 
-         @SuppressWarnings("unused")
          @Singleton
          @Provides
          @Zone

@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -55,7 +54,6 @@ public class BindAddNodeServiceToXmlPayloadTest {
                   "urn:tmrk:vCloudExpressExtensions-1.6");
       }
 
-      @SuppressWarnings("unused")
       @Singleton
       @Provides
       @Named("CreateNodeService")
@@ -68,7 +66,7 @@ public class BindAddNodeServiceToXmlPayloadTest {
    public void testApplyInputStream() throws IOException {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/CreateNodeService-test.xml"));
-      HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
       BindAddNodeServiceToXmlPayload binder = injector
                .getInstance(BindAddNodeServiceToXmlPayload.class);
 

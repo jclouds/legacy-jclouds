@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
@@ -59,7 +58,7 @@ public class JsonBallTest {
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("tomcat6", new JsonBall("{\"ssl_port\":8433}"));
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
+      assertEquals(handler.apply(HttpResponse.builder().statusCode(200).message("ok").payload(json).build()), map);
       assertEquals(mapper.toJson(map), json);
 
    }
@@ -69,7 +68,7 @@ public class JsonBallTest {
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("list", new JsonBall("[8431,8433]"));
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
+      assertEquals(handler.apply(HttpResponse.builder().statusCode(200).message("ok").payload(json).build()), map);
       assertEquals(mapper.toJson(map), json);
 
    }
@@ -79,7 +78,7 @@ public class JsonBallTest {
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("name", new JsonBall("fooy"));
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
+      assertEquals(handler.apply(HttpResponse.builder().statusCode(200).message("ok").payload(json).build()), map);
       assertEquals(mapper.toJson(map), json);
 
    }
@@ -89,7 +88,7 @@ public class JsonBallTest {
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("number", new JsonBall(1.0));
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
+      assertEquals(handler.apply(HttpResponse.builder().statusCode(200).message("ok").payload(json).build()), map);
       assertEquals(mapper.toJson(map), json);
 
    }
@@ -100,7 +99,7 @@ public class JsonBallTest {
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("boolean", new JsonBall(false));
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
+      assertEquals(handler.apply(HttpResponse.builder().statusCode(200).message("ok").payload(json).build()), map);
       assertEquals(mapper.toJson(map), json);
 
    }

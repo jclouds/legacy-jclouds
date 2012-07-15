@@ -21,7 +21,6 @@ package org.jclouds.s3.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -149,7 +148,7 @@ public class S3ParserTest extends PerformanceTest {
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {
       return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class)).setContext(
-               HttpRequest.builder().method("GET").endpoint(URI.create("http://bucket.com")).build()).parse(
+               HttpRequest.builder().method("GET").endpoint("http://bucket.com").build()).parse(
                Strings2.toInputStream(listContainerResult));
    }
 

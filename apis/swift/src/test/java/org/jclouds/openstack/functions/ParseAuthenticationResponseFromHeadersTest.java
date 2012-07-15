@@ -31,7 +31,6 @@ import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -43,7 +42,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ParseAuthenticationResponseFromHeadersTest")
 public class ParseAuthenticationResponseFromHeadersTest {
 
    Injector i = Guice.createInjector(new AbstractModule() {
@@ -61,8 +60,10 @@ public class ParseAuthenticationResponseFromHeadersTest {
       ParseAuthenticationResponseFromHeaders parser = i.getInstance(ParseAuthenticationResponseFromHeaders.class);
       parser = parser.setHostToReplace("fooman");
       
-      HttpResponse response = new HttpResponse(204, "No Content", null, ImmutableMultimap.<String, String> of(
-               "X-Auth-Token", "token", "X-Storage-Token", "token", "X-Storage-Url", "http://127.0.0.1:8080/v1/token"));
+      HttpResponse response = HttpResponse.builder().statusCode(204).message("No Content")
+                                          .addHeader("X-Auth-Token", "token")
+                                          .addHeader("X-Storage-Token", "token")
+                                          .addHeader("X-Storage-Url", "http://127.0.0.1:8080/v1/token").build();
 
       AuthenticationResponse md = parser.apply(response);
       assertEquals(md, new AuthenticationResponse("token", ImmutableMap.<String, URI> of("X-Storage-Url", URI

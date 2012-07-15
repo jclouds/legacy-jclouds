@@ -88,7 +88,6 @@ public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<Ter
          public void configure(Binder binder) {
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @VCloudLogin
          Supplier<URI> provideURI(@Provider Supplier<URI> uri) {

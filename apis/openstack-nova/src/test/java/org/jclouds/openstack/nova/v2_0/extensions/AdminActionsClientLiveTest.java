@@ -27,7 +27,6 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.nova.v2_0.domain.BackupType;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.domain.Server.Status;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsClient;
 import org.jclouds.openstack.nova.v2_0.features.ExtensionClient;
 import org.jclouds.openstack.nova.v2_0.features.ImageClient;
 import org.jclouds.openstack.nova.v2_0.features.ServerClient;

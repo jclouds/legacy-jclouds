@@ -20,12 +20,18 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.util.Multimaps2;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
@@ -35,36 +41,142 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class HttpMessage extends PayloadEnclosingImpl {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromHttpMessage(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected ImmutableMultimap.Builder<String, String> headers = ImmutableMultimap.<String, String>builder();
       protected Payload payload;
-      protected Multimap<String, String> headers = ImmutableMultimap.of();
 
-      public Builder payload(Payload payload) {
+      /**
+       * @see HttpMessage#getPayload()
+       */
+      public T payload(Payload payload) {
          this.payload = payload;
-         return this;
+         return self();
+      }
+      
+      /**
+       * @see HttpMessage#getPayload()
+       */
+      public T payload(byte [] payload) {
+         this.payload = Payloads.newByteArrayPayload(checkNotNull(payload, "payload"));
+         return self();
+      }
+      
+      /**
+       * @see HttpMessage#getPayload()
+       */
+      public T payload(File payload) {
+         this.payload = Payloads.newFilePayload(checkNotNull(payload, "payload"));
+         return self();
+      }
+      
+      /**
+       * @see HttpMessage#getPayload()
+       */
+      public T payload(InputStream payload) {
+         this.payload = Payloads.newInputStreamPayload(checkNotNull(payload, "payload"));
+         return self();
+      }
+      
+      /**
+       * @see HttpMessage#getPayload()
+       */
+      public T payload(String payload) {
+         this.payload = Payloads.newStringPayload(checkNotNull(payload, "payload"));
+         return self();
       }
 
-      public Builder headers(Multimap<String, String> headers) {
-         this.headers = ImmutableMultimap.copyOf(checkNotNull(headers, "headers"));
-         return this;
+      /**
+       * replaces all headers with the the supplied multimap.
+       * 
+       * @see HttpMessage#getHeaders()
+       */
+      public T headers(Multimap<String, String> headers) {
+         this.headers = ImmutableMultimap.<String, String> builder();
+         this.headers.putAll(checkNotNull(headers, "headers"));
+         return self();
+      }
+      
+      /**
+       * replace all headers that have the same keys as the input multimap
+       * 
+       * @see HttpMessage#getHeaders()
+       */
+      public T replaceHeaders(Multimap<String, String> headers) {
+         checkNotNull(headers, "headers");
+         Multimap<String, String> oldHeaders = this.headers.build();
+         this.headers = ImmutableMultimap.<String, String> builder();
+         this.headers.putAll(Multimaps2.replaceEntries(oldHeaders, headers));
+         return self();
+      }
+      
+      /**
+       * replace all headers that have the same keys as the input multimap
+       * 
+       * @see HttpMessage#getHeaders()
+       */
+      public T removeHeader(String name) {
+         checkNotNull(name, "name");
+         Multimap<String, String> oldHeaders = this.headers.build();
+         this.headers = ImmutableMultimap.<String, String> builder();
+         this.headers.putAll(Multimaps2.withoutKey(oldHeaders, name));
+         return self();
+      }
+      
+      /**
+       * Note that if there's an existing header of the same name, this will only add the new value,
+       * not replace it.
+       * 
+       * @see HttpMessage#getHeaders()
+       */
+      public T addHeader(String name, String ... values) {
+         this.headers.putAll(checkNotNull(name, "name"), checkNotNull(values, "values of %s", name));
+         return self();
       }
 
+      /**
+       * 
+       * Repla
+       * 
+       * @see HttpMessage#getHeaders()
+       */
+      public T replaceHeader(String name, String ... values) {
+         checkNotNull(name, "name");
+         checkNotNull(values, "values of %s", name);
+         return replaceHeaders(ImmutableMultimap.<String, String> builder().putAll(name, values).build());
+      }
+      
       public HttpMessage build() {
-         return new HttpMessage(payload, headers);
+         return new HttpMessage(headers.build(), payload);
       }
 
-      public static Builder from(HttpMessage input) {
-         return new Builder().payload(input.getPayload()).headers(input.getHeaders());
+      public T fromHttpMessage(HttpMessage in) {
+         return this
+               .headers(in.getHeaders())
+               .payload(in.getPayload());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
       }
    }
 
    protected final Multimap<String, String> headers;
 
-   public HttpMessage(@Nullable Payload payload, Multimap<String, String> headers) {
+   protected HttpMessage(Multimap<String, String> headers, @Nullable Payload payload) {
       super(payload);
       this.headers = ImmutableMultimap.copyOf(checkNotNull(headers, "headers"));
    }
@@ -83,38 +195,29 @@ public class HttpMessage extends PayloadEnclosingImpl {
       return (values.size() >= 1) ? values.iterator().next() : null;
    }
 
-   public Builder toBuilder() {
-      return Builder.from(this);
-   }
-
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-      return result;
+      return Objects.hashCode(headers, payload);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      HttpMessage other = (HttpMessage) obj;
-      if (headers == null) {
-         if (other.headers != null)
-            return false;
-      } else if (!headers.equals(other.headers))
-         return false;
-      return true;
+      if (this == obj) return true;
+      // testing equals by value, not by type
+      if (!(obj instanceof HttpMessage)) return false;
+      HttpMessage that = HttpMessage.class.cast(obj);
+      return Objects.equal(this.headers, that.headers)
+            && Objects.equal(this.payload, that.payload);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").omitNullValues()
+                    .add("headers", headers)
+                    .add("payload", payload);
    }
 
    @Override
    public String toString() {
-      return "[headers=" + headers + ", payload=" + payload + "]";
+      return string().toString();
    }
-
 }

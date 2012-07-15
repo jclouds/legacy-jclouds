@@ -21,7 +21,6 @@ package org.jclouds.s3.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -48,7 +47,7 @@ public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest<S
 
    public void testApplyInputStream() throws IOException {
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
       BindNoBucketLoggingToXmlPayload binder = injector.getInstance(BindNoBucketLoggingToXmlPayload.class);
 
       request = binder.bindToRequest(request, "bucket");

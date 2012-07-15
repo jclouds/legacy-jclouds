@@ -23,8 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 
-import javax.ws.rs.HttpMethod;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -33,7 +31,6 @@ import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests behavior of {@code BindSwiftObjectMetadataToRequest}
@@ -52,7 +49,7 @@ public class BindSwiftObjectMetadataToRequestTest extends CommonSwiftClientTest 
       object.setPayload(payload);
       object.getInfo().setName("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindSwiftObjectMetadataToRequest binder = injector.getInstance(BindSwiftObjectMetadataToRequest.class);
 
       assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
@@ -68,11 +65,11 @@ public class BindSwiftObjectMetadataToRequestTest extends CommonSwiftClientTest 
       object.getInfo().setName("foo");
       object.getInfo().getMetadata().putAll(ImmutableMap.of("foo", "bar"));
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindSwiftObjectMetadataToRequest binder = injector.getInstance(BindSwiftObjectMetadataToRequest.class);
 
-      assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
-               URI.create("http://localhost")).headers(ImmutableMultimap.of("X-Object-Meta-foo", "bar")).build());
+      assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT")
+               .endpoint("http://localhost").addHeader("X-Object-Meta-foo", "bar").build());
    }
 
    public void testNoContentLengthIsChunked() {
@@ -82,11 +79,11 @@ public class BindSwiftObjectMetadataToRequestTest extends CommonSwiftClientTest 
       object.setPayload(payload);
       object.getInfo().setName("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindSwiftObjectMetadataToRequest binder = injector.getInstance(BindSwiftObjectMetadataToRequest.class);
 
-      assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
-               URI.create("http://localhost")).headers(ImmutableMultimap.of("Transfer-Encoding", "chunked")).build());
+      assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT")
+               .endpoint("http://localhost").addHeader("Transfer-Encoding", "chunked").build());
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -96,7 +93,7 @@ public class BindSwiftObjectMetadataToRequestTest extends CommonSwiftClientTest 
       payload.getContentMetadata().setContentLength(5368709120000l);
       object.setPayload(payload);
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindSwiftObjectMetadataToRequest binder = injector.getInstance(BindSwiftObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
@@ -109,21 +106,21 @@ public class BindSwiftObjectMetadataToRequestTest extends CommonSwiftClientTest 
       object.setPayload(payload);
       object.getInfo().setName("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindSwiftObjectMetadataToRequest binder = injector.getInstance(BindSwiftObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeSwiftObject() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       injector.getInstance(BindSwiftObjectMetadataToRequest.class).bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
       BindSwiftObjectMetadataToRequest binder = injector.getInstance(BindSwiftObjectMetadataToRequest.class);
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 

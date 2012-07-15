@@ -160,10 +160,9 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createSecurityGroupRule = HttpRequest
                .builder()
                .method("POST")
-               .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules"))
-               .headers(
-                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put(
-                                 "X-Auth-Token", authToken).build())
+               .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
                .payload(
                         payloadFromStringWithContentType(
                                  "{\"security_group_rule\":{\"parent_group_id\":\"161\",\"cidr\":\"0.0.0.0/0\",\"ip_protocol\":\"tcp\",\"from_port\":\"80\",\"to_port\":\"8080\"}}",
@@ -186,10 +185,9 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createSecurityGroupRule = HttpRequest
                .builder()
                .method("POST")
-               .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules"))
-               .headers(
-                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put(
-                                 "X-Auth-Token", authToken).build())
+               .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules")
+               .addHeader("Accept", "application/json")
+               .addHeader("X-Auth-Token", authToken)
                .payload(
                         payloadFromStringWithContentType(
                                  "{\"security_group_rule\":{\"group_id\":\"999\",\"parent_group_id\":\"161\",\"ip_protocol\":\"tcp\",\"from_port\":\"80\",\"to_port\":\"8080\"}}",

@@ -86,6 +86,8 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
                .name("OpenStack Swift with Keystone authentication")
                .identityName("tenantName:user or user")
                .credentialName("password")
+               .defaultEndpoint("http://localhost:5000")
+               .endpointName("keystone url")
                .context(CONTEXT_TOKEN)
                .defaultProperties(SwiftKeystoneApiMetadata.defaultProperties())
                .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, KeystoneAuthenticationModule.RegionModule.class,

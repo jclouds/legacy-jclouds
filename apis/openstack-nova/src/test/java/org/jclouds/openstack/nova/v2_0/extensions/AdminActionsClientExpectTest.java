@@ -27,8 +27,8 @@ import java.net.URI;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.BackupType;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateBackupOfServerOptions;
 import org.jclouds.rest.AuthorizationException;
@@ -36,7 +36,6 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests parsing and guice wiring of AdminActionsClient
@@ -52,7 +51,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.suspendServer("1"));
@@ -64,7 +63,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.suspendServer("1"));
@@ -77,7 +76,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
-            standardResponseBuilder(403).build()
+            HttpResponse.builder().statusCode(403).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       client.suspendServer("1");
@@ -89,7 +88,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.resumeServer("1"));
@@ -101,7 +100,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.resumeServer("1"));
@@ -114,7 +113,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
-            standardResponseBuilder(403).build()
+            HttpResponse.builder().statusCode(403).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       client.resumeServer("1");
@@ -126,7 +125,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "lock").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.lockServer("1"));
@@ -138,7 +137,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "lock").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.lockServer("1"));
@@ -150,7 +149,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unlock").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.unlockServer("1"));
@@ -162,7 +161,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unlock").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.unlockServer("1"));
@@ -174,7 +173,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "pause").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.pauseServer("1"));
@@ -186,7 +185,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "pause").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.pauseServer("1"));
@@ -198,7 +197,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unpause").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.unpauseServer("1"));
@@ -210,7 +209,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unpause").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.unpauseServer("1"));
@@ -222,7 +221,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "migrate").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.migrateServer("1"));
@@ -235,7 +234,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "migrate").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.migrateServer("1"));
@@ -247,7 +246,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resetNetwork").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.resetNetworkOfServer("1"));
@@ -259,7 +258,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resetNetwork").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.resetNetworkOfServer("1"));
@@ -271,7 +270,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "injectNetworkInfo").build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.injectNetworkInfoIntoServer("1"));
@@ -283,20 +282,19 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "injectNetworkInfo").build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.injectNetworkInfoIntoServer("1"));
    }
    
    public void testBackupServer() {
-      URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
       AdminActionsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action").method("POST")
                   .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(202).headers(ImmutableMultimap.of("Location", "http://172.16.89.149:8774/v2/images/1976b3b3-409a-468d-b16c-a9172c341b46")).build()
+            HttpResponse.builder().statusCode(202).addHeader("Location", "http://172.16.89.149:8774/v2/images/1976b3b3-409a-468d-b16c-a9172c341b46").build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       String imageId = client.createBackupOfServer("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
@@ -309,9 +307,9 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
       AdminActionsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("POST")
+            authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       client.createBackupOfServer("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
@@ -324,7 +322,7 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
                   .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(202).build()
+            HttpResponse.builder().statusCode(202).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.liveMigrateServer("1", "bighost", true, false));
@@ -337,17 +335,18 @@ public class AdminActionsClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
                   .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(404).build()
+            HttpResponse.builder().statusCode(404).build()
       ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.liveMigrateServer("1", "bighost", true, false));
    }
    
-   protected HttpRequest.Builder standardActionRequestBuilderVoidResponse(URI endpoint, String actionName) {
-      return HttpRequest.builder().method("POST")
-            .headers(ImmutableMultimap.of("X-Auth-Token", authToken))
-            .payload(payloadFromStringWithContentType("{\"" + actionName + "\":null}", MediaType.APPLICATION_JSON))
-            .endpoint(endpoint);
+   protected HttpRequest.Builder<?> standardActionRequestBuilderVoidResponse(URI endpoint, String actionName) {
+      return HttpRequest.builder()
+                        .method("POST")
+                        .addHeader("X-Auth-Token", authToken)
+                        .payload(payloadFromStringWithContentType("{\"" + actionName + "\":null}", MediaType.APPLICATION_JSON))
+                        .endpoint(endpoint);
    }
 
 }

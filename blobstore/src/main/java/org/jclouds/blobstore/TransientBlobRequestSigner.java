@@ -29,7 +29,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.location.Provider;
@@ -59,7 +58,7 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signGetBlob(String container, String name) {
-      HttpRequest request = new HttpRequest("GET", URI.create(String.format("%s/%s/%s", endpoint.get(), container, name)));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(String.format("%s/%s/%s", endpoint.get(), container, name)).build();
       return basicAuth.filter(request);
    }
 
@@ -74,8 +73,8 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signRemoveBlob(String container, String name) {
-      HttpRequest request = new HttpRequest("DELETE", URI.create(String.format("%s/%s/%s", endpoint.get(), container,
-               name)));
+      HttpRequest request = HttpRequest.builder().method("DELETE").endpoint(String.format("%s/%s/%s", endpoint.get(), container,
+               name)).build();
       return basicAuth.filter(request);
    }
 

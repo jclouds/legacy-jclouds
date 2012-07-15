@@ -18,18 +18,29 @@
  */
 package org.jclouds.glesys.features;
 
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.glesys.domain.*;
+import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
+import org.jclouds.glesys.domain.Console;
+import org.jclouds.glesys.domain.Cost;
+import org.jclouds.glesys.domain.Ip;
+import org.jclouds.glesys.domain.OSTemplate;
+import org.jclouds.glesys.domain.ResourceStatus;
+import org.jclouds.glesys.domain.ResourceUsage;
+import org.jclouds.glesys.domain.ResourceUsageInfo;
+import org.jclouds.glesys.domain.ResourceUsageValue;
+import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerSpec;
+import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.domain.ServerUptime;
 import org.jclouds.glesys.internal.BaseGleSYSClientExpectTest;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
@@ -42,7 +53,6 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -56,10 +66,9 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/list/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/list/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_list.json")).build()).getServerClient();
       Server expected = Server.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ").build();
 
@@ -68,10 +77,9 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListServersWhenReponseIs404IsEmpty() {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/list/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/list/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getServerClient();
 
       assertTrue(client.listServers().isEmpty());
@@ -79,10 +87,9 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetAllowedArgumentsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(URI.create("https://api.glesys.com/server/allowedarguments/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/server/allowedarguments/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_allowed_arguments.json")).build()).getServerClient();
 
       Map<String, AllowedArgumentsForCreateServer> expected = new LinkedHashMap<String, AllowedArgumentsForCreateServer>();
@@ -115,10 +122,9 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetTemplatesWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("GET").endpoint(URI.create("https://api.glesys.com/server/templates/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("GET").endpoint("https://api.glesys.com/server/templates/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json")).build()).getServerClient();
 
       ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.builder();
@@ -146,13 +152,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetServerDetailsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/details/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("includestate", "true")
-                        .put("serverid", "xm3276891").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/details/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("includestate", "true")
+                       .addFormParam("serverid", "xm3276891").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
 
       ServerDetails actual = client.getServerDetails("xm3276891");
@@ -170,13 +174,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test
    public void testServerDetailsWhenResponseIs4xxReturnsNull() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/details/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("includestate", "true")
-                        .put("serverid", "xm3276891").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/details/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("includestate", "true")
+                       .addFormParam("serverid", "xm3276891").build(),
             HttpResponse.builder().statusCode(404).build()).getServerClient();
 
       assertNull(client.getServerDetails("xm3276891"));
@@ -185,21 +187,18 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test
    public void testCreateServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/create/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("hostname", "jclouds-test")
-                        .put("rootpassword", "password")
-                        .put("datacenter", "Falkenberg")
-                        .put("platform", "OpenVZ")
-                        .put("templatename", "Ubuntu 32-bit")
-                        .put("disksize", "5")
-                        .put("memorysize", "512")
-                        .put("cpucores", "1")
-                        .put("transfer", "50")
-                        .build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/create/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("hostname", "jclouds-test")
+                       .addFormParam("rootpassword", "password")
+                       .addFormParam("datacenter", "Falkenberg")
+                       .addFormParam("platform", "OpenVZ")
+                       .addFormParam("templatename", "Ubuntu 32-bit")
+                       .addFormParam("disksize", "5")
+                       .addFormParam("memorysize", "512")
+                       .addFormParam("cpucores", "1")
+                       .addFormParam("transfer", "50").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_noip.json")).build()).getServerClient();
 
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
@@ -215,23 +214,20 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testCreateServerWithOptsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/create/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("hostname", "jclouds-test")
-                        .put("rootpassword", "password")
-                        .put("datacenter", "Falkenberg")
-                        .put("platform", "OpenVZ")
-                        .put("templatename", "Ubuntu 32-bit")
-                        .put("disksize", "5")
-                        .put("memorysize", "512")
-                        .put("cpucores", "1")
-                        .put("transfer", "50")
-                        .put("ip", "10.0.0.1")
-                        .put("description", "Description-of-server")
-                        .build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/create/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("hostname", "jclouds-test")
+                       .addFormParam("rootpassword", "password")
+                       .addFormParam("datacenter", "Falkenberg")
+                       .addFormParam("platform", "OpenVZ")
+                       .addFormParam("templatename", "Ubuntu 32-bit")
+                       .addFormParam("disksize", "5")
+                       .addFormParam("memorysize", "512")
+                       .addFormParam("cpucores", "1")
+                       .addFormParam("transfer", "50")
+                       .addFormParam("ip", "10.0.0.1")
+                       .addFormParam("description", "Description-of-server").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
 
       CreateServerOptions options = CreateServerOptions.Builder.description("Description-of-server").ip("10.0.0.1");
@@ -245,15 +241,12 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test
    public void testEditServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/edit/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891")
-                        .put("description", "this is a different description!")
-                        .put("hostname", "new-hostname")
-                        .build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/edit/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "xm3276891")
+                       .addFormParam("description", "this is a different description!")
+                       .addFormParam("hostname", "new-hostname").build(),
             HttpResponse.builder().statusCode(206).build()).getServerClient();
 
       client.editServer("xm3276891", EditServerOptions.Builder.description("this is a different description!"),
@@ -263,18 +256,15 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test
    public void testEditServerWithOptsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/edit/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891")
-                        .put("description", "Description-of-server")
-                        .put("disksize", "1")
-                        .put("memorysize", "512")
-                        .put("cpucores", "1")
-                        .put("hostname", "jclouds-test")
-                        .build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/edit/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "xm3276891")
+                       .addFormParam("description", "Description-of-server")
+                       .addFormParam("disksize", "1")
+                       .addFormParam("memorysize", "512")
+                       .addFormParam("cpucores", "1")
+                       .addFormParam("hostname", "jclouds-test").build(),
             HttpResponse.builder().statusCode(200).build()).getServerClient();
 
       EditServerOptions options =
@@ -286,13 +276,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test
    public void testCloneServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/clone/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891")
-                        .put("hostname", "hostname1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/clone/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "xm3276891")
+                       .addFormParam("hostname", "hostname1").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
 
       assertEquals(client.cloneServer("xm3276891", "hostname1"), expectedServerDetails());
@@ -301,17 +289,15 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test
    public void testCloneServerWithOptsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/clone/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891")
-                        .put("hostname", "hostname1")
-                        .put("description", "Description-of-server")
-                        .put("disksize", "1")
-                        .put("memorysize", "512")
-                        .put("cpucores", "1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/clone/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "xm3276891")
+                       .addFormParam("hostname", "hostname1")
+                       .addFormParam("description", "Description-of-server")
+                       .addFormParam("disksize", "1")
+                       .addFormParam("memorysize", "512")
+                       .addFormParam("cpucores", "1").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
       CloneServerOptions options = (CloneServerOptions) CloneServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1);
 
@@ -321,13 +307,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {ResourceNotFoundException.class})
    public void testCloneServerWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/clone/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891")
-                        .put("hostname", "hostname1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/clone/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "xm3276891")
+                       .addFormParam("hostname", "hostname1").build(),
             HttpResponse.builder().statusCode(404).build()).getServerClient();
 
       client.cloneServer("xm3276891", "hostname1");
@@ -335,12 +319,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetServerStatusWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/status/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "xm3276891").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/status/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "xm3276891").build(),
             HttpResponse.builder().statusCode(206).payload(payloadFromResource("/server_status.json")).build())
             .getServerClient();
 
@@ -349,12 +331,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetServerStatusWithOptsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/status/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server321").put("statustype", "state").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/status/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server321")
+                       .addFormParam("statustype", "state").build(),
             HttpResponse.builder().statusCode(206).payload(payloadFromResource("/server_status.json")).build())
             .getServerClient();
 
@@ -363,12 +344,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetServerStatusWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/status/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server321").put("statustype", "state").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/status/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server321")
+                       .addFormParam("statustype", "state").build(),
             HttpResponse.builder().statusCode(404).build())
             .getServerClient();
 
@@ -377,12 +357,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetServerLimitsWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/limits/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server321").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/limits/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server321").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_limits.json")).build())
             .getServerClient();
 
@@ -391,12 +369,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetConsoleWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/console/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server322").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/console/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server322").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_console.json")).build())
             .getServerClient();
 
@@ -407,12 +383,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testGetConsoleWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/console/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server322").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/console/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server322").build(),
             HttpResponse.builder().statusCode(404).build())
             .getServerClient();
 
@@ -421,12 +395,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testStartServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/start/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/start/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
@@ -436,12 +408,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {AuthorizationException.class})
    public void testStartServerWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/start/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/start/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 
@@ -450,12 +420,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testStopServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/stop/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/stop/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
@@ -464,12 +432,11 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testHardStopServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/stop/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("type", "hard").put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/stop/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("type", "hard")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
@@ -479,12 +446,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {AuthorizationException.class})
    public void testStopServerWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/stop/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/stop/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 
@@ -493,12 +458,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testRebootServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/reboot/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/reboot/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
@@ -508,12 +471,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {AuthorizationException.class})
    public void testRebootServerWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/reboot/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/reboot/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777").build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 
@@ -522,11 +483,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testDestroyServerWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/destroy/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("keepip", "true").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/destroy/format/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777")
+                       .addFormParam("keepip", "true").build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
@@ -536,11 +496,10 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {AuthorizationException.class})
    public void testDestroyServerWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/destroy/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("keepip", "false").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/destroy/format/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777")
+                       .addFormParam("keepip", "false").build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 
@@ -549,12 +508,12 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testResourceUsageWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/resourceusage/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("resolution", "minute").put("resource", "diskioread").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/resourceusage/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777")
+                       .addFormParam("resolution", "minute")
+                       .addFormParam("resource", "diskioread").build(),
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromResourceWithContentType("/server_resource_usage.json", MediaType.APPLICATION_JSON))
                   .build())
@@ -578,12 +537,12 @@ public class ServerClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {AuthorizationException.class})
    public void testResouceUsageWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/resourceusage/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("resolution", "minute").put("resource", "diskioread").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/resourceusage/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("serverid", "server777")
+                       .addFormParam("resolution", "minute")
+                       .addFormParam("resource", "diskioread").build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 

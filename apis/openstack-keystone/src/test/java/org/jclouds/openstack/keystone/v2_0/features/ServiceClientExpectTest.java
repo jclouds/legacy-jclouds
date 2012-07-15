@@ -26,6 +26,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestClientExpectTest;
@@ -45,9 +46,9 @@ public class ServiceClientExpectTest extends BaseKeystoneRestClientExpectTest<Ke
       ServiceClient client = requestsSendResponses(
                keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess,
-               standardRequestBuilder(endpoint + "/v2.0/tenants").build(),
-               standardResponseBuilder(200).payload(
-                        payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
+               authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
+               HttpResponse.builder().statusCode(200)
+                        .payload(payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
                .getServiceClient();
       Set<Tenant> tenants = client.listTenants();
       assertNotNull(tenants);
@@ -61,8 +62,8 @@ public class ServiceClientExpectTest extends BaseKeystoneRestClientExpectTest<Ke
 
    public void testListTenantsFailNotFound() {
       ServiceClient client = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-               standardRequestBuilder(endpoint + "/v2.0/tenants").build(), standardResponseBuilder(404).build())
-               .getServiceClient();
+               authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
+               HttpResponse.builder().statusCode(404).build()).getServiceClient();
       assertTrue(client.listTenants().isEmpty());
    }
 }

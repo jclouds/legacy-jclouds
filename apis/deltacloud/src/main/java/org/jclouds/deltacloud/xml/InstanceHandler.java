@@ -93,8 +93,8 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
          try {
             Instance.Action action = Instance.Action.fromValue(attributes.get("rel"));
             if (action != Instance.Action.UNRECOGNIZED) {
-               HttpRequest request = new HttpRequest(attributes.get("method").toUpperCase(), URI.create(attributes
-                        .get("href")));
+               HttpRequest request = HttpRequest.builder().method(attributes.get("method").toUpperCase()).endpoint(attributes
+                        .get("href")).build();
                actions.put(action, request);
             }
          } catch (RuntimeException e) {

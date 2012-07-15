@@ -40,18 +40,12 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.net.URI;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -90,7 +84,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
@@ -98,7 +91,6 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.DelegatingPayload;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -418,8 +410,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    public static HttpResponseException returnResponseException(int code) {
-      HttpResponse response = null;
-      response = new HttpResponse(code, null, null);
+      HttpResponse response = HttpResponse.builder().statusCode(code).build();
       return new HttpResponseException(new HttpCommand() {
 
          public int getRedirectCount() {
@@ -452,7 +443,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
          @Override
          public HttpRequest getCurrentRequest() {
-            return new HttpRequest("GET", URI.create("http://stub"));
+            return HttpRequest.builder().method("GET").endpoint("http://stub").build();
          }
 
          @Override
@@ -569,7 +560,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          if (options.getIfModifiedSince() != null) {
             Date modifiedSince = options.getIfModifiedSince();
             if (blob.getMetadata().getLastModified().before(modifiedSince)) {
-               HttpResponse response = new HttpResponse(304, null, null);
+               HttpResponse response = HttpResponse.builder().statusCode(304).build();
                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is before %2$s", blob
                      .getMetadata().getLastModified(), modifiedSince), null, response));
             }
@@ -578,7 +569,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          if (options.getIfUnmodifiedSince() != null) {
             Date unmodifiedSince = options.getIfUnmodifiedSince();
             if (blob.getMetadata().getLastModified().after(unmodifiedSince)) {
-               HttpResponse response = new HttpResponse(412, null, null);
+               HttpResponse response = HttpResponse.builder().statusCode(412).build();
                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is after %2$s", blob
                      .getMetadata().getLastModified(), unmodifiedSince), null, response));
             }

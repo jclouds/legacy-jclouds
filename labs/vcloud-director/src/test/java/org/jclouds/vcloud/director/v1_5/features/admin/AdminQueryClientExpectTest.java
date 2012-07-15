@@ -32,8 +32,6 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * Test the {@link AdminQueryClient} by observing its side effects.
  * 
@@ -51,11 +49,9 @@ public class AdminQueryClientExpectTest extends VCloudDirectorAdminClientExpectT
       
       HttpRequest queryRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/admin/groups/query"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
+              .endpoint(endpoint + "/admin/groups/query")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token)
               .build();
 
       HttpResponse queryResponse= HttpResponse.builder()
@@ -99,11 +95,9 @@ public class AdminQueryClientExpectTest extends VCloudDirectorAdminClientExpectT
       
       HttpRequest queryRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create(endpoint + "/admin/roles/query"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "*/*")
-                                .put("x-vcloud-authorization", token)
-                                .build())
+              .endpoint(endpoint + "/admin/roles/query")
+              .addHeader("Accept", "*/*")
+              .addHeader("x-vcloud-authorization", token)
               .build();
 
       HttpResponse queryResponse= HttpResponse.builder()

@@ -80,7 +80,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().changeNameTo("roberto");
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
       request.setPayload(expected);
@@ -116,7 +116,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
       request.setPayload(expected);
@@ -145,7 +145,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
       VAppConfiguration config = changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1).addDisk(
                25 * 1048576).addDisk(25 * 1048576);
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
       request.setPayload(expected);
@@ -172,7 +172,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().changeProcessorCountTo(4);
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
       request.setPayload(expected);
@@ -201,7 +201,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().changeMemoryTo(1536);
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
       request.setPayload(expected);

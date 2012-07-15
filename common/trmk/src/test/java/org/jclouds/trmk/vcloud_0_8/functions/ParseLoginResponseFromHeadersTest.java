@@ -25,7 +25,6 @@ import java.net.URI;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.io.Payloads;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
@@ -33,7 +32,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests behavior of {@code ParseLoginResponseFromHeaders}
@@ -54,9 +52,9 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test
    public void testApply() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("x-vcloud-authorization",
-               "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/"));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml"))
+                                          .addHeader("x-vcloud-authorization", "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/").build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -69,9 +67,9 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test
    public void testApplyBlueLock() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("x-vcloud-authorization",
-               "MUKOJ2HoAfoMmLnHRp4esNb2MtWscCLLhVysnsIsCG0="));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml"))
+                                          .addHeader("x-vcloud-authorization", "MUKOJ2HoAfoMmLnHRp4esNb2MtWscCLLhVysnsIsCG0=").build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -84,9 +82,9 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test
    public void testApplyTerremark() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("Set-Cookie",
-               "vcloud-token=37ce2715-9aba-4f48-8e45-2db8a8da702d; path=/"));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml"))
+                                          .addHeader("Set-Cookie", "vcloud-token=37ce2715-9aba-4f48-8e45-2db8a8da702d; path=/").build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -99,10 +97,10 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test
    public void testApplyTerremarkMultipleCookies() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> builder().put("Set-Cookie",
-               "NSC_ESUO_21654_72.46.239.132_443=fooo;expires=Thu, 02-Jun-2011 17:19:26 GMT;path=/;secure;httponly")
-               .put("Set-Cookie", "vcloud-token=37ce2715-9aba-4f48-8e45-2db8a8da702d; path=/").build());
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml"))
+                                          .addHeader("Set-Cookie", "NSC_ESUO_21654_72.46.239.132_443=fooo;expires=Thu, 02-Jun-2011 17:19:26 GMT;path=/;secure;httponly")
+                                          .addHeader("Set-Cookie", "vcloud-token=37ce2715-9aba-4f48-8e45-2db8a8da702d; path=/").build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -115,10 +113,9 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test(expectedExceptions = HttpResponseException.class)
    public void testUnmatchedCookieThrowsHttpResponseException() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> builder().put("Set-Cookie",
-               "NSC_ESUO_21654_72.46.239.132_443=fooo;expires=Thu, 02-Jun-2011 17:19:26 GMT;path=/;secure;httponly")
-               .build());
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml"))
+                                          .addHeader("Set-Cookie", "NSC_ESUO_21654_72.46.239.132_443=fooo;expires=Thu, 02-Jun-2011 17:19:26 GMT;path=/;secure;httponly").build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -127,8 +124,8 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test(expectedExceptions = HttpResponseException.class)
    public void testNoThrowsHttpResponseException() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of());
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml")).build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
@@ -137,9 +134,9 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test
    public void testApplyVirtacore() {
-      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String, String> of("x-vcloud-authorization",
-               "vcloud-token=IPy0w7UGD4lwtdWAK/ZVzfuLK+dztxGRqsOhWqV0i48="));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("OK")
+                                          .payload(getClass().getResourceAsStream("/orglist.xml"))
+                                          .addHeader("x-vcloud-authorization", "vcloud-token=IPy0w7UGD4lwtdWAK/ZVzfuLK+dztxGRqsOhWqV0i48=").build();
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 

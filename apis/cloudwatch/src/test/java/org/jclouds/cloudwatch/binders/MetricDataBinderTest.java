@@ -18,9 +18,8 @@
  */
 package org.jclouds.cloudwatch.binders;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.Date;
+
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.StatisticValues;
@@ -29,8 +28,9 @@ import org.jclouds.http.HttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.Date;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@link MetricDataBinder}.
@@ -44,7 +44,7 @@ public class MetricDataBinderTest {
    MetricDataBinder binder = injector.getInstance(MetricDataBinder.class);
    
    HttpRequest request() {
-      return HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      return HttpRequest.builder().method("POST").endpoint("http://localhost").build();
    }
 
    public void testMetricWithoutTimestamp() throws Exception {

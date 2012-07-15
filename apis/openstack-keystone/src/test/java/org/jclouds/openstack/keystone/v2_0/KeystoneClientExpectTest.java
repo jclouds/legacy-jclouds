@@ -22,16 +22,12 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestClientExpectTest;
 import org.jclouds.openstack.keystone.v2_0.parse.ParseRackspaceApiMetadataTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  *
@@ -43,8 +39,8 @@ public class KeystoneClientExpectTest extends BaseKeystoneRestClientExpectTest<K
    public void testGetApiMetaData() {
       KeystoneClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            HttpRequest.builder().method("GET").endpoint(URI.create(endpoint + "/v2.0/")).
-            headers(ImmutableMultimap.of("Accept", APPLICATION_JSON)).build(),
+            HttpRequest.builder().method("GET").endpoint(endpoint + "/v2.0/").
+            addHeader("Accept", APPLICATION_JSON).build(),
             HttpResponse.builder().statusCode(200).
                   payload(payloadFromResourceWithContentType("/raxVersion.json", APPLICATION_JSON)).build());
       ApiMetadata metadata = client.getApiMetadata();
@@ -55,8 +51,8 @@ public class KeystoneClientExpectTest extends BaseKeystoneRestClientExpectTest<K
    public void testGetApiMetaDataFailNotFound() {
       KeystoneClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/v2.0/").headers(ImmutableMultimap.of("Accept", APPLICATION_JSON)).build(),
-            standardResponseBuilder(404).build());
+            HttpRequest.builder().method("GET").endpoint(endpoint + "/v2.0/").addHeader("Accept", APPLICATION_JSON).build(),
+            HttpResponse.builder().statusCode(404).build());
       assertNull(client.getApiMetadata());
    }
 

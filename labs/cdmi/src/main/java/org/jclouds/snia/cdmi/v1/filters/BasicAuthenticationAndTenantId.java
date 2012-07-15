@@ -26,7 +26,6 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
@@ -57,6 +56,6 @@ public class BasicAuthenticationAndTenantId implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return basicAuthentication.filter(ModifyRequest.replaceHeader(request, "TID", tenantId));
+      return basicAuthentication.filter(request.toBuilder().replaceHeader("TID", tenantId).build());
    }
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.quantum.v1_0.domain.Network;
 import org.jclouds.openstack.quantum.v1_0.domain.NetworkDetails;
 import org.jclouds.openstack.quantum.v1_0.domain.Reference;
@@ -50,8 +51,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReferencesReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/list_network_refs.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/list_network_refs.json", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
       
       Set<Reference> nets = client.listReferences();
@@ -61,8 +62,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReferencesReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       assertTrue(client.listReferences().isEmpty());
@@ -71,8 +72,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/detail").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/list_networks.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/detail").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/list_networks.json", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       Set<Network> nets = client.list();
@@ -82,8 +83,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testListReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/detail").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/detail").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       assertTrue(client.list().isEmpty());
@@ -92,8 +93,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/network.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/network.json", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       Network net = client.get("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
@@ -103,8 +104,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       assertNull(client.get("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
@@ -113,8 +114,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowDetailsReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/detail").build(),
-            standardResponseBuilder(200).payload(payloadFromResourceWithContentType("/network_details.json", APPLICATION_JSON)).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/detail").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/network_details.json", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       NetworkDetails net = client.getDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
@@ -124,8 +125,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testShowDetailsReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/detail").build(),
-            standardResponseBuilder(404).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/detail").build(),
+            HttpResponse.builder().statusCode(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       assertNull(client.getDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
@@ -134,9 +135,9 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testCreateReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks").method("POST")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").method("POST")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"network\":{\"id\":\"12345\"}}", APPLICATION_JSON)).build())
+            HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"network\":{\"id\":\"12345\"}}", APPLICATION_JSON)).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       Reference net = client.create("another-test");
@@ -147,9 +148,9 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testCreateReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks").method("POST")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").method("POST")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(401).build())
+            HttpResponse.builder().statusCode(401).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       client.create("another-test");
@@ -158,9 +159,9 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testUpdateReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/12345").method("PUT")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).build())
+            HttpResponse.builder().statusCode(200).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       assertTrue(client.rename("12345", "another-test"));
@@ -170,9 +171,9 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testUpdateReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/12345").method("PUT")
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(404).build())
+            HttpResponse.builder().statusCode(404).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       client.rename("12345", "another-test");
@@ -181,8 +182,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testDeleteReturns2xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/12345").method("DELETE").build(),
-            standardResponseBuilder(200).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       assertTrue(client.delete("12345"));
@@ -192,8 +193,8 @@ public class NetworkClientExpectTest extends BaseQuantumClientExpectTest {
    public void testDeleteReturns4xx() {
       NetworkClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
-            standardRequestBuilder(endpoint + "/tenants/3456/networks/12345").method("DELETE").build(),
-            standardResponseBuilder(403).build())
+            authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("DELETE").build(),
+            HttpResponse.builder().statusCode(403).build())
             .getNetworkClientForRegion("region-a.geo-1");
 
       client.delete("12345");

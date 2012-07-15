@@ -22,7 +22,6 @@ import static org.jclouds.iam.options.ListUsersOptions.Builder.pathPrefix;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.net.URI;
 import java.util.TimeZone;
 
 import org.jclouds.http.HttpRequest;
@@ -33,8 +32,6 @@ import org.jclouds.iam.parse.GetUserResponseTest;
 import org.jclouds.iam.parse.ListUsersResponseTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adrian Cole
@@ -48,22 +45,17 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
 
    public void testGetCurrentWhenResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest.builder()
-                                    .method("POST")
-                                    .endpoint(URI.create("https://iam.amazonaws.com/"))
-                                    .headers(ImmutableMultimap.<String, String> builder()
-                                             .put("Host", "iam.amazonaws.com")
-                                             .build())
-                                    .payload(
-                                       payloadFromStringWithContentType(
-                                             "Action=GetUser" +
-                                                   "&Signature=2UamWqKKgoSbaZpvixX0LKqGW%2FIIP9L319DLEUtYu3A%3D" +
-                                                   "&SignatureMethod=HmacSHA256" +
-                                                   "&SignatureVersion=2" +
-                                                   "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                   "&Version=2010-05-08" +
-                                                   "&AWSAccessKeyId=identity",
-                                             "application/x-www-form-urlencoded"))
-                                    .build();
+                                   .method("POST")
+                                   .endpoint("https://iam.amazonaws.com/")
+                                   .addHeader("Host", "iam.amazonaws.com")
+                                   .addFormParam("Action", "GetUser")
+                                   .addFormParam("Signature", "2UamWqKKgoSbaZpvixX0LKqGW%2FIIP9L319DLEUtYu3A%3D")
+                                   .addFormParam("SignatureMethod", "HmacSHA256")
+                                   .addFormParam("SignatureVersion", "2")
+                                   .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                   .addFormParam("Version", "2010-05-08")
+                                   .addFormParam("AWSAccessKeyId", "identity").build();
+      
       HttpResponse getResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/get_user.xml", "text/xml")).build();
 
@@ -74,23 +66,17 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
    }
    
    HttpRequest get = HttpRequest.builder()
-                                       .method("POST")
-                                       .endpoint(URI.create("https://iam.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "iam.amazonaws.com")
-                                                .build())
-                                       .payload(
-                                          payloadFromStringWithContentType(
-                                                "Action=GetUser" +
-                                                      "&Signature=cnY%2FAaG656cruOmb3y7YHtjnPB1qg3aavff6PPxIMs0%3D" +
-                                                      "&SignatureMethod=HmacSHA256" +
-                                                      "&SignatureVersion=2" +
-                                                      "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                      "&UserName=name" +
-                                                      "&Version=2010-05-08" +
-                                                      "&AWSAccessKeyId=identity",
-                                                "application/x-www-form-urlencoded"))
-                                       .build();
+                                .method("POST")
+                                .endpoint("https://iam.amazonaws.com/")
+                                .addHeader("Host", "iam.amazonaws.com")
+                                .addFormParam("Action", "GetUser")
+                                .addFormParam("Signature", "cnY%2FAaG656cruOmb3y7YHtjnPB1qg3aavff6PPxIMs0%3D")
+                                .addFormParam("SignatureMethod", "HmacSHA256")
+                                .addFormParam("SignatureVersion", "2")
+                                .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                .addFormParam("UserName", "name")
+                                .addFormParam("Version", "2010-05-08")
+                                .addFormParam("AWSAccessKeyId", "identity").build();
    
    
    public void testGetWhenResponseIs2xx() throws Exception {
@@ -115,22 +101,16 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
    }
 
    HttpRequest list = HttpRequest.builder()
-                                       .method("POST")
-                                       .endpoint(URI.create("https://iam.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "iam.amazonaws.com")
-                                                .build())
-                                       .payload(
-                                          payloadFromStringWithContentType(
-                                                "Action=ListUsers" +
-                                                      "&Signature=ed4OrONGuVlGpHSY8u5X2m9LVwx6oiihu7HbvA0iZkY%3D" +
-                                                      "&SignatureMethod=HmacSHA256" +
-                                                      "&SignatureVersion=2" +
-                                                      "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                      "&Version=2010-05-08" +
-                                                      "&AWSAccessKeyId=identity",
-                                                "application/x-www-form-urlencoded"))
-                                       .build();
+                                 .method("POST")
+                                 .endpoint("https://iam.amazonaws.com/")
+                                 .addHeader("Host", "iam.amazonaws.com")
+                                 .addFormParam("Action", "ListUsers")
+                                 .addFormParam("Signature", "ed4OrONGuVlGpHSY8u5X2m9LVwx6oiihu7HbvA0iZkY%3D")
+                                 .addFormParam("SignatureMethod", "HmacSHA256")
+                                 .addFormParam("SignatureVersion", "2")
+                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                 .addFormParam("Version", "2010-05-08")
+                                 .addFormParam("AWSAccessKeyId", "identity").build();
    
    public void testListWhenResponseIs2xx() throws Exception {
 
@@ -159,23 +139,18 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
       HttpRequest listWithOptions =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://iam.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String>builder()
-                                                 .put("Host", "iam.amazonaws.com")
-                                                 .build())
-                       .payload(payloadFromStringWithContentType(
-                                                  "Action=ListUsers" +
-                                                  "&Marker=MARKER" +
-                                                  "&PathPrefix=%2Ffoo" +
-                                                  "&Signature=1%2BeCgNIAjHr%2BraNdDd3rsVC5Qok3AuTrJOa5mZwmE7g%3D" +
-                                                  "&SignatureMethod=HmacSHA256" +
-                                                  "&SignatureVersion=2" +
-                                                  "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                  "&Version=2010-05-08" +
-                                                  "&AWSAccessKeyId=identity",
-                                            "application/x-www-form-urlencoded"))
-                       .build();
-      
+                       .endpoint("https://iam.amazonaws.com/")
+                       .addHeader("Host", "iam.amazonaws.com")
+                       .addFormParam("Action", "ListUsers")
+                       .addFormParam("Marker", "MARKER")
+                       .addFormParam("PathPrefix", "%2Ffoo")
+                       .addFormParam("Signature", "1%2BeCgNIAjHr%2BraNdDd3rsVC5Qok3AuTrJOa5mZwmE7g%3D")
+                       .addFormParam("SignatureMethod", "HmacSHA256")
+                       .addFormParam("SignatureVersion", "2")
+                       .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                       .addFormParam("Version", "2010-05-08")
+                       .addFormParam("AWSAccessKeyId", "identity").build();
+
       HttpResponse listWithOptionsResponse = HttpResponse.builder().statusCode(200)
                .payload(payloadFromResourceWithContentType("/list_users.xml", "text/xml")).build();
 

@@ -34,7 +34,6 @@ import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -54,7 +53,7 @@ public class ParseCredentialsFromJsonResponseTest {
    public void testFailWhenTooManyPasswords() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/test_credentials_list.json");
 
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("ok").payload(is).build();
 
       ParseCredentialsFromJsonResponse parser = i.getInstance(ParseCredentialsFromJsonResponse.class);
       parser.apply(response);
@@ -64,7 +63,7 @@ public class ParseCredentialsFromJsonResponseTest {
    public void testValid() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/test_credential.json");
 
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("ok").payload(is).build();
 
       ParseCredentialsFromJsonResponse parser = i.getInstance(ParseCredentialsFromJsonResponse.class);
       Credentials creds = parser.apply(response);
@@ -82,7 +81,6 @@ public class ParseCredentialsFromJsonResponseTest {
 
       @Provides
       @Singleton
-      @SuppressWarnings("unused")
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());

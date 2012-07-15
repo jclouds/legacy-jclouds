@@ -22,7 +22,6 @@ import static org.jclouds.elb.options.ListPoliciesOptions.Builder.loadBalancerNa
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.net.URI;
 import java.util.TimeZone;
 
 import org.jclouds.elb.ELBApi;
@@ -35,7 +34,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -50,10 +48,8 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest get = HttpRequest.builder()
                                 .method("POST")
-                                .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                .headers(ImmutableMultimap.<String, String> builder()
-                                          .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                          .build())
+                                .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                 .payload(
                                     payloadFromStringWithContentType(
                                           "Action=DescribeLoadBalancerPolicies" +
@@ -91,10 +87,8 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest list = HttpRequest.builder()
                                  .method("POST")
-                                 .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                 .headers(ImmutableMultimap.<String, String> builder()
-                                          .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                          .build())
+                                 .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                 .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                  .payload(
                                     payloadFromStringWithContentType(
                                              "Action=DescribeLoadBalancerPolicies" +
@@ -132,10 +126,8 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
       HttpRequest listWithOptions =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String>builder()
-                                                 .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                                 .build())
+                       .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType(
                                                   "Action=DescribeLoadBalancerPolicies" +
                                                   "&LoadBalancerName=moo" +
@@ -161,10 +153,8 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest getType = HttpRequest.builder()
                                     .method("POST")
-                                    .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                    .headers(ImmutableMultimap.<String, String> builder()
-                                             .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                             .build())
+                                    .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                    .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                     .payload(
                                        payloadFromStringWithContentType(
                                              "Action=DescribeLoadBalancerPolicyTypes" +
@@ -202,10 +192,8 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest listTypes = HttpRequest.builder()
                                       .method("POST")
-                                      .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                      .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                                .build())
+                                      .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                      .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                       .payload(
                                           payloadFromStringWithContentType(
                                                    "Action=DescribeLoadBalancerPolicyTypes" +
@@ -243,10 +231,8 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
       HttpRequest listWithOptions =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String>builder()
-                                                 .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                                 .build())
+                       .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType(
                                                   "Action=DescribeLoadBalancerPolicyTypes" +
                                                   "&PolicyTypeNames.member.1=moo" +

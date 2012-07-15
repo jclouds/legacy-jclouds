@@ -18,12 +18,10 @@
  */
 package org.jclouds.glesys.features;
 
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.List;
 
 import org.jclouds.glesys.domain.Archive;
@@ -48,11 +46,9 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListArchivesWhenReponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/list/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/list/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_list.json")).build())
             .getArchiveClient();
 
@@ -64,10 +60,9 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testListArchivesWhenResponseIs4xxReturnsEmpty() {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/list/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/list/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveClient();
 
       assertTrue(client.listArchives().isEmpty());
@@ -75,12 +70,10 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testArchiveDetailsWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/details/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("username", "xxxxxx_test1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/details/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build())
             .getArchiveClient();
 
@@ -93,12 +86,10 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testArchiveDetailsWhenResponseIs4xxReturnsNull() {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/details/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(
-                        ImmutableMultimap.<String, String>builder().put("username", "xxxxxx_test1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/details/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(404).build())
             .getArchiveClient();
       assertNull(client.getArchive("xxxxxx_test1"));
@@ -106,25 +97,22 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
 
    public void testCreateArchiveWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/create/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "xxxxxx_test1")
-                        .put("size", "5")
-                        .put("password", "somepass").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/create/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParams(ImmutableMultimap.<String, String>builder()
+                             .put("username", "xxxxxx_test1")
+                             .put("size", "5")
+                             .put("password", "somepass").build()).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build()).getArchiveClient();
       assertEquals(client.createArchive("xxxxxx_test1", "somepass", 5), detailsInArchiveDetails());
    }
 
    public void testDeleteArchiveWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/delete/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "xxxxxx_test1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/delete/format/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(200).build()).getArchiveClient();
 
       client.deleteArchive("xxxxxx_test1");
@@ -133,24 +121,20 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {HttpResponseException.class})
    public void testDeleteArchiveWhenResponseIs4xxThrows() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/delete/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder().put(
-                        "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "xxxxxx_test1").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/delete/format/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(402).build()).getArchiveClient();
       client.deleteArchive("xxxxxx_test1");
    }
 
    public void testResizeArchiveWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/resize/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "username1")
-                        .put("size", "5").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/resize/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "username1")
+                       .addFormParam("size", "5").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build()).getArchiveClient();
 
       assertEquals(client.resizeArchive("username1", 5), detailsInArchiveDetails());
@@ -159,13 +143,11 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
    @Test(expectedExceptions = {ResourceNotFoundException.class})
    public void testResizeArchiveWhenResponseIs4xxThrows() throws Exception {
       ArchiveClient client = requestSendsResponse(
-            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/archive/resize/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "username1")
-                        .put("size", "5").build())).build(),
+            HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/archive/resize/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "username1")
+                       .addFormParam("size", "5").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveClient();
 
       client.resizeArchive("username1", 5);
@@ -174,13 +156,11 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
    public void testChangeArchivePasswordWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
             HttpRequest.builder().method("POST")
-                  .endpoint(URI.create("https://api.glesys.com/archive/changepassword/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "username")
-                        .put("password", "newpass").build())).build(),
+                       .endpoint("https://api.glesys.com/archive/changepassword/format/json")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                       .addFormParam("username", "username")
+                       .addFormParam("password", "newpass").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build()).getArchiveClient();
       
       assertEquals(client.changeArchivePassword("username", "newpass"), detailsInArchiveDetails());
@@ -190,13 +170,11 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
    public void testChangeArchivePasswordWhenResponseIs4xxThrows() throws Exception {
       ArchiveClient client = requestSendsResponse(
             HttpRequest.builder().method("POST")
-                  .endpoint(URI.create("https://api.glesys.com/archive/changepassword/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("username", "username")
-                        .put("password", "newpass").build())).build(),
+                  .endpoint("https://api.glesys.com/archive/changepassword/format/json")
+                  .addHeader("Accept", "application/json")
+                  .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
+                  .addFormParam("username", "username")
+                  .addFormParam("password", "newpass").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveClient();
 
       client.changeArchivePassword("username", "newpass");
@@ -205,11 +183,9 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
    public void testGetArchiveAllowedArgumentsWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
             HttpRequest.builder().method("GET")
-                  .endpoint(URI.create("https://api.glesys.com/archive/allowedarguments/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-                        .build()).build(),
+                  .endpoint("https://api.glesys.com/archive/allowedarguments/format/json")
+                  .addHeader("Accept", "application/json")
+                  .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_allowed_arguments.json")).build()).getArchiveClient();
       ArchiveAllowedArguments expected = ArchiveAllowedArguments.builder().archiveSizes(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000).build();
 
@@ -219,10 +195,9 @@ public class ArchiveClientExpectTest extends BaseGleSYSClientExpectTest {
    public void testGetArchiveAllowedArguments4xxWhenResponseIs2xx() throws Exception {
       ArchiveClient client = requestSendsResponse(
             HttpRequest.builder().method("GET")
-                  .endpoint(URI.create("https://api.glesys.com/archive/allowedarguments/format/json"))
-                  .headers(ImmutableMultimap.<String, String>builder()
-                        .put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+                  .endpoint("https://api.glesys.com/archive/allowedarguments/format/json")
+                  .addHeader("Accept", "application/json")
+                  .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveClient();
 
       assertNull(client.getArchiveAllowedArguments());

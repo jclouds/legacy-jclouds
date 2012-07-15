@@ -20,7 +20,6 @@ package org.jclouds.cloudwatch.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -39,8 +38,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * @author Jeremy Whitlock, Adrian Cole
  */
@@ -53,10 +50,8 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
 
    HttpRequest listMetrics = HttpRequest.builder()
                                        .method("POST")
-                                       .endpoint(URI.create("https://monitoring.us-east-1.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "monitoring.us-east-1.amazonaws.com")
-                                                .build())
+                                       .endpoint("https://monitoring.us-east-1.amazonaws.com/")
+                                       .addHeader("Host", "monitoring.us-east-1.amazonaws.com")
                                        .payload(
                                           payloadFromStringWithContentType(
                                                 "Action=ListMetrics" +
@@ -97,10 +92,8 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
       HttpRequest listMetricsWithOptions =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://monitoring.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String>builder()
-                                                 .put("Host", "monitoring.us-east-1.amazonaws.com")
-                                                 .build())
+                       .endpoint("https://monitoring.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "monitoring.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType(
                              "Action=ListMetrics" +
                                    "&Dimensions.member.1.Name=InstanceId" +
@@ -146,10 +139,8 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
    
    HttpRequest getMetricStatistics = HttpRequest.builder()
                                        .method("POST")
-                                       .endpoint(URI.create("https://monitoring.us-east-1.amazonaws.com/"))
-                                       .headers(ImmutableMultimap.<String, String> builder()
-                                                .put("Host", "monitoring.us-east-1.amazonaws.com")
-                                                .build())
+                                       .endpoint("https://monitoring.us-east-1.amazonaws.com/")
+                                       .addHeader("Host", "monitoring.us-east-1.amazonaws.com")
                                        .payload(
                                           payloadFromStringWithContentType(
                                                 "Action=GetMetricStatistics" +
@@ -202,10 +193,8 @@ public class MetricClientExpectTest extends BaseCloudWatchClientExpectTest {
       HttpRequest getMetricStatistics =
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://monitoring.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.<String, String> builder()
-                                                 .put("Host", "monitoring.us-east-1.amazonaws.com")
-                                                 .build())
+                       .endpoint("https://monitoring.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "monitoring.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType(
                              "Action=GetMetricStatistics" +
                                    "&Dimensions.member.1.Name=InstanceId" +

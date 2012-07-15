@@ -23,8 +23,8 @@ import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.ServerWithSecurityGroups;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -43,8 +43,8 @@ public class ServerWithSecurityGroupsClientExpectTest extends BaseNovaClientExpe
       ServerWithSecurityGroupsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/server_with_security_groups.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_with_security_groups.json")).build()
       ).getServerWithSecurityGroupsExtensionForZone("az-1.region-a.geo-1").get();
 
       ServerWithSecurityGroups server = client.getServer("8d0a6ca5-8849-4b3d-b86e-f24c92490ebb");
@@ -57,8 +57,8 @@ public class ServerWithSecurityGroupsClientExpectTest extends BaseNovaClientExpe
       ServerWithSecurityGroupsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getServerWithSecurityGroupsExtensionForZone("az-1.region-a.geo-1").get();
       assertNull(client.getServer("8d0a6ca5-8849-4b3d-b86e-f24c92490ebb"));
    }

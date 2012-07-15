@@ -26,8 +26,8 @@ import javax.inject.Singleton;
 import org.jclouds.glesys.domain.GleSYSBoolean;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.functions.internal.GleSYSTypeAdapters;
-import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;

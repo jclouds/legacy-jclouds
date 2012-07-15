@@ -13,7 +13,6 @@ import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
@@ -27,7 +26,7 @@ public abstract class BaseNovaEC2RestClientExpectTest extends BaseRestClientExpe
             .builder()
             .method("POST")
             .endpoint(endpoint)
-            .headers(ImmutableMultimap.of("Host", "localhost:8773"))
+            .addHeader("Host", "localhost:8773")
             .payload(payloadFromStringWithContentType(
                      "Action=DescribeAvailabilityZones&Signature=S3fa5fybw4KAq4o11IpKHlqwx3cVJdKfeAKw3FIJYvM%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity",
                      MediaType.APPLICATION_FORM_URLENCODED)).build();

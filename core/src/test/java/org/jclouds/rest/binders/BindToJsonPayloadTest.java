@@ -21,7 +21,6 @@ package org.jclouds.rest.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
@@ -45,7 +44,7 @@ public class BindToJsonPayloadTest {
    public void testMap() throws SecurityException, NoSuchMethodException {
       BindToJsonPayload binder = new BindToJsonPayload(json);
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
       assertEquals(request.getPayload().getRawContent(), "{\"imageName\":\"foo\",\"serverId\":\"2\"}");
       assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/json");
@@ -56,7 +55,7 @@ public class BindToJsonPayloadTest {
    public void testSomethingNotAMap() throws SecurityException, NoSuchMethodException {
       BindToJsonPayload binder = new BindToJsonPayload(json);
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, new File("foo"));
       assertEquals(request.getPayload().getRawContent(), "{\"path\":\"foo\"}");
       assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/json");
@@ -66,6 +65,6 @@ public class BindToJsonPayloadTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
       BindToJsonPayload binder = new BindToJsonPayload(json);
-      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build(), null);
+      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("http://momma").build(), null);
    }
 }

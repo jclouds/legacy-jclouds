@@ -24,11 +24,11 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
@@ -36,7 +36,6 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTes
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -73,12 +72,9 @@ public class HttpClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       HttpResponse response = context.getUtils().getHttpClient().invoke(HttpRequest.builder()
             .method(method)
-            .endpoint(URI.create(endpoint + "/login"))
-            .headers(ImmutableMultimap.<String, String>builder()
-                  .put("Authorization", authHeader)
-                  .put("Accept", "*/*")
-                  .build())
-            .build());
+            .endpoint(endpoint + "/login")
+            .addHeader("Authorization", authHeader)
+            .addHeader("Accept", "*/*").build());
 
       sessionWithToken = SessionWithToken.builder().session(session).token(response.getFirstHeaderOrNull("x-vcloud-authorization")).build();
 
@@ -99,12 +95,9 @@ public class HttpClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       String schemafileName = "master.xsd";
       HttpResponse response = context.getUtils().getHttpClient().invoke(HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create(endpoint + "/v1.5/schema/" + schemafileName))
-            .headers(ImmutableMultimap.<String, String>builder()
-                  .put("x-vcloud-authorization", sessionWithToken.getToken())
-                  .put("Accept", "*/*")
-                  .build())
-            .build());
+            .endpoint(endpoint + "/v1.5/schema/" + schemafileName)
+            .addHeader("x-vcloud-authorization", sessionWithToken.getToken())
+            .addHeader("Accept", "*/*").build());
 
       String schema = Strings2.toStringAndClose(response.getPayload().getInput());
 

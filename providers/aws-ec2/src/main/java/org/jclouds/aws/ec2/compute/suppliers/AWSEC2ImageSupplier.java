@@ -125,7 +125,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
 
       final Map<RegionAndName, ? extends Image> imageMap = ImagesToRegionAndIdMap.imagesToMap(parsedImages);
       cache.get().invalidateAll();
-      cache.get().asMap().putAll((Map) imageMap);
+      cache.get().asMap().putAll(Map.class.cast(imageMap));
       logger.debug("<< images(%d)", imageMap.size());
       
       // TODO Used to be mutable; was this assumed anywhere?

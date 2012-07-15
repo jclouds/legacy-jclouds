@@ -23,7 +23,6 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.SimpleTenantUsage;
-import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 

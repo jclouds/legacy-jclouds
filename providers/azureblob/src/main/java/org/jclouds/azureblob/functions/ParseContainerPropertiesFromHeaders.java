@@ -52,7 +52,7 @@ public class ParseContainerPropertiesFromHeaders implements Function<HttpRespons
 
    private final DateService dateParser;
    private final String metadataPrefix;
-   private GeneratedHttpRequest<?> request;
+   private GeneratedHttpRequest request;
 
    @Inject
    public ParseContainerPropertiesFromHeaders(DateService dateParser,
@@ -101,8 +101,8 @@ public class ParseContainerPropertiesFromHeaders implements Function<HttpRespons
 
    @Override
    public ParseContainerPropertiesFromHeaders setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
-      this.request = (GeneratedHttpRequest<?>) request;
+      checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest) request;
       return this;
    }
 

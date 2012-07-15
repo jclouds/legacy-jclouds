@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -53,7 +52,7 @@ public class ParseAsyncJobsFromHttpResponseTest {
       InputStream is = getClass().getResourceAsStream("/listasyncjobsresponse.json");
 
       ParseAsyncJobsFromHttpResponse parser = injector.getInstance(ParseAsyncJobsFromHttpResponse.class);
-      Set<AsyncJob<?>> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Set<AsyncJob<?>> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.size(), 77);
    }

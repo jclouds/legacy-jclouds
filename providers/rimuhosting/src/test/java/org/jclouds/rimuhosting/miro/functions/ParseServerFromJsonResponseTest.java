@@ -24,7 +24,6 @@ import java.io.InputStream;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule.RimuIso8601DateAdapter;
 import org.jclouds.rimuhosting.miro.domain.Server;
@@ -54,7 +53,7 @@ public class ParseServerFromJsonResponseTest {
 
       ParseServerFromJsonResponse parser = i.getInstance(ParseServerFromJsonResponse.class);
 
-      Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Server response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.getBillingData().getDateSuspended(), null);
       assertEquals(response.getBillingData().getDateCancelled(), new SimpleDateFormatDateService()

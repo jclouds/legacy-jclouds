@@ -20,8 +20,6 @@ package org.jclouds.rest.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -47,7 +45,7 @@ public class BindToJsonPayloadWrappedWithTest {
       BindToJsonPayloadWrappedWith binder = new BindToJsonPayloadWrappedWith(injector
                .getInstance(BindToJsonPayload.class), "envelope");
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
       assertEquals(request.getPayload().getRawContent(), "{\"envelope\":{\"imageName\":\"foo\",\"serverId\":\"2\"}}");
 
@@ -58,7 +56,7 @@ public class BindToJsonPayloadWrappedWithTest {
       BindToJsonPayloadWrappedWith binder = injector.getInstance(BindToJsonPayloadWrappedWith.Factory.class).create(
                "envelope");
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
       assertEquals(request.getPayload().getRawContent(), "{\"envelope\":{\"imageName\":\"foo\",\"serverId\":\"2\"}}");
 
@@ -68,6 +66,6 @@ public class BindToJsonPayloadWrappedWithTest {
    public void testNullIsBad() {
       BindToJsonPayloadWrappedWith binder = new BindToJsonPayloadWrappedWith(injector
                .getInstance(BindToJsonPayload.class), "envelope");
-      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build(), null);
+      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("http://momma").build(), null);
    }
 }

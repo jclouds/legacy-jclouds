@@ -58,7 +58,7 @@ public class BindCloneDriveOptionsToPlainTextStringTest {
 
    protected void assertInputAndArgsCreatesPayload(ImmutableMap<String, Object> inputMap, List<Object> args,
          String expected) {
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getArgs()).andReturn(args).atLeastOnce();
       request.setPayload(expected);
       Payload payload = createMock(Payload.class);

@@ -26,7 +26,6 @@ import java.net.UnknownHostException;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
@@ -42,7 +41,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseImageFromJsonResponse}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -88,7 +87,7 @@ public class ParseImageFromJsonResponseTest {
 
       UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
       }));
-      Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Image response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       return response;
    }
 

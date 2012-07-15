@@ -21,17 +21,15 @@ package org.jclouds.openstack.nova.v2_0.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ServerInZone;
@@ -41,7 +39,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -59,10 +56,9 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest createServer = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build())
+         .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
          .payload(payloadFromStringWithContentType(
                   "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group1\"}, {\"name\":\"group2\"}]}}","application/json"))
          .build();
@@ -73,10 +69,9 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest serverDetail = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/71752"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/71752")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_details.json")).build();
@@ -112,10 +107,9 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest createServer = HttpRequest
          .builder()
          .method("POST")
-         .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-         .headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build())
+         .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
          .payload(payloadFromStringWithContentType(
                   "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"key_name\":\"foo\"}}","application/json"))
          .build();
@@ -127,10 +121,9 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpRequest serverDetail = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/71752"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/71752")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_details.json")).build();

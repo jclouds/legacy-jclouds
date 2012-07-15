@@ -63,7 +63,10 @@ public class ConvertToJcloudsResponse implements Function<HTTPResponse, HttpResp
       if (payload != null) {
          contentMetadataCodec.fromHeaders(payload.getContentMetadata(), headers);
       }
-      return new HttpResponse(gaeResponse.getResponseCode(), message, payload,
-            RestAnnotationProcessor.filterOutContentHeaders(headers));
+      return HttpResponse.builder()
+                         .statusCode(gaeResponse.getResponseCode())
+                         .message(message)
+                         .payload(payload)
+                         .headers(RestAnnotationProcessor.filterOutContentHeaders(headers)).build();
    }
 }

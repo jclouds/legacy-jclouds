@@ -19,17 +19,15 @@
 package org.jclouds.cloudstack.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * 
@@ -37,19 +35,15 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindSnapshotPolicyScheduleToQueryParam implements Binder {
-   private final Provider<UriBuilder> uriBuilderProvider;
 
-   @Inject
-   public BindSnapshotPolicyScheduleToQueryParam(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
-
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(input instanceof SnapshotPolicySchedule, "this binder is only valid for SnapshotPolicySchedule");
       SnapshotPolicySchedule schedule = SnapshotPolicySchedule.class.cast(input);
-      R modifiedResult = ModifyRequest.addQueryParam(request, "intervaltype", schedule.getInterval(), uriBuilderProvider.get());
-      modifiedResult = ModifyRequest.addQueryParam(modifiedResult, "schedule", schedule.getTime(), uriBuilderProvider.get());
-      return modifiedResult;
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      builder.put("intervaltype", schedule.getInterval().toString());
+      builder.put("schedule", schedule.getTime().toString());
+      return (R) request.toBuilder().replaceQueryParams(builder.build()).build();
    }
 }

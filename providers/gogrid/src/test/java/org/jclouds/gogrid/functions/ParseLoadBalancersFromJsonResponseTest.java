@@ -39,7 +39,6 @@ import org.jclouds.gogrid.domain.LoadBalancerType;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -61,7 +60,7 @@ public class ParseLoadBalancersFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_get_load_balancer_list.json");
 
       ParseLoadBalancerListFromJsonResponse parser = i.getInstance(ParseLoadBalancerListFromJsonResponse.class);
-      SortedSet<LoadBalancer> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      SortedSet<LoadBalancer> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       Option dc = Option.createWithIdNameAndDescription(1l, "US-West-1", "US West 1 Datacenter");
 
@@ -88,7 +87,6 @@ public class ParseLoadBalancersFromJsonResponseTest {
 
       @Provides
       @Singleton
-      @SuppressWarnings({"unused"})
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());

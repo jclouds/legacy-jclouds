@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.ec2.services;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.ec2.domain.Image;
@@ -29,8 +28,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.ec2.internal.BaseNovaEC2RestClientExpectTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adam Lowe
@@ -43,8 +40,8 @@ public class NovaEC2AMIClientTest extends BaseNovaEC2RestClientExpectTest {
             describeAvailabilityZonesRequest,
             describeAvailabilityZonesResponse,
             HttpRequest.builder().method("POST")
-                  .endpoint(URI.create("http://localhost:8773/services/Cloud/"))
-                  .headers(ImmutableMultimap.of("Host", "localhost:8773"))
+                  .endpoint("http://localhost:8773/services/Cloud/")
+                  .addHeader("Host", "localhost:8773")
                   .payload(payloadFromStringWithContentType("Action=DescribeImages&Signature=Z3q3jSutwlfgvbcINT0Ed3AjrjxM4WMvQloXu%2F1kd40%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nova_ec2_images_with_ramdisk.xml")).build()
       ).getAMIServices();

@@ -65,7 +65,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
          bindProperties(TerremarkVCloudApiMetadata.defaultProperties());
       }
 
-      @SuppressWarnings("unused")
       @Network
       @Provides
       @Singleton
@@ -80,7 +79,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
             "/InstantiateVAppTemplateParams-options-test.xml"));
       Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap.<String, String> create());
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(
             ImmutableList.<Object> of(InstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512)

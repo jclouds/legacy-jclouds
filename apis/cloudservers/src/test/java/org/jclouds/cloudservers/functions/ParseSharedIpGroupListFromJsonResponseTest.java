@@ -27,7 +27,6 @@ import java.util.List;
 import org.jclouds.cloudservers.domain.SharedIpGroup;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -56,7 +55,7 @@ public class ParseSharedIpGroupListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<SharedIpGroup>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<SharedIpGroup>>>() {
             }));
-      List<SharedIpGroup> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<SharedIpGroup> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response, expects);
 
@@ -68,7 +67,7 @@ public class ParseSharedIpGroupListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<SharedIpGroup>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<SharedIpGroup>>>() {
             }));
-      List<SharedIpGroup> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<SharedIpGroup> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.get(0).getId(), 1234);
       assertEquals(response.get(0).getName(), "Shared IP Group 1");

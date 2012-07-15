@@ -21,13 +21,9 @@ package org.jclouds.cloudstack.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.base.Joiner;
@@ -38,12 +34,6 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class BindIdListToCommaDelimitedQueryParam implements Binder {
-   private final Provider<UriBuilder> uriBuilderProvider;
-
-   @Inject
-   public BindIdListToCommaDelimitedQueryParam(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
 
    @SuppressWarnings("unchecked")
    @Override
@@ -51,6 +41,6 @@ public class BindIdListToCommaDelimitedQueryParam implements Binder {
       checkArgument(input instanceof Iterable<?>, "this binder is only valid for Iterables!");
       Iterable<Long> numbers = (Iterable<Long>) checkNotNull(input, "list of Longs");
       checkArgument(Iterables.size(numbers) > 0, "you must specify at least one element");
-      return ModifyRequest.addQueryParam(request, "ids", Joiner.on(',').join(numbers), uriBuilderProvider.get());
+      return (R) request.toBuilder().replaceQueryParam("ids", Joiner.on(',').join(numbers)).build();
    }
 }

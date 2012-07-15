@@ -27,7 +27,7 @@ import java.net.URI;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsClient;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -46,8 +46,8 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/volume_type_extra_specs.json")).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type_extra_specs.json")).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.getAllExtraSpecs("9"), ImmutableMap.of("test", "value1"));
@@ -58,8 +58,8 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.getAllExtraSpecs("9").isEmpty());
@@ -70,10 +70,10 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint)
+            authenticatedGET().endpoint(endpoint)
                   .method("POST")
                   .payload(payloadFromStringWithContentType("{\"extra_specs\":{\"test1\":\"somevalue\"}}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).build()
+            HttpResponse.builder().statusCode(200).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.setAllExtraSpecs("9", ImmutableMap.of("test1", "somevalue")));
@@ -84,10 +84,10 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint)
+            authenticatedGET().endpoint(endpoint)
                   .method("PUT")
                   .payload(payloadFromStringWithContentType("{\"test1\":\"somevalue\"}", MediaType.APPLICATION_JSON)).build(),
-            standardResponseBuilder(200).build()
+            HttpResponse.builder().statusCode(200).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.setExtraSpec("5", "test1", "somevalue"));
@@ -98,8 +98,8 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromStringWithContentType("{\"test1\":\"another value\"}", MediaType.APPLICATION_JSON)).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"test1\":\"another value\"}", MediaType.APPLICATION_JSON)).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.getExtraSpec("5", "test1"), "another value");
@@ -110,8 +110,8 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertNull(client.getExtraSpec("5", "test1"));
@@ -122,8 +122,8 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(200).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(200).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(client.deleteExtraSpec("5", "test1"));
@@ -134,8 +134,8 @@ public class FlavorExtraSpecsClientExpectTest extends BaseNovaClientExpectTest {
       FlavorExtraSpecsClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).method("DELETE").build(),
-            standardResponseBuilder(404).build()
+            authenticatedGET().endpoint(endpoint).method("DELETE").build(),
+            HttpResponse.builder().statusCode(404).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(client.deleteExtraSpec("5", "test1"));

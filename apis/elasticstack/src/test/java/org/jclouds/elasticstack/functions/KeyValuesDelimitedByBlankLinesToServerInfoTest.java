@@ -29,7 +29,6 @@ import org.jclouds.elasticstack.domain.NIC;
 import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.testng.annotations.Test;
 
@@ -65,18 +64,18 @@ public class KeyValuesDelimitedByBlankLinesToServerInfoTest {
    }).getInstance(KeyValuesDelimitedByBlankLinesToServerInfo.class);
 
    public void testNone() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), null);
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))), null);
-      assertEquals(FN.apply(new HttpResponse(200, "", null)), null);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("").build()), null);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("\n\n").build()), null);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").build()), null);
    }
 
    public void testOne() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToServerInfoTest.class
-            .getResourceAsStream("/servers.txt")))), MapToServerInfoTest.ONE);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload(MapToServerInfoTest.class
+            .getResourceAsStream("/servers.txt")).build()), MapToServerInfoTest.ONE);
    }
 
    public void testNew() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToServerInfoTest.class
-            .getResourceAsStream("/new_server.txt")))), MapToServerInfoTest.NEW);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload(MapToServerInfoTest.class
+            .getResourceAsStream("/new_server.txt")).build()), MapToServerInfoTest.NEW);
    }
 }

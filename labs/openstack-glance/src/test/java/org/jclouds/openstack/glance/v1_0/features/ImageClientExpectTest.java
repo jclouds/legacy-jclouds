@@ -23,8 +23,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
@@ -54,14 +52,11 @@ import com.google.common.collect.ImmutableSet;
 public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
 
    public void testListWhenResponseIs2xx() throws Exception {
-      HttpRequest list = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest list = HttpRequest.builder().method("GET")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/images.json")).build();
@@ -76,14 +71,10 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testListWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest list = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest list = HttpRequest.builder().method("GET")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -94,14 +85,11 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testListInDetailWhenResponseIs2xx() throws Exception {
-      HttpRequest listInDetail = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/detail"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest listInDetail = HttpRequest.builder().method("GET")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/detail")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse listInDetailResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/images_detail.json")).build();
@@ -116,14 +104,11 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testListInDetailWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listInDetail = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/detail"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("Accept", "application/json")
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest listInDetail = HttpRequest.builder().method("GET")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/detail")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse listInDetailResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -137,10 +122,9 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
       HttpRequest show = HttpRequest
             .builder()
             .method("HEAD")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse showResponse = new ParseImageDetailsFromHeadersTest().response;
 
@@ -154,13 +138,10 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testShowWhenReponseIs404IsNull() throws Exception {
-      HttpRequest show = HttpRequest
-            .builder()
-            .method("HEAD")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest show = HttpRequest.builder().method("HEAD")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse showResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -172,13 +153,10 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    
 
    public void testGetAsStreamWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest get = HttpRequest.builder().method("GET")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(200).payload(Payloads.newStringPayload("foo")).build();
       
@@ -192,13 +170,10 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testGetAsStreamWhenReponseIs404IsNull() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder()
-                     .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest get = HttpRequest.builder().method("GET")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -209,15 +184,12 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testCreateWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("x-image-meta-name", "test").put("Accept", MediaType.APPLICATION_JSON).put("X-Auth-Token", authToken).build())
-            .payload(payloadFromStringWithContentType("somedata", MediaType.APPLICATION_OCTET_STREAM))
-            .build();
+      HttpRequest get = HttpRequest.builder().method("POST")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images")
+            .addHeader("x-image-meta-name", "test")
+            .addHeader("Accept", MediaType.APPLICATION_JSON)
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("somedata", MediaType.APPLICATION_OCTET_STREAM)).build();
 
       HttpResponse createResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/image.json")).build();
@@ -233,15 +205,12 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testCreateWhenResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("x-image-meta-name", "test").put("Accept", MediaType.APPLICATION_JSON).put("X-Auth-Token", authToken).build())
-            .payload(payloadFromStringWithContentType("somedata", MediaType.APPLICATION_OCTET_STREAM))
-            .build();
+      HttpRequest get = HttpRequest.builder().method("POST")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images")
+            .addHeader("x-image-meta-name", "test")
+            .addHeader("Accept", MediaType.APPLICATION_JSON)
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("somedata", MediaType.APPLICATION_OCTET_STREAM)).build();
 
       HttpResponse createResponse = HttpResponse.builder().statusCode(401)
             .payload(payloadFromResource("/image.json")).build();
@@ -255,14 +224,11 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testReserveWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("x-image-meta-name", "test").put("Accept", MediaType.APPLICATION_JSON).put("X-Auth-Token", authToken).build())
-            .build();
+      HttpRequest get = HttpRequest.builder().method("POST")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images")
+            .addHeader("x-image-meta-name", "test")
+            .addHeader("Accept", MediaType.APPLICATION_JSON)
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse createResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/image.json")).build();
@@ -277,14 +243,11 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testReserveWhenResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("x-image-meta-name", "test").put("Accept", MediaType.APPLICATION_JSON).put("X-Auth-Token", authToken).build())
-            .build();
+      HttpRequest get = HttpRequest.builder().method("POST")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images")
+            .addHeader("x-image-meta-name", "test")
+            .addHeader("Accept", MediaType.APPLICATION_JSON)
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse createResponse = HttpResponse.builder().statusCode(401)
             .payload(payloadFromResource("/image.json")).build();
@@ -298,10 +261,8 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
    
    public void testUpdateMetadataWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("PUT")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
+      HttpRequest get = HttpRequest.builder().method("PUT")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
             .headers(
                   ImmutableMultimap.<String, String>builder()
                         .put("Accept", MediaType.APPLICATION_JSON)
@@ -337,10 +298,8 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testUpdateMetadataWhenResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("PUT")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
+      HttpRequest get = HttpRequest.builder().method("PUT")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
             .headers(
                   ImmutableMultimap.<String, String>builder()
                         .put("Accept", MediaType.APPLICATION_JSON)
@@ -363,13 +322,10 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testUpdateImageWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("PUT")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("Accept", MediaType.APPLICATION_JSON).put("X-Auth-Token", authToken).build())
+      HttpRequest get = HttpRequest.builder().method("PUT")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("Accept", MediaType.APPLICATION_JSON)
+            .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("somenewdata", MediaType.APPLICATION_OCTET_STREAM))
             .build();
 
@@ -387,10 +343,8 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testUpdateNameAndImageWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("PUT")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
+      HttpRequest get = HttpRequest.builder().method("PUT")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
             .headers(
                   ImmutableMultimap.<String, String>builder()
                         .put("Accept", MediaType.APPLICATION_JSON)
@@ -414,10 +368,8 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testUpdateNameAndImageWhenResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("PUT")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
+      HttpRequest get = HttpRequest.builder().method("PUT")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
             .headers(
                   ImmutableMultimap.<String, String>builder()
                         .put("Accept", MediaType.APPLICATION_JSON)
@@ -438,14 +390,9 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testDeleteWhenResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("DELETE")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("X-Auth-Token", authToken).build())
-            .build();
+      HttpRequest get = HttpRequest.builder().method("DELETE")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(200).build();
 
@@ -458,14 +405,10 @@ public class ImageClientExpectTest extends BaseGlanceClientExpectTest {
    }
 
    public void testDeleteWhenResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-            .builder()
-            .method("DELETE")
-            .endpoint(URI.create("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07"))
-            .headers(
-                  ImmutableMultimap.<String, String>builder()
-                        .put("X-Auth-Token", authToken).build())
-            .build();
+      HttpRequest get = HttpRequest.builder().method("DELETE")
+            .endpoint("https://glance.jclouds.org:9292/v1.0/images/fcc451d0-f6e4-4824-ad8f-70ec12326d07")
+            .addHeader("X-Auth-Token", authToken).build();
+
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(404).build();
 

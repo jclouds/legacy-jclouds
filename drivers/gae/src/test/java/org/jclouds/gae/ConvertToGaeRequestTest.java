@@ -49,7 +49,6 @@ import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.Files;
 
 /**
@@ -83,21 +82,24 @@ public class ConvertToGaeRequestTest {
 
    @Test
    void testConvertRequestGetsTargetAndUri() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
+      HttpRequest request = HttpRequest.builder().method(HttpMethod.GET).endpoint(endPoint).build();
       HTTPRequest gaeRequest = req.apply(request);
       assertEquals(gaeRequest.getURL().getPath(), "/foo");
    }
 
    @Test
    void testConvertRequestSetsFetchOptions() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
+      HttpRequest request = HttpRequest.builder().method(HttpMethod.GET).endpoint(endPoint).build();
       HTTPRequest gaeRequest = req.apply(request);
       assert gaeRequest.getFetchOptions() != null;
    }
 
    @Test
    void testConvertRequestSetsHeaders() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint, ImmutableMultimap.of("foo", "bar"));
+      HttpRequest request = HttpRequest.builder()
+                                       .method(HttpMethod.GET)
+                                       .endpoint(endPoint)
+                                       .addHeader("foo", "bar").build();
       HTTPRequest gaeRequest = req.apply(request);
       assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
       assertEquals(gaeRequest.getHeaders().get(0).getValue(), "bar");
@@ -105,7 +107,7 @@ public class ConvertToGaeRequestTest {
 
    @Test
    void testConvertRequestNoContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
+      HttpRequest request = HttpRequest.builder().method(HttpMethod.GET).endpoint(endPoint).build();
       HTTPRequest gaeRequest = req.apply(request);
       assert gaeRequest.getPayload() == null;
       assertEquals(gaeRequest.getHeaders().size(), 1);// user agent
@@ -115,41 +117,51 @@ public class ConvertToGaeRequestTest {
 
    @Test
    void testConvertRequestStringContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setPayload("hoot!");
+      HttpRequest request = HttpRequest.builder()
+                                       .method(HttpMethod.GET)
+                                       .endpoint(endPoint)
+                                       .payload("hoot!").build();
       testHoot(request);
    }
 
    @Test
    void testConvertRequestInputStreamContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setPayload(Strings2.toInputStream("hoot!"));
+      HttpRequest request = HttpRequest.builder()
+                                       .method(HttpMethod.GET)
+                                       .endpoint(endPoint)
+                                       .payload(Strings2.toInputStream("hoot!")).build();
       request.getPayload().getContentMetadata().setContentLength(5l);
       testHoot(request);
    }
 
    @Test
    void testConvertRequestBytesContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setPayload("hoot!".getBytes());
+      HttpRequest request = HttpRequest.builder()
+                                       .method(HttpMethod.GET)
+                                       .endpoint(endPoint)
+                                       .payload("hoot!".getBytes()).build();
       testHoot(request);
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    void testConvertRequestBadContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setPayload(Payloads.newPayload(new Date()));
+      HttpRequest request = HttpRequest.builder()
+                                       .method(HttpMethod.GET)
+                                       .endpoint(endPoint)
+                                       .payload(Payloads.newPayload(new Date())).build();
       req.apply(request);
    }
 
    @Test
    @Parameters("basedir")
    void testConvertRequestFileContent(String basedir) throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       File file = new File(basedir, "target/testfiles/hoot");
       file.getParentFile().mkdirs();
       Files.write("hoot!".getBytes(Charsets.UTF_8), file);
-      request.setPayload(file);
+      HttpRequest request = HttpRequest.builder()
+                                       .method(HttpMethod.GET)
+                                       .endpoint(endPoint)
+                                       .payload(file).build();
       testHoot(request);
    }
 

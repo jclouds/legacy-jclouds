@@ -33,7 +33,6 @@ import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -51,8 +50,11 @@ public class ParseDirectoryListFromContentAndHeadersTest extends BaseHandlerTest
    }
 
    public void testWithToken() {
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newPayload(getClass().getResourceAsStream(
-            "/list_basic.xml")), ImmutableMultimap.of(AtmosHeaders.TOKEN, "token"));
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(200)
+                                          .message("ok")
+                                          .payload(Payloads.newPayload(getClass().getResourceAsStream("/list_basic.xml")))
+                                          .addHeader(AtmosHeaders.TOKEN, "token").build();
 
       BoundedSet<DirectoryEntry> result = createFn().apply(response);
       assertEquals(result, new BoundedLinkedHashSet<DirectoryEntry>(values(), "token"));
@@ -60,8 +62,11 @@ public class ParseDirectoryListFromContentAndHeadersTest extends BaseHandlerTest
    }
 
    public void testWithoutToken() {
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newPayload(getClass().getResourceAsStream(
-            "/list_basic.xml")));
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(200)
+                                          .message("ok")
+                                          .payload(Payloads.newPayload(getClass().getResourceAsStream("/list_basic.xml"))).build();
+
       BoundedSet<DirectoryEntry> result = createFn().apply(response);
 
       assertEquals(ImmutableSet.copyOf(result), values());

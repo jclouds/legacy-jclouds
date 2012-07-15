@@ -31,7 +31,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -49,10 +48,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                           "command=listDomains&listAll=true&apiKey=identity&signature=sVFaGTu0DNSTVtWy3wtRt7KTx0w%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -74,10 +70,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                           "command=listDomains&listAll=true&apiKey=identity&signature=sVFaGTu0DNSTVtWy3wtRt7KTx0w%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -93,10 +86,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                           "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST%2FcIRUHvWhfWovJugU%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -114,10 +104,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                           "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST%2FcIRUHvWhfWovJugU%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -133,10 +120,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                           "command=listDomainChildren&listAll=true&id=1&isrecursive=true&apiKey=identity&signature=Jn6kFkloRvfaaivlJiHd0F5J3Jk%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -160,10 +144,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackRestClientExpect
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listDomainChildren&listAll=true&id=1&isrecursive=true&apiKey=identity&" +
                           "signature=Jn6kFkloRvfaaivlJiHd0F5J3Jk%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)

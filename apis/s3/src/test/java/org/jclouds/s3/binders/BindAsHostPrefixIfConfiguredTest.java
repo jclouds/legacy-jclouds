@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
@@ -53,7 +52,7 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
 
    public void testBucket() throws IOException {
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://euc/services/Walrus"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://euc/services/Walrus").build();
       BindAsHostPrefixIfConfigured binder = injector.getInstance(BindAsHostPrefixIfConfigured.class);
 
       request = binder.bindToRequest(request, "bucket");
@@ -63,7 +62,7 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
 
    public void testBucketWithHostnameStyle() throws IOException, SecurityException, NoSuchMethodException {
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://euc/services/Walrus"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://euc/services/Walrus").build();
       BindAsHostPrefixIfConfigured binder = injector.getInstance(BindAsHostPrefixIfConfigured.class);
 
       request = binder.bindToRequest(request, "testbucket.example.com");
@@ -78,7 +77,7 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
    @Test(dataProvider = "objects")
    public void testObject(String key) throws InterruptedException {
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://euc/services/Walrus/object"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://euc/services/Walrus/object").build();
       BindAsHostPrefixIfConfigured binder = injector.getInstance(BindAsHostPrefixIfConfigured.class);
 
       request = binder.bindToRequest(request, "bucket");

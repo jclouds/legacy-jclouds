@@ -12,7 +12,6 @@ import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.nova.v2_0.domain.Extension;
 import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
 import org.jclouds.openstack.nova.v2_0.extensions.KeyPairAsyncClient;
-import org.jclouds.openstack.nova.v2_0.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.annotations.Delegate;
 import org.testng.annotations.Test;
@@ -130,13 +129,11 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
                   protected void configure() {
                   }
 
-                  @SuppressWarnings("unused")
                   @Provides
                   LoadingCache<String, Set<Extension>> getExtensions() {
                      return extensionsForZone;
                   }
 
-                  @SuppressWarnings("unused")
                   @Provides
                   @Named("openstack.nova.extensions")
                   Multimap<URI, URI> getAliases() {

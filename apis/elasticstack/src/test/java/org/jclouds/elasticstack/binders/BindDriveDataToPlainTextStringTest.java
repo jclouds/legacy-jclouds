@@ -21,7 +21,6 @@ package org.jclouds.elasticstack.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -62,7 +61,7 @@ public class BindDriveDataToPlainTextStringTest {
    }).getInstance(BindDriveDataToPlainTextString.class);
 
    public void testSimple() {
-      HttpRequest request = new HttpRequest("POST", URI.create("https://host/drives/create"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("https://host/drives/create").build();
       FN.bindToRequest(request, new DriveData.Builder().name("foo").size(100l).build());
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.TEXT_PLAIN);
       assertEquals(request.getPayload().getRawContent(), "name foo\nsize 100");
@@ -77,7 +76,7 @@ public class BindDriveDataToPlainTextStringTest {
             .tags(ImmutableSet.of("tag1", "tag2")).userMetadata(ImmutableMap.of("foo", "bar", "baz", "raz"))//
             .build();
 
-      HttpRequest request = new HttpRequest("POST", URI.create("https://host/drives/create"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("https://host/drives/create").build();
       FN.bindToRequest(request, input);
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.TEXT_PLAIN);
       assertEquals(request.getPayload().getRawContent(),

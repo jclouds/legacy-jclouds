@@ -66,7 +66,7 @@ public abstract class BaseParserTest<T, G> {
    public void test() {
       T expects = expected();
       Function<HttpResponse, T> parser = parser(injector());
-      T response = parser.apply(new HttpResponse(200, "ok", payload()));
+      T response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(payload()).build());
       compare(expects, response);
    }
 

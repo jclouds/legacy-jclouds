@@ -24,13 +24,10 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.TransientBlobRequestSigner;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.domain.Location;
 import org.jclouds.rest.config.BinderUtils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link TransientBlobStoreContext}; requires {@link TransientAsyncBlobStore} bound.

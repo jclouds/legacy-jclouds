@@ -81,7 +81,7 @@ public class ComputeServiceUtils {
    }
 
    public static Statement execHttpResponse(URI location) {
-      return execHttpResponse(new HttpRequest("GET", location));
+      return execHttpResponse(HttpRequest.builder().method("GET").endpoint(location).build());
    }
 
    /**
@@ -95,7 +95,7 @@ public class ComputeServiceUtils {
    }
 
    public static Statement extractTargzIntoDirectory(URI targz, String directory) {
-      return extractTargzIntoDirectory(new HttpRequest("GET", targz), directory);
+      return extractTargzIntoDirectory(HttpRequest.builder().method("GET").endpoint(targz).build(), directory);
    }
 
    /**
@@ -108,7 +108,7 @@ public class ComputeServiceUtils {
    }
 
    public static Statement extractZipIntoDirectory(URI zip, String directory) {
-      return extractZipIntoDirectory(new HttpRequest("GET", zip), directory);
+      return extractZipIntoDirectory(HttpRequest.builder().method("GET").endpoint(zip).build(), directory);
    }
 
    public static double getCores(Hardware input) {

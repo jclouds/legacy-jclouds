@@ -18,10 +18,9 @@
  */
 package org.jclouds.openstack.keystone.v2_0.internal;
 import static java.lang.String.format;
-import static org.jclouds.rest.internal.BaseRestClientExpectTest.payloadFromStringWithContentType;
+import static org.jclouds.rest.internal.BaseRestApiExpectTest.payloadFromStringWithContentType;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -29,7 +28,6 @@ import org.jclouds.io.Payload;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -49,11 +47,9 @@ public enum KeystoneFixture {
 	   }
 
    public HttpRequest initialAuthWithUsernameAndPassword(String username, String password){
-      return HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
-            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+      return HttpRequest.builder().method("POST")
+            .endpoint("http://localhost:5000/v2.0/tokens")
+            .addHeader(HttpHeaders.ACCEPT, "application/json")
             .payload(
                      payloadFromStringWithContentType(
                               format(
@@ -62,11 +58,9 @@ public enum KeystoneFixture {
    }
   
    public HttpRequest initialAuthWithUsernameAndPasswordAndTenantName(String username, String password){
-      return HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
-            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+      return HttpRequest.builder().method("POST")
+            .endpoint("http://localhost:5000/v2.0/tokens")
+            .addHeader(HttpHeaders.ACCEPT, "application/json")
             .payload(
                      payloadFromStringWithContentType(
                               format(
@@ -75,11 +69,9 @@ public enum KeystoneFixture {
    }
   
    public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantName(String accessKey, String secretKey){
-      return HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
-            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+      return HttpRequest.builder().method("POST")
+            .endpoint("http://localhost:5000/v2.0/tokens")
+            .addHeader(HttpHeaders.ACCEPT, "application/json")
             .payload(
                      payloadFromStringWithContentType(
                               format(
@@ -88,11 +80,10 @@ public enum KeystoneFixture {
    }
    
    public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantId(String accessKey, String secretKey){
-	      return HttpRequest
-	            .builder()
-	            .method("POST")
-	            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
-	            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+      return HttpRequest.builder().method("POST")
+
+	            .endpoint("http://localhost:5000/v2.0/tokens")
+	            .addHeader(HttpHeaders.ACCEPT, "application/json")
 	            .payload(
 	                     payloadFromStringWithContentType(
 	                              format(

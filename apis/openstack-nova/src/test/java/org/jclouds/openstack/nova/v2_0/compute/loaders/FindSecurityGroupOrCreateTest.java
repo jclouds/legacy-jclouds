@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.jclouds.openstack.nova.v2_0.compute.loaders.FindSecurityGroupOrCreate;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneSecurityGroupNameAndPorts;

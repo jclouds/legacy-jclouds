@@ -27,7 +27,6 @@ import static org.jclouds.utils.TestUtils.SINGLE_NO_ARG_INVOCATION;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -102,7 +101,7 @@ public class ParseSaxTest extends BaseHandlerTest {
          InterruptedException, TimeoutException, IOException {
 
       ParseSax<String> parser = createParser();
-      HttpRequest request = new HttpRequest("GET", URI.create("http://foohost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://foohost").build(); 
       Exception input = new Exception("foo");
 
       try {
@@ -119,8 +118,8 @@ public class ParseSaxTest extends BaseHandlerTest {
          TimeoutException, IOException {
 
       ParseSax<String> parser = createParser();
-      HttpRequest request = new HttpRequest("GET", URI.create("http://foohost"));
-      HttpResponse response = new HttpResponse(304, "Not Modified", null);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://foohost").build();
+      HttpResponse response = HttpResponse.builder().statusCode(304).message("Not Modified").build();
       Exception input = new Exception("foo");
 
       try {
@@ -137,8 +136,8 @@ public class ParseSaxTest extends BaseHandlerTest {
          InterruptedException, TimeoutException, IOException {
 
       ParseSax<String> parser = createParser();
-      HttpRequest request = new HttpRequest("GET", URI.create("http://foohost"));
-      HttpResponse response = new HttpResponse(304, "Not Modified", null);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://foohost").build();
+      HttpResponse response = HttpResponse.builder().statusCode(304).message("Not Modified").build();;
       Locator locator = createMock(Locator.class);
       expect(locator.getColumnNumber()).andReturn(1);
       expect(locator.getLineNumber()).andReturn(1);
@@ -163,8 +162,8 @@ public class ParseSaxTest extends BaseHandlerTest {
          InterruptedException, TimeoutException, IOException {
 
       ParseSax<String> parser = createParser();
-      HttpRequest request = new HttpRequest("GET", URI.create("http://foohost"));
-      HttpResponse response = new HttpResponse(304, "Not Modified", null);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://foohost").build();
+      HttpResponse response = HttpResponse.builder().statusCode(304).message("Not Modified").build();
       Locator locator = createMock(Locator.class);
       expect(locator.getColumnNumber()).andReturn(1);
       expect(locator.getLineNumber()).andReturn(1);

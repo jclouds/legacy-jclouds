@@ -82,7 +82,6 @@ public class VAppToNodeMetadataTest {
             bind(ResourceAllocationSettingDataHandler.class).to(VCloudResourceAllocationSettingDataHandler.class);
          }
 
-         @SuppressWarnings("unused")
          @Memoized
          @Singleton
          @Provides
@@ -90,14 +89,12 @@ public class VAppToNodeMetadataTest {
             return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(location));
          }
 
-         @SuppressWarnings("unused")
          @Singleton
          @Provides
          Map<String, Credentials> supplyCreds() {
             return Maps.newConcurrentMap();
          }
 
-         @SuppressWarnings("unused")
          @Singleton
          @Provides
          protected Map<Status, NodeMetadata.Status> provideVAppStatusToNodeStatus() {

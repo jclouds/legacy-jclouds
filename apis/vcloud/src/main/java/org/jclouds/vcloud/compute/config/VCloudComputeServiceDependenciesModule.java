@@ -135,7 +135,7 @@ public class VCloudComputeServiceDependenciesModule extends AbstractModule {
 
       // we aren't converting from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
    }
 
 

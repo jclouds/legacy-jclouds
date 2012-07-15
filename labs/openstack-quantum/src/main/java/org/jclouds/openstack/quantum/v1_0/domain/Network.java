@@ -22,15 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
-import org.jclouds.javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 

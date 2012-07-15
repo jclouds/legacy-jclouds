@@ -129,7 +129,6 @@ import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.binders.BindAsHostPrefix;
-import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
@@ -149,7 +148,6 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.Futures;
@@ -848,7 +846,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public void testMultipartWithStringPart() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestMultipartForm.class.getMethod("withStringPart", String.class);
-      GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+      GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
             "foobledata");
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
@@ -863,7 +861,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testMultipartWithStringPartNullNotOkay() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestMultipartForm.class.getMethod("withStringPart", String.class);
       try {
-         GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+         GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
                (String) null);
          Assert.fail("call should have failed with illegal null parameter, not permitted " + httpRequest
                + " to be created");
@@ -875,7 +873,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public void testMultipartWithParamStringPart() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestMultipartForm.class.getMethod("withParamStringPart", String.class, String.class);
-      GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+      GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
             "name", "foobledata");
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
@@ -894,7 +892,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testMultipartWithParamStringPartNullNotOk() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestMultipartForm.class.getMethod("withParamStringPart", String.class, String.class);
       try {
-         GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+         GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
                null, "foobledata");
          Assert.fail("call should have failed with illegal null parameter, not permitted " + httpRequest
                + " to be created");
@@ -910,7 +908,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Files.append("foobledata", file, UTF_8);
       file.deleteOnExit();
 
-      GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+      GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
             "name", file);
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
@@ -928,7 +926,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public void testMultipartWithParamByteArrayPart() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestMultipartForm.class.getMethod("withParamByteArrayBinaryPart", String.class, byte[].class);
-      GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+      GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
             "name", "goo".getBytes());
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
@@ -951,7 +949,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Files.write(new byte[] { 17, 26, 39, 40, 50 }, file);
       file.deleteOnExit();
 
-      GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class).createRequest(method,
+      GeneratedHttpRequest httpRequest = factory(TestMultipartForm.class).createRequest(method,
             "name", file);
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
@@ -1116,7 +1114,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, View> parser = (Function<HttpResponse, View>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))).foo, "bar");
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()).foo, "bar");
 
    }
 
@@ -1131,7 +1129,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))),
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()),
             ImmutableMap.of("foo", "bar"));
 
    }
@@ -1147,7 +1145,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))),
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()),
             ImmutableMap.of("foo", "bar"));
 
    }
@@ -1163,7 +1161,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))),
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()),
             ImmutableMap.of("foo", "bar"));
 
    }
@@ -1179,7 +1177,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()), "bar");
 
    }
 
@@ -1194,7 +1192,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()), "bar");
 
    }
 
@@ -1215,7 +1213,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()), "bar");
 
    }
 
@@ -1230,7 +1228,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))),
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}").build()),
             ImmutableSet.of("0.7.0", "0.7.1"));
    }
 
@@ -1245,7 +1243,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))),
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}").build()),
             ImmutableSet.of("0.7.0", "0.7.1"));
    }
 
@@ -1260,8 +1258,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok",
-            newStringPayload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }"))), new Long(4));
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok")
+            .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), new Long(4));
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
@@ -1312,8 +1310,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestRequestFilter.class.getMethod("getOverride", HttpRequest.class);
       HttpRequest request = factory(TestRequestFilter.class).createRequest(
             method,
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost"))
-                  .headers(ImmutableMultimap.of("foo", "bar")).build());
+            HttpRequest.builder().method("GET").endpoint("http://localhost")
+                  .addHeader("foo", "bar").build());
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getHeaders().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), TestRequestFilter2.class);
@@ -1560,21 +1558,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       String query = factory(TestQueryReplace.class)
             .createRequest(oneQuery, new Object[] { "robot", new TestReplaceQueryOptions() }).getEndpoint().getQuery();
       assertEquals(query, "x-amz-copy-source=/robot");
-   }
-
-   private interface TestMapMatrixParams {
-      @POST
-      @Path("/objects/{id}/action/{action}")
-      ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
-            @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
-   }
-
-   public void testTestMapMatrixParams() throws SecurityException, NoSuchMethodException {
-      Method method = TestMapMatrixParams.class.getMethod("action", String.class, String.class, Map.class);
-      HttpRequest request = factory(TestMapMatrixParams.class).createRequest(method,
-            new Object[] { "robot", "kill", ImmutableMap.of("death", "slow") });
-      assertRequestLineEquals(request, "POST http://localhost:9999/objects/robot/action/kill;death=slow HTTP/1.1");
-      assertEquals(request.getHeaders().size(), 0);
    }
 
    @SkipEncoding('/')
@@ -1956,8 +1939,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestTransformers> processor = factory(TestTransformers.class);
       Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
-      GeneratedHttpRequest<TestTransformers> request = GeneratedHttpRequest.<TestTransformers> requestBuilder()
-            .method("GET").endpoint(URI.create("http://localhost")).declaring(TestTransformers.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .method("GET").endpoint("http://localhost").declaring(TestTransformers.class)
             .javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ReturnStringIf200Context.class);
@@ -2022,8 +2005,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateGetVarArgOptionsThatProducesHeaders() throws SecurityException, NoSuchMethodException {
       Date date = new Date();
       GetOptions options = GetOptions.Builder.ifModifiedSince(date);
-      HttpRequestOptions[] optionsHolder = new HttpRequestOptions[] {};
-      Method method = TestRequest.class.getMethod("get", String.class, optionsHolder.getClass());
+      Method method = TestRequest.class.getMethod("get", String.class, HttpRequestOptions[].class);
       HttpRequest request = factory(TestRequest.class).createRequest(method, new Object[] { "1", options });
       assertEquals(request.getEndpoint().getHost(), "localhost");
       assertEquals(request.getEndpoint().getPath(), "/1");
@@ -2329,7 +2311,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testPut() throws SecurityException, NoSuchMethodException, IOException {
       RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
       Method method = TestPayload.class.getMethod("put", String.class);
-      GeneratedHttpRequest<TestPayload> request = processor.createRequest(method, "test");
+      GeneratedHttpRequest request = processor.createRequest(method, "test");
 
       assertRequestLineEquals(request, "PUT http://localhost:9999 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -2340,7 +2322,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void putWithPath() throws SecurityException, NoSuchMethodException, IOException {
       RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
       Method method = TestPayload.class.getMethod("putWithPath", String.class, String.class);
-      GeneratedHttpRequest<TestPayload> request = processor.createRequest(method, "rabble", "test");
+      GeneratedHttpRequest request = processor.createRequest(method, "rabble", "test");
 
       assertRequestLineEquals(request, "PUT http://localhost:9999/rabble HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -2488,8 +2470,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
-      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest
-            .<TestJAXBResponseParser> requestBuilder().method("GET").endpoint(URI.create("http://localhost"))
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("GET").endpoint("http://localhost")
             .declaring(TestJAXBResponseParser.class).javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
@@ -2499,8 +2480,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
-      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest
-            .<TestJAXBResponseParser> requestBuilder().method("GET").endpoint(URI.create("http://localhost"))
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("GET").endpoint("http://localhost")
             .declaring(TestJAXBResponseParser.class).javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
@@ -2520,7 +2500,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       StringBuilder payload = new StringBuilder(XMLParser.DEFAULT_XML_HEADER);
       payload.append("<test><elem>Hello World</elem></test>");
-      TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
+      TestJAXBDomain domain = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(payload.toString()).build());
       assertEquals(domain.getElem(), "Hello World");
    }
 
@@ -2538,7 +2518,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       StringBuilder payload = new StringBuilder(XMLParser.DEFAULT_XML_HEADER);
       payload.append("<test><elem>Hello World</elem></test>");
-      TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
+      TestJAXBDomain domain = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(payload.toString()).build());
       assertEquals(domain.getElem(), "Hello World");
    }
 
@@ -2592,7 +2572,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                         Suppliers.ofInstance(URI.create("http://localhost:1111")));
                }
 
-               @SuppressWarnings("unused")
                @Provides
                @Named("exception")
                Set<String> exception() {

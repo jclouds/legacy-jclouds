@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Addresses;
@@ -42,7 +41,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -55,15 +54,14 @@ public class ParseAddressesFromJsonResponseTest {
 
       UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
       }));
-      Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Addresses response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
-      List<Address> publicAddresses = ImmutableList.copyOf(
-            Iterables.transform(ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
-                  Address.newString2AddressFunction()));
+      List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
+               ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+               Address.newString2AddressFunction()));
 
-      List<Address> privateAddresses = ImmutableList.copyOf(
-            Iterables.transform(ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
-                  Address.newString2AddressFunction()));
+      List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
+               ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
 
       assertTrue(response.getPublicAddresses().equals(Sets.newHashSet(publicAddresses)));
       assertTrue(response.getPrivateAddresses().equals(Sets.newHashSet(privateAddresses)));

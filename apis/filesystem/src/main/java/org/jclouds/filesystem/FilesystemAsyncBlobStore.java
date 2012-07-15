@@ -41,15 +41,11 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.net.URI;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -64,7 +60,6 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
@@ -93,13 +88,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
 
@@ -410,7 +403,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
    public static HttpResponseException returnResponseException(int code) {
       HttpResponse response = null;
-      response = new HttpResponse(code, null, null);
+      response = HttpResponse.builder().statusCode(code).build();
       return new HttpResponseException(new HttpCommand() {
 
          public int getRedirectCount() {
@@ -443,7 +436,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
          @Override
          public HttpRequest getCurrentRequest() {
-            return new HttpRequest("GET", URI.create("http://stub"));
+            return HttpRequest.builder().method("GET").endpoint("http://stub").build();
          }
 
          @Override
@@ -523,7 +516,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          if (options.getIfModifiedSince() != null) {
             Date modifiedSince = options.getIfModifiedSince();
             if (blob.getMetadata().getLastModified().before(modifiedSince)) {
-               HttpResponse response = new HttpResponse(304, null, null);
+               HttpResponse response = HttpResponse.builder().statusCode(304).build();
                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is before %2$s", blob
                      .getMetadata().getLastModified(), modifiedSince), null, response));
             }
@@ -532,7 +525,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          if (options.getIfUnmodifiedSince() != null) {
             Date unmodifiedSince = options.getIfUnmodifiedSince();
             if (blob.getMetadata().getLastModified().after(unmodifiedSince)) {
-               HttpResponse response = new HttpResponse(412, null, null);
+               HttpResponse response = HttpResponse.builder().statusCode(412).build();
                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is after %2$s", blob
                      .getMetadata().getLastModified(), unmodifiedSince), null, response));
             }

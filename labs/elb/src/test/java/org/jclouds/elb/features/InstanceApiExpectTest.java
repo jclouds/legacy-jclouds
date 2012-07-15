@@ -20,7 +20,6 @@ package org.jclouds.elb.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.TimeZone;
 
 import org.jclouds.elb.ELBApi;
@@ -32,7 +31,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -47,10 +45,8 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest get = HttpRequest.builder()
                                 .method("POST")
-                                .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                .headers(ImmutableMultimap.<String, String> builder()
-                                          .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                          .build())
+                                .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                 .payload(
                                     payloadFromStringWithContentType(
                                           "Action=DescribeInstanceHealth" +
@@ -88,10 +84,8 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest registerInstanceWithLoadBalancer = HttpRequest.builder()
                                     .method("POST")
-                                    .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                    .headers(ImmutableMultimap.<String, String> builder()
-                                             .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                             .build())
+                                    .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                    .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                     .payload(
                                        payloadFromStringWithContentType(
                                              "Action=RegisterInstancesWithLoadBalancer" +
@@ -131,10 +125,8 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
    
    HttpRequest registerInstancesWithLoadBalancer = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                     .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                     .build())
+            .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+            .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
             .payload(
                payloadFromStringWithContentType(
                      "Action=RegisterInstancesWithLoadBalancer" +
@@ -176,10 +168,8 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
 
    HttpRequest deregisterInstanceFromLoadBalancer = HttpRequest.builder()
                                     .method("POST")
-                                    .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-                                    .headers(ImmutableMultimap.<String, String> builder()
-                                             .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                                             .build())
+                                    .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+                                    .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
                                     .payload(
                                        payloadFromStringWithContentType(
                                              "Action=DeregisterInstancesFromLoadBalancer" +
@@ -219,10 +209,8 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
    
    HttpRequest deregisterInstancesFromLoadBalancer = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                     .put("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
-                     .build())
+            .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+            .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
             .payload(
                payloadFromStringWithContentType(
                      "Action=DeregisterInstancesFromLoadBalancer" +

@@ -38,7 +38,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextModule;
-import org.jclouds.openstack.nova.v2_0.compute.functions.ServerInZoneToNodeMetadata;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v2_0.parse.ParseServerTest;

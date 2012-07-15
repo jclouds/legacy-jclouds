@@ -18,21 +18,14 @@
  */
 package org.jclouds.http.utils;
 
-import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
+import static org.jclouds.http.utils.Queries.parseQueryToMap;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Set;
 
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
@@ -41,64 +34,8 @@ import com.google.common.collect.Multimap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class ModifyRequestTest {
-
-   public void testEndpoint() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
-
-      assertEquals(ModifyRequest.endpoint(request, URI.create("http://bar")), HttpRequest.builder().method("GET")
-         .endpoint(URI.create("http://bar")).build());
-   }
-
-   public void testReplaceHeader() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-         .headers(ImmutableMultimap.of("foo", "bar")).build();
-
-      assertEquals(
-         ModifyRequest.replaceHeader(request, "foo", "baz"),
-         HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-            .headers(ImmutableMultimap.of("foo", "baz")).build());
-   }
-
-   public void testRemoveHeader() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-         .headers(ImmutableMultimap.of("foo", "bar")).build();
-
-      assertEquals(ModifyRequest.removeHeader(request, "foo"),
-         HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build());
-   }
-
-   public void testReplaceHeaders() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-         .headers(ImmutableMultimap.of("foo", "bar", "rabbit", "tree")).build();
-
-      assertEquals(
-         ModifyRequest.replaceHeaders(request,
-            ImmutableMultimap.of("foo", "bar", "rabbit", "robot", "robert", "baz")),
-         HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-            .headers(ImmutableMultimap.of("foo", "bar", "rabbit", "robot", "robert", "baz")).build());
-   }
-
-   public void testPutHeadersAddsAnotherValue() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-         .headers(ImmutableMultimap.of("foo", "bar")).build();
-
-      assertEquals(
-         ModifyRequest.putHeaders(request, ImmutableMultimap.of("foo", "baz")),
-         HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-            .headers(ImmutableMultimap.<String, String>builder().put("foo", "bar").put("foo", "baz").build())
-            .build());
-   }
-
-   public void testPutFormParamsAddsAnotherValue() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo"))
-         .payload(Payloads.newStringPayload("foo=bar")).build();
-      Payload payload = Payloads.newStringPayload("foo=bar&foo=baz");
-      payload.getContentMetadata().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-      assertEquals(ModifyRequest.putFormParams(request, ImmutableMultimap.of("foo", "baz")), HttpRequest.builder()
-         .method("GET").endpoint(URI.create("http://foo")).payload(payload).build());
-   }
+@Test(groups = "unit", testName = "QueriesTest")
+public class QueriesTest {
 
    public void testParseBase64InForm() {
       Multimap<String, String> expects = LinkedListMultimap.create();

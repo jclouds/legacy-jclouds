@@ -41,7 +41,6 @@ import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
 import org.jclouds.vcloud.director.v1_5.domain.network.RouterInfo;
 import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

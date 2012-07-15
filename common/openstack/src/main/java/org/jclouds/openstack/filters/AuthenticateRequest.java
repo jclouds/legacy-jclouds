@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.openstack.internal.Authentication;
 import org.jclouds.openstack.reference.AuthHeaders;
 
@@ -48,7 +47,7 @@ public class AuthenticateRequest implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, AuthHeaders.AUTH_TOKEN, authTokenProvider.get());
+      return request.toBuilder().replaceHeader(AuthHeaders.AUTH_TOKEN, authTokenProvider.get()).build();
    }
 
 }

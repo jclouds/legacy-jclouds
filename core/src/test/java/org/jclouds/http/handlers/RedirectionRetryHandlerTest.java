@@ -23,8 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.net.URI;
-
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.ContextBuilder;
@@ -37,7 +35,6 @@ import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -58,7 +55,9 @@ public class RedirectionRetryHandlerTest {
    public void test302DoesNotRetry() {
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpResponse response = new HttpResponse(302, "HTTP/1.1 302 Found", null);
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(302)
+                                          .message("HTTP/1.1 302 Found").build();
 
       expect(command.incrementRedirectCount()).andReturn(0);
 
@@ -76,8 +75,10 @@ public class RedirectionRetryHandlerTest {
    public void test302DoesNotRetryAfterLimit() {
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpResponse response = new HttpResponse(302, "HTTP/1.1 302 Found", null, ImmutableMultimap.of(
-               HttpHeaders.LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645"));
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(302)
+                                          .message("HTTP/1.1 302 Found")
+                                          .addHeader(HttpHeaders.LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(); 
 
       expect(command.incrementRedirectCount()).andReturn(5);
 
@@ -95,65 +96,79 @@ public class RedirectionRetryHandlerTest {
    public void test302WithPathOnlyHeader() {
 
       verifyRedirectRoutes(
-               new HttpRequest("GET", URI
-                        .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),
-               new HttpResponse(302, "HTTP/1.1 302 Found", null, ImmutableMultimap.of(HttpHeaders.LOCATION,
-                        "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645")),
-               new HttpRequest(
-                        "GET",
-                        URI
-                                 .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645")));
-
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpResponse.builder()
+                           .statusCode(302)
+                           .message("HTTP/1.1 302 Found")
+                           .addHeader(HttpHeaders.LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(),
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build());
    }
 
    @Test
    public void test302ToHttps() {
 
-      verifyRedirectRoutes(new HttpRequest("GET", URI
-               .create("http://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),
-               new HttpResponse(302, "HTTP/1.1 302 Found", null, ImmutableMultimap.of(HttpHeaders.LOCATION,
-                        "https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),//
-               new HttpRequest("GET", URI
-                        .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")));
-
+      verifyRedirectRoutes(
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("http://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpResponse.builder()
+                           .statusCode(302)
+                           .message("HTTP/1.1 302 Found")
+                           .addHeader(HttpHeaders.LOCATION, "https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build());
    }
 
    @Test
    public void test302ToDifferentPort() {
-
-      verifyRedirectRoutes(new HttpRequest("GET", URI
-               .create("http://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),
-               new HttpResponse(302, "HTTP/1.1 302 Found", null, ImmutableMultimap.of(HttpHeaders.LOCATION,
-                        "http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645")),//
-               new HttpRequest("GET", URI
-                        .create("http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645")));
-
+      verifyRedirectRoutes(
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("http://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpResponse.builder()
+                           .statusCode(302)
+                           .message("HTTP/1.1 302 Found")
+                           .addHeader(HttpHeaders.LOCATION, "http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645").build());
    }
 
    @Test
    public void test302WithHeader() {
-
-      verifyRedirectRoutes(new HttpRequest("GET", URI
-               .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),
-               new HttpResponse(302, "HTTP/1.1 302 Found", null, ImmutableMultimap.of(HttpHeaders.LOCATION,
-                        "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),
-               new HttpRequest("GET", URI
-                        .create("https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")));
-
+      verifyRedirectRoutes(
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpResponse.builder()
+                           .statusCode(302)
+                           .message("HTTP/1.1 302 Found")
+                           .addHeader(HttpHeaders.LOCATION, "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build());
    }
 
    @Test
    public void test302WithHeaderReplacesHostHeader() {
-
-      verifyRedirectRoutes(new HttpRequest("GET", URI
-               .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645"),
-               ImmutableMultimap.of(HttpHeaders.HOST, "services.enterprisecloud.terremark.com")), new HttpResponse(302,
-               "HTTP/1.1 302 Found", null, ImmutableMultimap.of(HttpHeaders.LOCATION,
-                        "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")),//
-               new HttpRequest("GET", URI
-                        .create("https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645"),
-                        ImmutableMultimap.of(HttpHeaders.HOST, "services1.enterprisecloud.terremark.com")));
-
+      verifyRedirectRoutes(
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")
+                          .addHeader(HttpHeaders.HOST, "services.enterprisecloud.terremark.com").build(),
+               HttpResponse.builder()
+                           .statusCode(302)
+                           .message("HTTP/1.1 302 Found")
+                           .addHeader(HttpHeaders.LOCATION, "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+               HttpRequest.builder()
+                          .method("GET")
+                          .endpoint("https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")
+                          .addHeader(HttpHeaders.HOST, "services1.enterprisecloud.terremark.com").build());
    }
 
    protected void verifyRedirectRoutes(HttpRequest request, HttpResponse response, HttpRequest expected) {

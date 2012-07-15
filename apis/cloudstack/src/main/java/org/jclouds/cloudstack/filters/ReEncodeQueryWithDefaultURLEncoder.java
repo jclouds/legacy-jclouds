@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
@@ -48,7 +48,7 @@ public class ReEncodeQueryWithDefaultURLEncoder implements HttpRequestFilter {
    public HttpRequest filter(HttpRequest request) throws HttpException {
       UriBuilder builder = builders.get();
       builder.uri(request.getEndpoint());
-      Multimap<String, String> map = ModifyRequest.parseQueryToMap(request.getEndpoint().getRawQuery());
+      Multimap<String, String> map = Queries.parseQueryToMap(request.getEndpoint().getRawQuery());
       builder.replaceQuery("");
       for (String key : map.keySet())
          builder.queryParam(key, getOnlyElement(map.get(key)));

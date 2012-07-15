@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.reference.AtmosHeaders;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -34,17 +33,21 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ParseObjectFromHeadersAndHttpContentTest")
 public class ParseObjectFromHeadersAndHttpContentTest {
 
-   static final HttpResponse RESPONSE = new HttpResponse(200, "ok", Payloads.newStringPayload(""),
+   static final HttpResponse RESPONSE = HttpResponse.builder()
+                                                    .statusCode(200)
+                                                    .message("ok")
+                                                    .payload("")
+                                                    .headers(
          ImmutableMultimap.of(AtmosHeaders.TAGS, "tag1, tag2", AtmosHeaders.LISTABLE_TAGS,
                "listabletag1, listabletag2", AtmosHeaders.META,
                "meta1=foo1, content-md5=1f3870be274f6c49b3e31a0c6728957f, atime=2009-10-12T16:09:42Z, mtime=2009-10-19T04:37:00Z,"
                      + " ctime=2009-10-19T04:37:00Z, itime=2009-10-12T16:09:42Z, type=directory, uid=root, "
                      + "gid=rootr, objectid=4980cdb2b010109b04a44f7bb83f5f04ad354c638ae5, "
                      + "objname=e913e09366364e9ba384b8fead643d43, size=4096, nlink=1, policyname=default",
-               AtmosHeaders.LISTABLE_META, "listablemeta1=listablefoo1, listablemeta2=listablefoo2"));
+               AtmosHeaders.LISTABLE_META, "listablemeta1=listablefoo1, listablemeta2=listablefoo2")).build();
 
    public static final AtmosObject EXPECTED;
 

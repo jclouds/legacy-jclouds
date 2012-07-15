@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.VirtualInterface;
-import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

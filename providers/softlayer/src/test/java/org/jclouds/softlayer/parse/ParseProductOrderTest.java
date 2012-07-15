@@ -89,7 +89,7 @@ public class ParseProductOrderTest extends BaseItemParserTest<ProductOrder> {
    public void test() {
       ProductOrder expects = expected();
       Function<HttpResponse, ProductOrder> parser = parser(injector());
-      ProductOrder response = parser.apply(new HttpResponse(200, "ok", payload()));
+      ProductOrder response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(payload()).build());
       assertEquals(response,expects);
       hasOs(response);
    }

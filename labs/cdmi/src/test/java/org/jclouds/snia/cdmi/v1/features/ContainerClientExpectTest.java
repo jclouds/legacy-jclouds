@@ -20,8 +20,6 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -43,12 +41,12 @@ public class ContainerClientExpectTest extends BaseCDMIClientExpectTest {
 
       HttpRequest getContainer = HttpRequest.builder()
             .method("GET")
-            .endpoint(URI.create("http://localhost:8080/MyContainer/"))
+            .endpoint("http://localhost:8080/MyContainer/")
             .headers(ImmutableMultimap.<String, String> builder()
                         .put("X-CDMI-Specification-Version", "1.0.1")
-                        .put("Accept", "application/cdmi-container")
                         .put("TID", "tenantId")
                         .put("Authorization", "Basic " + CryptoStreams.base64("username:password".getBytes()))
+                        .put("Accept", "application/cdmi-container")
                         .build())
             .build();
       

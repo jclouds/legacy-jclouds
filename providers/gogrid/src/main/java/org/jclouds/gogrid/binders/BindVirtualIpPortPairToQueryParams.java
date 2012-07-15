@@ -23,14 +23,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.VIRTUAL_IP_KEY;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Binds a virtual IP to the request.
@@ -40,13 +37,8 @@ import org.jclouds.rest.Binder;
  * @author Oleksiy Yarmula
  */
 public class BindVirtualIpPortPairToQueryParams implements Binder {
-   private final Provider<UriBuilder> builder;
 
-   @Inject
-   BindVirtualIpPortPairToQueryParams(Provider<UriBuilder> builder) {
-      this.builder = builder;
-   }
-
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof IpPortPair,
@@ -58,8 +50,11 @@ public class BindVirtualIpPortPairToQueryParams implements Binder {
       checkNotNull(ipPortPair.getIp().getIp(), "There must be an IP address defined in Ip object");
       checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-      request = ModifyRequest.addQueryParam(request, VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp(), builder.get());
-      return ModifyRequest.addQueryParam(request, VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()),
-               builder.get());
+      ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+
+      builder.put(VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp());
+      builder.put(VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()));
+      
+      return (R) request.toBuilder().replaceQueryParams(builder.build()).build();
    }
 }

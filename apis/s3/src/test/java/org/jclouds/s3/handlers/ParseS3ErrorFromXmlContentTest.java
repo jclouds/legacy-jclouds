@@ -36,10 +36,8 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.s3.reference.S3Headers;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -86,9 +84,8 @@ public class ParseS3ErrorFromXmlContentTest {
       }).getInstance(ParseS3ErrorFromXmlContent.class);
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-               .toInputStream(content)));
+      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
+      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
       response.getPayload().getContentMetadata().setContentType("application/xml");
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

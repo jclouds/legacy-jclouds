@@ -163,7 +163,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testAuthorizeIngressICMPToCIDRs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToCIDRs", String.class, int.class,
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToCIDRs", String.class , int.class,
             int.class, Iterable.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, 22, 22, ImmutableSet.of("1.1.1.1/24", "1.2.2.2/16"));
 

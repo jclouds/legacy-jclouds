@@ -27,7 +27,6 @@ import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMultimap;
@@ -50,6 +49,7 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
       this.dateService = dateService;
    }
    
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       GetMetricStatistics getRequest = GetMetricStatistics.class.cast(checkNotNull(payload,
@@ -84,7 +84,7 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
          formParameters.put("Unit", getRequest.getUnit().get().toString());
       }
 
-      return ModifyRequest.putFormParams(request, formParameters.build());
+      return (R) request.toBuilder().replaceFormParams(formParameters.build()).build();
    }
 
 }

@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 

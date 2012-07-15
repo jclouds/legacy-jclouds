@@ -21,7 +21,6 @@ package org.jclouds.cloudsigma.functions;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -37,13 +36,13 @@ public class KeyValuesDelimitedByBlankLinesToDriveInfoTest {
          KeyValuesDelimitedByBlankLinesToDriveInfo.class);
 
    public void testNone() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), null);
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))), null);
-      assertEquals(FN.apply(new HttpResponse(200, "", null)), null);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("").build()), null);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("\n\n").build()), null);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").build()), null);
    }
 
    public void testOne() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToDriveInfoTest.class
-            .getResourceAsStream("/drive.txt")))), MapToDriveInfoTest.ONE);
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload(MapToDriveInfoTest.class
+            .getResourceAsStream("/drive.txt")).build()), MapToDriveInfoTest.ONE);
    }
 }

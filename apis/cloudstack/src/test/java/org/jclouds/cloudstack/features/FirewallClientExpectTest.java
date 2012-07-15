@@ -33,7 +33,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -51,10 +50,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
                   "apiKey=identity&signature=9%2BtdTXe2uYLzAexPNgrMy5Tq8hE%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -83,10 +79,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
                   "apiKey=identity&signature=9%2BtdTXe2uYLzAexPNgrMy5Tq8hE%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -102,10 +95,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
                   "id=2017&apiKey=identity&signature=6coh9Qdwla94TN1Dl008WlhzZUY%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -126,10 +116,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&listAll=true&" +
                   "id=4&apiKey=identity&signature=rYd8gr7ptdSZlIehBEMQEKsm07Q%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -145,10 +132,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=createFirewallRule&" +
                   "ipaddressid=2&protocol=TCP&apiKey=identity&signature=d0MZ%2FyhQPAaV%2BYQmfZsQtQL2C28%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -183,10 +167,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listPortForwardingRules&listAll=true&apiKey=identity&signature=8SXGJZWdcJfVz4V90Pyod12x9dM%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -213,10 +194,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listPortForwardingRules&listAll=true&apiKey=identity&signature=8SXGJZWdcJfVz4V90Pyod12x9dM%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -232,10 +210,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listPortForwardingRules&listAll=true&id=15&apiKey=identity&signature=JL63p6cJzbb9vaffeV4u60IGlWE%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -257,10 +232,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listPortForwardingRules&listAll=true&id=4&apiKey=identity&signature=4blbBVn2%2BZfF8HwoglbmtYoDAjs%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -277,10 +249,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
                URI.create("http://localhost:8080/client/api?response=json&command=createPortForwardingRule&" +
                   "ipaddressid=2&publicport=22&protocol=tcp&virtualmachineid=1234&privateport=22&" +
                   "apiKey=identity&signature=84dtGzQp0G6k3z3Gkc3F%2FHBNS2Y%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)

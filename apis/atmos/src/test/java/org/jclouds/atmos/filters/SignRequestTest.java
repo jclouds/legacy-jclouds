@@ -21,7 +21,6 @@ package org.jclouds.atmos.filters;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -42,9 +41,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -122,7 +121,10 @@ public class SignRequestTest {
    }
 
    public HttpRequest newRequest(Multimap<String, String> headers) {
-      HttpRequest request = new HttpRequest("POST", URI.create("http://localhost/rest/objects"), headers);
+      HttpRequest request = HttpRequest.builder()
+                                       .method("POST")
+                                       .endpoint("http://localhost/rest/objects")
+                                       .headers(headers).build();
       request.setPayload("");
       request.getPayload().getContentMetadata().setContentLength(4286l);
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);

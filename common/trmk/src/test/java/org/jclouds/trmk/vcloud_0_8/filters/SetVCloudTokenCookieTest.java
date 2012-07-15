@@ -20,8 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.filters;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -48,7 +46,7 @@ public class SetVCloudTokenCookieTest {
 
    @Test
    public void testApply() {
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = filter.filter(request);
       assertEquals(request.getHeaders().size(), 1);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.COOKIE), "vcloud-token=token");

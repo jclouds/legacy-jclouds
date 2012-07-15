@@ -28,13 +28,11 @@ import java.net.URI;
 import org.jclouds.Constants;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -60,15 +58,16 @@ public class ParseObjectInfoFromHeadersTest {
 
    public void testEtagCaseIssue() {
       ParseObjectInfoFromHeaders parser = i.getInstance(ParseObjectInfoFromHeaders.class);
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of("container", "key")).atLeastOnce();
 
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
       replay(request);
       parser.setContext(request);
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""),
-            ImmutableMultimap.<String, String> of("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT", "Content-Length",
-                  "0", "Etag", "feb1"));
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("ok").payload("")
+                                          .addHeader("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT")
+                                          .addHeader("Content-Length", "0")
+                                          .addHeader("Etag", "feb1").build();
 
       response.getPayload().getContentMetadata().setContentType("text/plain");
       MutableObjectInfoWithMetadata md = parser.apply(response);

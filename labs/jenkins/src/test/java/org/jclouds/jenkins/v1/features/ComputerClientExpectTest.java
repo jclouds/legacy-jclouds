@@ -20,8 +20,6 @@ package org.jclouds.jenkins.v1.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.jenkins.v1.JenkinsClient;
@@ -29,8 +27,6 @@ import org.jclouds.jenkins.v1.internal.BaseJenkinsClientExpectTest;
 import org.jclouds.jenkins.v1.parse.ParseComputerTest;
 import org.jclouds.jenkins.v1.parse.ParseComputerViewTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -43,10 +39,9 @@ public class ComputerClientExpectTest extends BaseJenkinsClientExpectTest {
       HttpRequest getComputerView = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("http://localhost:8080/computer/api/json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
+            .endpoint("http://localhost:8080/computer/api/json")
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
       HttpResponse getComputerViewResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/computerview.json")).build();
@@ -61,10 +56,9 @@ public class ComputerClientExpectTest extends BaseJenkinsClientExpectTest {
       HttpRequest getComputer = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("http://localhost:8080/computer/Ruboto/api/json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
+            .endpoint("http://localhost:8080/computer/Ruboto/api/json")
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
       HttpResponse getComputerResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/computer.json")).build();

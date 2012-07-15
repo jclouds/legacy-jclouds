@@ -21,8 +21,6 @@ package org.jclouds.blobstore.integration.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
@@ -51,8 +49,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
       httpStreamMD5 = checkNotNull(httpStreamMD5 != null ? httpStreamMD5 : sysHttpStreamMD5, "httpStreamMd5");
 
-      HttpResponse response = view.utils().http().invoke(
-               HttpRequest.builder().method("GET").endpoint(URI.create(httpStreamUrl)).build());
+      HttpResponse response = view.utils().http().invoke(HttpRequest.builder().method("GET").endpoint(httpStreamUrl).build());
       long length = response.getPayload().getContentMetadata().getContentLength();
 
       String name = "hello";

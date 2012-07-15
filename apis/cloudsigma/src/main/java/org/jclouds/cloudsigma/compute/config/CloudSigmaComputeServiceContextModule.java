@@ -77,11 +77,11 @@ public class CloudSigmaComputeServiceContextModule extends
       bind(new TypeLiteral<Function<ServerInfo, NodeMetadata>>() {
       }).to(ServerInfoToNodeMetadata.class);
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<DriveInfo, Image>>() {
       }).to(PreinstalledDiskToImage.class);
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Device, Volume>>() {
       }).to(DeviceToVolume.class);
       bind(new TypeLiteral<Function<Server, String>>() {

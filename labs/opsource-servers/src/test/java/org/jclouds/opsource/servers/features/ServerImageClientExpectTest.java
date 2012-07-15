@@ -20,8 +20,6 @@ package org.jclouds.opsource.servers.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.opsource.servers.OpSourceServersClient;
@@ -29,26 +27,21 @@ import org.jclouds.opsource.servers.domain.Account;
 import org.jclouds.opsource.servers.internal.BaseOpSourceServersRestClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * Allows us to test the {@link ServerImageClient}
  * 
  * @author Kedar Dave
  */
-@Test(groups = { "unit" }, singleThreaded = true, testName = "AccountClientExpectTest")
+@Test(groups = { "unit" }, singleThreaded = true, testName = "ServerImageClientExpectTest")
 public class ServerImageClientExpectTest extends BaseOpSourceServersRestClientExpectTest {
 
    @Test
    public void testGetMyAccount() {
       OpSourceServersClient client = requestSendsResponse(
-            HttpRequest
-                  .builder()
-                  .method("GET")
-                  .endpoint(URI.create("https://api.opsourcecloud.net/oec/0.9/myaccount"))
-                  .headers(
-                        ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
-                              .put("Authorization", "Basic dXNlcjpwYXNzd29yZA==").build()).build(),
+            HttpRequest.builder().method("GET")
+                       .endpoint("https://api.opsourcecloud.net/oec/0.9/myaccount")
+                       .addHeader("Accept", "*/*")
+                       .addHeader("Authorization", "Basic dXNlcjpwYXNzd29yZA==").build(),
 
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/myaccount.xml")).build());
 

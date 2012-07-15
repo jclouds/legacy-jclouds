@@ -181,14 +181,6 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
-   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
-   public void testKillRobotSlowly() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      setupApiProxy();
-      super.testKillRobotSlowly();
-   }
-
-   @Override
    @Test(enabled = false)
    public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
          TimeoutException {

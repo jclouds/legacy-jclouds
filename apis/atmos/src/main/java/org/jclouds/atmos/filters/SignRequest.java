@@ -41,7 +41,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
@@ -51,8 +50,8 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -98,9 +97,9 @@ public class SignRequest implements HttpRequestFilter {
       builder.put(HttpHeaders.DATE, date);
       if (request.getHeaders().containsKey(AtmosHeaders.DATE))
          builder.put(AtmosHeaders.DATE, date);
-      request = ModifyRequest.replaceHeaders(request, Multimaps.forMap(builder.build()));
+      request = request.toBuilder().replaceHeaders(Multimaps.forMap(builder.build())).build();
       String signature = calculateSignature(createStringToSign(request));
-      request = ModifyRequest.replaceHeader(request, AtmosHeaders.SIGNATURE, signature);
+      request = request.toBuilder().replaceHeader(AtmosHeaders.SIGNATURE, signature).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }

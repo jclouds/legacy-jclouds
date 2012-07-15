@@ -22,15 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.NAME_KEY;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Binds names to corresponding query parameters
@@ -38,12 +31,6 @@ import com.google.common.collect.ImmutableList;
  * @author Oleksiy Yarmula
  */
 public class BindNamesToQueryParams implements Binder {
-   private final Provider<UriBuilder> builder;
-
-   @Inject
-   BindNamesToQueryParams(Provider<UriBuilder> builder) {
-      this.builder = builder;
-   }
 
    /**
     * Binds the names to query parameters. The pattern, as specified by GoGrid's specification, is:
@@ -56,11 +43,12 @@ public class BindNamesToQueryParams implements Binder {
     * @param input
     *           array of String params
     */
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof String[],
                "this binder is only valid for String[] arguments");
       String[] names = (String[]) input;
-      return ModifyRequest.addQueryParam(request, NAME_KEY, ImmutableList.copyOf(names), builder.get());
+      return (R) request.toBuilder().replaceQueryParam(NAME_KEY, names).build();
    }
 }

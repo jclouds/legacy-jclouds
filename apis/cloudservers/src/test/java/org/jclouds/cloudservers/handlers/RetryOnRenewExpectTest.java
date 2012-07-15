@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudservers.handlers;
 
-import java.net.URI;
-
 import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.internal.BaseCloudServersRestClientExpectTest;
 import org.jclouds.http.HttpRequest;
@@ -27,8 +25,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests behavior of {@code RetryOnRenew} handler
@@ -42,16 +38,14 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
    public void testShouldReauthenticateOn401() {
 
       HttpRequest deleteImage = HttpRequest.builder().method("DELETE")
-            .endpoint(URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897"))
-            .headers(ImmutableMultimap.<String, String> builder().put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse pleaseRenew = HttpResponse
             .builder()
             .statusCode(401)
             .message("HTTP/1.1 401 Unauthorized")
-            .payload(
-                  Payloads
-                        .newStringPayload("[{\"unauthorized\":{\"message\":\"Invalid authentication token.  Please renew.\",\"code\":401}}]"))
+            .payload("[{\"unauthorized\":{\"message\":\"Invalid authentication token.  Please renew.\",\"code\":401}}]")
             .build();
 
       // second auth uses same creds as initial one
@@ -59,15 +53,13 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
       
       String authToken2 = "12345678-9012-47c0-9770-2c5097da25fc";
 
-      HttpResponse responseWithUrls2 = HttpResponse
-            .Builder.from(responseWithAuth)
-            .payload(
-                  Payloads.newPayload(responseWithAuth.getPayload().getRawContent().toString()
-                        .replace(authToken, authToken2))).build();
+      HttpResponse responseWithUrls2 = responseWithAuth.toBuilder()
+                                                       .payload(responseWithAuth.getPayload().getRawContent().toString().replace(authToken, authToken2))
+                                                       .build();
 
       HttpRequest deleteImage2 = HttpRequest.builder().method("DELETE")
-            .endpoint(URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897"))
-            .headers(ImmutableMultimap.<String, String> builder().put("X-Auth-Token", authToken2).build()).build();
+            .endpoint("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897")
+            .addHeader("X-Auth-Token", authToken2).build();
 
       HttpResponse imageDeleted = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content").build();
 
@@ -80,15 +72,14 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
    @Test(expectedExceptions = AuthorizationException.class)
    public void testDoesNotReauthenticateOnFatal401() {
       HttpRequest deleteImage = HttpRequest.builder().method("DELETE")
-            .endpoint(URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897"))
-            .headers(ImmutableMultimap.<String, String> builder().put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse unauthResponse = HttpResponse
             .builder()
             .statusCode(401)
             .message("HTTP/1.1 401 Unauthorized")
-            .payload(
-                  Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"Fatal unauthorized.\",\"code\":401}}]"))
+            .payload("[{\"unauthorized\":{\"message\":\"Fatal unauthorized.\",\"code\":401}}]")
             .build();
 
       CloudServersClient client = orderedRequestsSendResponses(initialAuth, responseWithAuth, deleteImage,

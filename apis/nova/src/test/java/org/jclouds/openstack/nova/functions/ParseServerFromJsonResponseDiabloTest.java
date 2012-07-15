@@ -30,7 +30,6 @@ import java.util.SimpleTimeZone;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Address;
 import org.jclouds.openstack.nova.domain.Addresses;
@@ -47,8 +46,9 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseServerFromJsonResponse} for the transitional nova api 1.1 in the Diablo release
- *
+ * Tests behavior of {@code ParseServerFromJsonResponse} for the transitional nova api 1.1 in the
+ * Diablo release
+ * 
  * @author Matt Stephenson
  */
 @Test(groups = "unit")
@@ -65,28 +65,24 @@ public class ParseServerFromJsonResponseDiabloTest {
       assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.getStatus(), ServerStatus.BUILD);
       assertEquals(response.getProgress(), new Integer(60));
-      SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
       dateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
-      assertEquals(response.getCreated(),
-            dateFormat.parse("2010-08-10T12:00:00Z"));
-      assertEquals(response.getUpdated(),
-            dateFormat.parse("2010-10-10T12:00:00Z"));
+      assertEquals(response.getCreated(), dateFormat.parse("2010-08-10T12:00:00Z"));
+      assertEquals(response.getUpdated(), dateFormat.parse("2010-10-10T12:00:00Z"));
 
       List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
-            ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
-            Address.newString2AddressFunction()));
+               ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+               Address.newString2AddressFunction()));
       List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
-            ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"),
-            Address.newString2AddressFunction()));
-      Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses), new HashSet<Address>(privateAddresses));
+               ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+      Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses),
+               new HashSet<Address>(privateAddresses));
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getAccessIPv4(), "67.23.10.132");
       assertEquals(response.getAccessIPv6(), "::babe:67.23.10.132");
    }
-
 
    public static Server parseServer() throws NoSuchMethodException, ClassNotFoundException {
 
@@ -98,12 +94,13 @@ public class ParseServerFromJsonResponseDiabloTest {
          }
       });
 
-      InputStream is = ParseServerFromJsonResponseDiabloTest.class.getResourceAsStream("/test_get_server_detail_diablo.json");
+      InputStream is = ParseServerFromJsonResponseDiabloTest.class
+               .getResourceAsStream("/test_get_server_detail_diablo.json");
 
       UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
       }));
 
-      return parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
    }
 
 }

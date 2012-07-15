@@ -29,12 +29,9 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.QuotaClass;
-import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests HostAdministrationClient guice wiring and parsing
@@ -48,8 +45,8 @@ public class QuotaClassClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-class-sets/jcloudstestquotas");
       QuotaClassClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(200).payload(payloadFromResource("/quota_class.json")).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/quota_class.json")).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
 
       assertEquals(client.getQuotaClass("jcloudstestquotas"), getTestQuotas());
    }
@@ -58,8 +55,8 @@ public class QuotaClassClientExpectTest extends BaseNovaClientExpectTest {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-quota-class-sets/jcloudstestquotas");
       QuotaClassClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            standardRequestBuilder(endpoint).build(),
-            standardResponseBuilder(404).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(404).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
       assertNull(client.getQuotaClass("jcloudstestquotas"));
    }
 
@@ -68,7 +65,7 @@ public class QuotaClassClientExpectTest extends BaseNovaClientExpectTest {
       QuotaClassClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().endpoint(endpoint).method("PUT")
-                  .headers(ImmutableMultimap.of("X-Auth-Token", authToken))
+                  .addHeader("X-Auth-Token", authToken)
                   .payload(payloadFromResourceWithContentType("/quota_class.json", MediaType.APPLICATION_JSON))
                   .build(),
             HttpResponse.builder().statusCode(200).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
@@ -82,7 +79,7 @@ public class QuotaClassClientExpectTest extends BaseNovaClientExpectTest {
       QuotaClassClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().endpoint(endpoint).method("PUT")
-                  .headers(ImmutableMultimap.of("X-Auth-Token", authToken))
+                  .addHeader("X-Auth-Token", authToken)
                   .payload(payloadFromResourceWithContentType("/quota_class.json", MediaType.APPLICATION_JSON))
                   .build(),
             HttpResponse.builder().statusCode(404).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();

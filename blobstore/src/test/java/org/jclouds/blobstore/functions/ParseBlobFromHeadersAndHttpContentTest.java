@@ -34,11 +34,9 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Guice;
 
 /**
@@ -55,7 +53,9 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    public void testCall() throws HttpException {
       ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
       ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(metadataParser, blobProvider);
-      HttpResponse response = new HttpResponse(200, null, null, ImmutableMultimap.of("Content-Range", (String) null));
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(200).message("ok")
+                                          .addHeader("Content-Range", (String) null).build(); 
       callable.apply(response);
    }
 
@@ -72,9 +72,11 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    public void testParseContentLengthWhenContentRangeSet() throws HttpException {
       ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
       ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(metadataParser, blobProvider);
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(200).message("ok")
+                                          .payload("")
+                                          .addHeader("Content-Range", "0-10485759/20232760").build(); 
 
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
-            "Content-Range", "0-10485759/20232760"));
       response.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
       response.getPayload().getContentMetadata().setContentLength(10485760l);
 

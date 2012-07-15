@@ -25,19 +25,15 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Set;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.domain.SimpleServerUsage;
 import org.jclouds.openstack.nova.v2_0.domain.SimpleTenantUsage;
-import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -54,7 +50,9 @@ public class SimpleTenantUsageClientExpectTest extends BaseNovaClientExpectTest 
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-simple-tenant-usage");
       SimpleTenantUsageClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
+            HttpRequest.builder().method("GET")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("X-Auth-Token", authToken)
             .endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromResource("/simple_tenant_usages.json")).build())
@@ -78,7 +76,9 @@ public class SimpleTenantUsageClientExpectTest extends BaseNovaClientExpectTest 
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-simple-tenant-usage/test-1234");
       SimpleTenantUsageClient client = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
-            HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
+            HttpRequest.builder().method("GET")
+                       .addHeader("Accept", "application/json")
+                       .addHeader("X-Auth-Token", authToken)
                   .endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromResource("/simple_tenant_usage.json")).build())

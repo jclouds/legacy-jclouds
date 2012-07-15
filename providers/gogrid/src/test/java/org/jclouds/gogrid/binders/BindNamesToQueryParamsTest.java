@@ -20,15 +20,8 @@ package org.jclouds.gogrid.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
-
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests that name bindings are proper for request
@@ -43,16 +36,9 @@ public class BindNamesToQueryParamsTest {
    public void testBinding() {
       String[] input = { "hello", "world" };
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma/").build();
 
-      BindNamesToQueryParams binder = new BindNamesToQueryParams(new Provider<UriBuilder>() {
-
-         @Override
-         public UriBuilder get() {
-            return new UriBuilderImpl();
-         }
-
-      });
+      BindNamesToQueryParams binder = new BindNamesToQueryParams();
 
       request = binder.bindToRequest(request, input);
 

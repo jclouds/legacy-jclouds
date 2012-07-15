@@ -22,7 +22,16 @@ import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.gogrid.config.GoGridParserModule;
-import org.jclouds.gogrid.domain.*;
+import org.jclouds.gogrid.domain.BillingToken;
+import org.jclouds.gogrid.domain.Customer;
+import org.jclouds.gogrid.domain.Ip;
+import org.jclouds.gogrid.domain.IpState;
+import org.jclouds.gogrid.domain.Option;
+import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.ServerImageState;
+import org.jclouds.gogrid.domain.ServerImageType;
+import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;

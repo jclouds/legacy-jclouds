@@ -32,7 +32,6 @@ import java.util.Set;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;

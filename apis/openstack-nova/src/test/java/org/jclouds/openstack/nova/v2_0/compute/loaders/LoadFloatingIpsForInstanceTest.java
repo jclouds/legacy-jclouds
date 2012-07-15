@@ -26,7 +26,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 
 import org.jclouds.openstack.nova.v2_0.NovaClient;
-import org.jclouds.openstack.nova.v2_0.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;

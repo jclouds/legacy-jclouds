@@ -25,7 +25,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.VolumeType;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeTypeOptions;
 import org.jclouds.predicates.RetryablePredicate;

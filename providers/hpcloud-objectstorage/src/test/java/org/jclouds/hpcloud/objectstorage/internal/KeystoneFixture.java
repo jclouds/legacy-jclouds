@@ -19,10 +19,9 @@
 package org.jclouds.hpcloud.objectstorage.internal;
 
 import static java.lang.String.format;
-import static org.jclouds.rest.internal.BaseRestClientExpectTest.payloadFromStringWithContentType;
+import static org.jclouds.rest.internal.BaseRestApiExpectTest.payloadFromStringWithContentType;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -30,7 +29,6 @@ import org.jclouds.io.Payload;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -46,11 +44,10 @@ public enum KeystoneFixture {
    }
 
    public HttpRequest initialAuthWithUsernameAndPassword(String username, String password){
-      return HttpRequest
-            .builder()
+      return HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens"))
-            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+            .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens")
+            .addHeader(HttpHeaders.ACCEPT, "application/json")
             .payload(
                      payloadFromStringWithContentType(
                               format(
@@ -59,11 +56,10 @@ public enum KeystoneFixture {
    }
   
    public HttpRequest initialAuthWithAccessKeyAndSecretKey(String accessKey, String secretKey){
-      return HttpRequest
-            .builder()
+      return HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens"))
-            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+            .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens")
+            .addHeader(HttpHeaders.ACCEPT, "application/json")
             .payload(
                      payloadFromStringWithContentType(
                               format(

@@ -20,7 +20,6 @@ package org.jclouds.openstack.swift.v1;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
@@ -30,7 +29,6 @@ import org.jclouds.openstack.swift.v1.internal.BaseSwiftClientExpectTest;
 import org.jclouds.openstack.swift.v1.parse.ParseContainerListTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -55,10 +53,9 @@ public class PasswordAuthenticationExpectTest extends BaseSwiftClientExpectTest 
       HttpRequest listContainers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://objects.jclouds.org/v1.0/40806637803162/?format=json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listContainersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/container_list.json")).build();

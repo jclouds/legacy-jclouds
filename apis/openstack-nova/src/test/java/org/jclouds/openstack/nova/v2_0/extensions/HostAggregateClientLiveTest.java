@@ -27,8 +27,6 @@ import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.Host;
 import org.jclouds.openstack.nova.v2_0.domain.HostAggregate;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationClient;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateClient;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;

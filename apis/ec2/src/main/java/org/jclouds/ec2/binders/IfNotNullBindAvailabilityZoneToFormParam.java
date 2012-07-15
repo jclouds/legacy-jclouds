@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -45,11 +44,12 @@ public class IfNotNullBindAvailabilityZoneToFormParam implements Binder {
       this.param = param;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       if (input != null) {
          checkArgument(input instanceof String, "this binder is only valid for String!");
-         return ModifyRequest.addFormParam(request, param, (String) input);
+         return (R) request.toBuilder().replaceFormParam(param, String.class.cast(input)).build();
       }
       return request;
    }

@@ -30,7 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRightRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultStrandedUserRecord;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

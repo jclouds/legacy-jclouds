@@ -27,7 +27,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.rest.Binder;
@@ -44,6 +43,7 @@ public class BindSwiftObjectMetadataToRequest implements Binder {
       this.object2Blob = object2Blob;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof SwiftObject, "this binder is only valid for SwiftObject!");
@@ -59,7 +59,7 @@ public class BindSwiftObjectMetadataToRequest implements Binder {
                "maximum size for put object is 5GB");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
-         request = ModifyRequest.replaceHeader(request, "Transfer-Encoding", "chunked");
+         request = (R) request.toBuilder().replaceHeader("Transfer-Encoding", "chunked").build();
       }
       request = mdBinder.bindToRequest(request, object2Blob.apply(object));
       return request;

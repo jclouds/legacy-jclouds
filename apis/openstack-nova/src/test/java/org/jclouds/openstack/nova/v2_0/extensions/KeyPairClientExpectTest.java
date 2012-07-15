@@ -21,8 +21,6 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.NovaClient;
@@ -31,7 +29,6 @@ import org.jclouds.openstack.nova.v2_0.parse.ParseKeyPairListTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseKeyPairTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -46,10 +43,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listKeyPairs = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_list.json")).build();
@@ -67,10 +63,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listKeyPairs = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(404).build();
 
@@ -85,10 +80,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{\"keypair\":{\"name\":\"testkeypair\"}}", "application/json"))
             .build();
 
@@ -107,10 +101,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest createKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
             .payload(
                   payloadFromStringWithContentType(
                         "{\"keypair\":{\"name\":\"testkeypair\",\"public_key\":\"ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n\"}}",
@@ -136,10 +129,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest deleteKeyPair = HttpRequest
             .builder()
             .method("DELETE")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs/testkeypair"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "*/*").put("X-Auth-Token", authToken)
-                        .build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs/testkeypair")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse deleteKeyPairResponse = HttpResponse.builder().statusCode(202).build();
 

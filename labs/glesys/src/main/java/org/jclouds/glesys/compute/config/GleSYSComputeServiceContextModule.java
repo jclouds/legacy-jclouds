@@ -53,7 +53,7 @@ import com.google.inject.name.Names;
 public class GleSYSComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<ServerDetails, Hardware, OSTemplate, String> {
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
       super.configure();
@@ -64,7 +64,7 @@ public class GleSYSComputeServiceContextModule extends
       bind(new TypeLiteral<Function<OSTemplate, org.jclouds.compute.domain.Image>>() {
       }).to(OSTemplateToImage.class);
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<String, Location>>() {
       }).to(DatacenterToLocation.class);
       bind(new TypeLiteral<Function<String, OsFamilyVersion64Bit>>() {

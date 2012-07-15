@@ -71,7 +71,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       return Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
-         @SuppressWarnings("unused")
          @Provides
          @Singleton
          @Network
@@ -79,7 +78,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
             return Functions.forMap(ImmutableMap.of(value, "vAppNet-vApp Internal"));
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @Singleton
          protected LoadingCache<URI, VAppTemplate> templateIdToVAppTemplate() {
@@ -92,14 +90,12 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
             bindProperties(new VCloudApiMetadata().getDefaultProperties());
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @Singleton
          public FenceMode defaultFenceMode(@Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
             return FenceMode.fromValue(fenceMode);
          }
 
-         @SuppressWarnings("unused")
          @Network
          @Provides
          @Singleton
@@ -115,7 +111,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       VAppTemplate template = createMock(VAppTemplate.class);
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(new InstantiateVAppTemplateOptions()))
                .atLeastOnce();
@@ -140,7 +136,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       String expected = Strings2.toStringAndClose(getClass()
                .getResourceAsStream("/instantiationparams-description.xml"));
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(
                ImmutableList.<Object> of(new InstantiateVAppTemplateOptions().description("my foo"))).atLeastOnce();
@@ -165,7 +161,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       VAppTemplate template = createMock(VAppTemplate.class);
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
       request.setPayload(expected);
@@ -191,7 +187,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
@@ -218,7 +214,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams-network.xml"));
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);

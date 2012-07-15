@@ -58,7 +58,6 @@ public class RegionIdToAdminURIFromAccessForTypeAndVersionTest {
                   RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public Supplier<Access> provide() {
@@ -88,7 +87,6 @@ public class RegionIdToAdminURIFromAccessForTypeAndVersionTest {
                   RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public Supplier<Access> provide() {

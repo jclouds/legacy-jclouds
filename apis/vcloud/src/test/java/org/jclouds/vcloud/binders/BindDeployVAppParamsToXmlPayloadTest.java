@@ -55,7 +55,7 @@ public class BindDeployVAppParamsToXmlPayloadTest {
    public void testPowerOnTrue() throws IOException {
       String expected = "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\" powerOn=\"true\"/>";
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       request.setPayload(expected);
       replay(request);
@@ -71,7 +71,7 @@ public class BindDeployVAppParamsToXmlPayloadTest {
    public void testDefault() throws IOException {
       String expected = "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\"/>";
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       request.setPayload(expected);
       replay(request);
