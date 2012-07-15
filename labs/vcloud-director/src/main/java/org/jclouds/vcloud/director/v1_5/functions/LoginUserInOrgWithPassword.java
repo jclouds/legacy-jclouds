@@ -26,19 +26,19 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 @Singleton
 public class LoginUserInOrgWithPassword implements Function<Credentials, SessionWithToken> {
-   private final SessionClient client;
+   private final SessionApi api;
    private final Supplier<URI> loginUrl;
 
    @Inject
-   public LoginUserInOrgWithPassword(SessionClient client, @Login Supplier<URI> loginUrl) {
-      this.client = client;
+   public LoginUserInOrgWithPassword(SessionApi api, @Login Supplier<URI> loginUrl) {
+      this.api = api;
       this.loginUrl = loginUrl;
    }
 
@@ -48,7 +48,7 @@ public class LoginUserInOrgWithPassword implements Function<Credentials, Session
       String org = input.identity.substring(input.identity.lastIndexOf('@') + 1);
       String password = input.credential;
 
-      return client.loginUserInOrgWithPassword(loginUrl.get(), user, org, password);
+      return api.loginUserInOrgWithPassword(loginUrl.get(), user, org, password);
    }
 
    @Override

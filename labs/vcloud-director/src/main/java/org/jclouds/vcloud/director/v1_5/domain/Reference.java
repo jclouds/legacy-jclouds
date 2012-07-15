@@ -163,7 +163,7 @@ public class Reference {
     * the object, and is never reused. The value of the href attribute is a reference to a view of
     * the object, and can be used to access a representation of the object that is valid in a
     * particular context. Although URLs have a well-known syntax and a well-understood
-    * interpretation, a client should treat each href as an opaque string. The rules that govern how
+    * interpretation, a api should treat each href as an opaque string. The rules that govern how
     * the server constructs href strings might change in future releases.
     *
     * @return an opaque reference and should never be parsed

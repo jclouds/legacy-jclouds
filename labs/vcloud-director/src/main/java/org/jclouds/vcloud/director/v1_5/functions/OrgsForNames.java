@@ -34,8 +34,8 @@ import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -47,28 +47,28 @@ import com.google.common.collect.Iterables;
 public class OrgsForNames implements Function<Iterable<String>, Iterable<? extends Org>> {
    @Resource
    public Logger logger = Logger.NULL;
-   private final VCloudDirectorAsyncClient aclient;
-   private final VCloudDirectorClient sclient;
+   private final VCloudDirectorAsyncApi aapi;
+   private final VCloudDirectorApi sapi;
    private final ExecutorService executor;
 
    @Inject
-   OrgsForNames(VCloudDirectorAsyncClient aclient, 
-         VCloudDirectorClient sclient, 
+   OrgsForNames(VCloudDirectorAsyncApi aapi, 
+         VCloudDirectorApi sapi, 
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aclient = aclient;
-      this.sclient = sclient;
+      this.aapi = aapi;
+      this.sapi = sapi;
       this.executor = executor;
    }
 
    @Override
    public Iterable<? extends Org> apply(Iterable<String> from) {
-      final Set<Reference> orgs = sclient.getOrgClient().getOrgList().getOrgs();
+      final Set<Reference> orgs = sapi.getOrgApi().getOrgList().getOrgs();
       
       return transformParallel(from, new Function<String, Future<? extends Org>>() {
 
          @Override
          public Future<? extends Org> apply(String from) {
-            return aclient.getOrgClient().getOrg(Iterables.find(orgs, nameEquals(from)).getHref());
+            return aapi.getOrgApi().getOrg(Iterables.find(orgs, nameEquals(from)).getHref());
          }
 
       }, executor, null, logger, "organizations for names");

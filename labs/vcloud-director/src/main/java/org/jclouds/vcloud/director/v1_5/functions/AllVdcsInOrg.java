@@ -33,7 +33,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 import com.google.common.base.Function;
 
@@ -45,12 +45,12 @@ public class AllVdcsInOrg implements Function<AdminOrg, Iterable<? extends Vdc>>
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final VCloudDirectorAsyncClient aclient;
+   private final VCloudDirectorAsyncApi aapi;
    private final ExecutorService executor;
 
    @Inject
-   AllVdcsInOrg(VCloudDirectorAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aclient = aclient;
+   AllVdcsInOrg(VCloudDirectorAsyncApi aapi, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.aapi = aapi;
       this.executor = executor;
    }
 
@@ -61,7 +61,7 @@ public class AllVdcsInOrg implements Function<AdminOrg, Iterable<? extends Vdc>>
             new Function<Reference, Future<? extends Vdc>>() {
                @Override
                public Future<? extends Vdc> apply(Reference from) {
-                  return aclient.getVdcClient().getVdc(from.getHref());
+                  return aapi.getVdcApi().getVdc(from.getHref());
                }
 
             }, executor, null, logger, "vdcs in org " + org.getName());

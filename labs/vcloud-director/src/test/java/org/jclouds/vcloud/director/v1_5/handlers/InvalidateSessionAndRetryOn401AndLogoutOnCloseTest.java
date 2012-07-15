@@ -30,7 +30,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.LoadingCache;
@@ -46,7 +46,7 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnCloseTest {
    @Test
    public void test401ShouldInvalidateSessionAndRetry() {
       HttpCommand command = createMock(HttpCommand.class);
-      SessionClient sessionClient = createMock(SessionClient.class);
+      SessionApi sessionApi = createMock(SessionApi.class);
       LoadingCache<Credentials, SessionWithToken> cache = createMock(LoadingCache.class);
 
       cache.invalidateAll();
@@ -60,7 +60,7 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnCloseTest {
       HttpResponse response = HttpResponse.builder().statusCode(401).build();
 
       InvalidateSessionAndRetryOn401AndLogoutOnClose retry = new InvalidateSessionAndRetryOn401AndLogoutOnClose(cache,
-               sessionClient);
+               sessionApi);
 
       assertTrue(retry.shouldRetryRequest(command, response));
 
@@ -71,7 +71,7 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnCloseTest {
    @Test
    public void test403ShouldNotInvalidateSessionOrRetry() {
       HttpCommand command = createMock(HttpCommand.class);
-      SessionClient sessionClient = createMock(SessionClient.class);
+      SessionApi sessionApi = createMock(SessionApi.class);
       LoadingCache<Credentials, SessionWithToken> cache = createMock(LoadingCache.class);
 
       replay(cache, command);
@@ -79,7 +79,7 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnCloseTest {
       HttpResponse response = HttpResponse.builder().statusCode(403).build();
 
       InvalidateSessionAndRetryOn401AndLogoutOnClose retry = new InvalidateSessionAndRetryOn401AndLogoutOnClose(cache,
-               sessionClient);
+               sessionApi);
 
       assertFalse(retry.shouldRetryRequest(command, response));
 

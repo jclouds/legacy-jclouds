@@ -38,7 +38,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -52,7 +52,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final VCloudDirectorAsyncClient aclient;
+   private final VCloudDirectorAsyncApi aapi;
    private final ExecutorService executor;
    private final ReturnNullOnAuthorizationException returnNullOnAuthorizationException;
 
@@ -68,10 +68,10 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
    }
 
    @Inject
-   VAppTemplatesForCatalogItems(VCloudDirectorAsyncClient aclient,
+   VAppTemplatesForCatalogItems(VCloudDirectorAsyncApi aapi,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             ReturnNullOnAuthorizationException returnNullOnAuthorizationException) {
-      this.aclient = aclient;
+      this.aapi = aapi;
       this.executor = executor;
       this.returnNullOnAuthorizationException = returnNullOnAuthorizationException;
    }
@@ -89,8 +89,8 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
 
          @Override
          public Future<? extends VAppTemplate> apply(CatalogItem from) {
-            return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(VCloudDirectorAsyncClient.class
-                     .cast(aclient).getVAppTemplateClient().getVAppTemplate(from.getEntity().getHref()), executor),
+            return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(VCloudDirectorAsyncApi.class
+                     .cast(aapi).getVAppTemplateApi().getVAppTemplate(from.getEntity().getHref()), executor),
                      returnNullOnAuthorizationException);
          }
 

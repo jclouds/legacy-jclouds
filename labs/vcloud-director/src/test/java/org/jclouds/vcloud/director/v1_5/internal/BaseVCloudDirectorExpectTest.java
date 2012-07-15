@@ -28,7 +28,7 @@ import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.testng.annotations.BeforeGroups;
@@ -39,11 +39,11 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 
 /**
- * Base class for writing vCloud Director REST client expect tests.
+ * Base class for writing vCloud Director REST api expect tests.
  * 
  * @author Adrian Cole
  */
-public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpectTest<T> {
+public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectTest<T> {
    
    public BaseVCloudDirectorExpectTest() {
       provider = "vcloud-director";

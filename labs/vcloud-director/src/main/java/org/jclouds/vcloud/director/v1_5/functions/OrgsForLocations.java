@@ -36,7 +36,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -49,12 +49,12 @@ import com.google.common.collect.Sets;
 public class OrgsForLocations implements Function<Iterable<Location>, Iterable<? extends Org>> {
    @Resource
    public Logger logger = Logger.NULL;
-   private final VCloudDirectorAsyncClient aclient;
+   private final VCloudDirectorAsyncApi aapi;
    private final ExecutorService executor;
 
    @Inject
-   OrgsForLocations(VCloudDirectorAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aclient = aclient;
+   OrgsForLocations(VCloudDirectorAsyncApi aapi, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.aapi = aapi;
       this.executor = executor;
    }
 
@@ -83,7 +83,7 @@ public class OrgsForLocations implements Function<Iterable<Location>, Iterable<?
 
          @Override
          public Future<? extends Org> apply(URI from) {
-            return aclient.getOrgClient().getOrg(from);
+            return aapi.getOrgApi().getOrg(from);
          }
 
       }, executor, null, logger, "organizations for uris");

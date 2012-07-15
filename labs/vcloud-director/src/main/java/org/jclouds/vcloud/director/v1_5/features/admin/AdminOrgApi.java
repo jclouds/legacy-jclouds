@@ -1,0 +1,229 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jclouds.vcloud.director.v1_5.features.admin;
+
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
+import org.jclouds.vcloud.director.v1_5.features.OrgApi;
+
+/**
+ * Provides synchronous access to {@link Org} objects.
+ * 
+ * @see GroupAsyncApi
+ * @author danikov
+ */
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface AdminOrgApi extends OrgApi {
+   
+   /**
+    * Retrieves an admin view of an organization. 
+    * The organization might be enabled or disabled. 
+    * If enabled, the organization allows login and all other operations.
+    *
+    * <pre>
+    * GET /admin/org/{id}
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the admin org
+    */
+   @Override
+   AdminOrg getOrg(URI orgRef);
+   
+   /**
+    * Gets organizational settings for this organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the settings
+    */
+   OrgSettings getSettings(URI orgRef);
+   
+   /**
+    * Updates organizational settings for this organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgSettings updateSettings(URI orgRef, OrgSettings newSettings);
+   
+   /**
+    * Retrieves email settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/email
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the email settings
+    */
+   OrgEmailSettings getEmailSettings(URI orgRef);
+   
+   /**
+    * Updates email policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/email
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgEmailSettings updateEmailSettings(URI orgRef, 
+         OrgEmailSettings newSettings);
+   
+   /**
+    * Gets general organization settings.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/general
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgGeneralSettings getGeneralSettings(URI orgRef);
+   
+   /**
+    * Updates general organization settings.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/general
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgGeneralSettings updateGeneralSettings(URI orgRef, 
+         OrgGeneralSettings newSettings);
+   
+   /**
+    * Retrieves LDAP settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/ldap
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the ldap settings
+    */
+   OrgLdapSettings getLdapSettings(URI orgRef);
+   
+   /**
+    * Retrieves password policy settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/passwordPolicy
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgPasswordPolicySettings getPasswordPolicy(URI orgRef);
+   
+   /**
+    * Updates password policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/passwordPolicy
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgPasswordPolicySettings updatePasswordPolicy(URI orgRef, 
+         OrgPasswordPolicySettings newSettings);
+   
+   /**
+    * Gets organization resource cleanup settings on the level of vApp.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/vAppLeaseSettings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgLeaseSettings getVAppLeaseSettings(URI orgRef);
+   
+   /**
+    * Updates organization resource cleanup settings on the level of vApp.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/vAppLeaseSettings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgLeaseSettings updateVAppLeaseSettings(URI orgRef, 
+         OrgLeaseSettings newSettings);
+   
+   /**
+    * Retrieves expiration and storage policy for vApp templates in an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgVAppTemplateLeaseSettings getVAppTemplateLeaseSettings(URI orgRef);
+   
+   /**
+    * Updates vApp template policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings(URI orgRef, 
+         OrgVAppTemplateLeaseSettings newSettings);
+   
+   /**
+    * @return synchronous access to admin {@link MetadataApi.Writeable} features
+    */
+    @Override
+    @Delegate
+    MetadataApi.Writeable getMetadataApi();
+
+}

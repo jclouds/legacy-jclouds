@@ -32,7 +32,7 @@ import org.jclouds.rest.HttpClient;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.annotations.Test;
 
@@ -44,13 +44,13 @@ import com.google.common.collect.Iterables;
  * @author danikov
  */
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "HttpClientLiveTest")
-public class HttpClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+public class HttpClientLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    private JAXBParser parser = new JAXBParser("true");
    private SessionWithToken sessionWithToken;
 
    @Override
-   protected void setupRequiredClients() {
+   protected void setupRequiredApis() {
    }
 
    @Test(description = "POST /login")
@@ -87,7 +87,7 @@ public class HttpClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       assertTrue(orgList.getOrgs().size() > 0, "must have orgs");
 
-      context.getApi().getOrgClient().getOrg(Iterables.getLast(orgList.getOrgs()).getHref());
+      context.getApi().getOrgApi().getOrg(Iterables.getLast(orgList.getOrgs()).getHref());
    }
 
    @Test(description = "GET /schema/{schemaFileName}", dependsOnMethods = { "testPostLogin", "testGetLogin" })
