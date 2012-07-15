@@ -41,7 +41,7 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
@@ -62,7 +62,7 @@ public class NovaImageExtension implements ImageExtension {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final NovaClient novaClient;
+   private final NovaApi novaApi;
    private final ExecutorService executor;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
@@ -73,10 +73,10 @@ public class NovaImageExtension implements ImageExtension {
    private PredicateWithResult<ZoneAndId, Image> imageReadyPredicate;
 
    @Inject
-   public NovaImageExtension(NovaClient novaClient,
+   public NovaImageExtension(NovaApi novaApi,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             PredicateWithResult<ZoneAndId, Image> imageReadyPredicate) {
-      this.novaClient = checkNotNull(novaClient);
+      this.novaApi = checkNotNull(novaApi);
       this.executor = userThreads;
       this.imageReadyPredicate = imageReadyPredicate;
    }
@@ -84,7 +84,7 @@ public class NovaImageExtension implements ImageExtension {
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Server server = novaClient.getServerClientForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      Server server = novaApi.getServerApiForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
       if (server == null)
          throw new NoSuchElementException("Cannot find server with id: " + zoneAndId);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
@@ -98,7 +98,7 @@ public class NovaImageExtension implements ImageExtension {
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
       ZoneAndId sourceImageZoneAndId = ZoneAndId.fromSlashEncoded(cloneTemplate.getSourceNodeId());
 
-      String newImageId = novaClient.getServerClientForZone(sourceImageZoneAndId.getZone()).createImageFromServer(
+      String newImageId = novaApi.getServerApiForZone(sourceImageZoneAndId.getZone()).createImageFromServer(
                cloneTemplate.getName(), sourceImageZoneAndId.getId());
 
       final ZoneAndId targetImageZoneAndId = ZoneAndId.fromZoneAndId(sourceImageZoneAndId.getZone(), newImageId);
@@ -119,7 +119,7 @@ public class NovaImageExtension implements ImageExtension {
    public boolean deleteImage(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
       try {
-         this.novaClient.getImageClientForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
+         this.novaApi.getImageApiForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
       } catch (Exception e) {
          return false;
       }

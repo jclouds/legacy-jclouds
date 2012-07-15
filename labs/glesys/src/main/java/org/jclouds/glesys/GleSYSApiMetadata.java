@@ -42,7 +42,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<GleSYSClient, GleSYSAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<GleSYSClient, GleSYSAsyncClient>>() {
+   public static final TypeToken<RestContext<GleSYSApi, GleSYSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<GleSYSApi, GleSYSAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
    
@@ -71,7 +71,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
          BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(GleSYSClient.class, GleSYSAsyncClient.class);
+         super(GleSYSApi.class, GleSYSAsyncApi.class);
          id("glesys")
          .name("GleSYS API")
          .identityName("Username")

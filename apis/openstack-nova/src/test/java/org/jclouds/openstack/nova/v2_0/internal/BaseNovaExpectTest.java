@@ -25,14 +25,14 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing Nova Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseNovaExpectTest<T> extends BaseRestApiExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithUsernameAndPasswordAndTenantName;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKeyAndTenantName;

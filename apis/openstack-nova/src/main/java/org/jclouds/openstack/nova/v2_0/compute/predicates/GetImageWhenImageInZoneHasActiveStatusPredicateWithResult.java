@@ -28,7 +28,7 @@ import javax.inject.Named;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
 import org.jclouds.predicates.PredicateWithResult;
@@ -51,13 +51,13 @@ public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult imp
    private ZoneAndId resultZoneAndId;
    private RuntimeException lastFailure;
    private Function<ImageInZone, Image> imageInZoneToImage;
-   private NovaClient client;
+   private NovaApi api;
 
    @Inject
    public GetImageWhenImageInZoneHasActiveStatusPredicateWithResult(Function<ImageInZone, Image> imageInZoneToImage,
-            NovaClient client) {
+            NovaApi api) {
       this.imageInZoneToImage = imageInZoneToImage;
-      this.client = client;
+      this.api = api;
    }
 
    @Override
@@ -89,7 +89,7 @@ public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult imp
    }
 
    public org.jclouds.openstack.nova.v2_0.domain.Image findImage(final ZoneAndId zoneAndId) {
-      return Iterables.tryFind(client.getImageClientForZone(zoneAndId.getZone()).listImagesInDetail(),
+      return Iterables.tryFind(api.getImageApiForZone(zoneAndId.getZone()).listImagesInDetail(),
                new Predicate<org.jclouds.openstack.nova.v2_0.domain.Image>() {
                   @Override
                   public boolean apply(org.jclouds.openstack.nova.v2_0.domain.Image input) {

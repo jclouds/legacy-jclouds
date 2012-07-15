@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.savvis.vpdc.VPDCClient;
+import org.jclouds.savvis.vpdc.VPDCApi;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.Resource;
@@ -54,21 +54,21 @@ import com.google.inject.Inject;
 ;
 
 /**
- * defines the connection between the {@link VPDCClient} implementation and the
+ * defines the connection between the {@link VPDCApi} implementation and the
  * jclouds {@link ComputeService}
  * 
  */
 @Singleton
 public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSpec, CIMOperatingSystem, Network> {
-   private final VPDCClient client;
+   private final VPDCApi api;
    private final RetryablePredicate<String> taskTester;
    @Inject(optional = true)
    @Named(PROPERTY_VPDC_VDC_EMAIL)
    String email;
 
    @Inject
-   public VPDCComputeServiceAdapter(VPDCClient client, TaskSuccess taskSuccess) {
-      this.client = checkNotNull(client, "client");
+   public VPDCComputeServiceAdapter(VPDCApi api, TaskSuccess taskSuccess) {
+      this.api = checkNotNull(api, "api");
       // TODO: parameterize
       this.taskTester = new RetryablePredicate<String>(checkNotNull(taskSuccess, "taskSuccess"), 650, 10,
             TimeUnit.SECONDS);
@@ -94,7 +94,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
             specBuilder.addDataDrive(volume.getDevice(), volume.getSize().intValue());
       }
 
-      Task task = client.getVMClient().addVMIntoVDC(billingSiteId, vpdcId, specBuilder.build());
+      Task task = api.getVMApi().addVMIntoVDC(billingSiteId, vpdcId, specBuilder.build());
       // make sure there's no error
       if (task.getError() != null)
          throw new RuntimeException("cloud not add vm: " + task.getError().toString());
@@ -121,7 +121,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
    @Override
    public Iterable<CIMOperatingSystem> listImages() {
-      return client.listPredefinedOperatingSystems();
+      return api.listPredefinedOperatingSystems();
    }
 
    // cheat until we have a getImage command
@@ -140,10 +140,10 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
    @Override
    public Iterable<VM> listNodes() {
       Builder<VM> builder = ImmutableSet.builder();
-      for (Resource org1 : client.listOrgs()) {
-         Org org = client.getBrowsingClient().getOrg(org1.getId());
+      for (Resource org1 : api.listOrgs()) {
+         Org org = api.getBrowsingApi().getOrg(org1.getId());
          for (Resource vdc : org.getVDCs()) {
-            VDC VDC = client.getBrowsingClient().getVDCInOrg(org.getId(), vdc.getId());
+            VDC VDC = api.getBrowsingApi().getVDCInOrg(org.getId(), vdc.getId());
             for (Resource vApp : Iterables.filter(VDC.getResourceEntities(), new Predicate<Resource>() {
 
                @Override
@@ -152,7 +152,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
                }
 
             })) {
-               builder.add(client.getBrowsingClient().getVMInVDC(org.getId(), vdc.getId(), vApp.getId(),
+               builder.add(api.getBrowsingApi().getVMInVDC(org.getId(), vdc.getId(), vApp.getId(),
                      withPowerState()));
             }
          }
@@ -163,15 +163,15 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
    @Override
    public Iterable<Network> listLocations() {
       Builder<Network> builder = ImmutableSet.builder();
-      for (Resource org1 : client.listOrgs()) {
-         Org org = client.getBrowsingClient().getOrg(org1.getId());
+      for (Resource org1 : api.listOrgs()) {
+         Org org = api.getBrowsingApi().getOrg(org1.getId());
          for (Resource vdc : org.getVDCs()) {
-            VDC VDC = client.getBrowsingClient().getVDCInOrg(org.getId(), vdc.getId());
+            VDC VDC = api.getBrowsingApi().getVDCInOrg(org.getId(), vdc.getId());
             // optionally constrain locations
             if (email != null && VDC.getDescription().indexOf(email) != -1)
                continue;
             for (Resource network : VDC.getAvailableNetworks()) {
-               builder.add(client.getBrowsingClient().getNetworkInVDC(org.getId(), vdc.getId(), network.getId()));
+               builder.add(api.getBrowsingApi().getNetworkInVDC(org.getId(), vdc.getId(), network.getId()));
             }
          }
       }
@@ -180,12 +180,12 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
    @Override
    public VM getNode(String id) {
-      return client.getBrowsingClient().getVM(URI.create(checkNotNull(id, "id")), withPowerState());
+      return api.getBrowsingApi().getVM(URI.create(checkNotNull(id, "id")), withPowerState());
    }
 
    @Override
    public void destroyNode(String id) {
-      taskTester.apply(client.getVMClient().removeVM(URI.create(checkNotNull(id, "id"))).getId());
+      taskTester.apply(api.getVMApi().removeVM(URI.create(checkNotNull(id, "id"))).getId());
    }
 
    @Override
@@ -197,11 +197,11 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
    @Override
    public void resumeNode(String id) {
-      taskTester.apply(client.getServiceManagementClient().powerOnVM(URI.create(checkNotNull(id, "id"))).getId());
+      taskTester.apply(api.getServiceManagementApi().powerOnVM(URI.create(checkNotNull(id, "id"))).getId());
    }
 
    @Override
    public void suspendNode(String id) {
-      taskTester.apply(client.getServiceManagementClient().powerOffVM(URI.create(checkNotNull(id, "id"))).getId());
+      taskTester.apply(api.getServiceManagementApi().powerOffVM(URI.create(checkNotNull(id, "id"))).getId());
    }
 }

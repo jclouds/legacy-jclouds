@@ -25,10 +25,10 @@ import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
-import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -42,65 +42,65 @@ public class LoadFloatingIpsForInstanceTest {
 
    @Test
    public void testReturnsPublicIpOnMatch() throws Exception {
-      NovaClient client = createMock(NovaClient.class);
-      FloatingIPClient ipClient = createMock(FloatingIPClient.class);
+      NovaApi api = createMock(NovaApi.class);
+      FloatingIPApi ipApi = createMock(FloatingIPApi.class);
       FloatingIP testIp = FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build();
 
-      expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
-      expect(ipClient.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
+      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipApi)).atLeastOnce();
+      expect(ipApi.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
 
-      replay(client);
-      replay(ipClient);
+      replay(api);
+      replay(ipApi);
 
-      LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
+      LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(api);
 
       assertEquals(ImmutableSet.copyOf(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah"))), ImmutableSet.of(testIp));
 
-      verify(client);
-      verify(ipClient);
+      verify(api);
+      verify(ipApi);
    }
 
    @Test
    public void testReturnsNullWhenNotFound() throws Exception {
-      NovaClient client = createMock(NovaClient.class);
-      FloatingIPClient ipClient = createMock(FloatingIPClient.class);
+      NovaApi api = createMock(NovaApi.class);
+      FloatingIPApi ipApi = createMock(FloatingIPApi.class);
 
-      expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
+      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipApi)).atLeastOnce();
 
-      expect(ipClient.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of()).atLeastOnce();
+      expect(ipApi.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of()).atLeastOnce();
 
-      replay(client);
-      replay(ipClient);
+      replay(api);
+      replay(ipApi);
 
-      LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
+      LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(api);
 
       assertFalse(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah")).iterator().hasNext());
 
-      verify(client);
-      verify(ipClient);
+      verify(api);
+      verify(ipApi);
 
    }
 
    @Test
    public void testReturnsNullWhenNotAssigned() throws Exception {
-      NovaClient client = createMock(NovaClient.class);
-      FloatingIPClient ipClient = createMock(FloatingIPClient.class);
+      NovaApi api = createMock(NovaApi.class);
+      FloatingIPApi ipApi = createMock(FloatingIPApi.class);
 
-      expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
+      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipApi)).atLeastOnce();
 
-      expect(ipClient.listFloatingIPs()).andReturn(
+      expect(ipApi.listFloatingIPs()).andReturn(
             ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").build()))
             .atLeastOnce();
 
-      replay(client);
-      replay(ipClient);
+      replay(api);
+      replay(ipApi);
 
-      LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
+      LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(api);
 
       assertFalse(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah")).iterator().hasNext());
 
-      verify(client);
-      verify(ipClient);
+      verify(api);
+      verify(ipApi);
 
    }
 

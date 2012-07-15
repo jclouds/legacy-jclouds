@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests the compute service abstraction of the nova client.
+ * Tests the compute service abstraction of the nova api.
  * 
  * @author Matt Stephenson
  */

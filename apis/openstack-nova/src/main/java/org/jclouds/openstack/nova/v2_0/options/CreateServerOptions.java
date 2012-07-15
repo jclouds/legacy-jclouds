@@ -34,7 +34,7 @@ import javax.inject.Named;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.util.Preconditions2;
@@ -296,7 +296,7 @@ public class CreateServerOptions implements MapBinder {
     * 
     * <h3>Note</h3>
     * 
-    * This requires that {@link NovaClient#getSecurityGroupExtensionForZone(String)} to return
+    * This requires that {@link NovaApi#getSecurityGroupExtensionForZone(String)} to return
     * {@link Optional#isPresent present}
     * 
     * @return security groups the user specified to run servers with; zero length will create an

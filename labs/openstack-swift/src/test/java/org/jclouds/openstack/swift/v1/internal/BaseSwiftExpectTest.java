@@ -21,14 +21,14 @@ package org.jclouds.openstack.swift.v1.internal;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing Swift Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseSwiftExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseSwiftExpectTest<T> extends BaseRestApiExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
    protected String authToken;

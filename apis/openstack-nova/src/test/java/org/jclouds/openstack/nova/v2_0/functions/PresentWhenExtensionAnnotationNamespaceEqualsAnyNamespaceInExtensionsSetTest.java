@@ -11,7 +11,7 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.nova.v2_0.domain.Extension;
 import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairAsyncClient;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairAsyncApi;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.annotations.Delegate;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
             "Keypair Support").build();
 
    @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
-   static interface KeyPairIPAsyncClient {
+   static interface KeyPairIPAsyncApi {
 
    }
 
@@ -51,29 +51,29 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
             "Floating IPs support").build();
 
    @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
-   static interface FloatingIPAsyncClient {
+   static interface FloatingIPAsyncApi {
 
    }
 
-   static interface NovaAsyncClient {
+   static interface NovaAsyncApi {
 
       @Delegate
-      Optional<FloatingIPAsyncClient> getFloatingIPExtensionForZone(String zone);
+      Optional<FloatingIPAsyncApi> getFloatingIPExtensionForZone(String zone);
 
       @Delegate
-      Optional<KeyPairAsyncClient> getKeyPairExtensionForZone(String zone);
+      Optional<KeyPairAsyncApi> getKeyPairExtensionForZone(String zone);
 
    }
 
    ClassMethodArgsAndReturnVal getFloatingIPExtension() throws SecurityException, NoSuchMethodException {
-      return ClassMethodArgsAndReturnVal.builder().clazz(FloatingIPAsyncClient.class).method(
-               NovaAsyncClient.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)).args(
+      return ClassMethodArgsAndReturnVal.builder().clazz(FloatingIPAsyncApi.class).method(
+               NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)).args(
                new Object[] { "expectedzone" }).returnVal("foo").build();
    }
 
    ClassMethodArgsAndReturnVal getKeyPairExtension() throws SecurityException, NoSuchMethodException {
-      return ClassMethodArgsAndReturnVal.builder().clazz(KeyPairAsyncClient.class).method(
-               NovaAsyncClient.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)).args(
+      return ClassMethodArgsAndReturnVal.builder().clazz(KeyPairAsyncApi.class).method(
+               NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)).args(
                new Object[] { "expectedzone" }).returnVal("foo").build();
    }
 

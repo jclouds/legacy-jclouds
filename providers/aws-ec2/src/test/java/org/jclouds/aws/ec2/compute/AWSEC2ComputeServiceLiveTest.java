@@ -36,12 +36,14 @@ import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
-import org.jclouds.cloudwatch.CloudWatchAsyncClient;
-import org.jclouds.cloudwatch.CloudWatchClient;
+import org.jclouds.cloudwatch.CloudWatchApi;
+import org.jclouds.cloudwatch.CloudWatchAsyncApi;
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.Dimension;
+import org.jclouds.cloudwatch.domain.EC2Constants;
+import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
-import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -162,15 +164,23 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // stop the spinner
          future.cancel(true);
 
-         RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = ContextBuilder
+         RestContext<CloudWatchApi, CloudWatchAsyncApi> monitoringContext = ContextBuilder
                .newBuilder(new AWSCloudWatchProviderMetadata())
                .credentials(identity, credential)
                .modules(setupModules()).build();
 
          try {
-            Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-                     "CPUUtilization", "AWS/EC2", before, new Date(), 60, Statistics.AVERAGE,
-                     GetMetricStatisticsOptions.Builder.instanceId(instance.getId()).unit(Unit.PERCENT));
+            Set<Datapoint> datapoints = monitoringContext.getApi().getMetricApiForRegion(instance.getRegion())
+                     .getMetricStatistics(GetMetricStatistics.builder()
+                                                             .dimension(new Dimension(EC2Constants.Dimension.INSTANCE_ID, instance.getId()))
+                                                             .unit(Unit.PERCENT)
+                                                             .namespace("AWS/EC2")
+                                                             .metricName("CPUUtilization")
+                                                             .startTime(before)
+                                                             .endTime(new Date())
+                                                             .period(60)
+                                                             .statistic(Statistics.AVERAGE)
+                                                             .build());
             assert (datapoints.size() > 0) : instance;
          } finally {
             monitoringContext.close();

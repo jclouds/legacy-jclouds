@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
+import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseServerListTest;
 import org.testng.annotations.Test;
 
@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
-public class PasswordAuthenticationExpectTest extends BaseNovaClientExpectTest {
+public class PasswordAuthenticationExpectTest extends BaseNovaApiExpectTest {
    public PasswordAuthenticationExpectTest() {
       identity = "identity";
    }
@@ -51,12 +51,12 @@ public class PasswordAuthenticationExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().toString(),
+      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().toString(),
             new ParseServerListTest().expected().toString());
    }
 

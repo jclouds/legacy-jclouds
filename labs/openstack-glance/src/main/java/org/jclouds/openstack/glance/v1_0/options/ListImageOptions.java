@@ -45,7 +45,7 @@ import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
  *
  *
  * // this will list the first 10 images with the name "name", minimum required disk of 5GB.
- * list = client.list(name("newName"), limit(10), minDisk(5));
+ * list = api.list(name("newName"), limit(10), minDisk(5));
  * <code>
  * 
  * @author Adam Lowe

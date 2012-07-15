@@ -27,10 +27,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
-import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
+import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseSecurityGroupListTest;
 import org.jclouds.openstack.nova.v2_0.predicates.FindSecurityGroupWithNameAndReturnTrue;
 import org.testng.annotations.Test;
@@ -43,7 +43,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "FindSecurityGroupWithNameAndReturnTrueExpectTest")
-public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaClientExpectTest {
+public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaApiExpectTest {
 
    public void testUpdateReferenceWhenSecurityGroupListContainsGroupName() throws Exception {
       HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
@@ -54,12 +54,12 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaCl
       HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+      NovaApi apiWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
                listSecurityGroupsResponse);
 
       FindSecurityGroupWithNameAndReturnTrue predicate = new FindSecurityGroupWithNameAndReturnTrue(
-               clientWhenSecurityGroupsExist);
+               apiWhenSecurityGroupsExist);
 
       AtomicReference<ZoneAndName> securityGroupInZoneRef = new AtomicReference<ZoneAndName>(ZoneAndName
                .fromZoneAndName("az-1.region-a.geo-1", "name1"));
@@ -82,12 +82,12 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaCl
       HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+      NovaApi apiWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
                listSecurityGroupsResponse);
 
       FindSecurityGroupWithNameAndReturnTrue predicate = new FindSecurityGroupWithNameAndReturnTrue(
-               clientWhenSecurityGroupsExist);
+               apiWhenSecurityGroupsExist);
 
       ZoneAndName zoneAndGroup = ZoneAndName.fromZoneAndName("az-1.region-a.geo-1", "name2");
 

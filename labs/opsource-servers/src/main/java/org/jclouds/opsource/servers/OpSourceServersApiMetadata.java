@@ -37,7 +37,7 @@ public class OpSourceServersApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>>() {
+   public static final TypeToken<RestContext<OpSourceServersApi, OpSourceServersAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<OpSourceServersApi, OpSourceServersAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
    @Override
@@ -63,7 +63,7 @@ public class OpSourceServersApiMetadata extends BaseRestApiMetadata {
          BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(OpSourceServersClient.class, OpSourceServersAsyncClient.class);
+         super(OpSourceServersApi.class, OpSourceServersAsyncApi.class);
          id("opsource-servers")
          .name("OpSourceServers API")
          .identityName("Username")

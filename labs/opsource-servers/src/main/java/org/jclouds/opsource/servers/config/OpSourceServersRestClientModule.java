@@ -25,14 +25,14 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
-import org.jclouds.opsource.servers.OpSourceServersAsyncClient;
-import org.jclouds.opsource.servers.OpSourceServersClient;
-import org.jclouds.opsource.servers.features.AccountAsyncClient;
-import org.jclouds.opsource.servers.features.AccountClient;
-import org.jclouds.opsource.servers.features.ServerAsyncClient;
-import org.jclouds.opsource.servers.features.ServerClient;
-import org.jclouds.opsource.servers.features.ServerImageAsyncClient;
-import org.jclouds.opsource.servers.features.ServerImageClient;
+import org.jclouds.opsource.servers.OpSourceServersAsyncApi;
+import org.jclouds.opsource.servers.OpSourceServersApi;
+import org.jclouds.opsource.servers.features.AccountAsyncApi;
+import org.jclouds.opsource.servers.features.AccountApi;
+import org.jclouds.opsource.servers.features.ServerAsyncApi;
+import org.jclouds.opsource.servers.features.ServerApi;
+import org.jclouds.opsource.servers.features.ServerImageAsyncApi;
+import org.jclouds.opsource.servers.features.ServerImageApi;
 import org.jclouds.opsource.servers.handlers.OpSourceServersErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -47,12 +47,12 @@ import com.google.inject.Scopes;
  */
 @ConfiguresRestClient
 public class OpSourceServersRestClientModule extends
-      RestClientModule<OpSourceServersClient, OpSourceServersAsyncClient> {
+      RestClientModule<OpSourceServersApi, OpSourceServersAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(AccountClient.class, AccountAsyncClient.class)
-         .put(ServerImageClient.class, ServerImageAsyncClient.class)
-         .put(ServerClient.class, ServerAsyncClient.class)
+         .put(AccountApi.class, AccountAsyncApi.class)
+         .put(ServerImageApi.class, ServerImageAsyncApi.class)
+         .put(ServerApi.class, ServerAsyncApi.class)
          .build();
 
    public OpSourceServersRestClientModule() {

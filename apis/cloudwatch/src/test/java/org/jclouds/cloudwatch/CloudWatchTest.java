@@ -28,7 +28,7 @@ import java.util.Set;
 import org.easymock.EasyMock;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
-import org.jclouds.cloudwatch.features.MetricClient;
+import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.collect.PaginatedIterables;
@@ -48,72 +48,72 @@ import com.google.common.collect.Sets;
 public class CloudWatchTest {
 
    /**
-    * Tests {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}
+    * Tests {@link CloudWatch#listMetrics(CloudWatchApi, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}
     * where a single response returns all results.
     *
     * @throws Exception if anything goes wrong
     */
    @Test
    public void testSinglePageResult() throws Exception {
-      CloudWatchClient client = createMock(CloudWatchClient.class);
-      MetricClient metricClient = createMock(MetricClient.class);
+      CloudWatchApi api = createMock(CloudWatchApi.class);
+      MetricApi metricApi = createMock(MetricApi.class);
       ListMetricsOptions options = new ListMetricsOptions();
       PaginatedIterable<Metric> response = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), null);
       
-      expect(client.getMetricClientForRegion(null))
-            .andReturn(metricClient)
+      expect(api.getMetricApiForRegion(null))
+            .andReturn(metricApi)
             .atLeastOnce();
 
-      expect(metricClient.list(options))
+      expect(metricApi.list(options))
             .andReturn(response)
             .once();
 
-      EasyMock.replay(client, metricClient);
+      EasyMock.replay(api, metricApi);
 
-      Assert.assertEquals(1, Iterables.size(CloudWatch.listMetrics(client, null, options)));
+      Assert.assertEquals(1, Iterables.size(CloudWatch.listMetrics(api, null, options)));
    }
 
    /**
-    * Tests {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}
+    * Tests {@link CloudWatch#listMetrics(CloudWatchApi, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}
     * where retrieving all results requires multiple requests.
     *
     * @throws Exception if anything goes wrong
     */
    @Test
    public void testMultiPageResult() throws Exception {
-      CloudWatchClient client = createMock(CloudWatchClient.class);
-      MetricClient metricClient = createMock(MetricClient.class);
+      CloudWatchApi api = createMock(CloudWatchApi.class);
+      MetricApi metricApi = createMock(MetricApi.class);
       ListMetricsOptions options = new ListMetricsOptions();
       PaginatedIterable<Metric> response1 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), "NEXTTOKEN");
       PaginatedIterable<Metric> response2 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), null);
 
       // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
-      expect(client.getMetricClientForRegion(EasyMock.eq("")))
-            .andReturn(metricClient)
+      expect(api.getMetricApiForRegion(EasyMock.eq("")))
+            .andReturn(metricApi)
             .atLeastOnce();
       
-      expect(metricClient.list(anyObject(ListMetricsOptions.class)))
+      expect(metricApi.list(anyObject(ListMetricsOptions.class)))
             .andReturn(response1)
             .once();
-      expect(metricClient.list(anyObject(ListMetricsOptions.class)))
+      expect(metricApi.list(anyObject(ListMetricsOptions.class)))
             .andReturn(response2)
             .once();
 
-      EasyMock.replay(client, metricClient);
+      EasyMock.replay(api, metricApi);
 
-      Assert.assertEquals(2, Iterables.size(CloudWatch.listMetrics(client, "", options)));
+      Assert.assertEquals(2, Iterables.size(CloudWatch.listMetrics(api, "", options)));
    }
 
    /**
-    * Tests {@link CloudWatch#putMetricData(CloudWatchClient, String, Iterable, String)} where the set of metrics is
+    * Tests {@link CloudWatch#putMetricData(CloudWatchApi, String, Iterable, String)} where the set of metrics is
     * greater than 10.
     *
     * @throws Exception if anything goes wrong
     */
    @Test
    public void testPutMetricData() throws Exception {
-      CloudWatchClient client = createMock(CloudWatchClient.class);
-      MetricClient metricClient = createMock(MetricClient.class);
+      CloudWatchApi api = createMock(CloudWatchApi.class);
+      MetricApi metricApi = createMock(MetricApi.class);
       Set<MetricDatum> metrics = Sets.newLinkedHashSet();
       String namespace = "JCLOUDS/Test";
 
@@ -122,19 +122,19 @@ public class CloudWatchTest {
       }
 
       // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
-      expect(client.getMetricClientForRegion(EasyMock.eq("")))
-            .andReturn(metricClient)
+      expect(api.getMetricApiForRegion(EasyMock.eq("")))
+            .andReturn(metricApi)
             .atLeastOnce();
       
       for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
-         metricClient.putMetricsInNamespace(slice, namespace);
+         metricApi.putMetricsInNamespace(slice, namespace);
       }
 
-      EasyMock.replay(client, metricClient);
+      EasyMock.replay(api, metricApi);
 
-      CloudWatch.putMetricData(client, "", metrics, namespace);
+      CloudWatch.putMetricData(api, "", metrics, namespace);
 
-      EasyMock.verify(metricClient);
+      EasyMock.verify(metricApi);
    }
 
 }

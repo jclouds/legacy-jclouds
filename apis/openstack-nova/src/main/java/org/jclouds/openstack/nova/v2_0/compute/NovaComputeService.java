@@ -57,14 +57,14 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
+import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
 import org.jclouds.openstack.nova.v2_0.predicates.KeyPairPredicates;
 import org.jclouds.openstack.nova.v2_0.predicates.SecurityGroupPredicates;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
@@ -83,7 +83,7 @@ import com.google.common.collect.Multimap;
  */
 @Singleton
 public class NovaComputeService extends BaseComputeService {
-   protected final NovaClient novaClient;
+   protected final NovaApi novaApi;
    protected final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap;
    protected final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
    protected final Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId;
@@ -104,7 +104,7 @@ public class NovaComputeService extends BaseComputeService {
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaClient novaClient,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaApi novaApi,
             LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap,
             LoadingCache<ZoneAndName, KeyPair> keyPairCache,
             Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId,
@@ -114,7 +114,7 @@ public class NovaComputeService extends BaseComputeService {
                startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
                persistNodeCredentials, timeouts, executor, imageExtension);
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+      this.novaApi = checkNotNull(novaApi, "novaApi");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.orphanedGroupsByZoneId = checkNotNull(orphanedGroupsByZoneId, "orphanedGroupsByZoneId");
@@ -135,14 +135,14 @@ public class NovaComputeService extends BaseComputeService {
    }
 
    private void cleanupOrphanedSecurityGroupsInZone(Set<String> groups, String zoneId) {
-      Optional<SecurityGroupClient> securityGroupClient = novaClient.getSecurityGroupExtensionForZone(zoneId);
-      if (securityGroupClient.isPresent()) {
+      Optional<SecurityGroupApi> securityGroupApi = novaApi.getSecurityGroupExtensionForZone(zoneId);
+      if (securityGroupApi.isPresent()) {
          for (String group : groups) {
-            for (SecurityGroup securityGroup : Iterables.filter(securityGroupClient.get().listSecurityGroups(),
+            for (SecurityGroup securityGroup : Iterables.filter(securityGroupApi.get().listSecurityGroups(),
                      SecurityGroupPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, securityGroup.getName());
                logger.debug(">> deleting securityGroup(%s)", zoneAndName);
-               securityGroupClient.get().deleteSecurityGroup(securityGroup.getId());
+               securityGroupApi.get().deleteSecurityGroup(securityGroup.getId());
                // TODO: test this clear happens
                securityGroupMap.invalidate(zoneAndName);
                logger.debug("<< deleted securityGroup(%s)", zoneAndName);
@@ -152,15 +152,15 @@ public class NovaComputeService extends BaseComputeService {
    }
 
    private void cleanupOrphanedKeyPairsInZone(Set<String> groups, String zoneId) {
-      Optional<KeyPairClient> keyPairClient = novaClient.getKeyPairExtensionForZone(zoneId);
-      if (keyPairClient.isPresent()) {
+      Optional<KeyPairApi> keyPairApi = novaApi.getKeyPairExtensionForZone(zoneId);
+      if (keyPairApi.isPresent()) {
          for (String group : groups) {
-            for (Map<String, KeyPair> view : keyPairClient.get().listKeyPairs()) {
+            for (Map<String, KeyPair> view : keyPairApi.get().listKeyPairs()) {
                for (KeyPair pair : Iterables.filter(view.values(),
                         KeyPairPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                   ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
                   logger.debug(">> deleting keypair(%s)", zoneAndName);
-                  keyPairClient.get().deleteKeyPair(pair.getName());
+                  keyPairApi.get().deleteKeyPair(pair.getName());
                   // TODO: test this clear happens
                   keyPairCache.invalidate(zoneAndName);
                   logger.debug("<< deleted keypair(%s)", zoneAndName);

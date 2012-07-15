@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
+import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseServerListTest;
 import org.testng.annotations.Test;
 
@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "AccessKeyAndSecretKeyAuthenticationExpectTest")
-public class AccessKeyAndSecretKeyAuthenticationExpectTest extends BaseNovaClientExpectTest {
+public class AccessKeyAndSecretKeyAuthenticationExpectTest extends BaseNovaApiExpectTest {
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -60,12 +60,12 @@ public class AccessKeyAndSecretKeyAuthenticationExpectTest extends BaseNovaClien
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantName,
+      NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().toString(),
+      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().toString(),
             new ParseServerListTest().expected().toString());
    }
 

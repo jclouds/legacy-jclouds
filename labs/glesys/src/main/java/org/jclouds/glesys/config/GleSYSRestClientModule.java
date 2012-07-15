@@ -20,18 +20,18 @@ package org.jclouds.glesys.config;
 
 import java.util.Map;
 
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.features.ArchiveAsyncClient;
-import org.jclouds.glesys.features.ArchiveClient;
-import org.jclouds.glesys.features.DomainAsyncClient;
-import org.jclouds.glesys.features.DomainClient;
-import org.jclouds.glesys.features.EmailAsyncClient;
-import org.jclouds.glesys.features.EmailClient;
-import org.jclouds.glesys.features.IpAsyncClient;
-import org.jclouds.glesys.features.IpClient;
-import org.jclouds.glesys.features.ServerAsyncClient;
-import org.jclouds.glesys.features.ServerClient;
+import org.jclouds.glesys.GleSYSAsyncApi;
+import org.jclouds.glesys.GleSYSApi;
+import org.jclouds.glesys.features.ArchiveAsyncApi;
+import org.jclouds.glesys.features.ArchiveApi;
+import org.jclouds.glesys.features.DomainAsyncApi;
+import org.jclouds.glesys.features.DomainApi;
+import org.jclouds.glesys.features.EmailAsyncApi;
+import org.jclouds.glesys.features.EmailApi;
+import org.jclouds.glesys.features.IpAsyncApi;
+import org.jclouds.glesys.features.IpApi;
+import org.jclouds.glesys.features.ServerAsyncApi;
+import org.jclouds.glesys.features.ServerApi;
 import org.jclouds.glesys.handlers.GleSYSErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -53,14 +53,14 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class GleSYSRestClientModule extends RestClientModule<GleSYSClient, GleSYSAsyncClient> {
+public class GleSYSRestClientModule extends RestClientModule<GleSYSApi, GleSYSAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(ServerClient.class, ServerAsyncClient.class)//
-         .put(IpClient.class, IpAsyncClient.class)//
-         .put(ArchiveClient.class, ArchiveAsyncClient.class)//
-         .put(DomainClient.class, DomainAsyncClient.class)//
-         .put(EmailClient.class, EmailAsyncClient.class)//
+         .put(ServerApi.class, ServerAsyncApi.class)//
+         .put(IpApi.class, IpAsyncApi.class)//
+         .put(ArchiveApi.class, ArchiveAsyncApi.class)//
+         .put(DomainApi.class, DomainAsyncApi.class)//
+         .put(EmailApi.class, EmailAsyncApi.class)//
          .build();
 
    public GleSYSRestClientModule() {

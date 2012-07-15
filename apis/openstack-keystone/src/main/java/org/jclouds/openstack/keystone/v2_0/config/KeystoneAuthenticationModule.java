@@ -47,8 +47,8 @@ import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromZoneIdToURIKeySet;
 import org.jclouds.location.suppliers.implicit.FirstRegion;
 import org.jclouds.location.suppliers.implicit.FirstZone;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
@@ -140,13 +140,13 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
-      bindAuthenticationClient();
+      bindAuthenticationApi();
    }
 
-   protected void bindAuthenticationClient() {
-      // AuthenticationClient is used directly for filters and retry handlers, so let's bind it
+   protected void bindAuthenticationApi() {
+      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it
       // explicitly
-      bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
+      bindClientAndAsyncClient(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
    }
 
    /**

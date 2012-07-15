@@ -53,7 +53,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<NovaClient, NovaAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaClient, NovaAsyncClient>>() {
+   public static final TypeToken<RestContext<NovaApi, NovaAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaApi, NovaAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -91,7 +91,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(NovaClient.class, NovaAsyncClient.class);
+         super(NovaApi.class, NovaAsyncApi.class);
           id("openstack-nova")
          .name("OpenStack Nova Diablo+ API")
          .identityName("tenantName:user or user")

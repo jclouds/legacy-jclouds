@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.glesys.compute.internal.BaseGleSYSComputeServiceExpectTest;
-import org.jclouds.glesys.features.ServerClientExpectTest;
+import org.jclouds.glesys.features.ServerApiExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -72,7 +72,7 @@ public class ServerDetailsToNodeMetadataTest extends BaseGleSYSComputeServiceExp
 
       ).getInstance(ServerDetailsToNodeMetadata.class);
 
-      NodeMetadata actual = toTest.apply(ServerClientExpectTest.expectedServerDetails());
+      NodeMetadata actual = toTest.apply(ServerApiExpectTest.expectedServerDetails());
       assertNotNull(actual);
 
       assertEquals(

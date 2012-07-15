@@ -26,12 +26,12 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.quantum.v1_0.QuantumAsyncClient;
-import org.jclouds.openstack.quantum.v1_0.QuantumClient;
-import org.jclouds.openstack.quantum.v1_0.features.NetworkAsyncClient;
-import org.jclouds.openstack.quantum.v1_0.features.NetworkClient;
-import org.jclouds.openstack.quantum.v1_0.features.PortAsyncClient;
-import org.jclouds.openstack.quantum.v1_0.features.PortClient;
+import org.jclouds.openstack.quantum.v1_0.QuantumAsyncApi;
+import org.jclouds.openstack.quantum.v1_0.QuantumApi;
+import org.jclouds.openstack.quantum.v1_0.features.NetworkAsyncApi;
+import org.jclouds.openstack.quantum.v1_0.features.NetworkApi;
+import org.jclouds.openstack.quantum.v1_0.features.PortAsyncApi;
+import org.jclouds.openstack.quantum.v1_0.features.PortApi;
 import org.jclouds.openstack.quantum.v1_0.handlers.QuantumErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -44,11 +44,11 @@ import com.google.common.collect.ImmutableMap;
  * @author Adam Lowe
  */
 @ConfiguresRestClient
-public class QuantumRestClientModule extends RestClientModule<QuantumClient, QuantumAsyncClient> {
+public class QuantumRestClientModule extends RestClientModule<QuantumApi, QuantumAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(NetworkClient.class, NetworkAsyncClient.class)
-         .put(PortClient.class, PortAsyncClient.class)
+         .put(NetworkApi.class, NetworkAsyncApi.class)
+         .put(PortApi.class, PortAsyncApi.class)
          .build();
 
    public QuantumRestClientModule() {

@@ -34,7 +34,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @see <a href=
        "http://nova.openstack.org/api/nova.api.openstack.compute.contrib.extended_status.html"
        />
- * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
+ * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
  * @see org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces#EXTENDED_STATUS (extended status?)
 */
 public class ServerExtendedStatus {

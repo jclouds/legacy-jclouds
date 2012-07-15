@@ -44,7 +44,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests the compute service abstraction of the nova client.
+ * Tests the compute service abstraction of the nova api.
  * 
  * @author Adrian Cole
  */

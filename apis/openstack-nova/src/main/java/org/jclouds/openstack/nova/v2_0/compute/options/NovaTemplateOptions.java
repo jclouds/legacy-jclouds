@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
@@ -46,9 +46,9 @@ import com.google.common.collect.ImmutableSet;
  * <code>
  * import static org.jclouds.aws.ec2.compute.options.NovaTemplateOptions.Builder.*;
  * <p/>
- * ComputeService client = // get connection
+ * ComputeService api = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
+ * Set<? extends NodeMetadata> set = api.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adam Lowe
@@ -162,7 +162,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    /**
     * <h3>Note</h3>
     * 
-    * This requires that {@link NovaClient#getFloatingIPExtensionForZone(String)} to return
+    * This requires that {@link NovaApi#getFloatingIPExtensionForZone(String)} to return
     * {@link Optional#isPresent present}
     * 
     * @return true if auto assignment of a floating ip to each vm is enabled
@@ -182,7 +182,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    /**
     * <h3>Note</h3>
     *
-    * This requires that {@link NovaClient#getKeyPairExtensionForZone(String)} to return
+    * This requires that {@link NovaApi#getKeyPairExtensionForZone(String)} to return
     * {@link Optional#isPresent present}
     *
     * @return true if auto generation of keypairs is enabled

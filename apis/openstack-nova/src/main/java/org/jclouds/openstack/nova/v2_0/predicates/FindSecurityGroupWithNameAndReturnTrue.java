@@ -28,11 +28,11 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
-import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Optional;
@@ -48,26 +48,26 @@ import com.google.inject.Inject;
 @Singleton
 public class FindSecurityGroupWithNameAndReturnTrue implements Predicate<AtomicReference<ZoneAndName>> {
 
-   private final NovaClient novaClient;
+   private final NovaApi novaApi;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public FindSecurityGroupWithNameAndReturnTrue(NovaClient novaClient) {
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+   public FindSecurityGroupWithNameAndReturnTrue(NovaApi novaApi) {
+      this.novaApi = checkNotNull(novaApi, "novaApi");
    }
 
    public boolean apply(AtomicReference<ZoneAndName> securityGroupInZoneRef) {
       checkNotNull(securityGroupInZoneRef, "securityGroupRef");
       final ZoneAndName securityGroupInZone = checkNotNull(securityGroupInZoneRef.get(), "securityGroupInZone");
 
-      Optional<SecurityGroupClient> client = novaClient.getSecurityGroupExtensionForZone(securityGroupInZone.getZone());
-      checkArgument(client.isPresent(), "Security groups are required, but the extension is not available!");
+      Optional<SecurityGroupApi> api = novaApi.getSecurityGroupExtensionForZone(securityGroupInZone.getZone());
+      checkArgument(api.isPresent(), "Security groups are required, but the extension is not available!");
 
       logger.trace("looking for security group %s", securityGroupInZone.slashEncode());
       try {
-         SecurityGroup returnVal = Iterables.find(client.get().listSecurityGroups(), new Predicate<SecurityGroup>() {
+         SecurityGroup returnVal = Iterables.find(api.get().listSecurityGroups(), new Predicate<SecurityGroup>() {
 
             @Override
             public boolean apply(SecurityGroup input) {

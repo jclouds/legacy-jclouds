@@ -47,7 +47,7 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
       /** The serialVersionUID */
    private static final long serialVersionUID = -7273686435105663195L;
 
-   public static final TypeToken<RestContext<QuantumClient, QuantumAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<QuantumClient, QuantumAsyncClient>>() {
+   public static final TypeToken<RestContext<QuantumApi, QuantumAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<QuantumApi, QuantumAsyncApi>>() {
       private static final long serialVersionUID = -3493117927790861884L;
    };
 
@@ -77,7 +77,7 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(QuantumClient.class, QuantumAsyncClient.class);
+         super(QuantumApi.class, QuantumAsyncApi.class);
           id("openstack-quantum")
          .name("OpenStack Quantum API")
          .identityName("tenantName:user or user")

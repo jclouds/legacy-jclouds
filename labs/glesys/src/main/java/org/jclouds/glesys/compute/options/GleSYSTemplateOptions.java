@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.glesys.features.ServerClient;
+import org.jclouds.glesys.features.ServerApi;
 
 import com.google.common.net.InetAddresses;
 
@@ -41,9 +41,9 @@ import com.google.common.net.InetAddresses;
  * 
  * <pre>
  * import static org.jclouds.compute.options.GleSYSTemplateOptions.Builder.*;
- * ComputeService client = // get connection
+ * ComputeService api = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set&lt;? extends NodeMetadata&gt; set = client.createNodesInGroup(tag, 2, templateBuilder.build());
+ * Set&lt;? extends NodeMetadata&gt; set = api.createNodesInGroup(tag, 2, templateBuilder.build());
  * </pre>
  * 
  * @author Adrian Cole
@@ -70,7 +70,7 @@ public class GleSYSTemplateOptions extends TemplateOptions implements Cloneable 
 
    /**
     * 
-    * @see ServerClient#createServerWithHostnameAndRootPassword
+    * @see ServerApi#createServerWithHostnameAndRootPassword
     * @see InetAddresses#isInetAddress
     */
    public TemplateOptions ip(String ip) {

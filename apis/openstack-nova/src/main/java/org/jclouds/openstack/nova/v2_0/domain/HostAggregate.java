@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Aggregates can be manipulated using the Aggregate Extension to Nova (alias "OS-AGGREGATES")
  * 
- * @see org.jclouds.openstack.nova.v2_0.extensions.HostAggregateClient
+ * @see org.jclouds.openstack.nova.v2_0.extensions.HostAggregateApi
 */
 public class HostAggregate {
 

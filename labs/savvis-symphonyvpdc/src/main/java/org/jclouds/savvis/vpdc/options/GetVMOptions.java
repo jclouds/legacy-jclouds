@@ -29,7 +29,7 @@ package org.jclouds.savvis.vpdc.options;
  * import static org.jclouds.savvis.vpdc.options.GetVAppOptions.Builder.*
  * <p/>
  * 
- * vApp = context.getApi().getBrowsingClient().getVAppInVDC(orgId, vdcId, vAppId, withPowerState());
+ * vApp = context.getApi().getBrowsingApi().getVAppInVDC(orgId, vdcId, vAppId, withPowerState());
  * <code>
  * 
  * @author Adrian Cole

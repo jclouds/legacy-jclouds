@@ -41,7 +41,7 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 3450830053589179249L;
 
-   public static final TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>>() {
+   public static final TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -51,7 +51,7 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
    }
 
    public CloudWatchApiMetadata() {
-      this(new Builder(CloudWatchClient.class, CloudWatchAsyncClient.class));
+      this(new Builder(CloudWatchApi.class, CloudWatchAsyncApi.class));
    }
 
    protected CloudWatchApiMetadata(Builder builder) {
@@ -67,8 +67,8 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<?> client, Class<?> asyncClient) {
-         super(client, asyncClient);
+      protected Builder(Class<?> api, Class<?> asyncApi) {
+         super(api, asyncApi);
          id("cloudwatch")
          .name("Amazon CloudWatch Api")
          .identityName("Access Key ID")

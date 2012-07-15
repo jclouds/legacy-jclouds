@@ -33,10 +33,10 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
-import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
 import org.jclouds.rest.InsufficientResourcesException;
 
 import com.google.common.base.Function;
@@ -60,14 +60,14 @@ public class AllocateAndAddFloatingIpToNode implements
    protected Logger logger = Logger.NULL;
 
    private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
-   private final NovaClient novaClient;
+   private final NovaApi novaApi;
    private final LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache;
 
    @Inject
    public AllocateAndAddFloatingIpToNode(@Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-            NovaClient novaClient, @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache) {
+            NovaApi novaApi, @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache) {
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+      this.novaApi = checkNotNull(novaApi, "novaApi");
       this.floatingIpCache = checkNotNull(floatingIpCache, "floatingIpCache");
    }
 
@@ -77,16 +77,16 @@ public class AllocateAndAddFloatingIpToNode implements
       NodeMetadata node = input.get();
       // node's location is a host
       String zoneId = node.getLocation().getParent().getId();
-      FloatingIPClient floatingIpClient = novaClient.getFloatingIPExtensionForZone(zoneId).get();
+      FloatingIPApi floatingIpApi = novaApi.getFloatingIPExtensionForZone(zoneId).get();
 
       FloatingIP ip = null;
       try {
          logger.debug(">> allocating or reassigning floating ip for node(%s)", node.getId());
-         ip = floatingIpClient.allocate();
+         ip = floatingIpApi.allocate();
       } catch (InsufficientResourcesException e) {
          logger.trace("<< [%s] allocating a new floating ip for node(%s)", e.getMessage(), node.getId());
          logger.trace(">> searching for existing, unassigned floating ip for node(%s)", node.getId());
-         ArrayList<FloatingIP> unassignedIps = Lists.newArrayList(Iterables.filter(floatingIpClient.listFloatingIPs(),
+         ArrayList<FloatingIP> unassignedIps = Lists.newArrayList(Iterables.filter(floatingIpApi.listFloatingIPs(),
                   new Predicate<FloatingIP>() {
 
                      @Override
@@ -101,7 +101,7 @@ public class AllocateAndAddFloatingIpToNode implements
       }
       logger.debug(">> adding floatingIp(%s) to node(%s)", ip.getIp(), node.getId());
 
-      floatingIpClient.addFloatingIPToServer(ip.getIp(), node.getProviderId());
+      floatingIpApi.addFloatingIPToServer(ip.getIp(), node.getProviderId());
       input.set(NodeMetadataBuilder.fromNodeMetadata(node).publicAddresses(ImmutableSet.of(ip.getIp())).build());
       floatingIpCache.invalidate(ZoneAndId.fromSlashEncoded(node.getId()));
       return input;

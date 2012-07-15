@@ -143,7 +143,7 @@ public class DomainRecord {
 
    /**
     * @return the id of the record used to modify it via the API
-    * @see org.jclouds.glesys.features.DomainClient
+    * @see org.jclouds.glesys.features.DomainApi
     */
    public String getId() {
       return this.id;

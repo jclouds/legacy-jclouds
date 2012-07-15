@@ -44,30 +44,30 @@ import static com.google.common.base.Preconditions.checkArgument;
  *
  * @author Jeremy Whitlock
  */
-public class CloudWatchLiveTest extends BaseContextLiveTest<RestContext<CloudWatchClient, CloudWatchAsyncClient>> {
+public class CloudWatchLiveTest extends BaseContextLiveTest<RestContext<CloudWatchApi, CloudWatchAsyncApi>> {
 
    public CloudWatchLiveTest() {
       provider = "cloudwatch";
    }
 
-   private CloudWatchClient client;
+   private CloudWatchApi api;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getApi();
+      api = context.getApi();
    }
 
    @Override
-   protected TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> contextType() {
+   protected TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>> contextType() {
       return CloudWatchApiMetadata.CONTEXT_TOKEN;
    }
 
    @Test
    protected void testCloudWatchListMetrics() {
       // Just make sure there is at least one metric returned (Much better if the account you use has more than 500)
-      checkArgument(CloudWatch.listMetrics(client, null, new ListMetricsOptions()).iterator().hasNext());
+      checkArgument(CloudWatch.listMetrics(api, null, new ListMetricsOptions()).iterator().hasNext());
    }
 
    @Test
@@ -87,14 +87,14 @@ public class CloudWatchLiveTest extends BaseContextLiveTest<RestContext<CloudWat
                                 .build());
       }
 
-      CloudWatch.putMetricData(client, null, metrics, namespace);
+      CloudWatch.putMetricData(api, null, metrics, namespace);
 
       ListMetricsOptions lmo = ListMetricsOptions.Builder.namespace(namespace)
                                                  .dimension(new Dimension("BaseMetricName", metricName));
       boolean success = new RetryablePredicate<ListMetricsOptions>(new Predicate<ListMetricsOptions>() {
          @Override
          public boolean apply(ListMetricsOptions options) {
-            return Iterables.size(CloudWatch.listMetrics(client, null, options)) == 11;
+            return Iterables.size(CloudWatch.listMetrics(api, null, options)) == 11;
          }
       }, 20, 1, TimeUnit.MINUTES).apply(lmo);
 

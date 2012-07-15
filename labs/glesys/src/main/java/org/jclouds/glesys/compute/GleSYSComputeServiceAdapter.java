@@ -49,8 +49,8 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.GleSYSAsyncApi;
+import org.jclouds.glesys.GleSYSApi;
 import org.jclouds.glesys.compute.options.GleSYSTemplateOptions;
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.OSTemplate;
@@ -72,7 +72,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * defines the connection between the {@link GleSYSClient} implementation and
+ * defines the connection between the {@link GleSYSApi} implementation and
  * the jclouds {@link ComputeService}
  * 
  */
@@ -83,19 +83,19 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final GleSYSClient client;
-   private final GleSYSAsyncClient aclient;
+   private final GleSYSApi api;
+   private final GleSYSAsyncApi aapi;
    private final ExecutorService userThreads;
    private final Timeouts timeouts;
    private final Supplier<Set<? extends Location>> locations;
    private final Provider<String> passwordProvider;
 
    @Inject
-   public GleSYSComputeServiceAdapter(GleSYSClient client, GleSYSAsyncClient aclient,
+   public GleSYSComputeServiceAdapter(GleSYSApi api, GleSYSAsyncApi aapi,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, Timeouts timeouts,
          @Memoized Supplier<Set<? extends Location>> locations, @Named("PASSWORD") Provider<String> passwordProvider) {
-      this.client = checkNotNull(client, "client");
-      this.aclient = checkNotNull(aclient, "aclient");
+      this.api = checkNotNull(api, "api");
+      this.aapi = checkNotNull(aapi, "aapi");
       this.userThreads = checkNotNull(userThreads, "userThreads");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.locations = checkNotNull(locations, "locations");
@@ -132,7 +132,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                                                 // and set if present
 
       logger.debug(">> creating new Server spec(%s) name(%s) options(%s)", spec, name, createServerOptions);
-      ServerDetails result = client.getServerClient().createServerWithHostnameAndRootPassword(spec, name, password,
+      ServerDetails result = api.getServerApi().createServerWithHostnameAndRootPassword(spec, name, password,
             createServerOptions);
       logger.trace("<< server(%s)", result.getId());
 
@@ -162,7 +162,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       // do this loop after dupes are filtered, else OOM
       Set<OSTemplate> images = listImages();
 
-      for (Entry<String, AllowedArgumentsForCreateServer> platformToArgs : client.getServerClient()
+      for (Entry<String, AllowedArgumentsForCreateServer> platformToArgs : api.getServerApi()
             .getAllowedArgumentsForCreateServerByPlatform().entrySet())
          for (String datacenter : platformToArgs.getValue().getDataCenters())
             for (int diskSizeGB : platformToArgs.getValue().getDiskSizesInGB())
@@ -192,7 +192,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public Set<OSTemplate> listImages() {
-      return client.getServerClient().listTemplates();
+      return api.getServerApi().listTemplates();
    }
    
    // cheat until we have a getTemplate command
@@ -210,10 +210,10 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    
    @Override
    public Iterable<ServerDetails> listNodes() {
-      return Iterables2.concreteCopy(transformParallel(client.getServerClient().listServers(), new Function<Server, Future<? extends ServerDetails>>() {
+      return Iterables2.concreteCopy(transformParallel(api.getServerApi().listServers(), new Function<Server, Future<? extends ServerDetails>>() {
          @Override
          public Future<ServerDetails> apply(Server from) {
-            return aclient.getServerClient().getServerDetails(from.getId());
+            return aapi.getServerApi().getServerDetails(from.getId());
          }
 
       }, userThreads, null, logger, "server details"));
@@ -221,7 +221,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public Set<String> listLocations() {
-      return ImmutableSet.copyOf(Iterables.concat(Iterables.transform(client.getServerClient()
+      return ImmutableSet.copyOf(Iterables.concat(Iterables.transform(api.getServerApi()
             .getAllowedArgumentsForCreateServerByPlatform().values(),
             new Function<AllowedArgumentsForCreateServer, Set<String>>() {
 
@@ -235,7 +235,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public ServerDetails getNode(String id) {
-      return client.getServerClient().getServerDetails(id);
+      return api.getServerApi().getServerDetails(id);
    }
 
    @Override
@@ -245,7 +245,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
          @Override
          public boolean apply(String arg0) {
             try {
-               client.getServerClient().destroyServer(arg0, DestroyServerOptions.Builder.discardIp());
+               api.getServerApi().destroyServer(arg0, DestroyServerOptions.Builder.discardIp());
                return true;
             } catch (IllegalStateException e) {
                return false;
@@ -257,16 +257,16 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public void rebootNode(String id) {
-      client.getServerClient().rebootServer(id);
+      api.getServerApi().rebootServer(id);
    }
 
    @Override
    public void resumeNode(String id) {
-      client.getServerClient().startServer(id);
+      api.getServerApi().startServer(id);
    }
 
    @Override
    public void suspendNode(String id) {
-      client.getServerClient().stopServer(id);
+      api.getServerApi().stopServer(id);
    }
 }

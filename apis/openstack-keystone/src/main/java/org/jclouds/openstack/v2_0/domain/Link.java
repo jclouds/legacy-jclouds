@@ -31,7 +31,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * For convenience, resources contain links to themselves. This allows a client to easily obtain a
+ * For convenience, resources contain links to themselves. This allows a api to easily obtain a
  * resource URIs rather than to construct them.
  *
  * @author AdrianCole

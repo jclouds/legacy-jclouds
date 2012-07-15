@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.jenkins.v1.JenkinsApiMetadata;
-import org.jclouds.jenkins.v1.JenkinsClient;
-import org.jclouds.jenkins.v1.internal.BaseJenkinsClientExpectTest;
+import org.jclouds.jenkins.v1.JenkinsApi;
+import org.jclouds.jenkins.v1.internal.BaseJenkinsApiExpectTest;
 import org.jclouds.jenkins.v1.parse.ParseComputerViewTest;
 import org.testng.annotations.Test;
 
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "BasicAuthenticationUnlessAnonymousExpectTest")
-public class BasicAuthenticationUnlessAnonymousExpectTest extends BaseJenkinsClientExpectTest {
+public class BasicAuthenticationUnlessAnonymousExpectTest extends BaseJenkinsApiExpectTest {
    
    public BasicAuthenticationUnlessAnonymousExpectTest(){
       identity = JenkinsApiMetadata.ANONYMOUS_IDENTITY;
@@ -49,9 +49,9 @@ public class BasicAuthenticationUnlessAnonymousExpectTest extends BaseJenkinsCli
       HttpResponse getComputerViewResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/computerview.json")).build();
 
-      JenkinsClient clientWhenServersExist = requestSendsResponse(getComputerView, getComputerViewResponse);
+      JenkinsApi apiWhenServersExist = requestSendsResponse(getComputerView, getComputerViewResponse);
 
-      assertEquals(clientWhenServersExist.getComputerClient().getView().toString(),
+      assertEquals(apiWhenServersExist.getComputerApi().getView().toString(),
             new ParseComputerViewTest().expected().toString());
    }
 }

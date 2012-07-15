@@ -45,20 +45,20 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.savvis.vpdc.VPDCAsyncClient;
-import org.jclouds.savvis.vpdc.VPDCClient;
+import org.jclouds.savvis.vpdc.VPDCAsyncApi;
+import org.jclouds.savvis.vpdc.VPDCApi;
 import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
-import org.jclouds.savvis.vpdc.features.BrowsingAsyncClient;
-import org.jclouds.savvis.vpdc.features.BrowsingClient;
-import org.jclouds.savvis.vpdc.features.FirewallAsyncClient;
-import org.jclouds.savvis.vpdc.features.FirewallClient;
-import org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClient;
-import org.jclouds.savvis.vpdc.features.ServiceManagementClient;
-import org.jclouds.savvis.vpdc.features.VMAsyncClient;
-import org.jclouds.savvis.vpdc.features.VMClient;
+import org.jclouds.savvis.vpdc.features.BrowsingAsyncApi;
+import org.jclouds.savvis.vpdc.features.BrowsingApi;
+import org.jclouds.savvis.vpdc.features.FirewallAsyncApi;
+import org.jclouds.savvis.vpdc.features.FirewallApi;
+import org.jclouds.savvis.vpdc.features.ServiceManagementAsyncApi;
+import org.jclouds.savvis.vpdc.features.ServiceManagementApi;
+import org.jclouds.savvis.vpdc.features.VMAsyncApi;
+import org.jclouds.savvis.vpdc.features.VMApi;
 import org.jclouds.savvis.vpdc.handlers.VPDCErrorHandler;
-import org.jclouds.savvis.vpdc.internal.LoginAsyncClient;
-import org.jclouds.savvis.vpdc.internal.LoginClient;
+import org.jclouds.savvis.vpdc.internal.LoginAsyncApi;
+import org.jclouds.savvis.vpdc.internal.LoginApi;
 import org.jclouds.savvis.vpdc.internal.VCloudToken;
 import org.jclouds.savvis.vpdc.location.FirstNetwork;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
@@ -82,11 +82,11 @@ import com.google.inject.TypeLiteral;
  * 
  */
 @ConfiguresRestClient
-public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsyncClient> {
+public class VPDCRestClientModule extends RestClientModule<VPDCApi, VPDCAsyncApi> {
    @Override
    protected void configure() {
       super.configure();
-      bindClientAndAsyncClient(binder(), LoginClient.class, LoginAsyncClient.class);
+      bindClientAndAsyncClient(binder(), LoginApi.class, LoginAsyncApi.class);
    }
 
    @VCloudToken
@@ -142,10 +142,10 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    }
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(BrowsingClient.class, BrowsingAsyncClient.class)//
-            .put(VMClient.class, VMAsyncClient.class)//
-            .put(FirewallClient.class, FirewallAsyncClient.class)//
-            .put(ServiceManagementClient.class, ServiceManagementAsyncClient.class)//
+            .put(BrowsingApi.class, BrowsingAsyncApi.class)//
+            .put(VMApi.class, VMAsyncApi.class)//
+            .put(FirewallApi.class, FirewallAsyncApi.class)//
+            .put(ServiceManagementApi.class, ServiceManagementAsyncApi.class)//
             .build();
 
    public VPDCRestClientModule() {
@@ -164,7 +164,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final LoginClient login) {
+            final LoginApi login) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
                new Supplier<VCloudSession>() {
 

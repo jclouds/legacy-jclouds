@@ -24,12 +24,12 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.jenkins.v1.JenkinsAsyncClient;
-import org.jclouds.jenkins.v1.JenkinsClient;
-import org.jclouds.jenkins.v1.features.ComputerAsyncClient;
-import org.jclouds.jenkins.v1.features.ComputerClient;
-import org.jclouds.jenkins.v1.features.JobAsyncClient;
-import org.jclouds.jenkins.v1.features.JobClient;
+import org.jclouds.jenkins.v1.JenkinsAsyncApi;
+import org.jclouds.jenkins.v1.JenkinsApi;
+import org.jclouds.jenkins.v1.features.ComputerAsyncApi;
+import org.jclouds.jenkins.v1.features.ComputerApi;
+import org.jclouds.jenkins.v1.features.JobAsyncApi;
+import org.jclouds.jenkins.v1.features.JobApi;
 import org.jclouds.jenkins.v1.handlers.JenkinsErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -42,11 +42,11 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class JenkinsRestClientModule extends RestClientModule<JenkinsClient, JenkinsAsyncClient> {
+public class JenkinsRestClientModule extends RestClientModule<JenkinsApi, JenkinsAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(ComputerClient.class, ComputerAsyncClient.class)
-         .put(JobClient.class, JobAsyncClient.class)
+         .put(ComputerApi.class, ComputerAsyncApi.class)
+         .put(JobApi.class, JobAsyncApi.class)
          .build();
 
    public JenkinsRestClientModule() {

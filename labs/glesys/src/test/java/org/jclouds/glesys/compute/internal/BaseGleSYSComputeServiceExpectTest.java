@@ -28,7 +28,7 @@ import org.jclouds.glesys.GleSYSApiMetadata;
 import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule.PasswordProvider;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -41,7 +41,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientExpectTest<ComputeService> {
+public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestApiExpectTest<ComputeService> {
 
    public BaseGleSYSComputeServiceExpectTest() {
       provider = "glesys";

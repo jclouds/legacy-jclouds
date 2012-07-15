@@ -26,14 +26,14 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.swift.v1.SwiftAsyncClient;
-import org.jclouds.openstack.swift.v1.SwiftClient;
-import org.jclouds.openstack.swift.v1.features.AccountAsyncClient;
-import org.jclouds.openstack.swift.v1.features.AccountClient;
-import org.jclouds.openstack.swift.v1.features.ContainerAsyncClient;
-import org.jclouds.openstack.swift.v1.features.ContainerClient;
-import org.jclouds.openstack.swift.v1.features.ObjectAsyncClient;
-import org.jclouds.openstack.swift.v1.features.ObjectClient;
+import org.jclouds.openstack.swift.v1.SwiftAsyncApi;
+import org.jclouds.openstack.swift.v1.SwiftApi;
+import org.jclouds.openstack.swift.v1.features.AccountAsyncApi;
+import org.jclouds.openstack.swift.v1.features.AccountApi;
+import org.jclouds.openstack.swift.v1.features.ContainerAsyncApi;
+import org.jclouds.openstack.swift.v1.features.ContainerApi;
+import org.jclouds.openstack.swift.v1.features.ObjectAsyncApi;
+import org.jclouds.openstack.swift.v1.features.ObjectApi;
 import org.jclouds.openstack.swift.v1.handlers.SwiftErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -46,12 +46,12 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class SwiftRestClientModule extends RestClientModule<SwiftClient, SwiftAsyncClient> {
+public class SwiftRestClientModule extends RestClientModule<SwiftApi, SwiftAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(AccountClient.class, AccountAsyncClient.class)
-         .put(ContainerClient.class, ContainerAsyncClient.class)
-         .put(ObjectClient.class, ObjectAsyncClient.class)
+         .put(AccountApi.class, AccountAsyncApi.class)
+         .put(ContainerApi.class, ContainerAsyncApi.class)
+         .put(ObjectApi.class, ObjectAsyncApi.class)
          .build();
 
    public SwiftRestClientModule() {

@@ -26,8 +26,8 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.KeystoneApiMetadata;
-import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
+import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
@@ -49,7 +49,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -1572520638079261710L;
    
-   public static final TypeToken<RestContext<KeystoneClient, KeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<KeystoneClient, KeystoneAsyncClient>>() {
+   public static final TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
    
@@ -79,7 +79,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
 
    public static class Builder extends KeystoneApiMetadata.Builder {
       protected Builder(){
-         super(KeystoneClient.class, KeystoneAsyncClient.class);
+         super(KeystoneApi.class, KeystoneAsyncApi.class);
          id("rackspace-cloudidentity")
          .name("Rackspace Cloud Identity Service")
          .defaultEndpoint("https://identity.api.rackspacecloud.com")
@@ -87,7 +87,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
          .credentialName("API Key")
          .defaultProperties(CloudIdentityApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .documentation(URI.create("http://docs.rackspace.com/auth/api/v2.0/auth-client-devguide/"))
+         .documentation(URI.create("http://docs.rackspace.com/auth/api/v2.0/auth-api-devguide/"))
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(CloudIdentityAuthenticationModule.class)
                                      .add(KeystoneAdminURLModule.class)

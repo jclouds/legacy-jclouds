@@ -23,7 +23,7 @@ import java.beans.ConstructorProperties;
 /**
  * Represents the set of limits (quota class) returned by the Quota Class Extension
  * 
- * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaClassClient
+ * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaClassApi
 */
 public class QuotaClass extends Quotas {
 

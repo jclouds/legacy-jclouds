@@ -23,14 +23,14 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing Quantum Expect tests
  * 
  * @author Adam Lowe
  */
-public class BaseQuantumExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseQuantumExpectTest<T> extends BaseRestApiExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
    protected String authToken;

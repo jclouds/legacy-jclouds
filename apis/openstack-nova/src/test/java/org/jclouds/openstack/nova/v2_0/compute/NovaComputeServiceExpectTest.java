@@ -46,7 +46,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests the compute service abstraction of the nova client.
+ * Tests the compute service abstraction of the nova api.
  * 
  * @author Matt Stephenson
  */
@@ -60,18 +60,18 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
             .put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse)
             .put(listServers, listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
-      ComputeService clientWhenServersExist = requestsSendResponses(requestResponseMap);
+      ComputeService apiWhenServersExist = requestsSendResponses(requestResponseMap);
 
-      Set<? extends Location> locations = clientWhenServersExist.listAssignableLocations();
+      Set<? extends Location> locations = apiWhenServersExist.listAssignableLocations();
       assertNotNull(locations);
       assertEquals(locations.size(), 1);
       assertEquals(locations.iterator().next().getId(), "az-1.region-a.geo-1");
 
-      assertNotNull(clientWhenServersExist.listNodes());
-      assertEquals(clientWhenServersExist.listNodes().size(), 1);
-      assertEquals(clientWhenServersExist.listNodes().iterator().next().getId(),
+      assertNotNull(apiWhenServersExist.listNodes());
+      assertEquals(apiWhenServersExist.listNodes().size(), 1);
+      assertEquals(apiWhenServersExist.listNodes().iterator().next().getId(),
             "az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f000004d2");
-      assertEquals(clientWhenServersExist.listNodes().iterator().next().getName(), "sample-server");
+      assertEquals(apiWhenServersExist.listNodes().iterator().next().getName(), "sample-server");
    }
 
    Map<HttpRequest, HttpResponse> defaultTemplateTryStack = ImmutableMap
@@ -102,11 +102,11 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
    public void testDefaultTemplateTryStack() throws Exception {
 
-      ComputeService clientForTryStack = requestsSendResponses(defaultTemplateTryStack);
+      ComputeService apiForTryStack = requestsSendResponses(defaultTemplateTryStack);
 
-      Template defaultTemplate = clientForTryStack.templateBuilder().imageId("RegionOne/15").build();
+      Template defaultTemplate = apiForTryStack.templateBuilder().imageId("RegionOne/15").build();
       checkTemplate(defaultTemplate);
-      checkTemplate(clientForTryStack.templateBuilder().fromTemplate(defaultTemplate).build());
+      checkTemplate(apiForTryStack.templateBuilder().fromTemplate(defaultTemplate).build());
 
    }
 
@@ -129,10 +129,10 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+      ComputeService apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertTrue(clientWhenNoServersExist.listNodes().isEmpty());
+      assertTrue(apiWhenNoServersExist.listNodes().isEmpty());
    }
 
    HttpRequest listSecurityGroups = HttpRequest
@@ -238,7 +238,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       requestResponseMap.put(createServerWithGeneratedKeyPair, createdServer);
 
-      ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
+      ComputeService apiThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -257,7 +257,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       });
 
-      NodeMetadata node = Iterables.getOnlyElement(clientThatCreatesNode.createNodesInGroup("test", 1,
+      NodeMetadata node = Iterables.getOnlyElement(apiThatCreatesNode.createNodesInGroup("test", 1,
             blockUntilRunning(false).generateKeyPair(true)));
       assertNotNull(node.getCredentials().getPrivateKey());
    }
@@ -292,7 +292,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       requestResponseMap.put(createServerWithSuppliedKeyPair, createdServer);
 
-      ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
+      ComputeService apiThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -311,7 +311,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       });
 
-      NodeMetadata node = Iterables.getOnlyElement(clientThatCreatesNode.createNodesInGroup("test", 1,
+      NodeMetadata node = Iterables.getOnlyElement(apiThatCreatesNode.createNodesInGroup("test", 1,
             keyPairName("fooPair").blockUntilRunning(false)));
       // we don't have access to this private key
       assertEquals(node.getCredentials().getPrivateKey(), null);

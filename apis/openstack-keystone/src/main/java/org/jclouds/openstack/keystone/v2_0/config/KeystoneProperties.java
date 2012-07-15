@@ -37,7 +37,7 @@ public interface KeystoneProperties {
     * </ul>
     * 
     * @see CredentialTypes
-    * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Client_Operations.html"
+    * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Api_Operations.html"
     *      />
     */
    public static final String CREDENTIAL_TYPE = "jclouds.keystone.credential-type";

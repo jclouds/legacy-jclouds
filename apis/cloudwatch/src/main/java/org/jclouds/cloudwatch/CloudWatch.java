@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
-import org.jclouds.cloudwatch.features.MetricClient;
+import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.collect.PaginatedIterable;
 import org.jclouds.collect.PaginatedIterables;
@@ -40,17 +40,17 @@ public class CloudWatch {
    /**
     * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
     *
-    * @param metricClient the {@link MetricClient} to use for the request
+    * @param metricApi the {@link MetricApi} to use for the request
     * @param options the {@link ListMetricsOptions} describing the ListMetrics request
     *
     * @return iterable of metrics fitting the criteria
     */
-   public static Iterable<Metric> listMetrics(final MetricClient metricClient, final ListMetricsOptions options) {
-      return PaginatedIterables.lazyContinue(metricClient.list(options), new Function<Object, PaginatedIterable<Metric>>() {
+   public static Iterable<Metric> listMetrics(final MetricApi metricApi, final ListMetricsOptions options) {
+      return PaginatedIterables.lazyContinue(metricApi.list(options), new Function<Object, PaginatedIterable<Metric>>() {
 
          @Override
          public PaginatedIterable<Metric> apply(Object input) {
-            return metricClient.list(options.clone().afterMarker(input));
+            return metricApi.list(options.clone().afterMarker(input));
          }
 
          @Override
@@ -63,31 +63,31 @@ public class CloudWatch {
    /**
     * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
     *
-    * @param cloudWatchClient the {@link CloudWatchClient} to use for the request
+    * @param cloudWatchApi the {@link CloudWatchApi} to use for the request
     * @param region the region to list metrics in
     * @param options the options describing the ListMetrics request
     *
     * @return iterable of metrics fitting the criteria
     */
-   public static Iterable<Metric> listMetrics(CloudWatchClient cloudWatchClient, String region,
+   public static Iterable<Metric> listMetrics(CloudWatchApi cloudWatchApi, String region,
             final ListMetricsOptions options) {
-      return listMetrics(cloudWatchClient.getMetricClientForRegion(region), options);
+      return listMetrics(cloudWatchApi.getMetricApiForRegion(region), options);
    }
 
    /**
     * Pushes metrics to CloudWatch.
     *
-    * @param cloudWatchClient the {@link CloudWatchClient} to use for the request
+    * @param cloudWatchApi the {@link CloudWatchApi} to use for the request
     * @param region the region to put the metrics in
     * @param metrics the metrics to publish
     * @param namespace the namespace to publish the metrics in
     */
-   public static void putMetricData(CloudWatchClient cloudWatchClient, String region, Iterable<MetricDatum> metrics,
+   public static void putMetricData(CloudWatchApi cloudWatchApi, String region, Iterable<MetricDatum> metrics,
             String namespace) {
-      MetricClient metricClient = cloudWatchClient.getMetricClientForRegion(region);
+      MetricApi metricApi = cloudWatchApi.getMetricApiForRegion(region);
 
       for (List<MetricDatum> slice : Iterables.partition(metrics, 10)) {
-         metricClient.putMetricsInNamespace(slice, namespace);
+         metricApi.putMetricsInNamespace(slice, namespace);
       }
    }
 
