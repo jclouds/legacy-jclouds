@@ -138,6 +138,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -269,6 +270,7 @@ public class RestAnnotationProcessor<T> {
       return createResponseParser(parserFactory, injector, method, request);
    }
 
+   @SuppressWarnings("unchecked")
    @VisibleForTesting
    public static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory, Injector injector,
          Method method, HttpRequest request) {
@@ -281,6 +283,13 @@ public class RestAnnotationProcessor<T> {
       }
       if (transformer instanceof InvocationContext<?>) {
          ((InvocationContext<?>) transformer).setContext(request);
+      }
+      if (method.isAnnotationPresent(Transform.class)) {
+         Function<?, ?> wrappingTransformer = injector.getInstance(method.getAnnotation(Transform.class).value());
+         if (wrappingTransformer instanceof InvocationContext<?>) {
+            ((InvocationContext<?>) wrappingTransformer).setContext(request);
+         }
+         transformer = Functions.compose(Function.class.cast(wrappingTransformer), transformer);
       }
       return transformer;
    }
@@ -298,11 +307,6 @@ public class RestAnnotationProcessor<T> {
             transformer = Functions.compose(new OnlyElementOrNull(), transformer);
       } else {
          transformer = injector.getInstance(getParserOrThrowException(method));
-      }
-      if (method.isAnnotationPresent(Transform.class)) {
-         transformer = Functions
-                  .compose(Function.class.cast(injector.getInstance(method.getAnnotation(Transform.class).value())),
-                           transformer);
       }
       return transformer;
    }
@@ -352,38 +356,19 @@ public class RestAnnotationProcessor<T> {
 
       @Override
       public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         result = prime * result + parametersTypeHashCode;
-         return result;
+         return Objects.hashCode(declaringClass, name, parametersTypeHashCode);
       }
 
       @Override
       public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         MethodKey other = (MethodKey) obj;
-         if (declaringClass == null) {
-            if (other.declaringClass != null)
-               return false;
-         } else if (!declaringClass.equals(other.declaringClass))
-            return false;
-         if (name == null) {
-            if (other.name != null)
-               return false;
-         } else if (!name.equals(other.name))
-            return false;
-         if (parametersTypeHashCode != other.parametersTypeHashCode)
-            return false;
-         return true;
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         MethodKey that = MethodKey.class.cast(obj);
+         return Objects.equal(this.declaringClass, that.declaringClass)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
       }
-
+      
       private final String name;
       private final int parametersTypeHashCode;
       private final Class<?> declaringClass;
@@ -450,8 +435,12 @@ public class RestAnnotationProcessor<T> {
             requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
          }
 
-         requestBuilder.declaring(declaring).javaMethod(method).args(args).skips(skips);
-         requestBuilder.filters(getFiltersIfAnnotated(method));
+         requestBuilder.declaring(declaring)
+                       .javaMethod(method)
+                       .args(args)
+                       .caller(caller)
+                       .skips(skips)
+                       .filters(getFiltersIfAnnotated(method));
 
          UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
 
