@@ -89,9 +89,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name").toString();
       URI template = URI.create(checkNotNull(postParams.remove("template"), "template").toString());
@@ -202,7 +202,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
             .a("xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1");
    }
 
-   protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof InstantiateVAppTemplateOptions) {
             return (InstantiateVAppTemplateOptions) arg;

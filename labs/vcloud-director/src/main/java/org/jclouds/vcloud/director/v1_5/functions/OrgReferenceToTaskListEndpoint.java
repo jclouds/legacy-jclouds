@@ -27,7 +27,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
-import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.OrgApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -37,11 +37,11 @@ import com.google.common.base.Preconditions;
  */
 @Singleton
 public class OrgReferenceToTaskListEndpoint implements Function<Object, URI> {
-   private final OrgClient client;
+   private final OrgApi api;
 
    @Inject
-   public OrgReferenceToTaskListEndpoint(OrgClient client) {
-      this.client = client;
+   public OrgReferenceToTaskListEndpoint(OrgApi api) {
+      this.api = api;
    }
 
    @Override
@@ -49,7 +49,7 @@ public class OrgReferenceToTaskListEndpoint implements Function<Object, URI> {
       Preconditions.checkNotNull(input);
       Preconditions.checkArgument(input instanceof URI);
       URI reference = (URI) input;
-      Org org = client.getOrg(reference);
+      Org org = api.getOrg(reference);
       if (org == null) {
          throw new ResourceNotFoundException();
       }

@@ -32,7 +32,7 @@ import org.jclouds.providers.config.BindProviderMetadataContextAndCredentials;
 import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
-import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
+import org.jclouds.rest.internal.BaseRestApiTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.reflect.TypeToken;

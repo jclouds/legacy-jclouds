@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.util.IpPermissions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -40,11 +39,12 @@ public class BindIpPermissionsToIndexedFormParams implements Binder {
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Iterable,
             "this binder is only valid for Iterable<IpPermission>");
-      Builder<String, String> headers = ImmutableMultimap.builder();
+      Builder<String, String> formBuilder = ImmutableMultimap.builder();
       int index = 0;
       for (IpPermission perm : (Iterable<IpPermission>) input)
-         headers.putAll(IpPermissions.buildFormParametersForIndex(index++, perm));
-      return ModifyRequest.putFormParams(request, headers.build());
+         formBuilder.putAll(IpPermissions.buildFormParametersForIndex(index++, perm));
+      ImmutableMultimap<String, String> forms = formBuilder.build();
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
 }

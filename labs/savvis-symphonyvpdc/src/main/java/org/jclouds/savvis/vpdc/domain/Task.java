@@ -26,8 +26,8 @@ import java.util.Date;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
- * The result of a client request cannot be returned immediately, the server creates a task entity
- * and returns its URL to the client. The client can use this URL in a subsequent GET request to
+ * The result of a api request cannot be returned immediately, the server creates a task entity
+ * and returns its URL to the api. The api can use this URL in a subsequent GET request to
  * obtain the current status of the task.
  * 
  * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/getTask.html" />

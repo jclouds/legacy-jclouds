@@ -66,9 +66,9 @@ public abstract class BindCloneParamsToXmlPayload<O extends CloneOptions> implem
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.get("name"), "name").toString();
       String source = checkNotNull(postParams.get("Source"), "Source").toString();
@@ -109,7 +109,7 @@ public abstract class BindCloneParamsToXmlPayload<O extends CloneOptions> implem
    }
 
    @SuppressWarnings("unchecked")
-   protected O findOptionsInArgsOrNew(GeneratedHttpRequest<?> gRequest) {
+   protected O findOptionsInArgsOrNew(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (getOptionClass().isInstance(arg)) {
             return (O) arg;

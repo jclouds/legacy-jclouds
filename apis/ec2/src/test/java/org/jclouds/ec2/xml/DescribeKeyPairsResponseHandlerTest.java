@@ -56,7 +56,7 @@ public class DescribeKeyPairsResponseHandlerTest extends BaseEC2HandlerTest {
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of());
       replay(request);
       handler.setContext(request);

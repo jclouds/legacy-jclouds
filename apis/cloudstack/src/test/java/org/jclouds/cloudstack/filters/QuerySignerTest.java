@@ -20,15 +20,13 @@ package org.jclouds.cloudstack.filters;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.AnonymousProviderMetadata;
-import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
+import org.jclouds.rest.internal.BaseRestApiTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -59,7 +57,7 @@ public class QuerySignerTest {
 
       assertEquals(
             filter.createStringToSign(HttpRequest.builder().method("GET")
-                  .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build()),
+                  .endpoint("http://localhost:8080/client/api?command=listZones").build()),
             "apikey=apikey&command=listzones");
    }
 
@@ -68,18 +66,18 @@ public class QuerySignerTest {
       QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
 
       assertEquals(
-            filter.filter(
-                  HttpRequest.builder().method("GET")
-                        .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build())
-                  .getRequestLine(),
-            "GET http://localhost:8080/client/api?command=listZones&apiKey=apiKey&signature=2UG8AcnMaozL3BINdjgkJ%2BRzjEY%3D HTTP/1.1");
+               filter.filter(
+                        HttpRequest.builder().method("GET")
+                                 .endpoint("http://localhost:8080/client/api?command=listZones").build())
+                        .getRequestLine(),
+               "GET http://localhost:8080/client/api?command=listZones&apiKey=apiKey&signature=2UG8AcnMaozL3BINdjgkJ%2BRzjEY%3D HTTP/1.1");
    }
 
    @Test
    void testFilterTwice() {
       QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
       HttpRequest request = HttpRequest.builder().method("GET")
-            .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build();
+               .endpoint("http://localhost:8080/client/api?command=listZones").build();
       for (int i = 0; i < 2; i++) {
          request = filter.filter(request);
          assertEquals(

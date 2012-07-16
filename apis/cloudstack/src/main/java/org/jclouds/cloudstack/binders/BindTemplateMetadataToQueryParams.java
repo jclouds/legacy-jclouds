@@ -19,47 +19,40 @@
 package org.jclouds.cloudstack.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.cloudstack.domain.TemplateMetadata;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * @author Richard Downer
  */
 public class BindTemplateMetadataToQueryParams implements Binder {
-   private final Provider<UriBuilder> uriBuilderProvider;
 
-   @Inject
-   public BindTemplateMetadataToQueryParams(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
-
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(input instanceof TemplateMetadata, "this binder is only valid for TemplateMetadata");
       TemplateMetadata metadata = (TemplateMetadata) input;
-      request = ModifyRequest.addQueryParam(request, "name", metadata.getName(), uriBuilderProvider.get());
-      request = ModifyRequest.addQueryParam(request, "ostypeid", metadata.getOsTypeId(), uriBuilderProvider.get());
-      request = ModifyRequest.addQueryParam(request, "displaytext", metadata.getDisplayText(), uriBuilderProvider.get());
+      Builder<String, String> builder = ImmutableMultimap.<String, String>builder();
+      builder.put("name", metadata.getName());
+      builder.put("ostypeid", metadata.getOsTypeId());
+      builder.put("displaytext", metadata.getDisplayText());
       if (metadata.getSnapshotId() != null) {
-	      request = ModifyRequest.addQueryParam(request, "snapshotid", metadata.getSnapshotId(), uriBuilderProvider.get());
+	      builder.put("snapshotid", metadata.getSnapshotId());
       }
       if (metadata.getVolumeId() != null) {
-	      request = ModifyRequest.addQueryParam(request, "volumeid", metadata.getVolumeId(), uriBuilderProvider.get());
+	      builder.put("volumeid", metadata.getVolumeId());
       }
       if (metadata.getVirtualMachineId() != null) {
-	      request = ModifyRequest.addQueryParam(request, "virtualmachineid", metadata.getVirtualMachineId(), uriBuilderProvider.get());
+	      builder.put("virtualmachineid", metadata.getVirtualMachineId());
       }
       if (metadata.isPasswordEnabled() != null) {
-	      request = ModifyRequest.addQueryParam(request, "passwordenabled", metadata.isPasswordEnabled(), uriBuilderProvider.get());
+	      builder.put("passwordenabled", metadata.isPasswordEnabled().toString());
       }
-      return request;
+      return (R) request.toBuilder().replaceQueryParams(builder.build()).build();
    }
 }

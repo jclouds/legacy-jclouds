@@ -19,8 +19,8 @@
 
 package org.jclouds.virtualbox.compute;
 
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 

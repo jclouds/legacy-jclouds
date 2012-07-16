@@ -23,9 +23,11 @@ import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.c
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.description;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.inboundPorts;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.ipAddressAllocationMode;
+import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.parentNetwork;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
@@ -79,6 +81,25 @@ public class VCloudTemplateOptionsTest {
    public void testcustomizationScriptStatic() {
       VCloudTemplateOptions options = customizationScript("mykeypair");
       assertEquals(options.getCustomizationScript(), "mykeypair");
+   }
+
+   @Test
+   public void testNullparentNetwork() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      assertEquals(options.getParentNetwork(), null);
+   }
+
+   @Test
+   public void testparentNetwork() {
+      VCloudTemplateOptions options = new VCloudTemplateOptions();
+      options.parentNetwork(URI.create("https://network"));
+      assertEquals(options.getParentNetwork(), URI.create("https://network"));
+   }
+
+   @Test
+   public void testparentNetworkStatic() {
+      VCloudTemplateOptions options = parentNetwork(URI.create("https://network"));
+      assertEquals(options.getParentNetwork(), URI.create("https://network"));
    }
 
    @Test

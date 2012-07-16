@@ -22,14 +22,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
@@ -38,129 +41,107 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class GeneratedHttpRequest<T> extends HttpRequest {
-   public static Builder<?> builder() {
-      // empty builder, so can be safely cast to Builder<T> by the caller
-      return new Builder<Object>();
+public class GeneratedHttpRequest extends HttpRequest {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromGeneratedHttpRequest(this);
    }
 
-   /*
-    * Convenience method - cannot have the same signature as builder() - see
-    * http://code.google.com/p/jclouds/issues/detail?id=795
-    */
-   @SuppressWarnings("unchecked")
-   public static <T> Builder<T> requestBuilder() {
-       return (Builder<T>) builder();
-   }
-
-   public static class Builder<T> extends HttpRequest.Builder {
-      protected Class<T> declaring;
+   public static abstract class Builder<T extends Builder<T>> extends HttpRequest.Builder<T>  {
+      protected Class<?> declaring;
       protected Method javaMethod;
-      protected List<Object> args;
-
-      public Builder<T> declaring(Class<T> declaring) {
-         this.declaring = checkNotNull(declaring, "declaring");
-         return this;
-      }
-
-      public Builder<T> javaMethod(Method javaMethod) {
-         this.javaMethod = checkNotNull(javaMethod, "javaMethod");
-         return this;
-      }
-
-      public Builder<T> args(Object[] args) {
-         // TODO make immutable. ImmutableList.of() doesn't accept nulls
-         return args((args == null) ? ImmutableList.<Object> of() : Lists.newArrayList(args));
-      }
-
-      public Builder<T> args(List<Object> args) {
-         this.args = checkNotNull(args, "args");
-         return this;
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> filters(List<HttpRequestFilter> requestFilters) {
-         return (Builder<T>) super.filters(requestFilters);
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> method(String method) {
-         return (Builder<T>) super.method(method);
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> endpoint(URI endpoint) {
-         return (Builder<T>) super.endpoint(endpoint);
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> skips(char[] skips) {
-         return (Builder<T>) super.skips(skips);
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> payload(Payload payload) {
-         return (Builder<T>) super.payload(payload);
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> headers(Multimap<String, String> headers) {
-         return (Builder<T>) super.headers(headers);
-      }
-
-      @Override
-      public GeneratedHttpRequest<T> build() {
-         return new GeneratedHttpRequest<T>(method, endpoint, skips, requestFilters, payload, headers, declaring,
-               javaMethod, args);
-      }
-
-      public static Builder<?> from(HttpRequest input) {
-         /*
-          * State added to builder will not conflict with return type so caller can
-          * safely cast result to Builder<T>
-          */
-         return new Builder<Object>().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
-               .filters(input.getFilters()).payload(input.getPayload()).headers(input.getHeaders());
-      }
-
-      /*
-       * Convenience method - cannot have the same signature as from(HttpRequest) - see
-       * http://code.google.com/p/jclouds/issues/detail?id=795
+      // args can be null, so cannot use immutable list
+      protected List<Object> args = Lists.newArrayList();
+      protected Optional<ClassMethodArgs> caller = Optional.absent();
+      
+      /** 
+       * @see GeneratedHttpRequest#getDeclaring()
        */
-      @SuppressWarnings("unchecked")
-      public static <Y> Builder<Y> fromRequest(HttpRequest input) {
-          return (Builder<Y>) from(input);
+      public T declaring(Class<?> declaring) {
+         this.declaring = checkNotNull(declaring, "declaring");
+         return self();
       }
 
-      public static <Y> Builder<Y> from(GeneratedHttpRequest<Y> input) {
-         return new Builder<Y>().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
-               .filters(input.getFilters()).payload(input.getPayload()).headers(input.getHeaders())
-               .declaring(input.getDeclaring()).javaMethod(input.getJavaMethod()).args(input.getArgs());
+      /** 
+       * @see GeneratedHttpRequest#getJavaMethod()
+       */
+      public T javaMethod(Method javaMethod) {
+         this.javaMethod = checkNotNull(javaMethod, "javaMethod");
+         return self();
+      }
+      
+      /** 
+       * @see GeneratedHttpRequest#getArgs()
+       */
+      public T args(Iterable<Object> args) {
+         this.args = Lists.newArrayList(checkNotNull(args, "args"));
+         return self();
+      }
+      
+      /** 
+       * @see GeneratedHttpRequest#getArgs()
+       */
+      public T args(@Nullable Object[] args) {
+         return args(Arrays.asList(args != null ? args : new Object[] {}));
       }
 
+      /** 
+       * @see GeneratedHttpRequest#getArgs()
+       */
+      public T arg(@Nullable Object arg) {
+         this.args.add(arg);
+         return self();
+      }
+      
+      /** 
+       * @see GeneratedHttpRequest#getCaller()
+       */
+      public T caller(@Nullable ClassMethodArgs caller) {
+         this.caller = Optional.fromNullable(caller);
+         return self();
+      }
+      
+      public GeneratedHttpRequest build() {
+         return new GeneratedHttpRequest(method, endpoint, headers.build(), payload, declaring, javaMethod,
+                  args, skips.build(), filters.build(), caller);
+      }
+
+      public T fromGeneratedHttpRequest(GeneratedHttpRequest in) {
+         return super.fromHttpRequest(in)
+                     .declaring(in.getDeclaring())
+                     .javaMethod(in.getJavaMethod())
+                     .args(in.getArgs())
+                     .caller(in.getCaller().orNull());
+      }
    }
-
-   private final Class<T> declaring;
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
+   private final Class<?> declaring;
    private final Method javaMethod;
    private final List<Object> args;
+   private final Optional<ClassMethodArgs> caller;
 
-   GeneratedHttpRequest(String method, URI endpoint, char[] skips, List<HttpRequestFilter> requestFilters,
-         @Nullable Payload payload, Multimap<String, String> headers, Class<T> declaring, Method javaMethod,
-         Iterable<Object> args) {
-      super(method, endpoint, skips, requestFilters, payload, headers);
+   protected GeneratedHttpRequest(String method, URI endpoint, Multimap<String, String> headers, @Nullable Payload payload,
+            Class<?> declaring, Method javaMethod, Iterable<Object> args, Iterable<Character> skips,
+            Iterable<HttpRequestFilter> filters, Optional<ClassMethodArgs> caller) {
+      super(method, endpoint, headers, payload, skips, filters);
       this.declaring = checkNotNull(declaring, "declaring");
       this.javaMethod = checkNotNull(javaMethod, "javaMethod");
       // TODO make immutable. ImmutableList.of() doesn't accept nulls
       this.args = Lists.newArrayList(checkNotNull(args, "args"));
+      this.caller = checkNotNull(caller, "caller");
    }
 
-   public Class<T> getDeclaring() {
+   public Class<?> getDeclaring() {
       return declaring;
    }
 
@@ -169,12 +150,10 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    }
 
    public List<Object> getArgs() {
-      return args;
+      return Collections.unmodifiableList(args);
    }
 
-   @Override
-   public Builder<T> toBuilder() {
-      return Builder.from(this);
+   public Optional<ClassMethodArgs> getCaller() {
+      return caller;
    }
-
 }

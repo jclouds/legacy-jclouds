@@ -32,7 +32,7 @@ import org.jclouds.openstack.glance.v1_0.domain.StoreType;
  *
  *
  * // this will create an image with the name "imageName", minimum required disk of 10GB, etc. 
- * details = client.create("imageName", minDisk(10), isPublic(true), property("mykey", "somevalue"));
+ * details = api.create("imageName", minDisk(10), isPublic(true), property("mykey", "somevalue"));
  * <code>
 
  * @author Adam Lowe

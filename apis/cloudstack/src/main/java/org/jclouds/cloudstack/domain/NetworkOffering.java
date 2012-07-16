@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,20 +30,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class NetworkOffering
- * 
+ *
  * @author Adrian Cole
-*/
+ */
 public class NetworkOffering implements Comparable<NetworkOffering> {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromNetworkOffering(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -60,8 +58,8 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       protected GuestIPType guestIPType;
       protected int networkRate;
       protected String tags;
-   
-      /** 
+
+      /**
        * @see NetworkOffering#getId()
        */
       public T id(String id) {
@@ -69,7 +67,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getName()
        */
       public T name(String name) {
@@ -77,7 +75,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getDisplayText()
        */
       public T displayText(String displayText) {
@@ -85,7 +83,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getCreated()
        */
       public T created(Date created) {
@@ -93,7 +91,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getAvailability()
        */
       public T availability(NetworkOfferingAvailabilityType availability) {
@@ -101,7 +99,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getMaxConnections()
        */
       public T maxConnections(Integer maxConnections) {
@@ -109,7 +107,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#isDefault()
        */
       public T isDefault(boolean isDefault) {
@@ -117,7 +115,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#supportsVLAN()
        */
       public T supportsVLAN(boolean supportsVLAN) {
@@ -125,7 +123,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getTrafficType()
        */
       public T trafficType(TrafficType trafficType) {
@@ -133,7 +131,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getGuestIPType()
        */
       public T guestIPType(GuestIPType guestIPType) {
@@ -141,7 +139,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getNetworkRate()
        */
       public T networkRate(int networkRate) {
@@ -149,7 +147,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return self();
       }
 
-      /** 
+      /**
        * @see NetworkOffering#getTags()
        */
       public T tags(String tags) {
@@ -160,21 +158,21 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       public NetworkOffering build() {
          return new NetworkOffering(id, name, displayText, created, availability, maxConnections, isDefault, supportsVLAN, trafficType, guestIPType, networkRate, tags);
       }
-      
+
       public T fromNetworkOffering(NetworkOffering in) {
          return this
-                  .id(in.getId())
-                  .name(in.getName())
-                  .displayText(in.getDisplayText())
-                  .created(in.getCreated())
-                  .availability(in.getAvailability())
-                  .maxConnections(in.getMaxConnections())
-                  .isDefault(in.isDefault())
-                  .supportsVLAN(in.supportsVLAN())
-                  .trafficType(in.getTrafficType())
-                  .guestIPType(in.getGuestIPType())
-                  .networkRate(in.getNetworkRate())
-                  .tags(in.getTags());
+               .id(in.getId())
+               .name(in.getName())
+               .displayText(in.getDisplayText())
+               .created(in.getCreated())
+               .availability(in.getAvailability())
+               .maxConnections(in.getMaxConnections())
+               .isDefault(in.isDefault())
+               .supportsVLAN(in.supportsVLAN())
+               .trafficType(in.getTrafficType())
+               .guestIPType(in.getGuestIPType())
+               .networkRate(in.getNetworkRate())
+               .tags(in.getTags());
       }
    }
 
@@ -187,26 +185,19 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
    private final String id;
    private final String name;
-   @Named("displaytext")
    private final String displayText;
    private final Date created;
    private final NetworkOfferingAvailabilityType availability;
-   @Named("maxconnections")
    private final Integer maxConnections;
-   @Named("isdefault")
    private final boolean isDefault;
-   @Named("specifyvlan")
    private final boolean supportsVLAN;
-   @Named("traffictype")
    private final TrafficType trafficType;
-   @Named("guestiptype")
    private final GuestIPType guestIPType;
-   @Named("networkrate")
    private final int networkRate;
    private final String tags;
 
    @ConstructorProperties({
-      "id", "name", "displaytext", "created", "availability", "maxconnections", "isdefault", "specifyvlan", "traffictype", "guestiptype", "networkrate", "tags"
+         "id", "name", "displaytext", "created", "availability", "maxconnections", "isdefault", "specifyvlan", "traffictype", "guestiptype", "networkrate", "tags"
    })
    protected NetworkOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created, @Nullable NetworkOfferingAvailabilityType availability, @Nullable Integer maxConnections, boolean isDefault, boolean supportsVLAN, @Nullable TrafficType trafficType, @Nullable GuestIPType guestIPType, int networkRate, @Nullable String tags) {
       this.id = checkNotNull(id, "id");
@@ -264,7 +255,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
    /**
     * @return the max number of concurrent connection the network offering
-         supports
+    *         supports
     */
    @Nullable
    public Integer getMaxConnections() {
@@ -327,24 +318,24 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       if (obj == null || getClass() != obj.getClass()) return false;
       NetworkOffering that = NetworkOffering.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.displayText, that.displayText)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.availability, that.availability)
-               && Objects.equal(this.maxConnections, that.maxConnections)
-               && Objects.equal(this.isDefault, that.isDefault)
-               && Objects.equal(this.supportsVLAN, that.supportsVLAN)
-               && Objects.equal(this.trafficType, that.trafficType)
-               && Objects.equal(this.guestIPType, that.guestIPType)
-               && Objects.equal(this.networkRate, that.networkRate)
-               && Objects.equal(this.tags, that.tags);
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.availability, that.availability)
+            && Objects.equal(this.maxConnections, that.maxConnections)
+            && Objects.equal(this.isDefault, that.isDefault)
+            && Objects.equal(this.supportsVLAN, that.supportsVLAN)
+            && Objects.equal(this.trafficType, that.trafficType)
+            && Objects.equal(this.guestIPType, that.guestIPType)
+            && Objects.equal(this.networkRate, that.networkRate)
+            && Objects.equal(this.tags, that.tags);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("name", name).add("displayText", displayText).add("created", created).add("availability", availability).add("maxConnections", maxConnections).add("isDefault", isDefault).add("supportsVLAN", supportsVLAN).add("trafficType", trafficType).add("guestIPType", guestIPType).add("networkRate", networkRate).add("tags", tags);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

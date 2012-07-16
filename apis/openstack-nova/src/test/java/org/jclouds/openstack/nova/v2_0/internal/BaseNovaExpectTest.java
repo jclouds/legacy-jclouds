@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.internal;
 
-import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
@@ -26,16 +25,14 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
-
-import com.google.common.collect.ImmutableMultimap;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing Nova Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseNovaExpectTest<T> extends BaseRestApiExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithUsernameAndPasswordAndTenantName;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKeyAndTenantName;
@@ -64,14 +61,11 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
       identityWithTenantId = KeystoneFixture.INSTANCE.getTenantId() + ":" + identity;
       identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
       
-      extensionsOfNovaRequest = HttpRequest
-            .builder()
-            .method("GET")
+      extensionsOfNovaRequest = HttpRequest.builder().method("GET")
              // NOTE THIS IS NOVA, NOT KEYSTONE
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/extensions")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       extensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list_full.json")).build();
@@ -88,18 +82,15 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
       return overrides;
    }
 
-   protected HttpRequest.Builder standardRequestBuilder(URI endpoint) {
-      return HttpRequest.builder().method("GET")
-            .headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
-            .endpoint(endpoint);
-   }
-
-   protected HttpResponse.Builder standardResponseBuilder(int status) {
-      return HttpResponse.builder().statusCode(status);
-   }
-   
    @Override
    protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
       return HttpRequestComparisonType.JSON;
+   }
+   
+   protected HttpRequest.Builder<?> authenticatedGET() {
+      return HttpRequest.builder()
+                        .method("GET")
+                        .addHeader("Accept", MediaType.APPLICATION_JSON)
+                        .addHeader("X-Auth-Token", authToken);
    }
 }

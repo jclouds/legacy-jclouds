@@ -20,8 +20,6 @@ package org.jclouds.rest.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
@@ -44,7 +42,7 @@ public class BindAsHostPrefixIfConfiguredTest {
 
       BindAsHostPrefix binder = new BindAsHostPrefix(Providers.<UriBuilder> of(new UriBuilderImpl()));
 
-      HttpRequest request = binder.bindToRequest(new HttpRequest("GET", URI.create("https://s3.amazonaws.com")),
+      HttpRequest request = binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("https://s3.amazonaws.com").build(),
             "bucket");
       assertEquals(request.getRequestLine(), "GET https://bucket.s3.amazonaws.com HTTP/1.1");
 
@@ -55,7 +53,7 @@ public class BindAsHostPrefixIfConfiguredTest {
 
       BindAsHostPrefix binder = new BindAsHostPrefix(Providers.<UriBuilder> of(new UriBuilderImpl()));
 
-      binder.bindToRequest(new HttpRequest("GET", URI.create("https://s3.amazonaws.com")), "b_ucket");
+      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("https://s3.amazonaws.com").build(), "b_ucket");
 
    }
 }

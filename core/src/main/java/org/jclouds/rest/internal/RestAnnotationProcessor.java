@@ -86,7 +86,7 @@ import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
@@ -124,6 +124,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.WrapWith;
@@ -137,6 +138,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -228,9 +230,6 @@ public class RestAnnotationProcessor<T> {
 
    }
 
-   private static final Class<? extends HttpRequestOptions[]> optionsVarArgsClass = new HttpRequestOptions[] {}
-         .getClass();
-
    private static final Function<? super Entry<String, String>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, String>, Part>() {
 
       @Override
@@ -247,7 +246,7 @@ public class RestAnnotationProcessor<T> {
                Builder<Integer> toReturn = ImmutableSet.builder();
                for (int index = 0; index < method.getParameterTypes().length; index++) {
                   Class<?> type = method.getParameterTypes()[index];
-                  if (HttpRequestOptions.class.isAssignableFrom(type) || optionsVarArgsClass.isAssignableFrom(type))
+                  if (HttpRequestOptions.class.isAssignableFrom(type) || HttpRequestOptions[].class.isAssignableFrom(type))
                      toReturn.add(index);
                }
                return toReturn.build();
@@ -271,6 +270,7 @@ public class RestAnnotationProcessor<T> {
       return createResponseParser(parserFactory, injector, method, request);
    }
 
+   @SuppressWarnings("unchecked")
    @VisibleForTesting
    public static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory, Injector injector,
          Method method, HttpRequest request) {
@@ -283,6 +283,13 @@ public class RestAnnotationProcessor<T> {
       }
       if (transformer instanceof InvocationContext<?>) {
          ((InvocationContext<?>) transformer).setContext(request);
+      }
+      if (method.isAnnotationPresent(Transform.class)) {
+         Function<?, ?> wrappingTransformer = injector.getInstance(method.getAnnotation(Transform.class).value());
+         if (wrappingTransformer instanceof InvocationContext<?>) {
+            ((InvocationContext<?>) wrappingTransformer).setContext(request);
+         }
+         transformer = Functions.compose(Function.class.cast(wrappingTransformer), transformer);
       }
       return transformer;
    }
@@ -349,41 +356,22 @@ public class RestAnnotationProcessor<T> {
 
       @Override
       public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         result = prime * result + parametersTypeHashCode;
-         return result;
+         return Objects.hashCode(declaringClass, name, parametersTypeHashCode);
       }
 
       @Override
       public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         MethodKey other = (MethodKey) obj;
-         if (declaringClass == null) {
-            if (other.declaringClass != null)
-               return false;
-         } else if (!declaringClass.equals(other.declaringClass))
-            return false;
-         if (name == null) {
-            if (other.name != null)
-               return false;
-         } else if (!name.equals(other.name))
-            return false;
-         if (parametersTypeHashCode != other.parametersTypeHashCode)
-            return false;
-         return true;
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         MethodKey that = MethodKey.class.cast(obj);
+         return Objects.equal(this.declaringClass, that.declaringClass)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
       }
-
+      
       private final String name;
       private final int parametersTypeHashCode;
-      private final Class declaringClass;
+      private final Class<?> declaringClass;
 
       public MethodKey(Method method) {
          this.name = method.getName();
@@ -418,7 +406,7 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
+   public GeneratedHttpRequest createRequest(Method method, Object... args) {
       try {
          inputParamValidator.validateMethodParametersOrThrow(method, args);
          ClassMethodArgs cma = logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args)
@@ -437,18 +425,22 @@ public class RestAnnotationProcessor<T> {
             endpoint = injector.getInstance(Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class)).get();
             logger.trace("using default endpoint %s for %s", endpoint, cma);
          }
-         GeneratedHttpRequest.Builder<T> requestBuilder;
+         GeneratedHttpRequest.Builder<?> requestBuilder;
          HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
          if (r != null) {
-            requestBuilder = GeneratedHttpRequest.Builder.fromRequest(r);
+            requestBuilder = GeneratedHttpRequest.builder().fromHttpRequest(r);
             endpoint = r.getEndpoint();
          } else {
-            requestBuilder = GeneratedHttpRequest.requestBuilder();
+            requestBuilder = GeneratedHttpRequest.builder();
             requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
          }
 
-         requestBuilder.declaring(declaring).javaMethod(method).args(args).skips(skips);
-         requestBuilder.filters(getFiltersIfAnnotated(method));
+         requestBuilder.declaring(declaring)
+                       .javaMethod(method)
+                       .args(args)
+                       .caller(caller)
+                       .skips(skips)
+                       .filters(getFiltersIfAnnotated(method));
 
          UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
 
@@ -504,7 +496,7 @@ public class RestAnnotationProcessor<T> {
          }
 
          if (queryParams.size() > 0) {
-            builder.replaceQuery(ModifyRequest.makeQueryLine(queryParams, null, skips));
+            builder.replaceQuery(Queries.makeQueryLine(queryParams, null, skips));
          }
 
          requestBuilder.headers(filterOutContentHeaders(headers));
@@ -535,7 +527,7 @@ public class RestAnnotationProcessor<T> {
          if (payload != null) {
             requestBuilder.payload(payload);
          }
-         GeneratedHttpRequest<T> request = requestBuilder.build();
+         GeneratedHttpRequest request = requestBuilder.build();
 
          org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(method, args);
          if (mapBinder != null) {
@@ -589,7 +581,7 @@ public class RestAnnotationProcessor<T> {
    public static URI replaceQuery(Provider<UriBuilder> uriBuilderProvider, URI in, String newQuery,
          @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
       UriBuilder builder = uriBuilderProvider.get().uri(in);
-      builder.replaceQuery(ModifyRequest.makeQueryLine(ModifyRequest.parseQueryToMap(newQuery), sorter, skips));
+      builder.replaceQuery(Queries.makeQueryLine(Queries.parseQueryToMap(newQuery), sorter, skips));
       return builder.build();
    }
 
@@ -826,7 +818,7 @@ public class RestAnnotationProcessor<T> {
             return Key.get(ReturnInputStream.class);
          } else if (method.getReturnType().equals(HttpResponse.class)
                || TypeLiteral.get(method.getGenericReturnType()).equals(futureHttpResponseLiteral)) {
-            return Key.get((Class) IdentityFunction.class);
+            return Key.get(Class.class.cast(IdentityFunction.class));
          } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_JSON)) {
             return getJsonParserKeyForMethod(method);
          } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_XML)
@@ -962,7 +954,7 @@ public class RestAnnotationProcessor<T> {
       }
    };
 
-   public GeneratedHttpRequest<T> decorateRequest(GeneratedHttpRequest<T> request) throws NegativeArraySizeException,
+   public GeneratedHttpRequest decorateRequest(GeneratedHttpRequest request) throws NegativeArraySizeException,
             ExecutionException {
       OUTER: for (Entry<Integer, Set<Annotation>> entry : concat(//
                filterValues(methodToIndexOfParamToBinderParamAnnotation.get(request.getJavaMethod()).asMap(), notEmpty)

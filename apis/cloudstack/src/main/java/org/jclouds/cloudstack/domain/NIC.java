@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.net.URI;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,20 +30,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class NIC
- * 
+ *
  * @author Adrian Cole
-*/
+ */
 public class NIC {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromNIC(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -59,8 +57,8 @@ public class NIC {
       protected String networkId;
       protected TrafficType trafficType;
       protected GuestIPType guestIPType;
-   
-      /** 
+
+      /**
        * @see NIC#getId()
        */
       public T id(String id) {
@@ -68,7 +66,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getBroadcastURI()
        */
       public T broadcastURI(URI broadcastURI) {
@@ -76,7 +74,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getGateway()
        */
       public T gateway(String gateway) {
@@ -84,7 +82,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getIPAddress()
        */
       public T IPAddress(String IPAddress) {
@@ -92,7 +90,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#isDefault()
        */
       public T isDefault(boolean isDefault) {
@@ -100,7 +98,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getIsolationURI()
        */
       public T isolationURI(URI isolationURI) {
@@ -108,7 +106,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getNetmask()
        */
       public T netmask(String netmask) {
@@ -116,7 +114,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getMacAddress()
        */
       public T macAddress(String macAddress) {
@@ -124,7 +122,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getNetworkId()
        */
       public T networkId(String networkId) {
@@ -132,7 +130,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getTrafficType()
        */
       public T trafficType(TrafficType trafficType) {
@@ -140,7 +138,7 @@ public class NIC {
          return self();
       }
 
-      /** 
+      /**
        * @see NIC#getGuestIPType()
        */
       public T guestIPType(GuestIPType guestIPType) {
@@ -151,20 +149,20 @@ public class NIC {
       public NIC build() {
          return new NIC(id, broadcastURI, gateway, IPAddress, isDefault, isolationURI, netmask, macAddress, networkId, trafficType, guestIPType);
       }
-      
+
       public T fromNIC(NIC in) {
          return this
-                  .id(in.getId())
-                  .broadcastURI(in.getBroadcastURI())
-                  .gateway(in.getGateway())
-                  .IPAddress(in.getIPAddress())
-                  .isDefault(in.isDefault())
-                  .isolationURI(in.getIsolationURI())
-                  .netmask(in.getNetmask())
-                  .macAddress(in.getMacAddress())
-                  .networkId(in.getNetworkId())
-                  .trafficType(in.getTrafficType())
-                  .guestIPType(in.getGuestIPType());
+               .id(in.getId())
+               .broadcastURI(in.getBroadcastURI())
+               .gateway(in.getGateway())
+               .IPAddress(in.getIPAddress())
+               .isDefault(in.isDefault())
+               .isolationURI(in.getIsolationURI())
+               .netmask(in.getNetmask())
+               .macAddress(in.getMacAddress())
+               .networkId(in.getNetworkId())
+               .trafficType(in.getTrafficType())
+               .guestIPType(in.getGuestIPType());
       }
    }
 
@@ -176,27 +174,19 @@ public class NIC {
    }
 
    private final String id;
-   @Named("broadcasturi")
    private final URI broadcastURI;
    private final String gateway;
-   @Named("ipaddress")
    private final String IPAddress;
-   @Named("isdefault")
    private final boolean isDefault;
-   @Named("isolationuri")
    private final URI isolationURI;
    private final String netmask;
-   @Named("macaddress")
    private final String macAddress;
-   @Named("networkid")
    private final String networkId;
-   @Named("traffictype")
    private final TrafficType trafficType;
-   @Named("type")
    private final GuestIPType guestIPType;
 
    @ConstructorProperties({
-      "id", "broadcasturi", "gateway", "ipaddress", "isdefault", "isolationuri", "netmask", "macaddress", "networkid", "traffictype", "type"
+         "id", "broadcasturi", "gateway", "ipaddress", "isdefault", "isolationuri", "netmask", "macaddress", "networkid", "traffictype", "type"
    })
    protected NIC(String id, @Nullable URI broadcastURI, @Nullable String gateway, @Nullable String IPAddress, boolean isDefault,
                  @Nullable URI isolationURI, @Nullable String netmask, @Nullable String macAddress, @Nullable String networkId,
@@ -311,25 +301,25 @@ public class NIC {
       if (obj == null || getClass() != obj.getClass()) return false;
       NIC that = NIC.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.broadcastURI, that.broadcastURI)
-               && Objects.equal(this.gateway, that.gateway)
-               && Objects.equal(this.IPAddress, that.IPAddress)
-               && Objects.equal(this.isDefault, that.isDefault)
-               && Objects.equal(this.isolationURI, that.isolationURI)
-               && Objects.equal(this.netmask, that.netmask)
-               && Objects.equal(this.macAddress, that.macAddress)
-               && Objects.equal(this.networkId, that.networkId)
-               && Objects.equal(this.trafficType, that.trafficType)
-               && Objects.equal(this.guestIPType, that.guestIPType);
+            && Objects.equal(this.broadcastURI, that.broadcastURI)
+            && Objects.equal(this.gateway, that.gateway)
+            && Objects.equal(this.IPAddress, that.IPAddress)
+            && Objects.equal(this.isDefault, that.isDefault)
+            && Objects.equal(this.isolationURI, that.isolationURI)
+            && Objects.equal(this.netmask, that.netmask)
+            && Objects.equal(this.macAddress, that.macAddress)
+            && Objects.equal(this.networkId, that.networkId)
+            && Objects.equal(this.trafficType, that.trafficType)
+            && Objects.equal(this.guestIPType, that.guestIPType);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("broadcastURI", broadcastURI).add("gateway", gateway).add("IPAddress", IPAddress)
             .add("isDefault", isDefault).add("isolationURI", isolationURI).add("netmask", netmask).add("macAddress", macAddress)
             .add("networkId", networkId).add("trafficType", trafficType).add("guestIPType", guestIPType);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

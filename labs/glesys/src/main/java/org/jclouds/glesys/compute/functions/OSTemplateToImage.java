@@ -24,11 +24,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamilyVersion64Bit;
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.OperatingSystem.Builder;
+import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.glesys.domain.OSTemplate;
 
 import com.google.common.base.Function;

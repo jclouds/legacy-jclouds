@@ -44,7 +44,7 @@ import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIn
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.concurrent.Futures;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.functions.AllocateAndAddFloatingIpToNode;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
@@ -68,7 +68,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
    private final AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode;
    private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache;
    private final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
-   private final NovaClient novaClient;
+   private final NovaApi novaApi;
 
    @Inject
    protected ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet(
@@ -79,14 +79,14 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
             LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
-            LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaClient novaClient) {
+            LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaApi novaApi) {
       super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.securityGroupCache = checkNotNull(securityGroupCache, "securityGroupCache");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.allocateAndAddFloatingIpToNode = checkNotNull(allocateAndAddFloatingIpToNode,
                "allocateAndAddFloatingIpToNode");
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+      this.novaApi = checkNotNull(novaApi, "novaApi");
    }
 
    @Override
@@ -102,12 +102,12 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
       String zone = mutableTemplate.getLocation().getId();
 
       if (templateOptions.shouldAutoAssignFloatingIp()) {
-         checkArgument(novaClient.getFloatingIPExtensionForZone(zone).isPresent(),
+         checkArgument(novaApi.getFloatingIPExtensionForZone(zone).isPresent(),
                   "Floating IPs are required by options, but the extension is not available! options: %s",
                   templateOptions);
       }
 
-      boolean keyPairExensionPresent = novaClient.getKeyPairExtensionForZone(zone).isPresent();
+      boolean keyPairExensionPresent = novaApi.getKeyPairExtensionForZone(zone).isPresent();
       if (templateOptions.shouldGenerateKeyPair()) {
          checkArgument(keyPairExensionPresent,
                   "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
@@ -126,10 +126,10 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
          }
       }
 
-      boolean securityGroupExensionPresent = novaClient.getSecurityGroupExtensionForZone(zone).isPresent();
+      boolean securityGroupExensionPresent = novaApi.getSecurityGroupExtensionForZone(zone).isPresent();
       List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
       if (templateOptions.getSecurityGroupNames().size() > 0) {
-         checkArgument(novaClient.getSecurityGroupExtensionForZone(zone).isPresent(),
+         checkArgument(novaApi.getSecurityGroupExtensionForZone(zone).isPresent(),
                   "Security groups are required by options, but the extension is not available! options: %s",
                   templateOptions);
       } else if (securityGroupExensionPresent && inboundPorts.size() > 0) {

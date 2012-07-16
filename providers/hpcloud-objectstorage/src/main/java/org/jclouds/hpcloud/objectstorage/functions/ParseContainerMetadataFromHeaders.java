@@ -40,7 +40,7 @@ import com.google.common.base.Function;
  */
 public class ParseContainerMetadataFromHeaders implements Function<HttpResponse, ContainerMetadata>,
       InvocationContext<ParseContainerMetadataFromHeaders> {
-   private GeneratedHttpRequest<?> request;
+   private GeneratedHttpRequest request;
 
    public ContainerMetadata apply(HttpResponse from) {
       ContainerMetadata to = new ContainerMetadata();
@@ -69,8 +69,8 @@ public class ParseContainerMetadataFromHeaders implements Function<HttpResponse,
    
    @Override
    public ParseContainerMetadataFromHeaders setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
-      this.request = (GeneratedHttpRequest<?>) request;
+      checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest) request;
       return this;
    }
 

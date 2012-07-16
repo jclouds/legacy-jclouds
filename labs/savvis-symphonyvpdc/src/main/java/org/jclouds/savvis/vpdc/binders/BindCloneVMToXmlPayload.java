@@ -52,7 +52,7 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
 
    }
 
-   protected URI findVAppURIInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected URI findVAppURIInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof URI) {
             return (URI) arg;
@@ -66,9 +66,9 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       request = super.bindToRequest(request,

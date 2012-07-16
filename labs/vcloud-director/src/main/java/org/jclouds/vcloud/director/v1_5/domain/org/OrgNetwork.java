@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
-import org.jclouds.vcloud.director.v1_5.domain.network.Network.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -56,7 +55,6 @@ public class BindAddInternetServiceToXmlPayloadTest {
                   "urn:tmrk:vCloudExpressExtensions-1.6");
       }
 
-      @SuppressWarnings("unused")
       @Singleton
       @Provides
       @Named("CreateInternetService")
@@ -69,7 +67,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
    public void testApplyInputStream() throws IOException {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/CreateInternetService-test.xml"));
-      HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
       BindAddInternetServiceToXmlPayload binder = injector
                .getInstance(BindAddInternetServiceToXmlPayload.class);
 
@@ -84,7 +82,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
    }
    
    public void testDisableMonitoringEnabled() throws IOException {
-       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
        BindAddInternetServiceToXmlPayload binder = injector
                 .getInstance(BindAddInternetServiceToXmlPayload.class);
 
@@ -102,7 +100,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
     }
 
    public void testDisableMonitoringDisabled() throws IOException {
-       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
+       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
        BindAddInternetServiceToXmlPayload binder = injector
                 .getInstance(BindAddInternetServiceToXmlPayload.class);
 

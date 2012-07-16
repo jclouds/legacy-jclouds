@@ -30,7 +30,7 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * Represents the set of limits (quotas) returned by the Quota Extension
  * 
- * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaClient
+ * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaApi
 */
 public class Quotas {
 
@@ -298,7 +298,7 @@ public class Quotas {
 
    /**
     * @return the limit of the number of security groups that can be created for the tenant
-    * @see org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient
+    * @see org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi
     */
    public int getSecurityGroups() {
       return this.securityGroups;
@@ -306,7 +306,7 @@ public class Quotas {
 
    /**
     * @return the limit of the number of security group rules that can be created for the tenant
-    * @see org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient
+    * @see org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi
     */
    public int getSecurityGroupRules() {
       return this.securityGroupRules;
@@ -314,7 +314,7 @@ public class Quotas {
 
    /**
     * @return the limit of the number of key pairs that can be created for the tenant
-    * @see org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient
+    * @see org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi
     */
    public int getKeyPairs() {
       return this.keyPairs;

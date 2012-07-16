@@ -29,45 +29,45 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.openstack.nova.v2_0.NovaAsyncClient;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.Extension;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsClient;
-import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsClient;
-import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationClient;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateClient;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v2_0.extensions.QuotaAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassClient;
-import org.jclouds.openstack.nova.v2_0.extensions.QuotaClient;
-import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsClient;
-import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageClient;
-import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceClient;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeClient;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeAsyncClient;
-import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeClient;
-import org.jclouds.openstack.nova.v2_0.features.ExtensionAsyncClient;
-import org.jclouds.openstack.nova.v2_0.features.ExtensionClient;
-import org.jclouds.openstack.nova.v2_0.features.FlavorAsyncClient;
-import org.jclouds.openstack.nova.v2_0.features.FlavorClient;
-import org.jclouds.openstack.nova.v2_0.features.ImageAsyncClient;
-import org.jclouds.openstack.nova.v2_0.features.ImageClient;
-import org.jclouds.openstack.nova.v2_0.features.ServerAsyncClient;
-import org.jclouds.openstack.nova.v2_0.features.ServerClient;
+import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsApi;
+import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsApi;
+import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
+import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationApi;
+import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateApi;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
+import org.jclouds.openstack.nova.v2_0.extensions.QuotaAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassApi;
+import org.jclouds.openstack.nova.v2_0.extensions.QuotaApi;
+import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsApi;
+import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeApi;
+import org.jclouds.openstack.nova.v2_0.features.ExtensionAsyncApi;
+import org.jclouds.openstack.nova.v2_0.features.ExtensionApi;
+import org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi;
+import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
+import org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi;
+import org.jclouds.openstack.nova.v2_0.features.ImageApi;
+import org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi;
+import org.jclouds.openstack.nova.v2_0.features.ServerApi;
 import org.jclouds.openstack.nova.v2_0.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.openstack.nova.v2_0.handlers.NovaErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -86,25 +86,25 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsyncClient> {
+public class NovaRestClientModule extends RestClientModule<NovaApi, NovaAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(ServerClient.class, ServerAsyncClient.class).put(FlavorClient.class, FlavorAsyncClient.class)
-         .put(ImageClient.class, ImageAsyncClient.class).put(ExtensionClient.class, ExtensionAsyncClient.class)
-         .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
-         .put(KeyPairClient.class, KeyPairAsyncClient.class)
-         .put(HostAdministrationClient.class, HostAdministrationAsyncClient.class)
-         .put(SimpleTenantUsageClient.class, SimpleTenantUsageAsyncClient.class)
-         .put(VolumeClient.class, VolumeAsyncClient.class)
-         .put(VirtualInterfaceClient.class, VirtualInterfaceAsyncClient.class)
-         .put(ServerWithSecurityGroupsClient.class, ServerWithSecurityGroupsAsyncClient.class)
-         .put(AdminActionsClient.class, AdminActionsAsyncClient.class)
-         .put(HostAggregateClient.class, HostAggregateAsyncClient.class)
-         .put(FlavorExtraSpecsClient.class, FlavorExtraSpecsAsyncClient.class)
-         .put(QuotaClient.class, QuotaAsyncClient.class)
-         .put(QuotaClassClient.class, QuotaClassAsyncClient.class)
-         .put(VolumeTypeClient.class, VolumeTypeAsyncClient.class)
+         .put(ServerApi.class, ServerAsyncApi.class).put(FlavorApi.class, FlavorAsyncApi.class)
+         .put(ImageApi.class, ImageAsyncApi.class).put(ExtensionApi.class, ExtensionAsyncApi.class)
+         .put(FloatingIPApi.class, FloatingIPAsyncApi.class)
+         .put(SecurityGroupApi.class, SecurityGroupAsyncApi.class)
+         .put(KeyPairApi.class, KeyPairAsyncApi.class)
+         .put(HostAdministrationApi.class, HostAdministrationAsyncApi.class)
+         .put(SimpleTenantUsageApi.class, SimpleTenantUsageAsyncApi.class)
+         .put(VolumeApi.class, VolumeAsyncApi.class)
+         .put(VirtualInterfaceApi.class, VirtualInterfaceAsyncApi.class)
+         .put(ServerWithSecurityGroupsApi.class, ServerWithSecurityGroupsAsyncApi.class)
+         .put(AdminActionsApi.class, AdminActionsAsyncApi.class)
+         .put(HostAggregateApi.class, HostAggregateAsyncApi.class)
+         .put(FlavorExtraSpecsApi.class, FlavorExtraSpecsAsyncApi.class)
+         .put(QuotaApi.class, QuotaAsyncApi.class)
+         .put(QuotaClassApi.class, QuotaClassAsyncApi.class)
+         .put(VolumeTypeApi.class, VolumeTypeAsyncApi.class)
          .build();
 
    public NovaRestClientModule() {
@@ -121,13 +121,13 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
 
    @Provides
    @Singleton
-   public LoadingCache<String, Set<Extension>> provideExtensionsByZone(final Provider<NovaClient> novaClient) {
+   public LoadingCache<String, Set<Extension>> provideExtensionsByZone(final Provider<NovaApi> novaApi) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
             .build(new CacheLoader<String, Set<Extension>>() {
 
                @Override
                public Set<Extension> load(String key) throws Exception {
-                  return novaClient.get().getExtensionClientForZone(key).listExtensions();
+                  return novaApi.get().getExtensionApiForZone(key).listExtensions();
                }
 
             });

@@ -20,8 +20,6 @@ package org.jclouds.rest.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
@@ -50,7 +48,7 @@ public class BindToXMLPayloadTest {
       TestJAXBDomain obj = new TestJAXBDomain();
       obj.setElem("Hello World");
 
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, obj);
       assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "\n<test>\n    <elem>Hello World</elem>\n</test>\n");
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
@@ -67,7 +65,7 @@ public class BindToXMLPayloadTest {
       // Add teh unknown content-type header to verify it is changed by the
       // binder
       Multimap<String, String> headers = ImmutableMultimap.<String, String> of("Content-type", "application/unknown");
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).headers(headers)
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").headers(headers)
             .build();
 
       request = binder.bindToRequest(request, obj);
@@ -78,13 +76,13 @@ public class BindToXMLPayloadTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
       BindToXMLPayload binder = new BindToXMLPayload(xml);
-      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build(), null);
+      binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("http://momma").build(), null);
    }
 
    @Test(expectedExceptions = BindException.class)
    public void testInvalidObjectBinding() {
       BindToXMLPayload binder = new BindToXMLPayload(xml);
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, new Object());
    }
 }

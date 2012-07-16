@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialType;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.BaseAuthenticator;
-import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationClient;
+import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationApi;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.rackspace.cloudidentity.v2_0.domain.ApiKeyCredentials;
 
@@ -39,21 +39,21 @@ import com.google.common.base.Optional;
 @CredentialType(CloudIdentityCredentialTypes.API_KEY_CREDENTIALS)
 @Singleton
 public class AuthenticateApiKeyCredentials extends BaseAuthenticator<ApiKeyCredentials> {
-   protected final CloudIdentityAuthenticationClient client;
+   protected final CloudIdentityAuthenticationApi api;
 
    @Inject
-   public AuthenticateApiKeyCredentials(CloudIdentityAuthenticationClient client) {
-      this.client = client;
+   public AuthenticateApiKeyCredentials(CloudIdentityAuthenticationApi api) {
+      this.api = api;
    }
 
    @Override
    protected Access authenticateWithTenantName(Optional<String> tenantId, ApiKeyCredentials apiKeyCredentials) {
-      return client.authenticateWithTenantNameAndCredentials(tenantId.orNull(), apiKeyCredentials);
+      return api.authenticateWithTenantNameAndCredentials(tenantId.orNull(), apiKeyCredentials);
    }
 
    @Override
    protected Access authenticateWithTenantId(Optional<String> tenantId, ApiKeyCredentials apiKeyCredentials) {
-      return client.authenticateWithTenantIdAndCredentials(tenantId.orNull(), apiKeyCredentials);
+      return api.authenticateWithTenantIdAndCredentials(tenantId.orNull(), apiKeyCredentials);
    }
 
    @Override

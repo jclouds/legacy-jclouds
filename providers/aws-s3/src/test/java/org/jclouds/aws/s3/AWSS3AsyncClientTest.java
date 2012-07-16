@@ -24,8 +24,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
@@ -39,7 +37,6 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.location.Region;
-import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -62,7 +59,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 

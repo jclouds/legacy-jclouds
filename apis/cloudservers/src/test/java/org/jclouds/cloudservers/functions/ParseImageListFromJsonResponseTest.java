@@ -29,7 +29,6 @@ import org.jclouds.cloudservers.domain.ImageStatus;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
@@ -67,7 +66,7 @@ public class ParseImageListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {
             }));
-      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<Image> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response, expects);
    }
@@ -78,7 +77,7 @@ public class ParseImageListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {
             }));
-      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<Image> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.get(0).getId(), 2);
       assertEquals(response.get(0).getName(), "CentOS 5.2");

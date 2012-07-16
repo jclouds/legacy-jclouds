@@ -109,7 +109,7 @@ public class ClassMethodArgs {
       return method;
    }
 
-   public Object[] getArgs() {
+   public @Nullable Object[] getArgs() {
       return args;
    }
 

@@ -22,28 +22,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
  * @author Adrian Cole
-*/
+ */
 public class IngressRule implements Comparable<IngressRule> {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromIngressRule(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String account;
@@ -55,8 +52,8 @@ public class IngressRule implements Comparable<IngressRule> {
       protected String id;
       protected String securityGroupName;
       protected int startPort;
-   
-      /** 
+
+      /**
        * @see IngressRule#getAccount()
        */
       public T account(String account) {
@@ -64,7 +61,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getCIDR()
        */
       public T CIDR(String CIDR) {
@@ -72,7 +69,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getEndPort()
        */
       public T endPort(int endPort) {
@@ -80,7 +77,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getICMPCode()
        */
       public T ICMPCode(int ICMPCode) {
@@ -88,7 +85,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getICMPType()
        */
       public T ICMPType(int ICMPType) {
@@ -96,7 +93,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getProtocol()
        */
       public T protocol(String protocol) {
@@ -104,7 +101,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getId()
        */
       public T id(String id) {
@@ -112,7 +109,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getSecurityGroupName()
        */
       public T securityGroupName(String securityGroupName) {
@@ -120,7 +117,7 @@ public class IngressRule implements Comparable<IngressRule> {
          return self();
       }
 
-      /** 
+      /**
        * @see IngressRule#getStartPort()
        */
       public T startPort(int startPort) {
@@ -131,18 +128,18 @@ public class IngressRule implements Comparable<IngressRule> {
       public IngressRule build() {
          return new IngressRule(account, CIDR, endPort, ICMPCode, ICMPType, protocol, id, securityGroupName, startPort);
       }
-      
+
       public T fromIngressRule(IngressRule in) {
          return this
-                  .account(in.getAccount())
-                  .CIDR(in.getCIDR())
-                  .endPort(in.getEndPort())
-                  .ICMPCode(in.getICMPCode())
-                  .ICMPType(in.getICMPType())
-                  .protocol(in.getProtocol())
-                  .id(in.getId())
-                  .securityGroupName(in.getSecurityGroupName())
-                  .startPort(in.getStartPort());
+               .account(in.getAccount())
+               .CIDR(in.getCIDR())
+               .endPort(in.getEndPort())
+               .ICMPCode(in.getICMPCode())
+               .ICMPType(in.getICMPType())
+               .protocol(in.getProtocol())
+               .id(in.getId())
+               .securityGroupName(in.getSecurityGroupName())
+               .startPort(in.getStartPort());
       }
    }
 
@@ -154,24 +151,17 @@ public class IngressRule implements Comparable<IngressRule> {
    }
 
    private final String account;
-   @Named("cidr")
    private final String CIDR;
-   @Named("endport")
    private final int endPort;
-   @Named("icmpcode")
    private final int ICMPCode;
-   @Named("icmptype")
    private final int ICMPType;
    private final String protocol;
-   @Named("ruleid")
    private final String id;
-   @Named("securitygroupname")
    private final String securityGroupName;
-   @Named("startport")
    private final int startPort;
 
    @ConstructorProperties({
-      "account", "cidr", "endport", "icmpcode", "icmptype", "protocol", "ruleid", "securitygroupname", "startport"
+         "account", "cidr", "endport", "icmpcode", "icmptype", "protocol", "ruleid", "securitygroupname", "startport"
    })
    protected IngressRule(@Nullable String account, @Nullable String CIDR, int endPort, int ICMPCode, int ICMPType,
                          @Nullable String protocol, String id, @Nullable String securityGroupName, int startPort) {
@@ -264,22 +254,22 @@ public class IngressRule implements Comparable<IngressRule> {
       if (obj == null || getClass() != obj.getClass()) return false;
       IngressRule that = IngressRule.class.cast(obj);
       return Objects.equal(this.account, that.account)
-               && Objects.equal(this.CIDR, that.CIDR)
-               && Objects.equal(this.endPort, that.endPort)
-               && Objects.equal(this.ICMPCode, that.ICMPCode)
-               && Objects.equal(this.ICMPType, that.ICMPType)
-               && Objects.equal(this.protocol, that.protocol)
-               && Objects.equal(this.id, that.id)
-               && Objects.equal(this.securityGroupName, that.securityGroupName)
-               && Objects.equal(this.startPort, that.startPort);
+            && Objects.equal(this.CIDR, that.CIDR)
+            && Objects.equal(this.endPort, that.endPort)
+            && Objects.equal(this.ICMPCode, that.ICMPCode)
+            && Objects.equal(this.ICMPType, that.ICMPType)
+            && Objects.equal(this.protocol, that.protocol)
+            && Objects.equal(this.id, that.id)
+            && Objects.equal(this.securityGroupName, that.securityGroupName)
+            && Objects.equal(this.startPort, that.startPort);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("account", account).add("CIDR", CIDR).add("endPort", endPort).add("ICMPCode", ICMPCode)
             .add("ICMPType", ICMPType).add("protocol", protocol).add("id", id).add("securityGroupName", securityGroupName).add("startPort", startPort);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

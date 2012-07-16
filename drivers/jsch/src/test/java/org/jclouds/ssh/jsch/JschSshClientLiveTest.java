@@ -19,6 +19,8 @@
 package org.jclouds.ssh.jsch;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,6 +31,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
@@ -46,6 +53,10 @@ import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.io.Closeables;
 import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -147,6 +158,7 @@ public class JschSshClientLiveTest {
       }
    }
 
+   @Test
    public void testPutAndGet() throws IOException {
       temp = File.createTempFile("foo", "bar");
       temp.deleteOnExit();
@@ -157,19 +169,98 @@ public class JschSshClientLiveTest {
       assertEquals(contents, "rabbit");
    }
 
+   @Test
    public void testGetEtcPassword() throws IOException {
       Payload input = setupClient().get("/etc/passwd");
       String contents = Strings2.toStringAndClose(input.getInput());
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
    }
 
+   @Test
    public void testExecHostname() throws IOException {
-      ExecResponse response = setupClient().exec("hostname");
-      assertEquals(response.getError(), "");
-      assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
-            : sshHost);
+      SshClient client = setupClient();
+      try {
+         ExecResponse response = client.exec("hostname");
+         assertEquals(response.getExitStatus(), 0);
+         assertEquals(response.getError(), "");
+         assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
+               : sshHost);
+      } finally {
+         client.disconnect();
+      }
    }
 
+   @Test
+   public void testExecInvalidCommand() throws IOException {
+      SshClient client = setupClient();
+      try {
+         ExecResponse response = client.exec("thisCommandDoesNotExist");
+         assertNotEquals(response.getExitStatus(), 0);
+         assertTrue(response.getOutput().contains("not found") || response.getError().contains("not found"), 
+               "stdout="+response.getOutput()+"; stderr="+response.getError());
+      } finally {
+         client.disconnect();
+      }
+   }
+
+   // Added for issue #1016.
+   @Test(invocationCount=100)
+   public void testExecHostnameRepeatedlyWithDifferentSessions() throws Exception {
+      testExecHostname();
+   }
+
+   // Added for issue #1016.
+   @Test
+   public void testExecHostnameRepeatedlyWithSameSessions() throws Exception {
+      final SshClient client = setupClient();
+      
+      try {
+         for (int i = 0; i < 100; i++) {
+            ExecResponse response = client.exec("hostname");
+            assertEquals(response.getError(), "");
+            assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
+                     : sshHost);
+            //System.out.println("completed (sequentially) "+i);
+         }
+      } finally {
+         client.disconnect();
+      }
+   }
+   
+   // Added for issue #1016.
+   // Note that some commands fail the first few attempt, but with default retries at 5 they do pass (for me locally).
+   // The error is "JSchException: channel is not opened".
+   // With the thread-pool size at 100, you get failures a lot more often.
+   @Test
+   public void testExecHostnameConcurrentlyWithSameSessions() throws Exception {
+      final SshClient client = setupClient();
+      ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+      List<ListenableFuture<ExecResponse>> futures = new ArrayList<ListenableFuture<ExecResponse>>();
+      try {
+         for (int i = 0; i < 100; i++) {
+            futures.add(executor.submit(new Callable<ExecResponse>() {
+               @Override
+               public ExecResponse call() {
+                  ExecResponse response = client.exec("hostname");
+                  //System.out.println("completed (concurrently) "+count.incrementAndGet());
+                  return response;
+                  
+               }
+            }));
+         }
+         List<ExecResponse> responses = Futures.allAsList(futures).get(3000, TimeUnit.SECONDS);
+         for (ExecResponse response : responses) {
+            assertEquals(response.getError(), "");
+            assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
+                     : sshHost);
+         }
+      } finally {
+         executor.shutdownNow();
+         client.disconnect();
+      }
+   }
+   
+   @Test
    public void testExecChannelTakesStdinAndNoEchoOfCharsInOuputAndOutlivesClient() throws IOException {
       SshClient client = setupClient();
       ExecChannel response = client.execChannel("cat <<EOF");

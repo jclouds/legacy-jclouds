@@ -20,8 +20,6 @@ package org.jclouds.gogrid.filters;
 
 import static java.lang.String.format;
 
-import java.net.URI;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +30,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
@@ -71,15 +69,15 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       String signatureMd5 = getMd5For(toSign);
 
       String query = request.getEndpoint().getQuery();
-      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(query);
+      Multimap<String, String> decodedParams = Queries.parseQueryToMap(query);
 
       decodedParams.replaceValues("sig", ImmutableSet.of(signatureMd5));
       decodedParams.replaceValues("api_key", ImmutableSet.of(apiKey));
 
-      String updatedQuery = ModifyRequest.makeQueryLine(decodedParams, null);
+      String updatedQuery = Queries.makeQueryLine(decodedParams, null);
       String requestBasePart = request.getEndpoint().toASCIIString();
       String updatedEndpoint = requestBasePart.substring(0, requestBasePart.indexOf("?") + 1) + updatedQuery;
-      request = request.toBuilder().endpoint(URI.create(updatedEndpoint)).build();
+      request = request.toBuilder().endpoint(updatedEndpoint).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }

@@ -20,7 +20,6 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.io.Payloads.newStringPayload;
 
 import java.net.URI;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class BindMapToStringPayload implements MapBinder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkNotNull(postParams, "postParams");
-      GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
+      GeneratedHttpRequest r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
       checkArgument(r.getJavaMethod().isAnnotationPresent(Payload.class),
             "method %s must have @Payload annotation to use this binder", r.getJavaMethod());
       String payload = r.getJavaMethod().getAnnotation(Payload.class).value();
@@ -63,7 +62,7 @@ public class BindMapToStringPayload implements MapBinder {
          URI fake = builder.buildFromMap(postParams);
          payload = fake.getPath().substring(1);
       }
-      return (R) request.toBuilder().payload(newStringPayload(payload)).build();
+      return (R) request.toBuilder().payload(payload).build();
    }
 
    @Override

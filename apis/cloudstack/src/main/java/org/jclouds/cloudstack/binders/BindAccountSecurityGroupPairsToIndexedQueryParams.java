@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -58,12 +58,12 @@ public class BindAccountSecurityGroupPairsToIndexedQueryParams implements Binder
       UriBuilder builder = uriBuilderProvider.get();
       builder.uri(request.getEndpoint());
       Builder<String, String> map = ImmutableMultimap.<String, String> builder().putAll(
-            ModifyRequest.parseQueryToMap(request.getEndpoint().getQuery()));
+            Queries.parseQueryToMap(request.getEndpoint().getQuery()));
       int i = 0;
       for (Entry<String, String> entry : pairs.entries())
          map.put(String.format("usersecuritygrouplist[%d].account", i), entry.getKey()).put(
                String.format("usersecuritygrouplist[%d].group", i++), entry.getValue());
-      builder.replaceQuery(ModifyRequest.makeQueryLine(map.build(), null));
+      builder.replaceQuery(Queries.makeQueryLine(map.build(), null));
       return (R) request.toBuilder().endpoint(builder.build()).build();
    }
 }

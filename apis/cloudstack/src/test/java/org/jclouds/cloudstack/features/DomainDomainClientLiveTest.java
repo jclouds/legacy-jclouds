@@ -18,24 +18,23 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import static com.google.common.collect.Iterables.find;
-import com.google.common.collect.Sets;
 import static com.google.common.collect.Sets.newHashSet;
-import java.util.NoSuchElementException;
-
 import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.parentDomainId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.Domain;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code DomainDomainClient}

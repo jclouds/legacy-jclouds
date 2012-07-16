@@ -117,7 +117,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
    public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {
       this.endpoint = request.getEndpoint();
-      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
+      checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
       return setName(getNameFor(GeneratedHttpRequest.class.cast(request)));
    }
 

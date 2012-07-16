@@ -26,10 +26,10 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.glance.v1_0.GlanceAsyncClient;
-import org.jclouds.openstack.glance.v1_0.GlanceClient;
-import org.jclouds.openstack.glance.v1_0.features.ImageAsyncClient;
-import org.jclouds.openstack.glance.v1_0.features.ImageClient;
+import org.jclouds.openstack.glance.v1_0.GlanceAsyncApi;
+import org.jclouds.openstack.glance.v1_0.GlanceApi;
+import org.jclouds.openstack.glance.v1_0.features.ImageAsyncApi;
+import org.jclouds.openstack.glance.v1_0.features.ImageApi;
 import org.jclouds.openstack.glance.v1_0.handlers.GlanceErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -42,10 +42,10 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class GlanceRestClientModule extends RestClientModule<GlanceClient, GlanceAsyncClient> {
+public class GlanceRestClientModule extends RestClientModule<GlanceApi, GlanceAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(ImageClient.class, ImageAsyncClient.class)
+         .put(ImageApi.class, ImageAsyncApi.class)
          .build();
 
    public GlanceRestClientModule() {

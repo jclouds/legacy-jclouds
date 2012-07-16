@@ -30,7 +30,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

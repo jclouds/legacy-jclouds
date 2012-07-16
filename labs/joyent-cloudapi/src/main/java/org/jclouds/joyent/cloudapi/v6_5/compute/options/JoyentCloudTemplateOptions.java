@@ -40,9 +40,9 @@ import com.google.common.base.Objects.ToStringHelper;
  * <code>
  * import static org.jclouds.joyent.cloudapi.v6_5.compute.options.JoyentCloudTemplateOptions.Builder.*;
  * <p/>
- * ComputeService client = // get connection
+ * ComputeService api = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
+ * Set<? extends NodeMetadata> set = api.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole

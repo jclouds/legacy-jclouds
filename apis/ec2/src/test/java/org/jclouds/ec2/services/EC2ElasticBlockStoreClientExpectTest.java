@@ -20,8 +20,6 @@ package org.jclouds.ec2.services;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.internal.BaseEC2ExpectTest;
@@ -31,7 +29,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adrian Cole
@@ -46,8 +43,8 @@ public class EC2ElasticBlockStoreClientExpectTest extends BaseEC2ExpectTest<EC2C
       builder.put(
             HttpRequest.builder()
                        .method("POST")
-                       .endpoint(URI.create("https://ec2.us-east-1.amazonaws.com/"))
-                       .headers(ImmutableMultimap.of("Host", "ec2.us-east-1.amazonaws.com"))
+                       .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                       .addHeader("Host", "ec2.us-east-1.amazonaws.com")
                        .payload(payloadFromStringWithContentType("Action=CreateVolume&AvailabilityZone=us-east-1a&Signature=FB5hTZHKSAuiygoafIdJh1EnfTu0ogC2VfRQOar85mg%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Size=4&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
             HttpResponse.builder()
                         .statusCode(200)

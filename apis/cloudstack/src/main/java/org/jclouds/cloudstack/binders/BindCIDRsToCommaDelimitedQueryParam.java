@@ -21,13 +21,9 @@ package org.jclouds.cloudstack.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.base.Joiner;
@@ -39,12 +35,6 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class BindCIDRsToCommaDelimitedQueryParam implements Binder {
-   private final Provider<UriBuilder> uriBuilderProvider;
-
-   @Inject
-   public BindCIDRsToCommaDelimitedQueryParam(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
 
    @SuppressWarnings("unchecked")
    @Override
@@ -52,6 +42,6 @@ public class BindCIDRsToCommaDelimitedQueryParam implements Binder {
       checkArgument(input instanceof Iterable<?>, "this binder is only valid for Iterables!");
       Iterable<String> cidrs = (Iterable<String>) checkNotNull(input, "cidr list");
       checkArgument(Iterables.size(cidrs) > 0, "you must specify at least one cidr range");
-      return ModifyRequest.addQueryParam(request, "cidrlist", Joiner.on(',').join(cidrs), uriBuilderProvider.get());
+      return (R) request.toBuilder().replaceQueryParam("cidrlist", Joiner.on(',').join(cidrs)).build();
    }
 }

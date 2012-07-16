@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -42,7 +41,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -57,9 +55,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testListHostsWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=listHosts&listAll=true&apiKey=identity&signature=NnYyyEy30G3V2dcIt7w4WZ68AU8%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=listHosts&listAll=true&apiKey=identity&signature=NnYyyEy30G3V2dcIt7w4WZ68AU8%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/listhostsresponse.json"))
          .statusCode(200).build();
@@ -92,9 +89,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testListHostsEmptyOn404() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=listHosts&listAll=true&apiKey=identity&signature=NnYyyEy30G3V2dcIt7w4WZ68AU8%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=listHosts&listAll=true&apiKey=identity&signature=NnYyyEy30G3V2dcIt7w4WZ68AU8%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder().statusCode(404).build();
       GlobalHostClient client = requestSendsResponse(request, response);
 
@@ -105,9 +101,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testAddHostWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=addHost&zoneid=1&hypervisor=XenServer&url=http%3A%2F%2Fexample.com&username=fred&password=sekrit&hosttags=&allocationstate=Enabled&clusterid=1&clustername=Xen%20Clust%201&podid=1&apiKey=identity&signature=ExGaljKKQIlVbWk5hd0BnnjmBzs%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=addHost&zoneid=1&hypervisor=XenServer&url=http%3A%2F%2Fexample.com&username=fred&password=sekrit&hosttags=&allocationstate=Enabled&clusterid=1&clustername=Xen%20Clust%201&podid=1&apiKey=identity&signature=ExGaljKKQIlVbWk5hd0BnnjmBzs%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/addhostresponse.json"))
          .statusCode(200).build();
@@ -126,9 +121,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testUpdateHostWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateHost&id=1&allocationstate=Enabled&hosttags=&oscategoryid=5&apiKey=identity&signature=qTxNq9yQG8S108giqS%2FROFzgev8%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=updateHost&id=1&allocationstate=Enabled&hosttags=&oscategoryid=5&apiKey=identity&signature=qTxNq9yQG8S108giqS%2FROFzgev8%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/updatehostresponse.json"))
          .statusCode(200).build();
@@ -146,9 +140,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testUpdateHostPasswordWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateHostPassword&hostid=1&password=sekrit&username=fred&apiKey=identity&signature=g9nMKDWoiU72y0HhaRFekZCgfJc%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=updateHostPassword&hostid=1&password=sekrit&username=fred&apiKey=identity&signature=g9nMKDWoiU72y0HhaRFekZCgfJc%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .statusCode(200).build();
 
@@ -159,8 +152,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testDeleteHostWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=deleteHost&id=1&forced=true&forcedestroylocalstorage=true&apiKey=identity&signature=ZdvO1BWBkdPiDAjsVlKtqDe6N7k%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .endpoint("http://localhost:8080/client/api?response=json&command=deleteHost&id=1&forced=true&forcedestroylocalstorage=true&apiKey=identity&signature=ZdvO1BWBkdPiDAjsVlKtqDe6N7k%3D")
+         .addHeader("Accept", "application/json")
          .build();
       HttpResponse response = HttpResponse.builder()
          .statusCode(200).build();
@@ -172,9 +165,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testPrepareHostForMaintenanceWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=prepareHostForMaintenance&id=1&apiKey=identity&signature=9tDwdox%2FxAKmZr9kVrR6Ttnxf3U%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=prepareHostForMaintenance&id=1&apiKey=identity&signature=9tDwdox%2FxAKmZr9kVrR6Ttnxf3U%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/preparehostformaintenanceresponse.json"))
          .statusCode(200).build();
@@ -187,9 +179,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testCancelHostMaintenanceWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=cancelHostMaintenance&id=1&apiKey=identity&signature=9RduzuBoyRZKNTzAoVqUo9gRTfk%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=cancelHostMaintenance&id=1&apiKey=identity&signature=9RduzuBoyRZKNTzAoVqUo9gRTfk%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/cancelhostmaintenanceresponse.json"))
          .statusCode(200).build();
@@ -202,9 +193,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testReconnectHostWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=reconnectHost&id=1&apiKey=identity&signature=wJEF02vwdyOnJOTa%2BWMMK906aRU%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=reconnectHost&id=1&apiKey=identity&signature=wJEF02vwdyOnJOTa%2BWMMK906aRU%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/reconnecthostresponse.json"))
          .statusCode(200).build();
@@ -217,9 +207,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testAddSecondaryStorageWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=addSecondaryStorage&url=nfs%3A%2F%2F10.26.26.165%2Fmnt%2Fnfs%2Fcs_sec&zoneid=1&apiKey=identity&signature=MccRKx1yPP43ImiO70WlhVDlAIA%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=addSecondaryStorage&url=nfs%3A%2F%2F10.26.26.165%2Fmnt%2Fnfs%2Fcs_sec&zoneid=1&apiKey=identity&signature=MccRKx1yPP43ImiO70WlhVDlAIA%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/addsecondarystorageresponse.json"))
          .statusCode(200).build();
@@ -238,9 +227,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testListClustersWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=listClusters&listAll=true&apiKey=identity&signature=lbimqg0OKIq8sgQBpNmi4oQNFog%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=listClusters&listAll=true&apiKey=identity&signature=lbimqg0OKIq8sgQBpNmi4oQNFog%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/listclustersresponse.json"))
          .statusCode(200).build();
@@ -258,9 +246,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testListClustersEmptyOn404() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=listClusters&listAll=true&apiKey=identity&signature=lbimqg0OKIq8sgQBpNmi4oQNFog%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=listClusters&listAll=true&apiKey=identity&signature=lbimqg0OKIq8sgQBpNmi4oQNFog%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder().statusCode(404).build();
       GlobalHostClient client = requestSendsResponse(request, response);
 
@@ -271,9 +258,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testAddClusterWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=addCluster&zoneid=1&clustertype=CloudManaged&clustername=Xen%20Clust%201&hypervisor=XenServer&allocationstate=Enabled&podid=1&url=http%3A%2F%2Fexample.com%2Fcluster&username=fred&password=sekrit&apiKey=identity&signature=2uIQ5qF0bVycXK111wxvogWp1Yw%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=addCluster&zoneid=1&clustertype=CloudManaged&clustername=Xen%20Clust%201&hypervisor=XenServer&allocationstate=Enabled&podid=1&url=http%3A%2F%2Fexample.com%2Fcluster&username=fred&password=sekrit&apiKey=identity&signature=2uIQ5qF0bVycXK111wxvogWp1Yw%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/addclusterresponse.json"))
          .statusCode(200).build();
@@ -289,9 +275,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testUpdateClusterWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateCluster&id=1&allocationstate=Enabled&clustername=Xen%20Clust%201&clustertype=CloudManaged&hypervisor=XenServer&managedstate=Managed&apiKey=identity&signature=%2FwbuYKwInciSXWkUf05lEfJZShQ%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=updateCluster&id=1&allocationstate=Enabled&clustername=Xen%20Clust%201&clustertype=CloudManaged&hypervisor=XenServer&managedstate=Managed&apiKey=identity&signature=%2FwbuYKwInciSXWkUf05lEfJZShQ%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/updateclusterresponse.json"))
          .statusCode(200).build();
@@ -307,9 +292,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testUpdateClusterPasswordWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateHostPassword&clusterid=1&password=sekrit&username=fred&apiKey=identity&signature=xwc83%2BoYK0cuAiFQAlg%2F7%2F1IVHE%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=updateHostPassword&clusterid=1&password=sekrit&username=fred&apiKey=identity&signature=xwc83%2BoYK0cuAiFQAlg%2F7%2F1IVHE%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .statusCode(200).build();
 
@@ -320,9 +304,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    public void testDeleteClusterWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
-         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=deleteCluster&id=1&apiKey=identity&signature=CKH26MFgKGY7Sosd17LjBMNa3AI%3D"))
-         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
-         .build();
+         .endpoint("http://localhost:8080/client/api?response=json&command=deleteCluster&id=1&apiKey=identity&signature=CKH26MFgKGY7Sosd17LjBMNa3AI%3D")
+         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .statusCode(200).build();
 

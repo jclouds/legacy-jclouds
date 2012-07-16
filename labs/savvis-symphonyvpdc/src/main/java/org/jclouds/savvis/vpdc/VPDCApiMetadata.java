@@ -44,7 +44,7 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<VPDCClient, VPDCAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<VPDCClient, VPDCAsyncClient>>() {
+   public static final TypeToken<RestContext<VPDCApi, VPDCAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<VPDCApi, VPDCAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
    
@@ -72,7 +72,7 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
          BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(VPDCClient.class, VPDCAsyncClient.class);
+         super(VPDCApi.class, VPDCAsyncApi.class);
          id("savvis-symphonyvpdc")
          .name("Savvis Symphony VPDC API")
          .identityName("Username")

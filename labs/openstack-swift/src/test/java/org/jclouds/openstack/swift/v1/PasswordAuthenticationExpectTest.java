@@ -20,17 +20,15 @@ package org.jclouds.openstack.swift.v1;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.swift.v1.internal.BaseSwiftClientExpectTest;
+import org.jclouds.openstack.swift.v1.internal.BaseSwiftApiExpectTest;
 import org.jclouds.openstack.swift.v1.parse.ParseContainerListTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -39,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
-public class PasswordAuthenticationExpectTest extends BaseSwiftClientExpectTest {
+public class PasswordAuthenticationExpectTest extends BaseSwiftApiExpectTest {
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -55,20 +53,19 @@ public class PasswordAuthenticationExpectTest extends BaseSwiftClientExpectTest 
       HttpRequest listContainers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://objects.jclouds.org/v1.0/40806637803162/?format=json"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listContainersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/container_list.json")).build();
 
-      SwiftClient clientWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+      SwiftApi apiWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listContainers, listContainersResponse);
 
-      assertEquals(clientWhenContainersExist.getConfiguredRegions(), ImmutableSet.of("region-a.geo-1"));
+      assertEquals(apiWhenContainersExist.getConfiguredRegions(), ImmutableSet.of("region-a.geo-1"));
 
-      assertEquals(clientWhenContainersExist.getAccountClientForRegion("region-a.geo-1").listContainers().toString(),
+      assertEquals(apiWhenContainersExist.getAccountApiForRegion("region-a.geo-1").listContainers().toString(),
             new ParseContainerListTest().expected().toString());
    }
 

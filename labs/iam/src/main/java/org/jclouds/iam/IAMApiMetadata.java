@@ -41,7 +41,7 @@ public class IAMApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 3450830053589179249L;
 
-   public static final TypeToken<RestContext<? extends IAMClient, ? extends IAMAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends IAMClient, ? extends IAMAsyncClient>>() {
+   public static final TypeToken<RestContext<? extends IAMApi, ? extends IAMAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends IAMApi, ? extends IAMAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -51,7 +51,7 @@ public class IAMApiMetadata extends BaseRestApiMetadata {
    }
 
    public IAMApiMetadata() {
-      this(new Builder(IAMClient.class, IAMAsyncClient.class));
+      this(new Builder(IAMApi.class, IAMAsyncApi.class));
    }
 
    protected IAMApiMetadata(Builder builder) {
@@ -67,8 +67,8 @@ public class IAMApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<?> client, Class<?> asyncClient) {
-         super(client, asyncClient);
+      protected Builder(Class<?> api, Class<?> asyncApi) {
+         super(api, asyncApi);
          id("iam")
          .name("Amazon IAM Api")
          .identityName("Access Key ID")

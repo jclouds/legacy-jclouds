@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Volume Type used in the Volume Type Extension for Nova
  * 
- * @see org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeClient
+ * @see org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeApi
 */
 public class VolumeType {
 

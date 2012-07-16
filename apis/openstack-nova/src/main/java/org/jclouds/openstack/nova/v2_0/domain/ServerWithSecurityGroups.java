@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
- * Extended server returned by ServerWithSecurityGroupsClient
+ * Extended server returned by ServerWithSecurityGroupsApi
  * 
  * @author Adam Lowe
  * @see <a href=

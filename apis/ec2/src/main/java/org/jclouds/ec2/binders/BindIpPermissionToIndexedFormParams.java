@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.util.IpPermissions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -32,11 +31,12 @@ import org.jclouds.rest.Binder;
  */
 public class BindIpPermissionToIndexedFormParams implements Binder {
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof IpPermission, "this binder is only valid for IpPermission");
       IpPermission perm = (IpPermission) input;
-      return ModifyRequest.putFormParams(request, IpPermissions.buildFormParametersForIndex(0, perm));
+      return (R) request.toBuilder().replaceFormParams(IpPermissions.buildFormParametersForIndex(0, perm)).build();
    }
 
 }

@@ -43,12 +43,12 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.Pems;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.io.Payloads;
-import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.KeyAndPrivateKey;
 import org.jclouds.joyent.cloudapi.v6_5.compute.loaders.CreateUniqueKey;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndName;
-import org.jclouds.joyent.cloudapi.v6_5.features.KeyClient;
+import org.jclouds.joyent.cloudapi.v6_5.features.KeyApi;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -90,8 +90,8 @@ public class CreateUniqueKeyTest {
 
    @Test
    public void testApply() {
-      JoyentCloudClient cloudApiClient = createMock(JoyentCloudClient.class);
-      KeyClient keyClient = createMock(KeyClient.class);
+      JoyentCloudApi cloudApiApi = createMock(JoyentCloudApi.class);
+      KeyApi keyApi = createMock(KeyApi.class);
       Crypto crypto = createMock(Crypto.class);
       KeyPairGenerator rsaKeyPairGenerator = createMock(KeyPairGenerator.class);
       SecureRandom secureRandom = createMock(SecureRandom.class);
@@ -102,18 +102,18 @@ public class CreateUniqueKeyTest {
       rsaKeyPairGenerator.initialize(2048, secureRandom);
       expect(rsaKeyPairGenerator.genKeyPair()).andReturn(keyPair);
 
-      expect(cloudApiClient.getKeyClient()).andReturn(keyClient);
+      expect(cloudApiApi.getKeyApi()).andReturn(keyApi);
 
-      expect(keyClient.create(key)).andReturn(key);
+      expect(keyApi.create(key)).andReturn(key);
 
-      replay(cloudApiClient, keyClient, crypto, rsaKeyPairGenerator, secureRandom);
+      replay(cloudApiApi, keyApi, crypto, rsaKeyPairGenerator, secureRandom);
 
-      CreateUniqueKey parser = new CreateUniqueKey(cloudApiClient, namingConvention, crypto, Providers.of(secureRandom));
+      CreateUniqueKey parser = new CreateUniqueKey(cloudApiApi, namingConvention, crypto, Providers.of(secureRandom));
 
       assertEquals(parser.load(DatacenterAndName.fromDatacenterAndName("datacenter", "group")),
             KeyAndPrivateKey.fromKeyAndPrivateKey(key, PRIVATE_KEY));
 
-      verify(cloudApiClient, keyClient, crypto, rsaKeyPairGenerator, secureRandom);
+      verify(cloudApiApi, keyApi, crypto, rsaKeyPairGenerator, secureRandom);
    }
 
 }

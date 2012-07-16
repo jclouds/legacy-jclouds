@@ -25,14 +25,11 @@ import static org.jclouds.gogrid.reference.GoGridQueryParams.REAL_IP_LIST_KEY;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Binds a list of real IPs to the request.
@@ -42,34 +39,26 @@ import org.jclouds.rest.Binder;
  * @author Oleksiy Yarmula
  */
 public class BindRealIpPortPairsToQueryParams implements Binder {
-   private final Provider<UriBuilder> builder;
 
-   @Inject
-   BindRealIpPortPairsToQueryParams(Provider<UriBuilder> builder) {
-      this.builder = builder;
-   }
-
-   @SuppressWarnings( { "unchecked" })
+   @SuppressWarnings({ "unchecked" })
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof List,
                "this binder is only valid for a List argument");
 
       List<IpPortPair> ipPortPairs = (List<IpPortPair>) input;
+      ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
 
       int i = 0;
       for (IpPortPair ipPortPair : ipPortPairs) {
          checkNotNull(ipPortPair.getIp(), "There must be an IP address defined");
-         checkNotNull(ipPortPair.getIp().getIp(),
-                  "There must be an IP address defined in Ip object");
+         checkNotNull(ipPortPair.getIp().getIp(), "There must be an IP address defined in Ip object");
          checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-         request = ModifyRequest.addQueryParam(request, REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp(), builder
-                  .get());
-         request = ModifyRequest.addQueryParam(request, REAL_IP_LIST_KEY + i + ".port", String.valueOf(ipPortPair
-                  .getPort()), builder.get());
+         builder.put(REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp());
+         builder.put(REAL_IP_LIST_KEY + i + ".port", String.valueOf(ipPortPair.getPort()));
          i++;
       }
-      return request;
+      return (R) request.toBuilder().replaceQueryParams(builder.build()).build();
    }
 }

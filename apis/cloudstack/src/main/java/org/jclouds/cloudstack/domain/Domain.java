@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -44,7 +42,7 @@ public class Domain implements Comparable<Domain> {
       return new ConcreteBuilder().fromDomain(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -135,15 +133,11 @@ public class Domain implements Comparable<Domain> {
    }
 
    private final String id;
-   @Named("haschild")
    private final boolean hasChild;
    private final long level;
    private final String name;
-   @Named("networkdomain")
    private final String networkDomain;
-   @Named("parentdomainid")
    private final String parentDomainId;
-   @Named("parentdomainname")
    private final String parentDomainName;
 
    @ConstructorProperties({

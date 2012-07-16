@@ -28,7 +28,6 @@ import java.util.SortedSet;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -61,6 +60,6 @@ public class ParseContainerCDNMetadataListFromJsonResponseTest {
       ParseJson<SortedSet<ContainerCDNMetadata>> parser = i.getInstance(Key
                .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
                }));
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is))), expects);
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build()), expects);
    }
 }

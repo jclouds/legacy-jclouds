@@ -117,7 +117,7 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
 
    ParseSax<ListBucketResponse> createParser() {
       return factory.create(injector.getInstance(ListBucketHandler.class)).setContext(
-               HttpRequest.builder().method("GET").endpoint(URI.create("http://bucket.com")).build());
+               HttpRequest.builder().method("GET").endpoint("http://bucket.com").build());
    }
 
    @Test

@@ -20,17 +20,12 @@ package org.jclouds.openstack.filters;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Date;
-
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * 
@@ -52,16 +47,9 @@ public class AddTimestampQueryTest {
 
       };
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma/").build();
 
-      AddTimestampQuery filter = new AddTimestampQuery(dateSupplier, new Provider<UriBuilder>() {
-
-         @Override
-         public UriBuilder get() {
-            return new UriBuilderImpl();
-         }
-
-      });
+      AddTimestampQuery filter = new AddTimestampQuery(dateSupplier);
 
       request = filter.filter(request);
 

@@ -29,7 +29,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.util.Maps2;
 
@@ -64,14 +63,14 @@ public class BindMapToHeadersWithPrefix implements Binder {
 
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map<?,?>, "this binder is only valid for Maps!");
       checkNotNull(request, "request");
 
-      @SuppressWarnings("unchecked")
       Map<String, String> userMetadata = Maps2.transformKeys((Map<String, String>) input, FN);
-      return ModifyRequest.putHeaders(request, Multimaps.forMap(userMetadata));
+      return (R) request.toBuilder().replaceHeaders(Multimaps.forMap(userMetadata)).build();
    }
 
 }

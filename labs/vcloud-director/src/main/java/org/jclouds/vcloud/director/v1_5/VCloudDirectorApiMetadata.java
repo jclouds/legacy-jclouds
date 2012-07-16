@@ -30,8 +30,8 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
 import com.google.common.reflect.TypeToken;
 
@@ -82,7 +82,7 @@ public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
        BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(VCloudDirectorClient.class, VCloudDirectorAsyncClient.class);
+         super(VCloudDirectorApi.class, VCloudDirectorAsyncApi.class);
           id("vcloud-director")
          .name("vCloud Director 1.5 API")
          .identityName("User at Organization (user@org)")

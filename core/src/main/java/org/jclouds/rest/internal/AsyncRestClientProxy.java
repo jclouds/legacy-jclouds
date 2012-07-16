@@ -234,7 +234,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       }
       ListenableFuture<?> result;
       try {
-         GeneratedHttpRequest<T> request = annotationProcessor.createRequest(method, args);
+         GeneratedHttpRequest request = annotationProcessor.createRequest(method, args);
          if (exceptionParser instanceof InvocationContext) {
             ((InvocationContext) exceptionParser).setContext(request);
          }

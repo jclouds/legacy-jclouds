@@ -27,27 +27,27 @@ import javax.inject.Singleton;
 
 import org.jclouds.atmos.domain.UserMetadata;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class BindUserMetadataToHeaders implements Binder, Function<UserMetadata, Map<String, String>> {
+   
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof UserMetadata,
             "this binder is only valid for UserMetadatas!");
       checkNotNull(request, "request");
-
-      return ModifyRequest.putHeaders(request, Multimaps.forMap(apply(UserMetadata.class.cast(input))));
+      return (R) request.toBuilder().replaceHeaders(Multimaps.forMap(apply(UserMetadata.class.cast(input)))).build();
    }
 
    @Override

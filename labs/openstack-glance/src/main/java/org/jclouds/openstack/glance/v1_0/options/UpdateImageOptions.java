@@ -46,7 +46,7 @@ import org.jclouds.openstack.glance.v1_0.domain.StoreType;
  *
  *
  * // this will adjust the image with id 'id' the name "newName", minimum required disk of 5GB, etc. 
- * details = client.update(id, name("newName"), minDisk(5), isPublic(true), property("mykey", "somevalue"));
+ * details = api.update(id, name("newName"), minDisk(5), isPublic(true), property("mykey", "somevalue"));
  * <code>
  * @author Adam Lowe
  * @see <a href="http://glance.openstack.org/glanceapi.html"/>

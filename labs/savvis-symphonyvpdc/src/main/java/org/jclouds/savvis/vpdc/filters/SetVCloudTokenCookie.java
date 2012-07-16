@@ -20,15 +20,14 @@ package org.jclouds.savvis.vpdc.filters;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.savvis.vpdc.internal.VCloudToken;
 
 import com.google.common.base.Supplier;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Adds the VCloud Token to the request as a cookie
@@ -47,7 +46,7 @@ public class SetVCloudTokenCookie implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, HttpHeaders.COOKIE, "vcloud-token=" + vcloudTokenProvider.get());
+      return request.toBuilder().replaceHeader(HttpHeaders.COOKIE, "vcloud-token=" + vcloudTokenProvider.get()).build();
    }
 
 }

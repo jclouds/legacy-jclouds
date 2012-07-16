@@ -20,8 +20,8 @@ package org.jclouds.iam.xml;
 
 import java.util.Set;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.iam.domain.User;
 import org.jclouds.util.SaxUtils;
@@ -36,7 +36,7 @@ import com.google.inject.Inject;
  *
  * @author Adrian Cole
  */
-public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<User>> {
+public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<User>> {
 
    private final UserHandler userHandler;
 
@@ -54,8 +54,8 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
     * {@inheritDoc}
     */
    @Override
-   public PaginatedIterable<User> getResult() {
-      return PaginatedIterables.forwardWithMarker(users, afterMarker);
+   public IterableWithMarker<User> getResult() {
+      return IterableWithMarkers.from(users, afterMarker);
    }
 
    /**

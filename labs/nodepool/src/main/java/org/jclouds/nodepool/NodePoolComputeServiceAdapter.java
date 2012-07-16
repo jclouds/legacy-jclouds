@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.JCloudsNativeComputeServiceAdapter;
 import org.jclouds.nodepool.internal.EagerNodePoolComputeServiceAdapter;
 
@@ -35,5 +36,11 @@ public interface NodePoolComputeServiceAdapter extends JCloudsNativeComputeServi
    int usedNodes();
 
    int currentSize();
+
+   void destroyPool();
+
+   ComputeServiceContext getBackendComputeServiceContext();
+
+   String getPoolGroupName();
 
 }

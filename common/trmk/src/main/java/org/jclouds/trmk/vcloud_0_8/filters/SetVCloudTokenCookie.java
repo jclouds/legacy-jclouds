@@ -26,7 +26,6 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.trmk.vcloud_0_8.VCloudToken;
 
 /**
@@ -46,7 +45,7 @@ public class SetVCloudTokenCookie implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, HttpHeaders.COOKIE, "vcloud-token=" + vcloudTokenProvider.get());
+      return request.toBuilder().replaceHeader(HttpHeaders.COOKIE, "vcloud-token=" + vcloudTokenProvider.get()).build();
    }
 
 }

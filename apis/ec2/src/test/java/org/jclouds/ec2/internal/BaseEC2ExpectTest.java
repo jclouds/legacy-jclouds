@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.internal;
 
-import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -37,7 +36,6 @@ import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -47,11 +45,10 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
    
    protected DateService dateService = new SimpleDateFormatDateService();
    
-   protected HttpRequest describeRegionsRequest = HttpRequest
-         .builder()
+   protected HttpRequest describeRegionsRequest = HttpRequest.builder()
          .method("POST")
-         .endpoint(URI.create("https://ec2.us-east-1.amazonaws.com/"))
-         .headers(ImmutableMultimap.of("Host", "ec2.us-east-1.amazonaws.com"))
+         .endpoint("https://ec2.us-east-1.amazonaws.com/")
+         .addHeader("Host", "ec2.us-east-1.amazonaws.com")
          .payload(payloadFromStringWithContentType(
                   "Action=DescribeRegions&Signature=s5OXKqaaeKhJW5FVrRntuMsUL4Ed5fjzgUWeukU96ko%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                   MediaType.APPLICATION_FORM_URLENCODED)).build();
@@ -70,8 +67,8 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
          builder.put(
                formSigner.filter(HttpRequest.builder()
                           .method("POST")
-                          .endpoint(URI.create("https://ec2." + region + ".amazonaws.com/"))
-                          .headers(ImmutableMultimap.of("Host", "ec2." + region + ".amazonaws.com"))
+                          .endpoint("https://ec2." + region + ".amazonaws.com/")
+                          .addHeader("Host", "ec2." + region + ".amazonaws.com")
                           .payload(payloadFromStringWithContentType(
                                  "Action=DescribeAvailabilityZones&Version=2010-06-15",
                                  MediaType.APPLICATION_FORM_URLENCODED)).build()),

@@ -30,16 +30,16 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
-import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.ServiceClient;
-import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.TenantClient;
-import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.TokenClient;
-import org.jclouds.openstack.keystone.v2_0.features.UserAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.features.UserClient;
+import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
+import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.features.ServiceApi;
+import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.features.TenantApi;
+import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.features.TokenApi;
+import org.jclouds.openstack.keystone.v2_0.features.UserAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.features.UserApi;
 import org.jclouds.openstack.keystone.v2_0.functions.PresentWhenAdminURLExistsForIdentityService;
 import org.jclouds.openstack.keystone.v2_0.handlers.KeystoneErrorHandler;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersion;
@@ -63,22 +63,22 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adam Lowe
  */
 @ConfiguresRestClient
-public class KeystoneRestClientModule<S extends KeystoneClient, A extends KeystoneAsyncClient> extends
+public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneAsyncApi> extends
          RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-            .put(ServiceClient.class, ServiceAsyncClient.class).put(TokenClient.class, TokenAsyncClient.class)
-            .put(UserClient.class, UserAsyncClient.class).put(TenantClient.class, TenantAsyncClient.class).build();
+            .put(ServiceApi.class, ServiceAsyncApi.class).put(TokenApi.class, TokenAsyncApi.class)
+            .put(UserApi.class, UserAsyncApi.class).put(TenantApi.class, TenantAsyncApi.class).build();
 
    @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
-      super(TypeToken.class.cast(TypeToken.of(KeystoneClient.class)), TypeToken.class.cast(TypeToken
-               .of(KeystoneAsyncClient.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(TypeToken.of(KeystoneApi.class)), TypeToken.class.cast(TypeToken
+               .of(KeystoneAsyncApi.class)), DELEGATE_MAP);
    }
 
-   protected KeystoneRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
+   protected KeystoneRestClientModule(TypeToken<S> syncApiType, TypeToken<A> asyncApiType,
             Map<Class<?>, Class<?>> sync2Async) {
-      super(syncClientType, asyncClientType, sync2Async);
+      super(syncApiType, asyncApiType, sync2Async);
    }
 
    public static class KeystoneAdminURLModule extends AbstractModule {

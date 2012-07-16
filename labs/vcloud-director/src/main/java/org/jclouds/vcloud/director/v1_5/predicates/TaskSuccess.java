@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.features.TaskClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskApi;
 
 import com.google.common.base.Predicate;
 
@@ -41,14 +41,14 @@ import com.google.common.base.Predicate;
 @Singleton
 public class TaskSuccess implements Predicate<Task> {
 
-   private final TaskClient taskClient;
+   private final TaskApi taskApi;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(TaskClient taskClient) {
-      this.taskClient = taskClient;
+   public TaskSuccess(TaskApi taskApi) {
+      this.taskApi = taskApi;
    }
 
    /** @see Predicate#apply(Object) */
@@ -58,7 +58,7 @@ public class TaskSuccess implements Predicate<Task> {
       logger.trace("looking for status on task %s", task.getOperationName());
 
       // TODO shouldn't we see if it's already done before getting it from API server?
-      task = taskClient.getTask(task.getHref());
+      task = taskApi.getTask(task.getHref());
       
       // perhaps task isn't available, yet
       if (task == null) return false;

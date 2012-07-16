@@ -36,7 +36,6 @@ import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -59,7 +58,7 @@ public class ParseJobsFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_get_job_list.json");
 
       ParseJobListFromJsonResponse parser = i.getInstance(ParseJobListFromJsonResponse.class);
-      SortedSet<Job> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      SortedSet<Job> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       Map<String, String> details = ImmutableMap.of(
             "image", "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
@@ -83,7 +82,6 @@ public class ParseJobsFromJsonResponseTest {
          super.configure();
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public Map<Type, Object> provideCustomAdapterBindings() {

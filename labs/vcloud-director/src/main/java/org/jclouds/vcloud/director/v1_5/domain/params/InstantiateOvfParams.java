@@ -24,8 +24,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.params.VAppCreationParams.Builder;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 

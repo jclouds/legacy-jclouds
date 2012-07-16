@@ -22,7 +22,6 @@ package org.jclouds.ec2.compute.predicates;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -36,7 +35,6 @@ import org.jclouds.predicates.PredicateWithResult;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Injector;
 
 /**
@@ -46,38 +44,34 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "GetImageWhenStatusAvailablePredicateWithResultExpectTest")
 public class GetImageWhenStatusAvailablePredicateWithResultExpectTest extends BaseEC2ComputeServiceExpectTest<Injector> {
 
-   protected HttpRequest describeRegionsRequest = HttpRequest
-            .builder()
+   protected HttpRequest describeRegionsRequest = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://ec2.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.of("Host", "ec2.us-east-1.amazonaws.com"))
+            .endpoint("https://ec2.us-east-1.amazonaws.com/")
+            .addHeader("Host", "ec2.us-east-1.amazonaws.com")
             .payload(payloadFromStringWithContentType(
                      "Action=DescribeRegions&Signature=s5OXKqaaeKhJW5FVrRntuMsUL4Ed5fjzgUWeukU96ko%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                      "application/x-www-form-urlencoded")).build();
 
-   protected HttpRequest describeImagesRequest0 = HttpRequest
-            .builder()
+   protected HttpRequest describeImagesRequest0 = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://ec2.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.of("Host", "ec2.us-east-1.amazonaws.com"))
+            .endpoint("https://ec2.us-east-1.amazonaws.com/")
+            .addHeader("Host", "ec2.us-east-1.amazonaws.com")
             .payload(payloadFromStringWithContentType(
                      "Action=DescribeImages&ImageId.1=ami-0&Signature=k9douTXFWkAZecPiZfBLUm3LIS3bTLanMV%2F%2BWrB1jFA%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                      "application/x-www-form-urlencoded")).build();
 
-   protected HttpRequest describeImagesRequest1 = HttpRequest
-            .builder()
+   protected HttpRequest describeImagesRequest1 = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://ec2.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.of("Host", "ec2.us-east-1.amazonaws.com"))
+            .endpoint("https://ec2.us-east-1.amazonaws.com/")
+            .addHeader("Host", "ec2.us-east-1.amazonaws.com")
             .payload(payloadFromStringWithContentType(
                      "Action=DescribeImages&ImageId.1=ami-1&Signature=IVunQEvp8vTKTIxXex2Uh5SWQY1PJCx0ExUe9FRujBY%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                      "application/x-www-form-urlencoded")).build();
 
-   protected HttpRequest describeImagesRequest2 = HttpRequest
-            .builder()
+   protected HttpRequest describeImagesRequest2 = HttpRequest.builder()
             .method("POST")
-            .endpoint(URI.create("https://ec2.us-east-1.amazonaws.com/"))
-            .headers(ImmutableMultimap.of("Host", "ec2.us-east-1.amazonaws.com"))
+            .endpoint("https://ec2.us-east-1.amazonaws.com/")
+            .addHeader("Host", "ec2.us-east-1.amazonaws.com")
             .payload(payloadFromStringWithContentType(
                      "Action=DescribeImages&ImageId.1=ami-2&Signature=8TfP8BJlg1hiY6EqUbS73A7PQO7dlpqnRMyi7hPu76U%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                      "application/x-www-form-urlencoded")).build();
@@ -85,21 +79,15 @@ public class GetImageWhenStatusAvailablePredicateWithResultExpectTest extends Ba
    protected HttpResponse describeRegionsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/regionEndpoints.xml", MediaType.APPLICATION_XML)).build();
 
-   protected HttpResponse describeImagesResponse0 = HttpResponse
-            .builder()
-            .statusCode(200)
+   protected HttpResponse describeImagesResponse0 = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/describe_images_imageextension0.xml",
                      MediaType.APPLICATION_XML)).build();
 
-   protected HttpResponse describeImagesResponse1 = HttpResponse
-            .builder()
-            .statusCode(200)
+   protected HttpResponse describeImagesResponse1 = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/describe_images_imageextension1.xml",
                      MediaType.APPLICATION_XML)).build();
 
-   protected HttpResponse describeImagesResponse2 = HttpResponse
-            .builder()
-            .statusCode(200)
+   protected HttpResponse describeImagesResponse2 = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/describe_images_imageextension2.xml",
                      MediaType.APPLICATION_XML)).build();
 

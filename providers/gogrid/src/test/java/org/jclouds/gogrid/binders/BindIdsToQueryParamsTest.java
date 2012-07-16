@@ -20,15 +20,8 @@ package org.jclouds.gogrid.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
-
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests that id bindings are proper for request
@@ -42,16 +35,9 @@ public class BindIdsToQueryParamsTest {
    @Test
    public void testWithView() throws SecurityException, NoSuchMethodException {
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma/").build();
 
-      BindIdsToQueryParams binder = new BindIdsToQueryParams(new Provider<UriBuilder>() {
-
-         @Override
-         public UriBuilder get() {
-            return new UriBuilderImpl();
-         }
-
-      });
+      BindIdsToQueryParams binder = new BindIdsToQueryParams();
 
       request = binder.bindToRequest(request, new Long[] { 123L, 456L });
 
@@ -60,16 +46,9 @@ public class BindIdsToQueryParamsTest {
 
    @Test
    public void testWithPrimitive() {
-      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma/").build();
 
-      BindIdsToQueryParams binder = new BindIdsToQueryParams(new Provider<UriBuilder>() {
-
-         @Override
-         public UriBuilder get() {
-            return new UriBuilderImpl();
-         }
-
-      });
+      BindIdsToQueryParams binder = new BindIdsToQueryParams();
 
       request = binder.bindToRequest(request, new long[] { 123L, 456L });
 

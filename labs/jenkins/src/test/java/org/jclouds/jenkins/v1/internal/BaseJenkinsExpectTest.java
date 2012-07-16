@@ -18,14 +18,14 @@
  */
 package org.jclouds.jenkins.v1.internal;
 
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing Jenkins Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseJenkinsExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseJenkinsExpectTest<T> extends BaseRestApiExpectTest<T> {
     public BaseJenkinsExpectTest() {
       provider = "jenkins";
    }

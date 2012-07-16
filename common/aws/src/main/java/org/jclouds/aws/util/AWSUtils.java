@@ -39,16 +39,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * Needed to sign and verify requests and responses.
@@ -56,6 +55,7 @@ import com.google.common.collect.ImmutableMultimap.Builder;
  * @author Adrian Cole
  */
 @Singleton
+@SuppressWarnings("unchecked")
 public class AWSUtils {
    @Singleton
    public static class GetRegionFromLocation implements Function<Location, String> {
@@ -118,7 +118,7 @@ public class AWSUtils {
          builder.put(String.format(format, (i + 1)), checkNotNull(values[i], format.toLowerCase() + "s[" + i + "]"));
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
    // TODO: make this more dynamic
@@ -136,7 +136,7 @@ public class AWSUtils {
          builder.put(prefix + "." + (i++ + 1), checkNotNull(o.toString(), prefix.toLowerCase() + "s[" + i + "]"));
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
    public static <R extends HttpRequest> R indexStringArrayToFormValuesWithPrefix(R request, String prefix, Object input) {
@@ -148,7 +148,7 @@ public class AWSUtils {
          builder.put(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase() + "s[" + i + "]"));
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
    public static <R extends HttpRequest> R indexMapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
@@ -164,10 +164,9 @@ public class AWSUtils {
          i++;
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
-   @SuppressWarnings("unchecked")
    public static <R extends HttpRequest> R indexMultimapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Multimap<?, ?>, "this binder is only valid for Multimap<?,?>: " + input.getClass());
       Multimap<Object, Object> map = (Multimap<Object, Object>) input;
@@ -183,10 +182,9 @@ public class AWSUtils {
          i++;
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
-   @SuppressWarnings("unchecked")
    public static <R extends HttpRequest> R indexMapOfIterableToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map<?, ?>, "this binder is only valid for Map<?,Iterable<?>>: " + input.getClass());
       Map<Object, Iterable<Object>> map = (Map<Object, Iterable<Object>>) input;
@@ -204,7 +202,7 @@ public class AWSUtils {
          i++;
       }
       ImmutableMultimap<String, String> forms = builder.build();
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
    public static String getRegionFromLocationOrNull(Location location) {
@@ -217,7 +215,7 @@ public class AWSUtils {
       return (parts.length == 1) ? new String[] { null, id } : parts;
    }
 
-   public static String findRegionInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   public static String findRegionInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof String) {
             String regionName = (String) arg;

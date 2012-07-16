@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Map;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
@@ -90,7 +88,7 @@ public class Capacity implements Comparable<Capacity> {
       return new ConcreteBuilder().fromCapacity(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected long capacityTotal;
@@ -190,20 +188,13 @@ public class Capacity implements Comparable<Capacity> {
       }
    }
 
-   @Named("capacitytotal")
    private final long capacityTotal;
-   @Named("capacityused")
    private final long capacityUsed;
-   @Named("percentused")
    private final double percentUsed;
-   @Named("podid")
    private final String podId;
-   @Named("podname")
    private final String podName;
    private final Capacity.Type type;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
 
    @ConstructorProperties({

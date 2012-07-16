@@ -30,13 +30,13 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.Ingress;
 import org.jclouds.openstack.nova.v2_0.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
-import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -50,11 +50,11 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final NovaClient novaClient;
+   protected final NovaApi novaApi;
 
    @Inject
-   public CreateSecurityGroupIfNeeded(NovaClient novaClient) {
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+   public CreateSecurityGroupIfNeeded(NovaApi novaApi) {
+      this.novaApi = checkNotNull(novaApi, "novaApi");
    }
 
    @Override
@@ -62,33 +62,33 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
       checkNotNull(zoneSecurityGroupNameAndPorts, "zoneSecurityGroupNameAndPorts");
 
       String zoneId = zoneSecurityGroupNameAndPorts.getZone();
-      Optional<SecurityGroupClient> client = novaClient.getSecurityGroupExtensionForZone(zoneId);
-      checkArgument(client.isPresent(), "Security groups are required, but the extension is not availablein zone %s!", zoneId);
+      Optional<SecurityGroupApi> api = novaApi.getSecurityGroupExtensionForZone(zoneId);
+      checkArgument(api.isPresent(), "Security groups are required, but the extension is not availablein zone %s!", zoneId);
       logger.debug(">> creating securityGroup %s", zoneSecurityGroupNameAndPorts);
       try {
 
-         SecurityGroup securityGroup = client.get().createSecurityGroupWithNameAndDescription(
+         SecurityGroup securityGroup = api.get().createSecurityGroupWithNameAndDescription(
                   zoneSecurityGroupNameAndPorts.getName(), zoneSecurityGroupNameAndPorts.getName());
 
          logger.debug("<< created securityGroup(%s)", securityGroup);
          for (int port : zoneSecurityGroupNameAndPorts.getPorts()) {
-            authorizeGroupToItselfAndAllIPsToTCPPort(client.get(), securityGroup, port);
+            authorizeGroupToItselfAndAllIPsToTCPPort(api.get(), securityGroup, port);
          }
-         return new SecurityGroupInZone(client.get().getSecurityGroup(securityGroup.getId()), zoneId);
+         return new SecurityGroupInZone(api.get().getSecurityGroup(securityGroup.getId()), zoneId);
       } catch (IllegalStateException e) {
          logger.trace("<< trying to find securityGroup(%s): %s", zoneSecurityGroupNameAndPorts, e.getMessage());
-         SecurityGroup group = find(client.get().listSecurityGroups(), nameEquals(zoneSecurityGroupNameAndPorts
+         SecurityGroup group = find(api.get().listSecurityGroups(), nameEquals(zoneSecurityGroupNameAndPorts
                   .getName()));
          logger.debug("<< reused securityGroup(%s)", group.getId());
          return new SecurityGroupInZone(group, zoneId);
       }
    }
 
-   private void authorizeGroupToItselfAndAllIPsToTCPPort(SecurityGroupClient securityGroupClient,
+   private void authorizeGroupToItselfAndAllIPsToTCPPort(SecurityGroupApi securityGroupApi,
             SecurityGroup securityGroup, int port) {
       // NOTE that permission to itself isn't supported on trystack!
       logger.debug(">> authorizing securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
-      securityGroupClient.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress.builder().ipProtocol(
+      securityGroupApi.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress.builder().ipProtocol(
                IpProtocol.TCP).fromPort(port).toPort(port).build(), "0.0.0.0/0");
       logger.debug("<< authorized securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
 

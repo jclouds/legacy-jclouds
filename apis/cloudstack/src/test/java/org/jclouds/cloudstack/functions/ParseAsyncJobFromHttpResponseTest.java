@@ -24,18 +24,17 @@ import static org.testng.Assert.assertTrue;
 import java.io.InputStream;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
+import org.jclouds.cloudstack.domain.AsyncJob.Status;
 import org.jclouds.cloudstack.domain.AsyncJobError;
+import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateExtraction;
-import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
-import org.jclouds.cloudstack.domain.AsyncJob.Status;
-import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -70,8 +69,9 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newStringPayload(input)));
+      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(input).build());
 
       assertEquals(response, expects);
    }
@@ -88,9 +88,9 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newStringPayload(input)));
-
+      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(input).build());
       assertEquals(response, expects);
    }
 
@@ -109,9 +109,9 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newStringPayload(input)));
-
+      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(input).build());
       assertEquals(response, expects);
    }
 
@@ -128,9 +128,9 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newStringPayload(input)));
-
+      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(input).build());
       assertEquals(response, expects);
    }
 
@@ -151,9 +151,9 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newStringPayload(input)));
-
+      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(input).build());
       assertEquals(response, expects);
    }
 
@@ -181,9 +181,9 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newInputStreamPayload(is)));
-
+      AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(is).build());
       assertEquals(response, expects);
    }
 
@@ -203,20 +203,20 @@ public class ParseAsyncJobFromHttpResponseTest {
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
-      AsyncJob<IPForwardingRule> response = (AsyncJob<IPForwardingRule>) parser.apply(new HttpResponse(200, "ok",
-         Payloads.newInputStreamPayload(is)));
-
+      AsyncJob<IPForwardingRule> response = (AsyncJob<IPForwardingRule>) parser.apply(HttpResponse.builder()
+                                                                                                .statusCode(200).message("ok")
+                                                                                                .payload(is).build());
       assertEquals(response, expects);
    }
 
    public void testOverloadedKeyName() {
       InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-createtemplate.json");
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
-      AsyncJob<?> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      AsyncJob<?> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertTrue(response.getResult() instanceof Template, "response expected to be Template, actually is " + response.getResult().getClass());
 
       is = getClass().getResourceAsStream("/queryasyncjobresultresponse-extracttemplate.json");
-      response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertTrue(response.getResult() instanceof TemplateExtraction, "response expected to be TemplateExtraction, actually is " + response.getResult().getClass());
    }
 }

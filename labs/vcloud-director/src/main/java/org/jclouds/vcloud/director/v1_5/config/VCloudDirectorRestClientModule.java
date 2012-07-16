@@ -41,56 +41,56 @@ import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Suppliers2;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.MediaAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.MediaClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
-import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgClient;
-import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.QueryClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskClient;
-import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.UploadClient;
-import org.jclouds.vcloud.director.v1_5.features.VAppAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.VAppClient;
-import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
-import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.VdcClient;
-import org.jclouds.vcloud.director.v1_5.features.VmAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.VmClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.GroupAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.UserAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.UserClient;
+import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.CatalogApi;
+import org.jclouds.vcloud.director.v1_5.features.MediaAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.MediaApi;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
+import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.NetworkApi;
+import org.jclouds.vcloud.director.v1_5.features.OrgAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.OrgApi;
+import org.jclouds.vcloud.director.v1_5.features.QueryAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.QueryApi;
+import org.jclouds.vcloud.director.v1_5.features.TaskAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.TaskApi;
+import org.jclouds.vcloud.director.v1_5.features.UploadAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.UploadApi;
+import org.jclouds.vcloud.director.v1_5.features.VAppAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.VAppApi;
+import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.VAppTemplateApi;
+import org.jclouds.vcloud.director.v1_5.features.VdcAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.VdcApi;
+import org.jclouds.vcloud.director.v1_5.features.VmAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.VmApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.GroupAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.GroupApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.UserAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.admin.UserApi;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
-import org.jclouds.vcloud.director.v1_5.login.SessionAsyncClient;
-import org.jclouds.vcloud.director.v1_5.login.SessionClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionAsyncApi;
+import org.jclouds.vcloud.director.v1_5.login.SessionApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -109,49 +109,49 @@ import com.google.inject.name.Named;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirectorClient, VCloudDirectorAsyncClient> {
+public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirectorApi, VCloudDirectorAsyncApi> {
    
    public static final Map<Class<?>, Class<?>> USER_DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
-         .put(CatalogClient.class, CatalogAsyncClient.class)
-         .put(MediaClient.class, MediaAsyncClient.class)
-         .put(MetadataClient.Readable.class, MetadataAsyncClient.Readable.class)
-         .put(MetadataClient.Writeable.class, MetadataAsyncClient.Writeable.class)
-         .put(NetworkClient.class, NetworkAsyncClient.class)
-         .put(OrgClient.class, OrgAsyncClient.class)
-         .put(QueryClient.class, QueryAsyncClient.class)
-         .put(TaskClient.class, TaskAsyncClient.class)
-         .put(UploadClient.class, UploadAsyncClient.class)
-         .put(VAppClient.class, VAppAsyncClient.class)
-         .put(VAppTemplateClient.class, VAppTemplateAsyncClient.class)
-         .put(VdcClient.class, VdcAsyncClient.class)
-         .put(VmClient.class, VmAsyncClient.class)
+         .put(CatalogApi.class, CatalogAsyncApi.class)
+         .put(MediaApi.class, MediaAsyncApi.class)
+         .put(MetadataApi.Readable.class, MetadataAsyncApi.Readable.class)
+         .put(MetadataApi.Writeable.class, MetadataAsyncApi.Writeable.class)
+         .put(NetworkApi.class, NetworkAsyncApi.class)
+         .put(OrgApi.class, OrgAsyncApi.class)
+         .put(QueryApi.class, QueryAsyncApi.class)
+         .put(TaskApi.class, TaskAsyncApi.class)
+         .put(UploadApi.class, UploadAsyncApi.class)
+         .put(VAppApi.class, VAppAsyncApi.class)
+         .put(VAppTemplateApi.class, VAppTemplateAsyncApi.class)
+         .put(VdcApi.class, VdcAsyncApi.class)
+         .put(VmApi.class, VmAsyncApi.class)
          .build();
    
    public static final Map<Class<?>, Class<?>> ADMIN_DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
          .putAll(USER_DELEGATE_MAP)
-         .put(AdminCatalogClient.class, AdminCatalogAsyncClient.class)
-         .put(AdminNetworkClient.class, AdminNetworkAsyncClient.class)
-         .put(AdminOrgClient.class, AdminOrgAsyncClient.class)
-         .put(AdminQueryClient.class, AdminQueryAsyncClient.class)
-         .put(AdminVdcClient.class, AdminVdcAsyncClient.class)
-         .put(GroupClient.class, GroupAsyncClient.class)
-         .put(UserClient.class, UserAsyncClient.class)
+         .put(AdminCatalogApi.class, AdminCatalogAsyncApi.class)
+         .put(AdminNetworkApi.class, AdminNetworkAsyncApi.class)
+         .put(AdminOrgApi.class, AdminOrgAsyncApi.class)
+         .put(AdminQueryApi.class, AdminQueryAsyncApi.class)
+         .put(AdminVdcApi.class, AdminVdcAsyncApi.class)
+         .put(GroupApi.class, GroupAsyncApi.class)
+         .put(UserApi.class, UserAsyncApi.class)
          .build();
    
    @Override
    protected void bindAsyncClient() {
-      // bind the user client (default)
+      // bind the user api (default)
       super.bindAsyncClient();
-      // bind the admin client
-      BinderUtils.bindAsyncClient(binder(), VCloudDirectorAdminAsyncClient.class);
+      // bind the admin api
+      BinderUtils.bindAsyncClient(binder(), VCloudDirectorAdminAsyncApi.class);
    }
    
    @Override
    protected void bindClient() {
-      // bind the user client (default)
+      // bind the user api (default)
       super.bindClient();
-      // bind the admin client
-      BinderUtils.bindClient(binder(), VCloudDirectorAdminClient.class, VCloudDirectorAdminAsyncClient.class, ADMIN_DELEGATE_MAP);
+      // bind the admin api
+      BinderUtils.bindClient(binder(), VCloudDirectorAdminApi.class, VCloudDirectorAdminAsyncApi.class, ADMIN_DELEGATE_MAP);
    }
    
    public VCloudDirectorRestClientModule() {
@@ -160,16 +160,16 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    
    @Override
    protected void configure() {
-      bind(new TypeLiteral<RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient>>() {
+      bind(new TypeLiteral<RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi>>() {
+      }).to(new TypeLiteral<RestContextImpl<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi>>() {
       });
       
-      // Bind clients that are used directly in Functions, Predicates and other circumstances
-      bindClientAndAsyncClient(binder(), OrgClient.class, OrgAsyncClient.class);
-      bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
-      bindClientAndAsyncClient(binder(), TaskClient.class, TaskAsyncClient.class);
-      bindClientAndAsyncClient(binder(), VAppClient.class, VAppAsyncClient.class);
-      bindClientAndAsyncClient(binder(), VmClient.class, VmAsyncClient.class);
+      // Bind apis that are used directly in Functions, Predicates and other circumstances
+      bindClientAndAsyncClient(binder(), OrgApi.class, OrgAsyncApi.class);
+      bindClientAndAsyncClient(binder(), SessionApi.class, SessionAsyncApi.class);
+      bindClientAndAsyncClient(binder(), TaskApi.class, TaskAsyncApi.class);
+      bindClientAndAsyncClient(binder(), VAppApi.class, VAppAsyncApi.class);
+      bindClientAndAsyncClient(binder(), VmApi.class, VmAsyncApi.class);
       
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
@@ -186,7 +186,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    @Provides
    @Login
    protected Supplier<URI> loginUrl(@Provider Supplier<URI> provider) {
-      // TODO: technically, we should implement version client, but this will work
+      // TODO: technically, we should implement version api, but this will work
       return Suppliers2.compose(new Function<URI, URI>() {
          
          @Override

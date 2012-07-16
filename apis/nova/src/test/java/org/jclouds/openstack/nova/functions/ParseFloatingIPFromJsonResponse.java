@@ -26,7 +26,6 @@ import java.io.InputStream;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.FloatingIP;
 import org.testng.annotations.Test;
@@ -43,30 +42,28 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit")
 public class ParseFloatingIPFromJsonResponse {
-	
-	@Test
-	public void testParseFloatingIPFromJsonResponseTest() throws IOException {
-		FloatingIP response = parseFLoatingIP();
 
-		String json = new Gson().toJson(response);
-		assertNotNull(json);
+   @Test
+   public void testParseFloatingIPFromJsonResponseTest() throws IOException {
+      FloatingIP response = parseFLoatingIP();
 
-		assertEquals(response.getId(), 1);
-		assertEquals(response.getFixedIP(), "10.0.0.2");
-		assertEquals(response.getInstanceID(), 123);
-		assertEquals(response.getIp(), "10.0.0.3");
-	}
+      String json = new Gson().toJson(response);
+      assertNotNull(json);
 
-	public static FloatingIP parseFLoatingIP() {
-		Injector i = Guice.createInjector(new GsonModule());
+      assertEquals(response.getId(), 1);
+      assertEquals(response.getFixedIP(), "10.0.0.2");
+      assertEquals(response.getInstanceID(), 123);
+      assertEquals(response.getIp(), "10.0.0.3");
+   }
 
-		InputStream is = ParseFloatingIPFromJsonResponse.class
-				.getResourceAsStream("/test_get_floatingip.json");
+   public static FloatingIP parseFLoatingIP() {
+      Injector i = Guice.createInjector(new GsonModule());
 
-		UnwrapOnlyJsonValue<FloatingIP> parser = i.getInstance(Key
-				.get(new TypeLiteral<UnwrapOnlyJsonValue<FloatingIP>>() {
-				}));
-		return parser.apply(new HttpResponse(200, "ok", Payloads
-				.newInputStreamPayload(is)));
-	}
+      InputStream is = ParseFloatingIPFromJsonResponse.class.getResourceAsStream("/test_get_floatingip.json");
+
+      UnwrapOnlyJsonValue<FloatingIP> parser = i.getInstance(Key
+               .get(new TypeLiteral<UnwrapOnlyJsonValue<FloatingIP>>() {
+               }));
+      return parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
+   }
 }

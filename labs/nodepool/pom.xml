@@ -30,7 +30,6 @@
   <groupId>org.jclouds.labs</groupId>
   <artifactId>nodepool</artifactId>
   <name>jcloud nodepool api</name>
-  <description>jclouds components to access an implementation of Joyent SDC</description>
   <packaging>bundle</packaging>
 
   <properties>
@@ -59,6 +58,13 @@
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-blobstore</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <!-- Add all compute so that we can run tests with any provider -->
+    <dependency>
+      <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-allcompute</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jclouds.api</groupId>

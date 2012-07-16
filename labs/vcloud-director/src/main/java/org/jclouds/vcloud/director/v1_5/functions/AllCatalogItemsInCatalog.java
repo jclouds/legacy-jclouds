@@ -35,7 +35,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -48,12 +48,12 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final VCloudDirectorAsyncClient aclient;
+   private final VCloudDirectorAsyncApi aapi;
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogItemsInCatalog(VCloudDirectorAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aclient = aclient;
+   AllCatalogItemsInCatalog(VCloudDirectorAsyncApi aapi, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.aapi = aapi;
       this.executor = executor;
    }
 
@@ -71,7 +71,7 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
 
          @Override
          public Future<CatalogItem> apply(Reference from) {
-            return aclient.getCatalogClient().getCatalogItem(from.getHref());
+            return aapi.getCatalogApi().getCatalogItem(from.getHref());
          }
 
       }, executor, null, logger, "catalogItems in " + from.getHref());

@@ -194,10 +194,10 @@ public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T
       @Override
       protected void bindCacheLoaders() {
          bind(new TypeLiteral<CacheLoader<URI, VAppTemplate>>() {
-         }).toInstance((CacheLoader) CacheLoader.from(Functions.constant(VAppTemplateHandlerTest.parseTemplate())));
+         }).toInstance(CacheLoader.class.cast(CacheLoader.from(Functions.constant(VAppTemplateHandlerTest.parseTemplate()))));
 
          bind(new TypeLiteral<CacheLoader<URI, Envelope>>() {
-         }).toInstance((CacheLoader) CacheLoader.from(Functions.constant(EnvelopeHandlerTest.parseEnvelope())));
+         }).toInstance(CacheLoader.class.cast(CacheLoader.from(Functions.constant(EnvelopeHandlerTest.parseEnvelope()))));
       }
 
       @Override

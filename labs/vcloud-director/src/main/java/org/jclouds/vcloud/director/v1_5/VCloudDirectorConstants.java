@@ -19,19 +19,19 @@
 package org.jclouds.vcloud.director.v1_5;
 
 import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.director.v1_5.login.SessionAsyncClient;
-import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionAsyncApi;
+import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 
 import com.google.common.reflect.TypeToken;
 
 /**
- * Constants used by VCloudDirector clients
+ * Constants used by VCloudDirector apis
  *
  * @author grkvlt@apache.org
  */
 public class VCloudDirectorConstants {
 
-   /** The XML namespace used by the clients. */
+   /** The XML namespace used by the apis. */
    public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
    public static final String VCLOUD_VMW_NS = "http://www.vmware.com/schema/ovf";
@@ -71,8 +71,8 @@ public class VCloudDirectorConstants {
    public static final String PROPERTY_NS_NAME_LEN_MAX = "jclouds.dns_name_length_max";
 
    /** TODO javadoc */
-   public static final TypeToken<RestContext<SessionClient, SessionAsyncClient>> SESSION_CONTEXT_TYPE =
-         new TypeToken<RestContext<SessionClient, SessionAsyncClient>>() {
+   public static final TypeToken<RestContext<SessionApi, SessionAsyncApi>> SESSION_CONTEXT_TYPE =
+         new TypeToken<RestContext<SessionApi, SessionAsyncApi>>() {
 				/** The serialVersionUID */
 				private static final long serialVersionUID = -3625362618882122604L;
 		   };

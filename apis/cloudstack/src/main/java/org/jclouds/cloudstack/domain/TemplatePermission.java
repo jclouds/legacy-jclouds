@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -31,26 +29,26 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * @author Richard Downer
-*/
+ */
 public class TemplatePermission {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromTemplatePermission(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
       protected String account;
       protected String domainId;
       protected boolean isPublic;
-   
-      /** 
+
+      /**
        * @see TemplatePermission#getId()
        */
       public T id(String id) {
@@ -58,7 +56,7 @@ public class TemplatePermission {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplatePermission#getAccount()
        */
       public T account(String account) {
@@ -66,7 +64,7 @@ public class TemplatePermission {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplatePermission#getDomainId()
        */
       public T domainId(String domainId) {
@@ -74,7 +72,7 @@ public class TemplatePermission {
          return self();
       }
 
-      /** 
+      /**
        * @see TemplatePermission#isPublic()
        */
       public T isPublic(boolean isPublic) {
@@ -85,13 +83,13 @@ public class TemplatePermission {
       public TemplatePermission build() {
          return new TemplatePermission(id, account, domainId, isPublic);
       }
-      
+
       public T fromTemplatePermission(TemplatePermission in) {
          return this
-                  .id(in.getId())
-                  .account(in.getAccount())
-                  .domainId(in.getDomainId())
-                  .isPublic(in.isPublic());
+               .id(in.getId())
+               .account(in.getAccount())
+               .domainId(in.getDomainId())
+               .isPublic(in.isPublic());
       }
    }
 
@@ -104,13 +102,11 @@ public class TemplatePermission {
 
    private final String id;
    private final String account;
-   @Named("domainid")
    private final String domainId;
-   @Named("ispublic")
    private final boolean isPublic;
 
    @ConstructorProperties({
-      "id", "account", "domainid", "ispublic"
+         "id", "account", "domainid", "ispublic"
    })
    protected TemplatePermission(String id, @Nullable String account, @Nullable String domainId, boolean isPublic) {
       this.id = checkNotNull(id, "id");
@@ -121,7 +117,7 @@ public class TemplatePermission {
 
    /**
     * Gets the template ID
-    * 
+    *
     * @return the template ID
     */
    public String getId() {
@@ -130,7 +126,7 @@ public class TemplatePermission {
 
    /**
     * Gets the list of accounts the template is available for
-    * 
+    *
     * @return the list of accounts the template is available for
     */
    @Nullable
@@ -140,7 +136,7 @@ public class TemplatePermission {
 
    /**
     * Gets the ID of the domain to which the template belongs
-    * 
+    *
     * @return the ID of the domain to which the template belongs
     */
    @Nullable
@@ -150,7 +146,7 @@ public class TemplatePermission {
 
    /**
     * Returns true if this template is a public template, false otherwise
-    * 
+    *
     * @return true if this template is a public template, false otherwise
     */
    public boolean isPublic() {
@@ -168,16 +164,16 @@ public class TemplatePermission {
       if (obj == null || getClass() != obj.getClass()) return false;
       TemplatePermission that = TemplatePermission.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.isPublic, that.isPublic);
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.isPublic, that.isPublic);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("account", account).add("domainId", domainId).add("isPublic", isPublic);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

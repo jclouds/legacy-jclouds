@@ -20,8 +20,6 @@ package org.jclouds.softlayer.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
 import org.jclouds.json.internal.GsonWrapper;
@@ -58,7 +56,7 @@ public class ProductOrderToJsonTest {
 
    @BeforeGroups(groups = { "unit" })
    public void setup() {
-      request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       Json json = new GsonWrapper(new Gson());
       binder = new ProductOrderToJson(json);
    }

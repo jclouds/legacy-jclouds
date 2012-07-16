@@ -77,7 +77,7 @@ public class ParseObjectInfoListFromJsonResponseTest {
                         CryptoStreams.hex("b039efe731ad111bc1b0ef221c3849d0")).bytes(64l).contentType(
                         "application/octet-stream").lastModified(
                         new SimpleDateFormatDateService().iso8601DateParse("2009-02-03T05:26:32.612Z")).build());
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       ListContainerOptions options = new ListContainerOptions();
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/foo")).atLeastOnce();
       expect(request.getArgs()).andReturn(

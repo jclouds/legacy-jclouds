@@ -31,8 +31,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * Test the CloudStack GlobalDomainClient
  *
@@ -48,10 +46,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=createDomain&" +
                   "name=test&apiKey=identity&signature=6cxzEo7h63G0hgTTMLm4lGsSDK8%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -70,10 +65,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=createDomain&" +
                   "name=test&apiKey=identity&signature=6cxzEo7h63G0hgTTMLm4lGsSDK8%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -89,10 +81,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=updateDomain&id=10&name=test-2&apiKey=identity&signature=5t1eUf2Eyf%2FaB6qt%2BqIj%2BmcwFIo%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -111,10 +100,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpect
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=updateDomain&id=10&name=test-2&apiKey=identity&signature=5t1eUf2Eyf%2FaB6qt%2BqIj%2BmcwFIo%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)

@@ -21,10 +21,7 @@ package org.jclouds.openstack.nova.options;
 import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.HashMap;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
@@ -52,7 +49,7 @@ public class RebuildServerOptionsTest {
 
    private HttpRequest buildRequest(RebuildServerOptions options) {
       injector.injectMembers(options);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       options.bindToRequest(request, new HashMap<String, Object>());
       return request;
    }

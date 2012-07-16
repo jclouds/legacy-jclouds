@@ -30,8 +30,8 @@ import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.domain.Image.Status;
 import org.jclouds.openstack.v2_0.domain.Link;
-import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.openstack.v2_0.domain.Link.Relation;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 

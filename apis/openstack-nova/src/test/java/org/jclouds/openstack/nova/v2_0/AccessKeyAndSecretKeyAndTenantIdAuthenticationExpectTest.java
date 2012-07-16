@@ -20,19 +20,16 @@ package org.jclouds.openstack.nova.v2_0;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
-import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
+import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseServerListTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -41,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest")
-public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends BaseNovaClientExpectTest {
+public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends BaseNovaApiExpectTest {
    public AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest() {
       identity = identityWithTenantId;
    }
@@ -61,20 +58,19 @@ public class AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest extends Ba
       HttpRequest listServers = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantId,
+      NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKeyAndTenantId,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().toString(),
+      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().toString(),
             new ParseServerListTest().expected().toString());
    }
 

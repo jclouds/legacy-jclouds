@@ -28,7 +28,6 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.annotations.Identity;
 
 /**
@@ -46,7 +45,7 @@ public class SlicehostBasic implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION,
-            String.format("Basic %s", CryptoStreams.base64(apikey.getBytes())));
+      return request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION,
+            String.format("Basic %s", CryptoStreams.base64(apikey.getBytes()))).build();
    }
 }

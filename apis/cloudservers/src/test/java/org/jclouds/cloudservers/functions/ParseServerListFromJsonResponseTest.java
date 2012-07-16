@@ -29,7 +29,6 @@ import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -59,7 +58,7 @@ public class ParseServerListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
             }));
-      List<Server> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<Server> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response, expects);
    }
@@ -70,7 +69,7 @@ public class ParseServerListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
             }));
-      List<Server> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<Server> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.get(0).getId(), 1234);
       assertEquals(response.get(0).getName(), "sample-server");

@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
@@ -412,7 +412,7 @@ public class Server extends Resource {
 
    /**
     * @return keyName if extension is present and there is a valur for this server
-    * @see KeyPairClient
+    * @see KeyPairApi
     */
    @Nullable
    public String getKeyName() {
@@ -424,7 +424,7 @@ public class Server extends Resource {
     * <p/>
     * NOTE: This field is only present if the Extended Status extension is installed.
     *
-    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
     * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#EXTENDED_STATUS
     */
    public Optional<ServerExtendedStatus> getExtendedStatus() {
@@ -436,7 +436,7 @@ public class Server extends Resource {
     * <p/>
     * NOTE: This field is only present if the The Extended Server Attributes API extension is installed.
     *
-    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
     * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#EXTENDED_STATUS
     */
    public Optional<ServerExtendedAttributes> getExtendedAttributes() {
@@ -448,7 +448,7 @@ public class Server extends Resource {
     * <p/>
     * NOTE: This field is only present if the Disk Config extension is installed
     *
-    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
     * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#DISK_CONFIG
     */
    public Optional<String> getDiskConfig() {

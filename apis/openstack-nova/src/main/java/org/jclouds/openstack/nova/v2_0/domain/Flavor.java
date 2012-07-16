@@ -175,7 +175,7 @@ public class Flavor extends Resource {
     * <p/>
     * NOTE: This field is only present if the Flavor Extra Data extension is installed (alias "OS-FLV-EXT-DATA").
     * 
-    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionClient#getExtensionByAlias
+    * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
     * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#FLAVOR_EXTRA_DATA
     */
    public Optional<Integer> getEphemeral() {

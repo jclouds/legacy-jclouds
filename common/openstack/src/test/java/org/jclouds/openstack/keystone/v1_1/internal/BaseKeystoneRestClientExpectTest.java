@@ -18,14 +18,11 @@
  */
 package org.jclouds.openstack.keystone.v1_1.internal;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -42,11 +39,9 @@ public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTes
       credential = "Password1234";
    }
 
-   protected HttpRequest initialAuth = HttpRequest
-         .builder()
-         .method("POST")
-         .endpoint(URI.create(endpoint + "/v1.1/auth"))
-         .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+   protected HttpRequest initialAuth = HttpRequest.builder().method("POST")
+         .endpoint(endpoint + "/v1.1/auth")
+         .addHeader(HttpHeaders.ACCEPT, "application/json")
          .payload(
                payloadFromStringWithContentType(
                      "{\"credentials\":{\"username\":\"user@jclouds.org\",\"key\":\"Password1234\"}}",

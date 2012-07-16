@@ -21,7 +21,6 @@ package org.jclouds.ec2.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.ec2.services.BaseEC2AsyncClientTest;
 import org.jclouds.ec2.services.InstanceAsyncClient;
@@ -52,7 +51,7 @@ public class BindS3UploadPolicyAndSignatureTest extends BaseEC2AsyncClientTest<I
    public void testMapping() {
       String json = "{\"foo\":true}";
 
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, json);
       assertEquals(
             request.getPayload().getRawContent(),
@@ -61,7 +60,7 @@ public class BindS3UploadPolicyAndSignatureTest extends BaseEC2AsyncClientTest<I
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 

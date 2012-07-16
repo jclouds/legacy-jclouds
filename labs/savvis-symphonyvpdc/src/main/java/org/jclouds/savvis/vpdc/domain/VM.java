@@ -227,7 +227,6 @@ public class VM extends BaseVirtualSystem<VM> implements Resource {
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder additionalSection(String name, Section additionalSection) {
          return Builder.class.cast(super.additionalSection(name, additionalSection));
@@ -236,7 +235,6 @@ public class VM extends BaseVirtualSystem<VM> implements Resource {
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder additionalSections(Multimap<String, Section> additionalSections) {
          return Builder.class.cast(super.additionalSections(additionalSections));
@@ -314,7 +312,6 @@ public class VM extends BaseVirtualSystem<VM> implements Resource {
    protected final Set<NetworkConfigSection> networkConfigSections;
    protected final Set<NetworkConnectionSection> networkConnectionSections;
 
-   @SuppressWarnings("unchecked")
    public VM(String id, String info, String name, OperatingSystemSection operatingSystem,
             Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
             Iterable<? extends ProductSection> productSections, Multimap<String, Section> additionalSections,

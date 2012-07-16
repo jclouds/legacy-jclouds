@@ -30,7 +30,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Task.Status;
-import org.jclouds.vcloud.director.v1_5.features.TaskClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskApi;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -42,7 +42,7 @@ import com.google.common.collect.Iterables;
  */
 public class TaskStatusEquals implements Predicate<Task> {
 
-   private final TaskClient taskClient;
+   private final TaskApi taskApi;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -50,12 +50,12 @@ public class TaskStatusEquals implements Predicate<Task> {
    private Collection<Status> expectedStatuses;
    private Collection<Status> failingStatuses;
 
-   public TaskStatusEquals(TaskClient taskClient, Status expectedStatus, Set<Status> failingStatuses) {
-      this(taskClient, Collections.singleton(expectedStatus), failingStatuses);
+   public TaskStatusEquals(TaskApi taskApi, Status expectedStatus, Set<Status> failingStatuses) {
+      this(taskApi, Collections.singleton(expectedStatus), failingStatuses);
    }
 
-   public TaskStatusEquals(TaskClient taskClient, Set<Status> expectedStatuses, Set<Status> failingStatuses) {
-      this.taskClient = taskClient;
+   public TaskStatusEquals(TaskApi taskApi, Set<Status> expectedStatuses, Set<Status> failingStatuses) {
+      this.taskApi = taskApi;
       this.expectedStatuses = expectedStatuses;
       this.failingStatuses = failingStatuses;
    }
@@ -67,7 +67,7 @@ public class TaskStatusEquals implements Predicate<Task> {
       logger.trace("looking for status on task %s", task);
 
       // TODO shouldn't we see if it's already done before getting it from API server?
-      task = taskClient.getTask(task.getHref());
+      task = taskApi.getTask(task.getHref());
       
       // perhaps task isn't available, yet
       if (task == null) return false;

@@ -30,7 +30,6 @@ import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.testng.annotations.Test;
 
@@ -68,15 +67,15 @@ public class ListOfKeyValuesDelimitedByBlankLinesToServerInfoSetTest {
          }).getInstance(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class);
 
    public void testNone() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), ImmutableSet.<ServerInfo> of());
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))),
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("").build()), ImmutableSet.<ServerInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload("\n\n").build()),
             ImmutableSet.<ServerInfo> of());
-      assertEquals(FN.apply(new HttpResponse(200, "", null)), ImmutableSet.<ServerInfo> of());
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").build()), ImmutableSet.<ServerInfo> of());
    }
 
    public void testOne() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToServerInfoTest.class
-            .getResourceAsStream("/servers.txt")))), ImmutableSet.<ServerInfo> of(MapToServerInfoTest.ONE,
+      assertEquals(FN.apply(HttpResponse.builder().statusCode(200).message("").payload(MapToServerInfoTest.class
+            .getResourceAsStream("/servers.txt")).build()), ImmutableSet.<ServerInfo> of(MapToServerInfoTest.ONE,
             MapToServerInfoTest.TWO));
    }
 }

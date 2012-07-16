@@ -76,7 +76,7 @@ public class NovaComputeServiceContextModule extends
 
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
 
    }
    

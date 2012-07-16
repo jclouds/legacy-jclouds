@@ -26,7 +26,6 @@ import java.io.InputStream;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.testng.annotations.Test;
@@ -39,7 +38,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -66,7 +65,7 @@ public class ParseFlavorFromJsonResponseTest {
 
       UnwrapOnlyJsonValue<Flavor> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Flavor>>() {
       }));
-      return parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
    }
 
 }

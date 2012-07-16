@@ -34,8 +34,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-
 /**
  * Test the CloudStack VirtualMachineClientClient
  *
@@ -67,10 +65,7 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=getVMPassword&id=1&apiKey=identity&signature=SVA2r1KRj4yG03rATMLPZWS%2BKnw%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)

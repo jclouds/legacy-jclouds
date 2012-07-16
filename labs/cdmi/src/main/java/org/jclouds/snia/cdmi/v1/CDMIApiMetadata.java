@@ -40,7 +40,7 @@ public class CDMIApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<CDMIClient, CDMIAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CDMIClient, CDMIAsyncClient>>() {
+   public static final TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CDMIApi, CDMIAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -65,7 +65,7 @@ public class CDMIApiMetadata extends BaseRestApiMetadata {
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(CDMIClient.class, CDMIAsyncClient.class);
+         super(CDMIApi.class, CDMIAsyncApi.class);
                   id("cdmi")
                   .name("SNIA CDMI API")
                   .identityName("tenantId:user")

@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.joyent.cloudapi.v6_5.features.PackageClient;
+import org.jclouds.joyent.cloudapi.v6_5.features.PackageApi;
 import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;
@@ -99,7 +99,7 @@ public class CreateMachineOptions extends BaseHttpRequestOptions {
 
    /**
     * Name of the package to use on provisioning; default is indicated in
-    * {@link PackageClient#list}
+    * {@link PackageApi#list}
     */
    public CreateMachineOptions packageName(String packageName) {
       this.pkg = checkNotNull(packageName, "packageName");

@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Strings2;
 
@@ -40,7 +40,7 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
 
    public UrlEncodedFormPayload(Multimap<String, String> formParams,
             @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-      super(ModifyRequest.makeQueryLine(formParams, sorter, skips));
+      super(Queries.makeQueryLine(formParams, sorter, skips));
       getContentMetadata().setContentLength((long) content.length());
       getContentMetadata().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
    }

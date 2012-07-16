@@ -28,7 +28,6 @@ import org.jclouds.cloudservers.domain.DailyBackup;
 import org.jclouds.cloudservers.domain.WeeklyBackup;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -52,7 +51,7 @@ public class ParseBackupScheduleFromJsonResponseTest {
       UnwrapOnlyJsonValue<BackupSchedule> parser = i.getInstance(Key
                .get(new TypeLiteral<UnwrapOnlyJsonValue<BackupSchedule>>() {
                }));
-      BackupSchedule response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      BackupSchedule response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(new BackupSchedule(WeeklyBackup.THURSDAY, DailyBackup.H_0400_0600, true), response);
    }
 
@@ -61,8 +60,9 @@ public class ParseBackupScheduleFromJsonResponseTest {
       UnwrapOnlyJsonValue<BackupSchedule> parser = i.getInstance(Key
                .get(new TypeLiteral<UnwrapOnlyJsonValue<BackupSchedule>>() {
                }));
-      BackupSchedule response = parser.apply(new HttpResponse(200, "ok", Payloads
-               .newStringPayload("{\"backupSchedule\":{\"enabled\" : false}}")));
+      BackupSchedule response = parser.apply(HttpResponse.builder()
+                                                         .statusCode(200).message("ok")
+                                                         .payload("{\"backupSchedule\":{\"enabled\" : false}}").build());
       assertEquals(new BackupSchedule(), response);
    }
 }

@@ -120,10 +120,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=deleteZone&id=6&apiKey=identity&signature=TfkzSIK8kzGJnIYo3DofECyuOII%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)

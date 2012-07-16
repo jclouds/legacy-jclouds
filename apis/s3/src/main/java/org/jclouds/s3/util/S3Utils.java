@@ -72,8 +72,8 @@ public class S3Utils {
    };
 
    public static String getBucketName(HttpRequest req) {
-      checkArgument(req instanceof GeneratedHttpRequest<?>, "this should be a generated http request");
-      GeneratedHttpRequest<?> request = GeneratedHttpRequest.class.cast(req);
+      checkArgument(req instanceof GeneratedHttpRequest, "this should be a generated http request");
+      GeneratedHttpRequest request = GeneratedHttpRequest.class.cast(req);
 
       String bucketName = null;
 

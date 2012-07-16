@@ -28,7 +28,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v2_0.compute.predicates.GetImageWhenImageInZoneHasActiveStatusPredicateWithResult;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaComputeServiceContextExpectTest;
 import org.jclouds.predicates.PredicateWithResult;

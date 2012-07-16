@@ -48,7 +48,7 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<GlanceClient, GlanceAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<GlanceClient, GlanceAsyncClient>>() {
+   public static final TypeToken<RestContext<GlanceApi, GlanceAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<GlanceApi, GlanceAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -78,7 +78,7 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(GlanceClient.class, GlanceAsyncClient.class);
+         super(GlanceApi.class, GlanceAsyncApi.class);
           id("openstack-glance")
          .name("OpenStack Glance API")
          .identityName("tenantName:user or user")

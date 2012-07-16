@@ -23,10 +23,6 @@ import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.wit
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSecurityGroup;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -54,7 +50,7 @@ public class CreateServerOptionsTest {
 
    private HttpRequest buildRequest(CreateServerOptions options) {
       injector.injectMembers(options);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       options.bindToRequest(request, ImmutableMap.<String,Object>of("name", "foo", "imageRef", "1", "flavorRef", "2"));
       return request;
    }

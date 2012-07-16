@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.iam.domain.User;
@@ -42,17 +42,17 @@ public class ListUsersResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/list_users.xml");
 
-      PaginatedIterable<User> expected = expected();
+      IterableWithMarker<User> expected = expected();
 
       ListUsersResultHandler handler = injector.getInstance(ListUsersResultHandler.class);
-      PaginatedIterable<User> result = factory.create(handler).parse(is);
+      IterableWithMarker<User> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public PaginatedIterable<User> expected() {
-      return PaginatedIterables.forward(ImmutableSet.of(
+   public IterableWithMarker<User> expected() {
+      return IterableWithMarkers.from(ImmutableSet.of(
                User.builder()
                    .path("/division_abc/subdivision_xyz/engineering/")
                    .name("Andrew")

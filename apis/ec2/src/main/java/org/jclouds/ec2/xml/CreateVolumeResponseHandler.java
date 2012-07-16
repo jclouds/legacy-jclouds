@@ -186,7 +186,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
       return this;
    }
 
-   public static String findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest, Set<String> zones) {
+   public static String findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest gRequest, Set<String> zones) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof String) {
             String zone = (String) arg;

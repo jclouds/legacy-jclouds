@@ -40,7 +40,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
@@ -51,8 +50,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 /**
  * Signs the Azure Storage request.
@@ -97,15 +96,15 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
-      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, "SharedKeyLite " + identity + ":"
-            + signature);
+      return request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, "SharedKeyLite " + identity + ":"
+            + signature).build();
    }
 
    HttpRequest replaceDateHeader(HttpRequest request) {
       Builder<String, String> builder = ImmutableMap.builder();
       String date = timeStampProvider.get();
       builder.put(HttpHeaders.DATE, date);
-      request = ModifyRequest.replaceHeaders(request, Multimaps.forMap(builder.build()));
+      request = request.toBuilder().replaceHeaders(Multimaps.forMap(builder.build())).build();
       return request;
    }
 

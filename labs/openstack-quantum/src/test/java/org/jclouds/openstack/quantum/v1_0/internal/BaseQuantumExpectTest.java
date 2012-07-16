@@ -18,21 +18,24 @@
  */
 package org.jclouds.openstack.quantum.v1_0.internal;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing Quantum Expect tests
  * 
  * @author Adam Lowe
  */
-public class BaseQuantumExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseQuantumExpectTest<T> extends BaseRestApiExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
    protected String authToken;
    protected HttpResponse responseWithKeystoneAccess;
+   protected String endpoint = "https://csnode.jclouds.org:9696/v1.0";
 
    public BaseQuantumExpectTest() {
       provider = "openstack-quantum";
@@ -45,5 +48,12 @@ public class BaseQuantumExpectTest<T> extends BaseRestClientExpectTest<T> {
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
       // now, createContext arg will need tenant prefix
       identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
+   }
+   
+   protected HttpRequest.Builder<?> authenticatedGET() {
+      return HttpRequest.builder()
+                        .method("GET")
+                        .addHeader("Accept", MediaType.APPLICATION_JSON)
+                        .addHeader("X-Auth-Token", authToken);
    }
 }

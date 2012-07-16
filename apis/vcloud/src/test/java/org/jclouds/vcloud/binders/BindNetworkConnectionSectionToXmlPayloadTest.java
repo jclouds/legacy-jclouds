@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "BindNetworkConnectionSectionToXmlPayloadTest")
 public class BindNetworkConnectionSectionToXmlPayloadTest {
    Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
@@ -53,7 +53,7 @@ public class BindNetworkConnectionSectionToXmlPayloadTest {
 
    public void testWithIpAllocationModeNONE() throws IOException {
 
-      HttpRequest request = HttpRequest.builder().endpoint(URI.create("http://localhost/key")).method("GET")
+      HttpRequest request = HttpRequest.builder().endpoint("http://localhost/key").method("GET")
             .build();
 
       BindNetworkConnectionSectionToXmlPayload binder = injector

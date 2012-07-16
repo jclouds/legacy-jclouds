@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.savvis.vpdc.VPDCClient;
+import org.jclouds.savvis.vpdc.VPDCApi;
 import org.jclouds.savvis.vpdc.domain.Task;
 
 import com.google.common.base.Predicate;
@@ -39,14 +39,14 @@ import com.google.inject.Inject;
 @Singleton
 public class TaskSuccess implements Predicate<String> {
 
-   private final VPDCClient client;
+   private final VPDCApi api;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(VPDCClient client) {
-      this.client = client;
+   public TaskSuccess(VPDCApi api) {
+      this.api = api;
    }
 
    public boolean apply(String taskId) {
@@ -62,6 +62,6 @@ public class TaskSuccess implements Predicate<String> {
    }
 
    private Task refresh(String taskId) {
-      return client.getBrowsingClient().getTask(taskId);
+      return api.getBrowsingApi().getTask(taskId);
    }
 }

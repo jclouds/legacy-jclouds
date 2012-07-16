@@ -30,7 +30,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -49,10 +48,7 @@ public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClien
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listConfigurations&listAll=true&apiKey=identity&signature=%2BJ9mTuw%2BZXaumzMAJAXgZQaO2cc%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -76,10 +72,7 @@ public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClien
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listConfigurations&listAll=true&apiKey=identity&signature=%2BJ9mTuw%2BZXaumzMAJAXgZQaO2cc%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)
@@ -97,10 +90,7 @@ public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClien
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=updateConfiguration&name=expunge.delay&value=11&" +
                   "apiKey=identity&signature=I2yG35EhfgIXYObeLfU3cvf%2BPeE%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -123,10 +113,7 @@ public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClien
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=updateConfiguration&name=expunge.delay&value=11&" +
                   "apiKey=identity&signature=I2yG35EhfgIXYObeLfU3cvf%2BPeE%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)

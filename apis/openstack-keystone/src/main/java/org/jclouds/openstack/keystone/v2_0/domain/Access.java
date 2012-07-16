@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
  * TODO
  *
  * @author Adrian Cole
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
+ * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
 />
  */
 public class Access implements Comparable<Access> {

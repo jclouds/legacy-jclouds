@@ -45,7 +45,6 @@ import org.jclouds.util.Throwables2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 
@@ -89,7 +88,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
             Strings2.toStringAndClose(
                   client.invoke(
                         HttpRequest.builder().method("GET")
-                              .endpoint(URI.create("http://localhost:" + testPort + "/objects/")).build()).getPayload()
+                              .endpoint("http://localhost:" + testPort + "/objects/").build()).getPayload()
                         .getInput()).trim(), XML);
    }
 
@@ -206,9 +205,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       }
    }
 
-   @Test(enabled = false)
-   // TODO find out why this gives java.net.SocketException: Unexpected end of file from server
-   // @Test(invocationCount = 5, timeOut = 5000)
+   @Test(invocationCount = 5, timeOut = 5000)
    public void testPost() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       assertEquals(client.post("", "foo").trim(), "fooPOST");
    }
@@ -269,12 +266,6 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    public void testPutRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
          TimeoutException {
       assertEquals(client.upload("redirect", "foo").trim(), "fooPUTREDIRECT");
-   }
-
-   @Test(invocationCount = 5, timeOut = 5000)
-   public void testKillRobotSlowly() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      assertEquals(client.action("robot", "kill", ImmutableMap.of("death", "slow")).trim(), "robot->kill:{death=slow}");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)

@@ -99,8 +99,10 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
       if (payload != null) {
          contentMetadataCodec.fromHeaders(payload.getContentMetadata(), headers);
       }
-      return new HttpResponse(apacheResponse.getStatusLine().getStatusCode(), apacheResponse.getStatusLine()
-            .getReasonPhrase(), payload, RestAnnotationProcessor.filterOutContentHeaders(headers));
+      return HttpResponse.builder().statusCode(apacheResponse.getStatusLine().getStatusCode())
+                                   .message(apacheResponse.getStatusLine().getReasonPhrase())
+                                   .payload(payload)
+                                   .headers(RestAnnotationProcessor.filterOutContentHeaders(headers)).build();
    }
 
    private org.apache.http.HttpResponse executeRequest(HttpUriRequest nativeRequest) throws IOException,

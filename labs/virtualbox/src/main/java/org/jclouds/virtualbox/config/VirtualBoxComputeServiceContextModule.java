@@ -94,11 +94,11 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
       }).to(IMachineToNodeMetadata.class);
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<Image, Image>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
       bind(new TypeLiteral<Function<IMachine, Hardware>>() {
       }).to(IMachineToHardware.class);
       bind(new TypeLiteral<Function<IMachine, Image>>() {

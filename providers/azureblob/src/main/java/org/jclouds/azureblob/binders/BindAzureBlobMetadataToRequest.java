@@ -29,12 +29,11 @@ import org.jclouds.azureblob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 @Singleton
 public class BindAzureBlobMetadataToRequest implements Binder {
@@ -48,6 +47,7 @@ public class BindAzureBlobMetadataToRequest implements Binder {
       this.blobBinder = checkNotNull(blobBinder, "blobBinder");
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof AzureBlob, "this binder is only valid for AzureBlobs!");
@@ -72,7 +72,7 @@ public class BindAzureBlobMetadataToRequest implements Binder {
                "maximum size for put Blob is 64MB");
          break;
       }
-      request = ModifyRequest.putHeaders(request, Multimaps.forMap(headers.build()));
+      request = (R) request.toBuilder().replaceHeaders(Multimaps.forMap(headers.build())).build();
 
       return blobBinder.bindToRequest(request, azureBlob2Blob.apply(blob));
    }

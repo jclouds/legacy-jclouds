@@ -87,7 +87,6 @@ public class VCloudLoginAsyncClientTest extends BaseAsyncClientTest<VCloudLoginA
          public void configure(Binder binder) {
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @VCloudLogin
          Supplier<URI> provideURI(@Provider Supplier<URI> uri) {

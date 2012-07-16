@@ -29,7 +29,6 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 
@@ -54,6 +53,6 @@ public class BasicAuthentication implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, header);
+      return request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, header).build();
    }
 }

@@ -110,7 +110,7 @@ public class NovaParserModule extends AbstractModule {
       public ServerWithSecurityGroups deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
             throws JsonParseException {
          Server server = context.deserialize(jsonElement, Server.class);
-         ServerWithSecurityGroups.Builder result = ServerWithSecurityGroups.builder().fromServer(server);
+         ServerWithSecurityGroups.Builder<?> result = ServerWithSecurityGroups.builder().fromServer(server);
          Set<String> names = Sets.newLinkedHashSet();
          if (jsonElement.getAsJsonObject().get("security_groups") != null) {
             JsonArray x = jsonElement.getAsJsonObject().get("security_groups").getAsJsonArray();
@@ -129,7 +129,7 @@ public class NovaParserModule extends AbstractModule {
       public Server deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
             throws JsonParseException {
          Server serverBase = apply((ServerInternal) context.deserialize(jsonElement, ServerInternal.class));
-         Server.Builder result = Server.builder().fromServer(serverBase);
+         Server.Builder<?> result = Server.builder().fromServer(serverBase);
          ServerExtendedStatus extendedStatus = context.deserialize(jsonElement, ServerExtendedStatus.class);
          if (!Objects.equal(extendedStatus, ServerExtendedStatus.builder().build())) {
             result.extendedStatus(extendedStatus);

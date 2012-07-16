@@ -18,14 +18,14 @@
  */
 package org.jclouds.snia.cdmi.v1.internal;
 
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing CDMI Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseCDMIExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseCDMIExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    public BaseCDMIExpectTest() {
       provider = "cdmi";

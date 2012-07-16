@@ -118,7 +118,7 @@ public class HttpUtilsTest extends PerformanceTest {
    }
 
    public void test404() {
-      Exception from = new HttpResponseException("message", null, new HttpResponse(404, "not found", null));
+      Exception from = new HttpResponseException("message", null, HttpResponse.builder().statusCode(404).message("not found").build());
       assertEquals(returnValueOnCodeOrNull(from, true, equalTo(404)), Boolean.TRUE);
    }
 

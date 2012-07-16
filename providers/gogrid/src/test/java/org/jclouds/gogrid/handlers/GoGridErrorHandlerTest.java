@@ -28,7 +28,6 @@ import java.io.InputStream;
 import org.jclouds.gogrid.mock.HttpCommandMock;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.TestException;
 import org.testng.annotations.Test;
@@ -51,7 +50,7 @@ public class GoGridErrorHandlerTest {
       GoGridErrorHandler handler = Guice.createInjector(new GsonModule()).getInstance(GoGridErrorHandler.class);
 
       HttpCommand command = createHttpCommand();
-      handler.handleError(command, new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      handler.handleError(command, HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       Exception createdException = command.getException();
 

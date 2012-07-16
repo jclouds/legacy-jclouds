@@ -21,9 +21,6 @@ package org.jclouds.ec2.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
@@ -44,20 +41,20 @@ public class BindUserIdsToIndexedFormParamsTest {
 
    public void test() {
 
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, ImmutableSet.of("alpha", "omega"));
       assertEquals(request.getPayload().getRawContent(), "UserId.1=alpha&UserId.2=omega");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeIterable() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

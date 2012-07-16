@@ -26,7 +26,6 @@ import java.net.UnknownHostException;
 import org.jclouds.cloudservers.domain.SharedIpGroup;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -52,7 +51,7 @@ public class ParseSharedIpGroupFromJsonResponseTest {
       UnwrapOnlyJsonValue<SharedIpGroup> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<SharedIpGroup>>() {
             }));
-      SharedIpGroup response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      SharedIpGroup response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "Shared IP Group 1");

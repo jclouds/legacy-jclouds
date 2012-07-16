@@ -18,15 +18,11 @@
  */
 package org.jclouds.softlayer.features;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
@@ -43,11 +39,9 @@ public class VirtualGuestClientExpectTest extends BaseRestClientExpectTest<SoftL
    public void testCancelGuestReturnsTrueOn200AndFalseOn404() {
       
       HttpRequest cancelGuest11 = HttpRequest.builder().method("GET")
-               .endpoint(URI.create("https://api.softlayer.com/rest/v3/SoftLayer_Billing_Item/11/cancelService.json"))
-               .headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("Accept", "application/json")
-               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
+               .endpoint("https://api.softlayer.com/rest/v3/SoftLayer_Billing_Item/11/cancelService.json")
+               .addHeader("Accept", "application/json")
+               .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
       HttpResponse found = HttpResponse.builder().statusCode(200).build();
 

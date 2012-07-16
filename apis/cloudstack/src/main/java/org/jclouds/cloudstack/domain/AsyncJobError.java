@@ -20,15 +20,12 @@ package org.jclouds.cloudstack.domain;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class AsyncJobError {
@@ -37,15 +34,15 @@ public class AsyncJobError {
     * Error codes for job errors
     */
    public static enum ErrorCode {
-      INTERNAL_ERROR (530),
-      ACCOUNT_ERROR (531),
+      INTERNAL_ERROR(530),
+      ACCOUNT_ERROR(531),
       ACCOUNT_RESOURCE_LIMIT_ERROR(532),
-      INSUFFICIENT_CAPACITY_ERROR (533),
-      RESOURCE_UNAVAILABLE_ERROR (534),
-      RESOURCE_ALLOCATION_ERROR (535),
-      RESOURCE_IN_USE_ERROR (536),
-      NETWORK_RULE_CONFLICT_ERROR (537),
-      UNKNOWN (-1);
+      INSUFFICIENT_CAPACITY_ERROR(533),
+      RESOURCE_UNAVAILABLE_ERROR(534),
+      RESOURCE_ALLOCATION_ERROR(535),
+      RESOURCE_IN_USE_ERROR(536),
+      NETWORK_RULE_CONFLICT_ERROR(537),
+      UNKNOWN(-1);
 
       private final int code;
 
@@ -53,19 +50,21 @@ public class AsyncJobError {
          this.code = code;
       }
 
-      public int code() { return this.code; }
+      public int code() {
+         return this.code;
+      }
 
       public static ErrorCode fromValue(String value) {
          try {
             int errorCode = Integer.parseInt(value);
-            for(ErrorCode candidate : values()) {
+            for (ErrorCode candidate : values()) {
                if (candidate.code() == errorCode) {
                   return candidate;
                }
             }
             return UNKNOWN;
 
-         } catch(NumberFormatException e) {
+         } catch (NumberFormatException e) {
             return UNKNOWN;
          }
       }
@@ -79,7 +78,7 @@ public class AsyncJobError {
       return new ConcreteBuilder().fromAsyncJobError(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected AsyncJobError.ErrorCode errorCode;
@@ -119,9 +118,7 @@ public class AsyncJobError {
       }
    }
 
-   @Named("errorcode")
    private final ErrorCode errorCode;
-   @Named("errortext")
    private final String errorText;
 
    @ConstructorProperties({

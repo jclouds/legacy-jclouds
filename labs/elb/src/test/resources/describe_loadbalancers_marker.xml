@@ -1,0 +1,64 @@
+<DescribeLoadBalancersResponse
+	xmlns="http://elasticloadbalancing.amazonaws.com/doc/2009-11-25/">
+	<DescribeLoadBalancersResult>
+		<LoadBalancerDescriptions>
+			<member>
+				<LoadBalancerName>my-load-balancer-1</LoadBalancerName>
+				<CreatedTime>2010-03-03T20:54:45.110Z</CreatedTime>
+				<DNSName>my-load-balancer-1400212309.us-east-1.elb.amazonaws.com</DNSName>
+				<HealthCheck>
+					<Interval>300</Interval>
+					<Target>HTTP:80/index.html</Target>
+					<HealthyThreshold>3</HealthyThreshold>
+					<Timeout>30</Timeout>
+					<UnhealthyThreshold>5</UnhealthyThreshold>
+				</HealthCheck>
+				<ListenerDescriptions>
+					<member>
+						<PolicyNames />
+						<Listener>
+							<Protocol>HTTP</Protocol>
+							<LoadBalancerPort>80</LoadBalancerPort>
+							<InstancePort>80</InstancePort>
+						</Listener>
+					</member>
+					<member>
+						<PolicyNames />
+						<Listener>
+							<Protocol>TCP</Protocol>
+							<LoadBalancerPort>443</LoadBalancerPort>
+							<InstancePort>443</InstancePort>
+						</Listener>
+					</member>
+				</ListenerDescriptions>
+				<Instances>
+					<member>
+						<InstanceId>i-5b33e630</InstanceId>
+					</member>
+					<member>
+						<InstanceId>i-8f26d7e4</InstanceId>
+					</member>
+					<member>
+						<InstanceId>i-5933e632</InstanceId>
+					</member>
+				</Instances>
+				<Policies>
+					<AppCookieStickinessPolicies>
+						<member>
+							<CookieName>MyCookie</CookieName>
+							<PolicyName>MyLoadBalancerPolicy</PolicyName>
+						</member>
+					</AppCookieStickinessPolicies>
+					<LBCookieStickinessPolicies />
+				</Policies>
+				<AvailabilityZones>
+					<member>us-east-1a</member>
+				</AvailabilityZones>
+			</member>
+		</LoadBalancerDescriptions>
+        <Marker>MARKER</Marker>
+	</DescribeLoadBalancersResult>
+	<ResponseMetadata>
+		<RequestId>10e2b9c9-3899-11df-a1e2-b5349194c035</RequestId>
+	</ResponseMetadata>
+</DescribeLoadBalancersResponse>

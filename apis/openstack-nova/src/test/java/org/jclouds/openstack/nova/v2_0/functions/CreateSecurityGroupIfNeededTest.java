@@ -24,26 +24,26 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
-import org.jclouds.openstack.nova.v2_0.internal.BaseNovaClientExpectTest;
+import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseComputeServiceTypicalSecurityGroupTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "CreateSecurityGroupIfNeededTest")
-public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
+public class CreateSecurityGroupIfNeededTest extends BaseNovaApiExpectTest {
    HttpRequest createSecurityGroup = HttpRequest.builder().method("POST").endpoint(
             URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
@@ -119,9 +119,9 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
       
       builder.put(getSecurityGroup, getSecurityGroupResponse);
 
-      NovaClient clientCanCreateSecurityGroup = requestsSendResponses(builder.build());
+      NovaApi apiCanCreateSecurityGroup = requestsSendResponses(builder.build());
 
-      CreateSecurityGroupIfNeeded fn = new CreateSecurityGroupIfNeeded(clientCanCreateSecurityGroup);
+      CreateSecurityGroupIfNeeded fn = new CreateSecurityGroupIfNeeded(apiCanCreateSecurityGroup);
 
       // we can find it
       assertEquals(fn.apply(
@@ -156,9 +156,9 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       builder.put(listSecurityGroups, listSecurityGroupsResponse);
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(builder.build());
+      NovaApi apiWhenSecurityGroupsExist = requestsSendResponses(builder.build());
 
-      CreateSecurityGroupIfNeeded fn = new CreateSecurityGroupIfNeeded(clientWhenSecurityGroupsExist);
+      CreateSecurityGroupIfNeeded fn = new CreateSecurityGroupIfNeeded(apiWhenSecurityGroupsExist);
 
       // we can find it
       assertEquals(fn.apply(

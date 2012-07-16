@@ -51,7 +51,6 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
    protected void setUpInjector() {
       injector = Guice.createInjector(new SaxParserModule() {
          
-         @SuppressWarnings("unused")
          @Singleton
          @Provides
          @org.jclouds.location.Region

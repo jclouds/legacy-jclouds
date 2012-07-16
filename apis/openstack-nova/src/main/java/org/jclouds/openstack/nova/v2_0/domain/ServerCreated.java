@@ -31,7 +31,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * Server Resource with administrative password returned by ServerClient#CreateServer calls
+ * Server Resource with administrative password returned by ServerApi#CreateServer calls
  * 
  * @author Adam Lowe
  * @see <a href=

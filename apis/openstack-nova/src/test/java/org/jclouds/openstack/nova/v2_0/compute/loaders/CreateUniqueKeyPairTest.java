@@ -26,11 +26,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
-import org.jclouds.openstack.nova.v2_0.NovaClient;
-import org.jclouds.openstack.nova.v2_0.compute.loaders.CreateUniqueKeyPair;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -48,16 +47,16 @@ public class CreateUniqueKeyPairTest {
 
    @Test
    public void testApply() throws UnknownHostException {
-      final NovaClient client = createMock(NovaClient.class);
-      KeyPairClient keyClient = createMock(KeyPairClient.class);
+      final NovaApi api = createMock(NovaApi.class);
+      KeyPairApi keyApi = createMock(KeyPairApi.class);
 
       KeyPair pair = createMock(KeyPair.class);
 
-      expect(client.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyClient)).atLeastOnce();
+      expect(api.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyApi)).atLeastOnce();
 
-      expect(keyClient.createKeyPair("group-1")).andReturn(pair);
+      expect(keyApi.createKeyPair("group-1")).andReturn(pair);
 
-      replay(client, keyClient);
+      replay(api, keyApi);
 
       CreateUniqueKeyPair parser = Guice.createInjector(new AbstractModule() {
 
@@ -65,33 +64,33 @@ public class CreateUniqueKeyPairTest {
          protected void configure() {
             bind(new TypeLiteral<Supplier<String>>() {
             }).toInstance(Suppliers.ofInstance("1"));
-            bind(NovaClient.class).toInstance(client);
+            bind(NovaApi.class).toInstance(api);
          }
 
       }).getInstance(CreateUniqueKeyPair.class);
 
       assertEquals(parser.load(ZoneAndName.fromZoneAndName("zone", "group")), pair);
 
-      verify(client, keyClient);
+      verify(api, keyApi);
    }
 
    @Test
    public void testApplyWithIllegalStateException() throws UnknownHostException {
-      final NovaClient client = createMock(NovaClient.class);
-      KeyPairClient keyClient = createMock(KeyPairClient.class);
+      final NovaApi api = createMock(NovaApi.class);
+      KeyPairApi keyApi = createMock(KeyPairApi.class);
       @SuppressWarnings("unchecked")
       final Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
 
       KeyPair pair = createMock(KeyPair.class);
 
-      expect(client.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyClient)).atLeastOnce();
+      expect(api.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyApi)).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPair("group-1")).andThrow(new IllegalStateException());
+      expect(keyApi.createKeyPair("group-1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
-      expect(keyClient.createKeyPair("group-2")).andReturn(pair);
+      expect(keyApi.createKeyPair("group-2")).andReturn(pair);
 
-      replay(client, keyClient, uniqueIdSupplier);
+      replay(api, keyApi, uniqueIdSupplier);
 
       CreateUniqueKeyPair parser = Guice.createInjector(new AbstractModule() {
 
@@ -99,14 +98,14 @@ public class CreateUniqueKeyPairTest {
          protected void configure() {
             bind(new TypeLiteral<Supplier<String>>() {
             }).toInstance(uniqueIdSupplier);
-            bind(NovaClient.class).toInstance(client);
+            bind(NovaApi.class).toInstance(api);
          }
 
       }).getInstance(CreateUniqueKeyPair.class);
 
       assertEquals(parser.load(ZoneAndName.fromZoneAndName("zone", "group")), pair);
 
-      verify(client, keyClient, uniqueIdSupplier);
+      verify(api, keyApi, uniqueIdSupplier);
    }
 
 }

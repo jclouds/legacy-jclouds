@@ -33,14 +33,14 @@ public class ThrowKeyNotFoundOn404Test {
 
    @Test(expectedExceptions = { KeyNotFoundException.class })
    public void testFound404ThrowsKeyNotFound() throws SecurityException, NoSuchMethodException {
-      HttpResponse response = new HttpResponse(404, null, null);
+      HttpResponse response = HttpResponse.builder().statusCode(404).build();
       HttpResponseException exception = new HttpResponseException(null, null, response);
       fn.apply(exception);
    }
 
    @Test(expectedExceptions = { HttpResponseException.class })
    public void testNotFound404PropagatesHttpResponseException() throws SecurityException, NoSuchMethodException {
-      HttpResponse response = new HttpResponse(409, null, null);
+      HttpResponse response = HttpResponse.builder().statusCode(409).build();
       HttpResponseException exception = new HttpResponseException(null, null, response);
       fn.apply(exception);
    }

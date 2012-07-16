@@ -49,7 +49,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
@@ -103,7 +103,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST), "request is not ready to sign; host not present");
-      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getPayload().getRawContent()
+      Multimap<String, String> decodedParams = Queries.parseQueryToMap(request.getPayload().getRawContent()
                .toString());
       decodedParams.replaceValues(VERSION, ImmutableSet.of(apiVersion));
       addSigningParams(decodedParams);
@@ -132,7 +132,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    HttpRequest setPayload(HttpRequest request, Multimap<String, String> decodedParams) {
-      request.setPayload(ModifyRequest.makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
+      request.setPayload(Queries.makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
          public int compare(Entry<String, String> o1, Entry<String, String> o2) {
             if (o1.getKey().startsWith("Action") || o2.getKey().startsWith("AWSAccessKeyId"))
                return -1;
@@ -190,7 +190,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    String buildCanonicalizedString(Multimap<String, String> decodedParams) {
-      return ModifyRequest.makeQueryLine(decodedParams, sortAWSFirst);
+      return Queries.makeQueryLine(decodedParams, sortAWSFirst);
    }
 
    public static final Comparator<Map.Entry<String, String>> sortAWSFirst = new Comparator<Map.Entry<String, String>>() {
@@ -211,7 +211,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      return createStringToSign(input, ModifyRequest.parseQueryToMap(input.getPayload().getRawContent().toString()));
+      return createStringToSign(input, Queries.parseQueryToMap(input.getPayload().getRawContent().toString()));
    }
 
 }

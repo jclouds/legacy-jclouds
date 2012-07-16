@@ -45,7 +45,7 @@ public class ELBApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -7077953935392202824L;
    
-   public static final TypeToken<RestContext<ELBClient, ELBAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<ELBClient, ELBAsyncClient>>() {
+   public static final TypeToken<RestContext<ELBApi, ELBAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<ELBApi, ELBAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -55,7 +55,7 @@ public class ELBApiMetadata extends BaseRestApiMetadata {
    }
 
    public ELBApiMetadata() {
-      this(new Builder(ELBClient.class, ELBAsyncClient.class));
+      this(new Builder(ELBApi.class, ELBAsyncApi.class));
    }
 
    protected ELBApiMetadata(Builder builder) {
@@ -71,8 +71,8 @@ public class ELBApiMetadata extends BaseRestApiMetadata {
    
    public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<?> client, Class<?> asyncClient) {
-         super(client, asyncClient);
+      protected Builder(Class<?> api, Class<?> asyncApi) {
+         super(api, asyncApi);
          id("elb")
          .name("Amazon Elastic Load Balancing Api")
          .identityName("Access Key ID")

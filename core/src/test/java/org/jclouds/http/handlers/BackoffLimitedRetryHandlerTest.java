@@ -145,7 +145,7 @@ public class BackoffLimitedRetryHandlerTest {
    void testClosesInputStream() throws InterruptedException, IOException, SecurityException, NoSuchMethodException {
       HttpCommand command = createCommand();
 
-      HttpResponse response = new HttpResponse(400, null, null);
+      HttpResponse response = HttpResponse.builder().statusCode(400).build();
 
       InputStream inputStream = new InputStream() {
          boolean isOpen = true;
@@ -199,7 +199,7 @@ public class BackoffLimitedRetryHandlerTest {
    @Test
    void testIncrementsFailureCount() throws InterruptedException, IOException, SecurityException, NoSuchMethodException {
       HttpCommand command = createCommand();
-      HttpResponse response = new HttpResponse(400, null, null);
+      HttpResponse response = HttpResponse.builder().statusCode(400).build();
 
       handler.shouldRetryRequest(command, response);
       assertEquals(command.getFailureCount(), 1);
@@ -215,7 +215,7 @@ public class BackoffLimitedRetryHandlerTest {
    void testDisallowsExcessiveRetries() throws InterruptedException, IOException, SecurityException,
             NoSuchMethodException {
       HttpCommand command = createCommand();
-      HttpResponse response = new HttpResponse(400, null, null);
+      HttpResponse response = HttpResponse.builder().statusCode(400).build();
 
       assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 1
 

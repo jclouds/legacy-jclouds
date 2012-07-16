@@ -28,7 +28,6 @@ import java.net.URI;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.io.Payloads;
 
 import com.google.inject.Guice;
 
@@ -70,8 +69,8 @@ public abstract class BaseHttpErrorHandlerTest {
       HttpErrorHandler function = Guice.createInjector(new SaxParserModule()).getInstance(getHandlerClass());
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newStringPayload(content));
+      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
+      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
       if (contentType != null)
          response.getPayload().getContentMetadata().setContentType(contentType);
 

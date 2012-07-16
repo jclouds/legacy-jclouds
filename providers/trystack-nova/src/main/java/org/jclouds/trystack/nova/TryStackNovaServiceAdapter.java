@@ -5,7 +5,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jclouds.location.Zone;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v2_0.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
@@ -24,9 +24,9 @@ import com.google.common.collect.Iterables;
 public class TryStackNovaServiceAdapter extends NovaComputeServiceAdapter {
 
    @Inject
-   public TryStackNovaServiceAdapter(NovaClient novaClient, @Zone Supplier<Set<String>> zoneIds,
+   public TryStackNovaServiceAdapter(NovaApi novaApi, @Zone Supplier<Set<String>> zoneIds,
             RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate, LoadingCache<ZoneAndName, KeyPair> keyPairCache) {
-      super(novaClient, zoneIds, removeFloatingIpFromNodeAndDeallocate, keyPairCache);
+      super(novaApi, zoneIds, removeFloatingIpFromNodeAndDeallocate, keyPairCache);
    }
 
    @Override

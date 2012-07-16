@@ -11,8 +11,8 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
@@ -71,7 +71,7 @@ public class VCloudDirectorTestSession implements Closeable {
    }
 
    private VCloudDirectorContext userContext;
-   private RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext;
+   private RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext;
 
    private VCloudDirectorTestSession(String provider, String identity, String credential, Properties overrides, String endpoint) {
       ContextBuilder builder = ContextBuilder.newBuilder(provider)
@@ -92,12 +92,12 @@ public class VCloudDirectorTestSession implements Closeable {
          adminContext = userContext.getAdminContext();
 
          // Lookup the user details
-         Reference orgRef = Iterables.getFirst(userContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
+         Reference orgRef = Iterables.getFirst(userContext.getApi().getOrgApi().getOrgList().getOrgs(), null)
                .toAdminReference(endpoint);
          Reference userRef = Iterables.find(
-               adminContext.getApi().getOrgClient().getOrg(orgRef.getHref()).getUsers(),
+               adminContext.getApi().getOrgApi().getOrg(orgRef.getHref()).getUsers(),
                ReferencePredicates.nameEquals(adminContext.getApi().getCurrentSession().getUser()));
-         User user = adminContext.getApi().getUserClient().getUser(userRef.getHref());
+         User user = adminContext.getApi().getUserApi().getUser(userRef.getHref());
 
          // Check that the user has the org admin role
          Reference userRole = user.getRole();
@@ -115,7 +115,7 @@ public class VCloudDirectorTestSession implements Closeable {
       return userContext;
    }
 
-   public RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> getAdminContext() {
+   public RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> getAdminContext() {
       return adminContext;
    }
 }

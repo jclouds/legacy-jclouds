@@ -21,10 +21,10 @@ package org.jclouds.iam.config;
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.iam.IAMAsyncClient;
-import org.jclouds.iam.IAMClient;
-import org.jclouds.iam.features.UserAsyncClient;
-import org.jclouds.iam.features.UserClient;
+import org.jclouds.iam.IAMAsyncApi;
+import org.jclouds.iam.IAMApi;
+import org.jclouds.iam.features.UserAsyncApi;
+import org.jclouds.iam.features.UserApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
@@ -36,13 +36,13 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class IAMRestClientModule extends FormSigningRestClientModule<IAMClient, IAMAsyncClient> {
+public class IAMRestClientModule extends FormSigningRestClientModule<IAMApi, IAMAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(UserClient.class, UserAsyncClient.class)
+         .put(UserApi.class, UserAsyncApi.class)
          .build();
    
    public IAMRestClientModule() {
-      super(TypeToken.of(IAMClient.class), TypeToken.of(IAMAsyncClient.class), DELEGATE_MAP);
+      super(TypeToken.of(IAMApi.class), TypeToken.of(IAMAsyncApi.class), DELEGATE_MAP);
    }
 
 }

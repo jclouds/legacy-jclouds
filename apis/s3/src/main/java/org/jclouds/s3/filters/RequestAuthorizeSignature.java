@@ -21,8 +21,7 @@ package org.jclouds.s3.filters;
 import static com.google.common.collect.Iterables.get;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
-import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
-import static org.jclouds.http.utils.ModifyRequest.replaceHeader;
+import static org.jclouds.http.utils.Queries.parseQueryToMap;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 import static org.jclouds.util.Strings2.toInputStream;
@@ -126,12 +125,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    }
 
    HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
-      request = replaceHeader(request, HttpHeaders.AUTHORIZATION, authTag + " " + accessKey + ":" + signature);
+      request = request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, authTag + " " + accessKey + ":" + signature).build();
       return request;
    }
 
    HttpRequest replaceDateHeader(HttpRequest request) {
-      request = replaceHeader(request, HttpHeaders.DATE, timeStampProvider.get());
+      request = request.toBuilder().replaceHeader(HttpHeaders.DATE, timeStampProvider.get()).build();
       return request;
    }
 

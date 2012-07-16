@@ -57,7 +57,7 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       throw new IllegalStateException("BindAuthToJsonPayload needs parameters");
    }
 
-   protected void addCredentialsInArgsOrNull(GeneratedHttpRequest<?> gRequest, Builder<String, Object> builder) {
+   protected void addCredentialsInArgsOrNull(GeneratedHttpRequest gRequest, Builder<String, Object> builder) {
       for (Object arg : Iterables.filter(gRequest.getArgs(), Predicates.notNull())) {
          if (arg.getClass().isAnnotationPresent(CredentialType.class)) {
             builder.put(arg.getClass().getAnnotation(CredentialType.class).value(), arg);
@@ -67,9 +67,9 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       Builder<String, Object> builder = ImmutableMap.builder();

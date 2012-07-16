@@ -18,14 +18,14 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.internal;
 
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
  * Base class for writing JoyentCloud Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseJoyentCloudExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseJoyentCloudExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    public BaseJoyentCloudExpectTest() {
       provider = "joyent-cloudapi";

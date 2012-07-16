@@ -18,12 +18,15 @@
  */
 package org.jclouds.vcloud.options;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 /**
@@ -42,7 +45,7 @@ public class InstantiateVAppTemplateOptions {
    public String getDescription() {
       return description;
    }
-   
+
    public boolean shouldDeploy() {
       return deploy;
    }
@@ -75,7 +78,7 @@ public class InstantiateVAppTemplateOptions {
       this.powerOn = powerOn;
       return this;
    }
-   
+
    /**
     * {@networkConfig VAppTemplate}s have internal networks that can be
     * connected in order to access the internet or other external networks.
@@ -138,52 +141,40 @@ public class InstantiateVAppTemplateOptions {
    }
 
    @Override
-   public String toString() {
-      return "[networkConfig=" + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate
-            + ", description=" + description  + ", deploy=" + deploy + ", powerOn=" + powerOn + "]";
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof InstantiateVAppTemplateOptions) {
+         final InstantiateVAppTemplateOptions other = InstantiateVAppTemplateOptions.class.cast(object);
+         return equal(networkConfig, other.networkConfig)
+               && equal(customizeOnInstantiate, other.customizeOnInstantiate) && equal(description, other.description)
+               && equal(deploy, other.deploy) && equal(powerOn, other.powerOn);
+      } else {
+         return false;
+      }
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((customizeOnInstantiate == null) ? 0 : customizeOnInstantiate.hashCode());
-      result = prime * result + (deploy ? 1231 : 1237);
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((networkConfig == null) ? 0 : networkConfig.hashCode());
-      result = prime * result + (powerOn ? 1231 : 1237);
-      return result;
+      return Objects.hashCode(networkConfig, customizeOnInstantiate, description, deploy, powerOn);
    }
-
+   
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      InstantiateVAppTemplateOptions other = (InstantiateVAppTemplateOptions) obj;
-      if (customizeOnInstantiate == null) {
-         if (other.customizeOnInstantiate != null)
-            return false;
-      } else if (!customizeOnInstantiate.equals(other.customizeOnInstantiate))
-         return false;
-      if (deploy != other.deploy)
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (networkConfig == null) {
-         if (other.networkConfig != null)
-            return false;
-      } else if (!networkConfig.equals(other.networkConfig))
-         return false;
-      if (powerOn != other.powerOn)
-         return false;
-      return true;
+   public String toString(){
+      return string().toString();
+   }
+   
+   protected ToStringHelper string() {
+      ToStringHelper toString = Objects.toStringHelper("").omitNullValues();
+      toString.add("customizeOnInstantiate", customizeOnInstantiate).add("description", description);
+      if (networkConfig.size() > 0)
+         toString.add("networkConfig", networkConfig);
+      if (!deploy)
+         toString.add("deploy", deploy);
+      if (!powerOn)
+         toString.add("powerOn", powerOn);
+      return toString;
    }
 
 }

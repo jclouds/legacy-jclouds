@@ -22,9 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
@@ -44,20 +41,20 @@ public class IfNotNullBindAvailabilityZoneToFormParamTest {
          .getInstance(IfNotNullBindAvailabilityZoneToFormParam.class);
 
    public void test() {
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, "us-east-1a");
       assertEquals(request.getPayload().getRawContent(), "Placement.AvailabilityZone=us-east-1a");
    }
 
    public void testWhenNullReturnsSame() {
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       HttpRequest request2 = binder.bindToRequest(request, null);
       assertSame(request, request2);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeString() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       binder.bindToRequest(request, new File("foo"));
    }
 

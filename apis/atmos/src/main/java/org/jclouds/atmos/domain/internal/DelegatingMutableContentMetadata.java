@@ -25,8 +25,6 @@ import org.jclouds.atmos.domain.MutableContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
-import com.google.common.collect.Multimap;
-
 /**
  * 
  * @author Adrian Cole

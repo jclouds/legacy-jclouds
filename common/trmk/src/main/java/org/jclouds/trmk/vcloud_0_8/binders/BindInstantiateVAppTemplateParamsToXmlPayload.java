@@ -84,9 +84,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name").toString();
       String template = checkNotNull(postParams.remove("template"), "template").toString();
@@ -172,7 +172,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    ThreadLocal<Map<String, String>> propLocal = new ThreadLocal<Map<String, String>>();
 
-   protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
       InstantiateVAppTemplateOptions options = null;
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof InstantiateVAppTemplateOptions) {

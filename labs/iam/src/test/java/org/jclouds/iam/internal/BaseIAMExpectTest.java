@@ -21,7 +21,7 @@ package org.jclouds.iam.internal;
 import org.jclouds.date.DateService;
 import org.jclouds.iam.config.IAMRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 import com.google.inject.Module;
 
@@ -29,7 +29,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseIAMExpectTest<T> extends BaseRestClientExpectTest<T> {
+public class BaseIAMExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    public BaseIAMExpectTest() {
       provider = "iam";

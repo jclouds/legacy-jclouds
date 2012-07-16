@@ -173,7 +173,7 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       Payload payload = createMock(Payload.class);
 
       function.setContext(request);
@@ -199,7 +199,7 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       Payload payload = createMock(Payload.class);
 
       function.setContext(request);
@@ -225,7 +225,7 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       Payload payload = createMock(Payload.class);
 
       function.setContext(request);

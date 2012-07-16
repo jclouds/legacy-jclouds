@@ -33,7 +33,7 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
-import org.jclouds.savvis.vpdc.VPDCClient;
+import org.jclouds.savvis.vpdc.VPDCApi;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.VDC;
@@ -52,15 +52,15 @@ public class NetworkToLocation implements Function<Network, Location> {
    private final String providerName;
    private final Supplier<URI> endpoint;
    private final Set<String> isoCodes;
-   private VPDCClient client;
+   private VPDCApi api;
 
    @Inject
    public NetworkToLocation(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider Supplier<URI> endpoint,
-            VPDCClient client) {
+            VPDCApi api) {
       this.providerName = checkNotNull(providerName, "providerName");
       this.endpoint = checkNotNull(endpoint, "endpoint");
       this.isoCodes = checkNotNull(isoCodes, "isoCodes");
-      this.client = checkNotNull(client, "client");
+      this.api = checkNotNull(api, "api");
    }
 
    @Override
@@ -70,12 +70,12 @@ public class NetworkToLocation implements Function<Network, Location> {
          Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName).description(
                   endpoint.get().toASCIIString()).iso3166Codes(isoCodes).build();
 
-         Org org = client.getBrowsingClient().getOrg(matcher.group(1));
+         Org org = api.getBrowsingApi().getOrg(matcher.group(1));
 
          Location orgLocation = new LocationBuilder().scope(LocationScope.REGION).id(org.getId()).description(
                   org.getDescription()).parent(provider).build();
 
-         VDC vdc = client.getBrowsingClient().getVDCInOrg(org.getId(), matcher.group(2));
+         VDC vdc = api.getBrowsingApi().getVDCInOrg(org.getId(), matcher.group(2));
 
          Location vdcLocation = new LocationBuilder().scope(LocationScope.ZONE).id(vdc.getId()).description(
                   vdc.getDescription()).parent(orgLocation).build();

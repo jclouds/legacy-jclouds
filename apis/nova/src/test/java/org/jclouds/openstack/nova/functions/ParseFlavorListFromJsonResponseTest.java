@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.testng.annotations.Test;
@@ -39,7 +38,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorListFromJsonResponse}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -51,12 +50,13 @@ public class ParseFlavorListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_flavors.json");
 
-      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server", null, null, null), new Flavor(2, "512 MB Server", null, null, null));
+      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server", null, null, null), new Flavor(2,
+               "512 MB Server", null, null, null));
 
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
-            }));
-      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+               .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
+               }));
+      List<Flavor> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(response, expects);
    }
 
@@ -65,9 +65,9 @@ public class ParseFlavorListFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_list_flavors_detail.json");
 
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
-            }));
-      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+               .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
+               }));
+      List<Flavor> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(response.get(0).getId(), 1);
       assertEquals(response.get(0).getName(), "256 MB Server");
       assertEquals(response.get(0).getDisk(), Integer.valueOf(10));

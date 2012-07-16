@@ -24,7 +24,7 @@ import static org.jclouds.aws.util.AWSUtils.parseHandle;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elb.ELBClient;
+import org.jclouds.elb.ELBApi;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.domain.regionscoped.LoadBalancerInRegion;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
@@ -39,13 +39,13 @@ import com.google.common.base.Function;
 @Singleton
 public class ELBGetLoadBalancerMetadataStrategy implements GetLoadBalancerMetadataStrategy {
 
-   private final ELBClient client;
+   private final ELBApi api;
    private final Function<LoadBalancerInRegion, LoadBalancerMetadata> converter;
 
    @Inject
-   protected ELBGetLoadBalancerMetadataStrategy(ELBClient client,
+   protected ELBGetLoadBalancerMetadataStrategy(ELBApi api,
             Function<LoadBalancerInRegion, LoadBalancerMetadata> converter) {
-      this.client = checkNotNull(client, "client");
+      this.api = checkNotNull(api, "api");
       this.converter = checkNotNull(converter, "converter");
    }
 
@@ -54,7 +54,7 @@ public class ELBGetLoadBalancerMetadataStrategy implements GetLoadBalancerMetada
       String[] parts = parseHandle(id);
       String region = parts[0];
       String name = parts[1];
-      LoadBalancer input = client.getLoadBalancerClientForRegion(region).get(name);
+      LoadBalancer input = api.getLoadBalancerApiForRegion(region).get(name);
       return input != null ? converter.apply(new LoadBalancerInRegion(input, region)) : null;
    }
 

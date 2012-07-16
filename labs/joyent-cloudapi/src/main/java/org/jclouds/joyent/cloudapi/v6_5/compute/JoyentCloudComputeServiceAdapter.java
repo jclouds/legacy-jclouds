@@ -33,7 +33,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Dataset;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Machine;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndId;
@@ -62,12 +62,12 @@ public class JoyentCloudComputeServiceAdapter implements
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final JoyentCloudClient cloudApiClient;
+   protected final JoyentCloudApi cloudApiApi;
    protected final Supplier<Set<String>> datacenterIds;
 
    @Inject
-   public JoyentCloudComputeServiceAdapter(JoyentCloudClient cloudApiClient, @Zone Supplier<Set<String>> datacenterIds) {
-      this.cloudApiClient = checkNotNull(cloudApiClient, "cloudApiClient");
+   public JoyentCloudComputeServiceAdapter(JoyentCloudApi cloudApiApi, @Zone Supplier<Set<String>> datacenterIds) {
+      this.cloudApiApi = checkNotNull(cloudApiApi, "cloudApiApi");
       this.datacenterIds = checkNotNull(datacenterIds, "datacenterIds");
    }
 
@@ -87,7 +87,7 @@ public class JoyentCloudComputeServiceAdapter implements
 
       logger.debug(">> creating new machine datacenter(%s) datasetURN(%s) options(%s)", datacenterId, datasetURN,
             options);
-      Machine machine = cloudApiClient.getMachineClientForDatacenter(datacenterId).createWithDataset(datasetURN, options);
+      Machine machine = cloudApiApi.getMachineApiForDatacenter(datacenterId).createWithDataset(datasetURN, options);
 
       logger.trace("<< machine(%s)", machine.getId());
 
@@ -105,7 +105,7 @@ public class JoyentCloudComputeServiceAdapter implements
    public Iterable<PackageInDatacenter> listHardwareProfiles() {
       Builder<PackageInDatacenter> builder = ImmutableSet.builder();
       for (final String datacenterId : datacenterIds.get()) {
-         builder.addAll(transform(cloudApiClient.getPackageClientForDatacenter(datacenterId).list(),
+         builder.addAll(transform(cloudApiApi.getPackageApiForDatacenter(datacenterId).list(),
                new Function<org.jclouds.joyent.cloudapi.v6_5.domain.Package, PackageInDatacenter>() {
 
                   @Override
@@ -122,7 +122,7 @@ public class JoyentCloudComputeServiceAdapter implements
    public Iterable<DatasetInDatacenter> listImages() {
       Builder<DatasetInDatacenter> builder = ImmutableSet.builder();
       for (final String datacenterId : datacenterIds.get()) {
-         builder.addAll(transform(cloudApiClient.getDatasetClientForDatacenter(datacenterId).list(),
+         builder.addAll(transform(cloudApiApi.getDatasetApiForDatacenter(datacenterId).list(),
                new Function<Dataset, DatasetInDatacenter>() {
 
                   @Override
@@ -139,7 +139,7 @@ public class JoyentCloudComputeServiceAdapter implements
    public Iterable<MachineInDatacenter> listNodes() {
       Builder<MachineInDatacenter> builder = ImmutableSet.builder();
       for (final String datacenterId : datacenterIds.get()) {
-         builder.addAll(transform(cloudApiClient.getMachineClientForDatacenter(datacenterId).list(),
+         builder.addAll(transform(cloudApiApi.getMachineApiForDatacenter(datacenterId).list(),
                new Function<Machine, MachineInDatacenter>() {
 
                   @Override
@@ -161,7 +161,7 @@ public class JoyentCloudComputeServiceAdapter implements
    @Override
    public MachineInDatacenter getNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      Machine machine = cloudApiClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).get(
+      Machine machine = cloudApiApi.getMachineApiForDatacenter(datacenterAndId.getDatacenter()).get(
             datacenterAndId.getId());
       return machine == null ? null : new MachineInDatacenter(machine, datacenterAndId.getDatacenter());
    }
@@ -169,7 +169,7 @@ public class JoyentCloudComputeServiceAdapter implements
    @Override
    public DatasetInDatacenter getImage(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      Dataset dataset = cloudApiClient.getDatasetClientForDatacenter(datacenterAndId.getDatacenter()).get(
+      Dataset dataset = cloudApiApi.getDatasetApiForDatacenter(datacenterAndId.getDatacenter()).get(
             datacenterAndId.getId());
       return dataset == null ? null : new DatasetInDatacenter(dataset, datacenterAndId.getDatacenter());
    }
@@ -177,26 +177,26 @@ public class JoyentCloudComputeServiceAdapter implements
    @Override
    public void destroyNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      cloudApiClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).delete(datacenterAndId.getId());
+      cloudApiApi.getMachineApiForDatacenter(datacenterAndId.getDatacenter()).delete(datacenterAndId.getId());
    }
 
    @Override
    public void rebootNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      cloudApiClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).reboot(datacenterAndId.getId());
+      cloudApiApi.getMachineApiForDatacenter(datacenterAndId.getDatacenter()).reboot(datacenterAndId.getId());
    }
 
    @Override
    public void resumeNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      cloudApiClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).stop(datacenterAndId.getId());
+      cloudApiApi.getMachineApiForDatacenter(datacenterAndId.getDatacenter()).stop(datacenterAndId.getId());
 
    }
 
    @Override
    public void suspendNode(String id) {
       DatacenterAndId datacenterAndId = DatacenterAndId.fromSlashEncoded(id);
-      cloudApiClient.getMachineClientForDatacenter(datacenterAndId.getDatacenter()).start(datacenterAndId.getId());
+      cloudApiApi.getMachineApiForDatacenter(datacenterAndId.getDatacenter()).start(datacenterAndId.getId());
 
    }
 

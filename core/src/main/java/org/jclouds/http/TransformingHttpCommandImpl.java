@@ -161,7 +161,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    @Override
    public String toString() {
-      if (request instanceof GeneratedHttpRequest<?>)
+      if (request instanceof GeneratedHttpRequest)
          return String.format("[method=%s.%s, request=%s]", GeneratedHttpRequest.class.cast(request).getDeclaring()
                   .getSimpleName(), GeneratedHttpRequest.class.cast(request).getJavaMethod().getName(), request
                   .getRequestLine());

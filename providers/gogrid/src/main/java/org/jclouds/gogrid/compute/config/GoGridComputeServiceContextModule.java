@@ -77,7 +77,7 @@ public class GoGridComputeServiceContextModule extends
 
       // we aren't converting hardware from a provider-specific type
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) IdentityFunction.class);
+      }).to(Class.class.cast(IdentityFunction.class));
 
       bind(TemplateOptions.class).to(GoGridTemplateOptions.class);
       

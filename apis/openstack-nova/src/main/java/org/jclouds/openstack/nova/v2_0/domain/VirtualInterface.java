@@ -31,7 +31,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * Represents a Virtual Interface (VIF)
  * 
  * @author Adam Lowe
- * @see org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceClient
+ * @see org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceApi
 */
 public class VirtualInterface {
 

@@ -28,7 +28,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.MapBinder;
 
 import com.google.common.base.Throwables;
@@ -43,6 +42,7 @@ import com.google.common.base.Throwables;
 @Singleton
 public class BindUserOrgAndPasswordAsBasicAuthorizationHeader implements MapBinder {
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       try {
@@ -50,7 +50,7 @@ public class BindUserOrgAndPasswordAsBasicAuthorizationHeader implements MapBind
                   + CryptoStreams.base64(String.format("%s@%s:%s", checkNotNull(postParams.get("user"), "user"),
                            checkNotNull(postParams.get("org"), "org"),
                            checkNotNull(postParams.get("password"), "password")).getBytes("UTF-8"));
-         return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, header);
+         return (R) request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, header).build();
       } catch (UnsupportedEncodingException e) {
          throw Throwables.propagate(e);
       }

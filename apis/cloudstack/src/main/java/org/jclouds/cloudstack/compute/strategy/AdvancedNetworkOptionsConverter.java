@@ -20,11 +20,10 @@ package org.jclouds.cloudstack.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetworkInZone;
-import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.isIsolatedNetwork;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
 
 import java.util.Map;
 

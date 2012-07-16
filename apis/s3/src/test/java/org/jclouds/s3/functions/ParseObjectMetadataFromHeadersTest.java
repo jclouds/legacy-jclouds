@@ -32,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.s3.domain.MutableObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
@@ -42,7 +41,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.name.Names;
@@ -55,9 +53,11 @@ public class ParseObjectMetadataFromHeadersTest {
 
    @Test
    void testNormalParsesETagIntoMD5AndMetadataHeaders() throws Exception {
-      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""), ImmutableMultimap.of(
-               S3Headers.USER_METADATA_PREFIX + "foo", "bar", HttpHeaders.LAST_MODIFIED, lastModified,
-               HttpHeaders.ETAG, "\"abcd\"", HttpHeaders.CACHE_CONTROL, "cacheControl"));
+      HttpResponse http = HttpResponse.builder().statusCode(400).message("boa").payload("")
+                                      .addHeader(S3Headers.USER_METADATA_PREFIX + "foo", "bar")
+                                      .addHeader(HttpHeaders.LAST_MODIFIED, lastModified)
+                                      .addHeader(HttpHeaders.ETAG, "\"abcd\"")
+                                      .addHeader(HttpHeaders.CACHE_CONTROL, "cacheControl").build();
       http.getPayload().getContentMetadata().setContentLength(1025l);
       http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
       http.getPayload().getContentMetadata().setContentEncoding("encoding");
@@ -83,9 +83,11 @@ public class ParseObjectMetadataFromHeadersTest {
 
    @Test
    void testMultipartDoesntAttemptToParseETagIntoMD5() throws Exception {
-      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""), ImmutableMultimap.of(
-               S3Headers.USER_METADATA_PREFIX + "foo", "bar", HttpHeaders.LAST_MODIFIED, lastModified,
-               HttpHeaders.ETAG, "\"abcd-1\"", HttpHeaders.CACHE_CONTROL, "cacheControl"));
+      HttpResponse http = HttpResponse.builder().statusCode(400).message("boa").payload("")
+                                      .addHeader(S3Headers.USER_METADATA_PREFIX + "foo", "bar")
+                                      .addHeader(HttpHeaders.LAST_MODIFIED, lastModified)
+                                      .addHeader(HttpHeaders.ETAG, "\"abcd-1\"")
+                                      .addHeader(HttpHeaders.CACHE_CONTROL, "cacheControl").build();
       http.getPayload().getContentMetadata().setContentLength(1025l);
       http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
       http.getPayload().getContentMetadata().setContentEncoding("encoding");
@@ -110,10 +112,12 @@ public class ParseObjectMetadataFromHeadersTest {
 
    @Test
    void testAmzEtagStillParsesToMD5AndDoesntMistakeAmzEtagForUserMetadata() throws Exception {
-
-      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""), ImmutableMultimap.of(
-               S3Headers.USER_METADATA_PREFIX + "foo", "bar", HttpHeaders.LAST_MODIFIED, lastModified,
-               HttpHeaders.CACHE_CONTROL, "cacheControl", S3Headers.AMZ_ETAG, "\"abcd\""));
+      HttpResponse http = HttpResponse.builder().statusCode(400).message("boa").payload("")
+                                      .addHeader(S3Headers.USER_METADATA_PREFIX + "foo", "bar")
+                                      .addHeader(HttpHeaders.LAST_MODIFIED, lastModified)
+                                      .addHeader(S3Headers.AMZ_ETAG, "\"abcd\"")
+                                      .addHeader(HttpHeaders.CACHE_CONTROL, "cacheControl").build();
+      
       http.getPayload().getContentMetadata().setContentLength(1025l);
       http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
       http.getPayload().getContentMetadata().setContentEncoding("encoding");

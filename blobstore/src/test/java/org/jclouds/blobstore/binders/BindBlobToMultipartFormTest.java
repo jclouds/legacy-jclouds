@@ -23,9 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.ContextBuilder;
@@ -64,7 +62,7 @@ public class BindBlobToMultipartFormTest {
 
       BindBlobToMultipartForm binder = new BindBlobToMultipartForm();
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost:8001").build();
       binder.bindToRequest(request, TEST_BLOB);
 
       assertEquals(Strings2.toStringAndClose(request.getPayload().getInput()), EXPECTS);
@@ -85,14 +83,14 @@ public class BindBlobToMultipartFormTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeBlob() {
       BindBlobToMultipartForm binder = new BindBlobToMultipartForm();
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
       BindBlobToMultipartForm binder = new BindBlobToMultipartForm();
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

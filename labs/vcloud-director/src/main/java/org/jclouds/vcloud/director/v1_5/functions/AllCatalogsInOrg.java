@@ -32,7 +32,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 import com.google.common.base.Function;
 
@@ -44,12 +44,12 @@ public class AllCatalogsInOrg implements Function<AdminOrg, Iterable<? extends C
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final VCloudDirectorAsyncClient aclient;
+   private final VCloudDirectorAsyncApi aapi;
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogsInOrg(VCloudDirectorAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aclient = aclient;
+   AllCatalogsInOrg(VCloudDirectorAsyncApi aapi, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.aapi = aapi;
       this.executor = executor;
    }
 
@@ -59,7 +59,7 @@ public class AllCatalogsInOrg implements Function<AdminOrg, Iterable<? extends C
             new Function<Reference, Future<? extends Catalog>>() {
                @Override
                public Future<? extends Catalog> apply(Reference from) {
-                  return aclient.getCatalogClient().getCatalog(from.getHref());
+                  return aapi.getCatalogApi().getCatalog(from.getHref());
                }
 
             }, executor, null, logger, "catalogs in " + org.getName());

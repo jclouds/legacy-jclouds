@@ -26,7 +26,6 @@ import javax.inject.Singleton;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.base.Charsets;
@@ -46,6 +45,7 @@ public class BindS3UploadPolicyAndSignature implements Binder {
       this.signer = signer;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       String encodedJson = CryptoStreams.base64(checkNotNull(input, "json").toString().getBytes(Charsets.UTF_8));
@@ -53,7 +53,7 @@ public class BindS3UploadPolicyAndSignature implements Binder {
       builder.put("Storage.S3.UploadPolicy", encodedJson);
       String signature = signer.sign(encodedJson);
       builder.put("Storage.S3.UploadPolicySignature", signature);
-      return ModifyRequest.putFormParams(request, builder.build());
+      return (R) request.toBuilder().replaceFormParams(builder.build()).build();
    }
 
 }

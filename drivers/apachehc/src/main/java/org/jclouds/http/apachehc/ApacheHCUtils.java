@@ -45,6 +45,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.util.EntityUtils;
 import org.jclouds.JcloudsVersion;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.ContentMetadataCodec;
@@ -198,7 +199,7 @@ public class ApacheHCUtils {
       @Override
       public void release() {
          try {
-            content.consumeContent();
+            EntityUtils.consume(content);
          } catch (IOException e) {
          }
       }

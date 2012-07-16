@@ -20,21 +20,17 @@ package org.jclouds.aws.s3;
 
 import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
 
-import java.net.URI;
-
 import org.jclouds.aws.s3.internal.BaseAWSS3ClientExpectTest;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Injector;
 
 /**
@@ -44,25 +40,18 @@ import com.google.inject.Injector;
 public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
    HttpRequest bucketLocationRequest = HttpRequest.builder()
                                                   .method("GET")
-                                                  .endpoint(URI.create("https://test.s3.amazonaws.com/?location"))
-                                                  .headers(ImmutableMultimap.of(
-                                                      "Host", "test.s3.amazonaws.com",
-                                                      "Date", CONSTANT_DATE,
-                                                      "Authorization", "AWS identity:D1rymKrEdvzvhmZXeg+Z0R+tiug="
-                                                   ))
-                                                  .build();
+                                                  .endpoint("https://test.s3.amazonaws.com/?location")
+                                                  .addHeader("Host", "test.s3.amazonaws.com")
+                                                  .addHeader("Date", CONSTANT_DATE)
+                                                  .addHeader("Authorization", "AWS identity:D1rymKrEdvzvhmZXeg+Z0R+tiug=").build();
    
    HttpResponse bucketLocationResponse = HttpResponse.builder()
                                                      .statusCode(200)
-                                                     .payload(
-                                                              payloadFromStringWithContentType("<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">eu-west-1</LocationConstraint>", "application/xml"))
-                                                     .headers(ImmutableMultimap.of(
-                                                         "x-amz-id-2", "BtioT9wIK04YkE2DPgWUrQFiAbjwJVP8cLyfOkJ1FHMbn2hVjBZvkMMuXPDHfGVw",
-                                                         "x-amz-request-id", "51BF4F45D49B1B34",
-                                                         "Date", CONSTANT_DATE,
-                                                         "Server", "AmazonS3"
-                                                      ))
-                                                     .build();
+                                                     .payload(payloadFromStringWithContentType("<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">eu-west-1</LocationConstraint>", "application/xml"))
+                                                     .addHeader("x-amz-id-2", "BtioT9wIK04YkE2DPgWUrQFiAbjwJVP8cLyfOkJ1FHMbn2hVjBZvkMMuXPDHfGVw")
+                                                     .addHeader("x-amz-request-id", "51BF4F45D49B1B34")
+                                                     .addHeader("Date", CONSTANT_DATE)
+                                                     .addHeader("Server", "AmazonS3").build();
    @Test
    public void testPutWithReducedRedundancy() {
       Injector injector = createInjector(Functions.forMap(ImmutableMap.<HttpRequest, HttpResponse>of()), createModule(), setupProperties());
@@ -72,26 +61,20 @@ public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
       
       AWSS3Client client = requestsSendResponses(bucketLocationRequest, bucketLocationResponse,
          HttpRequest.builder()
-            .method("PUT")
-            .endpoint(URI.create("https://test.s3-eu-west-1.amazonaws.com/test"))
-            .headers(ImmutableMultimap.of(
-               "x-amz-storage-class", "REDUCED_REDUNDANCY",
-               "Host", "test.s3-eu-west-1.amazonaws.com",
-               "Date", CONSTANT_DATE,
-               "Authorization", "AWS identity:1mJrW85/mqZpYTFIK5Ebtt2MM6E="
-            ))
-            .payload(new StringPayload("content"))
-            .build(),
+                    .method("PUT")
+                    .endpoint("https://test.s3-eu-west-1.amazonaws.com/test")
+                    .addHeader("x-amz-storage-class", "REDUCED_REDUNDANCY")
+                    .addHeader("Host", "test.s3-eu-west-1.amazonaws.com")
+                    .addHeader("Date", CONSTANT_DATE)
+                    .addHeader("Authorization", "AWS identity:1mJrW85/mqZpYTFIK5Ebtt2MM6E=")
+                    .payload("content").build(),
          HttpResponse.builder()
-            .statusCode(200)
-            .headers(ImmutableMultimap.of(
-               "x-amz-id-2", "w0rL+9fALQiCOToesVQefs8WalIgn+ZhMD7hHMKYud/xv7MyKkAWQOtFNEfK97Ri",
-               "x-amz-request-id", "7A84C3CD4437A4C0",
-               "Date", CONSTANT_DATE,
-               "ETag", "437b930db84b8079c2dd804a71936b5f",
-               "Server", "AmazonS3"
-            ))
-            .build()
+                     .statusCode(200)
+                     .addHeader("x-amz-id-2", "w0rL+9fALQiCOToesVQefs8WalIgn+ZhMD7hHMKYud/xv7MyKkAWQOtFNEfK97Ri")
+                     .addHeader("x-amz-request-id", "7A84C3CD4437A4C0")
+                     .addHeader("Date", CONSTANT_DATE)
+                     .addHeader("ETag", "437b930db84b8079c2dd804a71936b5f")
+                     .addHeader("Server", "AmazonS3").build()
       );
 
       client.putObject("test", blobToObject.apply(blob),

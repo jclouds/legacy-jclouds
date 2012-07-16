@@ -566,13 +566,13 @@ public class Checks {
       }
    }
 
-   public static void checkMetadataFor(String client, Metadata metadata) {
+   public static void checkMetadataFor(String api, Metadata metadata) {
       for (MetadataEntry entry : metadata.getMetadataEntries()) {
          // Check required fields
          assertNotNull(entry.getKey(), 
-               String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", entry.getKey(), "key"));
+               String.format(OBJ_FIELD_ATTRB_REQ, api, "MetadataEntry", entry.getKey(), "key"));
          assertNotNull(entry.getValue(), 
-               String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", entry.getValue(), "value"));
+               String.format(OBJ_FIELD_ATTRB_REQ, api, "MetadataEntry", entry.getValue(), "value"));
           
          // Check parent type
          checkResourceType(entry);
@@ -582,33 +582,33 @@ public class Checks {
       checkResourceType(metadata);
    }
 
-   public static void checkMetadataValueFor(String client, MetadataValue metadataValue) {
-      checkMetadataValueFor(client, metadataValue, "value");
+   public static void checkMetadataValueFor(String api, MetadataValue metadataValue) {
+      checkMetadataValueFor(api, metadataValue, "value");
    }
    
-   public static void checkMetadataValueFor(String client, MetadataValue metadataValue, String expectedValue) {
+   public static void checkMetadataValueFor(String api, MetadataValue metadataValue, String expectedValue) {
       // Check required fields
       String value = metadataValue.getValue();
       assertNotNull(value, 
-            String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", 
+            String.format(OBJ_FIELD_ATTRB_REQ, api, "MetadataEntry", 
                   metadataValue.toString(), "value"));
       assertEquals(value, expectedValue, 
-            String.format(OBJ_FIELD_EQ, client, "metadataEntry.value", expectedValue, value));
+            String.format(OBJ_FIELD_EQ, api, "metadataEntry.value", expectedValue, value));
       
       // Check parent type
       checkResourceType(metadataValue);
    }
 
-   public static void checkMetadataKeyAbsentFor(String client, Metadata metadata, String key) {
+   public static void checkMetadataKeyAbsentFor(String api, Metadata metadata, String key) {
       Map<String,String> metadataMap = metadataToMap(metadata);
       assertFalse(metadataMap.containsKey(key), 
-               String.format(OBJ_DEL, client+" metadata key", key));
+               String.format(OBJ_DEL, api+" metadata key", key));
    }
 
-   public static void checkMetadataFor(String client, Metadata metadata, Map<String, String> expectedMap) {
+   public static void checkMetadataFor(String api, Metadata metadata, Map<String, String> expectedMap) {
       Map<String,String> actualMap = Checks.metadataToMap(metadata);
       assertEquals(actualMap, expectedMap,
-               String.format(OBJ_FIELD_EQ, client, "metadata entries", expectedMap, actualMap));
+               String.format(OBJ_FIELD_EQ, api, "metadata entries", expectedMap, actualMap));
    }
 
    public static Map<String,String> metadataToMap(Metadata metadata) {
@@ -802,13 +802,13 @@ public class Checks {
       // TODO
    }
    
-   public static void checkMediaFor(String client, Media media) {
+   public static void checkMediaFor(String api, Media media) {
       // required
-      assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
+      assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, api, "imageType"));
       assertTrue(Media.ImageType.ALL.contains(media.getImageType()), 
             "The Image type of a Media must be one of the allowed list");
-      assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, client, "size"));
-      assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, client, "size", media.getSize()));
+      assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, api, "size"));
+      assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, api, "size", media.getSize()));
       
       // parent type
       checkResourceEntityType(media);
@@ -940,29 +940,29 @@ public class Checks {
       // NOTE groupSearchBase cannot be checked
    }
    
-   public static void checkUserAttributes(String client, OrgLdapUserAttributes attributes) {
+   public static void checkUserAttributes(String api, OrgLdapUserAttributes attributes) {
       // required
-      assertNotNull(attributes.getObjectClass(), String.format(OBJ_FIELD_REQ, client, "objectClass"));
-      assertNotNull(attributes.getObjectIdentifier(), String.format(OBJ_FIELD_REQ, client, "objectIdentifier"));
-      assertNotNull(attributes.getUserName(), String.format(OBJ_FIELD_REQ, client, "userName"));
-      assertNotNull(attributes.getEmail(), String.format(OBJ_FIELD_REQ, client, "email"));
-      assertNotNull(attributes.getFullName(), String.format(OBJ_FIELD_REQ, client, "fullName"));
-      assertNotNull(attributes.getGivenName(), String.format(OBJ_FIELD_REQ, client, "givenName"));
-      assertNotNull(attributes.getSurname(), String.format(OBJ_FIELD_REQ, client, "surname"));
-      assertNotNull(attributes.getTelephone(), String.format(OBJ_FIELD_REQ, client, "telephone"));
-      assertNotNull(attributes.getGroupMembershipIdentifier(), String.format(OBJ_FIELD_REQ, client, "groupMembershipIdentifier"));
+      assertNotNull(attributes.getObjectClass(), String.format(OBJ_FIELD_REQ, api, "objectClass"));
+      assertNotNull(attributes.getObjectIdentifier(), String.format(OBJ_FIELD_REQ, api, "objectIdentifier"));
+      assertNotNull(attributes.getUserName(), String.format(OBJ_FIELD_REQ, api, "userName"));
+      assertNotNull(attributes.getEmail(), String.format(OBJ_FIELD_REQ, api, "email"));
+      assertNotNull(attributes.getFullName(), String.format(OBJ_FIELD_REQ, api, "fullName"));
+      assertNotNull(attributes.getGivenName(), String.format(OBJ_FIELD_REQ, api, "givenName"));
+      assertNotNull(attributes.getSurname(), String.format(OBJ_FIELD_REQ, api, "surname"));
+      assertNotNull(attributes.getTelephone(), String.format(OBJ_FIELD_REQ, api, "telephone"));
+      assertNotNull(attributes.getGroupMembershipIdentifier(), String.format(OBJ_FIELD_REQ, api, "groupMembershipIdentifier"));
       
       // optional
       // NOTE groupBackLinkIdentifier cannot be checked
    }
    
-   public static void checkGroupAttributes(String client, OrgLdapGroupAttributes attributes) {
+   public static void checkGroupAttributes(String api, OrgLdapGroupAttributes attributes) {
       // required
-      assertNotNull(attributes.getObjectClass(), String.format(OBJ_FIELD_REQ, client, "objectClass"));
-      assertNotNull(attributes.getObjectIdentifier(), String.format(OBJ_FIELD_REQ, client, "objectIdentifier"));
-      assertNotNull(attributes.getGroupName(), String.format(OBJ_FIELD_REQ, client, "groupName"));
-      assertNotNull(attributes.getMembership(), String.format(OBJ_FIELD_REQ, client, "membership"));
-      assertNotNull(attributes.getMembershipIdentifier(), String.format(OBJ_FIELD_REQ, client, "membershipIdentifier"));
+      assertNotNull(attributes.getObjectClass(), String.format(OBJ_FIELD_REQ, api, "objectClass"));
+      assertNotNull(attributes.getObjectIdentifier(), String.format(OBJ_FIELD_REQ, api, "objectIdentifier"));
+      assertNotNull(attributes.getGroupName(), String.format(OBJ_FIELD_REQ, api, "groupName"));
+      assertNotNull(attributes.getMembership(), String.format(OBJ_FIELD_REQ, api, "membership"));
+      assertNotNull(attributes.getMembershipIdentifier(), String.format(OBJ_FIELD_REQ, api, "membershipIdentifier"));
       
       // optional
       // NOTE backLinkIdentifier cannot be checked

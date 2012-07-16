@@ -30,7 +30,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
@@ -39,7 +39,7 @@ import com.google.inject.Singleton;
 /**
  * If the credentials supplied in the authentication header are invalid, or if the token has
  * expired, the server returns HTTP response code 401. The token expires after a configurable
- * interval of client inactivity. The default is 30 minutes after the token is created. After the
+ * interval of api inactivity. The default is 30 minutes after the token is created. After the
  * token expires, you must log in again to obtain a new token.
  * 
  * @author Adrian Cole
@@ -51,13 +51,13 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnClose extends BackoffLimit
    protected Logger logger = Logger.NULL;
 
    private final LoadingCache<Credentials, SessionWithToken> authenticationResponseCache;
-   private final SessionClient sessionClient;
+   private final SessionApi sessionApi;
 
    @Inject
    protected InvalidateSessionAndRetryOn401AndLogoutOnClose(
-            LoadingCache<Credentials, SessionWithToken> authenticationResponseCache, SessionClient sessionClient) {
+            LoadingCache<Credentials, SessionWithToken> authenticationResponseCache, SessionApi sessionApi) {
       this.authenticationResponseCache = authenticationResponseCache;
-      this.sessionClient = sessionClient;
+      this.sessionApi = sessionApi;
    }
 
    @Override
@@ -83,7 +83,7 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnClose extends BackoffLimit
    public void logoutOnClose() {
       for (SessionWithToken s : authenticationResponseCache.asMap().values()) {
          try {
-            sessionClient.logoutSessionWithToken(s.getSession().getHref(), s.getToken());
+            sessionApi.logoutSessionWithToken(s.getSession().getHref(), s.getToken());
          } catch (Exception e) {
             logger.error(e, "error logging out session %s", s.getSession());
          }

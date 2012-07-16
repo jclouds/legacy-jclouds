@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.PathParam;
@@ -54,11 +53,11 @@ public class BindMapToStringPayloadTest {
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
       Method testPayload = TestPayload.class.getMethod("testPayload", String.class);
-      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.<TestPayload>requestBuilder()
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .declaring(TestPayload.class).javaMethod(testPayload).args(ImmutableList.<Object> of("robot"))
-            .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
+            .method(HttpMethod.POST).endpoint("http://localhost").build();
 
-      GeneratedHttpRequest<TestPayload> newRequest = binder()
+      GeneratedHttpRequest newRequest = binder()
             .bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));
 
       assertEquals(newRequest.getRequestLine(), request.getRequestLine());
@@ -68,23 +67,23 @@ public class BindMapToStringPayloadTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustHavePayloadAnnotation() throws SecurityException, NoSuchMethodException {
       Method noPayload = TestPayload.class.getMethod("noPayload", String.class);
-      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.<TestPayload>requestBuilder()
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .declaring(TestPayload.class).javaMethod(noPayload).args(ImmutableList.<Object> of("robot"))
-            .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
+            .method(HttpMethod.POST).endpoint("http://localhost").build();
       binder().bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeMap() {
       BindMapToStringPayload binder = binder();
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
       BindMapToStringPayload binder = binder();
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 

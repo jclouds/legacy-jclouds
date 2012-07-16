@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
@@ -33,40 +31,40 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class PublicIPAddress
- * 
+ *
  * @author Adrian Cole
-*/
+ */
 public class PublicIPAddress {
 
    /**
     */
    public static enum State {
       ALLOCATING, ALLOCATED, RELEASING, UNRECOGNIZED;
-      
+
       @Override
       public String toString() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
       }
-      
+
       public static State fromValue(String state) {
-      try {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-      } catch (IllegalArgumentException e) {
-      return UNRECOGNIZED;
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
-      }
-      
+
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromPublicIPAddress(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -90,8 +88,8 @@ public class PublicIPAddress {
       protected String zoneName;
       protected String jobId;
       protected Integer jobStatus;
-   
-      /** 
+
+      /**
        * @see PublicIPAddress#getId()
        */
       public T id(String id) {
@@ -99,7 +97,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getAccount()
        */
       public T account(String account) {
@@ -107,7 +105,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getAllocated()
        */
       public T allocated(Date allocated) {
@@ -115,7 +113,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getAssociatedNetworkId()
        */
       public T associatedNetworkId(String associatedNetworkId) {
@@ -123,7 +121,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getDomain()
        */
       public T domain(String domain) {
@@ -131,7 +129,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getDomainId()
        */
       public T domainId(String domainId) {
@@ -139,7 +137,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#isUsesVirtualNetwork()
        */
       public T usesVirtualNetwork(boolean usesVirtualNetwork) {
@@ -147,7 +145,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getIPAddress()
        */
       public T IPAddress(String IPAddress) {
@@ -155,7 +153,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#isSourceNAT()
        */
       public T isSourceNAT(boolean isSourceNAT) {
@@ -163,7 +161,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#isStaticNAT()
        */
       public T isStaticNAT(boolean isStaticNAT) {
@@ -171,7 +169,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getNetworkId()
        */
       public T networkId(String networkId) {
@@ -179,7 +177,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getState()
        */
       public T state(PublicIPAddress.State state) {
@@ -187,7 +185,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getVirtualMachineDisplayName()
        */
       public T virtualMachineDisplayName(String virtualMachineDisplayName) {
@@ -195,7 +193,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getVirtualMachineId()
        */
       public T virtualMachineId(String virtualMachineId) {
@@ -203,7 +201,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getVirtualMachineName()
        */
       public T virtualMachineName(String virtualMachineName) {
@@ -211,7 +209,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getVLANId()
        */
       public T VLANId(String VLANId) {
@@ -219,7 +217,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getVLANName()
        */
       public T VLANName(String VLANName) {
@@ -227,7 +225,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -235,7 +233,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getZoneName()
        */
       public T zoneName(String zoneName) {
@@ -243,7 +241,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getJobId()
        */
       public T jobId(String jobId) {
@@ -251,7 +249,7 @@ public class PublicIPAddress {
          return self();
       }
 
-      /** 
+      /**
        * @see PublicIPAddress#getJobStatus()
        */
       public T jobStatus(Integer jobStatus) {
@@ -262,30 +260,30 @@ public class PublicIPAddress {
       public PublicIPAddress build() {
          return new PublicIPAddress(id, account, allocated, associatedNetworkId, domain, domainId, usesVirtualNetwork, IPAddress, isSourceNAT, isStaticNAT, networkId, state, virtualMachineDisplayName, virtualMachineId, virtualMachineName, VLANId, VLANName, zoneId, zoneName, jobId, jobStatus);
       }
-      
+
       public T fromPublicIPAddress(PublicIPAddress in) {
          return this
-                  .id(in.getId())
-                  .account(in.getAccount())
-                  .allocated(in.getAllocated())
-                  .associatedNetworkId(in.getAssociatedNetworkId())
-                  .domain(in.getDomain())
-                  .domainId(in.getDomainId())
-                  .usesVirtualNetwork(in.isUsesVirtualNetwork())
-                  .IPAddress(in.getIPAddress())
-                  .isSourceNAT(in.isSourceNAT())
-                  .isStaticNAT(in.isStaticNAT())
-                  .networkId(in.getNetworkId())
-                  .state(in.getState())
-                  .virtualMachineDisplayName(in.getVirtualMachineDisplayName())
-                  .virtualMachineId(in.getVirtualMachineId())
-                  .virtualMachineName(in.getVirtualMachineName())
-                  .VLANId(in.getVLANId())
-                  .VLANName(in.getVLANName())
-                  .zoneId(in.getZoneId())
-                  .zoneName(in.getZoneName())
-                  .jobId(in.getJobId())
-                  .jobStatus(in.getJobStatus());
+               .id(in.getId())
+               .account(in.getAccount())
+               .allocated(in.getAllocated())
+               .associatedNetworkId(in.getAssociatedNetworkId())
+               .domain(in.getDomain())
+               .domainId(in.getDomainId())
+               .usesVirtualNetwork(in.isUsesVirtualNetwork())
+               .IPAddress(in.getIPAddress())
+               .isSourceNAT(in.isSourceNAT())
+               .isStaticNAT(in.isStaticNAT())
+               .networkId(in.getNetworkId())
+               .state(in.getState())
+               .virtualMachineDisplayName(in.getVirtualMachineDisplayName())
+               .virtualMachineId(in.getVirtualMachineId())
+               .virtualMachineName(in.getVirtualMachineName())
+               .VLANId(in.getVLANId())
+               .VLANName(in.getVLANName())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus());
       }
    }
 
@@ -299,43 +297,27 @@ public class PublicIPAddress {
    private final String id;
    private final String account;
    private final Date allocated;
-   @Named("associatednetworkid")
    private final String associatedNetworkId;
    private final String domain;
-   @Named("domainid")
    private final String domainId;
-   @Named("forvirtualnetwork")
    private final boolean usesVirtualNetwork;
-   @Named("ipaddress")
    private final String IPAddress;
-   @Named("issourcenat")
    private final boolean isSourceNAT;
-   @Named("isstaticnat")
    private final boolean isStaticNAT;
-   @Named("networkid")
    private final String networkId;
    private final PublicIPAddress.State state;
-   @Named("virtualmachinedisplayname")
    private final String virtualMachineDisplayName;
-   @Named("virtualmachineid")
    private final String virtualMachineId;
-   @Named("virtualmachinename")
    private final String virtualMachineName;
-   @Named("VLANid")
    private final String VLANId;
-   @Named("VLANname")
    private final String VLANName;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final Integer jobStatus;
 
    @ConstructorProperties({
-      "id", "account", "allocated", "associatednetworkid", "domain", "domainid", "forvirtualnetwork", "ipaddress", "issourcenat",
+         "id", "account", "allocated", "associatednetworkid", "domain", "domainid", "forvirtualnetwork", "ipaddress", "issourcenat",
          "isstaticnat", "networkid", "state", "virtualmachinedisplayname", "virtualmachineid", "virtualmachinename", "VLANid",
          "VLANname", "zoneid", "zonename", "jobid", "jobstatus"
    })
@@ -454,7 +436,7 @@ public class PublicIPAddress {
 
    /**
     * @return State of the ip address. Can be: Allocating, Allocated and
-         Releasing
+    *         Releasing
     */
    @Nullable
    public PublicIPAddress.State getState() {
@@ -463,7 +445,7 @@ public class PublicIPAddress {
 
    /**
     * @return virtual machine display name the ip address is assigned to (not
-         null only for static nat Ip)
+    *         null only for static nat Ip)
     */
    @Nullable
    public String getVirtualMachineDisplayName() {
@@ -472,7 +454,7 @@ public class PublicIPAddress {
 
    /**
     * @return virtual machine id the ip address is assigned to (not null only
-         for static nat Ip)
+    *         for static nat Ip)
     */
    @Nullable
    public String getVirtualMachineId() {
@@ -481,7 +463,7 @@ public class PublicIPAddress {
 
    /**
     * @return virtual machine name the ip address is assigned to (not null only
-         for static nat Ip)
+    *         for static nat Ip)
     */
    @Nullable
    public String getVirtualMachineName() {
@@ -522,8 +504,8 @@ public class PublicIPAddress {
 
    /**
     * @return shows the current pending asynchronous job ID. This tag is not
-         returned if no current pending jobs are acting on the virtual
-         machine
+    *         returned if no current pending jobs are acting on the virtual
+    *         machine
     */
    @Nullable
    public String getJobId() {
@@ -549,28 +531,28 @@ public class PublicIPAddress {
       if (obj == null || getClass() != obj.getClass()) return false;
       PublicIPAddress that = PublicIPAddress.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.allocated, that.allocated)
-               && Objects.equal(this.associatedNetworkId, that.associatedNetworkId)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.usesVirtualNetwork, that.usesVirtualNetwork)
-               && Objects.equal(this.IPAddress, that.IPAddress)
-               && Objects.equal(this.isSourceNAT, that.isSourceNAT)
-               && Objects.equal(this.isStaticNAT, that.isStaticNAT)
-               && Objects.equal(this.networkId, that.networkId)
-               && Objects.equal(this.state, that.state)
-               && Objects.equal(this.virtualMachineDisplayName, that.virtualMachineDisplayName)
-               && Objects.equal(this.virtualMachineId, that.virtualMachineId)
-               && Objects.equal(this.virtualMachineName, that.virtualMachineName)
-               && Objects.equal(this.VLANId, that.VLANId)
-               && Objects.equal(this.VLANName, that.VLANName)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.zoneName, that.zoneName)
-               && Objects.equal(this.jobId, that.jobId)
-               && Objects.equal(this.jobStatus, that.jobStatus);
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.allocated, that.allocated)
+            && Objects.equal(this.associatedNetworkId, that.associatedNetworkId)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.usesVirtualNetwork, that.usesVirtualNetwork)
+            && Objects.equal(this.IPAddress, that.IPAddress)
+            && Objects.equal(this.isSourceNAT, that.isSourceNAT)
+            && Objects.equal(this.isStaticNAT, that.isStaticNAT)
+            && Objects.equal(this.networkId, that.networkId)
+            && Objects.equal(this.state, that.state)
+            && Objects.equal(this.virtualMachineDisplayName, that.virtualMachineDisplayName)
+            && Objects.equal(this.virtualMachineId, that.virtualMachineId)
+            && Objects.equal(this.virtualMachineName, that.virtualMachineName)
+            && Objects.equal(this.VLANId, that.VLANId)
+            && Objects.equal(this.VLANName, that.VLANName)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("account", account).add("allocated", allocated).add("associatedNetworkId", associatedNetworkId)
@@ -580,7 +562,7 @@ public class PublicIPAddress {
             .add("virtualMachineName", virtualMachineName).add("VLANId", VLANId).add("VLANName", VLANName).add("zoneId", zoneId)
             .add("zoneName", zoneName).add("jobId", jobId).add("jobStatus", jobStatus);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

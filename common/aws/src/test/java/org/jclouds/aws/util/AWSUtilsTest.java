@@ -31,19 +31,16 @@ import org.jclouds.aws.filters.FormSignerTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests parsing of S3 responses
  * 
  * @author Adrian Cole
  */
-@Test(singleThreaded = true, groups = { "unit" })
+@Test(singleThreaded = true, groups = "unit", testName = "AWSUtilsTest")
 public class AWSUtilsTest {
    AWSUtils utils = null;
    private HttpCommand command;
@@ -64,8 +61,11 @@ public class AWSUtilsTest {
    }
 
    HttpResponse response(InputStream content) {
-      HttpResponse response = new HttpResponse(400, "boa", Payloads.newInputStreamPayload(content),
-            ImmutableMultimap.<String, String> of("x-amz-request-id", "requestid", "x-amz-id-2", "requesttoken"));
+      HttpResponse response = HttpResponse.builder().statusCode(400)
+                                          .message("boa")
+                                          .payload(content)
+                                          .addHeader("x-amz-request-id", "requestid")
+                                          .addHeader("x-amz-id-2", "requesttoken").build();
       response.getPayload().getContentMetadata().setContentType("text/xml");
       return response;
    }

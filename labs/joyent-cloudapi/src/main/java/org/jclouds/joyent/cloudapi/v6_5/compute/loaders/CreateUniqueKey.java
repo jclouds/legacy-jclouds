@@ -32,7 +32,7 @@ import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.SshKeys;
-import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudClient;
+import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.KeyAndPrivateKey;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndName;
@@ -49,14 +49,14 @@ public class CreateUniqueKey extends CacheLoader<DatacenterAndName, KeyAndPrivat
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final JoyentCloudClient cloudApiClient;
+   protected final JoyentCloudApi cloudApiApi;
    protected final GroupNamingConvention.Factory namingConvention;
    protected final Crypto crypto;
    protected final Provider<SecureRandom> secureRandom;
 
    @Inject
-   public CreateUniqueKey(JoyentCloudClient cloudApiClient, GroupNamingConvention.Factory namingConvention, Crypto crypto, Provider<SecureRandom> secureRandom) {
-      this.cloudApiClient = checkNotNull(cloudApiClient, "cloudApiClient");
+   public CreateUniqueKey(JoyentCloudApi cloudApiApi, GroupNamingConvention.Factory namingConvention, Crypto crypto, Provider<SecureRandom> secureRandom) {
+      this.cloudApiApi = checkNotNull(cloudApiApi, "cloudApiApi");
       this.namingConvention = checkNotNull(namingConvention, "namingConvention");
       this.crypto = checkNotNull(crypto, "crypto");
       this.secureRandom = checkNotNull(secureRandom, "secureRandom");
@@ -77,7 +77,7 @@ public class CreateUniqueKey extends CacheLoader<DatacenterAndName, KeyAndPrivat
       while (key == null) {
          String name = namingConvention.createWithoutPrefix().uniqueNameForGroup(prefix);
          try {
-            key = cloudApiClient.getKeyClient().create(Key.builder().name(name).key(publicKey).build());
+            key = cloudApiApi.getKeyApi().create(Key.builder().name(name).key(publicKey).build());
          } catch (IllegalStateException e) {
             logger.trace("error creating keypair named %s, %s", name, e.getMessage());
          }

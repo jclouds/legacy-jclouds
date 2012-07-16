@@ -23,8 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 
-import javax.ws.rs.HttpMethod;
-
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
@@ -62,7 +60,7 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3A
       object.setPayload(payload);
       object.getMetadata().setKey("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
 
       assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
@@ -79,7 +77,7 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3A
       object.getMetadata().setCacheControl("no-cache");
       object.getMetadata().setUserMetadata(ImmutableMap.of("foo", "bar"));
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
 
       assertEquals(binder.bindToRequest(request, object), HttpRequest.builder().method("PUT").endpoint(
@@ -95,7 +93,7 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3A
       object.setPayload(payload);
       object.getMetadata().setKey("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
@@ -107,7 +105,7 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3A
       payload.getContentMetadata().setContentLength(5368709120000l);
       object.setPayload(payload);
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
@@ -120,21 +118,21 @@ public class BindS3ObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3A
       object.setPayload(payload);
       object.getMetadata().setKey("foo");
 
-      HttpRequest request = HttpRequest.builder().method("PUT").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("PUT").endpoint("http://localhost").build();
       BindS3ObjectMetadataToRequest binder = injector.getInstance(BindS3ObjectMetadataToRequest.class);
       binder.bindToRequest(request, object);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeS3Object() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       injector.getInstance(BindS3ObjectMetadataToRequest.class).bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
       BindMapToHeadersWithPrefix binder = new BindMapToHeadersWithPrefix("prefix:");
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

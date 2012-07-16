@@ -49,7 +49,7 @@ public class RimuHostingAsyncClientTest extends BaseAsyncClientTest<RimuHostingA
    public void testCreateServer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = RimuHostingAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
                CreateServerOptions[].class);
-      GeneratedHttpRequest<RimuHostingAsyncClient> httpRequest = processor.createRequest(method, "test.ivan.api.com",
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "test.ivan.api.com",
                "lenny", "MIRO4B");
 
       assertRequestLineEquals(httpRequest, "POST https://api.rimuhosting.com/r/orders/new-vps HTTP/1.1");
@@ -68,7 +68,7 @@ public class RimuHostingAsyncClientTest extends BaseAsyncClientTest<RimuHostingA
 
    public void testGetServerList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = RimuHostingAsyncClient.class.getMethod("getServerList");
-      GeneratedHttpRequest<RimuHostingAsyncClient> httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://api.rimuhosting.com/r/orders;include_inactive=N HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nHost: api.rimuhosting.com\n");

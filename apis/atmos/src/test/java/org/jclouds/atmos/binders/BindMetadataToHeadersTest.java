@@ -21,9 +21,6 @@ package org.jclouds.atmos.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.http.HttpRequest;
@@ -50,27 +47,27 @@ public class BindMetadataToHeadersTest {
       object.setPayload(payload);
       object.getUserMetadata().getListableMetadata().put("apple", "bear");
       object.getUserMetadata().getListableMetadata().put("sushi", "king");
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, object);
       assertEquals(request.getFirstHeaderOrNull("x-emc-listable-meta"), "apple=bear,sushi=king");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeAtmosObject() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullIsBad() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testNullPayloadIsBad() {
       AtmosObject object = injector.getInstance(AtmosObject.Factory.class).create(null);
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       binder.bindToRequest(request, object);
    }
    
@@ -80,7 +77,7 @@ public class BindMetadataToHeadersTest {
       Payload payload = Payloads.newStringPayload("");
       payload.getContentMetadata().setContentLength(null);
       object.setPayload(payload);
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       binder.bindToRequest(request, object);
    }
 

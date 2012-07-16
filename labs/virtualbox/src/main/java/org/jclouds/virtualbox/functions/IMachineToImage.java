@@ -29,10 +29,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.virtualbox_4_1.IGuestOSType;

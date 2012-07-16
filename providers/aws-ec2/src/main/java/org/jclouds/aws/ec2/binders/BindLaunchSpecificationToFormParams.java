@@ -29,13 +29,12 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 /**
  * 
@@ -44,11 +43,12 @@ import com.google.common.collect.ImmutableMap.Builder;
 @Singleton
 public class BindLaunchSpecificationToFormParams implements Binder, Function<LaunchSpecification, Map<String, String>> {
 
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(input instanceof LaunchSpecification, "this binder is only valid for LaunchSpecifications!");
       LaunchSpecification launchSpec = LaunchSpecification.class.cast(input);
-      return ModifyRequest.putFormParams(request, Multimaps.forMap(apply(launchSpec)));
+      return (R) request.toBuilder().replaceFormParams(Multimaps.forMap(apply(launchSpec))).build();
    }
 
    @Override

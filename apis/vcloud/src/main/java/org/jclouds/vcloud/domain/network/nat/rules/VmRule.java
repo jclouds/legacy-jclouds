@@ -18,11 +18,14 @@
  */
 package org.jclouds.vcloud.domain.network.nat.rules;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.network.nat.NatProtocol;
 import org.jclouds.vcloud.domain.network.nat.NatRule;
+
+import com.google.common.base.Objects;
 
 /**
  * The VmRule element describes a NAT rule that maps an IP address and port in a vApp network to an
@@ -54,7 +57,7 @@ public class VmRule implements NatRule {
    }
 
    /**
-    * IP address to which this NAT rule maps the IP address specified in the InternalIp element.
+    * IP address to which this NAT rule maps the IP address specified in the vAppScopedLocalId element.
     */
    @Nullable
    public String getExternalIP() {
@@ -101,55 +104,27 @@ public class VmRule implements NatRule {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((externalIP == null) ? 0 : externalIP.hashCode());
-      result = prime * result + externalPort;
-      result = prime * result + internalPort;
-      result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      result = prime * result + ((vAppScopedLocalId == null) ? 0 : vAppScopedLocalId.hashCode());
-      result = prime * result + vmNicId;
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      VmRule that = VmRule.class.cast(o);
+      return equal(this.externalIP, that.externalIP) && equal(this.externalPort, that.externalPort)
+            && equal(this.vAppScopedLocalId, that.vAppScopedLocalId) && equal(this.vmNicId, that.vmNicId)
+            && equal(this.internalPort, that.internalPort) && equal(this.protocol, that.protocol);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VmRule other = (VmRule) obj;
-      if (externalIP == null) {
-         if (other.externalIP != null)
-            return false;
-      } else if (!externalIP.equals(other.externalIP))
-         return false;
-      if (externalPort != other.externalPort)
-         return false;
-      if (internalPort != other.internalPort)
-         return false;
-      if (protocol == null) {
-         if (other.protocol != null)
-            return false;
-      } else if (!protocol.equals(other.protocol))
-         return false;
-      if (vAppScopedLocalId == null) {
-         if (other.vAppScopedLocalId != null)
-            return false;
-      } else if (!vAppScopedLocalId.equals(other.vAppScopedLocalId))
-         return false;
-      if (vmNicId != other.vmNicId)
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(externalIP, externalPort, vAppScopedLocalId, vmNicId, internalPort, protocol);
    }
 
    @Override
    public String toString() {
-      return "[externalIP=" + externalIP + ", externalPort=" + externalPort + ", internalPort=" + internalPort
-               + ", protocol=" + protocol + ", vAppScopedLocalId=" + vAppScopedLocalId + ", vmNicId=" + vmNicId + "]";
+      return Objects.toStringHelper("").omitNullValues().add("externalIP", externalIP)
+            .add("externalPort", externalPort).add("vAppScopedLocalId", vAppScopedLocalId).add("vmNicId", vmNicId)
+            .add("internalPort", internalPort).add("protocol", protocol).toString();
    }
 
 }

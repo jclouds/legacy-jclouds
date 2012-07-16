@@ -33,6 +33,7 @@ import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ConnectException;
 
 import javax.annotation.PreDestroy;
@@ -156,6 +157,11 @@ public class JschSshClient implements SshClient {
       void clear();
 
       T create() throws Exception;
+   }
+
+   public static interface ConnectionWithStreams<T> extends Connection<T> {
+      InputStream getInputStream();
+      InputStream getErrStream();
    }
 
    protected <T, C extends Connection<T>> T acquire(C connection) {
@@ -334,14 +340,20 @@ public class JschSshClient implements SshClient {
       sessionConnection.clear();
    }
 
-   protected Connection<ChannelExec> execConnection(final String command) {
+   protected ConnectionWithStreams<ChannelExec> execConnection(final String command) {
       checkNotNull(command, "command");
-      return new Connection<ChannelExec>() {
+      return new ConnectionWithStreams<ChannelExec>() {
 
          private ChannelExec executor = null;
-
+         private InputStream inputStream;
+         private InputStream errStream;
+         
          @Override
          public void clear() {
+            if (inputStream != null)
+               Closeables.closeQuietly(inputStream);
+            if (errStream != null)
+               Closeables.closeQuietly(errStream);
             if (executor != null)
                executor.disconnect();
          }
@@ -353,10 +365,21 @@ public class JschSshClient implements SshClient {
             executor = (ChannelExec) sessionConnection.getSession().openChannel(channel);
             executor.setPty(true);
             executor.setCommand(command);
-            ByteArrayOutputStream error = new ByteArrayOutputStream();
-            executor.setErrStream(error);
+            inputStream = executor.getInputStream();
+            errStream = executor.getErrStream();
             executor.connect();
+            
             return executor;
+         }
+
+         @Override
+         public InputStream getInputStream() {
+            return inputStream;
+         }
+
+         @Override
+         public InputStream getErrStream() {
+            return errStream;
          }
 
          @Override
@@ -384,8 +407,10 @@ public class JschSshClient implements SshClient {
       @Override
       public ExecResponse create() throws Exception {
          try {
-            executor = acquire(execConnection(command));
-            String outputString = Strings2.toStringAndClose(executor.getInputStream());
+            ConnectionWithStreams<ChannelExec> connection = execConnection(command);
+            executor = acquire(connection);
+            String outputString = Strings2.toStringAndClose(connection.getInputStream());
+            String errorString = Strings2.toStringAndClose(connection.getErrStream());
             int errorStatus = executor.getExitStatus();
             int i = 0;
             String message = String.format("bad status -1 %s", toString());
@@ -395,12 +420,6 @@ public class JschSshClient implements SshClient {
             }
             if (errorStatus == -1)
                throw new SshException(message);
-            // be careful as this can hang reading
-            // com.jcraft.jsch.Channel$MyPipedInputStream when there's a slow
-            // network connection
-            // String errorString =
-            // Strings2.toStringAndClose(executor.getErrStream());
-            String errorString = "";
             return new ExecResponse(outputString, errorString, errorStatus);
          } finally {
             clear();
@@ -431,7 +450,7 @@ public class JschSshClient implements SshClient {
       private final String command;
       private ChannelExec executor = null;
       private Session sessionConnection;
-
+      
       ExecChannelConnection(String command) {
          this.command = checkNotNull(command, "command");
       }
@@ -451,10 +470,12 @@ public class JschSshClient implements SshClient {
          String channel = "exec";
          executor = (ChannelExec) sessionConnection.openChannel(channel);
          executor.setCommand(command);
-         ByteArrayOutputStream error = new ByteArrayOutputStream();
-         executor.setErrStream(error);
+         executor.setErrStream(new ByteArrayOutputStream());
+         InputStream inputStream = executor.getInputStream();
+         InputStream errStream = executor.getErrStream();
+         OutputStream outStream = executor.getOutputStream();
          executor.connect();
-         return new ExecChannel(executor.getOutputStream(), executor.getInputStream(), executor.getErrStream(),
+         return new ExecChannel(outStream, inputStream, errStream,
                   new Supplier<Integer>() {
 
                      @Override

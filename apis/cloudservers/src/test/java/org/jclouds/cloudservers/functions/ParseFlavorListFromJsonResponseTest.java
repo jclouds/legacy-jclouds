@@ -27,7 +27,6 @@ import java.util.List;
 import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -55,7 +54,7 @@ public class ParseFlavorListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
             }));
-      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<Flavor> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(response, expects);
    }
 
@@ -65,7 +64,7 @@ public class ParseFlavorListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
             }));
-      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<Flavor> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(response.get(0).getId(), 1);
       assertEquals(response.get(0).getName(), "256 MB Server");
       assertEquals(response.get(0).getDisk(), new Integer(10));

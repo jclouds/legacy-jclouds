@@ -18,14 +18,18 @@
  */
 package org.jclouds.util;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * 
@@ -59,5 +63,30 @@ public class Multimaps2 {
       for (K type : in.keySet())
          out.putAll(type, ImmutableSet.copyOf(in.get(type)));
       return out.build();
+   }
+
+   public static <K, V> Multimap<K, V> replaceValue(Multimap<K, V> fromMultimap, final K key, final V value) {
+      checkNotNull(fromMultimap, "input multimap");
+      checkNotNull(key, "key");
+      checkNotNull(value, "value");
+      return ImmutableMultimap.<K, V>builder()
+                              .putAll(withoutKey(fromMultimap, key))
+                              .put(key, value).build();
+   }
+   
+   public static <K, V> Multimap<K, V> replaceEntries(Multimap<K, V> fromMultimap, Multimap<K, V> updates) {
+      checkNotNull(fromMultimap, "input multimap");
+      checkNotNull(updates, "updates");
+      return ImmutableMultimap.<K, V>builder()
+                              .putAll(withoutKeys(fromMultimap, updates.keySet()))
+                              .putAll(updates).build();
+   }
+   
+   public static <K, V> Multimap<K, V> withoutKey(Multimap<K, V> fromMultimap, K key) {
+      return Multimaps.<K, V> filterKeys(fromMultimap, Predicates.not(Predicates.equalTo(key)));
+   }
+   
+   public static <K, V> Multimap<K, V> withoutKeys(Multimap<K, V> fromMultimap, Set<K> keys) {
+      return Multimaps.<K, V> filterKeys(fromMultimap, Predicates.not(Predicates.in(keys)));
    }
 }

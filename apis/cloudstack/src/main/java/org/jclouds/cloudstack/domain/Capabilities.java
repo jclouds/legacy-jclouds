@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.domain;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -42,7 +40,7 @@ public class Capabilities {
       return new ConcreteBuilder().fromCapabilities(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String cloudStackVersion;
@@ -112,11 +110,8 @@ public class Capabilities {
       }
    }
 
-   @Named("cloudstackversion")
    private final String cloudStackVersion;
-   @Named("securitygroupsenabled")
    private final boolean securityGroupsEnabled;
-   @Named("userpublictemplateenabled")
    private final boolean canShareTemplates;
    private final boolean firewallRuleUiEnabled;
    private final boolean supportELB;

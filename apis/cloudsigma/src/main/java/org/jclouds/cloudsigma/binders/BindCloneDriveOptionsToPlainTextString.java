@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.functions.ListOfMapsToListOfKeyValuesDelimitedByBlankLines;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.http.HttpRequest;
@@ -59,8 +58,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
-      @SuppressWarnings("unchecked")
-      GeneratedHttpRequest<CloudSigmaAsyncClient> gRequest = (GeneratedHttpRequest<CloudSigmaAsyncClient>) request;
+      GeneratedHttpRequest gRequest = GeneratedHttpRequest.class.cast(request);
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       CloneDriveOptions options = findOptionsInArgsOrNull(gRequest);
@@ -78,7 +76,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
       return request;
    }
 
-   static CloneDriveOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   static CloneDriveOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof CloneDriveOptions) {
             return (CloneDriveOptions) arg;

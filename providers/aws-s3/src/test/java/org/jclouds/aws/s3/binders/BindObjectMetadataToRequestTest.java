@@ -21,9 +21,6 @@ package org.jclouds.aws.s3.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
@@ -57,12 +54,11 @@ public class BindObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3Asy
    public void testPassWithMinimumDetailsAndPayload5GB() {
       ObjectMetadata md = ObjectMetadataBuilder.create().key("foo").build();
 
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       BindObjectMetadataToRequest binder = injector.getInstance(BindObjectMetadataToRequest.class);
 
-      assertEquals(binder.bindToRequest(request, md), HttpRequest.builder().method("POST").endpoint(
-               URI.create("http://localhost")).headers(ImmutableMultimap.of("Content-Type", "binary/octet-stream"))
-               .build());
+      assertEquals(binder.bindToRequest(request, md), HttpRequest.builder().method("POST")
+               .endpoint("http://localhost").addHeader("Content-Type", "binary/octet-stream").build());
    }
 
    @Test
@@ -70,11 +66,10 @@ public class BindObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3Asy
       ObjectMetadata md = ObjectMetadataBuilder.create().key("foo").cacheControl("no-cache").userMetadata(
                ImmutableMap.of("foo", "bar")).build();
 
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       BindObjectMetadataToRequest binder = injector.getInstance(BindObjectMetadataToRequest.class);
 
-      assertEquals(binder.bindToRequest(request, md), HttpRequest.builder().method("POST").endpoint(
-               URI.create("http://localhost")).headers(
+      assertEquals(binder.bindToRequest(request, md), HttpRequest.builder().method("POST").endpoint("http://localhost").headers(
                ImmutableMultimap.of("Cache-Control", "no-cache", "x-amz-meta-foo", "bar", "Content-Type",
                         "binary/octet-stream")).build());
    }
@@ -83,21 +78,21 @@ public class BindObjectMetadataToRequestTest extends BaseS3AsyncClientTest<S3Asy
    public void testNoKeyIsBad() {
       ObjectMetadata md = ObjectMetadataBuilder.create().build();
 
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       BindObjectMetadataToRequest binder = injector.getInstance(BindObjectMetadataToRequest.class);
       binder.bindToRequest(request, md);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeObjectMetadata() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();;
       injector.getInstance(BindObjectMetadataToRequest.class).bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
       BindMapToHeadersWithPrefix binder = new BindMapToHeadersWithPrefix("prefix:");
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

@@ -23,14 +23,14 @@ import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import java.util.Map;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
-import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationAsyncClient;
-import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationClient;
+import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationAsyncApi;
+import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationApi;
 import org.jclouds.rackspace.cloudidentity.v2_0.functions.AuthenticateApiKeyCredentials;
 
 import com.google.common.base.Function;
@@ -46,13 +46,13 @@ import com.google.inject.Scopes;
 public class CloudIdentityAuthenticationModule extends KeystoneAuthenticationModule {
 
    @Override
-   protected void bindAuthenticationClient() {
-      // AuthenticationClient is used directly for filters and retry handlers, so let's bind it
+   protected void bindAuthenticationApi() {
+      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it
       // explicitly
-      bindClientAndAsyncClient(binder(), CloudIdentityAuthenticationClient.class,
-               CloudIdentityAuthenticationAsyncClient.class);
-      bind(AuthenticationClient.class).to(CloudIdentityAuthenticationClient.class).in(Scopes.SINGLETON);
-      bind(AuthenticationAsyncClient.class).to(CloudIdentityAuthenticationAsyncClient.class).in(Scopes.SINGLETON);
+      bindClientAndAsyncClient(binder(), CloudIdentityAuthenticationApi.class,
+               CloudIdentityAuthenticationAsyncApi.class);
+      bind(AuthenticationApi.class).to(CloudIdentityAuthenticationApi.class).in(Scopes.SINGLETON);
+      bind(AuthenticationAsyncApi.class).to(CloudIdentityAuthenticationAsyncApi.class).in(Scopes.SINGLETON);
    }
 
    @Override

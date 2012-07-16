@@ -264,7 +264,7 @@ public class QueryResultNetworkRecord extends QueryResultRecordType {
 
    @Override
    public ToStringHelper string() {
-      return string().add("name", name).add("ipScopeId", ipScopeId).add("gateway", gateway).add("netmask", netmask).add("dns1", dns1).add("dns2", dns2).add("dnsSuffix", dnsSuffix).add("isBusy",
+      return Objects.toStringHelper(this).add("name", name).add("ipScopeId", ipScopeId).add("gateway", gateway).add("netmask", netmask).add("dns1", dns1).add("dns2", dns2).add("dnsSuffix", dnsSuffix).add("isBusy",
             isBusy);
    }
 

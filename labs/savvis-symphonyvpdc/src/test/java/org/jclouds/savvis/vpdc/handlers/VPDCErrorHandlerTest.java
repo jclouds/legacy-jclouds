@@ -18,11 +18,11 @@
  */
 package org.jclouds.savvis.vpdc.handlers;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
@@ -30,10 +30,8 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -96,9 +94,8 @@ public class VPDCErrorHandlerTest {
       VPDCErrorHandler function = Guice.createInjector().getInstance(VPDCErrorHandler.class);
 
       HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-               .toInputStream(content)));
+      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
+      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.filters;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.net.URLEncoder;
 
 import javax.ws.rs.core.UriBuilder;
@@ -52,7 +51,7 @@ public class ReEncodeQueryWithJavaNetURLEncoderTest {
       String defaultEncodedRequest = "http://localhost?foo=" + URLEncoder.encode(input);
       assert !defaultJcloudsEncodedRequest.equals(defaultEncodedRequest);
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost?foo=" + Strings2.urlEncode(input)));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost?foo=" + Strings2.urlEncode(input)).build();
       request = Guice.createInjector(new AbstractModule() {
 
          @Override

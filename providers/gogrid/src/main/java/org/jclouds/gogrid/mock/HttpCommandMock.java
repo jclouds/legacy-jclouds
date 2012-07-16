@@ -18,8 +18,6 @@
  */
 package org.jclouds.gogrid.mock;
 
-import java.net.URI;
-
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 
@@ -55,7 +53,7 @@ public class HttpCommandMock implements HttpCommand {
 
    @Override
    public HttpRequest getCurrentRequest() {
-      return new HttpRequest("GET", URI.create("http://localhost"));
+      return HttpRequest.builder().method("GET").endpoint("http://localhost").build();
    }
 
    @Override

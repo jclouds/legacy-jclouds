@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -31,20 +29,20 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents the data object used in CloudStack's "Vlan" API.
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class VlanIPRange implements Comparable<VlanIPRange> {
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromVlanIPRange(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -62,8 +60,8 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       protected String startIP;
       protected String endIP;
       protected String networkId;
-   
-      /** 
+
+      /**
        * @see VlanIPRange#getId()
        */
       public T id(String id) {
@@ -71,7 +69,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getDescription()
        */
       public T description(String description) {
@@ -79,7 +77,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#isForVirtualNetwork()
        */
       public T forVirtualNetwork(boolean forVirtualNetwork) {
@@ -87,7 +85,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -95,7 +93,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getVlan()
        */
       public T vlan(String vlan) {
@@ -103,7 +101,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getAccount()
        */
       public T account(String account) {
@@ -111,7 +109,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getDomainId()
        */
       public T domainId(String domainId) {
@@ -119,7 +117,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getDomain()
        */
       public T domain(String domain) {
@@ -127,7 +125,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getPodId()
        */
       public T podId(String podId) {
@@ -135,7 +133,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getPodName()
        */
       public T podName(String podName) {
@@ -143,7 +141,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getGateway()
        */
       public T gateway(String gateway) {
@@ -151,7 +149,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getNetmask()
        */
       public T netmask(String netmask) {
@@ -159,7 +157,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getStartIP()
        */
       public T startIP(String startIP) {
@@ -167,7 +165,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getEndIP()
        */
       public T endIP(String endIP) {
@@ -175,7 +173,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return self();
       }
 
-      /** 
+      /**
        * @see VlanIPRange#getNetworkId()
        */
       public T networkId(String networkId) {
@@ -187,24 +185,24 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
          return new VlanIPRange(id, description, forVirtualNetwork, zoneId, vlan, account, domainId, domain, podId,
                podName, gateway, netmask, startIP, endIP, networkId);
       }
-      
+
       public T fromVlanIPRange(VlanIPRange in) {
          return this
-                  .id(in.getId())
-                  .description(in.getDescription())
-                  .forVirtualNetwork(in.isForVirtualNetwork())
-                  .zoneId(in.getZoneId())
-                  .vlan(in.getVlan())
-                  .account(in.getAccount())
-                  .domainId(in.getDomainId())
-                  .domain(in.getDomain())
-                  .podId(in.getPodId())
-                  .podName(in.getPodName())
-                  .gateway(in.getGateway())
-                  .netmask(in.getNetmask())
-                  .startIP(in.getStartIP())
-                  .endIP(in.getEndIP())
-                  .networkId(in.getNetworkId());
+               .id(in.getId())
+               .description(in.getDescription())
+               .forVirtualNetwork(in.isForVirtualNetwork())
+               .zoneId(in.getZoneId())
+               .vlan(in.getVlan())
+               .account(in.getAccount())
+               .domainId(in.getDomainId())
+               .domain(in.getDomain())
+               .podId(in.getPodId())
+               .podName(in.getPodName())
+               .gateway(in.getGateway())
+               .netmask(in.getNetmask())
+               .startIP(in.getStartIP())
+               .endIP(in.getEndIP())
+               .networkId(in.getNetworkId());
       }
    }
 
@@ -217,30 +215,22 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
 
    private final String id;
    private final String description;
-   @Named("forvirtualnetwork")
    private final boolean forVirtualNetwork;
-   @Named("zoneid")
    private final String zoneId;
    private final String vlan;
    private final String account;
-   @Named("domainid")
    private final String domainId;
    private final String domain;
-   @Named("podid")
    private final String podId;
-   @Named("podname")
    private final String podName;
    private final String gateway;
    private final String netmask;
-   @Named("startip")
    private final String startIP;
-   @Named("endip")
    private final String endIP;
-   @Named("networkid")
    private final String networkId;
 
    @ConstructorProperties({
-      "id", "description", "forvirtualnetwork", "zoneid", "vlan", "account", "domainid", "domain", "podid", "podname",
+         "id", "description", "forvirtualnetwork", "zoneid", "vlan", "account", "domainid", "domain", "podid", "podname",
          "gateway", "netmask", "startip", "endip", "networkid"
    })
    protected VlanIPRange(String id, @Nullable String description, boolean forVirtualNetwork, @Nullable String zoneId,
@@ -348,22 +338,22 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       if (obj == null || getClass() != obj.getClass()) return false;
       VlanIPRange that = VlanIPRange.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.description, that.description)
-               && Objects.equal(this.forVirtualNetwork, that.forVirtualNetwork)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.vlan, that.vlan)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.domainId, that.domainId)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.podId, that.podId)
-               && Objects.equal(this.podName, that.podName)
-               && Objects.equal(this.gateway, that.gateway)
-               && Objects.equal(this.netmask, that.netmask)
-               && Objects.equal(this.startIP, that.startIP)
-               && Objects.equal(this.endIP, that.endIP)
-               && Objects.equal(this.networkId, that.networkId);
+            && Objects.equal(this.description, that.description)
+            && Objects.equal(this.forVirtualNetwork, that.forVirtualNetwork)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.vlan, that.vlan)
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.domainId, that.domainId)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.podId, that.podId)
+            && Objects.equal(this.podName, that.podName)
+            && Objects.equal(this.gateway, that.gateway)
+            && Objects.equal(this.netmask, that.netmask)
+            && Objects.equal(this.startIP, that.startIP)
+            && Objects.equal(this.endIP, that.endIP)
+            && Objects.equal(this.networkId, that.networkId);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("description", description).add("forVirtualNetwork", forVirtualNetwork).add("zoneId", zoneId)
@@ -371,7 +361,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
             .add("podName", podName).add("gateway", gateway).add("netmask", netmask).add("startIP", startIP).add("endIP", endIP)
             .add("networkId", networkId);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

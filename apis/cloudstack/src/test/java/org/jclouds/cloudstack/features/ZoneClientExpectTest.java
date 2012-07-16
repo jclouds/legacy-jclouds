@@ -30,7 +30,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -44,20 +43,19 @@ public class ZoneClientExpectTest extends BaseCloudStackRestClientExpectTest<Zon
 
    public void testListZonesWhenResponseIs2xx() {
       ZoneClient client = requestSendsResponse(
-         HttpRequest.builder()
-            .method("GET")
-            .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=listZones&listAll=true&apiKey=identity&signature=8iHCtck0qfxFTqJ8reyAObRf31I%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
-            .build(),
+         HttpRequest.builder().method("GET")
+                    .endpoint("http://localhost:8080/client/api")
+                    .addQueryParam("response", "json")
+                    .addQueryParam("command", "listZones")
+                    .addQueryParam("listAll", "true")
+                    .addQueryParam("apiKey", "identity")
+                    .addQueryParam("signature", "8iHCtck0qfxFTqJ8reyAObRf31I%3D")
+                    .addHeader("Accept", "application/json")
+                    .build(),
          HttpResponse.builder()
-            .statusCode(200)
-            .payload(payloadFromResource("/listzonesresponse.json"))
-            .build());
+                     .statusCode(200)
+                     .payload(payloadFromResource("/listzonesresponse.json"))
+                     .build());
 
       assertEquals(client.listZones(),
          ImmutableSet.of(
@@ -80,10 +78,7 @@ public class ZoneClientExpectTest extends BaseCloudStackRestClientExpectTest<Zon
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
                   "command=listZones&listAll=true&apiKey=identity&signature=8iHCtck0qfxFTqJ8reyAObRf31I%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(404)

@@ -19,7 +19,6 @@
 package org.jclouds.openstack.keystone.v2_0.parse;
 
 import java.net.URI;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
@@ -34,10 +33,8 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.TypeAdapterFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole

@@ -28,10 +28,10 @@ import javax.inject.Singleton;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairClient;
+import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
 
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheLoader;
@@ -45,12 +45,12 @@ public class CreateUniqueKeyPair extends CacheLoader<ZoneAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final NovaClient novaClient;
+   protected final NovaApi novaApi;
    protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
-   public CreateUniqueKeyPair(NovaClient novaClient, GroupNamingConvention.Factory namingConvention) {
-      this.novaClient = checkNotNull(novaClient, "novaClient");
+   public CreateUniqueKeyPair(NovaApi novaApi, GroupNamingConvention.Factory namingConvention) {
+      this.novaApi = checkNotNull(novaApi, "novaApi");
       this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
@@ -59,8 +59,8 @@ public class CreateUniqueKeyPair extends CacheLoader<ZoneAndName, KeyPair> {
       String zoneId = checkNotNull(zoneAndName, "zoneAndName").getZone();
       String prefix = zoneAndName.getName();
 
-      Optional<KeyPairClient> client = novaClient.getKeyPairExtensionForZone(zoneId);
-      checkArgument(client.isPresent(), "Key pairs are required, but the extension is not available in zone %s!",
+      Optional<KeyPairApi> api = novaApi.getKeyPairExtensionForZone(zoneId);
+      checkArgument(api.isPresent(), "Key pairs are required, but the extension is not available in zone %s!",
             zoneId);
 
       logger.debug(">> creating keyPair zone(%s) prefix(%s)", zoneId, prefix);
@@ -68,7 +68,7 @@ public class CreateUniqueKeyPair extends CacheLoader<ZoneAndName, KeyPair> {
       KeyPair keyPair = null;
       while (keyPair == null) {
          try {
-            keyPair = client.get().createKeyPair(namingConvention.createWithoutPrefix().uniqueNameForGroup(prefix));
+            keyPair = api.get().createKeyPair(namingConvention.createWithoutPrefix().uniqueNameForGroup(prefix));
          } catch (IllegalStateException e) {
 
          }

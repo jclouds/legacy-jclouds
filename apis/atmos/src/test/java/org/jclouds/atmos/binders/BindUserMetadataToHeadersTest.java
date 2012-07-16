@@ -21,9 +21,6 @@ package org.jclouds.atmos.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.atmos.domain.UserMetadata;
 import org.jclouds.http.HttpRequest;
@@ -46,7 +43,7 @@ public class BindUserMetadataToHeadersTest {
       UserMetadata metadata = new UserMetadata();
       metadata.getMetadata().put("apple", "bear");
       metadata.getMetadata().put("sushi", "king");
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, metadata);
       assertEquals(request.getFirstHeaderOrNull("x-emc-meta"), "apple=bear,sushi=king");
    }
@@ -55,7 +52,7 @@ public class BindUserMetadataToHeadersTest {
       UserMetadata metadata = new UserMetadata();
       metadata.getListableMetadata().put("apple", "bear");
       metadata.getListableMetadata().put("sushi", "king");
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, metadata);
       assertEquals(request.getFirstHeaderOrNull("x-emc-listable-meta"), "apple=bear,sushi=king");
    }
@@ -64,7 +61,7 @@ public class BindUserMetadataToHeadersTest {
       UserMetadata tagsdata = new UserMetadata();
       tagsdata.getTags().add("apple");
       tagsdata.getTags().add("sushi");
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, tagsdata);
       assertEquals(request.getFirstHeaderOrNull("x-emc-tags"), "apple,sushi");
    }
@@ -73,20 +70,20 @@ public class BindUserMetadataToHeadersTest {
       UserMetadata tagsdata = new UserMetadata();
       tagsdata.getListableTags().add("apple");
       tagsdata.getListableTags().add("sushi");
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = binder.bindToRequest(request, tagsdata);
       assertEquals(request.getFirstHeaderOrNull("x-emc-listable-tags"), "apple,sushi");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeUserMetadata() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
    public void testNullIsBad() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
    }
 }

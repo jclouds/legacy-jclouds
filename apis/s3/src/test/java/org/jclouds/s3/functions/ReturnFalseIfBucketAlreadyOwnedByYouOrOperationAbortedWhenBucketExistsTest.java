@@ -23,8 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.net.URI;
-
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -40,18 +38,18 @@ import org.testng.annotations.Test;
 @Test(testName = "ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTest")
 public class ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTest {
 
-   GeneratedHttpRequest<S3Client> putBucket;
+   GeneratedHttpRequest putBucket;
 
    @BeforeClass
    void setUp() throws SecurityException, NoSuchMethodException {
-      putBucket = GeneratedHttpRequest
-               .<S3Client> requestBuilder()
-               .method("PUT")
-               .endpoint(URI.create("https://adriancole-blobstore113.s3.amazonaws.com/"))
-               .declaring(S3Client.class)
-               .javaMethod(
-                        S3Client.class.getMethod("putBucketInRegion", String.class, String.class,
-                                 PutBucketOptions[].class)).args(new Object[] { null, "bucket" }).build();
+      putBucket = GeneratedHttpRequest.builder()
+                                      .method("PUT")
+                                      .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/")
+                                      .declaring(S3Client.class)
+                                      .javaMethod(
+                                                S3Client.class.getMethod("putBucketInRegion", String.class, String.class,
+                                                         PutBucketOptions[].class))
+                                      .args(new Object[] { null, "bucket" }).build();
    }
 
    @Test

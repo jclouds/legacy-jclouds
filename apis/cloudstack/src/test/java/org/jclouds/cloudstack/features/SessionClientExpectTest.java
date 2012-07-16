@@ -55,10 +55,7 @@ public class SessionClientExpectTest extends BaseCloudStackRestClientExpectTest<
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&command=login&" +
                "username=" + user + "&password=" + md5password + "&domain=" + URLEncoder.encode(domain)))
-         .headers(
-            ImmutableMultimap.<String, String>builder()
-               .put("Accept", "application/json")
-               .build())
+         .addHeader("Accept", "application/json")
          .build();
 
       String jSessionId = "90DD65D13AEAA590ECCA312D150B9F6D";

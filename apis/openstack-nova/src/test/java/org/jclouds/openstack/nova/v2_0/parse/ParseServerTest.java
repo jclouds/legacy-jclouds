@@ -31,8 +31,8 @@ import org.jclouds.openstack.nova.v2_0.domain.Address;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.Server.Status;
 import org.jclouds.openstack.v2_0.domain.Link;
-import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.openstack.v2_0.domain.Link.Relation;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 

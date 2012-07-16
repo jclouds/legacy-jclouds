@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.cloudstack.CloudStackContext;
@@ -32,7 +31,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -49,12 +47,8 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<
       AccountClient client = requestSendsResponse(
          HttpRequest.builder()
             .method("GET")
-            .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&apiKey=identity&signature=yMZYMZxzFlaUsbfxtuppMwNhpXI%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
+            .endpoint("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&apiKey=identity&signature=yMZYMZxzFlaUsbfxtuppMwNhpXI%3D")
+            .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
             .statusCode(200)

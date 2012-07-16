@@ -59,9 +59,9 @@ public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implem
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Builder<String, Object> payload = ImmutableMap.builder();
       payload.putAll(postParams);
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest<?>,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
 
       Ingress ingress = Ingress.class.cast(Iterables.find(gRequest.getArgs(), Predicates.instanceOf(Ingress.class)));
       payload.put("ip_protocol", ingress.getIpProtocol().toString());

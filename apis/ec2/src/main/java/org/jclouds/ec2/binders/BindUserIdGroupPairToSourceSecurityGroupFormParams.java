@@ -25,7 +25,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -38,6 +37,7 @@ import com.google.common.collect.ImmutableMultimap.Builder;
  */
 @Singleton
 public class BindUserIdGroupPairToSourceSecurityGroupFormParams implements Binder {
+   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof UserIdGroupPair,
@@ -46,7 +46,6 @@ public class BindUserIdGroupPairToSourceSecurityGroupFormParams implements Binde
       Builder<String, String> builder = ImmutableMultimap.builder();
       builder.put("SourceSecurityGroupOwnerId", pair.getUserId());
       builder.put("SourceSecurityGroupName", pair.getGroupName());
-      return ModifyRequest.putFormParams(request, builder.build());
-
+      return (R) request.toBuilder().replaceFormParams(builder.build()).build();
    }
 }

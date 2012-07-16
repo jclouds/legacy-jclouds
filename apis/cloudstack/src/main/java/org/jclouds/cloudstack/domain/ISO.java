@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -32,35 +30,35 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Class ISO
- * 
+ *
  * @author Richard Downer
-*/
+ */
 public class ISO {
 
    /**
     */
    public static enum ISOFilter {
-      
+
       featured, self, self_executable, executable, community, UNRECOGNIZED;
-      
+
       public static ISOFilter fromValue(String format) {
-      try {
-      return valueOf(checkNotNull(format, "format"));
-      } catch (IllegalArgumentException e) {
-      return UNRECOGNIZED;
-      }
+         try {
+            return valueOf(checkNotNull(format, "format"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
-   public static Builder<?> builder() { 
+   public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public Builder<?> toBuilder() { 
+
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromISO(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -95,8 +93,8 @@ public class ISO {
       protected String templateType;
       protected String zoneId;
       protected String zoneName;
-   
-      /** 
+
+      /**
        * @see ISO#getId()
        */
       public T id(String id) {
@@ -104,7 +102,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getAccount()
        */
       public T account(String account) {
@@ -112,7 +110,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getAccountId()
        */
       public T accountId(String accountId) {
@@ -120,7 +118,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isBootable()
        */
       public T bootable(boolean bootable) {
@@ -128,7 +126,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getChecksum()
        */
       public T checksum(String checksum) {
@@ -136,7 +134,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getCreated()
        */
       public T created(Date created) {
@@ -144,7 +142,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isCrossZones()
        */
       public T crossZones(boolean crossZones) {
@@ -152,7 +150,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getDisplayText()
        */
       public T displayText(String displayText) {
@@ -160,7 +158,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getDomain()
        */
       public T domain(String domain) {
@@ -168,7 +166,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getDomainid()
        */
       public T domainid(String domainid) {
@@ -176,7 +174,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getFormat()
        */
       public T format(String format) {
@@ -184,7 +182,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getHostId()
        */
       public T hostId(String hostId) {
@@ -192,7 +190,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getHostName()
        */
       public T hostName(String hostName) {
@@ -200,7 +198,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getHypervisor()
        */
       public T hypervisor(String hypervisor) {
@@ -208,7 +206,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isExtractable()
        */
       public T isExtractable(boolean isExtractable) {
@@ -216,7 +214,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isFeatured()
        */
       public T isFeatured(boolean isFeatured) {
@@ -224,7 +222,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isPublic()
        */
       public T isPublic(boolean isPublic) {
@@ -232,7 +230,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isReady()
        */
       public T isReady(boolean isReady) {
@@ -240,7 +238,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getJobId()
        */
       public T jobId(String jobId) {
@@ -248,7 +246,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getJobStatus()
        */
       public T jobStatus(String jobStatus) {
@@ -256,7 +254,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getName()
        */
       public T name(String name) {
@@ -264,7 +262,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getOsTypeId()
        */
       public T osTypeId(String osTypeId) {
@@ -272,7 +270,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getOsTypeName()
        */
       public T osTypeName(String osTypeName) {
@@ -280,7 +278,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#isPasswordEnabled()
        */
       public T passwordEnabled(boolean passwordEnabled) {
@@ -288,7 +286,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getRemoved()
        */
       public T removed(Date removed) {
@@ -296,7 +294,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getSize()
        */
       public T size(long size) {
@@ -304,7 +302,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getSourceTemplateId()
        */
       public T sourceTemplateId(String sourceTemplateId) {
@@ -312,7 +310,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getStatus()
        */
       public T status(String status) {
@@ -320,7 +318,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getTemplateTag()
        */
       public T templateTag(String templateTag) {
@@ -328,7 +326,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getTemplateType()
        */
       public T templateType(String templateType) {
@@ -336,7 +334,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getZoneId()
        */
       public T zoneId(String zoneId) {
@@ -344,7 +342,7 @@ public class ISO {
          return self();
       }
 
-      /** 
+      /**
        * @see ISO#getZoneName()
        */
       public T zoneName(String zoneName) {
@@ -358,41 +356,41 @@ public class ISO {
                osTypeId, osTypeName, passwordEnabled, removed, size, sourceTemplateId, status, templateTag, templateType,
                zoneId, zoneName);
       }
-      
+
       public T fromISO(ISO in) {
          return this
-                  .id(in.getId())
-                  .account(in.getAccount())
-                  .accountId(in.getAccountId())
-                  .bootable(in.isBootable())
-                  .checksum(in.getChecksum())
-                  .created(in.getCreated())
-                  .crossZones(in.isCrossZones())
-                  .displayText(in.getDisplayText())
-                  .domain(in.getDomain())
-                  .domainid(in.getDomainid())
-                  .format(in.getFormat())
-                  .hostId(in.getHostId())
-                  .hostName(in.getHostName())
-                  .hypervisor(in.getHypervisor())
-                  .isExtractable(in.isExtractable())
-                  .isFeatured(in.isFeatured())
-                  .isPublic(in.isPublic())
-                  .isReady(in.isReady())
-                  .jobId(in.getJobId())
-                  .jobStatus(in.getJobStatus())
-                  .name(in.getName())
-                  .osTypeId(in.getOsTypeId())
-                  .osTypeName(in.getOsTypeName())
-                  .passwordEnabled(in.isPasswordEnabled())
-                  .removed(in.getRemoved())
-                  .size(in.getSize())
-                  .sourceTemplateId(in.getSourceTemplateId())
-                  .status(in.getStatus())
-                  .templateTag(in.getTemplateTag())
-                  .templateType(in.getTemplateType())
-                  .zoneId(in.getZoneId())
-                  .zoneName(in.getZoneName());
+               .id(in.getId())
+               .account(in.getAccount())
+               .accountId(in.getAccountId())
+               .bootable(in.isBootable())
+               .checksum(in.getChecksum())
+               .created(in.getCreated())
+               .crossZones(in.isCrossZones())
+               .displayText(in.getDisplayText())
+               .domain(in.getDomain())
+               .domainid(in.getDomainid())
+               .format(in.getFormat())
+               .hostId(in.getHostId())
+               .hostName(in.getHostName())
+               .hypervisor(in.getHypervisor())
+               .isExtractable(in.isExtractable())
+               .isFeatured(in.isFeatured())
+               .isPublic(in.isPublic())
+               .isReady(in.isReady())
+               .jobId(in.getJobId())
+               .jobStatus(in.getJobStatus())
+               .name(in.getName())
+               .osTypeId(in.getOsTypeId())
+               .osTypeName(in.getOsTypeName())
+               .passwordEnabled(in.isPasswordEnabled())
+               .removed(in.getRemoved())
+               .size(in.getSize())
+               .sourceTemplateId(in.getSourceTemplateId())
+               .status(in.getStatus())
+               .templateTag(in.getTemplateTag())
+               .templateType(in.getTemplateType())
+               .zoneId(in.getZoneId())
+               .zoneName(in.getZoneName());
       }
    }
 
@@ -405,58 +403,39 @@ public class ISO {
 
    private final String id;
    private final String account;
-   @Named("accountid")
    private final String accountId;
    private final boolean bootable;
    private final String checksum;
    private final Date created;
    private final boolean crossZones;
-   @Named("displaytext")
    private final String displayText;
    private final String domain;
-   @Named("domainId")
    private final String domainid;
    private final String format;
-   @Named("hostid")
    private final String hostId;
-   @Named("hostname")
    private final String hostName;
    private final String hypervisor;
-   @Named("isextractable")
    private final boolean isExtractable;
-   @Named("isfeatured")
    private final boolean isFeatured;
-   @Named("ispublic")
    private final boolean isPublic;
-   @Named("isready")
    private final boolean isReady;
-   @Named("jobid")
    private final String jobId;
-   @Named("jobstatus")
    private final String jobStatus;
    private final String name;
-   @Named("ostypeid")
    private final String osTypeId;
-   @Named("ostypename")
    private final String osTypeName;
-   @Named("passwordenabled")
    private final boolean passwordEnabled;
    private final Date removed;
    private final long size;
-   @Named("sourcetemplateid")
    private final String sourceTemplateId;
    private final String status;
-   @Named("templatetag")
    private final String templateTag;
-   @Named("templatetype")
    private final String templateType;
-   @Named("zoneid")
    private final String zoneId;
-   @Named("zonename")
    private final String zoneName;
 
    @ConstructorProperties({
-      "id", "account", "accountid", "bootable", "checksum", "created", "crossZones", "displaytext", "domain", "domainId", "format", "hostid", "hostname", "hypervisor", "isextractable", "isfeatured", "ispublic", "isready", "jobid", "jobstatus", "name", "ostypeid", "ostypename", "passwordenabled", "removed", "size", "sourcetemplateid", "status", "templatetag", "templatetype", "zoneid", "zonename"
+         "id", "account", "accountid", "bootable", "checksum", "created", "crossZones", "displaytext", "domain", "domainId", "format", "hostid", "hostname", "hypervisor", "isextractable", "isfeatured", "ispublic", "isready", "jobid", "jobstatus", "name", "ostypeid", "ostypename", "passwordenabled", "removed", "size", "sourcetemplateid", "status", "templatetag", "templatetype", "zoneid", "zonename"
    })
    protected ISO(String id, @Nullable String account, @Nullable String accountId, boolean bootable, @Nullable String checksum,
                  @Nullable Date created, boolean crossZones, @Nullable String displayText, @Nullable String domain,
@@ -738,39 +717,39 @@ public class ISO {
       if (obj == null || getClass() != obj.getClass()) return false;
       ISO that = ISO.class.cast(obj);
       return Objects.equal(this.id, that.id)
-               && Objects.equal(this.account, that.account)
-               && Objects.equal(this.accountId, that.accountId)
-               && Objects.equal(this.bootable, that.bootable)
-               && Objects.equal(this.checksum, that.checksum)
-               && Objects.equal(this.created, that.created)
-               && Objects.equal(this.crossZones, that.crossZones)
-               && Objects.equal(this.displayText, that.displayText)
-               && Objects.equal(this.domain, that.domain)
-               && Objects.equal(this.domainid, that.domainid)
-               && Objects.equal(this.format, that.format)
-               && Objects.equal(this.hostId, that.hostId)
-               && Objects.equal(this.hostName, that.hostName)
-               && Objects.equal(this.hypervisor, that.hypervisor)
-               && Objects.equal(this.isExtractable, that.isExtractable)
-               && Objects.equal(this.isFeatured, that.isFeatured)
-               && Objects.equal(this.isPublic, that.isPublic)
-               && Objects.equal(this.isReady, that.isReady)
-               && Objects.equal(this.jobId, that.jobId)
-               && Objects.equal(this.jobStatus, that.jobStatus)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.osTypeId, that.osTypeId)
-               && Objects.equal(this.osTypeName, that.osTypeName)
-               && Objects.equal(this.passwordEnabled, that.passwordEnabled)
-               && Objects.equal(this.removed, that.removed)
-               && Objects.equal(this.size, that.size)
-               && Objects.equal(this.sourceTemplateId, that.sourceTemplateId)
-               && Objects.equal(this.status, that.status)
-               && Objects.equal(this.templateTag, that.templateTag)
-               && Objects.equal(this.templateType, that.templateType)
-               && Objects.equal(this.zoneId, that.zoneId)
-               && Objects.equal(this.zoneName, that.zoneName);
+            && Objects.equal(this.account, that.account)
+            && Objects.equal(this.accountId, that.accountId)
+            && Objects.equal(this.bootable, that.bootable)
+            && Objects.equal(this.checksum, that.checksum)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.crossZones, that.crossZones)
+            && Objects.equal(this.displayText, that.displayText)
+            && Objects.equal(this.domain, that.domain)
+            && Objects.equal(this.domainid, that.domainid)
+            && Objects.equal(this.format, that.format)
+            && Objects.equal(this.hostId, that.hostId)
+            && Objects.equal(this.hostName, that.hostName)
+            && Objects.equal(this.hypervisor, that.hypervisor)
+            && Objects.equal(this.isExtractable, that.isExtractable)
+            && Objects.equal(this.isFeatured, that.isFeatured)
+            && Objects.equal(this.isPublic, that.isPublic)
+            && Objects.equal(this.isReady, that.isReady)
+            && Objects.equal(this.jobId, that.jobId)
+            && Objects.equal(this.jobStatus, that.jobStatus)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.osTypeId, that.osTypeId)
+            && Objects.equal(this.osTypeName, that.osTypeName)
+            && Objects.equal(this.passwordEnabled, that.passwordEnabled)
+            && Objects.equal(this.removed, that.removed)
+            && Objects.equal(this.size, that.size)
+            && Objects.equal(this.sourceTemplateId, that.sourceTemplateId)
+            && Objects.equal(this.status, that.status)
+            && Objects.equal(this.templateTag, that.templateTag)
+            && Objects.equal(this.templateType, that.templateType)
+            && Objects.equal(this.zoneId, that.zoneId)
+            && Objects.equal(this.zoneName, that.zoneName);
    }
-   
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
             .add("id", id).add("account", account).add("accountId", accountId).add("bootable", bootable)
@@ -782,7 +761,7 @@ public class ISO {
             .add("sourceTemplateId", sourceTemplateId).add("status", status).add("templateTag", templateTag).add("templateType", templateType)
             .add("zoneId", zoneId).add("zoneName", zoneName);
    }
-   
+
    @Override
    public String toString() {
       return string().toString();

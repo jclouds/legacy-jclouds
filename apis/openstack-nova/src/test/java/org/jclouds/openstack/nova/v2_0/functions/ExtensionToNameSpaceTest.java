@@ -10,7 +10,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.openstack.nova.v2_0.domain.Extension;
 import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
-import org.jclouds.openstack.nova.v2_0.functions.ExtensionToNameSpace;
 import org.testng.annotations.Test;
 
 import com.sun.jersey.api.uri.UriBuilderImpl;

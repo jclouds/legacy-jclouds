@@ -40,7 +40,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
    private Set<Dimension> dimensions = Sets.newLinkedHashSet();
    private String metricName;
    private String namespace;
-   private Object nextToken;
+   private Object afterMarker;
 
    /**
     * The namespace to filter against.
@@ -93,12 +93,12 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
    /**
     * The token returned by a previous call to indicate that there is more data available.
     *
-    * @param nextToken the next token indicating that there is more data available
+    * @param afterMarker the next token indicating that there is more data available
     *
     * @return this {@code Builder} object
     */
-   public ListMetricsOptions afterMarker(Object nextToken) {
-      this.nextToken = nextToken;
+   public ListMetricsOptions afterMarker(Object afterMarker) {
+      this.afterMarker = afterMarker;
       return this;
    }
 
@@ -129,9 +129,9 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
          }
       }
 
-      // If nextToken isn't specified, don't include it
-      if (nextToken != null) {
-         formParameters.put("NextToken", nextToken.toString());
+      // If afterMarker isn't specified, don't include it
+      if (afterMarker != null) {
+         formParameters.put("NextToken", afterMarker.toString());
       }
 
       return formParameters.build();
@@ -139,7 +139,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
    
    @Override
    public ListMetricsOptions clone() {
-      return Builder.namespace(namespace).metricName(metricName).dimensions(dimensions).afterMarker(nextToken);
+      return Builder.namespace(namespace).metricName(metricName).dimensions(dimensions).afterMarker(afterMarker);
    }
    
    public static class Builder {
@@ -175,8 +175,8 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
       /**
        * @see ListMetricsOptions#afterMarker(String)
        */
-      public static ListMetricsOptions afterMarker(String nextToken) {
-         return new ListMetricsOptions().afterMarker(nextToken);
+      public static ListMetricsOptions afterMarker(Object afterMarker) {
+         return new ListMetricsOptions().afterMarker(afterMarker);
       }
    }
 

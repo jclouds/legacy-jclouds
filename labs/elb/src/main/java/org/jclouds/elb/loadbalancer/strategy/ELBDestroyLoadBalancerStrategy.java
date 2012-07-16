@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.elb.ELBClient;
+import org.jclouds.elb.ELBApi;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.DestroyLoadBalancerStrategy;
@@ -43,12 +43,12 @@ public class ELBDestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
    @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ELBClient elbClient;
+   private final ELBApi elbApi;
    private final GetLoadBalancerMetadataStrategy getLoadBalancer;
 
    @Inject
-   protected ELBDestroyLoadBalancerStrategy(ELBClient elbClient, GetLoadBalancerMetadataStrategy getLoadBalancer) {
-      this.elbClient = checkNotNull(elbClient, "elbClient");
+   protected ELBDestroyLoadBalancerStrategy(ELBApi elbApi, GetLoadBalancerMetadataStrategy getLoadBalancer) {
+      this.elbApi = checkNotNull(elbApi, "elbApi");
       this.getLoadBalancer = checkNotNull(getLoadBalancer, "getLoadBalancer");
    }
 
@@ -57,7 +57,7 @@ public class ELBDestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
-      elbClient.getLoadBalancerClientForRegion(region).delete(instanceId);
+      elbApi.getLoadBalancerApiForRegion(region).delete(instanceId);
       return getLoadBalancer.getLoadBalancer(id);
    }
 }

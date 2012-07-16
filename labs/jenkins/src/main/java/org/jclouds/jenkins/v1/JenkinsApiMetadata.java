@@ -42,7 +42,7 @@ public class JenkinsApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<JenkinsClient, JenkinsAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<JenkinsClient, JenkinsAsyncClient>>() {
+   public static final TypeToken<RestContext<JenkinsApi, JenkinsAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<JenkinsApi, JenkinsAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -67,7 +67,7 @@ public class JenkinsApiMetadata extends BaseRestApiMetadata {
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-         super(JenkinsClient.class, JenkinsAsyncClient.class);
+         super(JenkinsApi.class, JenkinsAsyncApi.class);
           id("jenkins")
          .name("Jenkins API")
          .identityName("Username (or " + ANONYMOUS_IDENTITY + " if anonymous)")

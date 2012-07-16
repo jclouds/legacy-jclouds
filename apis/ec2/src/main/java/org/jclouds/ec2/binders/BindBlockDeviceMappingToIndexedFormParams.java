@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMap;
@@ -62,7 +61,7 @@ public class BindBlockDeviceMappingToIndexedFormParams implements Binder {
          amazonOneBasedIndex++;
       }
       Multimap<String, String> forms = Multimaps.forMap(builder.build());
-      return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
+      return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();
    }
 
 }

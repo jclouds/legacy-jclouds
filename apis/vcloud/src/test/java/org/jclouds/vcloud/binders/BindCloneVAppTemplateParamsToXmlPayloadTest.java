@@ -64,7 +64,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
 
       CloneVAppTemplateOptions options = new CloneVAppTemplateOptions()
                .description("The description of the new vAppTemplate");
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
@@ -85,7 +85,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
 
       CloneVAppTemplateOptions options = new CloneVAppTemplateOptions()
                .description("The description of the new vAppTemplate");
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
       request.setPayload(expected);
@@ -105,7 +105,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
    public void testDefault() throws IOException {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/copyVAppTemplate-default.xml"));
 
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
       request.setPayload(expected);

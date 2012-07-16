@@ -92,10 +92,10 @@ import org.jclouds.vcloud.features.VDCAsyncClient;
 import org.jclouds.vcloud.features.VDCClient;
 import org.jclouds.vcloud.features.VmAsyncClient;
 import org.jclouds.vcloud.features.VmClient;
-import org.jclouds.vcloud.functions.AllCatalogItemsInCatalog;
-import org.jclouds.vcloud.functions.AllCatalogItemsInOrg;
-import org.jclouds.vcloud.functions.AllCatalogsInOrg;
-import org.jclouds.vcloud.functions.AllVDCsInOrg;
+import org.jclouds.vcloud.functions.CatalogItemsInCatalog;
+import org.jclouds.vcloud.functions.CatalogItemsInOrg;
+import org.jclouds.vcloud.functions.CatalogsInOrg;
+import org.jclouds.vcloud.functions.VDCsInOrg;
 import org.jclouds.vcloud.functions.DefaultNetworkNameInTemplate;
 import org.jclouds.vcloud.functions.OrgsForLocations;
 import org.jclouds.vcloud.functions.OrgsForNames;
@@ -179,10 +179,10 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       }).to(new TypeLiteral<FindLocationForResource>() {
       });
       bind(new TypeLiteral<Function<Org, Iterable<Catalog>>>() {
-      }).to(new TypeLiteral<AllCatalogsInOrg>() {
+      }).to(new TypeLiteral<CatalogsInOrg>() {
       });
       bind(new TypeLiteral<Function<Org, Iterable<VDC>>>() {
-      }).to(new TypeLiteral<AllVDCsInOrg>() {
+      }).to(new TypeLiteral<VDCsInOrg>() {
       });
       bind(new TypeLiteral<Function<Iterable<String>, Iterable<Org>>>() {
       }).to(new TypeLiteral<OrgsForNames>() {
@@ -191,10 +191,10 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       }).to(new TypeLiteral<OrgsForLocations>() {
       });
       bind(new TypeLiteral<Function<Catalog, Iterable<CatalogItem>>>() {
-      }).to(new TypeLiteral<AllCatalogItemsInCatalog>() {
+      }).to(new TypeLiteral<CatalogItemsInCatalog>() {
       });
       bind(new TypeLiteral<Function<Org, Iterable<CatalogItem>>>() {
-      }).to(new TypeLiteral<AllCatalogItemsInOrg>() {
+      }).to(new TypeLiteral<CatalogItemsInOrg>() {
       });
 
       bindCacheLoaders();

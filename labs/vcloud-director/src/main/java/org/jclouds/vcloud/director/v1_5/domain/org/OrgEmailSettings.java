@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.Resource;
-import org.jclouds.vcloud.director.v1_5.domain.Resource.Builder;
 import org.jclouds.vcloud.director.v1_5.domain.network.SmtpServerSettings;
 
 import com.google.common.base.Objects;

@@ -1,16 +1,12 @@
 package org.jclouds.cloudstack.filters;
 
-import static org.jclouds.http.utils.ModifyRequest.addQueryParam;
-import static org.jclouds.http.utils.ModifyRequest.replaceHeader;
-
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequest.Builder;
 
 import com.google.common.base.Supplier;
 import com.google.common.net.HttpHeaders;
@@ -25,22 +21,19 @@ import com.google.common.net.HttpHeaders;
 public class AddSessionKeyAndJSessionIdToRequest implements AuthenticationFilter {
 
    private final Supplier<LoginResponse> loginResponseSupplier;
-   private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   public AddSessionKeyAndJSessionIdToRequest(Supplier<LoginResponse> loginResponseSupplier,
-            Provider<UriBuilder> uriBuilderProvider) {
+   public AddSessionKeyAndJSessionIdToRequest(Supplier<LoginResponse> loginResponseSupplier) {
       this.loginResponseSupplier = loginResponseSupplier;
-      this.uriBuilderProvider = uriBuilderProvider;
    }
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
       LoginResponse loginResponse = loginResponseSupplier.get();
-
-      request = replaceHeader(request, HttpHeaders.COOKIE, "JSESSIONID=" + loginResponse.getJSessionId());
-      request = addQueryParam(request, "sessionkey", loginResponse.getSessionKey(), uriBuilderProvider.get());
-      return request;
+      Builder<?> builder = request.toBuilder();
+      builder.replaceHeader(HttpHeaders.COOKIE, "JSESSIONID=" + loginResponse.getJSessionId());
+      builder.replaceQueryParam("sessionkey", loginResponse.getSessionKey());
+      return builder.build();
 
    }
 

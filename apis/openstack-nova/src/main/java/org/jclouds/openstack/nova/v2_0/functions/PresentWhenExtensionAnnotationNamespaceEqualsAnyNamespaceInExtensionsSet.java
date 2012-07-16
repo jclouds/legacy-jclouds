@@ -43,7 +43,7 @@ import com.google.common.collect.Multimap;
 /**
  * We use the annotation {@link org.jclouds.openstack.services.Extension} to
  * bind a class that is an extension to an extension found in the
- * {@link org.jclouds.openstack.nova.v2_0.features.ExtensionClient#listExtensions} call.
+ * {@link org.jclouds.openstack.nova.v2_0.features.ExtensionApi#listExtensions} call.
  * 
  * @author Adrian Cole
  * 

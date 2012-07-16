@@ -24,8 +24,6 @@ import java.beans.ConstructorProperties;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
@@ -119,7 +117,7 @@ public class Account extends ForwardingSet<User> {
       return new ConcreteBuilder().fromAccount(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;
@@ -424,58 +422,60 @@ public class Account extends ForwardingSet<User> {
    }
 
    private final String id;
-   @Named("accounttype")
    private final Account.Type type;
-   @Named("networkdomain")
    private final String networkDomain;
    private final String domain;
    private final String domainId;
-   @Named("ipsavailable")
    private final Long IPsAvailable;
-   @Named("iplimit")
    private final Long IPLimit;
-   @Named("iptotal")
    private final long IPs;
-   @Named("iscleanuprequired")
    private final boolean cleanupRequired;
    private final String name;
-   @Named("receivedbytes")
    private final long receivedBytes;
-   @Named("sentbytes")
    private final long sentBytes;
-   @Named("snapshotavailable")
    private final Long snapshotsAvailable;
    private final Long snapshotLimit;
-   @Named("snapshottotal")
    private final long snapshots;
    private final Account.State state;
-   @Named("templateavailable")
    private final Long templatesAvailable;
-   @Named("templatelimit")
    private final Long templateLimit;
-   @Named("templatetotal")
    private final long templates;
-   @Named("vmavailable")
    private final Long VMsAvailable;
-   @Named("vmlimit")
    private final Long VMLimit;
-   @Named("vmrunning")
    private final long VMsRunning;
-   @Named("vmstopped")
    private final long VMsStopped;
-   @Named("vmtotal")
    private final long VMs;
-   @Named("volumeavailable")
    private final Long volumesAvailable;
-   @Named("volumelimit")
    private final Long volumeLimit;
-   @Named("volumetotal")
    private final long volumes;
    private final Set<User> users;
 
    @ConstructorProperties({
-         "id", "accounttype", "networkdomain", "domain", "domainId", "ipsavailable", "iplimit", "iptotal", "iscleanuprequired", "name", "receivedbytes", "sentbytes", "snapshotavailable", "snapshotLimit", "snapshottotal", "state", "templateavailable", "templatelimit", "templatetotal", "vmavailable", "vmlimit", "vmrunning", "vmstopped", "vmtotal", "volumeavailable", "volumelimit", "volumetotal", "users"
+         "id", "accounttype", "networkdomain", "domain", "domainid", "ipavailable", "iplimit", "iptotal", "iscleanuprequired",
+         "name", "receivedbytes", "sentbytes", "snapshotavailable", "snapshotlimit", "snapshottotal", "state", "templateavailable",
+         "templatelimit", "templatetotal", "vmavailable", "vmlimit", "vmrunning", "vmstopped", "vmtotal", "volumeavailable", "volumelimit",
+         "volumetotal", "user"
    })
+   @SuppressWarnings("unused")
+   private Account(String id, @Nullable Type type, @Nullable String networkDomain, @Nullable String domain,
+                   @Nullable String domainId, @Nullable String IPsAvailable, @Nullable String IPLimit, long IPs,
+                   boolean cleanupRequired, @Nullable String name, long receivedBytes, long sentBytes,
+                   @Nullable String snapshotsAvailable, @Nullable String snapshotLimit, long snapshots,
+                   @Nullable State state, @Nullable String templatesAvailable, @Nullable String templateLimit,
+                   long templates, @Nullable String VMsAvailable, @Nullable String VMLimit, long VMsRunning,
+                   long VMsStopped, long VMs, @Nullable String volumesAvailable, @Nullable String volumeLimit,
+                   long volumes, @Nullable Set<User> users) {
+      this(id, type, networkDomain, domain, domainId, toLongNullIfUnlimited(IPsAvailable), toLongNullIfUnlimited(IPLimit), IPs,
+            cleanupRequired, name, receivedBytes, sentBytes, toLongNullIfUnlimited(snapshotsAvailable), toLongNullIfUnlimited(snapshotLimit),
+            snapshots, state, toLongNullIfUnlimited(templatesAvailable), toLongNullIfUnlimited(templateLimit), templates,
+            toLongNullIfUnlimited(VMsAvailable), toLongNullIfUnlimited(VMLimit), VMsRunning, VMsStopped, VMs,
+            toLongNullIfUnlimited(volumesAvailable), toLongNullIfUnlimited(volumeLimit), volumes, users);
+   }
+
+   private static Long toLongNullIfUnlimited(String in) {
+      return in == null || "Unlimited".equals(in) ? null : new Long(in);
+   }
+
    protected Account(String id, @Nullable Account.Type type, @Nullable String networkDomain, @Nullable String domain,
                      @Nullable String domainId, @Nullable Long IPsAvailable, @Nullable Long IPLimit, long IPs,
                      boolean cleanupRequired, @Nullable String name, long receivedBytes, long sentBytes, @Nullable Long snapshotsAvailable,
@@ -554,7 +554,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of public ip addresses available for this account
-   to acquire, or null if unlimited
+    *         to acquire, or null if unlimited
     */
    @Nullable
    public Long getIPsAvailable() {
@@ -563,7 +563,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of public ip addresses this account can acquire,
-   or null if unlimited
+    *         or null if unlimited
     */
    @Nullable
    public Long getIPLimit() {
@@ -608,7 +608,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of snapshots available for this account, or null
-   if unlimited
+    *         if unlimited
     */
    @Nullable
    public Long getSnapshotsAvailable() {
@@ -617,7 +617,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of snapshots which can be stored by this account,
-   or null if unlimited
+    *         or null if unlimited
     */
    @Nullable
    public Long getSnapshotLimit() {
@@ -641,7 +641,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of templates available to be created by this
-   account, or null if unlimited
+    *         account, or null if unlimited
     */
    @Nullable
    public Long getTemplatesAvailable() {
@@ -650,7 +650,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of templates which can be created by this
-   account, or null if unlimited
+    *         account, or null if unlimited
     */
    @Nullable
    public Long getTemplateLimit() {
@@ -659,7 +659,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of templates which have been created by this
-   account
+    *         account
     */
    public long getTemplates() {
       return this.templates;
@@ -667,7 +667,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of virtual machines available for this account to
-   acquire, or null if unlimited
+    *         acquire, or null if unlimited
     */
    @Nullable
    public Long getVMsAvailable() {
@@ -676,7 +676,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total number of virtual machines that can be deployed by this
-   account, or null if unlimited
+    *         account, or null if unlimited
     */
    @Nullable
    public Long getVMLimit() {
@@ -714,7 +714,7 @@ public class Account extends ForwardingSet<User> {
 
    /**
     * @return the total volume which can be used by this account, or null if
-   unlimited
+    *         unlimited
     */
    @Nullable
    public Long getVolumeLimit() {

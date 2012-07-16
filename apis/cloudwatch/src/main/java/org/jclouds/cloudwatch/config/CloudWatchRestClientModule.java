@@ -21,10 +21,10 @@ package org.jclouds.cloudwatch.config;
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.cloudwatch.CloudWatchAsyncClient;
-import org.jclouds.cloudwatch.CloudWatchClient;
-import org.jclouds.cloudwatch.features.MetricAsyncClient;
-import org.jclouds.cloudwatch.features.MetricClient;
+import org.jclouds.cloudwatch.CloudWatchAsyncApi;
+import org.jclouds.cloudwatch.CloudWatchApi;
+import org.jclouds.cloudwatch.features.MetricAsyncApi;
+import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
@@ -36,13 +36,13 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
+public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchApi, CloudWatchAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(MetricClient.class, MetricAsyncClient.class)
+         .put(MetricApi.class, MetricAsyncApi.class)
          .build();
    
    public CloudWatchRestClientModule() {
-      super(TypeToken.of(CloudWatchClient.class), TypeToken.of(CloudWatchAsyncClient.class), DELEGATE_MAP);
+      super(TypeToken.of(CloudWatchApi.class), TypeToken.of(CloudWatchAsyncApi.class), DELEGATE_MAP);
    }
 
 }

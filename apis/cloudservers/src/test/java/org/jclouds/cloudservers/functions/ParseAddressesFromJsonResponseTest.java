@@ -27,7 +27,6 @@ import java.util.List;
 import org.jclouds.cloudservers.domain.Addresses;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
@@ -51,7 +50,7 @@ public class ParseAddressesFromJsonResponseTest {
 
       UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
       }));
-      Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Addresses response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       List<String> publicAddresses = ImmutableList.of("67.23.10.132", "67.23.10.131");
 
       List<String> privateAddresses = ImmutableList.of("10.176.42.16");

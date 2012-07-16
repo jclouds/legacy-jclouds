@@ -18,10 +18,13 @@
  */
 package org.jclouds.vcloud.domain.network.nat.rules;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.network.nat.NatRule;
+
+import com.google.common.base.Objects;
 
 /**
  * The OneToOneVmRule element describes a NAT rule that specifies network address translation
@@ -46,6 +49,28 @@ public class OneToOneVmRule implements NatRule {
       this.externalIP = externalIp;
       this.vAppScopedVmId = vAppScopedVmId;
       this.vmNicId = vmNicId;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      OneToOneVmRule that = OneToOneVmRule.class.cast(o);
+      return equal(this.mappingMode, that.mappingMode) && equal(this.externalIP, that.externalIP)
+            && equal(this.vAppScopedVmId, that.vAppScopedVmId) && equal(this.vmNicId, that.vmNicId);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(mappingMode, externalIP, vAppScopedVmId, vmNicId);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("").omitNullValues().add("mappingMode", mappingMode).add("externalIP", externalIP)
+            .add("vAppScopedVmId", vAppScopedVmId).add("vmNicId", vmNicId).toString();
    }
 
    /**

@@ -126,7 +126,6 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @Singleton
          protected Predicate<String> jobComplete(JobComplete jobComplete) {

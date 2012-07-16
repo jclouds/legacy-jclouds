@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.testng.Assert.assertEquals;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -27,6 +26,7 @@ import static org.easymock.EasyMock.replay;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;

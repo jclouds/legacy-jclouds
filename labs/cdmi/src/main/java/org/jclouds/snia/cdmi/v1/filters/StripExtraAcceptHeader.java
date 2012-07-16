@@ -23,7 +23,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.utils.ModifyRequest;
 
 /**
  * current CDMI spec doesn't indicate the form of the response. It would be nice, if it could take 2
@@ -38,6 +37,6 @@ public class StripExtraAcceptHeader implements HttpRequestFilter {
  
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return ModifyRequest.replaceHeader(request, "Accept", request.getFirstHeaderOrNull("Accept"));
+      return request.toBuilder().replaceHeader("Accept", request.getFirstHeaderOrNull("Accept")).build();
    }
 }

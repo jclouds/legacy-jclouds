@@ -21,12 +21,11 @@ package org.jclouds.openstack.nova.v2_0.compute.loaders;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.openstack.nova.v2_0.NovaClient;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
-import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
@@ -42,19 +41,19 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<FloatingIP>> {
-   private final NovaClient client;
+   private final NovaApi api;
 
    @Inject
-   public LoadFloatingIpsForInstance(NovaClient client) {
-      this.client = client;
+   public LoadFloatingIpsForInstance(NovaApi api) {
+      this.api = api;
    }
 
    @Override
    public Iterable<FloatingIP> load(final ZoneAndId key) throws Exception {
       String zone = key.getZone();
-      Optional<FloatingIPClient> ipClientOptional = client.getFloatingIPExtensionForZone(zone);
-      if (ipClientOptional.isPresent()) {
-         return Iterables.filter(ipClientOptional.get().listFloatingIPs(),
+      Optional<FloatingIPApi> ipApiOptional = api.getFloatingIPExtensionForZone(zone);
+      if (ipApiOptional.isPresent()) {
+         return Iterables.filter(ipApiOptional.get().listFloatingIPs(),
                   new Predicate<FloatingIP>() {
                      @Override
                      public boolean apply(FloatingIP input) {

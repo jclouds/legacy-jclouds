@@ -25,7 +25,6 @@ import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.StatisticValues;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMultimap;
@@ -100,7 +99,7 @@ public class MetricDataBinder implements org.jclouds.rest.Binder {
          metricDatumIndex++;
       }
 
-      return ModifyRequest.putFormParams(request, formParameters.build());
+      return (R) request.toBuilder().replaceFormParams(formParameters.build()).build();
    }
 
 }

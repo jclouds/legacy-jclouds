@@ -18,7 +18,6 @@
  */
 package org.jclouds.snia.cdmi.v1;
 
-
 /**
  * Object Types used in CDMI.
  * 
@@ -26,6 +25,7 @@ package org.jclouds.snia.cdmi.v1;
  */
 public interface ObjectTypes {
 
-   public static final String CONTAINER = "application/cdmi-container";
-
+	public static final String CONTAINER = "application/cdmi-container";
+	public static final String DATAOBJECT = "application/cdmi-object";
+	public static final String CDMIOBJECT = "application/cdmi-object";
 }
