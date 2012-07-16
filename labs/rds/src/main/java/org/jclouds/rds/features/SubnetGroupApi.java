@@ -20,7 +20,8 @@ package org.jclouds.rds.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rds.domain.SubnetGroup;
@@ -58,14 +59,14 @@ public interface SubnetGroupApi {
     * 
     * @return the response object
     */
-   PaginatedIterable<SubnetGroup> list(ListSubnetGroupsOptions options);
+   IterableWithMarker<SubnetGroup> list(ListSubnetGroupsOptions options);
 
    /**
     * Returns a list of {@link SubnetGroup}s.
     * 
     * @return the response object
     */
-   PaginatedIterable<SubnetGroup> list();
+   PagedIterable<SubnetGroup> list();
 
    /**
     * Deletes a DB subnet group.

@@ -20,7 +20,7 @@ package org.jclouds.iam.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.internal.BaseIAMApiLiveTest;
 import org.jclouds.iam.options.ListUsersOptions;
@@ -51,7 +51,7 @@ public class UserApiLiveTest extends BaseIAMApiLiveTest {
 
    @Test
    protected void testListUsers() {
-      PaginatedIterable<User> response = api().list();
+      IterableWithMarker<User> response = api().list().get(0);
       
       for (User user : response) {
          checkUser(user);
@@ -63,7 +63,7 @@ public class UserApiLiveTest extends BaseIAMApiLiveTest {
       }
 
       // Test with a Marker, even if it's null
-      response = api().list(ListUsersOptions.Builder.afterMarker(response.getNextMarker()));
+      response = api().list(ListUsersOptions.Builder.afterMarker(response.nextMarker().orNull()));
       for (User user : response) {
          checkUser(user);
       }

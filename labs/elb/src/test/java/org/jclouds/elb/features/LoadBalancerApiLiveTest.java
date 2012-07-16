@@ -21,7 +21,9 @@ package org.jclouds.elb.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.jclouds.collect.PaginatedIterable;
+import java.util.Set;
+
+import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.elb.domain.ListenerWithPolicies;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.internal.BaseELBApiLiveTest;
@@ -29,6 +31,7 @@ import org.jclouds.elb.options.ListLoadBalancersOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -69,10 +72,26 @@ public class LoadBalancerApiLiveTest extends BaseELBApiLiveTest {
       checkNotNull(listener.getSSLCertificateId(),
                "While SSLCertificateId can be null for a ListenerWithPolicies, its Optional wrapper cannot.");
    }
+   @Test
+   protected void testList() {
+      Set<LoadBalancer> response = ImmutableSet.copyOf(Iterables.concat(api().list()));
+
+      for (LoadBalancer loadBalancer : response) {
+         checkLoadBalancer(loadBalancer);
+         for (ListenerWithPolicies listener : loadBalancer.getListeners()) {
+            checkListener(listener);
+         }
+      }
+
+      if (Iterables.size(response) > 0) {
+         LoadBalancer loadBalancer = response.iterator().next();
+         Assert.assertEquals(api().get(loadBalancer.getName()), loadBalancer);
+      }
+   }
 
    @Test
-   protected void testDescribeLoadBalancers() {
-      PaginatedIterable<LoadBalancer> response = api().list();
+   protected void testListWithOptions() {
+      IterableWithMarker<LoadBalancer> response = api().list(new ListLoadBalancersOptions());
 
       for (LoadBalancer loadBalancer : response) {
          checkLoadBalancer(loadBalancer);
@@ -87,7 +106,7 @@ public class LoadBalancerApiLiveTest extends BaseELBApiLiveTest {
       }
 
       // Test with a Marker, even if it's null
-      response = api().list(ListLoadBalancersOptions.Builder.afterMarker(response.getNextMarker()));
+      response = api().list(ListLoadBalancersOptions.Builder.afterMarker(response.nextMarker().orNull()));
       for (LoadBalancer loadBalancer : response) {
          checkLoadBalancer(loadBalancer);
       }

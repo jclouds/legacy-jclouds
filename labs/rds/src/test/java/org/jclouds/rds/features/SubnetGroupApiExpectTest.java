@@ -33,6 +33,9 @@ import org.jclouds.rds.parse.GetSubnetGroupResponseTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 /**
  * @author Adrian Cole
  */
@@ -106,9 +109,43 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenExist.getSubnetGroupApi().list().toString(), new DescribeDBSubnetGroupsResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getSubnetGroupApi().list().get(0).toString(), new DescribeDBSubnetGroupsResponseTest().expected().toString());
    }
 
+
+   public void testList2PagesWhenResponseIs2xx() throws Exception {
+
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/describe_subnetgroups_marker.xml", "text/xml")).build();
+
+      HttpRequest list2 = HttpRequest.builder()
+                                     .method("POST")
+                                     .endpoint("https://rds.us-east-1.amazonaws.com/")
+                                     .addHeader("Host", "rds.us-east-1.amazonaws.com")
+                                     .payload(
+                                        payloadFromStringWithContentType(
+                                                 "Action=DescribeDBSubnetGroups" +
+                                                 "&Marker=MARKER" +
+                                                 "&Signature=1yK3VgSfUKDNHEwicyYbnMvSPAeJ7DZvi52gQeUUFSQ%3D" +
+                                                 "&SignatureMethod=HmacSHA256" +
+                                                 "&SignatureVersion=2" +
+                                                 "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                                 "&Version=2012-04-23" +
+                                                  "&AWSAccessKeyId=identity",
+                                              "application/x-www-form-urlencoded"))
+                                     .build();
+      
+      HttpResponse list2Response = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/describe_subnetgroups.xml", "text/xml")).build();
+
+      RDSApi apiWhenExist = requestsSendResponses(
+            list, listResponse, list2, list2Response);
+
+      assertEquals(ImmutableList.copyOf(Iterables.concat(apiWhenExist.getSubnetGroupApi().list())),
+               ImmutableList.copyOf(Iterables.concat(new DescribeDBSubnetGroupsResponseTest().expected(),
+                        new DescribeDBSubnetGroupsResponseTest().expected())));
+   }
+   
    // TODO: this should really be an empty set
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() throws Exception {
@@ -118,7 +155,7 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      apiWhenDontExist.getSubnetGroupApi().list();
+      apiWhenDontExist.getSubnetGroupApi().list().get(0);
    }
    
    public void testListWithOptionsWhenResponseIs2xx() throws Exception {

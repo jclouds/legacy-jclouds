@@ -33,6 +33,9 @@ import org.jclouds.iam.parse.ListUsersResponseTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 /**
  * @author Adrian Cole
  */
@@ -120,9 +123,37 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
       IAMApi apiWhenExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenExist.getUserApi().list().toString(), new ListUsersResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getUserApi().list().get(0).toString(), new ListUsersResponseTest().expected().toString());
    }
 
+   public void testList2PagesWhenResponseIs2xx() throws Exception {
+
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/list_users_marker.xml", "text/xml")).build();
+
+      HttpRequest list2 = HttpRequest.builder()
+                                    .method("POST")
+                                    .endpoint("https://iam.amazonaws.com/")
+                                    .addHeader("Host", "iam.amazonaws.com")
+                                    .addFormParam("Action", "ListUsers")
+                                    .addFormParam("Marker", "MARKER")
+                                    .addFormParam("Signature", "LKYao6Hll%2FplLDqOcgbNuJ6DhmOw0tZl4Sf3pPY%2By00%3D")
+                                    .addFormParam("SignatureMethod", "HmacSHA256")
+                                    .addFormParam("SignatureVersion", "2")
+                                    .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                    .addFormParam("Version", "2010-05-08")
+                                    .addFormParam("AWSAccessKeyId", "identity").build();
+      
+      HttpResponse list2Response = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/list_users.xml", "text/xml")).build();
+
+      IAMApi apiWhenExist = requestsSendResponses(list, listResponse, list2, list2Response);
+
+      assertEquals(ImmutableList.copyOf(Iterables.concat(apiWhenExist.getUserApi().list())),
+               ImmutableList.copyOf(Iterables.concat(new ListUsersResponseTest().expected(), new ListUsersResponseTest().expected())));
+   }
+
+   
    // TODO: this should really be an empty set
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() throws Exception {
@@ -132,7 +163,7 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
       IAMApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      apiWhenDontExist.getUserApi().list();
+      apiWhenDontExist.getUserApi().list().get(0);
    }
    
    public void testListWithOptionsWhenResponseIs2xx() throws Exception {

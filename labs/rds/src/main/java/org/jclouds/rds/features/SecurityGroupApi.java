@@ -20,7 +20,8 @@ package org.jclouds.rds.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rds.domain.SecurityGroup;
@@ -58,14 +59,14 @@ public interface SecurityGroupApi {
     * 
     * @return the response object
     */
-   PaginatedIterable<SecurityGroup> list(ListSecurityGroupsOptions options);
+   IterableWithMarker<SecurityGroup> list(ListSecurityGroupsOptions options);
 
    /**
     * Returns a list of {@link SecurityGroup}s.
     * 
     * @return the response object
     */
-   PaginatedIterable<SecurityGroup> list();
+   PagedIterable<SecurityGroup> list();
 
    /**
     * Deletes a DB security group.

@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.rds.domain.Subnet;
 import org.jclouds.rds.domain.SubnetGroup;
@@ -42,17 +42,17 @@ public class DescribeDBSubnetGroupsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/describe_subnetgroups.xml");
 
-      PaginatedIterable<SubnetGroup> expected = expected();
+      IterableWithMarker<SubnetGroup> expected = expected();
 
       DescribeDBSubnetGroupsResultHandler handler = injector.getInstance(DescribeDBSubnetGroupsResultHandler.class);
-      PaginatedIterable<SubnetGroup> result = factory.create(handler).parse(is);
+      IterableWithMarker<SubnetGroup> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public PaginatedIterable<SubnetGroup> expected() {
-      return PaginatedIterables.forward(ImmutableSet.<SubnetGroup>builder()
+   public IterableWithMarker<SubnetGroup> expected() {
+      return IterableWithMarkers.from(ImmutableSet.<SubnetGroup>builder()
             .add(SubnetGroup.builder()
                             .vpcId("990524496922")
                             .status("Complete")

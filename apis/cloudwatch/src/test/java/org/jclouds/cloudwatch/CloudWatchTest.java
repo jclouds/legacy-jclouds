@@ -30,8 +30,8 @@ import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -58,7 +58,7 @@ public class CloudWatchTest {
       CloudWatchApi api = createMock(CloudWatchApi.class);
       MetricApi metricApi = createMock(MetricApi.class);
       ListMetricsOptions options = new ListMetricsOptions();
-      PaginatedIterable<Metric> response = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), null);
+      IterableWithMarker<Metric> response = IterableWithMarkers.from(ImmutableSet.of(createMock(Metric.class)), null);
       
       expect(api.getMetricApiForRegion(null))
             .andReturn(metricApi)
@@ -84,8 +84,8 @@ public class CloudWatchTest {
       CloudWatchApi api = createMock(CloudWatchApi.class);
       MetricApi metricApi = createMock(MetricApi.class);
       ListMetricsOptions options = new ListMetricsOptions();
-      PaginatedIterable<Metric> response1 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), "NEXTTOKEN");
-      PaginatedIterable<Metric> response2 = PaginatedIterables.forwardWithMarker(ImmutableSet.of(createMock(Metric.class)), null);
+      IterableWithMarker<Metric> response1 = IterableWithMarkers.from(ImmutableSet.of(createMock(Metric.class)), "NEXTTOKEN");
+      IterableWithMarker<Metric> response2 = IterableWithMarkers.from(ImmutableSet.of(createMock(Metric.class)), null);
 
       // Using EasyMock.eq("") because EasyMock makes it impossible to pass null as a String value here
       expect(api.getMetricApiForRegion(EasyMock.eq("")))

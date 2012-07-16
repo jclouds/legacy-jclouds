@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -45,17 +45,17 @@ public class DescribeDBInstancesResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/describe_instances.xml");
 
-      PaginatedIterable<Instance> expected = expected();
+      IterableWithMarker<Instance> expected = expected();
 
       DescribeDBInstancesResultHandler handler = injector.getInstance(DescribeDBInstancesResultHandler.class);
-      PaginatedIterable<Instance> result = factory.create(handler).parse(is);
+      IterableWithMarker<Instance> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public PaginatedIterable<Instance> expected() {
-      return PaginatedIterables.forward(ImmutableSet.<Instance>builder()
+   public IterableWithMarker<Instance> expected() {
+      return IterableWithMarkers.from(ImmutableSet.<Instance>builder()
                .add(Instance.builder()
                             .engine("mysql")
                             .multiAZ(false)

@@ -39,7 +39,7 @@ import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchApiLiveTest;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -99,7 +99,7 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
          Assert.fail("Unable to gather the created CloudWatch data within the time (20m) allotted.");
       }
 
-      PaginatedIterable<Metric> lmr = api().list(lmo);
+      IterableWithMarker<Metric> lmr = api().list(lmo);
       Date endTime = new Date(metricTimestampInCloudWatch.getTime() + (60 * 1000)); // Pad a minute just in case
       Date startTime = new Date(metricTimestampInCloudWatch.getTime() - (60 * 1000)); // Pad a minute just in case
 
@@ -145,7 +145,7 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
    // TODO: change this test to retrieve pre-seeded custom metrics
    @Test
    protected void testGetMetricStatistics() {
-      PaginatedIterable<Metric> metricsResponse = api().list();
+      IterableWithMarker<Metric> metricsResponse = api().list(new ListMetricsOptions());
 
       // Walk through all datapoints in all metrics until we find a metric datapoint that returns statistics
       if (Iterables.size(metricsResponse) > 0) {
@@ -195,14 +195,14 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
 
    @Test
    protected void testListMetrics() {
-      PaginatedIterable<Metric> response;
+      IterableWithMarker<Metric> response;
       String testNamespace = Namespaces.EC2;
       String testMetricName = EC2Constants.MetricName.CPU_UTILIZATION;
       String testDimensionName = EC2Constants.Dimension.INSTANCE_TYPE;
       String testDimensionValue = "t1.micro";
 
       // Test an empty request (pulls all stored metric options across all products)
-      response = api().list();
+      response = api().list(new ListMetricsOptions());
 
       performDefaultMetricsTests(response);
 
@@ -236,7 +236,7 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
       }
 
       // Test with a NextToken, even if it's null
-      response = api().list(ListMetricsOptions.Builder.afterMarker(response.getNextMarker().toString()));
+      response = api().list(ListMetricsOptions.Builder.afterMarker(response.nextMarker().orNull()));
 
       performDefaultMetricsTests(response);
 
@@ -281,10 +281,10 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
       }
    }
 
-   private void performDefaultMetricsTests(PaginatedIterable<Metric> response) {
+   private void performDefaultMetricsTests(IterableWithMarker<Metric> response) {
       // If there are less than 500 metrics, NextToken should be null
       if (Iterables.size(response) < 500) {
-         checkArgument(response.getNextMarker() == null,
+         checkArgument(!response.nextMarker().isPresent(),
                        "NextToken should be null for response with fewer than 500 metrics.");
       }
 

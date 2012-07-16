@@ -33,6 +33,9 @@ import org.jclouds.rds.parse.GetInstanceResponseTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 /**
  * @author Adrian Cole
  */
@@ -44,21 +47,21 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
    }
 
    HttpRequest get = HttpRequest.builder()
-                                       .method("POST")
-                                       .endpoint("https://rds.us-east-1.amazonaws.com/")
-                                       .addHeader("Host", "rds.us-east-1.amazonaws.com")
-                                       .payload(
-                                          payloadFromStringWithContentType(
-                                                "Action=DescribeDBInstances" +
-                                                      "&DBInstanceIdentifier=id" +
-                                                      "&Signature=jcvzapwazR2OuWnMILEt48ycu226NOn2AuEBKSxV2O0%3D" +
-                                                      "&SignatureMethod=HmacSHA256" +
-                                                      "&SignatureVersion=2" +
-                                                      "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                      "&Version=2012-04-23" +
-                                                      "&AWSAccessKeyId=identity",
-                                                "application/x-www-form-urlencoded"))
-                                       .build();
+                                .method("POST")
+                                .endpoint("https://rds.us-east-1.amazonaws.com/")
+                                .addHeader("Host", "rds.us-east-1.amazonaws.com")
+                                .payload(
+                                   payloadFromStringWithContentType(
+                                         "Action=DescribeDBInstances" +
+                                               "&DBInstanceIdentifier=id" +
+                                               "&Signature=jcvzapwazR2OuWnMILEt48ycu226NOn2AuEBKSxV2O0%3D" +
+                                               "&SignatureMethod=HmacSHA256" +
+                                               "&SignatureVersion=2" +
+                                               "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                               "&Version=2012-04-23" +
+                                               "&AWSAccessKeyId=identity",
+                                         "application/x-www-form-urlencoded"))
+                                .build();
    
    
    public void testGetWhenResponseIs2xx() throws Exception {
@@ -83,20 +86,20 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
    }
 
    HttpRequest list = HttpRequest.builder()
-                                       .method("POST")
-                                       .endpoint("https://rds.us-east-1.amazonaws.com/")
-                                       .addHeader("Host", "rds.us-east-1.amazonaws.com")
-                                       .payload(
-                                          payloadFromStringWithContentType(
-                                                   "Action=DescribeDBInstances" +
-                                                   "&Signature=SnClCujZG9Sq9sMdf59xZWsjQxIbMOp5YEF%2FFBsurf4%3D" +
-                                                   "&SignatureMethod=HmacSHA256" +
-                                                   "&SignatureVersion=2" +
-                                                   "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
-                                                   "&Version=2012-04-23" +
-                                                   "&AWSAccessKeyId=identity",
-                                                "application/x-www-form-urlencoded"))
-                                       .build();
+                                 .method("POST")
+                                 .endpoint("https://rds.us-east-1.amazonaws.com/")
+                                 .addHeader("Host", "rds.us-east-1.amazonaws.com")
+                                 .payload(
+                                    payloadFromStringWithContentType(
+                                             "Action=DescribeDBInstances" +
+                                             "&Signature=SnClCujZG9Sq9sMdf59xZWsjQxIbMOp5YEF%2FFBsurf4%3D" +
+                                             "&SignatureMethod=HmacSHA256" +
+                                             "&SignatureVersion=2" +
+                                             "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                             "&Version=2012-04-23" +
+                                             "&AWSAccessKeyId=identity",
+                                          "application/x-www-form-urlencoded"))
+                                 .build();
    
    public void testListWhenResponseIs2xx() throws Exception {
 
@@ -106,9 +109,42 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenExist.getInstanceApi().list().toString(), new DescribeDBInstancesResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getInstanceApi().list().get(0).toString(), new DescribeDBInstancesResponseTest().expected().toString());
    }
+   
+   public void testList2PagesWhenResponseIs2xx() throws Exception {
 
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/describe_instances_marker.xml", "text/xml")).build();
+
+      HttpRequest list2 = HttpRequest.builder()
+                                     .method("POST")
+                                     .endpoint("https://rds.us-east-1.amazonaws.com/")
+                                     .addHeader("Host", "rds.us-east-1.amazonaws.com")
+                                     .payload(
+                                        payloadFromStringWithContentType(
+                                                 "Action=DescribeDBInstances" +
+                                                 "&Marker=MARKER" +
+                                                 "&Signature=TFW8vaU2IppmBey0ZHttbWz4rMFh%2F5ACWl6Xyt58sQU%3D" +
+                                                 "&SignatureMethod=HmacSHA256" +
+                                                 "&SignatureVersion=2" +
+                                                 "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                                                 "&Version=2012-04-23" +
+                                                  "&AWSAccessKeyId=identity",
+                                              "application/x-www-form-urlencoded"))
+                                     .build();
+      
+      HttpResponse list2Response = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/describe_instances.xml", "text/xml")).build();
+
+      RDSApi apiWhenExist = requestsSendResponses(
+            list, listResponse, list2, list2Response);
+
+      assertEquals(ImmutableList.copyOf(Iterables.concat(apiWhenExist.getInstanceApi().list())),
+               ImmutableList.copyOf(Iterables.concat(new DescribeDBInstancesResponseTest().expected(),
+                        new DescribeDBInstancesResponseTest().expected())));
+   }
+   
    // TODO: this should really be an empty set
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() throws Exception {
@@ -118,7 +154,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      apiWhenDontExist.getInstanceApi().list();
+      apiWhenDontExist.getInstanceApi().list().get(0);
    }
    
    public void testListWithOptionsWhenResponseIs2xx() throws Exception {

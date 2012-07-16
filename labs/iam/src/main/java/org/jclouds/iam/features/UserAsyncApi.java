@@ -23,14 +23,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.iam.domain.User;
+import org.jclouds.iam.functions.UsersToPagedIterable;
 import org.jclouds.iam.options.ListUsersOptions;
 import org.jclouds.iam.xml.ListUsersResultHandler;
 import org.jclouds.iam.xml.UserHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -73,8 +76,9 @@ public interface UserAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)
+   @Transform(UsersToPagedIterable.class)
    @FormParams(keys = "Action", values = "ListUsers")
-   ListenableFuture<PaginatedIterable<User>> list();
+   ListenableFuture<PagedIterable<User>> list();
 
    /**
     * @see UserApi#list(ListUsersOptions)
@@ -83,6 +87,6 @@ public interface UserAsyncApi {
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)
    @FormParams(keys = "Action", values = "ListUsers")
-   ListenableFuture<PaginatedIterable<User>> list(ListUsersOptions options);
+   ListenableFuture<IterableWithMarker<User>> list(ListUsersOptions options);
 
 }

@@ -38,6 +38,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
+
 /**
  * @author Jeremy Whitlock, Adrian Cole
  */
@@ -72,8 +74,8 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
       CloudWatchApi apiWhenMetricsExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      assertEquals(apiWhenMetricsExist.getMetricApiForRegion(null).list().toString(),
-            "{elements=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
+      assertEquals(apiWhenMetricsExist.getMetricApiForRegion(null).list().get(0).toString(),
+            "[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}]");
    }
 
    // TODO: this should really be an empty set
@@ -85,8 +87,41 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
       CloudWatchApi apiWhenMetricsDontExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      apiWhenMetricsDontExist.getMetricApiForRegion(null).list();
+      apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0);
    }
+   
+   public void testListMetrics2PagesWhenResponseIs2xx() throws Exception {
+
+      HttpResponse listMetricsResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/list_metrics_marker.xml", "text/xml")).build();
+      
+      HttpRequest listMetrics2 = HttpRequest.builder()
+               .method("POST")
+               .endpoint("https://monitoring.us-east-1.amazonaws.com/")
+               .addHeader("Host", "monitoring.us-east-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                        "Action=ListMetrics" +
+                              "&NextToken=MARKER" +
+                              "&Signature=RpBdQydXD1jQhEUnXoqT60NEuCP%2FZgdvO6Hf3uf%2Fwy0%3D" +
+                              "&SignatureMethod=HmacSHA256" +
+                              "&SignatureVersion=2" +
+                              "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                              "&Version=2010-08-01" +
+                              "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+
+      HttpResponse listMetrics2Response = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/list_metrics.xml", "text/xml")).build();
+
+      CloudWatchApi apiWhenMetricsExist = requestsSendResponses(
+            listMetrics, listMetricsResponse, listMetrics2, listMetrics2Response);
+
+      assertEquals(Iterables.concat(apiWhenMetricsExist.getMetricApiForRegion(null).list()).toString(),
+            "[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}, Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}]");
+   }
+
    
    public void testListMetricsWithOptionsWhenResponseIs2xx() throws Exception {
       HttpRequest listMetricsWithOptions =
@@ -124,7 +159,7 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
                                           .metricName(EC2Constants.MetricName.CPU_UTILIZATION)
                                           .namespace("SOMENEXTTOKEN")
                                           .afterMarker(Namespaces.EC2)).toString(),
-         "{elements=[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}], marker=null}");
+         "[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}]");
    }
 
    GetMetricStatistics stats = GetMetricStatistics.builder()

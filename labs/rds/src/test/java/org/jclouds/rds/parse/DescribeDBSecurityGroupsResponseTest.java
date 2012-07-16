@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.rds.domain.EC2SecurityGroup;
 import org.jclouds.rds.domain.IPRange;
@@ -43,17 +43,17 @@ public class DescribeDBSecurityGroupsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/describe_securitygroups.xml");
 
-      PaginatedIterable<SecurityGroup> expected = expected();
+      IterableWithMarker<SecurityGroup> expected = expected();
 
       DescribeDBSecurityGroupsResultHandler handler = injector.getInstance(DescribeDBSecurityGroupsResultHandler.class);
-      PaginatedIterable<SecurityGroup> result = factory.create(handler).parse(is);
+      IterableWithMarker<SecurityGroup> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public PaginatedIterable<SecurityGroup> expected() {
-      return PaginatedIterables.forward(ImmutableSet.<SecurityGroup>builder()
+   public IterableWithMarker<SecurityGroup> expected() {
+      return IterableWithMarkers.from(ImmutableSet.<SecurityGroup>builder()
                .add(SecurityGroup.builder()
                                  .ec2SecurityGroup(EC2SecurityGroup.builder()
                                                                    .status("authorized")

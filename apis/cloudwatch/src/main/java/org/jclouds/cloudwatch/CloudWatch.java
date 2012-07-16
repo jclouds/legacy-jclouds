@@ -24,8 +24,9 @@ import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterables;
+import org.jclouds.collect.PagedIterators;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -46,18 +47,19 @@ public class CloudWatch {
     * @return iterable of metrics fitting the criteria
     */
    public static Iterable<Metric> listMetrics(final MetricApi metricApi, final ListMetricsOptions options) {
-      return PaginatedIterables.lazyContinue(metricApi.list(options), new Function<Object, PaginatedIterable<Metric>>() {
+      return Iterables.concat(PagedIterables.create(PagedIterators.advancing(metricApi.list(options),
+               new Function<Object, IterableWithMarker<Metric>>() {
 
-         @Override
-         public PaginatedIterable<Metric> apply(Object input) {
-            return metricApi.list(options.clone().afterMarker(input));
-         }
+                  @Override
+                  public IterableWithMarker<Metric> apply(Object input) {
+                     return metricApi.list(options.clone().afterMarker(input));
+                  }
 
-         @Override
-         public String toString() {
-            return "listMetrics(" + options + ")";
-         }
-      });
+                  @Override
+                  public String toString() {
+                     return "listMetrics(" + options + ")";
+                  }
+               })));
    }
 
    /**

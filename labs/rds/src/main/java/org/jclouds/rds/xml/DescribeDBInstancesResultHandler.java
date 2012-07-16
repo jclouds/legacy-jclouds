@@ -23,8 +23,8 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Set;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rds.domain.Instance;
 import org.xml.sax.Attributes;
@@ -41,7 +41,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class DescribeDBInstancesResultHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<Instance>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<Instance>> {
 
    private final InstanceHandler instanceHandler;
 
@@ -61,8 +61,8 @@ public class DescribeDBInstancesResultHandler extends
     * {@inheritDoc}
     */
    @Override
-   public PaginatedIterable<Instance> getResult() {
-      return PaginatedIterables.forwardWithMarker(instances, marker);
+   public IterableWithMarker<Instance> getResult() {
+      return IterableWithMarkers.from(instances, marker);
    }
 
    /**

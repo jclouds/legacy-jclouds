@@ -16,24 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.collect;
+package org.jclouds.aws.cloudwatch.features;
 
-import com.google.common.annotations.Beta;
+import org.jclouds.cloudwatch.features.MetricApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * An {@code Iterable} that can be continued
- * 
- * @author Adrian Cole
+ * @author Jeremy Whitlock, Adrian Cole
  */
-@Beta
-public interface PaginatedIterable<T> extends Iterable<T> {
-
-   /**
-    * If there is a next marker, then the set is incomplete and you should issue another command to
-    * retrieve the rest, setting the option {@code marker} to this value 
-    * 
-    * @return next marker, or null if list is complete
-    */
-   Object getNextMarker();
+@Test(groups = "live", testName = "AWSMetricApiLiveTest")
+public class AWSMetricApiLiveTest extends MetricApiLiveTest {
+   public AWSMetricApiLiveTest(){
+      provider = "aws-cloudwatch";
+   }
 
 }

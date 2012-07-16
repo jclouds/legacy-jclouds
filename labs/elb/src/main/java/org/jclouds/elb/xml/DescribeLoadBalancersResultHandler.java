@@ -23,8 +23,8 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Set;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
@@ -41,7 +41,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class DescribeLoadBalancersResultHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<LoadBalancer>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<LoadBalancer>> {
 
    private final LoadBalancerHandler loadBalancerHandler;
 
@@ -61,8 +61,8 @@ public class DescribeLoadBalancersResultHandler extends
     * {@inheritDoc}
     */
    @Override
-   public PaginatedIterable<LoadBalancer> getResult() {
-      return PaginatedIterables.forwardWithMarker(loadBalancers, marker);
+   public IterableWithMarker<LoadBalancer> getResult() {
+      return IterableWithMarkers.from(loadBalancers, marker);
    }
 
    /**

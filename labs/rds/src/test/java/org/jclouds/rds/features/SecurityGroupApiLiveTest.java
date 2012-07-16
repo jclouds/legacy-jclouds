@@ -20,7 +20,7 @@ package org.jclouds.rds.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.rds.domain.EC2SecurityGroup;
 import org.jclouds.rds.domain.SecurityGroup;
 import org.jclouds.rds.internal.BaseRDSApiLiveTest;
@@ -55,7 +55,7 @@ public class SecurityGroupApiLiveTest extends BaseRDSApiLiveTest {
 
    @Test
    protected void testDescribeSecurityGroups() {
-      PaginatedIterable<SecurityGroup> response = api().list();
+      IterableWithMarker<SecurityGroup> response = api().list().get(0);
 
       for (SecurityGroup securityGroup : response) {
          checkSecurityGroup(securityGroup);
@@ -67,7 +67,7 @@ public class SecurityGroupApiLiveTest extends BaseRDSApiLiveTest {
       }
 
       // Test with a Marker, even if it's null
-      response = api().list(ListSecurityGroupsOptions.Builder.afterMarker(response.getNextMarker()));
+      response = api().list(ListSecurityGroupsOptions.Builder.afterMarker(response.nextMarker().orNull()));
       for (SecurityGroup securityGroup : response) {
          checkSecurityGroup(securityGroup);
       }

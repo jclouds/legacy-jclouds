@@ -25,6 +25,7 @@ import static org.testng.Assert.assertNull;
 import java.util.TimeZone;
 
 import org.jclouds.elb.ELBApi;
+import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.internal.BaseELBApiExpectTest;
 import org.jclouds.elb.parse.DescribeLoadBalancersResponseTest;
 import org.jclouds.elb.parse.GetLoadBalancerResponseTest;
@@ -32,6 +33,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -106,9 +110,93 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       ELBApi apiWhenExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenExist.getLoadBalancerApi().list().toString(), new DescribeLoadBalancersResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getLoadBalancerApi().list().get(0).toString(), new DescribeLoadBalancersResponseTest().expected().toString());
    }
 
+   
+   public void testList2PagesWhenResponseIs2xx() throws Exception {
+
+      HttpResponse listResponse1 = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/describe_loadbalancers_marker.xml", "text/xml")).build();
+     
+      HttpRequest list2 = HttpRequest.builder()
+               .method("POST")
+               .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com/")
+               .addHeader("Host", "elasticloadbalancing.us-east-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                           "Action=DescribeLoadBalancers" +
+                           "&Marker=MARKER" +
+                           "&Signature=%2FJttkIXuYljhZLJOPYyn%2BYIkDhD9skmePH3LYEnqmes%3D" +
+                           "&SignatureMethod=HmacSHA256" +
+                           "&SignatureVersion=2" +
+                           "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                           "&Version=2012-06-01" +
+                           "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+      
+      HttpResponse listResponse2 = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/describe_loadbalancers.xml", "text/xml")).build();
+
+      ELBApi apiWhenExist = requestsSendResponses(
+            list, listResponse1, list2, listResponse2);
+
+      LoadBalancer lb1 = new GetLoadBalancerResponseTest().expected().toBuilder().name("my-load-balancer-1").build();
+      LoadBalancer lb2 = new GetLoadBalancerResponseTest().expected();
+      
+      assertEquals(ImmutableSet.copyOf(Iterables.concat(apiWhenExist.getLoadBalancerApi().list())), ImmutableSet.of(lb1, lb2));
+   }
+   
+   public void testList2PagesWhenResponseIs2xxInEU() throws Exception {
+
+      HttpRequest list = HttpRequest.builder()
+               .method("POST")
+               .endpoint("https://elasticloadbalancing.eu-west-1.amazonaws.com/")
+               .addHeader("Host", "elasticloadbalancing.eu-west-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                           "Action=DescribeLoadBalancers" +
+                           "&Signature=%2FT6QECRsE52DT6mA7AkBy4%2Bdnvy4RXU3nNt56td0GTo%3D" +
+                           "&SignatureMethod=HmacSHA256" +
+                           "&SignatureVersion=2" +
+                           "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                           "&Version=2012-06-01" +
+                           "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+
+      HttpResponse listResponse1 = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/describe_loadbalancers_marker.xml", "text/xml")).build();
+      
+      HttpRequest list2 = HttpRequest.builder()
+               .method("POST")
+               .endpoint("https://elasticloadbalancing.eu-west-1.amazonaws.com/")
+               .addHeader("Host", "elasticloadbalancing.eu-west-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                           "Action=DescribeLoadBalancers" +
+                           "&Marker=MARKER" +
+                           "&Signature=jiNCvpqj2fTKbput%2BhBtYMM6KpWAFzBeW20FyWeoyZw%3D" +
+                           "&SignatureMethod=HmacSHA256" +
+                           "&SignatureVersion=2" +
+                           "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                           "&Version=2012-06-01" +
+                           "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+      
+      HttpResponse listResponse2 = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/describe_loadbalancers.xml", "text/xml")).build();
+
+      ELBApi apiWhenExist = requestsSendResponses(list, listResponse1, list2, listResponse2);
+
+      LoadBalancer lb1 = new GetLoadBalancerResponseTest().expected().toBuilder().name("my-load-balancer-1").build();
+      LoadBalancer lb2 = new GetLoadBalancerResponseTest().expected();
+      
+      assertEquals(ImmutableSet.copyOf(Iterables.concat(apiWhenExist.getLoadBalancerApiForRegion("eu-west-1").list())), ImmutableSet.of(lb1, lb2));
+   }
+   
    // TODO: this should really be an empty set
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() throws Exception {

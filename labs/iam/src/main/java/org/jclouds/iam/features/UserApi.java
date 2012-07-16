@@ -20,7 +20,8 @@ package org.jclouds.iam.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.options.ListUsersOptions;
@@ -62,7 +63,7 @@ public interface UserApi {
     * 
     * @return the response object
     */
-   PaginatedIterable<User> list(ListUsersOptions options);
+   IterableWithMarker<User> list(ListUsersOptions options);
 
    /**
     * Lists the users that have the specified path prefix. If there are none, the action returns an
@@ -70,6 +71,6 @@ public interface UserApi {
     * 
     * @return the response object
     */
-   PaginatedIterable<User> list();
+   PagedIterable<User> list();
 
 }

@@ -25,14 +25,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.rds.domain.Instance;
+import org.jclouds.rds.functions.InstancesToPagedIterable;
 import org.jclouds.rds.options.ListInstancesOptions;
 import org.jclouds.rds.xml.DescribeDBInstancesResultHandler;
 import org.jclouds.rds.xml.InstanceHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -69,8 +72,9 @@ public interface InstanceAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBInstancesResultHandler.class)
+   @Transform(InstancesToPagedIterable.class)
    @FormParams(keys = "Action", values = "DescribeDBInstances")
-   ListenableFuture<PaginatedIterable<Instance>> list();
+   ListenableFuture<PagedIterable<Instance>> list();
 
    /**
     * @see InstanceApi#list(ListInstancesOptions)
@@ -79,7 +83,7 @@ public interface InstanceAsyncApi {
    @Path("/")
    @XMLResponseParser(DescribeDBInstancesResultHandler.class)
    @FormParams(keys = "Action", values = "DescribeDBInstances")
-   ListenableFuture<PaginatedIterable<Instance>> list(ListInstancesOptions options);
+   ListenableFuture<IterableWithMarker<Instance>> list(ListInstancesOptions options);
 
    /**
     * @see InstanceApi#delete()

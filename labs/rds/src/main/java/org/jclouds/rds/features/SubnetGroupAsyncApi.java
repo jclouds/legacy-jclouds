@@ -25,14 +25,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.rds.domain.SubnetGroup;
+import org.jclouds.rds.functions.SubnetGroupsToPagedIterable;
 import org.jclouds.rds.options.ListSubnetGroupsOptions;
 import org.jclouds.rds.xml.DescribeDBSubnetGroupsResultHandler;
 import org.jclouds.rds.xml.SubnetGroupHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -69,8 +72,9 @@ public interface SubnetGroupAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSubnetGroupsResultHandler.class)
+   @Transform(SubnetGroupsToPagedIterable.class)
    @FormParams(keys = "Action", values = "DescribeDBSubnetGroups")
-   ListenableFuture<PaginatedIterable<SubnetGroup>> list();
+   ListenableFuture<PagedIterable<SubnetGroup>> list();
 
    /**
     * @see SubnetGroupApi#list(ListSubnetGroupsOptions)
@@ -79,7 +83,7 @@ public interface SubnetGroupAsyncApi {
    @Path("/")
    @XMLResponseParser(DescribeDBSubnetGroupsResultHandler.class)
    @FormParams(keys = "Action", values = "DescribeDBSubnetGroups")
-   ListenableFuture<PaginatedIterable<SubnetGroup>> list(ListSubnetGroupsOptions options);
+   ListenableFuture<IterableWithMarker<SubnetGroup>> list(ListSubnetGroupsOptions options);
 
    /**
     * @see SubnetGroupApi#delete()

@@ -21,7 +21,7 @@ package org.jclouds.rds.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.rds.domain.Subnet;
 import org.jclouds.rds.domain.SubnetGroup;
 import org.jclouds.rds.internal.BaseRDSApiLiveTest;
@@ -55,7 +55,7 @@ public class SubnetGroupApiLiveTest extends BaseRDSApiLiveTest {
 
    @Test
    protected void testDescribeSubnetGroups() {
-      PaginatedIterable<SubnetGroup> response = api().list();
+      IterableWithMarker<SubnetGroup> response = api().list().get(0);
 
       for (SubnetGroup subnetGroup : response) {
          checkSubnetGroup(subnetGroup);
@@ -67,7 +67,7 @@ public class SubnetGroupApiLiveTest extends BaseRDSApiLiveTest {
       }
 
       // Test with a Marker, even if it's null
-      response = api().list(ListSubnetGroupsOptions.Builder.afterMarker(response.getNextMarker()));
+      response = api().list(ListSubnetGroupsOptions.Builder.afterMarker(response.nextMarker().orNull()));
       for (SubnetGroup subnetGroup : response) {
          checkSubnetGroup(subnetGroup);
       }

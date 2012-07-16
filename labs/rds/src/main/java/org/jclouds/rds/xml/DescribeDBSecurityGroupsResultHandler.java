@@ -21,8 +21,8 @@ package org.jclouds.rds.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rds.domain.SecurityGroup;
 import org.xml.sax.Attributes;
@@ -40,7 +40,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class DescribeDBSecurityGroupsResultHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<SecurityGroup>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<SecurityGroup>> {
 
    private final SecurityGroupHandler securityGroupHander;
 
@@ -58,8 +58,8 @@ public class DescribeDBSecurityGroupsResultHandler extends
     * {@inheritDoc}
     */
    @Override
-   public PaginatedIterable<SecurityGroup> getResult() {
-      return PaginatedIterables.forwardWithMarker(securityGroups.build(), marker);
+   public IterableWithMarker<SecurityGroup> getResult() {
+      return IterableWithMarkers.from(securityGroups.build(), marker);
    }
 
    /**

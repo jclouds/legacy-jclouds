@@ -18,35 +18,24 @@
  */
 package org.jclouds.collect;
 
-import java.util.Iterator;
-
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ForwardingObject;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 
 /**
- * An iterator which forwards all its method calls to another iterator.
- * Subclasses should override one or more methods to modify the behavior of the
- * backing iterable as desired per the <a
- * href="http://en.wikipedia.org/wiki/Decorator_pattern">decorator pattern</a>.
- *  
+ * An {@code Iterable} that can be continued
+ * 
  * @author Adrian Cole
  */
 @Beta
-public abstract class ForwardingPaginatedIterable<T> extends ForwardingObject implements PaginatedIterable<T> {
+public abstract class IterableWithMarker<T> extends FluentIterable<T> {
 
-   /** Constructor for use by subclasses. */
-   protected ForwardingPaginatedIterable() {}
-
-   @Override protected abstract PaginatedIterable<T> delegate();
-
-   @Override
-   public Iterator<T> iterator() {
-      return delegate().iterator();
-   }
-
-   @Override
-   public Object getNextMarker() {
-      return delegate().getNextMarker();
-   }
+   /**
+    * If there is a next marker, then the set is incomplete and you should issue another command to
+    * retrieve the rest, setting the option {@code marker} to this value 
+    * 
+    * @return next marker, or absent if list is complete
+    */
+   public abstract Optional<Object> nextMarker();
 
 }

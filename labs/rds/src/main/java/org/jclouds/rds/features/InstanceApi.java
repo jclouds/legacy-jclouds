@@ -20,7 +20,8 @@ package org.jclouds.rds.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rds.domain.Instance;
@@ -61,14 +62,14 @@ public interface InstanceApi {
     * 
     * @return the response object
     */
-   PaginatedIterable<Instance> list(ListInstancesOptions options);
+   IterableWithMarker<Instance> list(ListInstancesOptions options);
 
    /**
     * Returns information about provisioned RDS instances.
     * 
     * @return the response object
     */
-   PaginatedIterable<Instance> list();
+   PagedIterable<Instance> list();
 
    /**
     * Deletes the specified Instance.

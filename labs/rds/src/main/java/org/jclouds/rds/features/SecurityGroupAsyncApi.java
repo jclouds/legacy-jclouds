@@ -25,14 +25,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.rds.domain.SecurityGroup;
+import org.jclouds.rds.functions.SecurityGroupsToPagedIterable;
 import org.jclouds.rds.options.ListSecurityGroupsOptions;
 import org.jclouds.rds.xml.DescribeDBSecurityGroupsResultHandler;
 import org.jclouds.rds.xml.SecurityGroupHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -69,8 +72,9 @@ public interface SecurityGroupAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSecurityGroupsResultHandler.class)
+   @Transform(SecurityGroupsToPagedIterable.class)
    @FormParams(keys = "Action", values = "DescribeDBSecurityGroups")
-   ListenableFuture<PaginatedIterable<SecurityGroup>> list();
+   ListenableFuture<PagedIterable<SecurityGroup>> list();
 
    /**
     * @see SecurityGroupApi#list(ListSecurityGroupsOptions)
@@ -79,7 +83,7 @@ public interface SecurityGroupAsyncApi {
    @Path("/")
    @XMLResponseParser(DescribeDBSecurityGroupsResultHandler.class)
    @FormParams(keys = "Action", values = "DescribeDBSecurityGroups")
-   ListenableFuture<PaginatedIterable<SecurityGroup>> list(ListSecurityGroupsOptions options);
+   ListenableFuture<IterableWithMarker<SecurityGroup>> list(ListSecurityGroupsOptions options);
 
    /**
     * @see SecurityGroupApi#delete()

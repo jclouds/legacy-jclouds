@@ -20,7 +20,7 @@ package org.jclouds.rds.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.rds.domain.Instance;
 import org.jclouds.rds.internal.BaseRDSApiLiveTest;
 import org.jclouds.rds.options.ListInstancesOptions;
@@ -49,7 +49,7 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
 
    @Test
    protected void testDescribeInstances() {
-      PaginatedIterable<Instance> response = api().list();
+      IterableWithMarker<Instance> response = api().list().get(0);
 
       for (Instance instance : response) {
          checkInstance(instance);
@@ -61,7 +61,7 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
       }
 
       // Test with a Marker, even if it's null
-      response = api().list(ListInstancesOptions.Builder.afterMarker(response.getNextMarker()));
+      response = api().list(ListInstancesOptions.Builder.afterMarker(response.nextMarker().orNull()));
       for (Instance instance : response) {
          checkInstance(instance);
       }

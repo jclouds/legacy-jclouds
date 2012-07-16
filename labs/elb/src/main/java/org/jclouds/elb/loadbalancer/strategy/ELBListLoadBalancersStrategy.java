@@ -33,6 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.elb.ELBAsyncApi;
 import org.jclouds.elb.domain.LoadBalancer;
@@ -83,11 +84,11 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
                   public ListenableFuture<? extends Iterable<LoadBalancerInRegion>> apply(final String from) {
                      // TODO: ELB.listLoadBalancers
                      return Futures.compose(aapi.getLoadBalancerApiForRegion(from).list(),
-                              new Function<Iterable<LoadBalancer>, Iterable<LoadBalancerInRegion>>() {
+                              new Function<PagedIterable<LoadBalancer>, Iterable<LoadBalancerInRegion>>() {
 
                                  @Override
-                                 public Iterable<LoadBalancerInRegion> apply(Iterable<LoadBalancer> input) {
-                                    return Iterables.transform(input,
+                                 public Iterable<LoadBalancerInRegion> apply(PagedIterable<LoadBalancer> input) {
+                                    return Iterables.transform(Iterables.concat(input),
                                              new Function<LoadBalancer, LoadBalancerInRegion>() {
 
                                                 @Override

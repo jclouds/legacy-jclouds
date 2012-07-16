@@ -21,8 +21,8 @@ package org.jclouds.rds.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import org.jclouds.collect.PaginatedIterable;
-import org.jclouds.collect.PaginatedIterables;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rds.domain.SubnetGroup;
 import org.xml.sax.Attributes;
@@ -40,7 +40,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class DescribeDBSubnetGroupsResultHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<PaginatedIterable<SubnetGroup>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<SubnetGroup>> {
 
    private final SubnetGroupHandler subnetGroupHander;
 
@@ -58,8 +58,8 @@ public class DescribeDBSubnetGroupsResultHandler extends
     * {@inheritDoc}
     */
    @Override
-   public PaginatedIterable<SubnetGroup> getResult() {
-      return PaginatedIterables.forwardWithMarker(subnetGroups.build(), marker);
+   public IterableWithMarker<SubnetGroup> getResult() {
+      return IterableWithMarkers.from(subnetGroups.build(), marker);
    }
 
    /**

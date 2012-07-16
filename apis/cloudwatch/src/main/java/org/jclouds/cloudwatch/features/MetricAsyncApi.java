@@ -29,14 +29,17 @@ import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
+import org.jclouds.cloudwatch.functions.MetricsToPagedIterable;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandlerV2;
 import org.jclouds.cloudwatch.xml.ListMetricsResponseHandler;
-import org.jclouds.collect.PaginatedIterable;
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
@@ -59,8 +62,9 @@ public interface MetricAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
+   @Transform(MetricsToPagedIterable.class)
    @FormParams(keys = "Action", values = "ListMetrics")
-   ListenableFuture<? extends PaginatedIterable<Metric>> list();
+   ListenableFuture<? extends PagedIterable<Metric>> list();
 
    /**
     * @see MetricApi#list(ListMetricsOptions)
@@ -69,7 +73,7 @@ public interface MetricAsyncApi {
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
    @FormParams(keys = "Action", values = "ListMetrics")
-   ListenableFuture<? extends PaginatedIterable<Metric>> list(ListMetricsOptions options);
+   ListenableFuture<? extends IterableWithMarker<Metric>> list(ListMetricsOptions options);
 
    /**
     * @see MetricApi#getMetricStatistics(GetMetricStatistics)
