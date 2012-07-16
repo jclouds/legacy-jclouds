@@ -40,7 +40,6 @@ package org.jclouds.collect.internal;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.collect.PagedIterables;
-import org.jclouds.collect.PagedIterators;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -61,7 +60,7 @@ public abstract class CallerArg0ToPagedIterable<T, I extends CallerArg0ToPagedIt
    @Override
    public PagedIterable<T> apply(IterableWithMarker<T> input) {
       if (input.nextMarker() == null)
-         return PagedIterables.create(PagedIterators.of(input));
+         return PagedIterables.of(input);
 
       Optional<String> arg0Option = Optional.absent();
       if (request.getCaller().get().getArgs() != null && request.getCaller().get().getArgs().length > 0) {
@@ -70,7 +69,7 @@ public abstract class CallerArg0ToPagedIterable<T, I extends CallerArg0ToPagedIt
             arg0Option = Optional.of(arg0.toString());
       }
       final String arg0 = arg0Option.orNull();
-      return PagedIterables.create(PagedIterators.advancing(input, markerToNextForCallingArg0(arg0)));
+      return PagedIterables.advance(input, markerToNextForCallingArg0(arg0));
    }
 
    protected abstract Function<Object, IterableWithMarker<T>> markerToNextForCallingArg0(String arg0);

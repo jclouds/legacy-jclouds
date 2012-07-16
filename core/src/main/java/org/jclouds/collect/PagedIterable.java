@@ -26,27 +26,31 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 
 /**
- * Allows you to advance through sequence of pages in a resultset. Typically
- * used in apis that return only a certain number of records at a time.
+ * Extends {@link FluentIterable} allowing you to lazily advance through
+ * sequence of pages in a resultset. Typically used in apis that return only a
+ * certain number of records at a time.
  * 
- * Simplest usage is to employ the {@link #concat} convenience function.
+ * Simplest usage is to employ the {@link #concat} convenience function, and one
+ * of the methods from {@link FluentIterable}.
  * 
  * <pre>
- * FluentIterable<StorageMetadata> blobs = blobstore.list(...).concat();
- * for (StorageMetadata blob : blobs) {
- *     process(blob);
- * }
+ *    // pull in new pages until it we see something interesting.
+ *     Optional<StorageMetadata> firstInterestingBlob = blobstore
+ *         .list(// options //)
+ *         .concat()
+ *         .firstMatch(isInterestingBlob());
  * </pre>
  * 
- * Some may be interested in each page, for example to
+ * For those seeking manual control of page advances, don't use concat, and
+ * instead look at the value of {@link IterableWithMarker#nextToken}.
  * 
  * <pre>
  * PagedIterator<StorageMetadata> blobs = blobstore.list(...).iterator();
  * while (blobs.hasNext()) {
- *     FluentIterable<StorageMetadata> page = blobs.next();
+ *     IterableWithMarker<StorageMetadata> page = blobs.next();
  *     ProcessedResults results = process(page);
- *     if (results.shouldBeBookmarked() && blobs.nextMarker().isPresent()) {
- *         saveBookmark(blobs.nextMarker().get());
+ *     if (results.shouldBeBookmarked() && page.nextMarker().isPresent()) {
+ *         saveBookmark(page.nextMarker().get());
  *     }
  * }
  * </pre>
@@ -55,9 +59,6 @@ import com.google.common.collect.UnmodifiableIterator;
  */
 @Beta
 public abstract class PagedIterable<E> extends FluentIterable<IterableWithMarker<E>> {
-
-   @Override
-   public abstract PagedIterator<E> iterator();
 
    /**
     * Combines all the pages into a single unmodifiable iterable. ex.
@@ -72,7 +73,7 @@ public abstract class PagedIterable<E> extends FluentIterable<IterableWithMarker
     * @see Iterators#concat
     */
    public FluentIterable<E> concat() {
-      final PagedIterator<E> iterator = iterator();
+      final Iterator<IterableWithMarker<E>> iterator = iterator();
       final UnmodifiableIterator<Iterator<E>> unmodifiable = new UnmodifiableIterator<Iterator<E>>() {
          @Override
          public boolean hasNext() {

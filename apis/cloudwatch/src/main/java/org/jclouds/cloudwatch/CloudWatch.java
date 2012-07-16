@@ -26,7 +26,6 @@ import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterables;
-import org.jclouds.collect.PagedIterators;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -47,7 +46,7 @@ public class CloudWatch {
     * @return iterable of metrics fitting the criteria
     */
    public static Iterable<Metric> listMetrics(final MetricApi metricApi, final ListMetricsOptions options) {
-      return Iterables.concat(PagedIterables.create(PagedIterators.advancing(metricApi.list(options),
+      return Iterables.concat(PagedIterables.advance(metricApi.list(options),
                new Function<Object, IterableWithMarker<Metric>>() {
 
                   @Override
@@ -59,7 +58,7 @@ public class CloudWatch {
                   public String toString() {
                      return "listMetrics(" + options + ")";
                   }
-               })));
+               }));
    }
 
    /**

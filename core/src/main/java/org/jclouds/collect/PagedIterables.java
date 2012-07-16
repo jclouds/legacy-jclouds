@@ -18,7 +18,15 @@
  */
 package org.jclouds.collect;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Iterator;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Utilities for using {@link PagedIterable}s.
@@ -27,23 +35,120 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public class PagedIterables {
-
    /**
+    * @param only
+    *           the only page of data
     * 
-    * @param iterator
-    *           how to advance pages
-    * 
-    * @return iterable current data which continues if the user iterates beyond the first page
+    * @return iterable with only the one page
     */
-   public static <T> PagedIterable<T> create(final PagedIterator<T> iterator) {
+   public static <T> PagedIterable<T> of(final IterableWithMarker<T> only) {
       return new PagedIterable<T>() {
 
          @Override
-         public PagedIterator<T> iterator() {
-            return iterator;
+         public Iterator<IterableWithMarker<T>> iterator() {
+            return ImmutableSet.of(only).iterator();
          }
 
       };
+   }
+
+   /**
+    * 
+    * 
+    * @param initial
+    *           the initial set current data
+    * @param markerToNext
+    *           produces the next set based on the marker
+    * 
+    * @return iterable current data which continues if the user iterates beyond
+    *         the first page
+    */
+   public static <T> PagedIterable<T> advance(final IterableWithMarker<T> initial,
+         final Function<Object, IterableWithMarker<T>> markerToNext) {
+      return new PagedIterable<T>() {
+
+         @Override
+         public Iterator<IterableWithMarker<T>> iterator() {
+            return advancingIterator(initial, markerToNext);
+         }
+
+      };
+   }
+
+   private static class AdvancingIterator<T> extends AbstractIterator<IterableWithMarker<T>> {
+
+      private final Function<Object, IterableWithMarker<T>> markerToNext;
+      private transient IterableWithMarker<T> current;
+      private transient boolean unread = true;
+
+      private AdvancingIterator(IterableWithMarker<T> initial, Function<Object, IterableWithMarker<T>> markerToNext) {
+         this.current = checkNotNull(initial, "initial iterable");
+         this.markerToNext = checkNotNull(markerToNext, "marker to next iterable");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      protected IterableWithMarker<T> computeNext() {
+         if (unread)
+            try {
+               return current;
+            } finally {
+               unread = false;
+            }
+         else if (current.nextMarker().isPresent())
+            return current = markerToNext.apply(current.nextMarker().get());
+         else
+            return endOfData();
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(current, unread);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         AdvancingIterator<?> other = AdvancingIterator.class.cast(obj);
+         return Objects.equal(this.current, other.current) && Objects.equal(this.unread, other.unread);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public String toString() {
+         return Objects.toStringHelper("").add("current", current).add("unread", unread).toString();
+      }
+   }
+
+   /**
+    * 
+    * @param initial
+    *           the initial set current data
+    * @param markerToNext
+    *           produces the next set based on the marker
+    * 
+    * @return iterable current data which continues if the user iterates beyond
+    *         the first page
+    */
+   public static <T> Iterator<IterableWithMarker<T>> advancingIterator(IterableWithMarker<T> initial,
+         Function<Object, IterableWithMarker<T>> markerToNext) {
+      if (!initial.nextMarker().isPresent()) {
+         return ImmutableSet.of(initial).iterator();
+      }
+      return new AdvancingIterator<T>(initial, markerToNext);
    }
 
 }
