@@ -38,8 +38,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
-
 /**
  * @author Jeremy Whitlock, Adrian Cole
  */
@@ -118,7 +116,7 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
       CloudWatchApi apiWhenMetricsExist = requestsSendResponses(
             listMetrics, listMetricsResponse, listMetrics2, listMetrics2Response);
 
-      assertEquals(Iterables.concat(apiWhenMetricsExist.getMetricApiForRegion(null).list()).toString(),
+      assertEquals(apiWhenMetricsExist.getMetricApiForRegion(null).list().concat().toString(),
             "[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}, Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}]");
    }
 

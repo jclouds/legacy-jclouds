@@ -18,10 +18,28 @@
  */
 package org.jclouds.collect;
 
+import java.util.Iterator;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.UnmodifiableIterator;
 
 /**
+ * Allows you to advance through sequence of pages in a resultset. Typically
+ * used in apis that return only a certain number of records at a time.
+ * 
+ * Simplest usage is to employ the {@link #concat} convenience function.
+ * 
+ * <pre>
+ * FluentIterable<StorageMetadata> blobs = blobstore.list(...).concat();
+ * for (StorageMetadata blob : blobs) {
+ *     process(blob);
+ * }
+ * </pre>
+ * 
+ * Some may be interested in each page, for example to
+ * 
  * <pre>
  * PagedIterator<StorageMetadata> blobs = blobstore.list(...).iterator();
  * while (blobs.hasNext()) {
@@ -36,9 +54,42 @@ import com.google.common.collect.FluentIterable;
  * @author Adrian Cole
  */
 @Beta
-public abstract class PagedIterable<T> extends FluentIterable<IterableWithMarker<T>> {
+public abstract class PagedIterable<E> extends FluentIterable<IterableWithMarker<E>> {
 
    @Override
-   public abstract PagedIterator<T> iterator();
+   public abstract PagedIterator<E> iterator();
+
+   /**
+    * Combines all the pages into a single unmodifiable iterable. ex.
+    * 
+    * <pre>
+    * FluentIterable<StorageMetadata> blobs = blobstore.list(...).concat();
+    * for (StorageMetadata blob : blobs) {
+    *     process(blob);
+    * }
+    * </pre>
+    * 
+    * @see Iterators#concat
+    */
+   public FluentIterable<E> concat() {
+      final PagedIterator<E> iterator = iterator();
+      final UnmodifiableIterator<Iterator<E>> unmodifiable = new UnmodifiableIterator<Iterator<E>>() {
+         @Override
+         public boolean hasNext() {
+            return iterator.hasNext();
+         }
+
+         @Override
+         public Iterator<E> next() {
+            return iterator.next().iterator();
+         }
+      };
+      return new FluentIterable<E>() {
+         @Override
+         public Iterator<E> iterator() {
+            return Iterators.concat(unmodifiable);
+         }
+      };
+   }
 
 }

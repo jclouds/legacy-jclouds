@@ -145,7 +145,7 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       LoadBalancer lb1 = new GetLoadBalancerResponseTest().expected().toBuilder().name("my-load-balancer-1").build();
       LoadBalancer lb2 = new GetLoadBalancerResponseTest().expected();
       
-      assertEquals(ImmutableSet.copyOf(Iterables.concat(apiWhenExist.getLoadBalancerApi().list())), ImmutableSet.of(lb1, lb2));
+      assertEquals(apiWhenExist.getLoadBalancerApi().list().concat().toImmutableSet(), ImmutableSet.of(lb1, lb2));
    }
    
    public void testList2PagesWhenResponseIs2xxInEU() throws Exception {
