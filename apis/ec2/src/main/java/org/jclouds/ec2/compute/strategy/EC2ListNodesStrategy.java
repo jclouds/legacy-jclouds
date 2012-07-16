@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -51,6 +50,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
 
 /**
  * 
@@ -58,9 +58,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @Singleton
 public class EC2ListNodesStrategy implements ListNodesStrategy {
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected static Long maxTime;
 
    protected final EC2AsyncClient client;
    protected final Supplier<Set<String>> regions;
@@ -100,7 +105,7 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
                      return castToSpecificTypedFuture(client.getInstanceServices().describeInstancesInRegion(from));
                   }
 
-               }, executor, null, logger, "reservations");
+               }, executor, maxTime, logger, "reservations");
 
       return concat(concat(reservations));
    }
