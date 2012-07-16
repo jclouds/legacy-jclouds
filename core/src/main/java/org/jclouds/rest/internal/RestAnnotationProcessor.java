@@ -124,6 +124,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.WrapWith;
@@ -297,6 +298,11 @@ public class RestAnnotationProcessor<T> {
             transformer = Functions.compose(new OnlyElementOrNull(), transformer);
       } else {
          transformer = injector.getInstance(getParserOrThrowException(method));
+      }
+      if (method.isAnnotationPresent(Transform.class)) {
+         transformer = Functions
+                  .compose(Function.class.cast(injector.getInstance(method.getAnnotation(Transform.class).value())),
+                           transformer);
       }
       return transformer;
    }

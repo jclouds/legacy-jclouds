@@ -125,6 +125,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.WrapWith;
@@ -1039,6 +1040,20 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       @GET
       @Path("/")
+      @SelectJson("jobid")
+      @Transform(AddOne.class)
+      ListenableFuture<Long> selectLongAddOne();
+
+      static class AddOne implements Function<Long, Long> {
+
+         @Override
+         public Long apply(Long o) {
+            return o + 1;
+         }
+      }
+
+      @GET
+      @Path("/")
       @SelectJson("runit")
       @OnlyElement
       @Consumes(MediaType.APPLICATION_JSON)
@@ -1262,6 +1277,18 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
             .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), new Long(4));
    }
 
+   @SuppressWarnings("unchecked")
+   public void selectLongAddOne() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPut.class.getMethod("selectLongAddOne");
+      HttpRequest request = factory(TestPut.class).createRequest(method);
+
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+            .createResponseParser(parserFactory, injector, method, request);
+
+      assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok")
+            .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), new Long(5));
+   }
+   
    static class TestRequestFilter1 implements HttpRequestFilter {
       public HttpRequest filter(HttpRequest request) throws HttpException {
          return request;
