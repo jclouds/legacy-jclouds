@@ -204,19 +204,13 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       return blobFile;
    }
 
-   /**
-    * Write a {@link Blob} {@link Payload} into a file
-    * 
-    * @param container
-    * @param blobKey
-    * @param payload
-    * @throws IOException
-    */
    @Override
-   public void writePayloadOnFile(String container, String blobKey, Payload payload) throws IOException {
-      filesystemContainerNameValidator.validate(container);
+   public void putBlob(final String containerName, final Blob blob) throws IOException {
+      String blobKey = blob.getMetadata().getName();
+      Payload payload = blob.getPayload();
+      filesystemContainerNameValidator.validate(containerName);
       filesystemBlobKeyValidator.validate(blobKey);
-      File outputFile = getFileForBlobKey(container, blobKey);
+      File outputFile = getFileForBlobKey(containerName, blobKey);
       FileOutputStream output = null;
       try {
          Files.createParentDirs(outputFile);
