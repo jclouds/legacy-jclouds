@@ -118,7 +118,6 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
 @Beta
 public abstract class BaseRestApiExpectTest<S> {
 
