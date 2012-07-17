@@ -169,11 +169,11 @@ public interface FilesystemStorageStrategy {
     void removeBlob(String container, String key);
 
     /**
-     * Write a {@link Blob} {@link Payload} into a file
-     * @param fileName
-     * @param payload
+     * Write a {@link Blob} into a file
+     * @param container
+     * @param blob
      * @throws IOException
      */
-    void writePayloadOnFile(String container, String blobKey, Payload payload) throws IOException;
+    void putBlob(String containerName, Blob blob) throws IOException;
 
 }

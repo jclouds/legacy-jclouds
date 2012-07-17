@@ -457,17 +457,22 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       String blobKey = blob.getMetadata().getName();
 
       logger.debug("Put blob with key [%s] to container [%s]", blobKey, containerName);
-      String eTag = getEtag(blob);
+      if (!storageStrategy.containerExists(containerName)) {
+         return Futures.immediateFailedFuture(new IllegalStateException("containerName not found: " + containerName));
+      }
+
       try {
          // TODO
          // must override existing file?
 
-         storageStrategy.writePayloadOnFile(containerName, blobKey, blob.getPayload());
+         storageStrategy.putBlob(containerName, blob);
       } catch (IOException e) {
          logger.error(e, "An error occurred storing the new blob with name [%s] to container [%s].", blobKey,
                containerName);
          Throwables.propagate(e);
       }
+
+      String eTag = getEtag(blob);
       return immediateFuture(eTag);
    }
 
@@ -591,13 +596,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       }
    }
 
-   private Blob copyBlob(Blob blob) {
-      Blob returnVal = blobFactory.create(copy(blob.getMetadata()));
-      returnVal.setPayload(blob.getPayload());
-      copyPayloadHeadersToBlob(blob.getPayload(), returnVal);
-      return returnVal;
-   }
-
    /**
     * Calculates the object MD5 and returns it as eTag
     * 
@@ -614,6 +612,13 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
       String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
       return eTag;
+   }
+
+   private Blob copyBlob(Blob blob) {
+      Blob returnVal = blobFactory.create(copy(blob.getMetadata()));
+      returnVal.setPayload(blob.getPayload());
+      copyPayloadHeadersToBlob(blob.getPayload(), returnVal);
+      return returnVal;
    }
 
    @Override

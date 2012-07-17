@@ -740,6 +740,7 @@ public class FilesystemAsyncBlobStoreTest {
          * can't be deleted. See http://code.google.com/p/jclouds/issues/detail?id=737
          */
         final String containerName = "containerWithRanges";
+        blobStore.createContainerInLocation(null, containerName);
         String payload = "abcdefgh";
         InputStream is;
         Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(payload)).build();
