@@ -80,7 +80,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -440,13 +439,14 @@ public abstract class BaseRestApiExpectTest<S> {
    public S requestsSendResponses(final Map<HttpRequest, HttpResponse> requestToResponse, Module module,
             Properties props) {
       return createClient(new Function<HttpRequest, HttpResponse>() {
-         ImmutableBiMap<HttpRequest, HttpResponse> bimap = ImmutableBiMap.copyOf(requestToResponse);
-
+         
          @Override
          public HttpResponse apply(HttpRequest input) {
+            HttpRequest matchedRequest = null;
             HttpResponse response = null;
             for (HttpRequest request : requestToResponse.keySet()) {
                if (httpRequestsAreEqual(input, request)) {
+                  matchedRequest = request;
                   response = requestToResponse.get(request);
                }
             }
@@ -467,7 +467,7 @@ public abstract class BaseRestApiExpectTest<S> {
 
             } else if (compareHttpRequestAsType(input) == HttpRequestComparisonType.DEFAULT) {
                // in case hashCode/equals doesn't do a full content check
-               assertEquals(renderRequest(input), renderRequest(bimap.inverse().get(response)));
+               assertEquals(renderRequest(input), renderRequest(matchedRequest));
             }
 
             return response;
