@@ -472,7 +472,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
       storageStrategy.putBlob(containerName, blob);
 
-      return immediateFuture(Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.ETAG)));
+      String eTag = getEtag(blob);
+      return immediateFuture(eTag);
    }
 
    private Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
@@ -633,6 +634,24 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             return immediateFuture(null);
          return immediateFailedFuture(e);
       }
+   }
+
+   /**
+    * Calculates the object MD5 and returns it as eTag
+    * 
+    * @param object
+    * @return
+    */
+   private String getEtag(Blob object) {
+      try {
+         Payloads.calculateMD5(object, crypto.md5());
+      } catch (IOException ex) {
+         logger.error(ex, "An error occurred calculating MD5 for object with name %s.", object.getMetadata().getName());
+         Throwables.propagate(ex);
+      }
+
+      String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
+      return eTag;
    }
 
    private Blob copyBlob(Blob blob) {

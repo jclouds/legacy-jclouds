@@ -371,8 +371,10 @@ public class FilesystemStorageStrategyImplTest {
       blobKey = TestUtils.createRandomBlobKey("writePayload-", ".img");
       sourceFile = TestUtils.getImageForBlobPayload();
       filePayload = new FilePayload(sourceFile);
+      Blob blob = storageStrategy.newBlob(blobKey);
+      blob.setPayload(filePayload);
       // write files
-      storageStrategy.writePayloadOnFile(CONTAINER_NAME, blobKey, filePayload);
+      storageStrategy.putBlob(CONTAINER_NAME, blob);
       // verify that the files is equal
       File blobFullPath = new File(TARGET_CONTAINER_NAME, blobKey);
       InputSupplier<FileInputStream> expectedInput =
