@@ -49,20 +49,21 @@ import com.google.common.io.InputSupplier;
 @Beta
 public class CryptoStreams {
 
-   public static String hex(byte[] in) {
-      byte[] hex = new byte[2 * in.length];
+   private static char[] hex(byte[] in, int offset, int len) {
+      char[] hex = new char[2 * len];
       int index = 0;
 
-      for (byte b : in) {
+      for (int i = offset; i < offset + len; ++i) {
+         byte b = in[i];
          int v = b & 0xFF;
          hex[index++] = HEX_CHAR_TABLE[v >>> 4];
          hex[index++] = HEX_CHAR_TABLE[v & 0xF];
       }
-      try {
-         return new String(hex, "ASCII");
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException(e);
-      }
+      return hex;
+   }
+
+   public static String hex(byte[] in) {
+      return new String(hex(in, 0, in.length));
    }
 
    public static byte[] hex(String s) {
@@ -295,9 +296,10 @@ public class CryptoStreams {
             });
    }
 
-   final static byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5',
-         (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
-         (byte) 'f' };
+   private final static char[] HEX_CHAR_TABLE = {
+      '0', '1', '2', '3', '4', '5', '6', '7',
+      '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+   };
 
    /**
     * Computes and returns the hex value for a supplied input stream.
@@ -313,16 +315,7 @@ public class CryptoStreams {
       final StringBuilder out = new StringBuilder();
       return com.google.common.io.ByteStreams.readBytes(supplier, new ByteProcessor<String>() {
          public boolean processBytes(byte[] buf, int off, int len) {
-            char[] hex = new char[2 * len];
-            int index = 0;
-
-            for (int i = off; i < off + len; i++) {
-               byte b = buf[i];
-               int v = b & 0xFF;
-               hex[index++] = (char) HEX_CHAR_TABLE[v >>> 4];
-               hex[index++] = (char) HEX_CHAR_TABLE[v & 0xF];
-            }
-            out.append(hex);
+            out.append(hex(buf, off, len));
             return true;
          }
 
