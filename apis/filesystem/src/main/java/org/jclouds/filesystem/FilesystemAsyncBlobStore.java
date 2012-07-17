@@ -402,8 +402,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    public static HttpResponseException returnResponseException(int code) {
-      HttpResponse response = null;
-      response = HttpResponse.builder().statusCode(code).build();
+      HttpResponse response = HttpResponse.builder().statusCode(code).build();
       return new HttpResponseException(new HttpCommand() {
 
          public int getRedirectCount() {
