@@ -580,7 +580,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          if (options.getRanges() != null && options.getRanges().size() > 0) {
             byte[] data;
             try {
-               data = toByteArray(blob.getPayload().getInput());
+               data = toByteArray(blob.getPayload());
             } catch (IOException e) {
                return immediateFailedFuture(new RuntimeException(e));
             }
