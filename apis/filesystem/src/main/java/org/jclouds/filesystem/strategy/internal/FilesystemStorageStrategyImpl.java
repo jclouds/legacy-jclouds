@@ -266,6 +266,11 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       return blobNames;
    }
 
+   @Override
+   public Location getLocation(final String containerName) {
+      return null;
+   }
+
    public boolean directoryExists(String container, String directory) {
       return buildPathAndChecksIfDirectoryExists(container, directory);
    }

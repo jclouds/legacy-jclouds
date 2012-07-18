@@ -95,6 +95,7 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       return containerToBlobs.get(containerName).keySet();
    }
 
+   @Override
    public Location getLocation(final String containerName) {
       return containerToLocation.get(containerName);
    }

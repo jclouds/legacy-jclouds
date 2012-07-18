@@ -121,4 +121,9 @@ public interface LocalStorageStrategy {
      */
     void putBlob(String containerName, Blob blob) throws IOException;
 
+    /**
+     * @param containerName name of container
+     * @return Location of container or null
+     */
+    Location getLocation(String containerName);
 }

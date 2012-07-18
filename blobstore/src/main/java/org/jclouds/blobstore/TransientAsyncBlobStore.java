@@ -119,7 +119,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final ContentMetadataCodec contentMetadataCodec;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
-   protected final TransientStorageStrategy storageStrategy;
+   protected final LocalStorageStrategy storageStrategy;
    protected final Provider<UriBuilder> uriBuilders;
 
    @Inject
@@ -155,7 +155,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          return immediateFailedFuture(cnfe(container));
 
       // Loading blobs from container
-      Iterable<String> blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+      Iterable<String> blobBelongingToContainer = null;
+      try {
+         blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+      } catch (IOException e) {
+         logger.error(e, "An error occurred loading blobs contained into container %s", container);
+         Throwables.propagate(e);
+      }
 
       SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
             new Function<String, StorageMetadata>() {
@@ -303,10 +309,15 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Boolean> deleteContainerIfEmpty(final String container) {
       Boolean returnVal = true;
       if (storageStrategy.containerExists(container)) {
-         if (Iterables.isEmpty(storageStrategy.getBlobKeysInsideContainer(container)))
-            storageStrategy.deleteContainer(container);
-         else
-            returnVal = false;
+         try {
+            if (Iterables.isEmpty(storageStrategy.getBlobKeysInsideContainer(container)))
+               storageStrategy.deleteContainer(container);
+            else
+               returnVal = false;
+         } catch (IOException e) {
+            logger.error(e, "An error occurred loading blobs contained into container %s", container);
+            Throwables.propagate(e);
+         }
       }
       return immediateFuture(returnVal);
    }
@@ -470,7 +481,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
       blob = createUpdatedCopyOfBlobInContainer(containerName, blob);
 
-      storageStrategy.putBlob(containerName, blob);
+      try {
+         storageStrategy.putBlob(containerName, blob);
+      } catch (IOException e) {
+         logger.error(e, "An error occurred storing the new blob with name [%s] to container [%s].", blobKey,
+               containerName);
+         Throwables.propagate(e);
+      }
 
       String eTag = getEtag(blob);
       return immediateFuture(eTag);
