@@ -19,11 +19,13 @@
 
 package org.jclouds.scriptbuilder.statements.login;
 
+import static java.lang.String.format;
 import static org.jclouds.scriptbuilder.statements.login.AdminAccessBuilderSpec.parse;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
+import java.io.File;
 import java.lang.reflect.Field;
 
 import javax.inject.Provider;
@@ -104,7 +106,7 @@ public class AdminAccessBuilderSpecTest {
 
    public void testParsePrivateKeyFile() {
       AdminAccessBuilderSpec spec = parse("adminPrivateKeyFile=target/test-classes/test");
-      assertEquals(spec.getAdminPrivateKeyFile().getPath(), "target/test-classes/test");
+      assertEquals(spec.getAdminPrivateKeyFile().getPath(), format("target%stest-classes%stest", File.separator, File.separator));
       assertNull(spec.adminHome);
       assertNull(spec.adminPassword);
       assertNull(spec.adminPublicKeyFile);

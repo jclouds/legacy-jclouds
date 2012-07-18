@@ -20,6 +20,7 @@ package org.jclouds.virtualbox;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
@@ -44,9 +45,9 @@ import com.google.common.collect.Iterables;
  * @author dralves
  * 
  */
-@Test(groups = "live", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "PreseedCfgServerTest")
 public class PreseedCfgServerTest {
-
+   private static final String lineSeparator = System.getProperty("line.separator");
    @Test
    public void testJettyServerServesPreseedFile() throws Exception {
       Properties props = VirtualBoxApiMetadata.defaultProperties();
@@ -60,7 +61,7 @@ public class PreseedCfgServerTest {
       starter.start(preconfigurationUrl, getDefaultImage().preseed_cfg);
 
       String preseedFileFromJetty = IOUtils.toString(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
-      String preseedFileFromFile = getDefaultImage().preseed_cfg + "\n";
+      String preseedFileFromFile = getDefaultImage().preseed_cfg + lineSeparator;
       assertEquals(preseedFileFromFile, preseedFileFromJetty);
 
       starter.stop();

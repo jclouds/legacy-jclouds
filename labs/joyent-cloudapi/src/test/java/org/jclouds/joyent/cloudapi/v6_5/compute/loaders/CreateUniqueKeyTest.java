@@ -64,6 +64,8 @@ import com.google.inject.util.Providers;
  */
 @Test(groups = "unit", testName = "CreateUniqueKeyTest")
 public class CreateUniqueKeyTest {
+   private static final String lineSeparator = System.getProperty("line.separator");
+
    private Factory namingConvention;
    private KeyPair keyPair;
    private String openSshKey;
@@ -111,7 +113,7 @@ public class CreateUniqueKeyTest {
       CreateUniqueKey parser = new CreateUniqueKey(cloudApiApi, namingConvention, crypto, Providers.of(secureRandom));
 
       assertEquals(parser.load(DatacenterAndName.fromDatacenterAndName("datacenter", "group")),
-            KeyAndPrivateKey.fromKeyAndPrivateKey(key, PRIVATE_KEY));
+            KeyAndPrivateKey.fromKeyAndPrivateKey(key, PRIVATE_KEY.replaceAll("\n", lineSeparator)));
 
       verify(cloudApiApi, keyApi, crypto, rsaKeyPairGenerator, secureRandom);
    }
