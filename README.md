@@ -1,7 +1,11 @@
 jclouds
 ======
-jclouds is an open source library that helps you get started in the cloud and reuse your java and clojure development skills. Our api allows you freedom to use portable abstractions or cloud-specific features. We test support of 30 cloud providers and cloud software stacks, including Amazon, GoGrid, Ninefold, vCloud, OpenStack, and Azure.
-We offer several API abstractions as java and clojure libraries. The following are the most mature:
+jclouds allows provisioning and control of cloud resources, including blobstore
+and compute, from Java and Clojure.  Our API gives allows developers to use
+both portable abstractions and cloud-specific features.  We test support of 30
+cloud providers and cloud software stacks, including Amazon, Azure, GoGrid,
+Ninefold, OpenStack, and vCloud.  jclouds is licensed under the Apache License,
+Version 2.0
 
 Features
 --------
