@@ -21,8 +21,10 @@ package org.jclouds.blobstore.config;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.TransientBlobRequestSigner;
+import org.jclouds.blobstore.TransientStorageStrategy;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.rest.config.BinderUtils;
 
@@ -44,6 +46,7 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       install(new BlobStoreMapModule());
       bind(BlobStore.class).to(TransientBlobStore.class);
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+      bind(LocalStorageStrategy.class).to(TransientStorageStrategy.class);
       bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
    }
 
