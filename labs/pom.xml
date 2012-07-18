@@ -55,5 +55,6 @@
        <module>nodepool</module>
        <module>rds</module>
        <module>aws-rds</module>
+       <module>smartos-ssh</module>
     </modules>
 </project>

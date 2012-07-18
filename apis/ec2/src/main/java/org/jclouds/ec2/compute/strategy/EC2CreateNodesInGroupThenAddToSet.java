@@ -133,10 +133,9 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       
-      Template mutableTemplate = templateBuilderProvider.get().imageId(template.getImage().getId()).fromTemplate(template)
-                  .build();
+      Template mutableTemplate = template.clone();
 
-      Iterable<String> ips = allocateElasticIpsInRegion(count, template);
+      Iterable<String> ips = allocateElasticIpsInRegion(count, mutableTemplate);
 
       Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group,
                count, mutableTemplate);

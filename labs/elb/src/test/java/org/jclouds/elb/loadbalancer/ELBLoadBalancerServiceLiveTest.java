@@ -20,7 +20,6 @@ package org.jclouds.elb.loadbalancer;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.collect.PagedIterable;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.elb.ELBApi;
 import org.jclouds.elb.ELBAsyncApi;
@@ -30,9 +29,9 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -61,8 +60,8 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
          instanceIds.add(node.getProviderId());
       }
 
-      PagedIterable<LoadBalancer> elbs = elbApi.getLoadBalancerApi().list();
-      for (LoadBalancer elb : Iterables.concat(elbs)) {
+      FluentIterable<LoadBalancer> elbs = elbApi.getLoadBalancerApi().list().concat();
+      for (LoadBalancer elb : elbs) {
          if (elb.getName().equals(group))
             assertEquals(elb.getInstanceIds(), instanceIds.build());
       }

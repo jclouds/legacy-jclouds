@@ -9,7 +9,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code IterableWithMarkers}.
@@ -28,7 +27,7 @@ public class PagedIterablesTest {
 
       EasyMock.replay(markerToNext);
 
-      PagedIterable<String> iterable = PagedIterables.create(PagedIterators.advancing(initial, markerToNext));
+      PagedIterable<String> iterable = PagedIterables.advance(initial, markerToNext);
 
       Assert.assertSame(iterable.get(0), initial);
 
@@ -49,9 +48,9 @@ public class PagedIterablesTest {
 
       EasyMock.replay(markerToNext);
 
-      PagedIterable<String> iterable = PagedIterables.create(PagedIterators.advancing(initial, markerToNext));
+      PagedIterable<String> iterable = PagedIterables.advance(initial, markerToNext);
 
-      Assert.assertEquals(ImmutableSet.copyOf(Iterables.concat(iterable)),
+      Assert.assertEquals(iterable.concat().toImmutableSet(),
                ImmutableSet.of("foo", "bar", "boo", "baz", "ham", "cheeze"));
 
       EasyMock.verify(markerToNext);

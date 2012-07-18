@@ -46,7 +46,6 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -88,14 +87,13 @@ public class ELBListLoadBalancersStrategy implements ListLoadBalancersStrategy {
 
                                  @Override
                                  public Iterable<LoadBalancerInRegion> apply(PagedIterable<LoadBalancer> input) {
-                                    return Iterables.transform(Iterables.concat(input),
-                                             new Function<LoadBalancer, LoadBalancerInRegion>() {
-
-                                                @Override
-                                                public LoadBalancerInRegion apply(LoadBalancer lb) {
-                                                   return new LoadBalancerInRegion(lb, from);
-                                                }
-                                             });
+                                    return input.concat()
+                                                .transform(new Function<LoadBalancer, LoadBalancerInRegion>() {
+                                                    @Override
+                                                    public LoadBalancerInRegion apply(LoadBalancer lb) {
+                                                       return new LoadBalancerInRegion(lb, from);
+                                                    }
+                                                 });
                                  }
 
                               }, executor);

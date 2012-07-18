@@ -115,33 +115,33 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
    protected final Crypto crypto;
-   protected final Provider<UriBuilder> uriBuilders;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
+   protected final ContentMetadataCodec contentMetadataCodec;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
    protected final TransientStorageStrategy storageStrategy;
-   protected final ContentMetadataCodec contentMetadataCodec;
+   protected final Provider<UriBuilder> uriBuilders;
 
    @Inject
    protected TransientAsyncBlobStore(BlobStoreContext context,
          DateService dateService, Crypto crypto,
          HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+         ContentMetadataCodec contentMetadataCodec,
          IfDirectoryReturnNameStrategy ifDirectoryReturnName,
          BlobUtils blobUtils,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         Factory blobFactory, Provider<UriBuilder> uriBuilders,
-         ContentMetadataCodec contentMetadataCodec) {
+         Factory blobFactory, Provider<UriBuilder> uriBuilders) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.crypto = crypto;
-      this.uriBuilders = uriBuilders;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
+      this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.storageStrategy = new TransientStorageStrategy(defaultLocation);
-      this.contentMetadataCodec = contentMetadataCodec;
+      this.uriBuilders = uriBuilders;
    }
 
    /**
@@ -472,7 +472,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
       storageStrategy.putBlob(containerName, blob);
 
-      return immediateFuture(Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.ETAG)));
+      String eTag = getEtag(blob);
+      return immediateFuture(eTag);
    }
 
    private Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
@@ -579,7 +580,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          if (options.getRanges() != null && options.getRanges().size() > 0) {
             byte[] data;
             try {
-               data = toByteArray(blob.getPayload().getInput());
+               data = toByteArray(blob.getPayload());
             } catch (IOException e) {
                return immediateFailedFuture(new RuntimeException(e));
             }
@@ -633,6 +634,24 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             return immediateFuture(null);
          return immediateFailedFuture(e);
       }
+   }
+
+   /**
+    * Calculates the object MD5 and returns it as eTag
+    * 
+    * @param object
+    * @return
+    */
+   private String getEtag(Blob object) {
+      try {
+         Payloads.calculateMD5(object, crypto.md5());
+      } catch (IOException ex) {
+         logger.error(ex, "An error occurred calculating MD5 for object with name %s.", object.getMetadata().getName());
+         Throwables.propagate(ex);
+      }
+
+      String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
+      return eTag;
    }
 
    private Blob copyBlob(Blob blob) {

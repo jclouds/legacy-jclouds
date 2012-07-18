@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -45,6 +44,7 @@ import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 
 /**
  * 
@@ -76,7 +76,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
                               .describeSpotInstanceRequestsInRegion(from);
                   }
 
-               }, executor, null, logger, "reservations")), spotConverter), notNull());
+               }, executor, maxTime, logger, "reservations")), spotConverter), notNull());
 
       return concat(super.pollRunningInstances(), spots);
    }

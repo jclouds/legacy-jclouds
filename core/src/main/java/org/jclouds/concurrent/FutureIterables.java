@@ -137,8 +137,9 @@ public class FutureIterables {
                   errors.incrementAndGet();
                   logException(logger, logPrefix, total, complete.get(), errors.get(), start, e);
                   errorMap.put(future.getKey(), e);
+               } finally {
+	               doneSignal.countDown();
                }
-               doneSignal.countDown();
             }
             
             @Override
@@ -148,10 +149,11 @@ public class FutureIterables {
          }, exec);
       }
       try {
-         if (maxTime != null)
+         if (maxTime != null) {
             doneSignal.await(maxTime, TimeUnit.MILLISECONDS);
-         else
+         } else {
             doneSignal.await();
+         }
          if (errors.get() > 0) {
             String message = message(logPrefix, total, complete.get(), errors.get(), start);
             RuntimeException exception = new RuntimeException(message);
