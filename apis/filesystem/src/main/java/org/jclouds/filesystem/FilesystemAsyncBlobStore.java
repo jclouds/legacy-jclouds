@@ -324,6 +324,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
                   MutableStorageMetadata cmd = create();
                   cmd.setName(name);
                   cmd.setType(StorageType.CONTAINER);
+                  cmd.setLocation(storageStrategy.getLocation(name));
                   return cmd;
                }
             }), null));
@@ -461,9 +462,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       try {
-         // TODO
-         // must override existing file?
-
          storageStrategy.putBlob(containerName, blob);
       } catch (IOException e) {
          logger.error(e, "An error occurred storing the new blob with name [%s] to container [%s].", blobKey,
