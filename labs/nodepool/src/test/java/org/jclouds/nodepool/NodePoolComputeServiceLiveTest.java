@@ -204,7 +204,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertTrue(caughtException, "expected an exception to be thrown");
    }
 
-   @Test(enabled = true, groups = "live", dependsOnMethods = "testRebuildPoolStateFromStore")
+   @Test(enabled = true, groups = "live", dependsOnMethods = "testIncreasePoolNotAllowed")
    public void testGetBackendComputeServiceContext() {
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
       assertNotNull(ctx.getBackendContext());
