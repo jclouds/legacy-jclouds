@@ -70,9 +70,6 @@ import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.http.HttpCommand;
@@ -83,7 +80,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
 
@@ -106,8 +102,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   protected final DateService dateService;
-   protected final Crypto crypto;
    protected final ContentMetadataCodec contentMetadataCodec;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
@@ -119,14 +113,11 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         DateService dateService, Crypto crypto,
          ContentMetadataCodec contentMetadataCodec,
          IfDirectoryReturnNameStrategy ifDirectoryReturnName,
          Factory blobFactory, LocalStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
-      this.dateService = dateService;
-      this.crypto = crypto;
       this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.storageStrategy = storageStrategy;
@@ -419,15 +410,12 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       try {
-         storageStrategy.putBlob(containerName, blob);
+         return immediateFuture(storageStrategy.putBlob(containerName, blob));
       } catch (IOException e) {
          logger.error(e, "An error occurred storing the new blob with name [%s] to container [%s].", blobKey,
                containerName);
-         Throwables.propagate(e);
+         throw Throwables.propagate(e);
       }
-
-      String eTag = getEtag(blob);
-      return immediateFuture(eTag);
    }
 
    private void copyPayloadHeadersToBlob(Payload payload, Blob blob) {
@@ -548,24 +536,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             return immediateFuture(null);
          return immediateFailedFuture(e);
       }
-   }
-
-   /**
-    * Calculates the object MD5 and returns it as eTag
-    * 
-    * @param object
-    * @return
-    */
-   private String getEtag(Blob object) {
-      try {
-         Payloads.calculateMD5(object, crypto.md5());
-      } catch (IOException ex) {
-         logger.error(ex, "An error occurred calculating MD5 for object with name %s.", object.getMetadata().getName());
-         Throwables.propagate(ex);
-      }
-
-      String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
-      return eTag;
    }
 
    private Blob copyBlob(Blob blob) {
