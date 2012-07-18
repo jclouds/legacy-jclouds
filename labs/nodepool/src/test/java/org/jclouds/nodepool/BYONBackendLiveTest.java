@@ -23,6 +23,7 @@ import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_PROVIDER;
 import static org.jclouds.nodepool.config.NodePoolProperties.BASEDIR;
 import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
+import static org.jclouds.nodepool.config.NodePoolProperties.REMOVE_DESTROYED;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.io.File;
@@ -41,7 +42,7 @@ import com.google.inject.Module;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Adrian Cole, David Alves
  */
 @Test(groups = "live", testName = "BYONBackendLiveTest")
 public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
@@ -61,6 +62,7 @@ public class BYONBackendLiveTest extends BaseComputeServiceContextLiveTest {
       contextProperties.setProperty(BASEDIR, basedir);
       contextProperties.setProperty(MAX_SIZE, 1 + "");
       contextProperties.setProperty(MIN_SIZE, 1 + "");
+      contextProperties.setProperty(REMOVE_DESTROYED, false + "");
       contextProperties.setProperty("nodepool.identity", System.getProperty("user.name"));
 
       StringBuilder nodes = new StringBuilder();

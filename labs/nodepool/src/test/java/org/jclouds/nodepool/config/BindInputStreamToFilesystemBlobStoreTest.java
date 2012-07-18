@@ -41,24 +41,21 @@ import com.google.inject.name.Names;
 @Test(groups = "unit", testName = "BindInputStreamToFilesystemBlobStoreTest")
 public class BindInputStreamToFilesystemBlobStoreTest {
 
-   //TODO: binding error
-   @Test(enabled = false)
    public void testCreatesDir() {
       final String basedir = "target/" + this.getClass().getSimpleName();
       new File(basedir).delete();
-      Map<String, InputStream> file = Guice.createInjector(new AbstractModule() {
-
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named(NodePoolProperties.BASEDIR)).to(basedir);
-            bindConstant().annotatedWith(Names.named(NodePoolProperties.METADATA_CONTAINER)).to("barr");
-            bindConstant().annotatedWith(Names.named(NodePoolProperties.BACKEND_MODULES)).to(
-                  SLF4JLoggingModule.class.getName());
-         }
-
-      }, new BindInputStreamToFilesystemBlobStore()).getInstance(
-            Key.get(new TypeLiteral<Supplier<Map<String, InputStream>>>() {
-            })).get();
+      Map<String, InputStream> file = Guice
+               .createInjector(new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(Names.named(NodePoolProperties.BASEDIR)).to(basedir);
+                     bindConstant().annotatedWith(Names.named(NodePoolProperties.METADATA_CONTAINER)).to("barr");
+                     bindConstant().annotatedWith(Names.named(NodePoolProperties.BACKEND_MODULES)).to(
+                              SLF4JLoggingModule.class.getName());
+                  }
+               }, new BindInputStreamToFilesystemBlobStore())
+               .getInstance(Key.get(new TypeLiteral<Supplier<Map<String, InputStream>>>() {
+               }, Names.named("METADATA"))).get();
 
       assert (new File(basedir + "/barr").exists());
       assertEquals(file.keySet(), ImmutableSet.of());

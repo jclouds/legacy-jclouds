@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool.config;
 
+import static org.easymock.EasyMock.createNiceMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -25,13 +26,19 @@ import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.nodepool.Backend;
 import org.jclouds.rest.annotations.Credential;
+import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.net.HostAndPort;
+import com.google.inject.AbstractModule;
 import com.google.inject.Key;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -40,26 +47,22 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "BindBackendComputeServiceTest")
 public class BindBackendComputeServiceTest {
 
-   //TODO: identity became nodepool-user
-   @Test(enabled = false)
    public void testBinds() {
       final String basedir = "target/" + this.getClass().getSimpleName();
       new File(basedir).delete();
-      
+
       Properties overrides = new Properties();
       overrides.setProperty(NodePoolProperties.BACKEND_PROVIDER, "stub");
       overrides.setProperty(NodePoolProperties.BASEDIR, basedir);
       // note no ssh module since we are stub and not trying ssh, yet
-      overrides.setProperty(NodePoolProperties.BACKEND_MODULES, SLF4JLoggingModule.class.getName());
+      overrides.setProperty(NodePoolProperties.BACKEND_MODULES, SLF4JLoggingModule.class.getName() + ","
+               + StubSshClientModule.class.getName());
 
-      ComputeService stub = ContextBuilder.newBuilder("nodepool")
-                                          .credentials("foo", "bar")
-                                          .endpoint("gooend")
-                                          .apiVersion("1.1")
-                                          .buildVersion("1.1-2")
-                                          .overrides(overrides)
-                                          .buildInjector().getInstance(Key.get(new TypeLiteral<Supplier<ComputeService>>(){}, Backend.class)).get();
-      
+      ComputeService stub = ContextBuilder.newBuilder("nodepool").credentials("foo", "bar").endpoint("gooend")
+               .apiVersion("1.1").buildVersion("1.1-2").overrides(overrides).buildInjector()
+               .getInstance(Key.get(new TypeLiteral<Supplier<ComputeService>>() {
+               }, Backend.class)).get();
+
       assertEquals(stub.getContext().unwrap().getIdentity(), "foo");
       assertEquals(stub.getContext().utils().injector().getInstance(Key.get(String.class, Credential.class)), "bar");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getEndpoint(), "gooend");
@@ -71,5 +74,23 @@ public class BindBackendComputeServiceTest {
 
    }
 
+   public static class StubSshClientModule extends AbstractModule {
 
+      protected void configure() {
+         bind(SshClient.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
+      }
+
+      private static class Factory implements SshClient.Factory {
+
+         @Override
+         public SshClient create(HostAndPort socket, LoginCredentials credentials) {
+            return createNiceMock(SshClient.class);
+         }
+
+         @Override
+         public SshClient create(HostAndPort socket, Credentials credentials) {
+            return createNiceMock(SshClient.class);
+         }
+      }
+   }
 }

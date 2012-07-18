@@ -41,27 +41,21 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "NodePoolComputeServiceContextTest")
 public class NodePoolComputeServiceContextTest {
 
-
-   //TODO: identity became nodepool-user
-   @Test(enabled = false)
    public void testBinds() {
       final String basedir = "target/" + this.getClass().getSimpleName();
       new File(basedir).delete();
-      
+
       Properties overrides = new Properties();
       overrides.setProperty(NodePoolProperties.BACKEND_PROVIDER, "stub");
       overrides.setProperty(NodePoolProperties.BASEDIR, basedir);
       // note no ssh module since we are stub and not trying ssh, yet
       overrides.setProperty(NodePoolProperties.BACKEND_MODULES, SLF4JLoggingModule.class.getName());
-      
-      ComputeService stub = ContextBuilder.newBuilder("nodepool")
-                                          .credentials("foo", "bar")
-                                          .endpoint("gooend")
-                                          .apiVersion("1.1")
-                                          .buildVersion("1.1-2")
-                                          .overrides(overrides)
-                                          .buildInjector().getInstance(Key.get(new TypeLiteral<Supplier<ComputeService>>(){}, Backend.class)).get();
-      
+
+      ComputeService stub = ContextBuilder.newBuilder("nodepool").credentials("foo", "bar").endpoint("gooend")
+               .apiVersion("1.1").buildVersion("1.1-2").overrides(overrides).buildInjector()
+               .getInstance(Key.get(new TypeLiteral<Supplier<ComputeService>>() {
+               }, Backend.class)).get();
+
       assertEquals(stub.getContext().unwrap().getIdentity(), "foo");
       assertEquals(stub.getContext().utils().injector().getInstance(Key.get(String.class, Credential.class)), "bar");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getEndpoint(), "gooend");
@@ -72,6 +66,5 @@ public class NodePoolComputeServiceContextTest {
       new File(basedir).delete();
 
    }
-
 
 }
