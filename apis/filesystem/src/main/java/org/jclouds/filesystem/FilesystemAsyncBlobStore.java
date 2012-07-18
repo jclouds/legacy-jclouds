@@ -58,6 +58,7 @@ import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -82,7 +83,6 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
-import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -121,7 +121,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    protected final ContentMetadataCodec contentMetadataCodec;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
-   protected final FilesystemStorageStrategy storageStrategy;
+   protected final LocalStorageStrategy storageStrategy;
 
    @Inject
    protected FilesystemAsyncBlobStore(BlobStoreContext context,
@@ -133,7 +133,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         Factory blobFactory, FilesystemStorageStrategy storageStrategy) {
+         Factory blobFactory, LocalStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
@@ -340,7 +340,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(final Location location,
          @PathParam("container") @ParamValidators({ FilesystemContainerNameValidator.class }) String name) {
-      boolean result = storageStrategy.createContainer(name);
+      boolean result = storageStrategy.createContainerInLocation(name, null);
       return immediateFuture(result);
    }
 
