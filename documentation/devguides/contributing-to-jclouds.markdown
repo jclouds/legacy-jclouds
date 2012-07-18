@@ -3,36 +3,36 @@ layout: jclouds
 title: Contributing to jclouds
 ---
 
-# How to develop and extend jclouds providers
+# How to Develop and Extend jclouds Providers
 
-## Creating and working with your fork
+## Creating and Working with your Fork
 
-### setup your fork
-*  go to [github](http://github.com) and fork [jclouds/jclouds](http://github.com/jclouds/jclouds)
-*  `git clone http://github.com/___YOUR_USER___/jclouds.git`
-*  if you are already a jclouds collaborator you can use git:// instead of http://
-*  `git remote add jclouds git://github.com/jclouds/jclouds.git`
+### Setup your Fork
 
-### pulling changes from master
-*  `git pull --rebase jclouds master`
-*  [why rebase](http://stackoverflow.com/questions/5968964/avoid-unwanted-merge-commits-and-other-commits-when-doing-pull-request-in-github)
+   *  go to [github](http://github.com) and fork [jclouds/jclouds](http://github.com/jclouds/jclouds)
+   *  `git clone http://github.com/___YOUR_USER___/jclouds.git`
+   *  if you are already a jclouds collaborator you can use git:// instead of http://
+   *  `git remote add jclouds git://github.com/jclouds/jclouds.git`
+
+### Pull Changes from the jclouds Master
+
+   *  `git pull --rebase jclouds master`
+   *  [Why rebase?](http://stackoverflow.com/questions/5968964/avoid-unwanted-merge-commits-and-other-commits-when-doing-pull-request-in-github)
 
 
-## Creating new providers with maven archetypes
+## Creating New Providers with Maven Archetypes
 
-*  Help developers _working on_ jclouds get sub-projects up and running quickly
-*  Give developers trying to _use_ jclouds a hands-up in terms of project setup, dependencies and sample code
+Developers _working on_ jclouds will get their sub-projects up and running quickly when they use Maven archetypes to create new providers.  Additionally,
+this will give developers _using_ jclouds a leap forward in terms of project setup, dependencies and sample code.
 
-The quickest way to make the jclouds archetypes available locally is to run
-`mvn install` from the `jclouds/archetypes` directory. This will build the archetypes and place them in your local catalogue. 
+The quickest way to make the jclouds archetypes available locally is to run `mvn install` from the `jclouds/archetypes` directory. This will build the 
+archetypes and place them in your local catalogue. 
 
-In order to create a project based _on_ an archetype, navigate to the directory in which you wish the project to be created and run
+To create a project based _on_ an archetype, navigate to the directory where you wish to create the project and run `mvn archetype:generate`.
 
-`mvn archetype:generate`
+## rest-client-archetype 
 
-### rest-client-archetype 
-
-A template project for a jclouds client of a cloud service.
+Below is a sample template that uses a Maven archetype to build a jclouds client for a cloud service.
 
 Parameters:
 
@@ -47,13 +47,13 @@ Parameters:
 	</thead>
 	<tr>
 		<td>*providerName*</td>
-		<td>The camel case name for the service. Will be used in class names, so should not contain spaces or other invalid characters. </td>
+		<td>The camel case name for the service.  This will be used in class names, so it should not contain spaces or other invalid characters. </td>
 		<td></td>
 		<td>Tweeter</td>
 	</tr>
 	<tr>
 		<td>*artifactId*</td> 
-		<td>The name of the project. Will be prefixed with `jclouds-`, and will also be the name of the generated project directory, so should not contain invalid characters. </td>
+		<td>The name of the project. It will be prefixed with `jclouds-` and will also be the name of the generated project directory.  It should not contain invalid characters. </td>
 		<td></td>
 		<td>tweeter</td>
 	</tr>	
@@ -71,13 +71,13 @@ Parameters:
 	</tr>
 	<tr>	
 		<td>*providerCredential* </td>
-		<td>What does this provider call a credential, associated with above?</td>
+		<td>This is associated with the providerIdentity.  What does this provider call a credential?</td>
 		<td></td>
 		<td>password, secret, key</td>
 	</tr>
 	<tr>
 		<td>*providerApiVersion*</td>
-		<td>What version of the rest api are you working on? </td>
+		<td>What version of the REST API are you working on? </td>
 		<td></td> 
 		<td>1.0, 2001-11-01</td>
 	</tr>
@@ -109,11 +109,11 @@ Parameters:
 </table>
 
 
-### compute-service-archetype
+## compute-service-archetype
 
 Adds compute service components to an *existing* project.  
 
-#### Prerequisites
+### Prerequisites
 In order for this to work, you must use the identical parameters as json-client-archetype, and beforehand, 
 you must delete the files this code will replace.  Here are the files:
 
@@ -138,16 +138,16 @@ you must delete the files this code will replace.  Here are the files:
 	</tr>
 </table>
 
-#### Fixing up
+### Fixing up
 
 *  You will have to change usage like context.getAPI() to context.getProviderSpecificContext().getAPI();
 *  add in appropriate lines to compute.properties hooking this provider to it.
 *  code in `providerName`ComputeServiceContextModule and run `providerName`ComputeServiceLiveTest until it passes.
 
 
-### Coding
+## Coding
 
-#### Adding new operations to an existing provider
+### Adding new operations to an existing provider
 
 *  You will need to add http markup in `providerName`AsyncClient and its respective unit test to create a new service
    -  Note that `providerName`Client must mirror method signatures in `providerName`AsyncClient except the return val is not a Future
@@ -174,7 +174,7 @@ For more information on writing tests, and to run your tests or stock jclouds te
 see (Provider Testing in jclouds)[/documentation/devguides/provider-testing].)
 
 
-#### Multiple API versions and dialects 
+### Multiple API versions and dialects 
 
 You may be working with a service that has dialects or multiple versions present.  In general, 
 if there are multiple api versions present on a BETA or otherwise <1.0 level service, 
@@ -182,7 +182,7 @@ please keep jclouds object model in sync with the latest and make the implementa
 This keeps the number of parallel classes in our source down.  
 
 
-#### Implementing a service dialect
+### Implementing a service dialect
 
 Services some time are based on a specific API, but follow slightly different conventions or have additional api calls.  
 The way to handle this is to create a subinterface of the master AsyncClient and Client interfaces.  
@@ -226,6 +226,7 @@ case 404:
   }
   break;
 {% endhighlight %}
+
 #### Special RuntimeException Types
 
 Certain exceptions are propagated, even if nested inside other exceptions.  

@@ -5,14 +5,14 @@ title: Contributing to jclouds Documentation
 
 # Contributing to jclouds Documentation
 
-### Introduction
+## Introduction
 
 The complete jclouds website and documentation are now served from Github, and the code is available at the [jclouds git repository](https://github.com/jclouds/jclouds.github.com).
 
 This site is rebuilt and updated whenever a new commit is pushed to the repository. This makes it extremely easy for us to accept your contributions to the 
 documentation. 
 
-### How to Contribute
+## How to Contribute
 
 To revise or contribute to the documentation:
 
@@ -24,7 +24,7 @@ so it may take a day or two.  If it takes more than two days to pull your change
 [freenode.net #jclouds](http://webchat.freenode.net/?channels=#jclouds).
 
 
-### More about the site: 
+## More about the site: 
 
 The jclouds site is built using [Github pages](http://pages.github.com/) which uses [Jekyll](https://github.com/mojombo/jekyll/), a static site 
 generator written in Ruby, under the covers. To preview any changes you make, install [Jekyll](https://github.com/mojombo/jekyll/wiki/install) 
