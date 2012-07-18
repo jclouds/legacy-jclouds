@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool;
 
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -50,6 +51,7 @@ public class NodePoolComputeServiceContextTest {
       overrides.setProperty(NodePoolProperties.BASEDIR, basedir);
       // note no ssh module since we are stub and not trying ssh, yet
       overrides.setProperty(NodePoolProperties.BACKEND_MODULES, SLF4JLoggingModule.class.getName());
+      overrides.setProperty(POOL_ADMIN_ACCESS, "adminUsername=pooluser,adminPassword=poolpass");
 
       ComputeService stub = ContextBuilder.newBuilder("nodepool").credentials("foo", "bar").endpoint("gooend")
                .apiVersion("1.1").buildVersion("1.1-2").overrides(overrides).buildInjector()

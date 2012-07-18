@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool;
 
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
@@ -81,6 +82,7 @@ public class NodeMetadataStoreTest {
       overrides.setProperty(NodePoolProperties.BACKEND_PROVIDER, "stub");
       overrides.setProperty(NodePoolProperties.MIN_SIZE, "0");
       overrides.setProperty(NodePoolProperties.BASEDIR, baseDir);
+      overrides.setProperty(POOL_ADMIN_ACCESS, "adminUsername=pooluser,adminPassword=poolpass");
       // note no ssh module since we are stub and not trying ssh, yet
       overrides.setProperty(NodePoolProperties.BACKEND_MODULES, SLF4JLoggingModule.class.getName());
       Context nodePoolCtx = ContextBuilder.newBuilder("nodepool").credentials("foo", "bar").overrides(overrides)

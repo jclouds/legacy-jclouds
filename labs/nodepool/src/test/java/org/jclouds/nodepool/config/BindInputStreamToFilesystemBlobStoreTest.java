@@ -50,6 +50,8 @@ public class BindInputStreamToFilesystemBlobStoreTest {
                   protected void configure() {
                      bindConstant().annotatedWith(Names.named(NodePoolProperties.BASEDIR)).to(basedir);
                      bindConstant().annotatedWith(Names.named(NodePoolProperties.METADATA_CONTAINER)).to("barr");
+                     bindConstant().annotatedWith(Names.named(NodePoolProperties.POOL_ADMIN_ACCESS)).to(
+                              "adminUsername=pooluser,adminPassword=poolpass");
                      bindConstant().annotatedWith(Names.named(NodePoolProperties.BACKEND_MODULES)).to(
                               SLF4JLoggingModule.class.getName());
                   }
