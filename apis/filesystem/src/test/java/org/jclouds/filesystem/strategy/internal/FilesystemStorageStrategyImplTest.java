@@ -42,7 +42,6 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyValidatorImpl;
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainerNameValidatorImpl;
-import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
 import org.testng.annotations.AfterMethod;
@@ -73,7 +72,7 @@ public class FilesystemStorageStrategyImplTest {
       System.setProperty(LOGGING_CONFIG_KEY, LOGGING_CONFIG_VALUE);
    }
 
-   private FilesystemStorageStrategy storageStrategy;
+   private FilesystemStorageStrategyImpl storageStrategy;
 
    @BeforeMethod
    protected void setUp() throws Exception {
@@ -414,7 +413,7 @@ public class FilesystemStorageStrategyImplTest {
       String absoluteContainerPath = absoluteBasePath + CONTAINER_NAME + FS;
 
       // create storageStrategy with an absolute path
-      FilesystemStorageStrategy storageStrategyAbsolute = new FilesystemStorageStrategyImpl(
+      FilesystemStorageStrategyImpl storageStrategyAbsolute = new FilesystemStorageStrategyImpl(
                new Provider<BlobBuilder>() {
                   @Override
                   public BlobBuilder get() {

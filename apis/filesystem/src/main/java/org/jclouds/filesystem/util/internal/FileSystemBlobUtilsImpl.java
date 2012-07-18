@@ -23,27 +23,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Provider;
 
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
-import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
+import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
 
 import com.google.inject.Inject;
 
 /**
  * Implements the {@link BlobUtils} interfaced and act as a bridge to
- * {@link FilesystemStorageStrategy} when used inside {@link AsyncBlobStore}
+ * {@link LocalStorageStrategy} when used inside {@link AsyncBlobStore}
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class FileSystemBlobUtilsImpl implements BlobUtils {
 
-   protected final FilesystemStorageStrategy storageStrategy;
+   protected final FilesystemStorageStrategyImpl storageStrategy;
    protected final Provider<BlobBuilder> blobBuilders;
 
    @Inject
-   public FileSystemBlobUtilsImpl(FilesystemStorageStrategy storageStrategy, Provider<BlobBuilder> blobBuilders) {
-      this.storageStrategy = checkNotNull(storageStrategy, "Filesystem Storage Strategy");
+   public FileSystemBlobUtilsImpl(LocalStorageStrategy storageStrategy, Provider<BlobBuilder> blobBuilders) {
+      this.storageStrategy = (FilesystemStorageStrategyImpl) checkNotNull(storageStrategy, "Filesystem Storage Strategy");
       this.blobBuilders = checkNotNull(blobBuilders, "Filesystem  blobBuilders");
    }
 
