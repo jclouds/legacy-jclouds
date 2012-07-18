@@ -26,9 +26,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
 
-public class TransientStorageStrategy {
+public class TransientStorageStrategy implements LocalStorageStrategy {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
    private final ConcurrentMap<String, Location> containerToLocation = new ConcurrentHashMap<String, Location>();
    private final Supplier<Location> defaultLocation;
@@ -47,6 +48,12 @@ public class TransientStorageStrategy {
 
    public void clearContainer(final String containerName) {
       containerToBlobs.get(containerName).clear();
+   }
+
+   @Override
+   public void clearContainer(String container, ListContainerOptions options) {
+      // TODO implement options
+      clearContainer(container);
    }
 
    public boolean createContainerInLocation(final String containerName, final Location location) {
