@@ -18,8 +18,6 @@
  */
 package org.jclouds.demo.tweetstore.functions;
 
-import static org.jclouds.util.Strings2.toStringAndClose;
-
 import javax.annotation.Resource;
 
 import org.jclouds.blobstore.BlobMap;
@@ -27,6 +25,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 
@@ -59,7 +58,7 @@ public class KeyToStoredTweetStatus implements Function<String, StoredTweetStatu
          Blob blob = map.get(id);
          status = ((System.currentTimeMillis() - start) + "ms");
          from = blob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME);
-         tweet = toString(blob.getPayload());
+         tweet = Strings2.toString(blob.getPayload());
       } catch (Exception e) {
          logger.error(e, "Error listing container %s//%s/%s", service, container, id);
          status = (e.getMessage());
