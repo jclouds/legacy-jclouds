@@ -118,7 +118,7 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
       // slicehost returns " " which is unparsable
       if (response.getPayload() != null) {
          try {
-            String payload = Strings2.toStringAndClose(response.getPayload().getInput()).trim();
+            String payload = Strings2.toString(response.getPayload()).trim();
             return payload.indexOf("xml") != -1 ? errorParser.parse(payload) : payload;
          } catch (IOException e) {
          }

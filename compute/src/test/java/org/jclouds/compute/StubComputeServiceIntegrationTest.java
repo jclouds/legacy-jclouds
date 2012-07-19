@@ -422,7 +422,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             return actual == null;
          }
          try {
-            String real = Strings2.toStringAndClose(((Payload) actual).getInput());
+            String real = Strings2.toString(((Payload) actual));
             assertEquals(real, expected);
             return true;
          } catch (IOException e) {

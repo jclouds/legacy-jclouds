@@ -101,7 +101,7 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       if (response.getPayload() != null) {
          try {
-            return Strings2.toStringAndClose(response.getPayload().getInput());
+            return Strings2.toString(response.getPayload());
          } catch (IOException e) {
             logger.warn(e, "exception reading error from response", response);
          }

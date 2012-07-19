@@ -67,7 +67,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
          assertConsistencyAwareContainerSize(container, 1);
          HttpRequest request = view.getSigner().signGetBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
-         assertEquals(Strings2.toStringAndClose(view.utils().http().invoke(request).getPayload().getInput()), text);
+         assertEquals(Strings2.toString(view.utils().http().invoke(request).getPayload()), text);
       } finally {
          returnContainer(container);
       }
@@ -85,7 +85,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
          assertConsistencyAwareContainerSize(container, 1);
          HttpRequest request = view.getSigner().signGetBlob(container, name, range(0, 1));
          assertEquals(request.getFilters().size(), 0);
-         assertEquals(Strings2.toStringAndClose(view.utils().http().invoke(request).getPayload().getInput()), "fo");
+         assertEquals(Strings2.toString(view.utils().http().invoke(request).getPayload()), "fo");
       } finally {
          returnContainer(container);
       }
@@ -101,7 +101,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          HttpRequest request = view.getSigner().signPutBlob(container, blob);
          assertEquals(request.getFilters().size(), 0);
-         Strings2.toStringAndClose(view.utils().http().invoke(request).getPayload().getInput());
+         Strings2.toString(view.utils().http().invoke(request).getPayload());
          assertConsistencyAwareContainerSize(container, 1);
       } finally {
          returnContainer(container);

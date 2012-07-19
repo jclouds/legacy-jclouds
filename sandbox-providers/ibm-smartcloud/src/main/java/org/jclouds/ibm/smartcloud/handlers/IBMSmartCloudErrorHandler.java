@@ -86,6 +86,6 @@ public class IBMSmartCloudErrorHandler implements HttpErrorHandler {
    public String parseMessage(HttpResponse response) throws IOException {
       if (response.getPayload() == null)
          return null;
-      return Strings2.toStringAndClose(response.getPayload().getInput());
+      return Strings2.toString(response.getPayload());
    }
 }

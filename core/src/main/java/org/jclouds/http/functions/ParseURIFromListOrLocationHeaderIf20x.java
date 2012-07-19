@@ -61,7 +61,7 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
          try {
             if (from.getPayload().getInput() == null)
                throw new HttpResponseException("no content", null, from);
-            String toParse = Strings2.toStringAndClose(from.getPayload().getInput());
+            String toParse = Strings2.toString(from.getPayload());
             return URI.create(toParse.trim());
          } catch (IOException e) {
             throw new HttpResponseException("couldn't parse uri from content", null, from, e);
