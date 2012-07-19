@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool;
 
+import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
@@ -38,7 +39,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.nodepool.config.NodePoolProperties;
 import org.jclouds.nodepool.internal.NodeMetadataStore;
@@ -53,11 +53,9 @@ import com.google.inject.Injector;
 /**
  * @author Adrian Cole, David Alves
  */
-@Test(groups = "unit")
-public class NodeMetadataStoreTestDisabled {
-//   unit tests should have no dependencies, yet this one is failing on cloudbees:
-//   Guice creation errors:  1) Error injecting constructor, java.lang.IllegalArgumentException: key adminPrivateKeyFile value set to /home/hudson/.ssh/id_rsa, must be an existing file   at org.jclouds.nodepool.internal.EagerNodePoolComputeServiceAdapter.<init>(EagerNodePoolComputeServiceAdapter.java:77)   at 
-   
+@Test(groups = "unit", testName = "NodeMetadataStoreTest")
+public class NodeMetadataStoreTest {
+
    @Inject
    NodeMetadataStore store;
 
@@ -84,6 +82,7 @@ public class NodeMetadataStoreTestDisabled {
       overrides.setProperty(NodePoolProperties.BACKEND_PROVIDER, "stub");
       overrides.setProperty(NodePoolProperties.MIN_SIZE, "0");
       overrides.setProperty(NodePoolProperties.BASEDIR, baseDir);
+      overrides.setProperty(POOL_ADMIN_ACCESS, "adminUsername=pooluser,adminPassword=poolpass");
       // note no ssh module since we are stub and not trying ssh, yet
       overrides.setProperty(NodePoolProperties.BACKEND_MODULES, SLF4JLoggingModule.class.getName());
       Context nodePoolCtx = ContextBuilder.newBuilder("nodepool").credentials("foo", "bar").overrides(overrides)
@@ -100,13 +99,6 @@ public class NodeMetadataStoreTestDisabled {
       assertEquals(readJSon, "{\"group\":\"testgroup\",\"tags\":[\"tag1\",\"tag2\"],"
                + "\"userMetadata\":{\"testmetakey\":\"testmetavalue\",\"testmetakey2\":\"testmetavalue2\"},"
                + "\"user\":\"testuser\",\"password\":\"testpass\",\"privateKey\":\"pk\",\"authenticateSudo\":true}");
-   }
-
-   @Test(groups = "unit", dependsOnMethods = "testStore")
-   public void testCredentialsFromStoreOverrideBackendCredentials() {
-      // test that node store credentials are not overriden from somewhere else
-      assertNull(createInjector().getBinding(PrioritizeCredentialsFromTemplate.class).getProvider().get()
-               .apply(null, null));
    }
 
    @Test(groups = "unit", dependsOnMethods = "testStore")
