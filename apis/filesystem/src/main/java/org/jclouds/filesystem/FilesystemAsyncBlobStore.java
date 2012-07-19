@@ -69,7 +69,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
-import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
@@ -117,7 +116,6 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
    protected final Crypto crypto;
-   protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    protected final ContentMetadataCodec contentMetadataCodec;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
@@ -125,20 +123,18 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    protected FilesystemAsyncBlobStore(BlobStoreContext context,
-         DateService dateService, Crypto crypto,
-         HttpGetOptionsListToGetOptions httpGetOptionsConverter,
-         ContentMetadataCodec contentMetadataCodec,
-         IfDirectoryReturnNameStrategy ifDirectoryReturnName,
          BlobUtils blobUtils,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
+         DateService dateService, Crypto crypto,
+         ContentMetadataCodec contentMetadataCodec,
+         IfDirectoryReturnNameStrategy ifDirectoryReturnName,
          Factory blobFactory, LocalStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.crypto = crypto;
-      this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.storageStrategy = storageStrategy;
