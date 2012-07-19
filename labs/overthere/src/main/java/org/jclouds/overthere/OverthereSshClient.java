@@ -25,14 +25,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This is currently biased towards Windows but could theoretically also be
  * used for Linux sessions too via ssh. This also slightly abuses the concept
  * of "SshClient" as it does not use ssh!
- *
+ * 
+ * FIXME Fails when used for computeService.runScriptOnNode(...) because:
+ * <ul>
+ *   <li> waits for port 22 to be reachable (workaround is to change NodeMetadataBuilder.loginPort to 5986)
+ *   <li> tries to copy bash script to machine, which fails
+ * </ul>
+ * 
  * @author Richard Downer
+ * @deprecated Use OverthereRunner; TODO Is the SshClient still useful?
  */
-public class OverthereClient implements SshClient {
+@Deprecated
+public class OverthereSshClient implements SshClient {
    private OverthereConnection connection;
    private final ConnectionOptions options;
 
-   public OverthereClient(ConnectionOptions options) {
+   public OverthereSshClient(ConnectionOptions options) {
       this.options = options;
    }
 

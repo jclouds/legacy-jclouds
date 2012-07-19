@@ -27,7 +27,7 @@
         <version>1.5.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.driver</groupId>
+    <groupId>org.jclouds.labs</groupId>
     <artifactId>jclouds-overthere</artifactId>
     <name>jclouds OverThere client</name>
     <description>jclouds for supporting operations on remote clients using the OverThere library from XebiaLabs</description>
@@ -45,11 +45,13 @@
     </repositories>
 
     <properties>
-        <test.ssh.host>localhost</test.ssh.host>
-        <test.ssh.port>22</test.ssh.port>
-        <test.ssh.username />
-        <test.ssh.password />
-        <test.ssh.keyfile />
+        <test.compute.provider>aws-ec2</test.compute.provider>
+        <test.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.compute.endpoint>
+        <test.compute.api-version>2011-05-15</test.compute.api-version>
+        <test.compute.build-version></test.compute.build-version>
+        <test.compute.identity>${test.aws.identity}</test.compute.identity>
+        <test.compute.credential>${test.aws.credential}</test.compute.credential>
+        <test.compute.windows-template>hardwareId=m1.small,imageId=us-east-1/ami-0cb76d65</test.compute.windows-template>
     </properties>
 
    <dependencies>
@@ -66,7 +68,7 @@
       <dependency>
          <groupId>com.xebialabs.overthere</groupId>
          <artifactId>overthere</artifactId>
-         <version>1.0.12</version>
+         <version>1.0.17</version>
       </dependency>
       <dependency>
          <groupId>org.jclouds.provider</groupId>
@@ -79,6 +81,12 @@
          <artifactId>jclouds-core</artifactId>
          <version>${project.version}</version>
          <type>test-jar</type>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jclouds.driver</groupId>
+         <artifactId>jclouds-slf4j</artifactId>
+         <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -133,11 +141,13 @@
                                     </includes>
                                     <systemPropertyVariables>
                                         <file.encoding>UTF-8</file.encoding>
-                                        <test.ssh.host>${test.ssh.host}</test.ssh.host>
-                                        <test.ssh.port>${test.ssh.port}</test.ssh.port>
-                                        <test.ssh.username>${test.ssh.username}</test.ssh.username>
-                                        <test.ssh.keyfile>${test.ssh.keyfile}</test.ssh.keyfile>
-                                        <test.ssh.password>${test.ssh.password}</test.ssh.password>
+                                        <test.compute.provider>aws-ec2</test.compute.provider>
+                                        <test.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.compute.endpoint>
+                                        <test.compute.api-version>2011-05-15</test.compute.api-version>
+                                        <test.compute.build-version></test.compute.build-version>
+                                        <test.compute.identity>${test.aws.identity}</test.compute.identity>
+                                        <test.compute.credential>${test.aws.credential}</test.compute.credential>
+                                        <test.compute.windows-template>hardwareId=m1.small,imageId=us-east-1/ami-0cb76d65</test.compute.windows-template>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

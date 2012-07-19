@@ -1,21 +1,20 @@
 package org.jclouds.overthere.config;
 
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.overthere.OverthereSshClient;
+import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.predicates.SocketOpen;
+import org.jclouds.ssh.ConfiguresSshClient;
+import org.jclouds.ssh.SshClient;
+
 import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.xebialabs.overthere.ConnectionOptions;
 import com.xebialabs.overthere.OperatingSystemFamily;
-import com.xebialabs.overthere.Overthere;
-import com.xebialabs.overthere.OverthereConnection;
 import com.xebialabs.overthere.cifs.CifsConnectionBuilder;
 import com.xebialabs.overthere.cifs.CifsConnectionType;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.LoginCredentials;
-import org.jclouds.overthere.OverthereClient;
-import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.SocketOpen;
-import org.jclouds.ssh.ConfiguresSshClient;
-import org.jclouds.ssh.SshClient;
 
 /**
  * Module for the Overthere library for remote access to hosts.
@@ -24,9 +23,11 @@ import org.jclouds.ssh.SshClient;
  * used for Linux sessions too via ssh.
  *
  * @author Richard Downer
+ * @Deprecated Use OverthereRunScriptClientModule
  */
+@Deprecated // Use OverthereRunScriptClientModule
 @ConfiguresSshClient
-public class OverthereClientModule extends AbstractModule {
+public class OverthereSshClientModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(SshClient.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
@@ -47,7 +48,7 @@ public class OverthereClientModule extends AbstractModule {
          options.set(ConnectionOptions.PASSWORD, credentials.getPassword());
          options.set(ConnectionOptions.OPERATING_SYSTEM, OperatingSystemFamily.WINDOWS);
          options.set(CifsConnectionBuilder.CONNECTION_TYPE, CifsConnectionType.WINRM_HTTPS);
-         return new OverthereClient(options);
+         return new OverthereSshClient(options);
       }
    }
 

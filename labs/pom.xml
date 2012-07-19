@@ -61,5 +61,6 @@
        <module>fgcp-au</module>
        <module>fgcp-de</module>
        <module>abiquo</module>
+       <module>overthere</module>
     </modules>
 </project>
