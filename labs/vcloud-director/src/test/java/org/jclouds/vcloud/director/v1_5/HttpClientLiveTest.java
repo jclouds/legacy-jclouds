@@ -83,7 +83,7 @@ public class HttpClientLiveTest extends BaseVCloudDirectorApiLiveTest {
       assertTrue(sessionWithToken.getSession().getLinks().size() > 0);
       assertNotNull(sessionWithToken.getToken());
 
-      OrgList orgList = parser.fromXML(Strings2.toStringAndClose(response.getPayload().getInput()), OrgList.class);
+      OrgList orgList = parser.fromXML(Strings2.toString(response.getPayload()), OrgList.class);
 
       assertTrue(orgList.getOrgs().size() > 0, "must have orgs");
 
@@ -99,7 +99,7 @@ public class HttpClientLiveTest extends BaseVCloudDirectorApiLiveTest {
             .addHeader("x-vcloud-authorization", sessionWithToken.getToken())
             .addHeader("Accept", "*/*").build());
 
-      String schema = Strings2.toStringAndClose(response.getPayload().getInput());
+      String schema = Strings2.toString(response.getPayload());
 
       // TODO: asserting something about the schema
    }

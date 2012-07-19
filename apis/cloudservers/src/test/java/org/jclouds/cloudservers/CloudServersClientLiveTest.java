@@ -383,7 +383,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");
-         String etcPasswdContents = Strings2.toStringAndClose(etcPasswd.getInput());
+         String etcPasswdContents = Strings2.toString(etcPasswd);
          assertEquals("rackspace", etcPasswdContents.trim());
       } finally {
          if (client != null)

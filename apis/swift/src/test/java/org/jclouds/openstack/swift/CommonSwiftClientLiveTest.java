@@ -222,7 +222,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          assert getApi().getObject(containerName, "non-existent-object") == null;
          // Test GET of object (including updated metadata)
          SwiftObject getBlob = getApi().getObject(containerName, object.getInfo().getName());
-         assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data);
+         assertEquals(Strings2.toString(getBlob.getPayload()), data);
          // TODO assertEquals(getBlob.getName(),
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
@@ -267,7 +267,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
                   GetOptions.Builder.ifETagMatches(newEtag));
          assertEquals(getBlob.getInfo().getHash(), CryptoStreams.hex(newEtag));
          getBlob = getApi().getObject(containerName, object.getInfo().getName(), GetOptions.Builder.startAt(8));
-         assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data.substring(8));
+         assertEquals(Strings2.toString(getBlob.getPayload()), data.substring(8));
 
       } finally {
          returnContainer(containerName);

@@ -65,7 +65,7 @@ public class BindBlobToMultipartFormTest {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost:8001").build();
       binder.bindToRequest(request, TEST_BLOB);
 
-      assertEquals(Strings2.toStringAndClose(request.getPayload().getInput()), EXPECTS);
+      assertEquals(Strings2.toString(request.getPayload()), EXPECTS);
       assertEquals(request.getPayload().getContentMetadata().getContentLength(), new Long(113));
 
       assertEquals(request.getPayload().getContentMetadata().getContentType(), "multipart/form-data; boundary="

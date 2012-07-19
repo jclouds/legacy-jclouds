@@ -84,7 +84,7 @@ public class VPDCErrorHandler implements HttpErrorHandler {
       if (response.getPayload() == null)
          return null;
       try {
-         return Strings2.toStringAndClose(response.getPayload().getInput());
+         return Strings2.toString(response.getPayload());
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
