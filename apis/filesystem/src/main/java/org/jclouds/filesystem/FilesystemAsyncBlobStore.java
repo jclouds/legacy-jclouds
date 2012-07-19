@@ -141,7 +141,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
-      this.storageStrategy = checkNotNull(storageStrategy, "Storage strategy");
+      this.storageStrategy = storageStrategy;
    }
 
    /**

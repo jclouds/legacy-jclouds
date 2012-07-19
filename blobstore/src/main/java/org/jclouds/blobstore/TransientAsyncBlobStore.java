@@ -132,7 +132,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         Factory blobFactory, Provider<UriBuilder> uriBuilders) {
+         Factory blobFactory, LocalStorageStrategy storageStrategy,
+         Provider<UriBuilder> uriBuilders) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
@@ -140,7 +141,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
-      this.storageStrategy = new TransientStorageStrategy(defaultLocation);
+      this.storageStrategy = storageStrategy;
       this.uriBuilders = uriBuilders;
    }
 

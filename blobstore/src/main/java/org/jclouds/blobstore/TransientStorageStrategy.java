@@ -21,6 +21,7 @@ package org.jclouds.blobstore;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import javax.inject.Inject;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
@@ -34,8 +35,9 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    private final ConcurrentMap<String, Location> containerToLocation = new ConcurrentHashMap<String, Location>();
    private final Supplier<Location> defaultLocation;
 
-   public TransientStorageStrategy(final Supplier<Location> defaultLocation) {
-      this.defaultLocation = Preconditions.checkNotNull(defaultLocation);
+   @Inject
+   TransientStorageStrategy(final Supplier<Location> defaultLocation) {
+      this.defaultLocation = defaultLocation;
    }
 
    public Iterable<String> getAllContainerNames() {
