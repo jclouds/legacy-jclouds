@@ -61,8 +61,10 @@ public abstract class BaseNodePoolComputeServiceAdapter implements NodePoolCompu
    protected final AdminAccess.Builder initialCredentialsBuilder;
 
    public BaseNodePoolComputeServiceAdapter(@Backend Supplier<ComputeService> backendComputeService,
-            @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupName,
-            NodeMetadataStore metadataStore, @Named(POOL_ADMIN_ACCESS) String poolNodeAdminAccess,
+
+   @Backend Supplier<Template> backendTemplate, @Named(BACKEND_GROUP) String poolGroupName,
+
+   NodeMetadataStore metadataStore, @Named(POOL_ADMIN_ACCESS) String poolNodeAdminAccess,
             AdminAccess.Configuration configuration) {
       this.backendComputeService = backendComputeService;
       this.poolGroupName = poolGroupName;

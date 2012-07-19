@@ -67,7 +67,8 @@ import com.google.common.io.Closeables;
 import com.google.inject.Module;
 
 public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-   final String basedir = "target/" + this.getClass().getSimpleName().toLowerCase();
+
+   private final String basedir = "target/" + this.getClass().getSimpleName().toLowerCase();
 
    public NodePoolComputeServiceLiveTest() {
       provider = "nodepool";
@@ -76,6 +77,9 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    protected Properties setupProperties() {
       Properties contextProperties = super.setupProperties();
+      contextProperties.setProperty(BASEDIR, basedir);
+      contextProperties.setProperty("nodepool.identity", "pooluser");
+      contextProperties.setProperty(POOL_ADMIN_ACCESS, "adminUsername=pooluser,adminPassword=poolpassword");
       contextProperties.setProperty(TIMEOUT_SCRIPT_COMPLETE, (1200 * 1000) + "");
       contextProperties.setProperty(TIMEOUT_PORT_OPEN, (1200 * 1000) + "");
       contextProperties.setProperty(BASEDIR, basedir);
@@ -102,7 +106,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   @Test(enabled = true)
+   @Test(enabled = true, groups = "live")
    public void testCreateAndRunAService() throws Exception {
       this.group = this.group + "s";
       final String configuration = Strings2.toStringAndClose(RunScriptData.class
@@ -125,6 +129,11 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       watch.reset().start();
 
+      // note this is a dependency on the template resolution so we have the
+      // right process per
+      // operating system. moreover, we wish this to run as root, so that it
+      // can change ip
+      // tables rules and setup our admin user
       client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
                nameTask("configure-jboss"));
 
@@ -170,7 +179,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }), "jboss", node, JBOSS_PATTERN);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreateAndRunAService")
+   @Test(enabled = true, groups = "live", dependsOnMethods = "testCreateAndRunAService")
    public void testRebuildPoolStateFromStore() {
       tearDownContext();
       setupContext();
@@ -178,13 +187,13 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertEquals(((NodeMetadata) Iterables.get(client.listNodes(), 0)).getGroup(), this.group);
    }
 
-   @Test(enabled = false, dependsOnMethods = "testRebuildPoolStateFromStore")
+   @Test(enabled = true, groups = "live", dependsOnMethods = "testRebuildPoolStateFromStore")
    public void testIncreasePoolAllowed() throws RunNodesException {
       client.createNodesInGroup(this.group, 1);
       assertSame(client.listNodes().size(), 2);
    }
 
-   @Test(enabled = false, dependsOnMethods = "testIncreasePoolAllowed")
+   @Test(enabled = true, groups = "live", dependsOnMethods = "testIncreasePoolAllowed")
    public void testIncreasePoolNotAllowed() throws RunNodesException {
       boolean caughtException = false;
       try {
@@ -195,7 +204,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertTrue(caughtException, "expected an exception to be thrown");
    }
 
-   @Test(enabled = true, dependsOnMethods = "testRebuildPoolStateFromStore")
+   @Test(enabled = true, groups = "live", dependsOnMethods = "testIncreasePoolNotAllowed")
    public void testGetBackendComputeServiceContext() {
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
       assertNotNull(ctx.getBackendContext());
@@ -204,7 +213,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                         NodePredicates.inGroup(ctx.getPoolGroupName())).size(), 2);
    }
 
-   @Test(enabled = false, dependsOnMethods = "testGetBackendComputeServiceContext")
+   @Test(enabled = false, groups = "live", dependsOnMethods = "testGetBackendComputeServiceContext")
    public void testDestroyPoolNodes() {
       client.destroyNodesMatching(NodePredicates.inGroup(this.group));
       // after we destroy all nodes we should still have minsize nodes in the pool
@@ -212,7 +221,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertSame(ctx.getPoolStats().currentSize(), 1);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testGetBackendComputeServiceContext")
+   @Test(enabled = true, groups = "live", dependsOnMethods = "testGetBackendComputeServiceContext")
    public void testDestroyPool() {
       // TODO get the ctx without the injector
       NodePoolComputeServiceContext ctx = context.utils().injector().getInstance(NodePoolComputeServiceContext.class);
@@ -223,7 +232,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = false)
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
    }
 
@@ -233,7 +242,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   @Test(enabled = false, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = false)
    public void testConcurrentUseOfComputeServiceToCreateNodes() throws Exception {
    }
 
