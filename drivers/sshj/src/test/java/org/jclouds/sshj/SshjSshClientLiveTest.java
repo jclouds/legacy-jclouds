@@ -152,13 +152,13 @@ public class SshjSshClientLiveTest {
       SshClient client = setupClient();
       client.put(temp.getAbsolutePath(), Payloads.newStringPayload("rabbit"));
       Payload input = client.get(temp.getAbsolutePath());
-      String contents = Strings2.toStringAndClose(input.getInput());
+      String contents = Strings2.toString(input);
       assertEquals(contents, "rabbit");
    }
 
    public void testGetEtcPassword() throws IOException {
       Payload input = setupClient().get("/etc/passwd");
-      String contents = Strings2.toStringAndClose(input.getInput());
+      String contents = Strings2.toString(input);
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
    }
 

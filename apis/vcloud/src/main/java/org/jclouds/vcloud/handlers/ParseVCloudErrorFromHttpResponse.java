@@ -73,7 +73,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
                   message = error.getMessage();
                   exception = new VCloudResponseException(command, response, error);
                } else {
-                  message = Strings2.toStringAndClose(response.getPayload().getInput());
+                  message = Strings2.toString(response.getPayload());
                   exception = message != null ? new HttpResponseException(command, response, message) : exception;
                }
             } catch (IOException e) {

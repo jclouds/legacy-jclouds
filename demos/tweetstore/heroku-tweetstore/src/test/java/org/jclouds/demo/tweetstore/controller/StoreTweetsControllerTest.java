@@ -108,13 +108,13 @@ public class StoreTweetsControllerTest {
          assertEquals(frankBlob.getMetadata().getName(), "1");
          assertEquals(frankBlob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME), "frank");
          assertEquals(frankBlob.getMetadata().getContentMetadata().getContentType(), "text/plain");
-         assertEquals(toStringAndClose(frankBlob.getPayload().getInput()), "I love beans!");
+         assertEquals(toString(frankBlob.getPayload()), "I love beans!");
 
          Blob jimmyBlob = map.get("2");
          assertEquals(jimmyBlob.getMetadata().getName(), "2");
          assertEquals(jimmyBlob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME), "jimmy");
          assertEquals(jimmyBlob.getMetadata().getContentMetadata().getContentType(), "text/plain");
-         assertEquals(toStringAndClose(jimmyBlob.getPayload().getInput()), "cloud is king");
+         assertEquals(toString(jimmyBlob.getPayload()), "cloud is king");
       }
 
    }

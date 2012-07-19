@@ -107,7 +107,7 @@ public abstract class BaseRestApiTest {
       } else {
          String payload = null;
          try {
-            payload = Strings2.toStringAndClose(request.getPayload().getInput());
+            payload = Strings2.toString(request.getPayload());
          } catch (IOException e) {
             propagate(e);
          }

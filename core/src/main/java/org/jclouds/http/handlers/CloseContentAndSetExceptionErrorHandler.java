@@ -40,7 +40,7 @@ public class CloseContentAndSetExceptionErrorHandler implements HttpErrorHandler
    public void handleError(HttpCommand command, HttpResponse from) {
       String content;
       try {
-         content = from.getPayload() != null ? Strings2.toStringAndClose(from.getPayload().getInput()) : null;
+         content = from.getPayload() != null ? Strings2.toString(from.getPayload()) : null;
          command.setException(new HttpResponseException(command, from, content));
       } catch (IOException e) {
          command.setException(new HttpResponseException(command, from));

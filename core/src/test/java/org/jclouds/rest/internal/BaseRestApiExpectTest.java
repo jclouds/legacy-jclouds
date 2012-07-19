@@ -386,8 +386,8 @@ public abstract class BaseRestApiExpectTest<S> {
  
          switch (compareHttpRequestAsType(a)) {
             case XML: {
-               Diff diff = XMLUnit.compareXML(Strings2.toStringAndClose(a.getPayload().getInput()), Strings2
-                        .toStringAndClose(b.getPayload().getInput()));
+               Diff diff = XMLUnit.compareXML(Strings2.toString(a.getPayload()), Strings2
+                        .toString(b.getPayload()));
 
                // Ignoring whitespace in elements that have other children, xsi:schemaLocation and
                // differences in namespace prefixes
@@ -419,8 +419,8 @@ public abstract class BaseRestApiExpectTest<S> {
             }
             case JSON: {               
                JsonParser parser = new JsonParser();
-               JsonElement payloadA = parser.parse(Strings2.toStringAndClose(a.getPayload().getInput()));
-               JsonElement payloadB = parser.parse(Strings2.toStringAndClose(b.getPayload().getInput()));
+               JsonElement payloadA = parser.parse(Strings2.toString(a.getPayload()));
+               JsonElement payloadB = parser.parse(Strings2.toString(b.getPayload()));
                return Objects.equal(payloadA, payloadB);
             }
             default: {
@@ -486,7 +486,7 @@ public abstract class BaseRestApiExpectTest<S> {
             builder.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
          }
          try {
-            builder.append('\n').append(Strings2.toStringAndClose(request.getPayload().getInput()));
+            builder.append('\n').append(Strings2.toString(request.getPayload()));
          } catch (IOException e) {
             throw Throwables.propagate(e);
          }

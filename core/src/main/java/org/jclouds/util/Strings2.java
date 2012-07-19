@@ -46,6 +46,8 @@ import javax.annotation.Resource;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
 
 /**
  * 
@@ -124,6 +126,12 @@ public class Strings2 {
    }
 
    public static final String UTF8_ENCODING = "UTF-8";
+
+   public static String toString(InputSupplier<? extends InputStream> supplier)
+         throws IOException {
+      return CharStreams.toString(CharStreams.newReaderSupplier(supplier,
+         Charsets.UTF_8));
+   }
 
    public static String toStringAndClose(InputStream input) throws IOException {
       checkNotNull(input, "input");
