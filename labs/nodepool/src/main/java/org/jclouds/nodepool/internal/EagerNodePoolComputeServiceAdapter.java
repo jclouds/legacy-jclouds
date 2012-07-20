@@ -144,10 +144,13 @@ public class EagerNodePoolComputeServiceAdapter extends BaseNodePoolComputeServi
       logger.info(">> destroying node %s", id);
       metadataStore.deleteMapping(id);
       if (removeDestroyed) {
-         logger.info(">> policy is replace detroyed node, replacing node with id %s", id);
          backendComputeService.get().destroyNode(id);
-         Set<? extends NodeMetadata> replacement = addToPool(1);
-         logger.info("<< node %s replaced with %s", id, Iterables.getOnlyElement(replacement));
+         if (currentSize() < minSize) {
+            logger.info(">> policy is remove destroyed node and pool "
+                     + "would fall below minsize, replacing node with id %s", id);
+            Set<? extends NodeMetadata> replacement = addToPool(1);
+            logger.info("<< node %s replaced with %s", id, Iterables.getOnlyElement(replacement));
+         }
       }
       // TODO we should allow the user to hook a way to "clean" the node
       else {
