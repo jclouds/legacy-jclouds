@@ -178,10 +178,6 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }), "jboss", node, JBOSS_PATTERN);
    }
 
-   public void testListNodeInGroup() {
-
-   }
-
    @Test(enabled = true, groups = "live", dependsOnMethods = "testCreateAndRunAService")
    public void testRebuildPoolStateFromStore() {
       tearDownContext();
