@@ -50,27 +50,27 @@ public class HardwareProfilesHandlerTest extends BaseHandlerTest {
       Set<? extends HardwareProfile> expects = ImmutableSet.of(
             new HardwareProfile(URI.create("http://localhost:3001/api/hardware_profiles/m1-small"), "m1-small",
                   "m1-small", ImmutableSet.<HardwareProperty> of(
-                        new FixedHardwareProperty("cpu", "count", new Long(1)), new FixedHardwareProperty("memory",
-                              "MB", new Double(1740.8)), new FixedHardwareProperty("storage", "GB", new Long(160)),
+                        new FixedHardwareProperty("cpu", "count", Long.valueOf(1)), new FixedHardwareProperty("memory",
+                              "MB", new Double(1740.8)), new FixedHardwareProperty("storage", "GB", Long.valueOf(160)),
                         new FixedHardwareProperty("architecture", "label", "i386"))),
             new HardwareProfile(URI.create("http://localhost:3001/api/hardware_profiles/m1-large"), "m1-large",
                   "m1-large", ImmutableSet.<HardwareProperty> of(
-                        new FixedHardwareProperty("cpu", "count", new Long(2)),
-                        new RangeHardwareProperty("memory", "MB", new Long(10240), new HardwareParameter(URI
+                        new FixedHardwareProperty("cpu", "count", Long.valueOf(2)),
+                        new RangeHardwareProperty("memory", "MB", Long.valueOf(10240), new HardwareParameter(URI
                               .create("http://localhost:3001/api/instances"), "post", "hwp_memory", "create"),
-                              new Double(7680.0), new Long(15360)), new EnumHardwareProperty("storage", "GB", new Long(
+                              new Double(7680.0), Long.valueOf(15360)), new EnumHardwareProperty("storage", "GB", Long.valueOf(
                               850), new HardwareParameter(URI.create("http://localhost:3001/api/instances"), "post",
-                              "hwp_storage", "create"), ImmutableSet.<Object> of(new Long(850), new Long(1024))),
+                              "hwp_storage", "create"), ImmutableSet.<Object> of(Long.valueOf(850), Long.valueOf(1024))),
                         new FixedHardwareProperty("architecture", "label", "x86_64"))),
             new HardwareProfile(URI.create("http://localhost:3001/api/hardware_profiles/m1-xlarge"), "m1-xlarge",
                   "m1-xlarge", ImmutableSet.<HardwareProperty> of(
-                        new FixedHardwareProperty("cpu", "count", new Long(4)),
-                        new RangeHardwareProperty("memory", "MB", new Long(12288), new HardwareParameter(URI
+                        new FixedHardwareProperty("cpu", "count", Long.valueOf(4)),
+                        new RangeHardwareProperty("memory", "MB", Long.valueOf(12288), new HardwareParameter(URI
                               .create("http://localhost:3001/api/instances"), "post", "hwp_memory", "create"),
-                              new Long(12288), new Long(32768)),
-                        new EnumHardwareProperty("storage", "GB", new Long(1024), new HardwareParameter(URI
+                              Long.valueOf(12288), Long.valueOf(32768)),
+                        new EnumHardwareProperty("storage", "GB", Long.valueOf(1024), new HardwareParameter(URI
                               .create("http://localhost:3001/api/instances"), "post", "hwp_storage", "create"),
-                              ImmutableSet.<Object> of(new Long(1024), new Long(2048), new Long(4096))),
+                              ImmutableSet.<Object> of(Long.valueOf(1024), Long.valueOf(2048), Long.valueOf(4096))),
                         new FixedHardwareProperty("architecture", "label", "x86_64"))),
             new HardwareProfile(URI.create("http://localhost:3001/api/hardware_profiles/opaque"), "opaque", "opaque",
                   ImmutableSet.<HardwareProperty> of()));

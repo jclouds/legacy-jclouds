@@ -80,7 +80,7 @@ public class UsageRecord {
       }
 
       public static UsageType fromValue(String usageType) {
-         Integer code = new Integer(checkNotNull(usageType, "usageType"));
+         Integer code = Integer.valueOf(checkNotNull(usageType, "usageType"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
 

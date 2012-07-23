@@ -67,7 +67,7 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
          if (response.getPayload() != null) {
             String contentType = response.getPayload().getContentMetadata().getContentType();
             if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)
-                     && !new Long(0).equals(response.getPayload().getContentMetadata().getContentLength())) {
+                     && !Long.valueOf(0).equals(response.getPayload().getContentMetadata().getContentLength())) {
                try {
                   error = utils.parseAzureStorageErrorFromContent(command, response, response.getPayload().getInput());
                   if (error != null) {

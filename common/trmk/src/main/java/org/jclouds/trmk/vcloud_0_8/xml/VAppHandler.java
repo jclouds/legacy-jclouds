@@ -91,7 +91,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
          String statusString = attributes.get("status");
          status = Status.fromValue(statusString);
          if (attributes.containsKey("size"))
-            size = new Long(attributes.get("size"));
+            size = Long.valueOf(attributes.get("size"));
       } else if (qName.equals("Link")) { // type should never be missing
          if (attributes.containsKey("type")) {
             if (attributes.get("type").equals(TerremarkVCloudMediaType.VDC_XML)) {

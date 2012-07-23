@@ -53,7 +53,7 @@ public class ListContainersOptions extends BaseHttpRequestOptions {
 
    public int getLimit() {
       String val = getFirstQueryOrNull("limit");
-      return val != null ? new Integer(val) : 10000;
+      return val != null ? Integer.valueOf(val) : 10000;
    }
 
    public static class Builder {

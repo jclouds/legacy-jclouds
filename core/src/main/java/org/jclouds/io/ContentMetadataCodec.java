@@ -94,7 +94,7 @@ public interface ContentMetadataCodec {
          });
          for (Entry<String, String> header : headers.entries()) {
             if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
-               contentMetadata.setContentLength(new Long(header.getValue()));
+               contentMetadata.setContentLength(Long.valueOf(header.getValue()));
             } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentMD5(CryptoStreams.base64(header.getValue()));
             } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {

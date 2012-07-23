@@ -91,7 +91,7 @@ public class ResourceLimit {
       }
 
       public static ResourceType fromValue(String resourceType) {
-         Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
+         Integer code = Integer.valueOf(checkNotNull(resourceType, "resourcetype"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
    }

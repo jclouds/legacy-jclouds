@@ -104,7 +104,7 @@ public class Datacenter implements Comparable<Datacenter> {
 
    @Override
    public int compareTo(Datacenter arg0) {
-      return new Integer(id).compareTo(arg0.getId());
+      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**

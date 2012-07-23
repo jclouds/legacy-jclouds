@@ -85,7 +85,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       replay(metadataParser);
 
       Blob object = callable.apply(response);
-      assertEquals(object.getPayload().getContentMetadata().getContentLength(), new Long(10485760));
+      assertEquals(object.getPayload().getContentMetadata().getContentLength(), Long.valueOf(10485760));
       assertEquals(object.getAllHeaders().get("Content-Range"), Collections.singletonList("0-10485759/20232760"));
 
    }

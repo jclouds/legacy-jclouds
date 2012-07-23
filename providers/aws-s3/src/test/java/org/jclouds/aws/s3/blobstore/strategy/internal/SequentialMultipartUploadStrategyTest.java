@@ -75,14 +75,14 @@ public class SequentialMultipartUploadStrategyTest {
       long chunkSize = MultipartUploadSlicingAlgorithm.DEFAULT_PART_SIZE;
       long remaining = 100L;
       SortedMap<Integer, String> etags = Maps.newTreeMap();
-      etags.put(new Integer(1), "eTag1");
-      etags.put(new Integer(2), "eTag2");
+      etags.put(Integer.valueOf(1), "eTag1");
+      etags.put(Integer.valueOf(2), "eTag2");
       
       expect(blob.getMetadata()).andReturn(blobMeta).atLeastOnce();
       expect(blobMeta.getName()).andReturn(key).atLeastOnce();
       expect(blob.getPayload()).andReturn(payload).atLeastOnce();
       expect(payload.getContentMetadata()).andReturn(contentMeta).atLeastOnce();
-      expect(contentMeta.getContentLength()).andReturn(new Long(chunkSize + remaining));
+      expect(contentMeta.getContentLength()).andReturn(Long.valueOf(chunkSize + remaining));
       expect(ablobStore.getContext()).andReturn(context).atLeastOnce();
       expect(context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN)).andReturn(psc).atLeastOnce();
       expect(psc.getApi()).andReturn(client).atLeastOnce();
@@ -138,14 +138,14 @@ public class SequentialMultipartUploadStrategyTest {
       long chunkSize = MultipartUploadSlicingAlgorithm.DEFAULT_PART_SIZE;
       long remaining = 100L;
       SortedMap<Integer, String> etags = Maps.newTreeMap();
-      etags.put(new Integer(1), "eTag1");
-      etags.put(new Integer(2), "eTag2");
+      etags.put(Integer.valueOf(1), "eTag1");
+      etags.put(Integer.valueOf(2), "eTag2");
       
       expect(blob.getMetadata()).andReturn(blobMeta).atLeastOnce();
       expect(blobMeta.getName()).andReturn(key).atLeastOnce();
       expect(blob.getPayload()).andReturn(payload).atLeastOnce();
       expect(payload.getContentMetadata()).andReturn(contentMeta).atLeastOnce();
-      expect(contentMeta.getContentLength()).andReturn(new Long(chunkSize + remaining));
+      expect(contentMeta.getContentLength()).andReturn(Long.valueOf(chunkSize + remaining));
       expect(ablobStore.getContext()).andReturn(context).atLeastOnce();
       expect(context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN)).andReturn(psc).atLeastOnce();
       expect(psc.getApi()).andReturn(client).atLeastOnce();

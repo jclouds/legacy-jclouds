@@ -57,7 +57,7 @@ public class NetworkConfigSectionHandler extends SectionHandler<NetworkConfigSec
       if (equalsOrSuffix(qName, "FenceMode")) {
          builder.fenceMode(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Dhcp")) {
-         builder.dhcp(new Boolean(currentOrNull(currentText)));
+         builder.dhcp(Boolean.valueOf(currentOrNull(currentText)));
       }
       super.endElement(uri, localName, qName);
    }

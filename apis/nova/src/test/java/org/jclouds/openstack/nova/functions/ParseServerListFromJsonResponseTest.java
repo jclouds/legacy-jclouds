@@ -88,7 +88,7 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.get(0).getUuid(), "d84e2086-fc0d-11e0-8e08-2837371c69ae");
       assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
-      assertEquals(response.get(0).getProgress(), new Integer(60));
+      assertEquals(response.get(0).getProgress(), Integer.valueOf(60));
 
       List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
                ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
