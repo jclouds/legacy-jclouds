@@ -87,7 +87,7 @@ public class HardwarePropertyHandler extends ParseSax.HandlerWithResult<Hardware
       if (DOUBLE.matcher(in).matches())
          return new Double(in);
       else if (LONG.matcher(in).matches())
-         return new Long(in);
+         return Long.valueOf(in);
       return null;
    }
 

@@ -270,7 +270,7 @@ public class VirtualSystemSettingData extends ManagedElement {
                });
 
       public static AutomaticRecoveryAction fromValue(String automaticRecoveryAction) {
-         return AUTOMATIC_RECOVERY_ACTION_BY_ID.get(new Integer(checkNotNull(automaticRecoveryAction,
+         return AUTOMATIC_RECOVERY_ACTION_BY_ID.get(Integer.valueOf(checkNotNull(automaticRecoveryAction,
                   "automaticRecoveryAction")));
       }
    }
@@ -307,7 +307,7 @@ public class VirtualSystemSettingData extends ManagedElement {
                });
 
       public static AutomaticShutdownAction fromValue(String automaticShutdownAction) {
-         return AUTOMATIC_SHUTDOWN_ACTION_BY_ID.get(new Integer(checkNotNull(automaticShutdownAction,
+         return AUTOMATIC_SHUTDOWN_ACTION_BY_ID.get(Integer.valueOf(checkNotNull(automaticShutdownAction,
                   "automaticShutdownAction")));
       }
    }
@@ -344,7 +344,7 @@ public class VirtualSystemSettingData extends ManagedElement {
                });
 
       public static AutomaticStartupAction fromValue(String automaticStartupAction) {
-         return AUTOMATIC_STARTUP_ACTION_BY_ID.get(new Integer(checkNotNull(automaticStartupAction,
+         return AUTOMATIC_STARTUP_ACTION_BY_ID.get(Integer.valueOf(checkNotNull(automaticStartupAction,
                   "automaticStartupAction")));
       }
    }

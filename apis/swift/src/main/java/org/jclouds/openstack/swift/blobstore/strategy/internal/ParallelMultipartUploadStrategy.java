@@ -164,7 +164,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                                 CountDownLatch latch = new CountDownLatch(effectiveParts);
                                 int part;
                                 while ((part = algorithm.getNextPart()) <= parts) {
-                                    Integer partKey = new Integer(part);
+                                    Integer partKey = Integer.valueOf(part);
                                     activeParts.put(partKey);
 
                                     prepareUploadPart(container, blob, key, partKey, payload,
@@ -173,7 +173,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                                             blob2Object);
                                 }
                                 if (remaining > 0) {
-                                    Integer partKey = new Integer(part);
+                                    Integer partKey = Integer.valueOf(part);
                                     activeParts.put(partKey);
                                     prepareUploadPart(container, blob, key, partKey, payload,
                                             algorithm.getNextChunkOffset(), remaining, etags,
@@ -187,7 +187,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                                     CountDownLatch retryLatch = new CountDownLatch(atOnce);
                                     for (int i = 0; i < atOnce; i++) {
                                         Part failedPart = toRetry.poll();
-                                        Integer partKey = new Integer(failedPart.getPart());
+                                        Integer partKey = Integer.valueOf(failedPart.getPart());
                                         activeParts.put(partKey);
                                         prepareUploadPart(container, blob, key, partKey, payload,
                                                 failedPart.getOffset(), failedPart.getSize(), etags,

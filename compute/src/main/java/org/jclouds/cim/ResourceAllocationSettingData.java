@@ -345,7 +345,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
             });
 
       public static ResourceType fromValue(String type) {
-         return RESOURCE_TYPE_BY_ID.get(new Integer(checkNotNull(type, "type")));
+         return RESOURCE_TYPE_BY_ID.get(Integer.valueOf(checkNotNull(type, "type")));
       }
    }
 
@@ -394,7 +394,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
             });
 
       public static ConsumerVisibility fromValue(String behavior) {
-         return MAPPING_BEHAVIOR_BY_ID.get(new Integer(checkNotNull(behavior, "behavior")));
+         return MAPPING_BEHAVIOR_BY_ID.get(Integer.valueOf(checkNotNull(behavior, "behavior")));
       }
    }
 
@@ -428,7 +428,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
             });
 
       public static MappingBehavior fromValue(String behavior) {
-         return MAPPING_BEHAVIOR_BY_ID.get(new Integer(checkNotNull(behavior, "behavior")));
+         return MAPPING_BEHAVIOR_BY_ID.get(Integer.valueOf(checkNotNull(behavior, "behavior")));
       }
    }
 

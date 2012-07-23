@@ -52,13 +52,13 @@ public class InstantiateVAppTemplateOptionsTest {
    public void testCustomizeOnInstantiate() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
       options.customizeOnInstantiate(true);
-      assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
+      assertEquals(options.shouldCustomizeOnInstantiate(), Boolean.TRUE);
    }
 
    @Test
    public void testCustomizeOnInstantiateStatic() {
       InstantiateVAppTemplateOptions options = customizeOnInstantiate(true);
-      assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
+      assertEquals(options.shouldCustomizeOnInstantiate(), Boolean.TRUE);
    }
 
    @Test

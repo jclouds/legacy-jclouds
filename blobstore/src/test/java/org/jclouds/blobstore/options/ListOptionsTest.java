@@ -64,7 +64,7 @@ public class ListOptionsTest {
       ListContainerOptions options = new ListContainerOptions();
       options.inDirectory("test").maxResults(1);
       assertEquals(options.getDir(), "test");
-      assertEquals(options.getMaxResults(), new Integer(1));
+      assertEquals(options.getMaxResults(), Integer.valueOf(1));
 
    }
 
@@ -108,7 +108,7 @@ public class ListOptionsTest {
    public void testMaxResults() {
       ListContainerOptions options = new ListContainerOptions();
       options.maxResults(1000);
-      assertEquals(options.getMaxResults(), new Integer(1000));
+      assertEquals(options.getMaxResults(), Integer.valueOf(1000));
    }
 
    @Test
@@ -120,7 +120,7 @@ public class ListOptionsTest {
    @Test
    public void testMaxResultsStatic() {
       ListContainerOptions options = maxResults(1000);
-      assertEquals(options.getMaxResults(), new Integer(1000));
+      assertEquals(options.getMaxResults(), Integer.valueOf(1000));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

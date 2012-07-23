@@ -66,7 +66,7 @@ public class BindBlobToMultipartFormTest {
       binder.bindToRequest(request, TEST_BLOB);
 
       assertEquals(Strings2.toString(request.getPayload()), EXPECTS);
-      assertEquals(request.getPayload().getContentMetadata().getContentLength(), new Long(113));
+      assertEquals(request.getPayload().getContentMetadata().getContentLength(), Long.valueOf(113));
 
       assertEquals(request.getPayload().getContentMetadata().getContentType(), "multipart/form-data; boundary="
             + BOUNDARY);

@@ -33,7 +33,7 @@ public class ReturnFalseOnKeyNotFoundTest {
 
    @Test
    public void testFoundIsFalse() throws SecurityException, NoSuchMethodException {
-      assertEquals(fn.apply(new KeyNotFoundException()), new Boolean(false));
+      assertEquals(fn.apply(new KeyNotFoundException()), Boolean.FALSE);
    }
 
    @Test(expectedExceptions = { RuntimeException.class })

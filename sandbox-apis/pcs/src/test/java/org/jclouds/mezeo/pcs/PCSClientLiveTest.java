@@ -215,7 +215,7 @@ public class PCSClientLiveTest {
       // Test GET of object (including updated metadata)
       InputStream file = connection.downloadFile(objectURI);
       assertEquals(Strings2.toStringAndClose(file), data);
-      validateFileInfoAndNameIsInMetadata(container, objectURI, "object", new Long(data.length()));
+      validateFileInfoAndNameIsInMetadata(container, objectURI, "object", Long.valueOf(data.length()));
 
       try {
          connection.uploadFile(container, object);
@@ -235,15 +235,15 @@ public class PCSClientLiveTest {
       // try sending it in 2 parts
       object.getMetadata().setName(name);
       objectURI = connection.createFile(container, object);
-      validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(0));
+      validateFileInfoAndNameIsInMetadata(container, objectURI, name, Long.valueOf(0));
 
       object.setPayload(data.substring(0, 2));
       connection.uploadBlock(objectURI, object, range(0, 2));
-      validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(2));
+      validateFileInfoAndNameIsInMetadata(container, objectURI, name, Long.valueOf(2));
 
       object.setPayload(data.substring(2));
       connection.uploadBlock(objectURI, object, range(2, data.getBytes().length));
-      validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
+      validateFileInfoAndNameIsInMetadata(container, objectURI, name, Long.valueOf(data.length()));
 
       file = connection.downloadFile(objectURI);
       assertEquals(Strings2.toStringAndClose(file), data);
@@ -252,7 +252,7 @@ public class PCSClientLiveTest {
       data = "Here is my datum";
       object.setPayload(data.substring(2));
       connection.uploadBlock(objectURI, object, range(2, data.getBytes().length));
-      validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
+      validateFileInfoAndNameIsInMetadata(container, objectURI, name, Long.valueOf(data.length()));
 
       file = connection.downloadFile(objectURI);
       assertEquals(Strings2.toStringAndClose(file), data);

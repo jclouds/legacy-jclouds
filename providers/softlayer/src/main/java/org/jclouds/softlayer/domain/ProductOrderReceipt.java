@@ -67,7 +67,7 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
 
    @Override
    public int compareTo(ProductOrderReceipt arg0) {
-      return new Integer(orderId).compareTo(arg0.getOrderId());
+      return Integer.valueOf(orderId).compareTo(arg0.getOrderId());
    }
 
    /**

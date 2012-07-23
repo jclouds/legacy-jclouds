@@ -75,7 +75,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       String eTag = null;
       try {
          eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);
-         etags.put(new Integer(part), eTag);
+         etags.put(Integer.valueOf(part), eTag);
       } catch (KeyNotFoundException e) {
          // note that because of eventual consistency, the upload id may not be present yet
          // we may wish to add this condition to the retry handler
@@ -83,7 +83,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
          // we may also choose to implement ListParts and wait for the uploadId to become
          // available there.
          eTag = client.uploadPart(container, key, part, uploadId, chunkedPart);
-         etags.put(new Integer(part), eTag);
+         etags.put(Integer.valueOf(part), eTag);
       }
    }
 

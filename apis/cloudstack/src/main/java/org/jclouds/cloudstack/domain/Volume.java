@@ -108,7 +108,7 @@ public class Volume {
       }
 
       public static Type fromValue(String resourceType) {
-         Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
+         Integer code = Integer.valueOf(checkNotNull(resourceType, "resourcetype"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
 

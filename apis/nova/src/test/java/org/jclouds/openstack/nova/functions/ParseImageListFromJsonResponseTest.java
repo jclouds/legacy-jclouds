@@ -96,7 +96,7 @@ public class ParseImageListFromJsonResponseTest {
       assertEquals(response.get(1).getName(), "My Server Backup");
       assertEquals(response.get(1).getCreated(), dateService.iso8601SecondsDateParse("2009-07-07T09:56:16Z"));
 
-      assertEquals(response.get(1).getProgress(), new Integer(80));
+      assertEquals(response.get(1).getProgress(), Integer.valueOf(80));
       assertEquals(response.get(1).getStatus(), ImageStatus.SAVING);
       assertEquals(response.get(1).getUpdated(), dateService.iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
       assertEquals(response.get(1).getServerRef(), "http://servers.api.openstack.org/v1.1/1234/servers/12");

@@ -1274,7 +1274,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok")
-            .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), new Long(4));
+            .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), Long.valueOf(4));
    }
 
    @SuppressWarnings("unchecked")
@@ -1286,7 +1286,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok")
-            .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), new Long(5));
+            .payload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }").build()), Long.valueOf(5));
    }
    
    static class TestRequestFilter1 implements HttpRequestFilter {

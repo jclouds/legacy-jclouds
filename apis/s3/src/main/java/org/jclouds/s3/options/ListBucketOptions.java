@@ -85,7 +85,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
 
    public Integer getMaxResults() {
       String returnVal = getFirstQueryOrNull("max-keys");
-      return (returnVal != null) ? new Integer(returnVal) : null;
+      return (returnVal != null) ? Integer.valueOf(returnVal) : null;
    }
 
    /**

@@ -33,7 +33,7 @@ public class ReturnFalseOnContainerNotFoundTest {
 
    @Test
    public void testFoundIsFalse() throws SecurityException, NoSuchMethodException {
-      assertEquals(fn.apply(new ContainerNotFoundException()), new Boolean(false));
+      assertEquals(fn.apply(new ContainerNotFoundException()), Boolean.FALSE);
    }
 
    @Test(expectedExceptions = { RuntimeException.class })

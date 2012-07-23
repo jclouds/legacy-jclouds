@@ -67,13 +67,13 @@ public class ParseFlavorListFromJsonResponseTest {
       List<Flavor> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
       assertEquals(response.get(0).getId(), 1);
       assertEquals(response.get(0).getName(), "256 MB Server");
-      assertEquals(response.get(0).getDisk(), new Integer(10));
-      assertEquals(response.get(0).getRam(), new Integer(256));
+      assertEquals(response.get(0).getDisk(), Integer.valueOf(10));
+      assertEquals(response.get(0).getRam(), Integer.valueOf(256));
 
       assertEquals(response.get(1).getId(), 2);
       assertEquals(response.get(1).getName(), "512 MB Server");
-      assertEquals(response.get(1).getDisk(), new Integer(20));
-      assertEquals(response.get(1).getRam(), new Integer(512));
+      assertEquals(response.get(1).getDisk(), Integer.valueOf(20));
+      assertEquals(response.get(1).getRam(), Integer.valueOf(512));
 
    }
 

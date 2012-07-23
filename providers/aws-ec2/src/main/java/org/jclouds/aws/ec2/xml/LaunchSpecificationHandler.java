@@ -115,7 +115,7 @@ public class LaunchSpecificationHandler extends HandlerForGeneratedRequestWithRe
       } else if (qName.equals("enabled")) {
          String monitoringEnabled = currentOrNull();
          if (monitoringEnabled != null)
-            builder.monitoringEnabled(new Boolean(monitoringEnabled));
+            builder.monitoringEnabled(Boolean.valueOf(monitoringEnabled));
       }
       currentText = new StringBuilder();
    }

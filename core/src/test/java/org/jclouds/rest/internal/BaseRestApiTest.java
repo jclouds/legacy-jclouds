@@ -112,7 +112,7 @@ public abstract class BaseRestApiTest {
             propagate(e);
          }
          assertEquals(payload, toMatch);
-         Long length = new Long(payload.getBytes().length);
+         Long length = Long.valueOf(payload.getBytes().length);
          try {
             assertContentHeadersEqual(request, contentType, contentDispositon, contentEncoding, contentLanguage,
                   length, contentMD5 ? CryptoStreams.md5(request.getPayload()) : null, expires);

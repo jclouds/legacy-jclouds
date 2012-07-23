@@ -251,7 +251,7 @@ public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    private static void verifyMetadata(String metadataValue, AtmosObject getBlob) {
-      assertEquals(getBlob.getContentMetadata().getContentLength(), new Long(16));
+      assertEquals(getBlob.getContentMetadata().getContentLength(), Long.valueOf(16));
       assert getBlob.getContentMetadata().getContentType().startsWith("text/plain");
       assertEquals(getBlob.getUserMetadata().getMetadata().get("Metadata"), metadataValue);
       SystemMetadata md = getBlob.getSystemMetadata();
