@@ -77,14 +77,17 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       this.uriBuilders = uriBuilders;
    }
 
+   @Override
    public Iterable<String> getAllContainerNames() {
       return containerToBlobs.keySet();
    }
 
+   @Override
    public boolean containerExists(final String containerName) {
       return containerToBlobs.containsKey(containerName);
    }
 
+   @Override
    public void clearContainer(final String containerName) {
       containerToBlobs.get(containerName).clear();
    }
@@ -95,6 +98,7 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       clearContainer(container);
    }
 
+   @Override
    public boolean createContainerInLocation(final String containerName, final Location location) {
       ConcurrentMap<String, Blob> origValue = containerToBlobs.putIfAbsent(
             containerName, new ConcurrentHashMap<String, Blob>());
@@ -105,20 +109,24 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       return true;
    }
 
+   @Override
    public void deleteContainer(final String containerName) {
       containerToBlobs.remove(containerName);
    }
 
+   @Override
    public boolean blobExists(final String containerName, final String blobName) {
       Map<String, Blob> map = containerToBlobs.get(containerName);
       return map != null && map.containsKey(blobName);
    }
 
+   @Override
    public Blob getBlob(final String containerName, final String blobName) {
       Map<String, Blob> map = containerToBlobs.get(containerName);
       return map == null ? null : map.get(blobName);
    }
 
+   @Override
    public String putBlob(final String containerName, final Blob blob) throws IOException {
       Blob newBlob = createUpdatedCopyOfBlobInContainer(containerName, blob);
       Map<String, Blob> map = containerToBlobs.get(containerName);
@@ -128,12 +136,14 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       return eTag;
    }
 
+   @Override
    public void removeBlob(final String containerName, final String blobName) {
       Map<String, Blob> map = containerToBlobs.get(containerName);
       if (map != null)
          map.remove(blobName);
    }
 
+   @Override
    public Iterable<String> getBlobKeysInsideContainer(final String containerName) {
       return containerToBlobs.get(containerName).keySet();
    }
