@@ -117,9 +117,10 @@ public interface LocalStorageStrategy {
      * Write a {@link Blob} into a file
      * @param container
      * @param blob
+     * @return etag of blob
      * @throws IOException
      */
-    void putBlob(String containerName, Blob blob) throws IOException;
+    String putBlob(String containerName, Blob blob) throws IOException;
 
     /**
      * @param containerName name of container
