@@ -83,12 +83,15 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Implementation of {@link BaseAsyncBlobStore} which keeps all data in a local Map object.
- * 
+ * Implementation of {@link BaseAsyncBlobStore} which uses a pluggable
+ * LocalStorageStrategy.
+ *
  * @author Adrian Cole
+ * @author Alfredo "Rainbowbreeze" Morresi
+ * @author Andrew Gaul
  * @author James Murty
  */
-public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
+public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -99,7 +102,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final LocalStorageStrategy storageStrategy;
 
    @Inject
-   protected TransientAsyncBlobStore(BlobStoreContext context,
+   protected LocalAsyncBlobStore(BlobStoreContext context,
          BlobUtils blobUtils,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,

@@ -42,7 +42,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "TransientBlobRequestSignerTest")
-public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<TransientAsyncBlobStore> {
+public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<LocalAsyncBlobStore> {
 
    private BlobRequestSigner signer;
    private Provider<BlobBuilder> blobFactory;
@@ -121,8 +121,8 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<Transien
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<TransientAsyncBlobStore>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TransientAsyncBlobStore>>() {
+   protected TypeLiteral<RestAnnotationProcessor<LocalAsyncBlobStore>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<LocalAsyncBlobStore>>() {
       };
    }
 

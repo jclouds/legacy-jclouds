@@ -37,7 +37,7 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.TransientAsyncBlobStore;
+import org.jclouds.blobstore.LocalAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -103,7 +103,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    @Inject
    private StubS3AsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            TransientAsyncBlobStore blobStore, ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+            LocalAsyncBlobStore blobStore, ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             ConcurrentMap<String, Location> containerToLocation, DateService dateService,
             S3Object.Factory objectProvider, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob, BlobToObject blob2Object,
@@ -158,22 +158,22 @@ public class StubS3AsyncClient implements S3AsyncClient {
          Blob object = source.get(sourceObject);
          if (options.getIfMatch() != null) {
             if (!object.getMetadata().getETag().equals(options.getIfMatch()))
-               return immediateFailedFuture(TransientAsyncBlobStore.returnResponseException(412));
+               return immediateFailedFuture(LocalAsyncBlobStore.returnResponseException(412));
          }
          if (options.getIfNoneMatch() != null) {
             if (object.getMetadata().getETag().equals(options.getIfNoneMatch()))
-               return immediateFailedFuture(TransientAsyncBlobStore.returnResponseException(412));
+               return immediateFailedFuture(LocalAsyncBlobStore.returnResponseException(412));
          }
          if (options.getIfModifiedSince() != null) {
             Date modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
             if (modifiedSince.after(object.getMetadata().getLastModified()))
-               return immediateFailedFuture(TransientAsyncBlobStore.returnResponseException(412));
+               return immediateFailedFuture(LocalAsyncBlobStore.returnResponseException(412));
 
          }
          if (options.getIfUnmodifiedSince() != null) {
             Date unmodifiedSince = dateService.rfc822DateParse(options.getIfUnmodifiedSince());
             if (unmodifiedSince.before(object.getMetadata().getLastModified()))
-               return immediateFailedFuture(TransientAsyncBlobStore.returnResponseException(412));
+               return immediateFailedFuture(LocalAsyncBlobStore.returnResponseException(412));
          }
          Blob sourceS3 = source.get(sourceObject);
          MutableBlobMetadata newMd = BlobStoreUtils.copy(sourceS3.getMetadata(), destinationObject);

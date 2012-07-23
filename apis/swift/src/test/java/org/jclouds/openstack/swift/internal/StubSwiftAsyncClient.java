@@ -33,7 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.blobstore.TransientAsyncBlobStore;
+import org.jclouds.blobstore.LocalAsyncBlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -68,7 +68,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Singleton
 public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final TransientAsyncBlobStore blobStore;
+   private final LocalAsyncBlobStore blobStore;
    private final SwiftObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
@@ -79,7 +79,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
 
    @Inject
    private StubSwiftAsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            TransientAsyncBlobStore blobStore,
+            LocalAsyncBlobStore blobStore,
             SwiftObject.Factory objectProvider, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             ObjectToBlob object2Blob, BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
