@@ -18,30 +18,31 @@
  */
 package org.jclouds.smartos.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.collect.FindResourceInSet;
+import org.jclouds.collect.Memoized;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.smartos.compute.domain.VM;
+
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.sun.corba.se.spi.activation.Server;
-import org.jclouds.smartos.compute.domain.VM;
-import org.jclouds.collect.FindResourceInSet;
-import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.*;
-import org.jclouds.compute.functions.GroupNamingConvention;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LoginCredentials;
-import org.omg.PortableInterceptor.ACTIVE;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Nigel Magnay
@@ -49,9 +50,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
 
-    public static final Map<VM.State, NodeMetadata.Status> serverStatusToNodeStatus = ImmutableMap
-            .<VM.State, NodeMetadata.Status> builder()
-            .put(VM.State.RUNNING, NodeMetadata.Status.RUNNING)//
+   public static final Map<VM.State, NodeMetadata.Status> serverStatusToNodeStatus = ImmutableMap
+            .<VM.State, NodeMetadata.Status> builder().put(VM.State.RUNNING, NodeMetadata.Status.RUNNING)//
             .put(VM.State.STOPPED, NodeMetadata.Status.SUSPENDED)//
             .put(VM.State.INCOMPLETE, NodeMetadata.Status.PENDING)//
             .build();
@@ -64,8 +64,8 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
 
    @Inject
    VMToNodeMetadata(Map<String, Credentials> credentialStore, FindHardwareForServer findHardwareForServer,
-                    FindLocationForServer findLocationForServer, FindImageForServer findImageForServer,
-                    GroupNamingConvention.Factory namingConvention) {
+            FindLocationForServer findLocationForServer, FindImageForServer findImageForServer,
+            GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findHardwareForServer = checkNotNull(findHardwareForServer, "findHardwareForServer");
@@ -87,21 +87,18 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
          builder.operatingSystem(image.getOperatingSystem());
       builder.hardware(findHardwareForServer.apply(from));
       builder.status(serverStatusToNodeStatus.get(from.getState()));
-       try {
-           if( from.getState() == VM.State.RUNNING )
-           {
-               Optional<String> ip = from.getPublicAddress();
-               if( ip.isPresent() ) {
-                    builder.publicAddresses(ImmutableSet.<String> of(ip.get()));
-                    builder.privateAddresses(ImmutableSet.<String> of(ip.get()));
-               }
-           }
-       }
-       catch(Exception ex)
-       {
-           // None?
-       }
-       //builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
+      try {
+         if (from.getState() == VM.State.RUNNING) {
+            Optional<String> ip = from.getPublicAddress();
+            if (ip.isPresent()) {
+               builder.publicAddresses(ImmutableSet.<String> of(ip.get()));
+               builder.privateAddresses(ImmutableSet.<String> of(ip.get()));
+            }
+         }
+      } catch (Exception ex) {
+         // None?
+      }
+      // builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
       builder.credentials(LoginCredentials.fromCredentials(credentialStore.get(from.getUuid() + "")));
       return builder.build();
    }
