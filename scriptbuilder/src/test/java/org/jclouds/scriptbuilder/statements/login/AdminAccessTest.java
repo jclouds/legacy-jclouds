@@ -52,14 +52,33 @@ public class AdminAccessTest {
       try {
          assertEquals(
                AdminAccess.builder().adminPassword("bar").adminPrivateKey("fooPrivateKey")
-                     .adminPublicKey("fooPublicKey").adminUsername("foo").adminHome("/over/ridden/foo").build()
+                     .adminPublicKey("fooPublicKey").adminUsername("foo")
+                     .adminHome("/over/ridden/foo").build()
                      .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX), 
                      CharStreams.toString(Resources.newReaderSupplier(
                      Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8)));
+
       } finally {
          TestConfiguration.INSTANCE.reset();
       }
    }
+
+   public void testWithParamsAndFullNameUNIX() throws IOException {
+      TestConfiguration.INSTANCE.reset();
+      try {
+         assertEquals(
+               AdminAccess.builder().adminPassword("bar").adminPrivateKey("fooPrivateKey")
+                     .adminPublicKey("fooPublicKey").adminUsername("foo").adminFullName("JClouds Foo")
+                     .adminHome("/over/ridden/foo").build()
+                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
+               CharStreams.toString(Resources.newReaderSupplier(
+                     Resources.getResource("test_adminaccess_params_and_fullname.sh"), Charsets.UTF_8)));
+
+      } finally {
+         TestConfiguration.INSTANCE.reset();
+      }
+   }
+
 
    public void testOnlyInstallUserUNIX() throws IOException {
       TestConfiguration.INSTANCE.reset();
