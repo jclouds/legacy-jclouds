@@ -181,7 +181,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             }
          }
 
-         final String delimiter = options.isRecursive() ? null : "/";
+         final String delimiter = options.isRecursive() ? null : storageStrategy.getSeparator();
          if (delimiter != null) {
             SortedSet<String> commonPrefixes = newTreeSet(
                    transform(contents, new CommonPrefixes(prefix, delimiter)));
@@ -238,7 +238,12 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    /**
-    * {@inheritDoc}
+    * Override parent method because it uses strange futures and listenables
+    * that creates problem in the test if more than one test that deletes the
+    * container is executed
+    *
+    * @param container
+    * @return
     */
    @Override
    public ListenableFuture<Void> deleteContainer(final String container) {

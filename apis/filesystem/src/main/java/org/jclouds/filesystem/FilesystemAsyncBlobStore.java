@@ -33,7 +33,6 @@ import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
@@ -43,8 +42,6 @@ import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -71,7 +68,6 @@ import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -81,7 +77,6 @@ import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.ParamValidators;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -190,7 +185,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             }
          }
 
-         final String delimiter = options.isRecursive() ? null : File.separator;
+         final String delimiter = options.isRecursive() ? null : storageStrategy.getSeparator();
          if (delimiter != null) {
             SortedSet<String> commonPrefixes = newTreeSet(
                    transform(contents, new CommonPrefixes(prefix, delimiter)));
@@ -238,6 +233,15 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<Void> clearContainer(final String container) {
+      storageStrategy.clearContainer(container);
+      return immediateFuture(null);
+   }
+
+   /**
     * Override parent method because it uses strange futures and listenables
     * that creates problem in the test if more than one test that deletes the
     * container is executed
@@ -249,6 +253,22 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Void> deleteContainer(final String container) {
       deleteAndVerifyContainerGone(container);
       return immediateFuture(null);
+   }
+
+   public ListenableFuture<Boolean> deleteContainerIfEmpty(final String container) {
+      Boolean returnVal = true;
+      if (storageStrategy.containerExists(container)) {
+         try {
+            if (Iterables.isEmpty(storageStrategy.getBlobKeysInsideContainer(container)))
+               storageStrategy.deleteContainer(container);
+            else
+               returnVal = false;
+         } catch (IOException e) {
+            logger.error(e, "An error occurred loading blobs contained into container %s", container);
+            Throwables.propagate(e);
+         }
+      }
+      return immediateFuture(returnVal);
    }
 
    /**
@@ -285,11 +305,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    /**
     * {@inheritDoc}
     */
-   @Path("{container}")
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(final Location location,
-         @PathParam("container") @ParamValidators({ FilesystemContainerNameValidator.class }) String name) {
-      boolean result = storageStrategy.createContainerInLocation(name, null);
+         final String name) {
+      boolean result = storageStrategy.createContainerInLocation(name, location);
       return immediateFuture(result);
    }
 

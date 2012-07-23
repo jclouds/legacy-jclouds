@@ -116,6 +116,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    }
 
    public boolean createContainer(String container) {
+      filesystemContainerNameValidator.validate(container);
       return createContainerInLocation(container, null);
    }
 
@@ -277,6 +278,11 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    @Override
    public Location getLocation(final String containerName) {
       return null;
+   }
+
+   @Override
+   public String getSeparator() {
+      return File.separator;
    }
 
    public boolean directoryExists(String container, String directory) {
