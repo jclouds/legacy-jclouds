@@ -26,24 +26,16 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
@@ -72,6 +64,7 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.crypto.Crypto;
@@ -167,7 +160,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
                   checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
                         + container);
                   checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
-                  MutableBlobMetadata md = copy(oldBlob.getMetadata());
+                  MutableBlobMetadata md = BlobStoreUtils.copy(oldBlob.getMetadata());
                   String directoryName = ifDirectoryReturnName.execute(md);
                   if (directoryName != null) {
                      md.setName(directoryName);
@@ -244,36 +237,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return new ContainerNotFoundException(name, String.format(
             "container %s not in %s", name,
             storageStrategy.getAllContainerNames()));
-   }
-
-   public static MutableBlobMetadata copy(MutableBlobMetadata in) {
-      ByteArrayOutputStream bout = new ByteArrayOutputStream();
-      ObjectOutput os;
-      try {
-         os = new ObjectOutputStream(bout);
-         os.writeObject(in);
-         ObjectInput is = new ObjectInputStream(new ByteArrayInputStream(bout.toByteArray()));
-         MutableBlobMetadata metadata = (MutableBlobMetadata) is.readObject();
-         convertUserMetadataKeysToLowercase(metadata);
-         HttpUtils.copy(in.getContentMetadata(), metadata.getContentMetadata());
-         return metadata;
-      } catch (Exception e) {
-         throw propagate(e);
-      }
-   }
-
-   private static void convertUserMetadataKeysToLowercase(MutableBlobMetadata metadata) {
-      Map<String, String> lowerCaseUserMetadata = newHashMap();
-      for (Entry<String, String> entry : metadata.getUserMetadata().entrySet()) {
-         lowerCaseUserMetadata.put(entry.getKey().toLowerCase(), entry.getValue());
-      }
-      metadata.setUserMetadata(lowerCaseUserMetadata);
-   }
-
-   public static MutableBlobMetadata copy(MutableBlobMetadata in, String newKey) {
-      MutableBlobMetadata newMd = copy(in);
-      newMd.setName(newKey);
-      return newMd;
    }
 
    /**
@@ -513,7 +476,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       } catch (IOException e) {
          Throwables.propagate(e);
       }
-      Blob blob = blobFactory.create(copy(in.getMetadata()));
+      Blob blob = blobFactory.create(BlobStoreUtils.copy(in.getMetadata()));
       blob.setPayload(payload);
       blob.getMetadata().setContainer(containerName);
       blob.getMetadata().setUri(
@@ -642,7 +605,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
          Blob blob = getBlob(container, key).get();
-         return immediateFuture(blob != null ? (BlobMetadata) copy(blob.getMetadata()) : null);
+         return immediateFuture(blob != null ? (BlobMetadata) BlobStoreUtils.copy(blob.getMetadata()) : null);
       } catch (Exception e) {
          if (size(filter(getCausalChain(e), KeyNotFoundException.class)) >= 1)
             return immediateFuture(null);
@@ -669,7 +632,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    private Blob copyBlob(Blob blob) {
-      Blob returnVal = blobFactory.create(copy(blob.getMetadata()));
+      Blob returnVal = blobFactory.create(BlobStoreUtils.copy(blob.getMetadata()));
       returnVal.setPayload(blob.getPayload());
       copyPayloadHeadersToBlob(blob.getPayload(), returnVal);
       return returnVal;

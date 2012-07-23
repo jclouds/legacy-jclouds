@@ -43,6 +43,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
@@ -175,7 +176,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
                return immediateFailedFuture(TransientAsyncBlobStore.returnResponseException(412));
          }
          Blob sourceS3 = source.get(sourceObject);
-         MutableBlobMetadata newMd = TransientAsyncBlobStore.copy(sourceS3.getMetadata(), destinationObject);
+         MutableBlobMetadata newMd = BlobStoreUtils.copy(sourceS3.getMetadata(), destinationObject);
          if (options.getAcl() != null)
             keyToAcl.put(destinationBucket + "/" + destinationObject, options.getAcl());
 
@@ -183,7 +184,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
          Blob newBlob = blobProvider.create(newMd);
          newBlob.setPayload(sourceS3.getPayload());
          dest.put(destinationObject, newBlob);
-         return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(TransientAsyncBlobStore.copy(newMd)));
+         return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(BlobStoreUtils.copy(newMd)));
       }
       return immediateFailedFuture(new KeyNotFoundException(sourceBucket, sourceObject, sourceBucket + "/"
                + sourceObject));
