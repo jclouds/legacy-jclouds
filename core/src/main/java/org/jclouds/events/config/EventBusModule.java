@@ -33,6 +33,7 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * Configures the {@link EventBus} to be used in the platform.
@@ -79,7 +80,7 @@ public class EventBusModule extends AbstractModule {
      */
     @Override
     protected void configure() {
-        bind(EventBus.class).annotatedWith(AsyncBus.class).to(AsyncEventBus.class);
+        bind(EventBus.class).annotatedWith(AsyncBus.class).to(AsyncEventBus.class).in(Scopes.SINGLETON);
     }
 
 }
