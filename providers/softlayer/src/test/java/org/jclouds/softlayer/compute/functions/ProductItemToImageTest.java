@@ -231,12 +231,12 @@ public class ProductItemToImageTest {
 
    @Test
    public void testOsBitsWithSpace() {
-      assertEquals(osBits().apply("a (32 bit) os"),new Integer(32));
+      assertEquals(osBits().apply("a (32 bit) os"),Integer.valueOf(32));
    }
 
    @Test
    public void testOsBitsNoSpace() {
-      assertEquals(osBits().apply("a (64bit) os"),new Integer(64));
+      assertEquals(osBits().apply("a (64bit) os"),Integer.valueOf(64));
    }
 
    @Test

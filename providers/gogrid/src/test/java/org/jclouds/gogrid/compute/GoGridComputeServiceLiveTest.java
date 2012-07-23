@@ -84,12 +84,12 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1));
 
-         Server updatedServer = providerContext.getApi().getServerServices().editServerRam(new Long(node.getId()), ram);
+         Server updatedServer = providerContext.getApi().getServerServices().editServerRam(Long.valueOf(node.getId()), ram);
          assertNotNull(updatedServer);
          assert serverLatestJobCompleted.apply(updatedServer);
 
          assertEquals(
-               Iterables.getLast(providerContext.getApi().getServerServices().getServersById(new Long(node.getId())))
+               Iterables.getLast(providerContext.getApi().getServerServices().getServersById(Long.valueOf(node.getId())))
                      .getRam().getName(), ram);
 
       } finally {

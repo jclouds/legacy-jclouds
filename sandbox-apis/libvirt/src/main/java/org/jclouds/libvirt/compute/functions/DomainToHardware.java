@@ -78,7 +78,7 @@ public class DomainToHardware implements Function<Domain, Hardware> {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				StorageVol storageVol = from.getConnect().storageVolLookupByPath(diskFileName);
 				String id = storageVol.getKey();
-				float size = new Long(storageVol.getInfo().capacity).floatValue();
+				float size = Long.valueOf(storageVol.getInfo().capacity).floatValue();
 				volumes.add(new VolumeImpl(id, Volume.Type.LOCAL, size, null, true, false));
 			}
 			builder.volumes((List<Volume>) volumes);

@@ -137,7 +137,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    private void addDiskItems(XMLBuilder sectionBuilder, VApp vApp, VAppConfiguration configuration) {
       for (ResourceAllocationSettingData disk : filter(vApp.getResourceAllocations(), CIMPredicates
                .resourceTypeIn(ResourceType.DISK_DRIVE))) {
-         if (!configuration.getDisksToDelete().contains(new Integer(disk.getAddressOnParent()))) {
+         if (!configuration.getDisksToDelete().contains(Integer.valueOf(disk.getAddressOnParent()))) {
             addDiskWithQuantity(sectionBuilder, disk);
          }
       }

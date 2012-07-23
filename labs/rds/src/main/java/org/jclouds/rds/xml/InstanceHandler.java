@@ -110,7 +110,7 @@ public class InstanceHandler extends ParseSax.HandlerForGeneratedRequestWithResu
       } else if (equalsOrSuffix(qName, "Address")) {
          address = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "Port")) {
-         port = new Integer(currentOrNull(currentText));
+         port = Integer.valueOf(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Endpoint")) {
          builder.endpoint(HostAndPort.fromParts(address, port));
          address = null;

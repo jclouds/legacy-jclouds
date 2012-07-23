@@ -276,6 +276,6 @@ public class JschSshClientLiveTest {
       } finally {
          Closeables.closeQuietly(response);
       }
-      assertEquals(response.getExitStatus().get(), new Integer(0));
+      assertEquals(response.getExitStatus().get(), Integer.valueOf(0));
    }
 }

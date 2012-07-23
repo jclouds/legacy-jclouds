@@ -264,8 +264,8 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
       assertNotNull(server.getHostId());
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
       assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-      assertEquals(new Integer(14362), server.getImage());
-      assertEquals(new Integer(1), server.getFlavor());
+      assertEquals(Integer.valueOf(14362), server.getImage());
+      assertEquals(Integer.valueOf(1), server.getFlavor());
       assertNotNull(server.getAddresses());
       // listAddresses tests..
       assertEquals(client.getAddresses(serverId), server.getAddresses());
@@ -332,7 +332,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    public void testCreateImage() throws Exception {
       Image image = client.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
-      assertEquals(new Integer(serverId), image.getServerRef());
+      assertEquals(Integer.valueOf(serverId), image.getServerRef());
       createdImageRef = image.getId()+"";
       blockUntilImageActive(createdImageRef);
    }
@@ -341,7 +341,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    public void testRebuildServer() throws Exception {
       client.rebuildServer(serverId, new RebuildServerOptions().withImage(createdImageRef));
       blockUntilServerActive(serverId);
-      assertEquals(new Integer(createdImageRef).intValue(),client.getServer(serverId).getImage().getId());
+      assertEquals(Integer.valueOf(createdImageRef).intValue(),client.getServer(serverId).getImage().getId());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
@@ -362,7 +362,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
       blockUntilServerVerifyResize(serverId);
       client.revertResizeServer(serverId);
       blockUntilServerActive(serverId);
-      assertEquals(new Integer(1), client.getServer(serverId).getFlavorRef());
+      assertEquals(Integer.valueOf(1), client.getServer(serverId).getFlavorRef());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
@@ -371,7 +371,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
       blockUntilServerVerifyResize(serverId2);
       client.confirmResizeServer(serverId2);
       blockUntilServerActive(serverId2);
-      assertEquals(new Integer(2), client.getServer(serverId2).getFlavorRef());
+      assertEquals(Integer.valueOf(2), client.getServer(serverId2).getFlavorRef());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize", "testConfirmResize" })

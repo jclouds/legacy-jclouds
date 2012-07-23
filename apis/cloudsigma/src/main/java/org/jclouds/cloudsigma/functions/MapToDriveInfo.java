@@ -69,7 +69,7 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
       if (from.containsKey("readers"))
          builder.readers(Splitter.on(' ').split(from.get("readers")));
       if (from.containsKey("size"))
-         builder.size(new Long(from.get("size")));
+         builder.size(Long.valueOf(from.get("size")));
       Map<String, String> metadata = Maps.newLinkedHashMap();
       for (Entry<String, String> entry : from.entrySet()) {
          if (entry.getKey().startsWith("user:"))
@@ -78,7 +78,7 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
       if (from.containsKey("use"))
          builder.use(Splitter.on(' ').split(from.get("use")));
       if (from.containsKey("bits"))
-         builder.bits(new Integer(from.get("bits")));
+         builder.bits(Integer.valueOf(from.get("bits")));
       if (from.containsKey("url"))
          builder.url(URI.create(from.get("url")));
       builder.encryptionKey(from.get("encryption:key"));
@@ -88,9 +88,9 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
       if (from.containsKey("drive_type"))
          builder.driveType(Splitter.on(',').split(from.get("drive_type")));
       if (from.containsKey("autoexpanding"))
-         builder.autoexpanding(new Boolean(from.get("autoexpanding")));
+         builder.autoexpanding(Boolean.valueOf(from.get("autoexpanding")));
       if (from.containsKey("free"))
-         builder.free(new Boolean(from.get("free")));
+         builder.free(Boolean.valueOf(from.get("free")));
       if (from.containsKey("type"))
          builder.type(DriveType.fromValue(from.get("type")));
       try {
@@ -104,13 +104,13 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
    protected DriveMetrics buildMetrics(Map<String, String> from) {
       DriveMetrics.Builder metricsBuilder = new DriveMetrics.Builder();
       if (from.containsKey("read:bytes"))
-         metricsBuilder.readBytes(new Long(from.get("read:bytes")));
+         metricsBuilder.readBytes(Long.valueOf(from.get("read:bytes")));
       if (from.containsKey("read:requests"))
-         metricsBuilder.readRequests(new Long(from.get("read:requests")));
+         metricsBuilder.readRequests(Long.valueOf(from.get("read:requests")));
       if (from.containsKey("write:bytes"))
-         metricsBuilder.writeBytes(new Long(from.get("write:bytes")));
+         metricsBuilder.writeBytes(Long.valueOf(from.get("write:bytes")));
       if (from.containsKey("write:requests"))
-         metricsBuilder.writeRequests(new Long(from.get("write:requests")));
+         metricsBuilder.writeRequests(Long.valueOf(from.get("write:requests")));
       return metricsBuilder.build();
    }
 }

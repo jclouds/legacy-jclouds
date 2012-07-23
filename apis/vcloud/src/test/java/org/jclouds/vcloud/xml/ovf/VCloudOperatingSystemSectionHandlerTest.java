@@ -55,7 +55,7 @@ public class VCloudOperatingSystemSectionHandlerTest extends BaseHandlerTest {
       assertEquals(result.getEdit(), new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.operatingSystemSection+xml",
                URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection/")));
-      assertEquals(result.getId(), new Integer(80));
+      assertEquals(result.getId(), Integer.valueOf(80));
       assertEquals(result.getVmwOsType(), "rhel5_64Guest");
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.operatingSystemSection+xml");
       assertEquals(result.getInfo(), "Specifies the operating system installed");

@@ -73,11 +73,11 @@ public class ParseServerListFromJsonResponseTest {
 
       assertEquals(response.get(0).getId(), 1234);
       assertEquals(response.get(0).getName(), "sample-server");
-      assertEquals(response.get(0).getImageId(), new Integer(2));
-      assertEquals(response.get(0).getFlavorId(), new Integer(1));
+      assertEquals(response.get(0).getImageId(), Integer.valueOf(2));
+      assertEquals(response.get(0).getFlavorId(), Integer.valueOf(1));
       assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
-      assertEquals(response.get(0).getProgress(), new Integer(60));
+      assertEquals(response.get(0).getProgress(), Integer.valueOf(60));
       List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
       List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
       Addresses addresses1 = new Addresses();
@@ -87,8 +87,8 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
       assertEquals(response.get(1).getId(), 5678);
       assertEquals(response.get(1).getName(), "sample-server2");
-      assertEquals(response.get(1).getImageId(), new Integer(2));
-      assertEquals(response.get(1).getFlavorId(), new Integer(1));
+      assertEquals(response.get(1).getImageId(), Integer.valueOf(2));
+      assertEquals(response.get(1).getFlavorId(), Integer.valueOf(1));
       assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
       assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);
       assertEquals(response.get(1).getProgress(), null);

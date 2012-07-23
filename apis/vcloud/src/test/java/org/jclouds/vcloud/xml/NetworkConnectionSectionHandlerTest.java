@@ -57,7 +57,7 @@ public class NetworkConnectionSectionHandlerTest {
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/networkConnectionSection/"));
       assertEquals(result.getType(), VCloudMediaType.NETWORKCONNECTIONSECTION_XML);
       assertEquals(result.getInfo(), "Specifies the available VM network connections");
-      assertEquals(result.getPrimaryNetworkConnectionIndex(), new Integer(0));
+      assertEquals(result.getPrimaryNetworkConnectionIndex(), Integer.valueOf(0));
       assertEquals(result.getEdit(), new ReferenceTypeImpl(null, VCloudMediaType.NETWORKCONNECTIONSECTION_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/networkConnectionSection/")));
       NetworkConnectionHandlerTest.checkNetworkConnection(Iterables.getOnlyElement(result.getConnections()));

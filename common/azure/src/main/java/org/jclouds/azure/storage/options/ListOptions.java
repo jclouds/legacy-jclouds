@@ -94,7 +94,7 @@ public class ListOptions extends BaseHttpRequestOptions {
 
    public Integer getMaxResults() {
       String maxresults = getFirstQueryOrNull("maxresults");
-      return (maxresults != null) ? new Integer(maxresults) : null;
+      return (maxresults != null) ? Integer.valueOf(maxresults) : null;
    }
 
    public static class Builder {

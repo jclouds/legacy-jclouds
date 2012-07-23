@@ -86,7 +86,7 @@ public class OperatingSystem implements Comparable<OperatingSystem> {
 
    @Override
    public int compareTo(OperatingSystem arg0) {
-      return new Integer(id).compareTo(arg0.getId());
+      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**

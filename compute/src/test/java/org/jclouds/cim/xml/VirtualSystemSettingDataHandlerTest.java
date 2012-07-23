@@ -124,7 +124,7 @@ public class VirtualSystemSettingDataHandlerTest extends BaseHandlerTest {
    @Test(enabled = false)
    public static void checkOs(OperatingSystemSection result) {
       assertEquals(result.getDescription(), "Ubuntu Linux (64-bit)");
-      assertEquals(result.getId(), new Integer(94));
+      assertEquals(result.getId(), Integer.valueOf(94));
       assertEquals(result.getInfo(), "Specifies the operating system installed");
    }
 }

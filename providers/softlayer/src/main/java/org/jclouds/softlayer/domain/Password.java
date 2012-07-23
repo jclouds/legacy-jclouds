@@ -82,7 +82,7 @@ public class Password implements Comparable<Password> {
 
     @Override
    public int compareTo(Password arg0) {
-      return new Integer(id).compareTo(arg0.getId());
+      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**

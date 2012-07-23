@@ -55,18 +55,18 @@ public class GuestCustomizationSectionHandlerTest extends BaseHandlerTest {
       assertEquals(result.getHref(),
             URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/guestCustomizationSection/"));
       assertEquals(result.getInfo(), "Specifies Guest OS Customization Settings");
-      assertEquals(result.isEnabled(), new Boolean(true));
-      assertEquals(result.shouldChangeSid(), new Boolean(false));
+      assertEquals(result.isEnabled(), Boolean.TRUE);
+      assertEquals(result.shouldChangeSid(), Boolean.FALSE);
       assertEquals(result.getVirtualMachineId(), "2087535248");
-      assertEquals(result.isJoinDomainEnabled(), new Boolean(false));
-      assertEquals(result.useOrgSettings(), new Boolean(false));
+      assertEquals(result.isJoinDomainEnabled(), Boolean.FALSE);
+      assertEquals(result.useOrgSettings(), Boolean.FALSE);
       assertEquals(result.getDomainName(), null);
       assertEquals(result.getDomainUserName(), null);
       assertEquals(result.getDomainUserPassword(), null);
-      assertEquals(result.isAdminPasswordEnabled(), new Boolean(true));
-      assertEquals(result.isAdminPasswordAuto(), new Boolean(true));
+      assertEquals(result.isAdminPasswordEnabled(), Boolean.TRUE);
+      assertEquals(result.isAdminPasswordAuto(), Boolean.TRUE);
       assertEquals(result.getAdminPassword(), null);
-      assertEquals(result.isResetPasswordRequired(), new Boolean(false));
+      assertEquals(result.isResetPasswordRequired(), Boolean.FALSE);
       assertEquals(result.getCustomizationScript(), "cat > /root/foo.txt<<EOF\nI '\"love\"' {asc|!}*&\nEOF\n");
       assertEquals(result.getComputerName(), "RHEL5");
       assertEquals(

@@ -72,7 +72,7 @@ public class ListOptions extends BaseHttpRequestOptions {
 
    public Integer getLimit() {
       String maxresults = getFirstHeaderOrNull("x-emc-limit");
-      return (maxresults != null) ? new Integer(maxresults) : null;
+      return (maxresults != null) ? Integer.valueOf(maxresults) : null;
    }
 
    public static class Builder {

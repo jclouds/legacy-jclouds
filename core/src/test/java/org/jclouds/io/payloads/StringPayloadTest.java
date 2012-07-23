@@ -33,7 +33,7 @@ import com.google.common.base.Charsets;
 public class StringPayloadTest {
    public void testLengthIsCorrectPerUTF8() {
       Payload stringPayload = new StringPayload("unic₪de");
-      assertEquals(stringPayload.getContentMetadata().getContentLength(), new Long(
+      assertEquals(stringPayload.getContentMetadata().getContentLength(), Long.valueOf(
             "unic₪de".getBytes(Charsets.UTF_8).length));
    }
 }

@@ -65,13 +65,13 @@ public class HardwareProfileHandlerTest {
       HardwareProfile expects = new HardwareProfile(
             URI.create("http://localhost:3001/api/hardware_profiles/m1-xlarge"), "m1-xlarge", "m1-xlarge",
             ImmutableSet.<HardwareProperty> of(
-                  new FixedHardwareProperty("cpu", "count", new Long(4)),
-                  new RangeHardwareProperty("memory", "MB", new Long(12288), new HardwareParameter(URI
+                  new FixedHardwareProperty("cpu", "count", Long.valueOf(4)),
+                  new RangeHardwareProperty("memory", "MB", Long.valueOf(12288), new HardwareParameter(URI
                         .create("http://localhost:3001/api/instances"), "post", "hwp_memory", "create"),
-                        new Long(12288), new Long(32768)),
-                  new EnumHardwareProperty("storage", "GB", new Long(1024), new HardwareParameter(URI
+                        Long.valueOf(12288), Long.valueOf(32768)),
+                  new EnumHardwareProperty("storage", "GB", Long.valueOf(1024), new HardwareParameter(URI
                         .create("http://localhost:3001/api/instances"), "post", "hwp_storage", "create"),
-                        ImmutableSet.<Object> of(new Long(1024), new Long(2048), new Long(4096))),
+                        ImmutableSet.<Object> of(Long.valueOf(1024), Long.valueOf(2048), Long.valueOf(4096))),
                   new FixedHardwareProperty("architecture", "label", "x86_64"))
       );
       assertEquals(parseHardwareProfile(), expects);

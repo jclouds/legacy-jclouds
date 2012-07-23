@@ -52,11 +52,11 @@ public class ParseServerFromJsonResponseTest {
 
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "sample-server");
-      assertEquals(response.getImageId(), new Integer(2));
-      assertEquals(response.getFlavorId(), new Integer(1));
+      assertEquals(response.getImageId(), Integer.valueOf(2));
+      assertEquals(response.getFlavorId(), Integer.valueOf(1));
       assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.getStatus(), ServerStatus.BUILD);
-      assertEquals(response.getProgress(), new Integer(60));
+      assertEquals(response.getProgress(), Integer.valueOf(60));
       List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
       List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
       Addresses addresses1 = new Addresses();

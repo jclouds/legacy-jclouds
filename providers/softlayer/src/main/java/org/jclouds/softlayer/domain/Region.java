@@ -76,7 +76,7 @@ public class Region implements Comparable<Region> {
 
    @Override
    public int compareTo(Region arg0) {
-      return new Integer(sortOrder).compareTo(arg0.sortOrder);
+      return Integer.valueOf(sortOrder).compareTo(arg0.sortOrder);
    }
 
    /**

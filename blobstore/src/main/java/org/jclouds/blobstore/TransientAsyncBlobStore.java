@@ -591,7 +591,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             byte[] byteArray = out.toByteArray();
             blob.setPayload(byteArray);
             HttpUtils.copy(cmd, blob.getPayload().getContentMetadata());
-            blob.getPayload().getContentMetadata().setContentLength(new Long(byteArray.length));
+            blob.getPayload().getContentMetadata().setContentLength(Long.valueOf(byteArray.length));
          }
       }
       checkNotNull(blob.getPayload(), "payload " + blob);
