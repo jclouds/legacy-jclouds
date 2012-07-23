@@ -143,6 +143,11 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       return containerToLocation.get(containerName);
    }
 
+   @Override
+   public String getSeparator() {
+      return "/";
+   }
+
    private Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
       checkNotNull(in, "blob");
       checkNotNull(in.getPayload(), "blob.payload");

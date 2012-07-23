@@ -127,4 +127,7 @@ public interface LocalStorageStrategy {
      * @return Location of container or null
      */
     Location getLocation(String containerName);
+
+    /** @return path separator, either / or \ */
+    String getSeparator();
 }
