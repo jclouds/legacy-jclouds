@@ -24,6 +24,6 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.concurrent.Timeout;
 
 @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
-public interface TransientBlobStore extends BlobStore {
+public interface LocalBlobStore extends BlobStore {
 
 }

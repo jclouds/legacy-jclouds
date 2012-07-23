@@ -43,7 +43,7 @@ import org.jclouds.atmos.domain.SystemMetadata;
 import org.jclouds.atmos.domain.UserMetadata;
 import org.jclouds.atmos.options.ListOptions;
 import org.jclouds.atmos.options.PutOptions;
-import org.jclouds.blobstore.TransientAsyncBlobStore;
+import org.jclouds.blobstore.LocalAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
@@ -61,7 +61,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class StubAtmosAsyncClient implements AtmosAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final TransientAsyncBlobStore blobStore;
+   private final LocalAsyncBlobStore blobStore;
    private final AtmosObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
@@ -71,7 +71,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
    private final ExecutorService service;
 
    @Inject
-   private StubAtmosAsyncClient(TransientAsyncBlobStore blobStore, AtmosObject.Factory objectProvider,
+   private StubAtmosAsyncClient(LocalAsyncBlobStore blobStore, AtmosObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobMetadataToObject blob2ObjectInfo, ListOptionsToBlobStoreListOptions container2ContainerListOptions,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
