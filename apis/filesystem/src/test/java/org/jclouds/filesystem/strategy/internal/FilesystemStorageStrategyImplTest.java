@@ -86,7 +86,7 @@ public class FilesystemStorageStrategyImplTest {
             }
          }
 
-      }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
+      }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl(), new JCECrypto());
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
    }
 
@@ -408,7 +408,7 @@ public class FilesystemStorageStrategyImplTest {
       assertEquals(fileForPayload.getAbsolutePath(), fullPath + blobKey, "Wrong file path");
    }
 
-   public void testGetFileForBlobKey_AbsolutePath() throws IOException {
+   public void testGetFileForBlobKey_AbsolutePath() throws Exception {
       String absoluteBasePath = (new File(getAbsoluteDirectory(), "basedir")).getAbsolutePath() + FS;
       String absoluteContainerPath = absoluteBasePath + CONTAINER_NAME + FS;
 
@@ -423,7 +423,7 @@ public class FilesystemStorageStrategyImplTest {
                         return null;
                      }
                   }
-               }, absoluteBasePath, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
+               }, absoluteBasePath, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl(), new JCECrypto());
       TestUtils.cleanDirectoryContent(absoluteContainerPath);
 
       String blobKey;
