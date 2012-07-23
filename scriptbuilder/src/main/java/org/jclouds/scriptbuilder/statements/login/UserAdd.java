@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Named;
 
+import com.google.common.base.*;
 import org.jclouds.crypto.Sha512Crypt;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -35,14 +36,11 @@ import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
 import org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import org.jclouds.util.Strings2;
 
 /**
  * Creates a statement that will add a given user to a machine ("login"), with optional 
@@ -69,6 +67,7 @@ public class UserAdd implements Statement {
       private List<String> groups = Lists.newArrayList();
       private List<String> authorizeRSAPublicKeys = Lists.newArrayList();
       private String shell = "/bin/bash";
+      private String fullName;
 
       /**
        * See --home in `man useradd`. 
@@ -128,18 +127,22 @@ public class UserAdd implements Statement {
          return this;
       }
 
+      public UserAdd.Builder fullName(String fullName) {
+         this.fullName = fullName;
+         return this;
+      }
       public UserAdd build() {
-         return new UserAdd(login, groups, password, RSAPrivateKey, authorizeRSAPublicKeys, home, defaultHome, shell);
+         return new UserAdd(login, groups, password, RSAPrivateKey, authorizeRSAPublicKeys, home, defaultHome, shell, fullName);
       }
    }
 
    public UserAdd(String login, List<String> groups, @Nullable String password, @Nullable String installRSAPrivateKey,
          List<String> authorizeRSAPublicKeys, String defaultHome, String shell) {
-      this(login, groups, password, installRSAPrivateKey, authorizeRSAPublicKeys, null, defaultHome, shell);
+      this(login, groups, password, installRSAPrivateKey, authorizeRSAPublicKeys, null, defaultHome, shell, login);
    }
    
    public UserAdd(String login, List<String> groups, @Nullable String password, @Nullable String installRSAPrivateKey,
-         List<String> authorizeRSAPublicKeys, @Nullable String home, String defaultHome, String shell) {
+         List<String> authorizeRSAPublicKeys, @Nullable String home, String defaultHome, String shell, String fullName) {
       this.login = checkNotNull(login, "login");
       this.password = password;
       this.groups = ImmutableList.copyOf(checkNotNull(groups, "groups"));
@@ -149,6 +152,7 @@ public class UserAdd implements Statement {
       this.home = home;
       this.defaultHome = checkNotNull(defaultHome, "defaultHome");
       this.shell = checkNotNull(shell, "shell");
+      this.fullName = fullName;
    }
 
    private final String home;
@@ -159,6 +163,7 @@ public class UserAdd implements Statement {
    private final String installRSAPrivateKey;
    private final List<String> authorizeRSAPublicKeys;
    private final String shell;
+   private final String fullName;
 
    private Function<String, String> cryptFunction = Sha512Crypt.function();
 
@@ -187,8 +192,13 @@ public class UserAdd implements Statement {
 
       ImmutableMap.Builder<String, String> userAddOptions = ImmutableMap.builder();
       // Include the username as the full name for now.
-      userAddOptions.put("-c", login);
-      
+
+      if (Strings.isNullOrEmpty(fullName)) {
+         userAddOptions.put("-c", login);
+      } else {
+         userAddOptions.put("-c", "'" + fullName + "'");
+      }
+
       userAddOptions.put("-s", shell);
       if (groups.size() > 0) {
          for (String group : groups)
