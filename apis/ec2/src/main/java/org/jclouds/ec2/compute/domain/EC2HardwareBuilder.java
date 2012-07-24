@@ -352,6 +352,14 @@ public class EC2HardwareBuilder extends HardwareBuilder {
             .virtualizationType(VirtualizationType.HVM);
    }
 
+   public static EC2HardwareBuilder hi1_4xlarge() {
+      return new EC2HardwareBuilder(InstanceType.HI1_4XLARGE)
+            .ram(60 * 1024 + 512)
+            .processors(ImmutableList.of(new Processor(8.0, 5.5), new Processor(8.0, 5.5)))
+            .volumes(ImmutableList.<Volume> of(new VolumeImpl(1024.0f, "/dev/sda1", true, false),
+                  new VolumeImpl(1024.0f, "/dev/sdb", false, false)));
+   }
+
    @SuppressWarnings("unchecked")
    @Override
    public Hardware build() {

@@ -36,11 +36,13 @@ import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.predicates.NodePredicates;
+import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -131,7 +133,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
 
    public void testStartCCInstance() throws Exception {
 
-      Template template = view.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX).build();
+      Template template = view.getComputeService().templateBuilder().fromHardware(EC2HardwareBuilder.cc2_8xlarge().build()).osFamily(OsFamily.AMZN_LINUX).build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
