@@ -33,6 +33,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.jclouds.blobstore.LocalStorageStrategy;
@@ -49,10 +53,6 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
-import com.google.common.io.Files;
 
 /**
  * 
@@ -92,32 +92,15 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    }
 
    @Override
-   public boolean blobExists(String container, String key) {
-      filesystemContainerNameValidator.validate(container);
-      filesystemBlobKeyValidator.validate(key);
-      return buildPathAndChecksIfFileExists(container, key);
-   }
+   public Iterable<String> getAllContainerNames() {
+      Iterable<String> containers = new Iterable<String>() {
+         @Override
+         public Iterator<String> iterator() {
+            return new FileIterator(buildPathStartingFromBaseDir(), DirectoryFileFilter.INSTANCE);
+         }
+      };
 
-   @Override
-   public Blob getBlob(final String container, final String key) {
-      BlobBuilder builder = blobBuilders.get();
-      builder.name(key);
-      File file = getFileForBlobKey(container, key);
-      try {
-         builder.payload(file).calculateMD5();
-      } catch (IOException e) {
-         logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
-         Throwables.propagateIfPossible(e);
-      }
-      Blob blob = builder.build();
-      if (blob.getPayload().getContentMetadata().getContentMD5() != null)
-         blob.getMetadata().setETag(CryptoStreams.hex(blob.getPayload().getContentMetadata().getContentMD5()));
-      return blob;
-   }
-
-   public boolean createContainer(String container) {
-      filesystemContainerNameValidator.validate(container);
-      return createContainerInLocation(container, null);
+      return containers;
    }
 
    @Override
@@ -134,22 +117,15 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       deleteDirectory(container, null);
    }
 
-   /**
-    * Empty the directory of its content (files and subdirectories)
-    * 
-    * @param container
-    */
    @Override
    public void clearContainer(final String container) {
-      filesystemContainerNameValidator.validate(container);
       clearContainer(container, ListContainerOptions.Builder.recursive());
    }
 
    @Override
    public void clearContainer(String container, ListContainerOptions options) {
       filesystemContainerNameValidator.validate(container);
-      // TODO
-      // now all is deleted, check it based on options
+      // TODO implement options
       try {
          File containerFile = openFolder(container);
          File[] children = containerFile.listFiles();
@@ -163,85 +139,11 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       }
    }
 
-   public Blob newBlob(@ParamValidators({ FilesystemBlobKeyValidator.class }) String name) {
-      filesystemBlobKeyValidator.validate(name);
-      return blobBuilders.get().name(name).build();
-   }
-
    @Override
-   public void removeBlob(final String container, final String blobKey) {
+   public boolean blobExists(String container, String key) {
       filesystemContainerNameValidator.validate(container);
-      filesystemBlobKeyValidator.validate(blobKey);
-      String fileName = buildPathStartingFromBaseDir(container, blobKey);
-      logger.debug("Deleting blob %s", fileName);
-      File fileToBeDeleted = new File(fileName);
-      fileToBeDeleted.delete();
-
-      // now examins if the key of the blob is a complex key (with a directory structure)
-      // and eventually remove empty directory
-      removeDirectoriesTreeOfBlobKey(container, blobKey);
-   }
-
-   /**
-    * Return an iterator that reports all the containers under base path
-    * 
-    * @return
-    */
-   @Override
-   public Iterable<String> getAllContainerNames() {
-      Iterable<String> containers = new Iterable<String>() {
-         @Override
-         public Iterator<String> iterator() {
-            return new FileIterator(buildPathStartingFromBaseDir(), DirectoryFileFilter.INSTANCE);
-         }
-      };
-
-      return containers;
-   }
-
-   /**
-    * Returns a {@link File} object that links to the blob
-    * 
-    * @param container
-    * @param blobKey
-    * @return
-    */
-   public File getFileForBlobKey(String container, String blobKey) {
-      filesystemContainerNameValidator.validate(container);
-      filesystemBlobKeyValidator.validate(blobKey);
-      String fileName = buildPathStartingFromBaseDir(container, blobKey);
-      File blobFile = new File(fileName);
-      return blobFile;
-   }
-
-   @Override
-   public String putBlob(final String containerName, final Blob blob) throws IOException {
-      String blobKey = blob.getMetadata().getName();
-      Payload payload = blob.getPayload();
-      filesystemContainerNameValidator.validate(containerName);
-      filesystemBlobKeyValidator.validate(blobKey);
-      File outputFile = getFileForBlobKey(containerName, blobKey);
-      FileOutputStream output = null;
-      try {
-         Files.createParentDirs(outputFile);
-         if (payload.getRawContent() instanceof File)
-            Files.copy((File) payload.getRawContent(), outputFile);
-         else {
-            output = new FileOutputStream(outputFile);
-            payload.writeTo(output);
-         }
-         Payloads.calculateMD5(payload, crypto.md5());
-         String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
-         return eTag;
-      } catch (IOException ex) {
-         if (outputFile != null) {
-            outputFile.delete();
-         }
-         throw ex;
-      } finally {
-         Closeables.closeQuietly(output);
-         payload.release();
-      }
+      filesystemBlobKeyValidator.validate(key);
+      return buildPathAndChecksIfFileExists(container, key);
    }
 
    /**
@@ -276,6 +178,67 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    }
 
    @Override
+   public Blob getBlob(final String container, final String key) {
+      BlobBuilder builder = blobBuilders.get();
+      builder.name(key);
+      File file = getFileForBlobKey(container, key);
+      try {
+         builder.payload(file).calculateMD5();
+      } catch (IOException e) {
+         logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
+         Throwables.propagateIfPossible(e);
+      }
+      Blob blob = builder.build();
+      if (blob.getPayload().getContentMetadata().getContentMD5() != null)
+         blob.getMetadata().setETag(CryptoStreams.hex(blob.getPayload().getContentMetadata().getContentMD5()));
+      return blob;
+   }
+
+   @Override
+   public String putBlob(final String containerName, final Blob blob) throws IOException {
+      String blobKey = blob.getMetadata().getName();
+      Payload payload = blob.getPayload();
+      filesystemContainerNameValidator.validate(containerName);
+      filesystemBlobKeyValidator.validate(blobKey);
+      File outputFile = getFileForBlobKey(containerName, blobKey);
+      FileOutputStream output = null;
+      try {
+         Files.createParentDirs(outputFile);
+         if (payload.getRawContent() instanceof File)
+            Files.copy((File) payload.getRawContent(), outputFile);
+         else {
+            output = new FileOutputStream(outputFile);
+            payload.writeTo(output);
+         }
+         Payloads.calculateMD5(payload, crypto.md5());
+         String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
+         return eTag;
+      } catch (IOException ex) {
+         if (outputFile != null) {
+            outputFile.delete();
+         }
+         throw ex;
+      } finally {
+         Closeables.closeQuietly(output);
+         payload.release();
+      }
+   }
+
+   @Override
+   public void removeBlob(final String container, final String blobKey) {
+      filesystemContainerNameValidator.validate(container);
+      filesystemBlobKeyValidator.validate(blobKey);
+      String fileName = buildPathStartingFromBaseDir(container, blobKey);
+      logger.debug("Deleting blob %s", fileName);
+      File fileToBeDeleted = new File(fileName);
+      fileToBeDeleted.delete();
+
+      // now examins if the key of the blob is a complex key (with a directory structure)
+      // and eventually remove empty directory
+      removeDirectoriesTreeOfBlobKey(container, blobKey);
+   }
+
+   @Override
    public Location getLocation(final String containerName) {
       return null;
    }
@@ -283,6 +246,31 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    @Override
    public String getSeparator() {
       return File.separator;
+   }
+
+   public boolean createContainer(String container) {
+      filesystemContainerNameValidator.validate(container);
+      return createContainerInLocation(container, null);
+   }
+
+   public Blob newBlob(@ParamValidators({ FilesystemBlobKeyValidator.class }) String name) {
+      filesystemBlobKeyValidator.validate(name);
+      return blobBuilders.get().name(name).build();
+   }
+
+   /**
+    * Returns a {@link File} object that links to the blob
+    *
+    * @param container
+    * @param blobKey
+    * @return
+    */
+   public File getFileForBlobKey(String container, String blobKey) {
+      filesystemContainerNameValidator.validate(container);
+      filesystemBlobKeyValidator.validate(blobKey);
+      String fileName = buildPathStartingFromBaseDir(container, blobKey);
+      File blobFile = new File(fileName);
+      return blobFile;
    }
 
    public boolean directoryExists(String container, String directory) {

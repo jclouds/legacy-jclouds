@@ -32,6 +32,19 @@ import org.jclouds.domain.Location;
 public interface LocalStorageStrategy {
 
     /**
+     * Checks if a container exists
+     * @param container
+     * @return
+     */
+    boolean containerExists(String container);
+
+    /**
+     * Return an iterator that reports all the containers under base path
+     * @return
+     */
+    Iterable<String> getAllContainerNames();
+
+    /**
      * Creates a new container
      *
      * @param container
@@ -44,13 +57,6 @@ public interface LocalStorageStrategy {
      * @param container
      */
     void deleteContainer(String container);
-
-    /**
-     * Checks if a container exists
-     * @param container
-     * @return
-     */
-    boolean containerExists(String container);
 
     /**
      * Empty the container of its content (files and subdirectories), but doesn't
@@ -71,18 +77,20 @@ public interface LocalStorageStrategy {
     void clearContainer(String container, ListContainerOptions options);
 
     /**
-     * Return an iterator that reports all the containers under base path
-     * @return
-     */
-    Iterable<String> getAllContainerNames();
-
-    /**
      * Return true if a blob named by key exists
      * @param container
      * @param key
      * @return
      */
     boolean blobExists(String container, String key);
+
+    /**
+     * Returns all the blobs key inside a container
+     * @param container
+     * @return
+     * @throws IOException
+     */
+    Iterable<String> getBlobKeysInsideContainer(String container) throws IOException;
 
     /**
      * Load the blob with the given key belonging to the container with the given
@@ -99,21 +107,6 @@ public interface LocalStorageStrategy {
     Blob getBlob(String containerName, String blobName);
 
     /**
-     * Returns all the blobs key inside a container
-     * @param container
-     * @return
-     * @throws IOException
-     */
-    Iterable<String> getBlobKeysInsideContainer(String container) throws IOException;
-
-    /**
-     * Remove blob named by the given key
-     * @param container
-     * @param key
-     */
-    void removeBlob(String container, String key);
-
-    /**
      * Write a {@link Blob} into a file
      * @param container
      * @param blob
@@ -121,6 +114,13 @@ public interface LocalStorageStrategy {
      * @throws IOException
      */
     String putBlob(String containerName, Blob blob) throws IOException;
+
+    /**
+     * Remove blob named by the given key
+     * @param container
+     * @param key
+     */
+    void removeBlob(String container, String key);
 
     /**
      * @param containerName name of container
