@@ -634,7 +634,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
       Matcher matcher = parseReported.matcher(exec.getOutput());
       if (matcher.find())
-         stats.reportedStartupTimeMilliseconds = new Long(matcher.group(1));
+         stats.reportedStartupTimeMilliseconds = Long.valueOf(matcher.group(1));
 
       getAnonymousLogger().info(format("<< %s on node(%s) %s", bgProcess, node.getId(), stats));
       return stats;

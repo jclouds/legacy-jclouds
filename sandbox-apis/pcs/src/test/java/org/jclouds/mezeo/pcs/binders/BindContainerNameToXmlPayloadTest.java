@@ -40,7 +40,7 @@ public class BindContainerNameToXmlPayloadTest {
       binder.bindToRequest(request, "foo");
 
       assertEquals(request.getPayload().getRawContent(), "<container><name>foo</name></container>");
-      assertEquals(request.getPayload().getContentMetadata().getContentLength(), new Long(
+      assertEquals(request.getPayload().getContentMetadata().getContentLength(), Long.valueOf(
                "<container><name>foo</name></container>".getBytes().length));
       assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/unknown");
 

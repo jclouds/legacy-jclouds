@@ -32,7 +32,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.features.QueryAsyncApi;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -42,7 +42,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see AdminQueryApi
  * @author Aled Sage
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminQueryAsyncApi extends QueryAsyncApi {
    

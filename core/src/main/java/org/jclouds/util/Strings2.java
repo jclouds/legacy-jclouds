@@ -46,6 +46,8 @@ import javax.annotation.Resource;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
 
 /**
  * 
@@ -123,7 +125,11 @@ public class Strings2 {
       return input;
    }
 
-   public static final String UTF8_ENCODING = "UTF-8";
+   public static String toString(InputSupplier<? extends InputStream> supplier)
+         throws IOException {
+      return CharStreams.toString(CharStreams.newReaderSupplier(supplier,
+         Charsets.UTF_8));
+   }
 
    public static String toStringAndClose(InputStream input) throws IOException {
       checkNotNull(input, "input");
@@ -143,42 +149,8 @@ public class Strings2 {
       return new ByteArrayInputStream(in.getBytes(Charsets.UTF_8));
    }
 
-   /**
-    * Encode the given string with the given encoding, if possible. If the encoding fails with
-    * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
-    * encoding.
-    * 
-    * @param str
-    *           what to encode
-    * @param charsetName
-    *           the name of a supported {@link java.nio.charset.Charset </code>charset<code>}
-    * @return properly encoded String.
-    */
-   public static byte[] encodeString(String str, String charsetName) {
-      try {
-         return str.getBytes(charsetName);
-      } catch (UnsupportedEncodingException e) {
-         logger.warn(e, "Failed to encode string to bytes with encoding " + charsetName
-               + ". Falling back to system's default encoding");
-         return str.getBytes();
-      }
-   }
-
    @Resource
    private static Logger logger = Logger.NULL;
-
-   /**
-    * Encode the given string with the UTF-8 encoding, the sane default. In the very unlikely event
-    * the encoding fails with {@link UnsupportedEncodingException}, log a warning and fall back to
-    * the system's default encoding.
-    * 
-    * @param str
-    *           what to encode
-    * @return properly encoded String.
-    */
-   public static byte[] encodeString(String str) {
-      return encodeString(str, UTF8_ENCODING);
-   }
 
    /**
     * replaces tokens that are expressed as <code>{token}</code>

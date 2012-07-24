@@ -81,7 +81,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                }
             } else {
                try {
-                  message = Strings2.toStringAndClose(response.getPayload().getInput());
+                  message = Strings2.toString(response.getPayload());
                   exception = new HttpResponseException(command, response, message);
                } catch (IOException e) {
                }

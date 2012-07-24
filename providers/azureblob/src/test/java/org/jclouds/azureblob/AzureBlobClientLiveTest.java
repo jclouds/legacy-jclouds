@@ -265,9 +265,9 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
 
       // Test GET of object (including updated metadata)
       AzureBlob getBlob = getApi().getBlob(privateContainer, object.getProperties().getName());
-      assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data);
+      assertEquals(Strings2.toString(getBlob.getPayload()), data);
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
-      assertEquals(getBlob.getPayload().getContentMetadata().getContentLength(), new Long(data.length()));
+      assertEquals(getBlob.getPayload().getContentMetadata().getContentLength(), Long.valueOf(data.length()));
       assertEquals(getBlob.getProperties().getContentMetadata().getContentType(), "text/plain");
       assertEquals(CryptoStreams.hex(md5),
             CryptoStreams.hex(getBlob.getProperties().getContentMetadata().getContentMD5()));
@@ -310,7 +310,7 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       object = getApi().newBlob();
       object.getProperties().setName("chunked-object");
       object.setPayload(bais);
-      object.getPayload().getContentMetadata().setContentLength(new Long(data.getBytes().length));
+      object.getPayload().getContentMetadata().setContentLength(Long.valueOf(data.getBytes().length));
       newEtag = getApi().putBlob(privateContainer, object);
       assertEquals(CryptoStreams.hex(md5),
             CryptoStreams.hex(getBlob.getProperties().getContentMetadata().getContentMD5()));

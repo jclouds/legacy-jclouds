@@ -104,7 +104,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
          builder.eTag(currentETag);
          builder.contentMD5(CryptoStreams.hex(Strings2.replaceAll(currentETag, '"', "")));
       } else if (qName.equals("Size")) {
-         builder.contentLength(new Long(currentOrNull(currentText)));
+         builder.contentLength(Long.valueOf(currentOrNull(currentText)));
       } else if (qName.equals("Owner")) {
          builder.owner(currentOwner);
          currentOwner = null;

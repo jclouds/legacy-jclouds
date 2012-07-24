@@ -22,13 +22,13 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.smartos.compute.domain.DataSet;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.smartos.compute.domain.DataSet;
 
 import com.google.common.base.Function;
 
@@ -53,7 +53,8 @@ public class DataSetToImage implements Function<DataSet, Image> {
       OsFamily family;
       try {
          family = OsFamily.SOLARIS;
-         builder.operatingSystem(new OperatingSystem.Builder().name(from.getUrn()).description(from.getUrn()).family(family).build());
+         builder.operatingSystem(new OperatingSystem.Builder().name(from.getUrn()).description(from.getUrn())
+                  .family(family).build());
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from);
       }

@@ -37,7 +37,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.OrgList;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.OrgListHandler;
@@ -50,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@RequestFilters(SetVCloudTokenCookie.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface OrgAsyncClient {
 
    /**

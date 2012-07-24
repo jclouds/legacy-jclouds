@@ -42,7 +42,6 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyValidatorImpl;
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainerNameValidatorImpl;
-import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
 import org.testng.annotations.AfterMethod;
@@ -73,7 +72,7 @@ public class FilesystemStorageStrategyImplTest {
       System.setProperty(LOGGING_CONFIG_KEY, LOGGING_CONFIG_VALUE);
    }
 
-   private FilesystemStorageStrategy storageStrategy;
+   private FilesystemStorageStrategyImpl storageStrategy;
 
    @BeforeMethod
    protected void setUp() throws Exception {
@@ -87,7 +86,7 @@ public class FilesystemStorageStrategyImplTest {
             }
          }
 
-      }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
+      }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl(), new JCECrypto());
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
    }
 
@@ -409,12 +408,12 @@ public class FilesystemStorageStrategyImplTest {
       assertEquals(fileForPayload.getAbsolutePath(), fullPath + blobKey, "Wrong file path");
    }
 
-   public void testGetFileForBlobKey_AbsolutePath() throws IOException {
+   public void testGetFileForBlobKey_AbsolutePath() throws Exception {
       String absoluteBasePath = (new File(getAbsoluteDirectory(), "basedir")).getAbsolutePath() + FS;
       String absoluteContainerPath = absoluteBasePath + CONTAINER_NAME + FS;
 
       // create storageStrategy with an absolute path
-      FilesystemStorageStrategy storageStrategyAbsolute = new FilesystemStorageStrategyImpl(
+      FilesystemStorageStrategyImpl storageStrategyAbsolute = new FilesystemStorageStrategyImpl(
                new Provider<BlobBuilder>() {
                   @Override
                   public BlobBuilder get() {
@@ -424,7 +423,7 @@ public class FilesystemStorageStrategyImplTest {
                         return null;
                      }
                   }
-               }, absoluteBasePath, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
+               }, absoluteBasePath, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl(), new JCECrypto());
       TestUtils.cleanDirectoryContent(absoluteContainerPath);
 
       String blobKey;

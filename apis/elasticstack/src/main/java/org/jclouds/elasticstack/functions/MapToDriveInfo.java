@@ -65,7 +65,7 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
       if (from.containsKey("readers"))
          builder.readers(Splitter.on(' ').split(from.get("readers")));
       if (from.containsKey("size"))
-         builder.size(new Long(from.get("size")));
+         builder.size(Long.valueOf(from.get("size")));
       Map<String, String> metadata = Maps.newLinkedHashMap();
       for (Entry<String, String> entry : from.entrySet()) {
          if (entry.getKey().startsWith("user:"))
@@ -83,13 +83,13 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
    protected DriveMetrics buildMetrics(Map<String, String> from) {
       DriveMetrics.Builder metricsBuilder = new DriveMetrics.Builder();
       if (from.containsKey("read:bytes"))
-         metricsBuilder.readBytes(new Long(from.get("read:bytes")));
+         metricsBuilder.readBytes(Long.valueOf(from.get("read:bytes")));
       if (from.containsKey("read:requests"))
-         metricsBuilder.readRequests(new Long(from.get("read:requests")));
+         metricsBuilder.readRequests(Long.valueOf(from.get("read:requests")));
       if (from.containsKey("write:bytes"))
-         metricsBuilder.writeBytes(new Long(from.get("write:bytes")));
+         metricsBuilder.writeBytes(Long.valueOf(from.get("write:bytes")));
       if (from.containsKey("write:requests"))
-         metricsBuilder.writeRequests(new Long(from.get("write:requests")));
+         metricsBuilder.writeRequests(Long.valueOf(from.get("write:requests")));
       return metricsBuilder.build();
    }
 }

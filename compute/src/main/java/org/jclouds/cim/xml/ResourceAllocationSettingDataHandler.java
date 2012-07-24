@@ -67,13 +67,13 @@ public class ResourceAllocationSettingDataHandler extends ParseSax.HandlerWithRe
          } else if (equalsOrSuffix(qName, "AllocationUnits")) {
             builder.allocationUnits(current);
          } else if (equalsOrSuffix(qName, "AutomaticAllocation")) {
-            builder.automaticAllocation(new Boolean(current));
+            builder.automaticAllocation(Boolean.valueOf(current));
          } else if (equalsOrSuffix(qName, "AutomaticDeallocation")) {
-            builder.automaticDeallocation(new Boolean(current));
+            builder.automaticDeallocation(Boolean.valueOf(current));
          } else if (equalsOrSuffix(qName, "ConsumerVisibility")) {
             builder.consumerVisibility(ConsumerVisibility.fromValue(current));
          } else if (equalsOrSuffix(qName, "Limit")) {
-            builder.limit(new Long(current));
+            builder.limit(Long.valueOf(current));
          } else if (equalsOrSuffix(qName, "MappingBehavior")) {
             builder.mappingBehavior(MappingBehavior.fromValue(current));
          } else if (equalsOrSuffix(qName, "OtherResourceType")) {
@@ -83,17 +83,17 @@ public class ResourceAllocationSettingDataHandler extends ParseSax.HandlerWithRe
          } else if (equalsOrSuffix(qName, "PoolID")) {
             builder.poolID(current);
          } else if (equalsOrSuffix(qName, "Reservation")) {
-            builder.reservation(new Long(current));
+            builder.reservation(Long.valueOf(current));
          } else if (equalsOrSuffix(qName, "ResourceSubType")) {
             builder.resourceSubType(current);
          } else if (equalsOrSuffix(qName, "ResourceType")) {
             builder.resourceType(ResourceType.fromValue(current));
          } else if (equalsOrSuffix(qName, "VirtualQuantity")) {
-            builder.virtualQuantity(new Long(current));
+            builder.virtualQuantity(Long.valueOf(current));
          } else if (equalsOrSuffix(qName, "VirtualQuantityUnits")) {
             builder.virtualQuantityUnits(current);
          } else if (equalsOrSuffix(qName, "Weight")) {
-            builder.weight(new Integer(current));
+            builder.weight(Integer.valueOf(current));
          } else if (equalsOrSuffix(qName, "Connection")) {
             builder.connection(current);
          } else if (equalsOrSuffix(qName, "HostResource")) {

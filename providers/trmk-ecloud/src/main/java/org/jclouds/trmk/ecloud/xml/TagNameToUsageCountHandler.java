@@ -50,7 +50,7 @@ public class TagNameToUsageCountHandler extends ParseSax.HandlerWithResult<Map<S
       if (equalsOrSuffix(qName, "Name")) {
          name = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "UsageCount")) {
-         builder.put(name, new Integer(currentOrNull(currentText)));
+         builder.put(name, Integer.valueOf(currentOrNull(currentText)));
       }
       currentText = new StringBuilder();
    }

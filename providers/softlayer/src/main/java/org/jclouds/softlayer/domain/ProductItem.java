@@ -130,7 +130,7 @@ public class ProductItem implements Comparable<ProductItem> {
 
    @Override
    public int compareTo(ProductItem arg0) {
-      return new Integer(id).compareTo(arg0.getId());
+      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**

@@ -55,7 +55,7 @@ import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.xml.VAppTemplateHandlerTest;
 import org.testng.annotations.Test;
 
@@ -82,7 +82,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), SetVCloudTokenCookie.class);
+      assertEquals(request.getFilters().get(0).getClass(), AddVCloudAuthorizationAndCookieToRequest.class);
    }
 
    @Override

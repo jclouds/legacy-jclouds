@@ -656,7 +656,7 @@ public class FilesystemAsyncBlobStoreTest {
         assertEquals(metadata.getUserMetadata().size(), 0, "Wrong blob UserMetadata");
         // metadata.getLastModified()
         File file = new File(TARGET_CONTAINER_NAME + File.separator + BLOB_KEY);
-        assertEquals(metadata.getContentMetadata().getContentLength(), new Long(file.length()), "Wrong blob size");
+        assertEquals(metadata.getContentMetadata().getContentLength(), Long.valueOf(file.length()), "Wrong blob size");
     }
 
     public void testDeleteContainer_NotExistingContainer() {

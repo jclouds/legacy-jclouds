@@ -35,15 +35,18 @@ import javax.inject.Provider;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.domain.Location;
 import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
 
@@ -55,7 +58,7 @@ import com.google.common.io.Files;
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy {
+public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
 
    private static final String BACK_SLASH = "\\";
 
@@ -66,17 +69,20 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
    protected final String baseDirectory;
    protected final FilesystemContainerNameValidator filesystemContainerNameValidator;
    protected final FilesystemBlobKeyValidator filesystemBlobKeyValidator;
+   private final Crypto crypto;
 
    @Inject
    protected FilesystemStorageStrategyImpl(Provider<BlobBuilder> blobBuilders,
          @Named(FilesystemConstants.PROPERTY_BASEDIR) String baseDir,
          FilesystemContainerNameValidator filesystemContainerNameValidator,
-         FilesystemBlobKeyValidator filesystemBlobKeyValidator) {
+         FilesystemBlobKeyValidator filesystemBlobKeyValidator,
+         Crypto crypto) {
       this.blobBuilders = checkNotNull(blobBuilders, "filesystem storage strategy blobBuilders");
       this.baseDirectory = checkNotNull(baseDir, "filesystem storage strategy base directory");
       this.filesystemContainerNameValidator = checkNotNull(filesystemContainerNameValidator,
             "filesystem container name validator");
       this.filesystemBlobKeyValidator = checkNotNull(filesystemBlobKeyValidator, "filesystem blob key validator");
+      this.crypto = crypto;
    }
 
    @Override
@@ -109,8 +115,14 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       return blob;
    }
 
-   @Override
    public boolean createContainer(String container) {
+      filesystemContainerNameValidator.validate(container);
+      return createContainerInLocation(container, null);
+   }
+
+   @Override
+   public boolean createContainerInLocation(String container, Location location) {
+      // TODO: implement location
       logger.debug("Creating container %s", container);
       filesystemContainerNameValidator.validate(container);
       return createDirectoryWithResult(container, null);
@@ -151,7 +163,6 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       }
    }
 
-   @Override
    public Blob newBlob(@ParamValidators({ FilesystemBlobKeyValidator.class }) String name) {
       filesystemBlobKeyValidator.validate(name);
       return blobBuilders.get().name(name).build();
@@ -195,7 +206,6 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
     * @param blobKey
     * @return
     */
-   @Override
    public File getFileForBlobKey(String container, String blobKey) {
       filesystemContainerNameValidator.validate(container);
       filesystemBlobKeyValidator.validate(blobKey);
@@ -205,7 +215,7 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
    }
 
    @Override
-   public void putBlob(final String containerName, final Blob blob) throws IOException {
+   public String putBlob(final String containerName, final Blob blob) throws IOException {
       String blobKey = blob.getMetadata().getName();
       Payload payload = blob.getPayload();
       filesystemContainerNameValidator.validate(containerName);
@@ -220,6 +230,9 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
             output = new FileOutputStream(outputFile);
             payload.writeTo(output);
          }
+         Payloads.calculateMD5(payload, crypto.md5());
+         String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
+         return eTag;
       } catch (IOException ex) {
          if (outputFile != null) {
             outputFile.delete();
@@ -263,16 +276,23 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
    }
 
    @Override
+   public Location getLocation(final String containerName) {
+      return null;
+   }
+
+   @Override
+   public String getSeparator() {
+      return File.separator;
+   }
+
    public boolean directoryExists(String container, String directory) {
       return buildPathAndChecksIfDirectoryExists(container, directory);
    }
 
-   @Override
    public void createDirectory(String container, String directory) {
       createDirectoryWithResult(container, directory);
    }
 
-   @Override
    public void deleteDirectory(String container, String directory) {
       // create complete dir path
       String fullDirPath = buildPathStartingFromBaseDir(container, directory);
@@ -284,7 +304,6 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       }
    }
 
-   @Override
    public long countBlobs(String container, ListContainerOptions options) {
       // TODO
       throw new UnsupportedOperationException("Not supported yet.");

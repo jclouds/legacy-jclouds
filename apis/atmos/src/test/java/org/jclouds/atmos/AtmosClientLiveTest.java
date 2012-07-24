@@ -239,19 +239,19 @@ public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
    private static void verifyHeadObject(AtmosClient connection, String path, String metadataValue)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       AtmosObject getBlob = connection.headFile(path);
-      assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), "");
+      assertEquals(Strings2.toString(getBlob.getPayload()), "");
       verifyMetadata(metadataValue, getBlob);
    }
 
    private static void verifyObject(AtmosClient connection, String path, String compare, String metadataValue)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       AtmosObject getBlob = connection.readFile(path);
-      assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), compare);
+      assertEquals(Strings2.toString(getBlob.getPayload()), compare);
       verifyMetadata(metadataValue, getBlob);
    }
 
    private static void verifyMetadata(String metadataValue, AtmosObject getBlob) {
-      assertEquals(getBlob.getContentMetadata().getContentLength(), new Long(16));
+      assertEquals(getBlob.getContentMetadata().getContentLength(), Long.valueOf(16));
       assert getBlob.getContentMetadata().getContentType().startsWith("text/plain");
       assertEquals(getBlob.getUserMetadata().getMetadata().get("Metadata"), metadataValue);
       SystemMetadata md = getBlob.getSystemMetadata();

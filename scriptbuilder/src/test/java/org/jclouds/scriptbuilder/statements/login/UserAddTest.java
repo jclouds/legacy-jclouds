@@ -36,6 +36,12 @@ public class UserAddTest {
                "mkdir -p /home/users\nuseradd -c me -s /bin/bash -m  -d /home/users/me me\nchown -R me /home/users/me\n");
    }
 
+   public void testWithFullNameUNIX() {
+      assertEquals(UserAdd.builder().login("me").fullName("JClouds Guy").build().render(OsFamily.UNIX),
+            "mkdir -p /home/users\nuseradd -c 'JClouds Guy' -s /bin/bash -m  -d /home/users/me me\nchown -R me /home/users/me\n");
+
+   }
+
    public void testWithBaseUNIX() {
       assertEquals(UserAdd.builder().login("me").defaultHome("/export/home").build().render(OsFamily.UNIX),
                "mkdir -p /export/home\nuseradd -c me -s /bin/bash -m  -d /export/home/me me\nchown -R me /export/home/me\n");

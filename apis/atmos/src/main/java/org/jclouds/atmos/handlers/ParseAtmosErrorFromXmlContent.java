@@ -71,7 +71,7 @@ public class ParseAtmosErrorFromXmlContent implements HttpErrorHandler {
          AtmosError error = null;
          if (response.getPayload() != null) {
             try {
-               String content = Strings2.toStringAndClose(response.getPayload().getInput());
+               String content = Strings2.toString(response.getPayload());
                if (content != null && content.indexOf('<') >= 0) {
                   error = utils.parseAtmosErrorFromContent(command, response, Strings2.toInputStream(content));
                } else {

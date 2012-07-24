@@ -119,7 +119,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
                         .virtualQuantity(104857l).build());
 
       VApp expects = new VAppImpl("centos53", URI
-               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(104857), new ReferenceTypeImpl(null,
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, Long.valueOf(104857), new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.vdc+xml", URI.create("http://10.150.4.49/api/v0.8/vdc/4")),
                networkToAddresses, null, "Other Linux (32-bit)", system, resourceAllocations);
       assertEquals(result.getHref(), expects.getHref());
@@ -167,7 +167,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
                         .virtualQuantity(10485760l).build());
 
       VApp expects = new VAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"),
-               Status.ON, new Long(10485760), new ReferenceTypeImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
+               Status.ON, Long.valueOf(10485760), new ReferenceTypeImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
                         .create("http://localhost:8000/api/v0.8/vdc/28")), networkToAddresses, null,
                "Microsoft Windows XP Professional (32-bit)", system, resourceAllocations);
       assertEquals(result.getHref(), expects.getHref());

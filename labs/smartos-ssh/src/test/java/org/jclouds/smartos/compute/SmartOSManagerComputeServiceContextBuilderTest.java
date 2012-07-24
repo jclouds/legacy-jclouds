@@ -22,15 +22,15 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.internal.ContextImpl;
-import org.jclouds.rest.internal.BaseRestClientTest;
 import org.jclouds.smartos.SmartOSApiMetadata;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -40,21 +40,17 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "ServerManagerContextBuilderTest")
 public class SmartOSManagerComputeServiceContextBuilderTest {
 
-
    @Test
    public void testCanBuildWithApiMetadata() {
-      ComputeServiceContext context = ContextBuilder.newBuilder(
-              new SmartOSApiMetadata())
-              .modules(ImmutableSet.<Module>of(getSshModule()))
-              .build(ComputeServiceContext.class);
+      ComputeServiceContext context = ContextBuilder.newBuilder(new SmartOSApiMetadata())
+               .modules(ImmutableSet.<Module> of(getSshModule())).build(ComputeServiceContext.class);
       context.close();
    }
 
    @Test
    public void testCanBuildById() {
       ComputeServiceContext context = ContextBuilder.newBuilder("smartos-ssh")
-              .modules(ImmutableSet.<Module>of(getSshModule()))
-              .build(ComputeServiceContext.class);
+               .modules(ImmutableSet.<Module> of(getSshModule())).build(ComputeServiceContext.class);
       context.close();
    }
 
@@ -65,8 +61,8 @@ public class SmartOSManagerComputeServiceContextBuilderTest {
       overrides.setProperty("smartos-ssh.api-version", "1");
 
       ComputeServiceContext context = ContextBuilder.newBuilder("smartos-ssh")
-              .modules(ImmutableSet.<Module>of(getSshModule()))
-              .overrides(overrides).build(ComputeServiceContext.class);
+               .modules(ImmutableSet.<Module> of(getSshModule())).overrides(overrides)
+               .build(ComputeServiceContext.class);
 
       context.close();
    }
@@ -74,15 +70,14 @@ public class SmartOSManagerComputeServiceContextBuilderTest {
    @Test
    public void testUnwrapIsCorrectType() {
       ComputeServiceContext context = ContextBuilder.newBuilder("smartos-ssh")
-              .modules(ImmutableSet.<Module>of(getSshModule()))
-              .build(ComputeServiceContext.class);
+               .modules(ImmutableSet.<Module> of(getSshModule())).build(ComputeServiceContext.class);
 
       assertEquals(context.unwrap().getClass(), ContextImpl.class);
 
       context.close();
    }
 
-    protected Module getSshModule() {
-        return new SshjSshClientModule();
-    }
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
+   }
 }

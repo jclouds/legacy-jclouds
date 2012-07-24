@@ -109,6 +109,7 @@ public class AdminAccess implements Statement {
       }
 
       private String adminUsername;
+      private String adminFullName;
       private String adminHome;
       private String adminPublicKey;
       private File adminPublicKeyFile;
@@ -126,6 +127,12 @@ public class AdminAccess implements Statement {
          this.adminUsername = adminUsername;
          return this;
       }
+
+      public AdminAccess.Builder adminFullName(String adminFullName) {
+         this.adminFullName = adminFullName;
+         return this;
+      }
+
 
       public AdminAccess.Builder adminHome(String adminHome) {
          this.adminHome = adminHome;
@@ -211,7 +218,7 @@ public class AdminAccess implements Statement {
             String adminPrivateKey = this.adminPrivateKey;
             if (adminPrivateKey == null && adminPrivateKeyFile != null)
                adminPrivateKey = Files.toString(adminPrivateKeyFile, UTF_8);
-            return new Config(adminUsername, adminHome, adminPublicKey, adminPrivateKey, adminPassword, loginPassword, 
+            return new Config(adminUsername, adminFullName, adminHome, adminPublicKey, adminPrivateKey, adminPassword, loginPassword,
                      lockSsh, grantSudoToAdminUser, authorizeAdminPublicKey, installAdminPrivateKey, resetLoginPassword,
                      cryptFunction);
          } catch (IOException e) {
@@ -222,6 +229,7 @@ public class AdminAccess implements Statement {
 
    protected static class Config {
       private final String adminUsername;
+      private final String adminFullName;
       private final String adminHome;
       private final String adminPublicKey;
       private final String adminPrivateKey;
@@ -235,11 +243,12 @@ public class AdminAccess implements Statement {
       private boolean authorizeAdminPublicKey;
       private boolean lockSsh;
 
-      protected Config(@Nullable String adminUsername, @Nullable String adminHome, @Nullable String adminPublicKey,
+      protected Config(@Nullable String adminUsername, @Nullable String adminFullName, @Nullable String adminHome, @Nullable String adminPublicKey,
                @Nullable String adminPrivateKey, @Nullable String adminPassword, @Nullable String loginPassword,
                boolean lockSsh, boolean grantSudoToAdminUser, boolean authorizeAdminPublicKey,
                boolean installAdminPrivateKey, boolean resetLoginPassword, Function<String, String> cryptFunction) {
          this.adminUsername = adminUsername;
+         this.adminFullName = adminFullName;
          this.adminHome = adminHome;
          this.adminPublicKey = adminPublicKey;
          this.adminPrivateKey = adminPrivateKey;
@@ -265,6 +274,10 @@ public class AdminAccess implements Statement {
 
       public String getAdminUsername() {
          return adminUsername;
+      }
+
+      public String getAdminFullName() {
+         return adminFullName;
       }
 
       public String getAdminHome() {
@@ -318,7 +331,8 @@ public class AdminAccess implements Statement {
       @Override
       public String toString() {
          StringBuilder builder = new StringBuilder();
-         builder.append("Config [adminUsername=").append(adminUsername).append(", adminHome=").append(adminHome)
+         builder.append("Config [adminUsername=").append(adminUsername).append(", adminFullName=").append(adminFullName)
+                  .append(", adminHome=").append(adminHome)
                   .append(", adminPublicKey=").append(adminPublicKey == null ? "null" : "present")
                   .append(", adminPrivateKey=").append(adminPrivateKey == null ? "null" : "present")
                   .append(", adminPassword=").append(adminPassword == null ? "null" : "present")
@@ -368,6 +382,7 @@ public class AdminAccess implements Statement {
       Builder builder = AdminAccess.builder(configuration.cryptFunction());
       builder.adminUsername(config.getAdminUsername() != null ? config.getAdminUsername() : configuration
                .defaultAdminUsername().get());
+      builder.adminFullName(config.getAdminFullName() != null ? config.getAdminFullName() : builder.adminUsername);
       builder.adminHome(config.getAdminHome());
       builder.adminPassword(config.getAdminPassword() != null ? config.getAdminPassword() : configuration
                .passwordGenerator().get());
@@ -408,6 +423,7 @@ public class AdminAccess implements Statement {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       UserAdd.Builder userBuilder = UserAdd.builder();
       userBuilder.login(config.getAdminUsername());
+      userBuilder.fullName(config.getAdminFullName());
       if (config.getAdminHome() != null)
          userBuilder.home(config.getAdminHome());
       if (config.shouldAuthorizeAdminPublicKey())

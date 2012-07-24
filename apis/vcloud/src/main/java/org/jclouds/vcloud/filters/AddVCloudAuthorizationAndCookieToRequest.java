@@ -18,40 +18,40 @@
  */
 package org.jclouds.vcloud.filters;
 
-import static org.testng.Assert.assertEquals;
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.vcloud.VCloudToken;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
+ * Adds the VCloud Token to the request as a cookie
+ * 
  * @author Adrian Cole
+ * 
  */
-@Test
-public class SetVCloudTokenCookieTest {
+@Singleton
+public class AddVCloudAuthorizationAndCookieToRequest implements HttpRequestFilter {
+   private Supplier<String> vcloudTokenProvider;
 
-   private SetVCloudTokenCookie filter;
-
-   @BeforeTest
-   void setUp() {
-      filter = new SetVCloudTokenCookie(new Supplier<String>() {
-         public String get() {
-            return "token";
-         }
-      });
+   @Inject
+   public AddVCloudAuthorizationAndCookieToRequest(@VCloudToken Supplier<String> authTokenProvider) {
+      this.vcloudTokenProvider = authTokenProvider;
    }
 
-   @Test
-   public void testApply() {
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
-      request = filter.filter(request);
-      assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.COOKIE), "vcloud-token=token");
-
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      String token = vcloudTokenProvider.get();
+      return request
+               .toBuilder()
+               .replaceHeaders(
+                        ImmutableMultimap.of("x-vcloud-authorization", token, HttpHeaders.COOKIE, "vcloud-token="
+                                 + token)).build();
    }
-
 }

@@ -46,7 +46,7 @@ import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
  
@@ -54,7 +54,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see VdcApi
  * @author danikov
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface VdcAsyncApi {
  
    /**

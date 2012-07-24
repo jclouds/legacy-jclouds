@@ -20,8 +20,15 @@ package org.jclouds.blobstore.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +39,7 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.functions.ExceptionToValueOrPropagate;
@@ -41,6 +49,8 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -158,5 +168,35 @@ public class BlobStoreUtils {
    @Deprecated
    public static Iterable<String> getSupportedProviders() {
       return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(BlobStoreContext.class));
+   }
+
+   public static MutableBlobMetadata copy(MutableBlobMetadata in) {
+      ByteArrayOutputStream bout = new ByteArrayOutputStream();
+      ObjectOutput os;
+      try {
+         os = new ObjectOutputStream(bout);
+         os.writeObject(in);
+         ObjectInput is = new ObjectInputStream(new ByteArrayInputStream(bout.toByteArray()));
+         MutableBlobMetadata metadata = (MutableBlobMetadata) is.readObject();
+         convertUserMetadataKeysToLowercase(metadata);
+         HttpUtils.copy(in.getContentMetadata(), metadata.getContentMetadata());
+         return metadata;
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
+      }
+   }
+
+   public static MutableBlobMetadata copy(MutableBlobMetadata in, String newKey) {
+      MutableBlobMetadata newMd = BlobStoreUtils.copy(in);
+      newMd.setName(newKey);
+      return newMd;
+   }
+
+   private static void convertUserMetadataKeysToLowercase(MutableBlobMetadata metadata) {
+      Map<String, String> lowerCaseUserMetadata = Maps.newHashMap();
+      for (Map.Entry<String, String> entry : metadata.getUserMetadata().entrySet()) {
+         lowerCaseUserMetadata.put(entry.getKey().toLowerCase(), entry.getValue());
+      }
+      metadata.setUserMetadata(lowerCaseUserMetadata);
    }
 }

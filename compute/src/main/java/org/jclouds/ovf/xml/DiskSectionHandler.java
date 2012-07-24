@@ -67,7 +67,7 @@ public class DiskSectionHandler extends SectionHandler<DiskSection, DiskSection.
       Long val = null;
       if (toParse != null) {
          try {
-            val = new Long(toParse);
+            val = Long.valueOf(toParse);
          } catch (NumberFormatException e) {
             logger.warn("%s for disk %s not a number [%s]", key, diskId, toParse);
          }

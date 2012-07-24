@@ -88,7 +88,7 @@ public class HttpResponseException extends RuntimeException {
             && request.getPayload().getContentMetadata().getContentLength() < 1024) {
          try {
             return String.format(" [%s] ", request.getPayload() instanceof StringPayload ? request.getPayload()
-                  .getRawContent() : Strings2.toStringAndClose(request.getPayload().getInput()));
+                  .getRawContent() : Strings2.toString(request.getPayload()));
          } catch (IOException e) {
          }
       }

@@ -42,7 +42,7 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCatalogItemToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.options.CatalogItemOptions;
@@ -57,7 +57,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@RequestFilters(SetVCloudTokenCookie.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface CatalogAsyncClient {
 
    /**

@@ -21,8 +21,10 @@ package org.jclouds.blobstore.config;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.TransientAsyncBlobStore;
+import org.jclouds.blobstore.LocalAsyncBlobStore;
+import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.TransientBlobRequestSigner;
+import org.jclouds.blobstore.TransientStorageStrategy;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.rest.config.BinderUtils;
 
@@ -37,13 +39,14 @@ import com.google.inject.AbstractModule;
 public class TransientBlobStoreContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      bind(AsyncBlobStore.class).to(TransientAsyncBlobStore.class).asEagerSingleton();
+      bind(AsyncBlobStore.class).to(LocalAsyncBlobStore.class).asEagerSingleton();
       // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
-      BinderUtils.bindClient(binder(), TransientBlobStore.class, AsyncBlobStore.class, ImmutableMap.<Class<?>, Class<?>>of());
+      BinderUtils.bindClient(binder(), LocalBlobStore.class, AsyncBlobStore.class, ImmutableMap.<Class<?>, Class<?>>of());
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
-      bind(BlobStore.class).to(TransientBlobStore.class);
+      bind(BlobStore.class).to(LocalBlobStore.class);
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+      bind(LocalStorageStrategy.class).to(TransientStorageStrategy.class);
       bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
    }
 

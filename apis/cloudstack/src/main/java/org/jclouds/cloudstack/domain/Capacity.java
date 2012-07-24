@@ -75,7 +75,7 @@ public class Capacity implements Comparable<Capacity> {
       }
 
       public static Type fromValue(String type) {
-         Integer code = new Integer(checkNotNull(type, "type"));
+         Integer code = Integer.valueOf(checkNotNull(type, "type"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
    }

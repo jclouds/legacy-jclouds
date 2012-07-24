@@ -36,7 +36,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.functions.OrgNameToTasksListEndpoint;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
@@ -49,7 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@RequestFilters(SetVCloudTokenCookie.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface TaskAsyncClient {
 
    /**

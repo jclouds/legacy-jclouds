@@ -234,7 +234,7 @@ public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
       Slice slice = client.getSlice(sliceId);
       assertEquals(slice.getStatus(), Slice.Status.ACTIVE);
       assert slice.getProgress() >= 0 : "newDetails.getProgress()" + slice.getProgress();
-      assertEquals(new Integer(14362), slice.getImageId());
+      assertEquals(Integer.valueOf(14362), slice.getImageId());
       assertEquals(1, slice.getFlavorId());
       assertNotNull(slice.getAddresses());
       checkPassOk(slice, rootPassword);

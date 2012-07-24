@@ -86,18 +86,18 @@ public class VAppTemplateHandlerTest {
                URI
                         .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194/guestCustomizationSection/"));
       assertEquals(guestC.getInfo(), "Specifies Guest OS Customization Settings");
-      assertEquals(guestC.isEnabled(), new Boolean(true));
-      assertEquals(guestC.shouldChangeSid(), new Boolean(false));
+      assertEquals(guestC.isEnabled(), Boolean.TRUE);
+      assertEquals(guestC.shouldChangeSid(), Boolean.FALSE);
       assertEquals(guestC.getVirtualMachineId(), "172837194");
-      assertEquals(guestC.isJoinDomainEnabled(), new Boolean(false));
-      assertEquals(guestC.useOrgSettings(), new Boolean(false));
+      assertEquals(guestC.isJoinDomainEnabled(), Boolean.FALSE);
+      assertEquals(guestC.useOrgSettings(), Boolean.FALSE);
       assertEquals(guestC.getDomainName(), null);
       assertEquals(guestC.getDomainUserName(), null);
       assertEquals(guestC.getDomainUserPassword(), null);
-      assertEquals(guestC.isAdminPasswordEnabled(), new Boolean(true));
-      assertEquals(guestC.isAdminPasswordAuto(), new Boolean(true));
+      assertEquals(guestC.isAdminPasswordEnabled(), Boolean.TRUE);
+      assertEquals(guestC.isAdminPasswordAuto(), Boolean.TRUE);
       assertEquals(guestC.getAdminPassword(), "%3eD%gmF");
-      assertEquals(guestC.isResetPasswordRequired(), new Boolean(false));
+      assertEquals(guestC.isResetPasswordRequired(), Boolean.FALSE);
       assertEquals(
                guestC.getCustomizationScript(),
                "#!/bin/bash if [ \"$1\" = \"postcustomization\" ]; then echo \"post customization\" touch /root/.postcustomization sleep 30 #regenerate keys /bin/rm /etc/ssh/ssh_host_* /usr/sbin/dpkg-reconfigure openssh-server echo \"completed\" fi");

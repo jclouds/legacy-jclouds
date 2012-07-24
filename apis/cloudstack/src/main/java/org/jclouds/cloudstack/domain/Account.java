@@ -103,7 +103,7 @@ public class Account extends ForwardingSet<User> {
       }
 
       public static Type fromValue(String type) {
-         Integer code = new Integer(checkNotNull(type, "type"));
+         Integer code = Integer.valueOf(checkNotNull(type, "type"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }
 
@@ -473,7 +473,7 @@ public class Account extends ForwardingSet<User> {
    }
 
    private static Long toLongNullIfUnlimited(String in) {
-      return in == null || "Unlimited".equals(in) ? null : new Long(in);
+      return in == null || "Unlimited".equals(in) ? null : Long.valueOf(in);
    }
 
    protected Account(String id, @Nullable Account.Type type, @Nullable String networkDomain, @Nullable String domain,

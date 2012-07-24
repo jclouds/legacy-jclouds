@@ -122,7 +122,7 @@ public class ProductItemPrice implements Comparable<ProductItemPrice> {
 
    @Override
    public int compareTo(ProductItemPrice arg0) {
-      return new Integer(id).compareTo(arg0.getId());
+      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**

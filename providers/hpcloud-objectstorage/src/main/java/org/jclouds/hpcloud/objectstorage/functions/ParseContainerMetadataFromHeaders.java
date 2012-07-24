@@ -49,8 +49,8 @@ public class ParseContainerMetadataFromHeaders implements Function<HttpResponse,
       
       to.setReadACL(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_READ));
  
-      to.setBytes(new Long(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_BYTES_USED)));
-      to.setCount(new Long(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_OBJECT_COUNT)));
+      to.setBytes(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_BYTES_USED)));
+      to.setCount(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_OBJECT_COUNT)));
       
       addUserMetadataTo(from, to);
       

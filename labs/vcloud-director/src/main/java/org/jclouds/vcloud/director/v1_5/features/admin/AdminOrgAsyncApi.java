@@ -45,7 +45,7 @@ import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncApi;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -53,7 +53,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see AdminOrgApi
  * @author danikov
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface AdminOrgAsyncApi extends OrgAsyncApi {
    
    /**

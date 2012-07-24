@@ -326,7 +326,7 @@ public class VirtualGuest implements Comparable<VirtualGuest> {
 
    @Override
    public int compareTo(VirtualGuest arg0) {
-      return new Integer(id).compareTo(arg0.getId());
+      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**

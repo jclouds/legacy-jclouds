@@ -154,19 +154,19 @@ public class GoGridComputeServiceAdapter implements ComputeServiceAdapter<Server
    
    @Override
    public void destroyNode(String id) {
-      client.getServerServices().deleteById(new Long(id));
+      client.getServerServices().deleteById(Long.valueOf(id));
    }
 
    @Override
    public void rebootNode(String id) {
       executeCommandOnServer(PowerCommand.RESTART, id);
-      Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
+      Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(Long.valueOf(id)));
       client.getServerServices().power(server.getName(), PowerCommand.START);
       serverLatestJobCompletedShort.apply(server);
    }
 
    private boolean executeCommandOnServer(PowerCommand command, String id) {
-      Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
+      Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(Long.valueOf(id)));
       client.getServerServices().power(server.getName(), command);
       return serverLatestJobCompleted.apply(server);
    }

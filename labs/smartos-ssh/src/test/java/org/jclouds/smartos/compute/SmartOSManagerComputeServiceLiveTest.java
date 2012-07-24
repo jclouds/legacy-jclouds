@@ -49,12 +49,11 @@ public class SmartOSManagerComputeServiceLiveTest extends BaseComputeServiceLive
       assertEquals(getCores(defaultTemplate.getHardware()), 0.5d);
    }
 
-
    // smartos-ssh does not support metadata
    @Override
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
-            "node userMetadata did not match %s %s", userMetadata, node);
+               "node userMetadata did not match %s %s", userMetadata, node);
    }
-   
+
 }

@@ -79,7 +79,7 @@ public class VirtualSystemSettingDataHandler extends ParseSax.HandlerWithResult<
             // TODO parse the format for intervals: ddddddddhhmmss.mmmmmm:000
             builder.automaticStartupActionDelay(null);
          } else if (equalsOrSuffix(qName, "AutomaticStartupActionSequenceNumber")) {
-            builder.automaticStartupActionSequenceNumber(new Integer(current));
+            builder.automaticStartupActionSequenceNumber(Integer.valueOf(current));
          } else if (equalsOrSuffix(qName, "ConfigurationDataRoot")) {
             builder.configurationDataRoot(URI.create(current));
          } else if (equalsOrSuffix(qName, "ConfigurationFile")) {

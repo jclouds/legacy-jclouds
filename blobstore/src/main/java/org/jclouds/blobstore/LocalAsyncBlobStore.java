@@ -26,24 +26,15 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
@@ -51,9 +42,6 @@ import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.domain.Blob;
@@ -66,18 +54,15 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
-import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
@@ -86,11 +71,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
-import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
-import org.jclouds.io.payloads.ByteArrayPayload;
-import org.jclouds.io.payloads.DelegatingPayload;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -98,50 +79,42 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimaps;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Implementation of {@link BaseAsyncBlobStore} which keeps all data in a local Map object.
- * 
+ * Implementation of {@link BaseAsyncBlobStore} which uses a pluggable
+ * LocalStorageStrategy.
+ *
  * @author Adrian Cole
+ * @author Alfredo "Rainbowbreeze" Morresi
+ * @author Andrew Gaul
  * @author James Murty
  */
-public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
+public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   protected final DateService dateService;
-   protected final Crypto crypto;
-   protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    protected final ContentMetadataCodec contentMetadataCodec;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
-   protected final TransientStorageStrategy storageStrategy;
-   protected final Provider<UriBuilder> uriBuilders;
+   protected final LocalStorageStrategy storageStrategy;
 
    @Inject
-   protected TransientAsyncBlobStore(BlobStoreContext context,
-         DateService dateService, Crypto crypto,
-         HttpGetOptionsListToGetOptions httpGetOptionsConverter,
-         ContentMetadataCodec contentMetadataCodec,
-         IfDirectoryReturnNameStrategy ifDirectoryReturnName,
+   protected LocalAsyncBlobStore(BlobStoreContext context,
          BlobUtils blobUtils,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
-         Factory blobFactory, Provider<UriBuilder> uriBuilders) {
+         ContentMetadataCodec contentMetadataCodec,
+         IfDirectoryReturnNameStrategy ifDirectoryReturnName,
+         Factory blobFactory, LocalStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
-      this.dateService = dateService;
-      this.crypto = crypto;
-      this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
-      this.storageStrategy = new TransientStorageStrategy(defaultLocation);
-      this.uriBuilders = uriBuilders;
+      this.storageStrategy = storageStrategy;
    }
 
    /**
@@ -155,7 +128,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          return immediateFailedFuture(cnfe(container));
 
       // Loading blobs from container
-      Iterable<String> blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+      Iterable<String> blobBelongingToContainer = null;
+      try {
+         blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+      } catch (IOException e) {
+         logger.error(e, "An error occurred loading blobs contained into container %s", container);
+         Throwables.propagate(e);
+      }
 
       SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
             new Function<String, StorageMetadata>() {
@@ -164,7 +143,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
                   checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
                         + container);
                   checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
-                  MutableBlobMetadata md = copy(oldBlob.getMetadata());
+                  MutableBlobMetadata md = BlobStoreUtils.copy(oldBlob.getMetadata());
                   String directoryName = ifDirectoryReturnName.execute(md);
                   if (directoryName != null) {
                      md.setName(directoryName);
@@ -205,7 +184,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             }
          }
 
-         final String delimiter = options.isRecursive() ? null : "/";
+         final String delimiter = options.isRecursive() ? null : storageStrategy.getSeparator();
          if (delimiter != null) {
             SortedSet<String> commonPrefixes = newTreeSet(
                    transform(contents, new CommonPrefixes(prefix, delimiter)));
@@ -243,36 +222,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             storageStrategy.getAllContainerNames()));
    }
 
-   public static MutableBlobMetadata copy(MutableBlobMetadata in) {
-      ByteArrayOutputStream bout = new ByteArrayOutputStream();
-      ObjectOutput os;
-      try {
-         os = new ObjectOutputStream(bout);
-         os.writeObject(in);
-         ObjectInput is = new ObjectInputStream(new ByteArrayInputStream(bout.toByteArray()));
-         MutableBlobMetadata metadata = (MutableBlobMetadata) is.readObject();
-         convertUserMetadataKeysToLowercase(metadata);
-         HttpUtils.copy(in.getContentMetadata(), metadata.getContentMetadata());
-         return metadata;
-      } catch (Exception e) {
-         throw propagate(e);
-      }
-   }
-
-   private static void convertUserMetadataKeysToLowercase(MutableBlobMetadata metadata) {
-      Map<String, String> lowerCaseUserMetadata = newHashMap();
-      for (Entry<String, String> entry : metadata.getUserMetadata().entrySet()) {
-         lowerCaseUserMetadata.put(entry.getKey().toLowerCase(), entry.getValue());
-      }
-      metadata.setUserMetadata(lowerCaseUserMetadata);
-   }
-
-   public static MutableBlobMetadata copy(MutableBlobMetadata in, String newKey) {
-      MutableBlobMetadata newMd = copy(in);
-      newMd.setName(newKey);
-      return newMd;
-   }
-
    /**
     * {@inheritDoc}
     */
@@ -292,7 +241,12 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    /**
-    * {@inheritDoc}
+    * Override parent method because it uses strange futures and listenables
+    * that creates problem in the test if more than one test that deletes the
+    * container is executed
+    *
+    * @param container
+    * @return
     */
    @Override
    public ListenableFuture<Void> deleteContainer(final String container) {
@@ -303,10 +257,15 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Boolean> deleteContainerIfEmpty(final String container) {
       Boolean returnVal = true;
       if (storageStrategy.containerExists(container)) {
-         if (Iterables.isEmpty(storageStrategy.getBlobKeysInsideContainer(container)))
-            storageStrategy.deleteContainer(container);
-         else
-            returnVal = false;
+         try {
+            if (Iterables.isEmpty(storageStrategy.getBlobKeysInsideContainer(container)))
+               storageStrategy.deleteContainer(container);
+            else
+               returnVal = false;
+         } catch (IOException e) {
+            logger.error(e, "An error occurred loading blobs contained into container %s", container);
+            Throwables.propagate(e);
+         }
       }
       return immediateFuture(returnVal);
    }
@@ -468,52 +427,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          return Futures.immediateFailedFuture(new IllegalStateException("containerName not found: " + containerName));
       }
 
-      blob = createUpdatedCopyOfBlobInContainer(containerName, blob);
-
-      storageStrategy.putBlob(containerName, blob);
-
-      String eTag = getEtag(blob);
-      return immediateFuture(eTag);
-   }
-
-   private Blob createUpdatedCopyOfBlobInContainer(String containerName, Blob in) {
-      checkNotNull(in, "blob");
-      checkNotNull(in.getPayload(), "blob.payload");
-      ByteArrayPayload payload = (in.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(in
-               .getPayload()) : null;
-      if (payload == null)
-         payload = (in.getPayload() instanceof DelegatingPayload) ? (DelegatingPayload.class.cast(in.getPayload())
-                  .getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(DelegatingPayload.class
-                  .cast(in.getPayload()).getDelegate()) : null : null;
       try {
-         if (payload == null || !(payload instanceof ByteArrayPayload)) {
-            MutableContentMetadata oldMd = in.getPayload().getContentMetadata();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            in.getPayload().writeTo(out);
-            payload = (ByteArrayPayload) Payloads.calculateMD5(Payloads.newPayload(out.toByteArray()));
-            HttpUtils.copy(oldMd, payload.getContentMetadata());
-         } else {
-            if (payload.getContentMetadata().getContentMD5() == null)
-               Payloads.calculateMD5(in, crypto.md5());
-         }
+         return immediateFuture(storageStrategy.putBlob(containerName, blob));
       } catch (IOException e) {
-         Throwables.propagate(e);
+         logger.error(e, "An error occurred storing the new blob with name [%s] to container [%s].", blobKey,
+               containerName);
+         throw Throwables.propagate(e);
       }
-      Blob blob = blobFactory.create(copy(in.getMetadata()));
-      blob.setPayload(payload);
-      blob.getMetadata().setContainer(containerName);
-      blob.getMetadata().setUri(
-               uriBuilders.get().scheme("mem").host(containerName).path(in.getMetadata().getName()).build());
-      blob.getMetadata().setLastModified(new Date());
-      String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
-      blob.getMetadata().setETag(eTag);
-      // Set HTTP headers to match metadata
-      blob.getAllHeaders().replaceValues(HttpHeaders.LAST_MODIFIED,
-               Collections.singleton(dateService.rfc822DateFormat(blob.getMetadata().getLastModified())));
-      blob.getAllHeaders().replaceValues(HttpHeaders.ETAG, Collections.singleton(eTag));
-      copyPayloadHeadersToBlob(payload, blob);
-      blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
-      return blob;
    }
 
    private void copyPayloadHeadersToBlob(Payload payload, Blob blob) {
@@ -614,7 +534,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             byte[] byteArray = out.toByteArray();
             blob.setPayload(byteArray);
             HttpUtils.copy(cmd, blob.getPayload().getContentMetadata());
-            blob.getPayload().getContentMetadata().setContentLength(new Long(byteArray.length));
+            blob.getPayload().getContentMetadata().setContentLength(Long.valueOf(byteArray.length));
          }
       }
       checkNotNull(blob.getPayload(), "payload " + blob);
@@ -628,7 +548,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
          Blob blob = getBlob(container, key).get();
-         return immediateFuture(blob != null ? (BlobMetadata) copy(blob.getMetadata()) : null);
+         return immediateFuture(blob != null ? (BlobMetadata) BlobStoreUtils.copy(blob.getMetadata()) : null);
       } catch (Exception e) {
          if (size(filter(getCausalChain(e), KeyNotFoundException.class)) >= 1)
             return immediateFuture(null);
@@ -636,26 +556,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       }
    }
 
-   /**
-    * Calculates the object MD5 and returns it as eTag
-    * 
-    * @param object
-    * @return
-    */
-   private String getEtag(Blob object) {
-      try {
-         Payloads.calculateMD5(object, crypto.md5());
-      } catch (IOException ex) {
-         logger.error(ex, "An error occurred calculating MD5 for object with name %s.", object.getMetadata().getName());
-         Throwables.propagate(ex);
-      }
-
-      String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
-      return eTag;
-   }
-
    private Blob copyBlob(Blob blob) {
-      Blob returnVal = blobFactory.create(copy(blob.getMetadata()));
+      Blob returnVal = blobFactory.create(BlobStoreUtils.copy(blob.getMetadata()));
       returnVal.setPayload(blob.getPayload());
       copyPayloadHeadersToBlob(blob.getPayload(), returnVal);
       return returnVal;

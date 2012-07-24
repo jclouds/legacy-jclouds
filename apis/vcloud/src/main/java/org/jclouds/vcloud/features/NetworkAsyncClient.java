@@ -32,7 +32,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.xml.OrgNetworkHandler;
 
@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@RequestFilters(SetVCloudTokenCookie.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface NetworkAsyncClient {
 
    /**

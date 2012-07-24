@@ -20,10 +20,10 @@ package org.jclouds.smartos.compute.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.smartos.compute.domain.VmSpecification;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.smartos.compute.domain.VmSpecification;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -41,7 +41,7 @@ public class VmSpecificationToHardware implements Function<VmSpecification, Hard
       builder.name(from.getAlias());
       builder.processors(ImmutableList.of(new Processor(1, 1.0)));
       builder.ram(256);
-      //builder.volumes(ImmutableList.<Volume> of(new VolumeImpl(from.disk, true, false)));
+      // builder.volumes(ImmutableList.<Volume> of(new VolumeImpl(from.disk, true, false)));
       return builder.build();
    }
 

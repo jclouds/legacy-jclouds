@@ -202,7 +202,7 @@ END_OF_JCLOUDS_SCRIPT
 	chmod 0440 /etc/sudoers
 	mkdir -p /home/users
 	groupadd -f wheel
-	useradd -c web -s /bin/bash -g wheel -m  -d /home/users/web -p 'crypt(randompassword)' web
+	useradd -c 'web' -s /bin/bash -g wheel -m  -d /home/users/web -p 'crypt(randompassword)' web
 	mkdir -p /home/users/web/.ssh
 	cat >> /home/users/web/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'
 		publicKey

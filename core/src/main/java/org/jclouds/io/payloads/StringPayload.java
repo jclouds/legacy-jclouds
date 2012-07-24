@@ -38,7 +38,7 @@ public class StringPayload extends BasePayload<String> {
    public StringPayload(String content) {
       super(content);
       this.bytes = content.getBytes(Charsets.UTF_8);
-      getContentMetadata().setContentLength(new Long(bytes.length));
+      getContentMetadata().setContentLength(Long.valueOf(bytes.length));
    }
 
    /**

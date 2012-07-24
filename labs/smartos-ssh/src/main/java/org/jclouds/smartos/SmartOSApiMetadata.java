@@ -13,7 +13,7 @@ import org.jclouds.smartos.compute.config.SmartOSComputeServiceContextModule;
  * @author Nigel Magnay
  */
 public class SmartOSApiMetadata extends BaseApiMetadata {
-   
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 3606170564482119304L;
 
@@ -36,16 +36,16 @@ public class SmartOSApiMetadata extends BaseApiMetadata {
 
    public static class Builder extends BaseApiMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("smartos-ssh")
-         .name("SmartOS SSH API")
-         .identityName("Username")
-         .defaultIdentity("root")
-         .defaultCredential("smartos")
-         .defaultEndpoint("http://localhost")
-         .documentation(URI.create("http://http://wiki.smartos.org/display/DOC/How+to+create+a+Virtual+Machine+in+SmartOS"))
-         .view(ComputeServiceContext.class)
-         .defaultModule(SmartOSComputeServiceContextModule.class);
+                  .name("SmartOS SSH API")
+                  .identityName("Username")
+                  .defaultIdentity("root")
+                  .defaultCredential("smartos")
+                  .defaultEndpoint("http://localhost")
+                  .documentation(
+                           URI.create("http://http://wiki.smartos.org/display/DOC/How+to+create+a+Virtual+Machine+in+SmartOS"))
+                  .view(ComputeServiceContext.class).defaultModule(SmartOSComputeServiceContextModule.class);
       }
 
       @Override

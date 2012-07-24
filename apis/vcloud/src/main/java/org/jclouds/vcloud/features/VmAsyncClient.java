@@ -54,7 +54,7 @@ import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VmHandler;
 
@@ -66,7 +66,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@RequestFilters(SetVCloudTokenCookie.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface VmAsyncClient {
 
    /**

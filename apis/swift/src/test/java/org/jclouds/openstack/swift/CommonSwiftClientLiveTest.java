@@ -204,7 +204,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          MutableObjectInfoWithMetadata metadata = getApi().getObjectInfo(containerName, object.getInfo().getName());
          assertEquals(metadata.getName(), object.getInfo().getName());
 
-         assertEquals(metadata.getBytes(), new Long(data.length()));
+         assertEquals(metadata.getBytes(), Long.valueOf(data.length()));
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
 
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(metadata.getHash()));
@@ -222,10 +222,10 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          assert getApi().getObject(containerName, "non-existent-object") == null;
          // Test GET of object (including updated metadata)
          SwiftObject getBlob = getApi().getObject(containerName, object.getInfo().getName());
-         assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data);
+         assertEquals(Strings2.toString(getBlob.getPayload()), data);
          // TODO assertEquals(getBlob.getName(),
          // object.getMetadata().getName());
-         assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
+         assertEquals(getBlob.getInfo().getBytes(), Long.valueOf(data.length()));
          testGetObjectContentType(getBlob);
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
          assertEquals(CryptoStreams.hex(newEtag), getBlob.getInfo().getHash());
@@ -267,7 +267,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
                   GetOptions.Builder.ifETagMatches(newEtag));
          assertEquals(getBlob.getInfo().getHash(), CryptoStreams.hex(newEtag));
          getBlob = getApi().getObject(containerName, object.getInfo().getName(), GetOptions.Builder.startAt(8));
-         assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data.substring(8));
+         assertEquals(Strings2.toString(getBlob.getPayload()), data.substring(8));
 
       } finally {
          returnContainer(containerName);

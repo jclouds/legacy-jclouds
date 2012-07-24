@@ -64,7 +64,7 @@ public class ParseServerFromJsonResponseDiabloTest {
       assertEquals(response.getFlavor().getURI(), new URI("http://servers.api.openstack.org/1234/flavors/1"));
       assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.getStatus(), ServerStatus.BUILD);
-      assertEquals(response.getProgress(), new Integer(60));
+      assertEquals(response.getProgress(), Integer.valueOf(60));
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
       dateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
       assertEquals(response.getCreated(), dateFormat.parse("2010-08-10T12:00:00Z"));

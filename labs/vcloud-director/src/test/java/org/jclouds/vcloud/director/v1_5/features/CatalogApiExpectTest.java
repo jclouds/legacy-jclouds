@@ -38,6 +38,7 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Test the {@link CatalogApi} by observing its side effects.
@@ -53,7 +54,9 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
               .method("GET")
               .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
               .addHeader("Accept", "*/*")
-              .addHeader("x-vcloud-authorization", token).build();
+              .addHeader("x-vcloud-authorization", token)
+              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+              .build();
 
       HttpResponse catalogResponse = HttpResponse.builder()
               .statusCode(200)
@@ -75,6 +78,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems")
             .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
             .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
             .payload(payloadFromResourceWithContentType("/catalog/newCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
             .build();
 
@@ -105,7 +109,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogResponse = HttpResponse.builder()
               .statusCode(200)
@@ -137,7 +141,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogResponse = HttpResponse.builder()
               .statusCode(200)
@@ -160,7 +164,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
               .statusCode(200)
@@ -183,6 +187,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
             .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
             .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
             .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
             .build();
 
@@ -206,7 +211,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
             .statusCode(200)
@@ -226,7 +231,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
               .statusCode(200)
@@ -258,6 +263,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
             .payload(payloadFromResourceWithContentType("/catalog/mergeCatalogItemMetadata.xml", VCloudDirectorMediaType.METADATA))
             .build();
 
@@ -284,7 +290,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
               .statusCode(200)
@@ -307,6 +313,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
             .payload(payloadFromResourceWithContentType("/catalog/setCatalogItemMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE))
             .build();
 
@@ -333,7 +340,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse catalogItemResponse = HttpResponse.builder()
             .statusCode(200)

@@ -26,6 +26,7 @@ import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.POOL_ADMIN_ACCESS;
 import static org.jclouds.nodepool.config.NodePoolProperties.REMOVE_DESTROYED;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Properties;
 
@@ -62,7 +63,6 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty("nodepool.identity", "nodepool-user");
       properties.setProperty(BACKEND_GROUP, "nodepool");
       properties.setProperty(METADATA_CONTAINER, "nodes");
       properties.setProperty(BACKEND_MODULES,
@@ -70,9 +70,12 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
       properties.setProperty(MAX_SIZE, 10 + "");
       properties.setProperty(MIN_SIZE, 5 + "");
       properties.setProperty(REMOVE_DESTROYED, "true");
-      // by default use the current user's user and private key
-      properties.setProperty(POOL_ADMIN_ACCESS, "adminUsername=" + System.getProperty("user.name")
-               + ",adminPrivateKeyFile=" + System.getProperty("user.home") + "/.ssh/id_rsa");
+      // by default use the current user's user and private key if one exists, if not the properties
+      // will need to be set (no default passwords)
+      if (new File(System.getProperty("user.home") + "/.ssh/id_rsa").exists()) {
+         properties.setProperty(POOL_ADMIN_ACCESS, "adminUsername=" + System.getProperty("user.name")
+                  + ",adminPrivateKeyFile=" + System.getProperty("user.home") + "/.ssh/id_rsa");
+      }
       return properties;
    }
 

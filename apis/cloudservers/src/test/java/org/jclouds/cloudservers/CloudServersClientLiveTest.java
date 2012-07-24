@@ -344,8 +344,8 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       assertNotNull(server.getHostId());
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
       assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-      assertEquals(new Integer(14362), server.getImageId());
-      assertEquals(new Integer(1), server.getFlavorId());
+      assertEquals(Integer.valueOf(14362), server.getImageId());
+      assertEquals(Integer.valueOf(1), server.getFlavorId());
       assertNotNull(server.getAddresses());
       // listAddresses tests..
       assertEquals(client.getAddresses(serverId), server.getAddresses());
@@ -383,7 +383,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");
-         String etcPasswdContents = Strings2.toStringAndClose(etcPasswd.getInput());
+         String etcPasswdContents = Strings2.toString(etcPasswd);
          assertEquals("rackspace", etcPasswdContents.trim());
       } finally {
          if (client != null)
@@ -445,7 +445,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       blockUntilServerActive(serverId2);
       assertIpConfigured(server, adminPass2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses() + " doesn't contain " + ip;
-      assertEquals(server.getSharedIpGroupId(), new Integer(sharedIpGroupId));
+      assertEquals(server.getSharedIpGroupId(), Integer.valueOf(sharedIpGroupId));
    }
 
    private void assertIpConfigured(Server server, String password) {
@@ -518,7 +518,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
    public void testCreateImage() throws Exception {
       Image image = client.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
-      assertEquals(new Integer(serverId), image.getServerId());
+      assertEquals(Integer.valueOf(serverId), image.getServerId());
       imageId = image.getId();
       blockUntilImageActive(imageId);
    }
@@ -528,7 +528,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
       blockUntilServerActive(serverId);
       // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-      assert !new Integer(imageId).equals(client.getServer(serverId).getImageId());
+      assert !Integer.valueOf(imageId).equals(client.getServer(serverId).getImageId());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
@@ -549,7 +549,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       blockUntilServerVerifyResize(serverId);
       client.revertResizeServer(serverId);
       blockUntilServerActive(serverId);
-      assertEquals(new Integer(1), client.getServer(serverId).getFlavorId());
+      assertEquals(Integer.valueOf(1), client.getServer(serverId).getFlavorId());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
@@ -558,7 +558,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       blockUntilServerVerifyResize(serverId2);
       client.confirmResizeServer(serverId2);
       blockUntilServerActive(serverId2);
-      assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
+      assertEquals(Integer.valueOf(2), client.getServer(serverId2).getFlavorId());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize", "testConfirmResize" })

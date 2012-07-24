@@ -28,7 +28,7 @@ import org.jclouds.vcloud.features.VAppAsyncClient;
 import org.jclouds.vcloud.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.features.VDCAsyncClient;
 import org.jclouds.vcloud.features.VmAsyncClient;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -38,7 +38,7 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
  *      />
  * @author Adrian Cole
  */
-@RequestFilters(SetVCloudTokenCookie.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface VCloudAsyncClient {
 
    /**
