@@ -36,6 +36,7 @@ import org.testng.annotations.BeforeGroups;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.net.HttpHeaders;
 import com.google.inject.Guice;
 
 /**
@@ -132,6 +133,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
             .headers(ImmutableMultimap.<String, String> builder()
                   .put("Accept", mediaType)
                   .put("x-vcloud-authorization", token)
+                  .put(HttpHeaders.COOKIE, "vcloud-token=" + token)
                   .build())
             .build();
    }
@@ -160,6 +162,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
             .headers(ImmutableMultimap.<String, String> builder()
                   .put("Accept", acceptType)
                   .put("x-vcloud-authorization", token)
+                  .put(HttpHeaders.COOKIE, "vcloud-token=" + token)
                   .build())
             .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType))
             .build();
@@ -221,6 +224,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
       
       public HttpRequest.Builder<?> httpRequestBuilder() {
          header("x-vcloud-authorization", token);
+         header(HttpHeaders.COOKIE, "vcloud-token=" + token);
          builder.headers(headers);
          return builder;
       }

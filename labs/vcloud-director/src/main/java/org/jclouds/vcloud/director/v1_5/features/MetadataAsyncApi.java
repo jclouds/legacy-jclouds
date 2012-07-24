@@ -40,7 +40,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -50,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public interface MetadataAsyncApi {
 
-   @RequestFilters(AddVCloudAuthorizationToRequest.class)
+   @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
    public static interface Readable extends MetadataAsyncApi {
 
       /**
@@ -74,7 +74,7 @@ public interface MetadataAsyncApi {
       ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam URI metaDataUri, @PathParam("key") String key);
    }
    
-   @RequestFilters(AddVCloudAuthorizationToRequest.class)
+   @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
    public static interface Writeable extends Readable {
 
       /**

@@ -36,7 +36,7 @@ import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see QueryApi
  * @author grkvlt@apache.org
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 @SkipEncoding({ '=' })
 public interface QueryAsyncApi {
 

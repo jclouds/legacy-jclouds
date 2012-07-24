@@ -86,10 +86,10 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
                                         .e("AllEULAsAccepted").t("true").up()
                                         .asString(outputProperties);
      
-      HttpRequest version1_0InstantiateWithNetworkNamedSameAsOrgNetwork = HttpRequest.builder()
-                                                                           .method("POST")
+      HttpRequest version1_0InstantiateWithNetworkNamedSameAsOrgNetwork = HttpRequest.builder().method("POST")
                                                                            .endpoint(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate")
                                                                            .addHeader(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
+                                                                           .addHeader("x-vcloud-authorization", sessionToken)
                                                                            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken)
                                                                            .payload(payloadFromStringWithContentType(instantiateXML, "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")).build();
                                                                         
@@ -143,12 +143,12 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
                                         .e("AllEULAsAccepted").t("true").up()
                                         .asString(outputProperties);
      
-      HttpRequest version1_0InstantiateWithCustomizedNetwork = HttpRequest.builder()
-                                                                           .method("POST")
-                                                                           .endpoint(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate")
-                                                                           .addHeader(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
-                                                                            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken)
-                                                                           .payload(payloadFromStringWithContentType(instantiateXML, "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")).build();
+      HttpRequest version1_0InstantiateWithCustomizedNetwork = HttpRequest.builder().method("POST")
+                                                                          .endpoint(ENDPOINT + "/v1.0/vdc/" + vdcId + "/action/instantiateVAppTemplate")
+                                                                          .addHeader(HttpHeaders.ACCEPT, "application/vnd.vmware.vcloud.vApp+xml")
+                                                                          .addHeader("x-vcloud-authorization", sessionToken)
+                                                                          .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + sessionToken)
+                                                                          .payload(payloadFromStringWithContentType(instantiateXML, "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")).build();
                                                                         
       ComputeService compute = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> builder()
               .put(versionsRequest, versionsResponseFromVCD1_5)

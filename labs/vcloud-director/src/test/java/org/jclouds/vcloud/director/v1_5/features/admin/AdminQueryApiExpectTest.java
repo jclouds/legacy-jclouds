@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -52,6 +54,7 @@ public class AdminQueryApiExpectTest extends VCloudDirectorAdminApiExpectTest {
               .endpoint(endpoint + "/admin/groups/query")
               .addHeader("Accept", "*/*")
               .addHeader("x-vcloud-authorization", token)
+              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
               .build();
 
       HttpResponse queryResponse= HttpResponse.builder()
@@ -98,7 +101,7 @@ public class AdminQueryApiExpectTest extends VCloudDirectorAdminApiExpectTest {
               .endpoint(endpoint + "/admin/roles/query")
               .addHeader("Accept", "*/*")
               .addHeader("x-vcloud-authorization", token)
-              .build();
+              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse queryResponse= HttpResponse.builder()
               .statusCode(200)

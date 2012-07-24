@@ -60,7 +60,7 @@ import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -68,7 +68,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author grkvlt@apache.org
  * @see VAppApi
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface VAppAsyncApi {
 
    /**

@@ -24,6 +24,8 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
@@ -51,7 +53,7 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
               .endpoint(endpoint + "/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
               .addHeader("Accept", "*/*")
               .addHeader("x-vcloud-authorization", token)
-              .build();
+              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(200)
@@ -62,7 +64,7 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .endpoint(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
 		HttpResponse orgResponse = HttpResponse.builder()
             .statusCode(200)
@@ -95,7 +97,7 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .endpoint(endpoint + "/org/NOTAUUID")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse orgResponse = HttpResponse.builder()
             .statusCode(400)
@@ -126,7 +128,7 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .endpoint(endpoint + "/tasksList/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse taskResponse = HttpResponse.builder().build();
       
@@ -134,7 +136,7 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .endpoint(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse orgResponse = HttpResponse.builder()
             .statusCode(403)
@@ -152,7 +154,8 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
               .method("GET")
               .endpoint(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
               .addHeader("Accept", "*/*")
-              .addHeader("x-vcloud-authorization", token).build();
+              .addHeader("x-vcloud-authorization", token)
+              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(200)
@@ -175,7 +178,8 @@ public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .method("POST")
             .endpoint(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b/action/cancel")
             .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token).build();
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
       HttpResponse taskResponse = HttpResponse.builder()
             .statusCode(200)

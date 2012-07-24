@@ -25,7 +25,7 @@ import javax.ws.rs.PUT;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -33,7 +33,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see UploadApi
  * @author danikov
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface UploadAsyncApi {
 
    /**
