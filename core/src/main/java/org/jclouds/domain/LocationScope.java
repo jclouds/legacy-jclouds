@@ -25,6 +25,18 @@ package org.jclouds.domain;
  */
 public enum LocationScope {
 
-   PROVIDER, REGION, ZONE, NETWORK, RACK, HOST;
+    PROVIDER,
+    REGION,
+    ZONE,
+    /**
+     * @see <a href="http://dmtf.org/standards/cloud">cimi system docs</a>
+     */
+    SYSTEM,
+    /**
+     * E.g. the DMZ segment, secure segment. 
+     */
+    NETWORK,
+    RACK,
+    HOST;
 
 }
