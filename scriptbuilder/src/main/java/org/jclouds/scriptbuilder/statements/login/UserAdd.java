@@ -18,14 +18,16 @@
  */
 package org.jclouds.scriptbuilder.statements.login;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.List;
-
-import javax.inject.Named;
-
-import com.google.common.base.*;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import org.jclouds.crypto.Sha512Crypt;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -35,22 +37,21 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
 import org.jclouds.scriptbuilder.statements.ssh.InstallRSAPrivateKey;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import org.jclouds.util.Strings2;
+import javax.inject.Named;
+import java.util.List;
+
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Creates a statement that will add a given user to a machine ("login"), with optional 
+ * Creates a statement that will add a given user to a machine ("login"), with optional
  * password, groups, private key, and authorized keys.
  * <p>
  * This is supported on most *nix environments. Not currently supported on Windows.
  * <p>
  * Note that some places where this is used may have stricter requirements on the parameters
- * (for example {@link AdminAccess} requires password and keys).  
- * 
+ * (for example {@link AdminAccess} requires password and keys).
+ *
  * @author Adrian Cole
  */
 public class UserAdd implements Statement {
@@ -70,7 +71,7 @@ public class UserAdd implements Statement {
       private String fullName;
 
       /**
-       * See --home in `man useradd`. 
+       * See --home in `man useradd`.
        */
       public UserAdd.Builder home(String home) {
          this.home = home;
@@ -78,7 +79,7 @@ public class UserAdd implements Statement {
       }
 
       /**
-       * See --base-dir in `man useradd`. 
+       * See --base-dir in `man useradd`.
        */
       public UserAdd.Builder defaultHome(String defaultHome) {
          this.defaultHome = defaultHome;
@@ -140,7 +141,7 @@ public class UserAdd implements Statement {
          List<String> authorizeRSAPublicKeys, String defaultHome, String shell) {
       this(login, groups, password, installRSAPrivateKey, authorizeRSAPublicKeys, null, defaultHome, shell, login);
    }
-   
+
    public UserAdd(String login, List<String> groups, @Nullable String password, @Nullable String installRSAPrivateKey,
          List<String> authorizeRSAPublicKeys, @Nullable String home, String defaultHome, String shell, String fullName) {
       this.login = checkNotNull(login, "login");
