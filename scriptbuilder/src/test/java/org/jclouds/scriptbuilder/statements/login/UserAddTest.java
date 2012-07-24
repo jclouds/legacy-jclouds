@@ -20,7 +20,6 @@ package org.jclouds.scriptbuilder.statements.login;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.JcloudsVersion;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.testng.annotations.Test;
 
