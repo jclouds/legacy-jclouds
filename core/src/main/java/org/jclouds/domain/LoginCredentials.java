@@ -64,6 +64,8 @@ public class LoginCredentials extends Credentials {
 
       public Builder password(String password) {
          this.password = Optional.fromNullable(password);
+         if (privateKey == null)
+            noPrivateKey();
          return this;
       }
 
@@ -74,6 +76,8 @@ public class LoginCredentials extends Credentials {
 
       public Builder privateKey(String privateKey) {
          this.privateKey = Optional.fromNullable(privateKey);
+         if (password == null)
+            noPassword();
          return this;
       }
 
