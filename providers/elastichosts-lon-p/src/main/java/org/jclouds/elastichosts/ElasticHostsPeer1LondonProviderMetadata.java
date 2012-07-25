@@ -68,7 +68,7 @@ public class ElasticHostsPeer1LondonProviderMetadata extends BaseProviderMetadat
          .homepage(URI.create("https://lon-p.elastichosts.com"))
          .console(URI.create("https://lon-p.elastichosts.com/accounts"))
          .iso3166Codes("GB-LND")
-         .endpoint("https://api.lon-p.elastichosts.com")
+         .endpoint("https://api-lon-p.elastichosts.com")
          .defaultProperties(ElasticHostsPeer1LondonProviderMetadata.defaultProperties());
       }
 

@@ -83,7 +83,7 @@ public class ElasticStackApiMetadata extends BaseRestApiMetadata {
          .credentialName("Secret API key")
          .documentation(URI.create("http://www.elasticstack.com/cloud-platform/api"))
          .version("1.0")
-         .defaultEndpoint("https://api.lon-p.elastichosts.com")
+         .defaultEndpoint("https://api-lon-p.elastichosts.com")
          .defaultProperties(ElasticStackApiMetadata.defaultProperties())
          .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(ElasticStackRestClientModule.class, ElasticStackComputeServiceContextModule.class));
