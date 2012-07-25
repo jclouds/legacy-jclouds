@@ -186,4 +186,17 @@ public class InstanceType {
     */
    public static final String CC2_8XLARGE = "cc2.8xlarge";
 
+   /**
+    * High I/O Quadruple Extra Large specifications
+    * <ul>
+    * <li>60.5 GB of memory</li>
+    * <li>35 EC2 Compute Units (16 virtual cores)</li>
+    * <li>2 SSD-based volumes each with 1024 GB of instance storage</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: Very High (10 Gigabit Ethernet)</li>
+    * <li>Storage I/O Performance: Very High**</li>
+    * </ul>
+    */
+   public static final String HI1_4XLARGE = "hi1.4xlarge";
+
 }
