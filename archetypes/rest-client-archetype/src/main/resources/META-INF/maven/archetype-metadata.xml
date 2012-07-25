@@ -2,10 +2,10 @@
 <archetype-descriptor name="jclouds-rest-client-archetype">
   <requiredProperties>
     <requiredProperty key="groupId">
-      <defaultValue>org.jclouds</defaultValue>
+      <defaultValue>org.jclouds.labs</defaultValue>
     </requiredProperty>
     <requiredProperty key="package" >
-     <defaultValue>${groupId}.${artifactId}</defaultValue>
+     <defaultValue>org.jclouds.${artifactId}</defaultValue>
     </requiredProperty>
     <requiredProperty key="author">
       <defaultValue>Adrian Cole</defaultValue>
@@ -23,6 +23,9 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/resources</directory>
+    </fileSet>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
       <directory>src/test/java</directory>
       <includes>
@@ -32,7 +35,8 @@
     <fileSet encoding="UTF-8">
       <directory>src/test/resources</directory>
       <includes>
-        <include>**/*.xml</include>
+        <include>**/*.json</include>
+        <include>logback.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
