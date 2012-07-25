@@ -18,7 +18,7 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.handlers;
 
-import static org.easymock.EasyMock.createMockBuilder;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
@@ -38,10 +38,21 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "JoyentCloudErrorHandlerTest")
 public class JoyentCloudErrorHandlerTest {
+   
+   @Test
+   public void test409MakesIllegalStateException() {
+      assertCodeMakes(
+               "POST",
+               URI.create("https://us-east-1.api.joyentcloud.com/my/machines/b7d07c64-ba40-496a-a19a-3f1d028494ff"),
+               409,
+               "HTTP/1.1 409 Conflict",
+               "\"{\"code\":\"InvalidState\",\"message\":\"An incompatible transition has already been queued for this resource\"}\"",
+               IllegalStateException.class);
+   }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
          Class<? extends Exception> expected) {
-      assertCodeMakes(method, uri, statusCode, message, "text/plain", content, expected);
+      assertCodeMakes(method, uri, statusCode, message, "application/json", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
@@ -49,7 +60,7 @@ public class JoyentCloudErrorHandlerTest {
 
       JoyentCloudErrorHandler function = new JoyentCloudErrorHandler();
 
-      HttpCommand command = createMockBuilder(HttpCommand.class).createMock();
+      HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
       HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
       response.getPayload().getContentMetadata().setContentType(contentType);
