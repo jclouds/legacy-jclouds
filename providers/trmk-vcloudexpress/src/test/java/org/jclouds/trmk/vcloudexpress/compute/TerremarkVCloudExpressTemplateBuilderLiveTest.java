@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "TerremarkVCloudExpressTemplateBuilderLiveTest")
 public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public TerremarkVCloudExpressTemplateBuilderLiveTest() {
