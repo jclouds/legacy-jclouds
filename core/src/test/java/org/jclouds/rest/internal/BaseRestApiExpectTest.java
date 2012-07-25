@@ -559,7 +559,7 @@ public abstract class BaseRestApiExpectTest<S> {
       // isolate tests from eachother, as default credentialStore is static
       return builder.credentials(identity, credential).modules(
                ImmutableSet.of(new ExpectModule(fn), new NullLoggingModule(), new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
-                     new ConcurrentHashMap<String, InputSupplier<InputStream>>())), module)).overrides(setupProperties())
+                     new ConcurrentHashMap<String, InputSupplier<InputStream>>())), module)).overrides(props)
                .buildInjector();
    }
    
