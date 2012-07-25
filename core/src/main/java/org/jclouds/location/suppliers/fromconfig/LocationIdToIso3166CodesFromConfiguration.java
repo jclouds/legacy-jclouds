@@ -31,9 +31,11 @@ import javax.inject.Singleton;
 
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.suppliers.LocationIdToIso3166CodesSupplier;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -63,14 +65,9 @@ public class LocationIdToIso3166CodesFromConfiguration implements LocationIdToIs
    @Iso3166
    @Override
    public Map<String, Supplier<Set<String>>> get() {
-      Map<String, String> stringsBoundWithRegionOrZonePrefix = filterStringsBoundByName.apply(new Predicate<String>() {
-
-         @Override
-         public boolean apply(String input) {
-            return (input.startsWith(PROPERTY_REGION) || input.startsWith(PROPERTY_ZONE));
-         }
-
-      });
+      Map<String, String> stringsBoundWithRegionOrZonePrefix = filterStringsBoundByName.apply(Predicates.<String>or(
+             Predicates2.startsWith(PROPERTY_REGION),
+             Predicates2.startsWith(PROPERTY_ZONE)));
       Builder<String, Supplier<Set<String>>> codes = ImmutableMap.builder();
       for (String key : ImmutableSet.of(PROPERTY_REGION, PROPERTY_ZONE)) {
          String regionOrZoneString = stringsBoundWithRegionOrZonePrefix.get(key + "s");
