@@ -41,6 +41,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -50,7 +51,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Gerald Pereira
  * @see MachineApi
- * @see <a href="http://apidocs.joyent.com/cloudApiapidoc/cloudapi">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#machines">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
@@ -74,7 +75,7 @@ public interface MachineAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Machine> get(@PathParam("id") String id);
-   
+
    /**
     * @see MachineApi#createWithDataset(String)
     */
@@ -82,63 +83,62 @@ public interface MachineAsyncApi {
    @Path("/my/machines")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Machine> createWithDataset(@QueryParam("dataset") String datasetURN);
-   
-	/**
-	 * @see MachineApi#createWithDataset(String, CreateMachineOptions)
-	 */
-	@POST
+
+   /**
+    * @see MachineApi#createWithDataset(String, CreateMachineOptions)
+    */
+   @POST
    @Path("/my/machines")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Machine> createWithDataset(@QueryParam("dataset") String datasetURN, CreateMachineOptions options);
 
-	/**
-	 * @see MachineApi#stop
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("/my/machines/{id}")
-	@Payload("action=stop")
-	ListenableFuture<Void> stop(@PathParam("id") String id);
-	
-	/**
-	 * @see MachineApi#start
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("/my/machines/{id}")
-	@Payload("action=start")
-	ListenableFuture<Void> start(@PathParam("id") String id);
-	
-	/**
-	 * @see MachineApi#reboot
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("/my/machines/{id}")
-	@Payload("action=reboot")
-	ListenableFuture<Void> reboot(@PathParam("id") String id);
-	
-	/**
-	 * @see MachineApi#resize
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("/my/machines/{id}")
-	@Payload("action=resize&package={package}")
-	ListenableFuture<Void> resize(@PathParam("id") String id,@PayloadParam("package") String packageJoyentCloud);
-	
-	/**
-	 * @see MachineApi#delete
-	 */
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/my/machines/{id}")
-	ListenableFuture<Void> delete(@PathParam("id") String id);
-	
-	
-	
+   /**
+    * @see MachineApi#stop
+    */
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_FORM_URLENCODED)
+   @Path("/my/machines/{id}")
+   @Payload("action=stop")
+   ListenableFuture<Void> stop(@PathParam("id") String id);
+
+   /**
+    * @see MachineApi#start
+    */
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_FORM_URLENCODED)
+   @Path("/my/machines/{id}")
+   @Payload("action=start")
+   ListenableFuture<Void> start(@PathParam("id") String id);
+
+   /**
+    * @see MachineApi#reboot
+    */
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_FORM_URLENCODED)
+   @Path("/my/machines/{id}")
+   @Payload("action=reboot")
+   ListenableFuture<Void> reboot(@PathParam("id") String id);
+
+   /**
+    * @see MachineApi#resize
+    */
+   @POST
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_FORM_URLENCODED)
+   @Path("/my/machines/{id}")
+   @Payload("action=resize&package={package}")
+   ListenableFuture<Void> resize(@PathParam("id") String id, @PayloadParam("package") String packageJoyentCloud);
+
+   /**
+    * @see MachineApi#delete
+    */
+   @DELETE
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/my/machines/{id}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> delete(@PathParam("id") String id);
+
 }

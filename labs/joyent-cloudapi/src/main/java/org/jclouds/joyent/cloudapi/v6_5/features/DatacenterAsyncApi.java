@@ -40,7 +40,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see DatacenterApi
  * @author Adrian Cole
- * @see <a href="http://cloudApi.joyent.org/cloudApiapi.html">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datacenters">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")

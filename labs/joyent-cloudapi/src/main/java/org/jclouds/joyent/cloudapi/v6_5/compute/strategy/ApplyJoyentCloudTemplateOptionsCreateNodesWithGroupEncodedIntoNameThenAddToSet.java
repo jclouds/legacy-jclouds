@@ -20,6 +20,7 @@ package org.jclouds.joyent.cloudapi.v6_5.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.joyent.cloudapi.v6_5.config.JoyentCloudProperties.AUTOGENERATE_KEYS;
 
 import java.util.Map;
 import java.util.Set;
@@ -55,6 +56,7 @@ public class ApplyJoyentCloudTemplateOptionsCreateNodesWithGroupEncodedIntoNameT
          CreateNodesWithGroupEncodedIntoNameThenAddToSet {
 
    private final LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache;
+   private final boolean defaultToAutogenerateKeys;
 
    @Inject
    protected ApplyJoyentCloudTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet(
@@ -63,10 +65,12 @@ public class ApplyJoyentCloudTemplateOptionsCreateNodesWithGroupEncodedIntoNameT
             GroupNamingConvention.Factory namingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache) {
+            LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache, 
+            @Named(AUTOGENERATE_KEYS) boolean defaultToAutogenerateKeys) {
       super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.keyCache = checkNotNull(keyCache, "keyCache");
+      this.defaultToAutogenerateKeys = defaultToAutogenerateKeys;
    }
 
    @Override
@@ -80,8 +84,11 @@ public class ApplyJoyentCloudTemplateOptionsCreateNodesWithGroupEncodedIntoNameT
       assert template.getOptions().equals(templateOptions) : "options didn't clone properly";
 
       String datacenter = mutableTemplate.getLocation().getId();
+      
+      if (!templateOptions.shouldGenerateKey().isPresent())
+         templateOptions.generateKey(defaultToAutogenerateKeys);
 
-      if (templateOptions.shouldGenerateKey()) {
+      if (templateOptions.shouldGenerateKey().get()) {
          KeyAndPrivateKey keyPair = keyCache.getUnchecked(DatacenterAndName.fromDatacenterAndName(datacenter, namingConvention.create()
                .sharedNameForGroup(group)));
          // in order to delete the key later

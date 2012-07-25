@@ -16,34 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.joyent.cloudapi.v6_5.config;
+package org.jclouds.joyent.cloudapi.v6_5.compute.internal;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-
-import javax.inject.Singleton;
-
-import org.jclouds.joyent.cloudapi.v6_5.domain.Machine;
-import org.jclouds.joyent.cloudapi.v6_5.functions.internal.JoyentCloudTypeAdapters;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 
 /**
+ * 
  * @author Adrian Cole
  */
-public class JoyentCloudParserModule extends AbstractModule {
-
-   @Provides
-   @Singleton
-   public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(Machine.State.class, new JoyentCloudTypeAdapters.MachineStateAdapter(), Type.class,
-            new JoyentCloudTypeAdapters.JoyentCloudTypeAdapter());
-   }
+public class BaseJoyentCloudComputeServiceExpectTest extends BaseJoyentCloudComputeServiceContextExpectTest<ComputeService> {
 
    @Override
-   protected void configure() {
+   public ComputeService apply(ComputeServiceContext input) {
+      return input.getComputeService();
    }
 
 }

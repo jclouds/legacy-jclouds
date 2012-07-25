@@ -29,7 +29,7 @@ public class DatasetInDatacenter extends DatacenterAndId {
    protected final Dataset dataset;
 
    public DatasetInDatacenter(Dataset dataset, String datacenterId) {
-      super(datacenterId, checkNotNull(dataset, "dataset").getId());
+      super(datacenterId, checkNotNull(dataset, "dataset").getUrn());
       this.dataset = dataset;
    }
 

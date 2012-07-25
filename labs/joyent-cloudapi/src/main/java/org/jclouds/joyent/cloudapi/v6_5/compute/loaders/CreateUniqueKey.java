@@ -20,18 +20,15 @@ package org.jclouds.joyent.cloudapi.v6_5.compute.loaders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.security.SecureRandom;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.SshKeys;
+import org.jclouds.crypto.SshKeyPairGenerator;
 import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.KeyAndPrivateKey;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
@@ -51,23 +48,22 @@ public class CreateUniqueKey extends CacheLoader<DatacenterAndName, KeyAndPrivat
    protected Logger logger = Logger.NULL;
    protected final JoyentCloudApi cloudApiApi;
    protected final GroupNamingConvention.Factory namingConvention;
-   protected final Crypto crypto;
-   protected final Provider<SecureRandom> secureRandom;
+   protected final SshKeyPairGenerator sshKeyPairGenerator;
 
    @Inject
-   public CreateUniqueKey(JoyentCloudApi cloudApiApi, GroupNamingConvention.Factory namingConvention, Crypto crypto, Provider<SecureRandom> secureRandom) {
+   public CreateUniqueKey(JoyentCloudApi cloudApiApi, GroupNamingConvention.Factory namingConvention,
+            SshKeyPairGenerator sshKeyPairGenerator) {
       this.cloudApiApi = checkNotNull(cloudApiApi, "cloudApiApi");
       this.namingConvention = checkNotNull(namingConvention, "namingConvention");
-      this.crypto = checkNotNull(crypto, "crypto");
-      this.secureRandom = checkNotNull(secureRandom, "secureRandom");
+      this.sshKeyPairGenerator = checkNotNull(sshKeyPairGenerator, "sshKeyPairGenerator");
    }
 
    @Override
    public KeyAndPrivateKey load(DatacenterAndName datacenterAndName) {
       String datacenterId = checkNotNull(datacenterAndName, "datacenterAndName").getDatacenter();
       String prefix = datacenterAndName.getName();
-      
-      Map<String, String> keyPair = SshKeys.generate(crypto.rsaKeyPairGenerator(), secureRandom.get());
+
+      Map<String, String> keyPair = sshKeyPairGenerator.get();
       String publicKey = keyPair.get("public");
       String privateKey = keyPair.get("private");
 

@@ -35,15 +35,16 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "KeyApiExpectTest")
 public class KeyApiExpectTest extends BaseJoyentCloudApiExpectTest {
-   HttpRequest list = HttpRequest.builder().method("GET")
-                                 .endpoint("https://api.joyentcloud.com/my/keys")
-                                 .addHeader("X-Api-Version", "~6.5")
-                                 .addHeader("Accept", "application/json")
-                                 .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
+   public HttpRequest list = HttpRequest.builder().method("GET")
+                                        .endpoint("https://api.joyentcloud.com/my/keys")
+                                        .addHeader("X-Api-Version", "~6.5")
+                                        .addHeader("Accept", "application/json")
+                                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
+   
+   public HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
+            payloadFromResource("/key_list.json")).build();
 
    public void testListKeysWhenResponseIs2xx() {
-      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/key_list.json")).build();
 
       JoyentCloudApi apiWhenKeysExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 

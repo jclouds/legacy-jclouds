@@ -31,7 +31,7 @@ import org.jclouds.joyent.cloudapi.v6_5.options.CreateMachineOptions;
  * 
  * @author Gerald Pereira
  * @see MachineAsyncApi
- * @see <a href="http://apidocs.joyent.com/cloudApiapidoc/cloudapi">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#machines">api doc</a>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface MachineApi {

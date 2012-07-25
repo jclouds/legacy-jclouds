@@ -12,7 +12,7 @@ import org.jclouds.joyent.cloudapi.v6_5.domain.Dataset;
  * 
  * @author Gerald Pereira
  * @see DatasetAsyncApi
- * @see <a href="http://apidocs.joyent.com/cloudApiapidoc/cloudapi">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datasets">api doc</a>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface DatasetApi {

@@ -25,7 +25,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Gerald Pereira
  * @see DatasetApi
- * @see <a href="http://apidocs.joyent.com/cloudApiapidoc/cloudapi">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datasets">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")

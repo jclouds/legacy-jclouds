@@ -68,7 +68,7 @@ public class MachineApiLiveTest extends BaseJoyentCloudApiLiveTest {
             assertEquals(newDetails.getName(), machine.getName());
             assertEquals(newDetails.getType(), machine.getType());
             assertEquals(newDetails.getState(), machine.getState());
-            assertEquals(newDetails.get(), machine.get());
+            assertEquals(newDetails.getDatasetURN(), machine.getDatasetURN());
             assertEquals(newDetails.getMemorySizeMb(), machine.getMemorySizeMb());
             assertEquals(newDetails.getDiskSizeGb(), machine.getDiskSizeGb());
             assertEquals(newDetails.getIps(), machine.getIps());

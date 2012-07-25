@@ -34,15 +34,16 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "PackageApiExpectTest")
 public class PackageApiExpectTest extends BaseJoyentCloudApiExpectTest {
-   HttpRequest list = HttpRequest.builder().method("GET")
-                                 .endpoint("https://us-sw-1.api.joyentcloud.com/my/packages")
-                                 .addHeader("X-Api-Version", "~6.5")
-                                 .addHeader("Accept", "application/json")
-                                 .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
-
-   public void testListPackagesWhenResponseIs2xx() {
-      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   public HttpRequest list = HttpRequest.builder().method("GET")
+                                        .endpoint("https://us-sw-1.api.joyentcloud.com/my/packages")
+                                        .addHeader("X-Api-Version", "~6.5")
+                                        .addHeader("Accept", "application/json")
+                                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
+   
+   public HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/package_list.json")).build();
+   
+   public void testListPackagesWhenResponseIs2xx() {
 
       JoyentCloudApi apiWhenPackagesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 

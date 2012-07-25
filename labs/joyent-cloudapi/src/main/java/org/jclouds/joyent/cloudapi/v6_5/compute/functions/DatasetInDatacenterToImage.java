@@ -59,10 +59,11 @@ public class DatasetInDatacenterToImage implements Function<DatasetInDatacenter,
       Dataset dataset = datasetInDatacenter.get();
       return new ImageBuilder()
             .id(datasetInDatacenter.slashEncode())
-            .providerId(dataset.getId())
+            // note that it is urn that is the expected value!
+            .providerId(dataset.getUrn())
             .name(dataset.getName())
             .operatingSystem(imageToOs.apply(dataset))
-            .description(dataset.getUrn())
+            .description(dataset.getDescription())
             .version(dataset.getVersion())
             .location(location)
             .status(Image.Status.AVAILABLE).build();

@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(testName = "DatasetInDatacenterToHardwareTest")
+@Test(testName = "DatasetInDatacenterToImageTest")
 public class DatasetInDatacenterToImageTest {
 
    Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("joyent-cloudapi")
@@ -66,14 +66,14 @@ public class DatasetInDatacenterToImageTest {
 
       org.jclouds.compute.domain.Image convertedImage = converter.apply(datasetInZoneToConvert);
 
-      assertEquals(convertedImage.getId(), datasetInZoneToConvert.slashEncode());
-      assertEquals(convertedImage.getProviderId(), datasetToConvert.getId());
+      assertEquals(convertedImage.getId(), "us-sw-1/" + datasetToConvert.getUrn());
+      assertEquals(convertedImage.getProviderId(), datasetToConvert.getUrn());
       assertEquals(convertedImage.getLocation(), locationIndex.get().get("us-sw-1"));
 
       assertEquals(convertedImage.getName(), datasetToConvert.getName());
       assertEquals(convertedImage.getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
       assertEquals(convertedImage.getOperatingSystem(), operatingSystem);
-      assertEquals(convertedImage.getDescription(), datasetToConvert.getUrn());
+      assertEquals(convertedImage.getDescription(), datasetToConvert.getDescription());
       assertEquals(convertedImage.getVersion(), datasetToConvert.getVersion());
    }
 

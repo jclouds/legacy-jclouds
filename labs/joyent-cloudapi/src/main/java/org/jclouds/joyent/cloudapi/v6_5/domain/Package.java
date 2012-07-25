@@ -18,19 +18,31 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.collect.ComparisonChain;
 
 /**
- * Listing of a package.
+ * Packages are named collections of resources that are used to describe the ‘sizes’ of either a
+ * smart machine or a virtual machine. These resources include (but are not limited to) RAM, CPUs,
+ * CPU Caps, Lightweight Threads, Disk Space, Swap size, and Logical Networks.
  * 
  * @author Gerald Pereira
- * @see <a href= "http://apidocs.joyent.com/cloudApiapidoc/cloudapi/#machines" />
+ * @see <a href= "http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#packages" >docs</a>
  */
 public class Package implements Comparable<Package> {
 
    public static Builder builder() {
       return new Builder();
+   }
+   
+   public Builder toBuilder() {
+      return new Builder().fromPackage(this);
    }
 
    public static class Builder {
@@ -40,26 +52,41 @@ public class Package implements Comparable<Package> {
       private int swapSizeMb;
       private boolean isDefault;
 
+      /**
+       * @see Package#getName()
+       */
       public Builder name(String name) {
          this.name = name;
          return this;
       }
 
+      /**
+       * @see Package#getMemorySizeMb()
+       */
       public Builder memorySizeMb(int memorySizeMb) {
          this.memorySizeMb = memorySizeMb;
          return this;
       }
 
+      /**
+       * @see Package#getDiskSizeGb()
+       */
       public Builder diskSizeGb(int diskSizeGb) {
          this.diskSizeGb = diskSizeGb;
          return this;
       }
 
+      /**
+       * @see Package#getSwapSizeMb()
+       */
       public Builder swapSizeMb(int swapSizeMb) {
          this.swapSizeMb = swapSizeMb;
          return this;
       }
 
+      /**
+       * @see Package#isDefault()
+       */
       public Builder isDefault(boolean isDefault) {
          this.isDefault = isDefault;
          return this;
@@ -75,51 +102,56 @@ public class Package implements Comparable<Package> {
       }
    }
 
-   // The "friendly" name for this machine
    protected final String name;
-   // The amount of memory this package has (Mb)
-   @SerializedName("memory")
+   @Named("memory")
    protected final int memorySizeMb;
-   // The amount of disk this package has (Gb)
-   @SerializedName("disk")
+   @Named("disk")
    protected final int diskSizeGb;
-   // The amount of swap this package has (Gb)
-   @SerializedName("swap")
+   @Named("swap")
    protected final int swapSizeMb;
-   // Whether this is the default package in this datacenter
-   @SerializedName("default")
+   @Named("default")
    protected final boolean isDefault;
 
-   @Override
-   public int compareTo(Package other) {
-      return name.compareTo(other.getName());
-   }
-
+   @ConstructorProperties({ "name", "memory", "disk", "swap", "default" })
    public Package(String name, int memorySizeMb, int diskSizeGb, int swapSizeMb, boolean isDefault) {
-      super();
-      this.name = name;
+      this.name = checkNotNull(name, "name");
       this.memorySizeMb = memorySizeMb;
       this.diskSizeGb = diskSizeGb;
       this.swapSizeMb = swapSizeMb;
       this.isDefault = isDefault;
    }
 
+   /**
+    * The "friendly name for this package
+    */
    public String getName() {
       return name;
    }
 
+   /**
+    * How much memory will by available (in Mb)
+    */
    public int getMemorySizeMb() {
       return memorySizeMb;
    }
 
+   /**
+    * How much disk space will be available (in Gb)
+    */
    public int getDiskSizeGb() {
       return diskSizeGb;
    }
 
+   /**
+    * How much swap memory will be available (in Mb)
+    */
    public int getSwapSizeMb() {
       return swapSizeMb;
    }
 
+   /**
+    * Whether this is the default package in this datacenter
+    */
    public boolean isDefault() {
       return isDefault;
    }
@@ -130,7 +162,8 @@ public class Package implements Comparable<Package> {
          return true;
       }
       if (object instanceof Package) {
-         return Objects.equal(name, ((Package) object).name);
+         Package that = Package.class.cast(object);
+         return Objects.equal(name, that.name);
       } else {
          return false;
       }
@@ -143,7 +176,20 @@ public class Package implements Comparable<Package> {
 
    @Override
    public String toString() {
-      return String.format("[name=%s, memory=%s, disk=%s, swap=%s, default=%s]", name, memorySizeMb, diskSizeGb,
-            swapSizeMb, isDefault);
+      return Objects.toStringHelper("").omitNullValues()
+                    .add("name", name)
+                    .add("memorySizeMb", memorySizeMb)
+                    .add("diskSizeGb", diskSizeGb)
+                    .add("swapSizeMb", swapSizeMb)
+                    .add("isDefault", isDefault).toString();
+   }
+   
+   @Override
+   public int compareTo(Package that) {
+      return ComparisonChain.start()
+                            .compare(this.name, that.name)
+                            .compare(this.memorySizeMb, that.memorySizeMb)
+                            .compare(this.diskSizeGb, that.diskSizeGb)
+                            .compare(this.swapSizeMb, that.swapSizeMb).result();
    }
 }

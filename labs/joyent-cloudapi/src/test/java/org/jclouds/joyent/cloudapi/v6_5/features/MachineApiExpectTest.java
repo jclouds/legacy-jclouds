@@ -36,15 +36,16 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "MachineApiExpectTest")
 public class MachineApiExpectTest extends BaseJoyentCloudApiExpectTest {
-   HttpRequest list = HttpRequest.builder().method("GET")
+   public HttpRequest list = HttpRequest.builder().method("GET")
             .endpoint("https://us-sw-1.api.joyentcloud.com/my/machines")
             .addHeader("X-Api-Version", "~6.5")
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build();
 
+   public HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
+            payloadFromResource("/machine_list.json")).build();
+
    public void testListMachinesWhenResponseIs2xx() {
-      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/machine_list.json")).build();
 
       JoyentCloudApi apiWhenMachinesExists = requestsSendResponses(getDatacenters, getDatacentersResponse, list, listResponse);
 
