@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Singleton;
 
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -38,35 +39,16 @@ import com.google.common.base.Predicates;
  */
 @Singleton
 public class EncodedRSAPublicKeyToBase64 implements Function<Object, String> {
-   private static Predicate<Object> startsWith(String value) {
-      return new ToStringStartsWith(value);
-   }
-
-   private static final class ToStringStartsWith implements Predicate<Object> {
-      private final String value;
-
-      private ToStringStartsWith(String value) {
-         this.value = value;
-      }
-
-      @Override
-      public boolean apply(Object input) {
-         return input.toString().startsWith(value);
-      }
-
-      public String toString() {
-         return "toStringStartsWith(" + value + ")";
-      }
-   }
-
-   @SuppressWarnings("unchecked")
-   private static final Predicate<Object> ALLOWED_MARKERS = Predicates.or(startsWith("ssh-rsa"),
-         startsWith("-----BEGIN CERTIFICATE-----"), startsWith("---- BEGIN SSH2 PUBLIC KEY ----"));
+   private static final Predicate<String> ALLOWED_MARKERS = Predicates.or(
+      Predicates2.startsWith("ssh-rsa"),
+      Predicates2.startsWith("-----BEGIN CERTIFICATE-----"),
+      Predicates2.startsWith("---- BEGIN SSH2 PUBLIC KEY ----"));
 
    @Override
    public String apply(Object from) {
       checkNotNull(from, "input");
-      checkArgument(ALLOWED_MARKERS.apply(from), "must be a ssh public key, conforming to %s ", ALLOWED_MARKERS);
-      return CryptoStreams.base64(from.toString().getBytes(Charsets.UTF_8));
+      String fromString = from.toString();
+      checkArgument(ALLOWED_MARKERS.apply(fromString), "must be a ssh public key, conforming to %s ", ALLOWED_MARKERS);
+      return CryptoStreams.base64(fromString.getBytes(Charsets.UTF_8));
    }
 }

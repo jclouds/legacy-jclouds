@@ -39,9 +39,11 @@ import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.domain.Slice;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
@@ -109,22 +111,8 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));
       builder.status(sliceToNodeStatus.get(from.getStatus()));
-      builder.publicAddresses(Iterables.filter(from.getAddresses(), new Predicate<String>() {
-
-         @Override
-         public boolean apply(String input) {
-            return !input.startsWith("10.");
-         }
-
-      }));
-      builder.privateAddresses(Iterables.filter(from.getAddresses(), new Predicate<String>() {
-
-         @Override
-         public boolean apply(String input) {
-            return input.startsWith("10.");
-         }
-
-      }));
+      builder.publicAddresses(Iterables.filter(from.getAddresses(), Predicates.not(Predicates2.startsWith("10."))));
+      builder.privateAddresses(Iterables.filter(from.getAddresses(), Predicates2.startsWith("10.")));
       return builder.build();
    }
 

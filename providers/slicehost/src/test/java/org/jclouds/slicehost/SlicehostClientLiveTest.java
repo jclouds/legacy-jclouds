@@ -39,11 +39,13 @@ import org.jclouds.slicehost.domain.Image;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.Predicates2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
@@ -268,15 +270,7 @@ public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
    }
 
    private String getIp(Slice newDetails) {
-      String ip = Iterables.find(newDetails.getAddresses(), new Predicate<String>() {
-
-         @Override
-         public boolean apply(String input) {
-            return !input.startsWith("10.");
-         }
-
-      });
-      return ip;
+      return Iterables.find(newDetails.getAddresses(), Predicates.not(Predicates2.startsWith("10.")));
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testSliceDetails")

@@ -48,6 +48,7 @@ import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.SeedAnnotationCache;
 import org.jclouds.util.Maps2;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -111,15 +112,7 @@ public class RestModule extends AbstractModule {
    @Singleton
    @Named("TIMEOUTS")
    protected Map<String, Long> timeouts(Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
-      Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName.apply(new Predicate<String>() {
-
-         @Override
-         public boolean apply(String input) {
-            return input.startsWith(PROPERTY_TIMEOUTS_PREFIX);
-         }
-
-      });
-
+      Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName.apply(Predicates2.startsWith(PROPERTY_TIMEOUTS_PREFIX));
       Map<String, Long> longsByName = Maps.transformValues(stringBoundWithTimeoutPrefix, new Function<String, Long>() {
 
          @Override
