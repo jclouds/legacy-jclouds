@@ -68,7 +68,7 @@ public class ElasticHostsBlueSquareLondonProviderMetadata extends BaseProviderMe
          .homepage(URI.create("https://lon-b.elastichosts.com"))
          .console(URI.create("https://lon-b.elastichosts.com/accounts"))
          .iso3166Codes("GB-LND")
-         .endpoint("https://api.lon-b.elastichosts.com")
+         .endpoint("https://api-lon-b.elastichosts.com")
          .defaultProperties(ElasticHostsBlueSquareLondonProviderMetadata.defaultProperties());
       }
 

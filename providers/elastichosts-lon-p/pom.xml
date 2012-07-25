@@ -34,7 +34,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.elastichosts-lon-p.endpoint>https://api.lon-p.elastichosts.com</test.elastichosts-lon-p.endpoint>
+        <test.elastichosts-lon-p.endpoint>https://api-lon-p.elastichosts.com</test.elastichosts-lon-p.endpoint>
         <test.elastichosts-lon-p.api-version>2.0</test.elastichosts-lon-p.api-version>
         <test.elastichosts-lon-p.build-version></test.elastichosts-lon-p.build-version>
         <test.elastichosts-lon-p.identity>FIXME_IDENTITY</test.elastichosts-lon-p.identity>

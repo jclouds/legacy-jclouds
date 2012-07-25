@@ -66,7 +66,7 @@ public class ElasticHostsPeer1SanAntonioProviderMetadata extends BaseProviderMet
          .homepage(URI.create("https://sat-p.elastichosts.com"))
          .console(URI.create("https://sat-p.elastichosts.com/accounts"))
          .iso3166Codes("US-TX")
-         .endpoint("https://api.sat-p.elastichosts.com")
+         .endpoint("https://api-sat-p.elastichosts.com")
          .defaultProperties(ElasticHostsPeer1SanAntonioProviderMetadata.defaultProperties());
       }
 
