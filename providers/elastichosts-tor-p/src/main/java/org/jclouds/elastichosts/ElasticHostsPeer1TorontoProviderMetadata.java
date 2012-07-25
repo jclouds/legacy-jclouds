@@ -66,7 +66,7 @@ public class ElasticHostsPeer1TorontoProviderMetadata extends BaseProviderMetada
          .homepage(URI.create("https://tor-p.elastichosts.com"))
          .console(URI.create("https://tor-p.elastichosts.com/accounts"))
          .iso3166Codes("CA-ON")
-         .endpoint("https://api.tor-p.elastichosts.com")
+         .endpoint("https://api-tor-p.elastichosts.com")
          .defaultProperties(ElasticHostsPeer1TorontoProviderMetadata.defaultProperties());
       }
 

@@ -48,7 +48,7 @@
   </repositories>
   
   <properties>
-    <test.elasticstack.endpoint>https://api.lon-p.elastichosts.com</test.elasticstack.endpoint>
+    <test.elasticstack.endpoint>https://api-lon-p.elastichosts.com</test.elasticstack.endpoint>
     <test.elasticstack.api-version>1.0</test.elasticstack.api-version>
     <test.elasticstack.build-version></test.elasticstack.build-version>
     <test.elasticstack.identity>FIXME</test.elasticstack.identity>

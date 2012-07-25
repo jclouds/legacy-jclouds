@@ -66,7 +66,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("listServers");
       HttpRequest httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/servers/list HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/servers/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -74,7 +74,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/servers/list HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/servers/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
@@ -93,7 +93,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("listServerInfo");
       HttpRequest httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/servers/info HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/servers/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -108,7 +108,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("getServerInfo", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/servers/uuid/info HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/servers/uuid/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -125,7 +125,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method,
             BindServerToPlainTextStringTest.SERVER);
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/create HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, BindServerToPlainTextStringTest.CREATED_SERVER, "text/plain", false);
 
@@ -142,7 +142,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method,
             BindServerToPlainTextStringTest.SERVER);
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/create/stopped HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/create/stopped HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, BindServerToPlainTextStringTest.CREATED_SERVER, "text/plain", false);
 
@@ -159,7 +159,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method, "100",
             BindServerToPlainTextStringTest.SERVER);
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/100/set HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, BindServerToPlainTextStringTest.CREATED_SERVER, "text/plain", false);
 
@@ -175,7 +175,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("destroyServer", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/uuid/destroy HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -191,7 +191,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("startServer", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/uuid/start HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/uuid/start HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -207,7 +207,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("stopServer", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/uuid/stop HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/uuid/stop HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -223,7 +223,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("shutdownServer", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/uuid/shutdown HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/uuid/shutdown HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -239,7 +239,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("resetServer", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/servers/uuid/reset HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/servers/uuid/reset HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -255,7 +255,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("listDrives");
       HttpRequest httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/drives/list HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/drives/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -263,7 +263,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/drives/list HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/drives/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
@@ -282,7 +282,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("listDriveInfo");
       HttpRequest httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/drives/info HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/drives/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -297,7 +297,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("getDriveInfo", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "GET https://api.lon-p.elastichosts.com/drives/uuid/info HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api-lon-p.elastichosts.com/drives/uuid/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -314,7 +314,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method,
             new CreateDriveRequest.Builder().name("foo").size(10000l).build());
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/create HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, "name foo\nsize 10000", "text/plain", false);
 
@@ -331,7 +331,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method, "100",
             new DriveData.Builder().name("foo").size(10000l).tags(ImmutableList.of("production", "candy")).build());
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/100/set HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, "name foo\nsize 10000\ntags production candy", "text/plain", false);
 
@@ -347,7 +347,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("destroyDrive", String.class);
       HttpRequest httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/uuid/destroy HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -363,7 +363,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("imageDrive", String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, "100", "200");
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/200/image/100 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/200/image/100 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -381,7 +381,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method, "100", "200",
             ImageConversionType.GUNZIP);
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/200/image/100/gunzip HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/200/image/100/gunzip HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -397,7 +397,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       Method method = ElasticStackAsyncClient.class.getMethod("readDrive", String.class, long.class, long.class);
       HttpRequest httpRequest = processor.createRequest(method, "100", 1024, 2048);
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/100/read/1024/2048 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/100/read/1024/2048 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/octet-stream\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -413,7 +413,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method, "100",
             Payloads.newStringPayload("foo"));
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/100/write HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/100/write HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, "foo", MediaType.APPLICATION_OCTET_STREAM, false);
 
@@ -429,7 +429,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
       HttpRequest httpRequest = processor.createRequest(method, "100",
             Payloads.newStringPayload("foo"), 2048);
 
-      assertRequestLineEquals(httpRequest, "POST https://api.lon-p.elastichosts.com/drives/100/write/2048 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api-lon-p.elastichosts.com/drives/100/write/2048 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, "foo", MediaType.APPLICATION_OCTET_STREAM, false);
 
