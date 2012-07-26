@@ -18,6 +18,7 @@
  */
 package org.jclouds.domain.internal;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
@@ -28,6 +29,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -45,6 +48,41 @@ public class LocationImpl implements Location, Serializable {
    private final Location parent;
    private final Set<String> iso3166Codes;
    private final Map<String, Object> metadata;
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      LocationImpl that = LocationImpl.class.cast(o);
+      return equal(this.scope, that.scope) && equal(this.id, that.id) && equal(this.parent, that.parent);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(scope, id, parent);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+  
+   protected ToStringHelper string() {
+      ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("scope", scope).add("id", id)
+               .add("description", description);
+
+      if (parent != null)
+         helper.add("parent", parent.getId());
+
+      if (iso3166Codes.size() > 0)
+         helper.add("iso3166Codes", iso3166Codes);
+      if (metadata.size() > 0)
+         helper.add("metadata", metadata);
+      return helper;
+   }
 
    public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent,
             Iterable<String> iso3166Codes, Map<String, Object> metadata) {
@@ -102,68 +140,6 @@ public class LocationImpl implements Location, Serializable {
    @Override
    public Map<String, Object> getMetadata() {
       return metadata;
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((iso3166Codes == null) ? 0 : iso3166Codes.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-      result = prime * result + ((scope == null) ? 0 : scope.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LocationImpl other = (LocationImpl) obj;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (iso3166Codes == null) {
-         if (other.iso3166Codes != null)
-            return false;
-      } else if (!iso3166Codes.equals(other.iso3166Codes))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
-         return false;
-      if (parent == null) {
-         if (other.parent != null)
-            return false;
-      } else if (!parent.equals(other.parent))
-         return false;
-      if (scope == null) {
-         if (other.scope != null)
-            return false;
-      } else if (!scope.equals(other.scope))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return "[id=" + id + ", scope=" + scope + ", description=" + description + ", parent="
-               + ((parent == null) ? null : parent.getId()) + ", iso3166Codes=" + iso3166Codes + ", metadata="
-               + metadata + "]";
    }
 
 }

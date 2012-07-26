@@ -18,10 +18,14 @@
  */
 package org.jclouds.compute.domain.internal;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * @author Adrian Cole
@@ -30,12 +34,39 @@ public class VolumeImpl implements Volume {
 
    private final String id;
    private final Volume.Type type;
-   private final @Nullable
-   Float size;
-   private final @Nullable
-   String device;
+   @Nullable
+   private final Float size;
+   @Nullable
+   private final String device;
    private final boolean bootDevice;
    private final boolean durable;
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      VolumeImpl that = VolumeImpl.class.cast(o);
+      return equal(this.id, that.id) && equal(this.getType(), that.getType()) && equal(this.size, that.size)
+               && equal(this.device, that.device) && equal(this.bootDevice, that.bootDevice)
+               && equal(this.durable, that.durable);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, size, device, bootDevice, durable);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").omitNullValues().add("id", id).add("type", getType()).add("size", size)
+               .add("device", device).add("bootDevice", bootDevice).add("durable", durable);
+   }
 
    public VolumeImpl(@Nullable String id, Volume.Type type, @Nullable Float size, @Nullable String device,
             boolean bootDevice, boolean durable) {
@@ -103,62 +134,5 @@ public class VolumeImpl implements Volume {
       return bootDevice;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String toString() {
-      return "[id=" + getId() + ", type=" + type + ", size=" + size + ", device=" + device + ", durable=" + durable
-               + ", isBootDevice=" + bootDevice + "]";
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (bootDevice ? 1231 : 1237);
-      result = prime * result + ((device == null) ? 0 : device.hashCode());
-      result = prime * result + (durable ? 1231 : 1237);
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((size == null) ? 0 : size.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VolumeImpl other = (VolumeImpl) obj;
-      if (bootDevice != other.bootDevice)
-         return false;
-      if (device == null) {
-         if (other.device != null)
-            return false;
-      } else if (!device.equals(other.device))
-         return false;
-      if (durable != other.durable)
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (size == null) {
-         if (other.size != null)
-            return false;
-      } else if (!size.equals(other.size))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
-      return true;
-   }
 
 }

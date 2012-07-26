@@ -18,6 +18,10 @@
  */
 package org.jclouds.compute.domain;
 
+import static com.google.common.base.Objects.equal;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ComparisonChain;
 
 /**
@@ -64,36 +68,27 @@ public class Processor implements Comparable<Processor> {
    }
 
    @Override
-   public String toString() {
-      return "[cores=" + cores + ", speed=" + speed + "]";
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Processor that = Processor.class.cast(o);
+      return equal(this.cores, that.cores) && equal(this.speed, that.speed);
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      long temp;
-      temp = Double.doubleToLongBits(cores);
-      result = prime * result + (int) (temp ^ (temp >>> 32));
-      temp = Double.doubleToLongBits(speed);
-      result = prime * result + (int) (temp ^ (temp >>> 32));
-      return result;
+      return Objects.hashCode(cores, speed);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Processor other = (Processor) obj;
-      if (Double.doubleToLongBits(cores) != Double.doubleToLongBits(other.cores))
-         return false;
-      if (Double.doubleToLongBits(speed) != Double.doubleToLongBits(other.speed))
-         return false;
-      return true;
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").omitNullValues().add("cores", cores).add("speed", speed);
    }
 
 }

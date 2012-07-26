@@ -134,8 +134,8 @@ public abstract class ResourceMetadataImpl<T extends Enum<T>> implements Resourc
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("type", getType()).add("providerId", providerId).add("name", name).add(
-               "location", location).add("uri", uri).add("userMetadata", userMetadata);
+      return Objects.toStringHelper("").omitNullValues().add("type", getType()).add("providerId", providerId)
+               .add("name", name).add("location", location).add("uri", uri).add("userMetadata", userMetadata);
    }
 
 }

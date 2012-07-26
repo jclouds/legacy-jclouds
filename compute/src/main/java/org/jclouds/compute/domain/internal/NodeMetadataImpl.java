@@ -33,7 +33,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
@@ -193,12 +192,14 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    // equals and toString from super are sufficient to establish identity equivalence
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", getId()).add("providerId", getProviderId()).add("group", getGroup())
-               .add("name", getName()).add("location", getLocation()).add("uri", getUri()).add("imageId", getImageId())
-               .add("os", getOperatingSystem()).add("status", formatStatus(this)).add("loginPort", getLoginPort()).add(
-                        "hostname", getHostname()).add("privateAddresses", getPrivateAddresses()).add(
-                        "publicAddresses", getPublicAddresses()).add("hardware", getHardware()).add("loginUser",
-                        ((credentials != null) ? credentials.identity : null)).add("tags", getTags()).add(
-                        "userMetadata", getUserMetadata());
+      ToStringHelper helper = computeToStringPrefix();
+      helper.add("group", getGroup()).add("imageId", getImageId()).add("os", getOperatingSystem())
+               .add("status", formatStatus(this)).add("loginPort", getLoginPort()).add("hostname", getHostname());
+      if (getPrivateAddresses().size() > 0)
+         helper.add("privateAddresses", getPrivateAddresses());
+      if (getPublicAddresses().size() > 0)
+         helper.add("publicAddresses", getPublicAddresses());
+      helper.add("hardware", getHardware()).add("loginUser", ((credentials != null) ? credentials.identity : null));
+      return addComputeToStringSuffix(helper);
    }
 }

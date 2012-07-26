@@ -91,11 +91,22 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
    public int hashCode() {
       return Objects.hashCode(super.hashCode(), id);
    }
+   
+   protected ToStringHelper computeToStringPrefix() {
+      return Objects.toStringHelper("").omitNullValues().add("id", getId()).add("providerId", getProviderId())
+               .add("uri", getUri()).add("name", getName()).add("uri", getUri()).add("location", getLocation());
+   }
 
+   protected ToStringHelper addComputeToStringSuffix(ToStringHelper helper) {
+      if (getTags().size() > 0)
+         helper.add("tags", getTags());
+      if (getUserMetadata().size() > 0)
+         helper.add("userMetadata", getUserMetadata());
+      return helper;
+   }
+   
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("type", getType()).add("id", id).add("providerId", getProviderId()).add(
-               "name", getName()).add("location", getLocation()).add("uri", getUri()).add("tags", getTags()).add(
-               "userMetadata", getUserMetadata());
+      return addComputeToStringSuffix(computeToStringPrefix());
    }
 
 }
