@@ -132,7 +132,7 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
                InstanceRequest.builder()
                               .instanceClass("db.t1.micro")
                               .allocatedStorageGB(5)
-                              .securityGroups(securityGroup.getName())
+                              .securityGroup(securityGroup.getName())
                               .name("jclouds")
                               .engine("mysql")
                               .masterUsername("master").masterPassword("Password01")
