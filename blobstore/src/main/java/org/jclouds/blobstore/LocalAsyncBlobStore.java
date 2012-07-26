@@ -184,8 +184,8 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
             }
          }
 
-         final String delimiter = options.isRecursive() ? null : storageStrategy.getSeparator();
-         if (delimiter != null) {
+         if (!options.isRecursive()) {
+            String delimiter = storageStrategy.getSeparator();
             SortedSet<String> commonPrefixes = newTreeSet(
                    transform(contents, new CommonPrefixes(prefix, delimiter)));
             commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
