@@ -22,45 +22,34 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.services.ElasticBlockStoreClient;
+import org.jclouds.ec2.domain.Image;
+import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.ec2.internal.BaseNovaEC2RestClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
  * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "NovaEC2ElasticBlockStoreClientTest")
-public class NovaEC2ElasticBlockStoreClientTest extends BaseNovaEC2RestClientExpectTest {
+public class NovaEC2AMIClientExpectTest extends BaseNovaEC2RestClientExpectTest {
 
-   public void testDescribeVolumesWithNovaEC2Status() {
-      ElasticBlockStoreClient client = requestsSendResponses(
+   public void testDescribeImagesWithNonMachineTypes() {
+      AMIClient client = requestsSendResponses(
             describeAvailabilityZonesRequest,
             describeAvailabilityZonesResponse,
             HttpRequest.builder().method("POST")
                   .endpoint("http://localhost:8773/services/Cloud/")
                   .addHeader("Host", "localhost:8773")
-                  .payload(payloadFromStringWithContentType("Action=DescribeVolumes&Signature=AvRznSzGExM%2Buaj2JJj66wq4v4f%2BakicyLooRDtC0t0%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nova_ec2_describe_volumes.xml")).build()
-      ).getElasticBlockStoreServices();
+                  .payload(payloadFromStringWithContentType("Action=DescribeImages&Signature=Z3q3jSutwlfgvbcINT0Ed3AjrjxM4WMvQloXu%2F1kd40%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nova_ec2_images_with_ramdisk.xml")).build()
+      ).getAMIServices();
 
-      Set<Volume> expected = ImmutableSet.of(Volume
-            .builder()
-            .status(Volume.Status.AVAILABLE)
-            .availabilityZone("nova")
-            .region("nova")
-            .id("vol-00000007")
-            .size(1)
-            .attachments(Attachment.builder().region("nova").build())
-            .createTime(dateService.iso8601SecondsDateParse("2012-04-10T10:39:52Z"))
-            .build());
-
-      assertEquals(client.describeVolumesInRegion("nova"), expected);
+      Set<? extends Image> images = client.describeImagesInRegion("nova");
+      
+      assertEquals(images.size(), 1);
+      
    }
 
 }
