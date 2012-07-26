@@ -163,7 +163,7 @@ public class Image extends Resource {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(containerFormat, diskFormat, size, checksum);
+      return Objects.hashCode(super.hashCode(), containerFormat, diskFormat, size, checksum);
    }
 
    @Override
