@@ -18,11 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +35,8 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -92,6 +94,43 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    private Float spotPrice;
    private RequestSpotInstancesOptions spotOptions = RequestSpotInstancesOptions.NONE;
    private Set<String> groupIds = ImmutableSet.of();
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      AWSEC2TemplateOptions that = AWSEC2TemplateOptions.class.cast(o);
+      return super.equals(that) && equal(this.monitoringEnabled, that.monitoringEnabled)
+               && equal(this.placementGroup, that.placementGroup)
+               && equal(this.noPlacementGroup, that.noPlacementGroup) && equal(this.subnetId, that.subnetId)
+               && equal(this.spotPrice, that.spotPrice) && equal(this.spotOptions, that.spotOptions)
+               && equal(this.groupIds, that.groupIds);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), monitoringEnabled, placementGroup, noPlacementGroup, subnetId,
+               spotPrice, spotOptions, groupIds);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      ToStringHelper toString = super.string();
+      if (monitoringEnabled)
+         toString.add("monitoringEnabled", monitoringEnabled);
+      toString.add("placementGroup", placementGroup);
+      if (noPlacementGroup)
+         toString.add("noPlacementGroup", noPlacementGroup);
+      toString.add("subnetId", subnetId);
+      toString.add("spotPrice", spotPrice);
+      if (spotOptions != RequestSpotInstancesOptions.NONE)
+         toString.add("spotOptions", spotOptions);
+      if (groupIds.size() != 0)
+         toString.add("groupIds", groupIds);
+      return toString;
+   }
 
    public static final AWSEC2TemplateOptions NONE = new AWSEC2TemplateOptions();
 
@@ -652,65 +691,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     */
    public RequestSpotInstancesOptions getSpotOptions() {
       return spotOptions;
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + (monitoringEnabled ? 1231 : 1237);
-      result = prime * result + (noPlacementGroup ? 1231 : 1237);
-      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
-      result = prime * result + ((spotOptions == null) ? 0 : spotOptions.hashCode());
-      result = prime * result + ((spotPrice == null) ? 0 : spotPrice.hashCode());
-      result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      AWSEC2TemplateOptions other = (AWSEC2TemplateOptions) obj;
-      if (monitoringEnabled != other.monitoringEnabled)
-         return false;
-      if (noPlacementGroup != other.noPlacementGroup)
-         return false;
-      if (placementGroup == null) {
-         if (other.placementGroup != null)
-            return false;
-      } else if (!placementGroup.equals(other.placementGroup))
-         return false;
-      if (spotOptions == null) {
-         if (other.spotOptions != null)
-            return false;
-      } else if (!spotOptions.equals(other.spotOptions))
-         return false;
-      if (spotPrice == null) {
-         if (other.spotPrice != null)
-            return false;
-      } else if (!spotPrice.equals(other.spotPrice))
-         return false;
-      if (subnetId == null) {
-         if (other.subnetId != null)
-            return false;
-      } else if (!subnetId.equals(other.subnetId))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-
-      return "[groupIds=" + getGroups() + ", keyPair=" + getKeyPair() + ", noKeyPair="
-            + !shouldAutomaticallyCreateKeyPair() + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup="
-            + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", subnetId=" + subnetId + ", userData="
-            + Arrays.toString(getUserData()) + ", blockDeviceMappings=" + getBlockDeviceMappings() + ", spotPrice="
-            + spotPrice + ", spotOptions=" + spotOptions + "]";
    }
 
 }

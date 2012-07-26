@@ -18,11 +18,11 @@
  */
 package org.jclouds.ec2.compute.options;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +37,8 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -88,6 +90,39 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    private boolean noKeyPair;
    private byte[] userData;
    private ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.builder();
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      EC2TemplateOptions that = EC2TemplateOptions.class.cast(o);
+      return super.equals(that) && equal(this.groupNames, that.groupNames) && equal(this.keyPair, that.keyPair)
+               && equal(this.noKeyPair, that.noKeyPair) && equal(this.userData, that.userData)
+               && equal(this.blockDeviceMappings, that.blockDeviceMappings);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects
+               .hashCode(super.hashCode(), groupNames, keyPair, noKeyPair, userData, userData, blockDeviceMappings);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      ToStringHelper toString = super.string();
+      if (groupNames.size() != 0)
+         toString.add("groupNames", groupNames);
+      if (noKeyPair)
+         toString.add("noKeyPair", noKeyPair);
+      toString.add("keyPair", keyPair);
+      toString.add("userData", userData);
+      ImmutableSet<BlockDeviceMapping> mappings = blockDeviceMappings.build();
+      if (mappings.size() != 0)
+         toString.add("blockDeviceMappings", mappings);
+      return toString;
+   }
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
@@ -482,55 +517,5 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
     */
    public Set<BlockDeviceMapping> getBlockDeviceMappings() {
       return blockDeviceMappings.build();
-   }
-
-   @Override
-   public int hashCode() {
-
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings.hashCode());
-      result = prime * result + ((groupNames == null) ? 0 : groupNames.hashCode());
-      result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
-      result = prime * result + (noKeyPair ? 1231 : 1237);
-      result = prime * result + Arrays.hashCode(userData);
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      EC2TemplateOptions other = (EC2TemplateOptions) obj;
-      if (blockDeviceMappings == null) {
-         if (other.blockDeviceMappings != null)
-            return false;
-      } else if (!blockDeviceMappings.equals(other.blockDeviceMappings))
-         return false;
-      if (groupNames == null) {
-         if (other.groupNames != null)
-            return false;
-      } else if (!groupNames.equals(other.groupNames))
-         return false;
-      if (keyPair == null) {
-         if (other.keyPair != null)
-            return false;
-      } else if (!keyPair.equals(other.keyPair))
-         return false;
-
-      if (!Arrays.equals(userData, other.userData))
-         return false;
-
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return "[groupNames=" + groupNames + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", userData="
-            + Arrays.toString(userData) + ", blockDeviceMappings=" + blockDeviceMappings.build() + "]";
    }
 }
