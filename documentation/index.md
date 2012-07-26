@@ -55,7 +55,7 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 * [Pool Design](/documentation/reference/pool-design)
 * [Load Balancer Design](/documentation/reference/load-balancer-design)
 * [Logging in jclouds](/documentation/reference/jclouds-logging)
-* [VMWare Integration Approach & Design](/documentation/reference/vmware-integration-design)
+* [VMWare vSphere Approach & Design](/documentation/reference/vmware-vsphere-design)
 * [Supported Providers](/documentation/reference/supported-providers)
 * [Apps that use jclouds](/documentation/reference/apps-that-use-jclouds)
 * [Using Provider Metadata](/documentation/reference/using-provider-metadata)
