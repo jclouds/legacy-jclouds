@@ -25,6 +25,7 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rds.domain.Instance;
+import org.jclouds.rds.domain.InstanceRequest;
 import org.jclouds.rds.options.ListInstancesOptions;
 
 /**
@@ -37,6 +38,41 @@ import org.jclouds.rds.options.ListInstancesOptions;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface InstanceApi {
+   /**
+    * Creates a new DB instance in a random, system-chosen Availability Zone in the endpoint's
+    * region.
+    * 
+    * @param id
+    *           unique id of the new instance
+    * @param instanceRequest
+    *           parameters to create the instance with
+    * @return new instance being created
+    */
+   Instance create(String id, InstanceRequest instanceRequest);
+
+   /**
+    * Creates a new DB instance in the specified {@code availabilityZone}
+    * 
+    * @param id
+    *           unique id of the new instance
+    * @param instanceRequest
+    *           parameters to create the instance with
+    * @param availabilityZone
+    *           The EC2 Availability Zone that the database instance will be created in
+    * @return new instance being created
+    */
+   Instance createInAvailabilityZone(String id, InstanceRequest instanceRequest, String availabilityZone);
+
+   /**
+    * Creates a Multi-AZ deployment. This is not compatible with Microsoft SQL Server.
+    * 
+    * @param id
+    *           unique id of the new instance
+    * @param instanceRequest
+    *           parameters to create the instance with
+    * @return new instance being created
+    */
+   Instance createMultiAZ(String id, InstanceRequest instanceRequest);
 
    /**
     * Retrieves information about the specified instance.
@@ -72,20 +108,38 @@ public interface InstanceApi {
    PagedIterable<Instance> list();
 
    /**
-    * Deletes the specified Instance.
+    * Deletes the specified Instance, skipping final snapshot.
     * 
     * <p/>
     * The DeleteDBInstance API deletes a previously provisioned RDS instance. A successful response
-    * from the web service indicates the request was received correctly. If a final DBSnapshot is
-    * requested the status of the RDS instance will be "deleting" until the DBSnapshot is created.
-    * DescribeDBInstance is used to monitor the status of this operation. This cannot be canceled or
+    * from the web service indicates the request was received correctly. This cannot be canceled or
     * reverted once submitted.
     * 
     * 
     * @param id
     *           The DB Instance identifier for the DB Instance to be deleted. This parameter isn't
     *           case sensitive.
+    * @return final state of instance or null if not found
     */
-   void delete(String id);
+   Instance delete(String id);
 
+   /**
+    * Deletes the specified Instance.
+    * 
+    * <p/>
+    * The DeleteDBInstance API deletes a previously provisioned RDS instance. A successful response
+    * from the web service indicates the request was received correctly. The status of the RDS
+    * instance will be "deleting" until the DBSnapshot is created. DescribeDBInstance is used to
+    * monitor the status of this operation. This cannot be canceled or reverted once submitted.
+    * 
+    * 
+    * @param id
+    *           The DB Instance identifier for the DB Instance to be deleted. This parameter isn't
+    *           case sensitive.
+    * @param snapshotId
+    *           The DBSnapshotIdentifier of the new DBSnapshot created when SkipFinalSnapshot is set
+    *           to false.
+    * @return final state of instance or null if not found
+    */
+   Instance deleteAndSaveSnapshot(String id, String snapshotId);
 }

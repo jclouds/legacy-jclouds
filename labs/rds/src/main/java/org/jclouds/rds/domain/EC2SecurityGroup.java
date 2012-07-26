@@ -31,7 +31,7 @@ import com.google.common.base.Optional;
  * 
  * @author Adrian Cole
  */
-public class EC2SecurityGroup {
+public class EC2SecurityGroup extends Authorization {
 
    public static Builder builder() {
       return new Builder();
@@ -41,12 +41,11 @@ public class EC2SecurityGroup {
       return new Builder().fromEC2SecurityGroup(this);
    }
 
-   public static class Builder {
+   public static class Builder extends Authorization.Builder<Builder> {
 
       protected Optional<String> id = Optional.absent();
       protected String name;
       protected String ownerId;
-      protected String status;
 
       /**
        * @see EC2SecurityGroup#getId()
@@ -72,33 +71,29 @@ public class EC2SecurityGroup {
          return this;
       }
 
-      /**
-       * @see EC2SecurityGroup#getStatus()
-       */
-      public Builder status(String status) {
-         this.status = status;
-         return this;
-      }
-
       public EC2SecurityGroup build() {
-         return new EC2SecurityGroup(id, name, ownerId, status);
+         return new EC2SecurityGroup(id, name, ownerId, rawStatus, status);
       }
 
       public Builder fromEC2SecurityGroup(EC2SecurityGroup in) {
-         return this.id(in.getId().orNull()).name(in.getName()).ownerId(in.getOwnerId()).status(in.getStatus());
+         return fromAuthorization(in).id(in.getId().orNull()).name(in.getName()).ownerId(in.getOwnerId());
+      }
+
+      @Override
+      protected Builder self() {
+         return this;
       }
    }
 
    protected final Optional<String> id;
    protected final String name;
    protected final String ownerId;
-   protected final String status;
 
-   protected EC2SecurityGroup(Optional<String> id, String name, String ownerId, String status) {
+   protected EC2SecurityGroup(Optional<String> id, String name, String ownerId, String rawStatus, Status status) {
+      super(rawStatus, status);
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.ownerId = checkNotNull(ownerId, "ownerId");
-      this.status = checkNotNull(status, "status");
    }
 
    /**
@@ -120,13 +115,6 @@ public class EC2SecurityGroup {
     */
    public String getOwnerId() {
       return ownerId;
-   }
-
-   /**
-    * Provides the status of the EC2 security group.
-    */
-   public String getStatus() {
-      return status;
    }
 
    /**
@@ -159,7 +147,7 @@ public class EC2SecurityGroup {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("id", id.orNull()).add("name", name)
-               .add("ownerId", ownerId).add("status", status).toString();
+               .add("ownerId", ownerId).add("status", rawStatus).toString();
    }
 
 }

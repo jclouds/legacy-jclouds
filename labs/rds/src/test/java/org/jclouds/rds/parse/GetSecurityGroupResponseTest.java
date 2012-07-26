@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.rds.domain.Authorization.Status;
 import org.jclouds.rds.domain.EC2SecurityGroup;
 import org.jclouds.rds.domain.IPRange;
 import org.jclouds.rds.domain.SecurityGroup;
@@ -50,11 +51,15 @@ public class GetSecurityGroupResponseTest extends BaseHandlerTest {
    public SecurityGroup expected() {
       return SecurityGroup.builder()
                           .ec2SecurityGroup(EC2SecurityGroup.builder()
-                                                            .status("authorized")
+                                                            .rawStatus("authorized")
+                                                            .status(Status.AUTHORIZED)
                                                             .name("myec2securitygroup")
                                                             .ownerId("054794666394").build())
                           .description("default")
-                          .ipRange(IPRange.builder().cidrIp("127.0.0.1/30").status("authorized").build())
+                          .ipRange(IPRange.builder()
+                                          .cidrIp("127.0.0.1/30")
+                                          .rawStatus("authorized")
+                                          .status(Status.AUTHORIZED).build())
                           .ownerId("621567473609")
                           .name("default")
                           .vpcId("vpc-1ab2c3d4").build();

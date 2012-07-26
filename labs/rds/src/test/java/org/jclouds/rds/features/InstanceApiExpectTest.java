@@ -27,6 +27,7 @@ import java.util.TimeZone;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rds.RDSApi;
+import org.jclouds.rds.domain.InstanceRequest;
 import org.jclouds.rds.internal.BaseRDSApiExpectTest;
 import org.jclouds.rds.parse.DescribeDBInstancesResponseTest;
 import org.jclouds.rds.parse.GetInstanceResponseTest;
@@ -193,9 +194,10 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
                payloadFromStringWithContentType(
                         "Action=DeleteDBInstance" +
                         "&DBInstanceIdentifier=id" +
-                        "&Signature=3UFxv5zaG%2B3dZRAhinJZ10De0LAxkJtr3Nb6kfspC7w%3D" +
+                        "&Signature=Kag9creOPsl%2BslM1J0fNzWIzo1LrF4ycnOI21v%2Bl6VM%3D" +
                         "&SignatureMethod=HmacSHA256" +
                         "&SignatureVersion=2" +
+                        "&SkipFinalSnapshot=true" +
                         "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
                         "&Version=2012-04-23" +
                         "&AWSAccessKeyId=identity",
@@ -204,7 +206,8 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
 
    public void testDeleteWhenResponseIs2xx() throws Exception {
 
-      HttpResponse deleteResponse = HttpResponse.builder().statusCode(200).build();
+      HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/delete_instance.xml", "text/xml")).build();
 
       RDSApi apiWhenExist = requestSendsResponse(delete, deleteResponse);
 
@@ -218,5 +221,117 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenDontExist = requestSendsResponse(delete, deleteResponse);
 
       apiWhenDontExist.getInstanceApi().delete("id");
+   }
+   
+   public void testDeleteWhenInvalidStateDeleting() throws Exception {
+      HttpResponse deleteResponse = HttpResponse.builder().statusCode(400).message("HTTP/1.1 400 Bad Request")
+               .payload(payloadFromResourceWithContentType("/invalid_state.xml", "text/xml")).build();
+
+      RDSApi apiWhenDeleting = requestSendsResponse(delete, deleteResponse);
+
+      apiWhenDeleting.getInstanceApi().delete("id");
+   }
+
+   public void testDeleteAndSaveSnapshotWhenResponseIs2xx() throws Exception {
+      HttpRequest delete = HttpRequest.builder().method("POST")
+               .endpoint("https://rds.us-east-1.amazonaws.com/")
+               .addHeader("Host", "rds.us-east-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                           "Action=DeleteDBInstance" +
+                           "&DBInstanceIdentifier=id" +
+                           "&FinalDBSnapshotIdentifier=snap" +
+                           "&Signature=aKuG1%2FYbZAzUFdAZTjke1LYRfR5JU86UxDt%2BtwdPJwE%3D" +
+                           "&SignatureMethod=HmacSHA256" +
+                           "&SignatureVersion=2" +
+                           "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                           "&Version=2012-04-23" +
+                           "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+      HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/delete_instance.xml", "text/xml")).build();
+
+      RDSApi apiWhenExist = requestSendsResponse(delete, deleteResponse);
+
+      apiWhenExist.getInstanceApi().deleteAndSaveSnapshot("id", "snap");
+   }
+
+   public void testCreateWithMinumumParamsWhenResponseIs2xx() throws Exception {
+      HttpRequest create = HttpRequest.builder()
+               .method("POST")
+               .endpoint("https://rds.us-east-1.amazonaws.com/")
+               .addHeader("Host", "rds.us-east-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                           "Action=CreateDBInstance" +
+                           "&AllocatedStorage=5" +
+                           "&AutoMinorVersionUpgrade=true" +
+                           "&BackupRetentionPeriod=1" +
+                           "&DBInstanceClass=db.t1.micro" +
+                           "&DBInstanceIdentifier=SimCoProd01" +
+                           "&Engine=mysql" +
+                           "&MasterUserPassword=Password01" +
+                           "&MasterUsername=master" +
+                           "&Signature=TecIUViW09soXGFT3kAXcW2dhsK6fY2cNykLpzLJtvk%3D" +
+                           "&SignatureMethod=HmacSHA256" +
+                           "&SignatureVersion=2" +
+                           "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                           "&Version=2012-04-23" +
+                           "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+      
+      HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/create_instance.xml", "text/xml")).build();
+
+      RDSApi apiWhenExist = requestSendsResponse(create, createResponse);
+
+      apiWhenExist.getInstanceApi().create("SimCoProd01", InstanceRequest.builder()
+                                                                         .engine("mysql")
+                                                                         .masterUsername("master")
+                                                                         .masterPassword("Password01")
+                                                                         .allocatedStorageGB(5)
+                                                                         .instanceClass("db.t1.micro").build());
+   }
+
+   public void testCreateWithOptionalParamsWhenResponseIs2xx() throws Exception {
+      HttpRequest create = HttpRequest.builder()
+               .method("POST")
+               .endpoint("https://rds.us-east-1.amazonaws.com/")
+               .addHeader("Host", "rds.us-east-1.amazonaws.com")
+               .payload(
+                  payloadFromStringWithContentType(
+                           "Action=CreateDBInstance" +
+                           "&AllocatedStorage=10" +
+                           "&AutoMinorVersionUpgrade=true" +
+                           "&BackupRetentionPeriod=1" +
+                           "&DBInstanceClass=db.m1.large" +
+                           "&DBInstanceIdentifier=SimCoProd01" +
+                           "&DBSubnetGroupName=dbSubnetgroup01" +
+                           "&Engine=mysql" +
+                           "&MasterUserPassword=Password01" +
+                           "&MasterUsername=master" +
+                           "&Signature=kfDFp50sxBkSlZd%2Bv8G9u6%2BFdZ133BEVcIRGwwoa8%2Fs%3D" +
+                           "&SignatureMethod=HmacSHA256" +
+                           "&SignatureVersion=2" +
+                           "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
+                           "&Version=2012-04-23" +
+                           "&AWSAccessKeyId=identity",
+                        "application/x-www-form-urlencoded"))
+               .build();
+      
+      HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/create_instance.xml", "text/xml")).build();
+
+      RDSApi apiWhenExist = requestSendsResponse(create, createResponse);
+
+      apiWhenExist.getInstanceApi().create("SimCoProd01", InstanceRequest.builder()
+                                                                         .engine("mysql")
+                                                                         .masterPassword("Password01")
+                                                                         .allocatedStorageGB(10)
+                                                                         .masterUsername("master")
+                                                                         .instanceClass("db.m1.large")
+                                                                         .subnetGroup("dbSubnetgroup01").build());
    }
 }

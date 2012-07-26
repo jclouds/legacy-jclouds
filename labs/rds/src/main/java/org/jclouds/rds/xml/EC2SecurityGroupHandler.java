@@ -21,8 +21,9 @@ package org.jclouds.rds.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import org.jclouds.rds.domain.EC2SecurityGroup;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rds.domain.Authorization.Status;
+import org.jclouds.rds.domain.EC2SecurityGroup;
 import org.xml.sax.SAXException;
 
 /**
@@ -61,7 +62,9 @@ public class EC2SecurityGroupHandler extends ParseSax.HandlerForGeneratedRequest
       } else if (equalsOrSuffix(qName, "EC2SecurityGroupOwnerId")) {
          builder.ownerId(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Status")) {
-         builder.status(currentOrNull(currentText));
+         String rawStatus = currentOrNull(currentText);
+         builder.rawStatus(rawStatus);
+         builder.status(Status.fromValue(rawStatus));
       }
       currentText = new StringBuilder();
    }

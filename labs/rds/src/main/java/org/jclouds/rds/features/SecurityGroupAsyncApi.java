@@ -47,15 +47,33 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Amazon RDS via the Query API
  * <p/>
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonRDS/latest/APIReference"
- *      >doc</a>
+ * @see <a href="http://docs.amazonwebservices.com/AmazonRDS/latest/APIReference" >doc</a>
  * @see SecurityGroupApi
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
 @VirtualHost
 public interface SecurityGroupAsyncApi {
- 
+   /**
+    * @see SecurityGroupApi#createWithNameAndDescription
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "CreateDBSecurityGroup")
+   ListenableFuture<SecurityGroup> createWithNameAndDescription(@FormParam("DBSecurityGroupName") String name,
+            @FormParam("DBSecurityGroupDescription") String description);
+
+   /**
+    * @see SecurityGroupApi#createInVPCWithNameAndDescription
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "CreateDBSecurityGroup")
+   ListenableFuture<SecurityGroup> createInVPCWithNameAndDescription(@FormParam("EC2VpcId") String vpcId,
+            @FormParam("DBSecurityGroupName") String name, @FormParam("DBSecurityGroupDescription") String description);
+
    /**
     * @see SecurityGroupApi#get()
     */
@@ -85,6 +103,71 @@ public interface SecurityGroupAsyncApi {
    @FormParams(keys = "Action", values = "DescribeDBSecurityGroups")
    ListenableFuture<IterableWithMarker<SecurityGroup>> list(ListSecurityGroupsOptions options);
 
+   /**
+    * @see SecurityGroupApi#authorizeIngressToIPRange
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "AuthorizeDBSecurityGroupIngress")
+   ListenableFuture<SecurityGroup> authorizeIngressToIPRange(@FormParam("DBSecurityGroupName") String name,
+            @FormParam("CIDRIP") String CIDR);
+
+   /**
+    * @see SecurityGroupApi#authorizeIngressToEC2SecurityGroupOfOwner
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "AuthorizeDBSecurityGroupIngress")
+   ListenableFuture<SecurityGroup> authorizeIngressToEC2SecurityGroupOfOwner(
+            @FormParam("DBSecurityGroupName") String name,
+            @FormParam("EC2SecurityGroupName") String ec2SecurityGroupName,
+            @FormParam("EC2SecurityGroupOwnerId") String ec2SecurityGroupOwnerId);
+
+   /**
+    * @see SecurityGroupApi#authorizeIngressToVPCSecurityGroup
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "AuthorizeDBSecurityGroupIngress")
+   ListenableFuture<SecurityGroup> authorizeIngressToVPCSecurityGroup(@FormParam("DBSecurityGroupName") String name,
+            @FormParam("EC2SecurityGroupId") String vpcSecurityGroupId);
+
+
+   /**
+    * @see SecurityGroupApi#revokeIngressFromIPRange
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "RevokeDBSecurityGroupIngress")
+   ListenableFuture<SecurityGroup> revokeIngressFromIPRange(@FormParam("DBSecurityGroupName") String name,
+            @FormParam("CIDRIP") String CIDR);
+
+   /**
+    * @see SecurityGroupApi#revokeIngressFromEC2SecurityGroupOfOwner
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "RevokeDBSecurityGroupIngress")
+   ListenableFuture<SecurityGroup> revokeIngressFromEC2SecurityGroupOfOwner(
+            @FormParam("DBSecurityGroupName") String name,
+            @FormParam("EC2SecurityGroupName") String ec2SecurityGroupName,
+            @FormParam("EC2SecurityGroupOwnerId") String ec2SecurityGroupOwnerId);
+
+   /**
+    * @see SecurityGroupApi#revokeIngressFromVPCSecurityGroup
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(SecurityGroupHandler.class)
+   @FormParams(keys = ACTION, values = "RevokeDBSecurityGroupIngress")
+   ListenableFuture<SecurityGroup> revokeIngressFromVPCSecurityGroup(@FormParam("DBSecurityGroupName") String name,
+            @FormParam("EC2SecurityGroupId") String vpcSecurityGroupId);
+   
    /**
     * @see SecurityGroupApi#delete()
     */

@@ -19,27 +19,172 @@
 package org.jclouds.rds.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rds.domain.Authorization;
+import org.jclouds.rds.domain.Authorization.Status;
 import org.jclouds.rds.domain.Instance;
+import org.jclouds.rds.domain.InstanceRequest;
+import org.jclouds.rds.domain.SecurityGroup;
 import org.jclouds.rds.internal.BaseRDSApiLiveTest;
 import org.jclouds.rds.options.ListInstancesOptions;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "InstanceApiLiveTest")
 public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
+   public static final String INSTANCE = (System.getProperty("user.name") + "-jclouds-instance").toLowerCase();
+
+   private RetryablePredicate<HostAndPort> socketTester;
+   private RetryablePredicate<Instance> instanceAvailable;
+   private RetryablePredicate<Instance> instanceGone;
+
+   private SecurityGroup securityGroup;
+
+   @BeforeClass(groups = "live")
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      securityGroup = createSecurityGroupAndAuthorizeIngressToAll(INSTANCE);
+
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
+      instanceAvailable = new RetryablePredicate<Instance>(new Predicate<Instance>() {
+
+         @Override
+         public boolean apply(Instance input) {
+            return api().get(input.getId()).getStatus() == Instance.Status.AVAILABLE;
+         }
+
+      }, 600, 5, 5, TimeUnit.SECONDS);
+
+      instanceGone = new RetryablePredicate<Instance>(new Predicate<Instance>() {
+
+         @Override
+         public boolean apply(Instance input) {
+            return api().get(input.getId()) == null;
+         }
+
+      }, 600, 5, 5, TimeUnit.SECONDS);
+   }
+
+   private SecurityGroup createSecurityGroupAndAuthorizeIngressToAll(String name) {
+      RetryablePredicate<SecurityGroup> ipRangesAuthorized = new RetryablePredicate<SecurityGroup>(
+               new Predicate<SecurityGroup>() {
+
+                  @Override
+                  public boolean apply(SecurityGroup input) {
+                     return Iterables.all(sgApi().get(input.getName()).getIPRanges(), new Predicate<Authorization>() {
+
+                        @Override
+                        public boolean apply(@Nullable Authorization i2) {
+                           return i2.getStatus() == Status.AUTHORIZED;
+                        }
+
+                     });
+                  }
+
+               }, 30000, 100, 500, TimeUnit.MILLISECONDS);
+
+      try {
+         SecurityGroup securityGroup = sgApi().createWithNameAndDescription(name, "jclouds");
+
+         Logger.getAnonymousLogger().info("created securityGroup: " + securityGroup);
+
+         // we could look up our IP address alternatively
+         securityGroup = sgApi().authorizeIngressToIPRange(name, "0.0.0.0/0");
+
+         assertTrue(ipRangesAuthorized.apply(securityGroup), securityGroup.toString());
+
+         securityGroup = sgApi().get(securityGroup.getName());
+         Logger.getAnonymousLogger().info("ip range authorized: " + securityGroup);
+         return securityGroup;
+      } catch (RuntimeException e) {
+         sgApi().delete(name);
+         throw e;
+      }
+   }
+
+   private Instance instance;
+
+   public void testCreateInstance() {
+
+      Instance newInstance = api().create(
+               INSTANCE,
+               InstanceRequest.builder()
+                              .instanceClass("db.t1.micro")
+                              .allocatedStorageGB(5)
+                              .securityGroups(securityGroup.getName())
+                              .name("jclouds")
+                              .engine("mysql")
+                              .masterUsername("master").masterPassword("Password01")
+                              .backupRetentionPeriod(0).build());
+
+      instance = newInstance;
+      Logger.getAnonymousLogger().info("created instance: " + instance);
+
+      assertEquals(instance.getId(), INSTANCE);
+      assertEquals(instance.getName().get(), "jclouds");
+
+      checkInstance(newInstance);
+
+      assertTrue(instanceAvailable.apply(newInstance), newInstance.toString());
+      instance = api().get(newInstance.getId());
+      Logger.getAnonymousLogger().info("instance available: " + instance);
+
+   }
+
+   @Test(dependsOnMethods = "testCreateInstance")
+   protected void testPortResponds() {
+      assertTrue(socketTester.apply(instance.getEndpoint().get()), instance.toString());
+      Logger.getAnonymousLogger().info("instance reachable on: " + instance.getEndpoint().get());
+   }
+
+   @Test(dependsOnMethods = "testPortResponds")
+   public void testDeleteInstance() {
+      instance = api().delete(instance.getId());
+      assertTrue(instanceGone.apply(instance), instance.toString());
+      Logger.getAnonymousLogger().info("instance deleted: " + instance);
+   }
+
+   @Override
+   @AfterClass(groups = "live")
+   protected void tearDownContext() {
+      try {
+         api().delete(INSTANCE);
+      } finally {
+         sgApi().delete(INSTANCE);
+      }
+      super.tearDownContext();
+   }
 
    private void checkInstance(Instance instance) {
       checkNotNull(instance.getId(), "Id cannot be null for a Instance: %s", instance);
+      checkNotNull(instance.getStatus(), "Status cannot be null for a Instance: %s", instance);
+      assertNotEquals(instance.getStatus(), Instance.Status.UNRECOGNIZED,
+               "Status cannot be UNRECOGNIZED for a Instance: " + instance);
       checkNotNull(instance.getCreatedTime(), "CreatedTime cannot be null for a Instance: %s", instance);
       checkNotNull(instance.getName(), "While Name can be null for a Instance, its Optional wrapper cannot: %s",
                instance);
+
       checkNotNull(instance.getSubnetGroup(),
                "While SubnetGroup can be null for a Instance, its Optional wrapper cannot: %s", instance);
       // TODO: other checks
@@ -69,5 +214,9 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
 
    protected InstanceApi api() {
       return context.getApi().getInstanceApi();
+   }
+
+   protected SecurityGroupApi sgApi() {
+      return context.getApi().getSecurityGroupApi();
    }
 }

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.rds.domain.Authorization.Status;
 import org.jclouds.rds.domain.EC2SecurityGroup;
 import org.jclouds.rds.domain.IPRange;
 import org.jclouds.rds.domain.SecurityGroup;
@@ -56,17 +57,24 @@ public class DescribeDBSecurityGroupsResponseTest extends BaseHandlerTest {
       return IterableWithMarkers.from(ImmutableSet.<SecurityGroup>builder()
                .add(SecurityGroup.builder()
                                  .ec2SecurityGroup(EC2SecurityGroup.builder()
-                                                                   .status("authorized")
+                                                                   .rawStatus("authorized")
+                                                                   .status(Status.AUTHORIZED)
                                                                    .name("myec2securitygroup")
                                                                    .ownerId("054794666394").build())
                                  .description("default")
-                                 .ipRange(IPRange.builder().cidrIp("127.0.0.1/30").status("authorized").build())
+                                 .ipRange(IPRange.builder()
+                                                 .cidrIp("127.0.0.1/30")
+                                                 .rawStatus("authorized")
+                                                 .status(Status.AUTHORIZED).build())
                                  .ownerId("621567473609")
                                  .name("default")
                                  .vpcId("vpc-1ab2c3d4").build())
                .add(SecurityGroup.builder()
                                  .description("My new DBSecurityGroup")
-                                 .ipRange(IPRange.builder().cidrIp("192.168.1.1/24").status("authorized").build())
+                                 .ipRange(IPRange.builder()
+                                                 .cidrIp("192.168.1.1/24")
+                                                 .rawStatus("authorized")
+                                                 .status(Status.AUTHORIZED).build())
                                  .ownerId("621567473609")
                                  .name("mydbsecuritygroup")
                                  .vpcId("vpc-1ab2c3d5").build())
