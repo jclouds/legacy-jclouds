@@ -41,26 +41,25 @@ Particularly, jclouds-vsphere needs to use a getIpAddress API only available if 
 
 We need to find a way to programmatically install the VMware tools possibly using ssh.
 
-### Next actions
+#### Next actions
 Explore the solutions already available to build an image (veewee)
 
-## Difference between Image and Node 
+### Difference between Image and Node 
 
 Difference between image and node is that an image is immutable, and typically doesn't have a correlation to hardware.  
 However (see vcloud), sometimes there is a direct relationship.
 
 * need a way to filter what is a node vs what is an image (template flag?)
 
-### Possible solutions
-  1. VMware template: we could map jclouds image to VMware templates and jclouds node to VMware VM
+#### Possible solutions
+  1. VMware template: we could map jclouds image to VMware templates and jclouds node to VMware VM.
   2. VMware folders: jclouds can create different VMware folders where store images (named 'jclouds-images') and nodes, named as 'group' chosen using createNodesInGroup call.
 
 ## Low priority design issues
 
 ### Snapshots
 
-The idea of snapshots doesn't exist yet in jclouds.  Closest is Image, which has an image version which could correlate to the snapshot date.
-  * snapshot in vmware also includes memory state.  is this a problem?
+The idea of snapshots doesn't exist yet in jclouds.  Closest is Image, but we probably won't use snapshot concept in jclouds-vsphere.
 
 ## Customization & bootstrap 
 
@@ -82,13 +81,22 @@ Doing so will allow easier mapping to async provisioners like ec2 spot, and appl
 ### Managing Images
 
 Mapping VMware volumes to blobstore could help deal with image-based use cases such as groupging, bulk transfer, conversion, etc. 
- This could provide a clean and testable means to integrate with the compute service.
+
+This could provide a clean and testable means to integrate with the compute service.
 
   * groups or metadata on the volume could map to blob.userMetadata and then be used in the vsphere driver
   * Blobstore: link to datastore to retrieve machines (upload, download)
   * convert image to ovf, ova via a blobstore transformer
 
 ## Implementation
+
+### Set up
+
+To use jclouds-vsphere you will need:
+
+  * one or more [ESXi 5 server](http://www.vmware.com/products/vsphere-hypervisor/overview.html)
+  * a VMware vCenter server (physical or virtualized). VMware provides also a vCenter server [appliance](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.vsphere.install.doc_50%2FGUID-25FCBA87-5D2F-4CB6-85D7-88899B4AC174.html)
+
 
 ### Assumptions
 
