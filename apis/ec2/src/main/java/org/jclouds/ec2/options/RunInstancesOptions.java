@@ -112,8 +112,8 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
 
    /**
     * The ID of the RAM disk with which to launch the instance. Some kernels require additional
-    * drivers at l aunch. Check the kernel requirements for information on whether you need to
-    * specify a RAM disk. To find kernel requirements, go to th e Resource Center and search for the
+    * drivers at launch. Check the kernel requirements for information on whether you need to
+    * specify a RAM disk. To find kernel requirements, go to the Resource Center and search for the
     * kernel ID.
     */
    public RunInstancesOptions withRamdisk(String ramDiskId) {

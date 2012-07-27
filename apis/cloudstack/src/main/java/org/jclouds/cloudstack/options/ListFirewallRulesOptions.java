@@ -43,7 +43,7 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
 
    /**
     * @param ipAddressId
-    *    the id of IP address of the firwall services
+    *    the id of IP address of the firewall services
     */
    public ListFirewallRulesOptions ipAddressId(String ipAddressId) {
       this.queryParameters.replaceValues("ipaddressid", ImmutableSet.of(ipAddressId + ""));

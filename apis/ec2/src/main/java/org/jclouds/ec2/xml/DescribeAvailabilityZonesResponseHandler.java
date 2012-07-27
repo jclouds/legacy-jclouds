@@ -40,7 +40,7 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
    private StringBuilder currentText = new StringBuilder();
    private final Supplier<String> defaultRegion;
 
-   private Set<AvailabilityZoneInfo> availablilityZones = Sets.newLinkedHashSet();
+   private Set<AvailabilityZoneInfo> availabilityZones = Sets.newLinkedHashSet();
    private String zone;
    @Resource
    protected Logger logger = Logger.NULL;
@@ -63,7 +63,7 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
    }
 
    public Set<AvailabilityZoneInfo> getResult() {
-      return availablilityZones;
+      return availabilityZones;
    }
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
@@ -89,7 +89,7 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
       } else if (qName.equals("messageSet")) {
          inMessageSet = false;
       } else if (qName.equals("item") && !inMessageSet) {
-         availablilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region, messages));
+         availabilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region, messages));
          this.zone = null;
          this.region = defaultRegion.get();
          this.zoneState = null;

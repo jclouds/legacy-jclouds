@@ -233,7 +233,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       File fileToBeDeleted = new File(fileName);
       fileToBeDeleted.delete();
 
-      // now examins if the key of the blob is a complex key (with a directory structure)
+      // now examine if the key of the blob is a complex key (with a directory structure)
       // and eventually remove empty directory
       removeDirectoriesTreeOfBlobKey(container, blobKey);
    }

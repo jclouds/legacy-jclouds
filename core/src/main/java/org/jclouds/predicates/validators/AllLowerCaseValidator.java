@@ -22,7 +22,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.predicates.Validator;
 
 /**
- * Validates that the string paremeter doesn't have any uppercase letters.
+ * Validates that the string parameter doesn't have any uppercase letters.
  * 
  * @see org.jclouds.rest.InputParamValidator
  * @see org.jclouds.predicates.Validator

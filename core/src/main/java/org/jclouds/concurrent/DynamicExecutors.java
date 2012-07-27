@@ -140,7 +140,7 @@ public class DynamicExecutors {
     * A priority based thread factory, for all Thread priority constants:
     * <tt>Thread.MIN_PRIORITY, Thread.NORM_PRIORITY, Thread.MAX_PRIORITY</tt>;
     * <p/>
-    * This factory is used instead of Executers.DefaultThreadFactory to allow manipulation of
+    * This factory is used instead of Executors.DefaultThreadFactory to allow manipulation of
     * priority and thread owner name.
     * 
     * @param namePrefix
@@ -173,7 +173,7 @@ public class DynamicExecutors {
     * A priority based thread factory, for all Thread priority constants:
     * <tt>Thread.MIN_PRIORITY, Thread.NORM_PRIORITY, Thread.MAX_PRIORITY</tt>;
     * <p/>
-    * This factory is used instead of Executers.DefaultThreadFactory to allow manipulation of
+    * This factory is used instead of Executors.DefaultThreadFactory to allow manipulation of
     * priority and thread owner name.
     * 
     * @param priority

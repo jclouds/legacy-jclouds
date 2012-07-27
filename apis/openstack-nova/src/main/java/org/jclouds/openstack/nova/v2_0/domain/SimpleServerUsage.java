@@ -76,7 +76,7 @@ public class SimpleServerUsage {
       protected String tenantId;
       protected String flavorName;
       protected Date instanceCreated;
-      protected Date instanceTerminiated;
+      protected Date instanceTerminated;
       protected SimpleServerUsage.Status instanceStatus;
       protected long uptime;
    
@@ -145,10 +145,10 @@ public class SimpleServerUsage {
       }
 
       /** 
-       * @see SimpleServerUsage#getInstanceTerminiated()
+       * @see SimpleServerUsage#getInstanceTerminated()
        */
-      public T instanceTerminiated(Date instanceTerminiated) {
-         this.instanceTerminiated = instanceTerminiated;
+      public T instanceTerminated(Date instanceTerminated) {
+         this.instanceTerminated = instanceTerminated;
          return self();
       }
 
@@ -169,7 +169,7 @@ public class SimpleServerUsage {
       }
 
       public SimpleServerUsage build() {
-         return new SimpleServerUsage(instanceName, hours, flavorMemoryMb, flavorLocalGb, flavorVcpus, tenantId, flavorName, instanceCreated, instanceTerminiated, instanceStatus, uptime);
+         return new SimpleServerUsage(instanceName, hours, flavorMemoryMb, flavorLocalGb, flavorVcpus, tenantId, flavorName, instanceCreated, instanceTerminated, instanceStatus, uptime);
       }
       
       public T fromSimpleServerUsage(SimpleServerUsage in) {
@@ -182,7 +182,7 @@ public class SimpleServerUsage {
                   .tenantId(in.getTenantId())
                   .flavorName(in.getFlavorName())
                   .instanceCreated(in.getInstanceCreated())
-                  .instanceTerminiated(in.getInstanceTerminiated())
+                  .instanceTerminated(in.getInstanceTerminated())
                   .instanceStatus(in.getInstanceStatus())
                   .uptime(in.getUptime());
       }
@@ -211,7 +211,7 @@ public class SimpleServerUsage {
    @Named("started_at")
    private final Date instanceCreated;
    @Named("ended_at")
-   private final Date instanceTerminiated;
+   private final Date instanceTerminated;
    @Named("state")
    private final SimpleServerUsage.Status instanceStatus;
    private final long uptime;
@@ -219,7 +219,7 @@ public class SimpleServerUsage {
    @ConstructorProperties({
       "name", "hours", "memory_mb", "local_gb", "vcpus", "tenant_id", "flavor", "started_at", "ended_at", "state", "uptime"
    })
-   protected SimpleServerUsage(String instanceName, double hours, double flavorMemoryMb, double flavorLocalGb, double flavorVcpus, String tenantId, String flavorName, Date instanceCreated, @Nullable Date instanceTerminiated, SimpleServerUsage.Status instanceStatus, long uptime) {
+   protected SimpleServerUsage(String instanceName, double hours, double flavorMemoryMb, double flavorLocalGb, double flavorVcpus, String tenantId, String flavorName, Date instanceCreated, @Nullable Date instanceTerminated, SimpleServerUsage.Status instanceStatus, long uptime) {
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.hours = hours;
       this.flavorMemoryMb = flavorMemoryMb;
@@ -228,7 +228,7 @@ public class SimpleServerUsage {
       this.tenantId = checkNotNull(tenantId, "tenantId");
       this.flavorName = checkNotNull(flavorName, "flavorName");
       this.instanceCreated = checkNotNull(instanceCreated, "instanceCreated");
-      this.instanceTerminiated = instanceTerminiated;
+      this.instanceTerminated = instanceTerminated;
       this.instanceStatus = checkNotNull(instanceStatus, "instanceStatus");
       this.uptime = uptime;
    }
@@ -266,8 +266,8 @@ public class SimpleServerUsage {
    }
 
    @Nullable
-   public Date getInstanceTerminiated() {
-      return this.instanceTerminiated;
+   public Date getInstanceTerminated() {
+      return this.instanceTerminated;
    }
 
    public SimpleServerUsage.Status getInstanceStatus() {
@@ -280,7 +280,7 @@ public class SimpleServerUsage {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(instanceName, hours, flavorMemoryMb, flavorLocalGb, flavorVcpus, tenantId, flavorName, instanceCreated, instanceTerminiated, instanceStatus, uptime);
+      return Objects.hashCode(instanceName, hours, flavorMemoryMb, flavorLocalGb, flavorVcpus, tenantId, flavorName, instanceCreated, instanceTerminated, instanceStatus, uptime);
    }
 
    @Override
@@ -296,14 +296,14 @@ public class SimpleServerUsage {
                && Objects.equal(this.tenantId, that.tenantId)
                && Objects.equal(this.flavorName, that.flavorName)
                && Objects.equal(this.instanceCreated, that.instanceCreated)
-               && Objects.equal(this.instanceTerminiated, that.instanceTerminiated)
+               && Objects.equal(this.instanceTerminated, that.instanceTerminated)
                && Objects.equal(this.instanceStatus, that.instanceStatus)
                && Objects.equal(this.uptime, that.uptime);
    }
    
    protected ToStringHelper string() {
       return Objects.toStringHelper(this)
-            .add("instanceName", instanceName).add("hours", hours).add("flavorMemoryMb", flavorMemoryMb).add("flavorLocalGb", flavorLocalGb).add("flavorVcpus", flavorVcpus).add("tenantId", tenantId).add("flavorName", flavorName).add("instanceCreated", instanceCreated).add("instanceTerminiated", instanceTerminiated).add("instanceStatus", instanceStatus).add("uptime", uptime);
+            .add("instanceName", instanceName).add("hours", hours).add("flavorMemoryMb", flavorMemoryMb).add("flavorLocalGb", flavorLocalGb).add("flavorVcpus", flavorVcpus).add("tenantId", tenantId).add("flavorName", flavorName).add("instanceCreated", instanceCreated).add("instanceTerminated", instanceTerminated).add("instanceStatus", instanceStatus).add("uptime", uptime);
    }
    
    @Override

@@ -37,7 +37,7 @@ import com.google.gson.annotations.SerializedName;
  * However the special characters '.' and '-' may not be consecutive.
  * Each alphanumeric string separated by a period is considered a label.
  * Labels must begin and end with an alphanumeric character.
- * Each label cannot be soley comprised of digits and must be between 1-63 characters in length.
+ * Each label cannot be solely comprised of digits and must be between 1-63 characters in length.
  * The last label, the TLD (top level domain) must be between 2-6 alphabetic characters.
  * The domain portion must consist of least one label followed by a period '.' then ending with the TLD label.
  * Combining the hostname, followed by a period '.', followed by the domain gives the FQDN (fully qualified domain name),

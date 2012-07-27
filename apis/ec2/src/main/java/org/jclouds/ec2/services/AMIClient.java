@@ -43,7 +43,7 @@ public interface AMIClient {
 
    /**
     * Returns information about AMIs, AKIs, and ARIs. This includes image type, product codes,
-    * architecture, and kernel and RAM disk IDs. Images available to you include p ublic images,
+    * architecture, and kernel and RAM disk IDs. Images available to you include public images,
     * private images that you own, and private images owned by other users for which you have
     * explicit launch permissions.
     * 

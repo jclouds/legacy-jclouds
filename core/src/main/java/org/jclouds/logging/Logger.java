@@ -19,7 +19,7 @@
 package org.jclouds.logging;
 
 /**
- * JCloud log abstraction layer.
+ * JClouds log abstraction layer.
  * <p/>
  * Implementations of logging are optional and injected if they are configured.
  * <p/>

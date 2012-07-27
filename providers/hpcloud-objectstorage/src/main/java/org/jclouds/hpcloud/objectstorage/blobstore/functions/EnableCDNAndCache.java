@@ -49,9 +49,9 @@ public class EnableCDNAndCache implements Function<String, URI> {
 
    @Override
    public URI apply(String input) {
-      Optional<HPCloudCDNClient> cdnExension = sync.getCDNExtension();
-      checkArgument(cdnExension.isPresent(), "CDN is required, but the extension is not available!");
-      URI uri = cdnExension.get().enableCDN(input);
+      Optional<HPCloudCDNClient> cdnExtension = sync.getCDNExtension();
+      checkArgument(cdnExtension.isPresent(), "CDN is required, but the extension is not available!");
+      URI uri = cdnExtension.get().enableCDN(input);
       cdnContainer.put(input, uri);
       return uri;
    }

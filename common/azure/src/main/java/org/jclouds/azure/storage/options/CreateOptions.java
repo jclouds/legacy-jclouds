@@ -37,7 +37,7 @@ import com.google.common.collect.Multimap;
  * <p/>
  * AzureQueueClient connection = // get connection
  * Multimap<String,String> metadata = // ...
- * boolean createdWithPublicAcl = connection.createQueue("containerName", withMetdata(metadata));
+ * boolean createdWithPublicAcl = connection.createQueue("containerName", withMetadata(metadata));
  * <code> *
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd179466.aspx" />

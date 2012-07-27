@@ -36,7 +36,7 @@ public class NetworkConnectionSection extends Section<NetworkConnectionSection> 
     */
    @Override
    public Builder toBuilder() {
-      return builder().fromNetworkConectionSection(this);
+      return builder().fromNetworkConnectionSection(this);
    }
 
    public static class Builder extends Section.Builder<NetworkConnectionSection> {
@@ -61,7 +61,7 @@ public class NetworkConnectionSection extends Section<NetworkConnectionSection> 
          return new NetworkConnectionSection(info, network, ipAddress);
       }
 
-      public Builder fromNetworkConectionSection(NetworkConnectionSection in) {
+      public Builder fromNetworkConnectionSection(NetworkConnectionSection in) {
          return fromSection(in).network(in.getNetwork()).ipAddress(in.getIpAddress());
       }
 

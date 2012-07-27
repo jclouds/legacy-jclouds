@@ -24,7 +24,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import com.google.common.annotations.Beta;
 
 /**
- * A statement was submitted to a node for exectuion.
+ * A statement was submitted to a node for execution.
  * <p/>
  * Note this does not guarantee that there was success, nor that the node
  * received the statement.

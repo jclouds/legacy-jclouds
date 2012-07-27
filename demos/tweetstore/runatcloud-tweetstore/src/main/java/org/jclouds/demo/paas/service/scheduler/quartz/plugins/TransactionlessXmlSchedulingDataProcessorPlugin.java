@@ -363,7 +363,7 @@ public class TransactionlessXmlSchedulingDataProcessorPlugin implements
                         file = new File(furl);
                         try {
                             f = url.openStream();
-                        } catch (IOException ignor) {
+                        } catch (IOException ignore) {
                             // Swallow the exception
                         }
                     }

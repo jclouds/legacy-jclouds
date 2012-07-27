@@ -38,14 +38,14 @@ import org.jclouds.openstack.v2_0.services.Extension;
 public interface SimpleTenantUsageApi {
 
    /**
-    * Retrive tenant_usage for all tenants
+    * Retrieve tenant_usage for all tenants
     *
     * @return the set of TenantUsage reports
     */
    Set<SimpleTenantUsage> listTenantUsages();
 
    /**
-    * Retrive tenant_usage for a specified tenant
+    * Retrieve tenant_usage for a specified tenant
     *
     * @return the requested tenant usage
     */

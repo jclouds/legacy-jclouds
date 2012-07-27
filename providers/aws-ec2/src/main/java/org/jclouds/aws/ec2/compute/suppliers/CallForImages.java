@@ -90,7 +90,7 @@ public class CallForImages implements Callable<Iterable<Image>> {
 
    @Override
    public String toString() {
-      return String.format("desribingImages(filter=%s,regions=%s)", filter, regions);
+      return String.format("describingImages(filter=%s,regions=%s)", filter, regions);
    }
 
 }
