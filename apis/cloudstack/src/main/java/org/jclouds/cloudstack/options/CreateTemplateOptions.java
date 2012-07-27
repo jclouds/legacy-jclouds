@@ -67,7 +67,7 @@ public class CreateTemplateOptions extends BaseHttpRequestOptions {
    }
 
    /**
-    * true if the template requres HVM, false otherwise
+    * true if the template requires HVM, false otherwise
     */
    public CreateTemplateOptions requiresHVM(boolean requiresHVM) {
       this.queryParameters.replaceValues("requireshvm", ImmutableSet.of(requiresHVM + ""));

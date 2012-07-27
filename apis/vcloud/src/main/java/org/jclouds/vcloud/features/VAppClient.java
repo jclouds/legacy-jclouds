@@ -54,7 +54,7 @@ public interface VAppClient {
    Task deployVApp(URI href);
 
    /**
-    * like {@link #deployVApp(URI)}, except deploy transistions to power on state
+    * like {@link #deployVApp(URI)}, except deploy transitions to power on state
     * 
     */
    Task deployAndPowerOnVApp(URI href);

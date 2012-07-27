@@ -71,5 +71,5 @@ public class CatalogReference extends Reference {
       return super.equals(that);
    }
    
-   // NOTE hashcode inheritted from Reference
+   // NOTE hashcode inherited from Reference
 }

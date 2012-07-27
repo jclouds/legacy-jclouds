@@ -98,7 +98,7 @@ public class SpeedTest {
          runTests(queueName, messageCount, isEnterprise ? "enterprise" : "default", context);
       } finally {
          purgeQueues(queueName, context);
-         // Close connectons
+         // Close connections
          context.close();
          System.exit(0);
       }

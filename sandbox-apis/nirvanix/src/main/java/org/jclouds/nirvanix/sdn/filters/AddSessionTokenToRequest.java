@@ -65,7 +65,7 @@ public class AddSessionTokenToRequest implements HttpRequestFilter {
    }
 
    // this is a hotspot when submitted concurrently, so be lazy.
-   // session tokens expire in 20 minutes of no use, but let's be a little paraniod and go 19
+   // session tokens expire in 20 minutes of no use, but let's be a little paranoid and go 19
    public String createNewToken() {
       authToken.set(authTokenProvider.get());
       trigger.set(System.nanoTime() + System.nanoTime() + 19 * MINUTES);

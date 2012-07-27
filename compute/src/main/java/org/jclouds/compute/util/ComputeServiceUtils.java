@@ -69,7 +69,7 @@ public class ComputeServiceUtils {
       return String.format("%s[%s]", resource.getStatus(), resource.getBackendStatus());
    }
    
-   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("(.+)-[0-9a-f]+");
+   public static final Pattern DELIMITED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("(.+)-[0-9a-f]+");
 
    /**
     * build a shell script that invokes the contents of the http request in bash.

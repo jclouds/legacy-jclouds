@@ -86,7 +86,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
     */
    protected boolean shouldDoWork() {
       try {
-         exceptionIfDepedenciesNotActive();
+         exceptionIfDependenciesNotActive();
       } catch (IllegalStateException e) {
          return false;
       }
@@ -112,14 +112,14 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
             throw new IllegalStateException("Illegal state: " + this.status);
          }
 
-         exceptionIfDepedenciesNotActive();
+         exceptionIfDependenciesNotActive();
 
          this.status = Status.ACTIVE;
       }
       executorService.execute(this);
    }
 
-   protected void exceptionIfDepedenciesNotActive() {
+   protected void exceptionIfDependenciesNotActive() {
       for (LifeCycle dependency : dependencies) {
          if (dependency.getStatus().compareTo(Status.ACTIVE) != 0) {
             throw new IllegalStateException(String.format("Illegal state: %s for component: %s",

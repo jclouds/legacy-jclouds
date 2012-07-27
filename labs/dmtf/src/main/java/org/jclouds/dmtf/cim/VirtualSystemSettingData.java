@@ -589,7 +589,7 @@ public class VirtualSystemSettingData {
    }
 
    /**
-    * Filepath of a file where recovery relateded information of the virtual system is stored.
+    * Filepath of a file where recovery related information of the virtual system is stored.
     *
     * Format shall be String based on RFC-2079.
     */
@@ -637,7 +637,7 @@ public class VirtualSystemSettingData {
     * Note that the VirtualSystemIdentifier is not the hostname assigned to
     * the operating system instance running within the virtual system, nor is it an IP address or
     * MAC address assigned to any of its network ports. On create requests VirtualSystemIdentifier
-    * may contain implementation specific rules (like simple patterns or regular expresssion) that
+    * may contain implementation specific rules (like simple patterns or regular expression) that
     * may be interpreted by the implementation when assigning a VirtualSystemIdentifier.
     */
    public String getVirtualSystemIdentifier() {

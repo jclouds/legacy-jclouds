@@ -91,7 +91,7 @@ public class TerremarkECloudRestClientModule extends
          // VDC's
          // this does not
          // work well.
-         // Each VDC will have differnt network subnets. So we cannot assume the
+         // Each VDC will have different network subnets. So we cannot assume the
          // default VDC's
          // networks will
          // work with non-default VDC's. So make PROPERTY_VCLOUD_DEFAULT_NETWORK

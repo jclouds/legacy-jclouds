@@ -1047,7 +1047,7 @@ public class RestAnnotationProcessor<T> {
   private Set<HttpRequestOptions> findOptionsIn(Method method, Object... args) throws ExecutionException {
      ImmutableSet.Builder<HttpRequestOptions> result = ImmutableSet.builder();
      for (int index : methodToIndexesOfOptions.get(method)) {
-         if (args.length >= index + 1) {// accomodate varargs
+         if (args.length >= index + 1) {// accommodate varargs
             if (args[index] instanceof Object[]) {
                for (Object option : (Object[]) args[index]) {
                   if (option instanceof HttpRequestOptions) {

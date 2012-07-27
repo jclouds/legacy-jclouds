@@ -98,7 +98,7 @@ public class ListOptions implements Cloneable {
 
    /**
     * Place to continue a listing at. This must be the value returned from the last list object, as
-    * not all blobstores use lexigraphic lists.
+    * not all blobstores use lexicographic lists.
     */
    public ListOptions afterMarker(String marker) {
       this.marker = checkNotNull(marker, "marker");

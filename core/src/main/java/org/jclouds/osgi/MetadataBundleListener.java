@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A {@link BundleListener} that listens for {@link BundleEvent} and searches for {@link org.jclouds.providers.ProviderMetadata} and {@ling org.jclouds.apis.ApiMetadata} in newly
+ * A {@link BundleListener} that listens for {@link BundleEvent} and searches for {@link org.jclouds.providers.ProviderMetadata} and {@link org.jclouds.apis.ApiMetadata} in newly
  * installed Bundles. This is used as a workaround for OSGi environments where the ServiceLoader cannot cross bundle
  * boundaries.
  */

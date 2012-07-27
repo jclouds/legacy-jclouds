@@ -64,7 +64,7 @@ public class Task extends Entity {
       @XmlEnumValue("queued") QUEUED("queued"),
       /** The task is awaiting preprocessing or, if it is a blocking task, administrative action. */
       @XmlEnumValue("preRunning") PRE_RUNNING("preRunning"),
-      /** The task is runnning. */
+      /** The task is running. */
       @XmlEnumValue("running") RUNNING("running"),
       /** The task completed with a status of success. */
       @XmlEnumValue("success") SUCCESS("success"),

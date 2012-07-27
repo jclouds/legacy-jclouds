@@ -227,7 +227,7 @@ public class SSHExecute {
    }
 
    /**
-    * Open an ssh seession.
+    * Open an ssh session.
     * 
     * @return the opened session
     * @throws JSchException

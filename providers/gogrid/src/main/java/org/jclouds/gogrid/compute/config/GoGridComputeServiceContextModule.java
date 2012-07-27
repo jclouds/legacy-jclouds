@@ -119,7 +119,7 @@ public class GoGridComputeServiceContextModule extends
    
    /**
     * Finds matches to required configurations. GoGrid's documentation only specifies how much RAM
-    * one can get with different instance types. The # of cores and disk sizes are purely empyrical
+    * one can get with different instance types. The # of cores and disk sizes are purely empirical
     * and aren't guaranteed. However, these are the matches found: Ram: 512MB, CPU: 1 core, HDD: 28
     * GB Ram: 1GB, CPU: 1 core, HDD: 57 GB Ram: 2GB, CPU: 1 core, HDD: 113 GB Ram: 4GB, CPU: 3
     * cores, HDD: 233 GB Ram: 8GB, CPU: 6 cores, HDD: 462 GB (as of March 2010)
