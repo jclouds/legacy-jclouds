@@ -78,24 +78,13 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    }
 
    @Override
-   public Iterable<String> getAllContainerNames() {
-      return containerToBlobs.keySet();
-   }
-
-   @Override
    public boolean containerExists(final String containerName) {
       return containerToBlobs.containsKey(containerName);
    }
 
    @Override
-   public void clearContainer(final String containerName) {
-      containerToBlobs.get(containerName).clear();
-   }
-
-   @Override
-   public void clearContainer(String container, ListContainerOptions options) {
-      // TODO implement options
-      clearContainer(container);
+   public Iterable<String> getAllContainerNames() {
+      return containerToBlobs.keySet();
    }
 
    @Override
@@ -115,9 +104,25 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    }
 
    @Override
+   public void clearContainer(final String containerName) {
+      clearContainer(containerName, ListContainerOptions.Builder.recursive());
+   }
+
+   @Override
+   public void clearContainer(String containerName, ListContainerOptions options) {
+      // TODO implement options
+      containerToBlobs.get(containerName).clear();
+   }
+
+   @Override
    public boolean blobExists(final String containerName, final String blobName) {
       Map<String, Blob> map = containerToBlobs.get(containerName);
       return map != null && map.containsKey(blobName);
+   }
+
+   @Override
+   public Iterable<String> getBlobKeysInsideContainer(final String containerName) {
+      return containerToBlobs.get(containerName).keySet();
    }
 
    @Override
@@ -141,11 +146,6 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       Map<String, Blob> map = containerToBlobs.get(containerName);
       if (map != null)
          map.remove(blobName);
-   }
-
-   @Override
-   public Iterable<String> getBlobKeysInsideContainer(final String containerName) {
-      return containerToBlobs.get(containerName).keySet();
    }
 
    @Override
