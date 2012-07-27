@@ -123,3 +123,6 @@ title: A List of applications that use jclouds
 
   * [MaestroDev](http://www.maestrodev.com/)
     * MaestroDev uses jclouds to start and provision servers on public/private clouds as part of the source code to production workflow, for building, testing or deployment
+
+  * [Ning Atlas](http://atlas-project.org/)
+    * Atlas uses jclouds to provision machines, databases, and loadbalancers that compose environments.
