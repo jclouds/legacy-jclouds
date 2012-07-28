@@ -138,7 +138,7 @@ public class VM {
 
       for (int i = 0; i < 30; i++) {
          ipAddresses = host.getVMIpAddresses(uuid);
-         if (ipAddresses.isEmpty()) {
+         if (!ipAddresses.isEmpty()) {
             // Got some
             String ip = ipAddresses.get("net0");
             if (ip != null && !ip.equals("0.0.0.0"))
