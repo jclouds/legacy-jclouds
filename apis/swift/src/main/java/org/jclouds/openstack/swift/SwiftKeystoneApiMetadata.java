@@ -27,7 +27,6 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.config.SwiftKeystoneRestClientModule;
@@ -72,22 +71,24 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = SwiftApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
-      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
+      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
       properties.remove(PROPERTY_REGIONS);
       return properties;
    }
 
    public static class Builder extends SwiftApiMetadata.Builder {
       protected Builder() {
-         super(SwiftKeystoneClient.class, SwiftKeystoneAsyncClient.class);
+         this(SwiftKeystoneClient.class, SwiftKeystoneAsyncClient.class);
+      }
+
+      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
+         super(syncClient, asyncClient);
          id("swift-keystone")
                .name("OpenStack Swift with Keystone authentication")
-               .identityName("tenantName:user or user")
-               .credentialName("password")
-               .defaultEndpoint("http://localhost:5000")
-               .endpointName("keystone url")
+               .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
+               .credentialName("${password}")
+               .endpointName("KeyStone base url ending in /v2.0/")
+               .defaultEndpoint("http://localhost:5000/v2.0/")
                .context(CONTEXT_TOKEN)
                .defaultProperties(SwiftKeystoneApiMetadata.defaultProperties())
                .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, KeystoneAuthenticationModule.RegionModule.class,

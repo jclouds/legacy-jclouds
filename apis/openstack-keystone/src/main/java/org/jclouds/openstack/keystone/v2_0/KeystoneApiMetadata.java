@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -69,10 +68,8 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
-      properties.put(SERVICE_TYPE, ServiceType.IDENTITY);
+      properties.setProperty(SERVICE_TYPE, ServiceType.IDENTITY);
       return properties;
    }
 
@@ -82,11 +79,12 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
          super(api, asyncApi);
           id("openstack-keystone")
          .name("OpenStack Keystone Essex+ API")
-         .identityName("tenantId:user")
-         .credentialName("password")
+         .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
+         .credentialName("${password}")
+         .endpointName("KeyStone base url ending in /v${jclouds.api-version}/")
          .documentation(URI.create("http://api.openstack.org/"))
          .version("2.0")
-         .defaultEndpoint("http://localhost:5000")
+         .defaultEndpoint("http://localhost:5000/v${jclouds.api-version}/")
          .defaultProperties(KeystoneApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(KeystoneAuthenticationModule.class)

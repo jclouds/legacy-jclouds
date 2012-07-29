@@ -43,7 +43,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adrian Cole
  */
-@Path("/v2.0")
 public interface AuthenticationAsyncApi {
 
    /**
@@ -76,8 +75,6 @@ public interface AuthenticationAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
-   // still use tenantName
    ListenableFuture<Access> authenticateWithTenantNameAndCredentials(@Nullable @PayloadParam("tenantName") String tenantName,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
    

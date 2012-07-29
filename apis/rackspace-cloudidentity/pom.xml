@@ -35,11 +35,11 @@
 
   <properties>
     <!-- keystone endpoint -->
-    <test.rackspace-cloudidentity.endpoint>https://identity.api.rackspacecloud.com</test.rackspace-cloudidentity.endpoint>
+    <test.rackspace-cloudidentity.endpoint>https://identity.api.rackspacecloud.com/v${jclouds.api-version}/</test.rackspace-cloudidentity.endpoint>
     <!-- keystone version -->
     <test.rackspace-cloudidentity.api-version>2.0</test.rackspace-cloudidentity.api-version>
     <test.rackspace-cloudidentity.build-version></test.rackspace-cloudidentity.build-version>
-    <test.rackspace-cloudidentity.identity>413274:${test.rackspace-us.identity}</test.rackspace-cloudidentity.identity>
+    <test.rackspace-cloudidentity.identity>${test.rackspace-us.identity}</test.rackspace-cloudidentity.identity>
     <test.rackspace-cloudidentity.credential>${test.rackspace-us.credential}</test.rackspace-cloudidentity.credential>
     <test.jclouds.keystone.credential-type>RAX-KSKEY:apiKeyCredentials</test.jclouds.keystone.credential-type>
 

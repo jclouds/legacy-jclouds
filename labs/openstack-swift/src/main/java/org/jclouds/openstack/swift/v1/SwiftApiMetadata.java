@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.swift.v1.config.SwiftRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
@@ -69,9 +68,6 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
-
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
       return properties;
    }
 
@@ -81,11 +77,12 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          super(SwiftApi.class, SwiftAsyncApi.class);
           id("openstack-swift")
          .name("OpenStack Swift Diablo+ API")
-         .identityName("tenantId:user")
-         .credentialName("password")
+         .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
+         .credentialName("${password}")
          .documentation(URI.create("http://docs.openstack.org/api/openstack-object-storage/1.0/content/ch_object-storage-dev-overview.html"))
          .version("1.0")
-         .defaultEndpoint("http://localhost:5000")
+         .endpointName("KeyStone base url ending in /v2.0/")
+         .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(SwiftApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(KeystoneAuthenticationModule.class)

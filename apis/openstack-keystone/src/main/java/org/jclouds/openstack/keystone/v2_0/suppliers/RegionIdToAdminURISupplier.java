@@ -2,6 +2,7 @@ package org.jclouds.openstack.keystone.v2_0.suppliers;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.jclouds.javax.annotation.Nullable;
 
@@ -16,15 +17,16 @@ import com.google.inject.assistedinject.Assisted;
 public interface RegionIdToAdminURISupplier extends Supplier<Map<String, Supplier<URI>>> {
    static interface Factory {
       /**
-       *
+       * 
        * @param apiType
-       *           type of the api, according to the provider. ex. {@code compute} {@code
-       *           object-store}
+       *           type of the api, according to the provider. ex. {@code compute}
+       *           {@code object-store}
        * @param apiVersion
        *           version of the api, or null
        * @return regions mapped to default uri
+       * @throws NoSuchElementException if the {@code apiType} is not present in the catalog
        */
       RegionIdToAdminURISupplier createForApiTypeAndVersion(@Assisted("apiType") String apiType,
-                                                       @Nullable @Assisted("apiVersion") String apiVersion);
+               @Nullable @Assisted("apiVersion") String apiVersion) throws NoSuchElementException;
    }
 }

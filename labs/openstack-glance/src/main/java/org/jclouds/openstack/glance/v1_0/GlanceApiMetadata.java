@@ -29,7 +29,6 @@ import org.jclouds.openstack.glance.v1_0.config.GlanceRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -69,9 +68,6 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.IMAGE);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
-
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
       return properties;
    }
 
@@ -81,11 +77,12 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
          super(GlanceApi.class, GlanceAsyncApi.class);
           id("openstack-glance")
          .name("OpenStack Glance API")
-         .identityName("tenantName:user or user")
-         .credentialName("password")
+         .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
+         .credentialName("${password}")
+         .endpointName("KeyStone base url ending in /v2.0/")
          .documentation(URI.create("http://glance.openstack.org/glanceapi.html"))
          .version("1.0")
-         .defaultEndpoint("http://localhost:5000")
+         .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(GlanceApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(KeystoneAuthenticationModule.class)

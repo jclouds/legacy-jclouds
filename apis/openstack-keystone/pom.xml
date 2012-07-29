@@ -35,7 +35,7 @@
 
   <properties>
     <!-- keystone endpoint -->
-    <test.openstack-keystone.endpoint>http://localhost:5000</test.openstack-keystone.endpoint>
+    <test.openstack-keystone.endpoint>http://localhost:5000/v${jclouds.api-version}/</test.openstack-keystone.endpoint>
     <!-- keystone version -->
     <test.openstack-keystone.api-version>2.0</test.openstack-keystone.api-version>
     <test.openstack-keystone.build-version></test.openstack-keystone.build-version>

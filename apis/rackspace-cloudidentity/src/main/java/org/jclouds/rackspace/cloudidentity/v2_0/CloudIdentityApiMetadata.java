@@ -25,9 +25,9 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
 import org.jclouds.openstack.keystone.v2_0.KeystoneApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncApi;
-import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
@@ -73,7 +73,6 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = KeystoneApiMetadata.defaultProperties();
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
-
       return properties;
    }
 
@@ -82,9 +81,10 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
          super(KeystoneApi.class, KeystoneAsyncApi.class);
          id("rackspace-cloudidentity")
          .name("Rackspace Cloud Identity Service")
-         .defaultEndpoint("https://identity.api.rackspacecloud.com")
-         .identityName("username")
-         .credentialName("API Key")
+         .identityName("${userName}")
+         .credentialName("${apiKey}")
+         .defaultEndpoint("https://identity.api.rackspacecloud.com/v${jclouds.api-version}/")
+         .endpointName("identity service url ending in /v${jclouds.api-version}/")
          .defaultProperties(CloudIdentityApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
          .documentation(URI.create("http://docs.rackspace.com/auth/api/v2.0/auth-api-devguide/"))

@@ -35,7 +35,7 @@
 
   <properties>
     <!-- keystone endpoint -->
-    <test.openstack-nova.endpoint>http://localhost:5000</test.openstack-nova.endpoint>
+    <test.openstack-nova.endpoint>http://localhost:5000/v2.0/</test.openstack-nova.endpoint>
     <!-- keystone version -->
     <test.openstack-nova.api-version>1.1</test.openstack-nova.api-version>
     <test.openstack-nova.build-version></test.openstack-nova.build-version>

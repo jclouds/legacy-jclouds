@@ -34,7 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.trystack-nova.endpoint>https://nova-api.trystack.org:5443</test.trystack-nova.endpoint>
+    <test.trystack-nova.endpoint>https://nova-api.trystack.org:5443/v2.0/</test.trystack-nova.endpoint>
     <test.trystack-nova.api-version>1.1</test.trystack-nova.api-version>
     <test.trystack-nova.build-version></test.trystack-nova.build-version>
     <test.trystack-nova.identity>FIXME_IDENTITY</test.trystack-nova.identity>

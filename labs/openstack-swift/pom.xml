@@ -35,7 +35,7 @@
 
   <properties>
     <!-- keystone endpoint -->
-    <test.openstack-swift.endpoint>http://localhost:5000</test.openstack-swift.endpoint>
+    <test.openstack-swift.endpoint>http://localhost:5000/v2.0/</test.openstack-swift.endpoint>
     <test.openstack-swift.api-version>1.0</test.openstack-swift.api-version>
     <test.openstack-swift.build-version></test.openstack-swift.build-version>
     <test.openstack-swift.identity>FIXME_IDENTITY</test.openstack-swift.identity>

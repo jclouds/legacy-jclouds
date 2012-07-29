@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.v2_0;
 
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.VERSION;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
@@ -79,9 +78,6 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       properties.setProperty(SERVICE_TYPE, ServiceType.COMPUTE);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
       
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(VERSION, "2.0");
-      
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "false");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");
       properties.setProperty(TIMEOUT_SECURITYGROUP_PRESENT, "500");
@@ -94,11 +90,12 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
          super(NovaApi.class, NovaAsyncApi.class);
           id("openstack-nova")
          .name("OpenStack Nova Diablo+ API")
-         .identityName("tenantName:user or user")
-         .credentialName("password")
+         .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
+         .credentialName("${password}")
+         .endpointName("KeyStone base url ending in /v2.0/")
          .documentation(URI.create("http://api.openstack.org/"))
          .version("1.1")
-         .defaultEndpoint("http://localhost:5000")
+         .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(NovaApiMetadata.defaultProperties())
          .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
