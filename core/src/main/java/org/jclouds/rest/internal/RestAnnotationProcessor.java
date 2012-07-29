@@ -48,6 +48,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
@@ -433,6 +434,11 @@ public class RestAnnotationProcessor<T> {
          } else {
             requestBuilder = GeneratedHttpRequest.builder();
             requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
+         }
+
+         if (endpoint == null) {
+            throw new NoSuchElementException(String.format("no endpoint found for %s",
+                     new ClassMethodArgs(method.getDeclaringClass(), method, args)));
          }
 
          requestBuilder.declaring(declaring)

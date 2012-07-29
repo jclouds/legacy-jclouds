@@ -18,25 +18,13 @@
  */
 package org.jclouds.util;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.NoSuchElementException;
 
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -45,15 +33,66 @@ public class Suppliers2Test {
 
    @Test
    public void testGetLastValueInMap() {
-      assertEquals(Suppliers2
-               .<String, String> getLastValueInMap(
-                        Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("foo", Suppliers
-                                 .ofInstance("bar")))).get(), "bar");
+      assertEquals(
+               Suppliers2.<String, String> getLastValueInMap(
+                        Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("foo",
+                                 Suppliers.ofInstance("bar")))).get(), "bar");
    }
 
    @Test
    public void testOfInstanceFunction() {
       assertEquals(Suppliers2.ofInstanceFunction().apply("foo").get(), "foo");
    }
+
+   @Test
+   public void testOrWhenFirstNull() {
+      assertEquals(Suppliers2.or(Suppliers.<String> ofInstance(null), Suppliers.ofInstance("foo")).get(), "foo");
+   }
+
+   @Test
+   public void testOrWhenFirstNotNull() {
+      assertEquals(Suppliers2.or(Suppliers.<String> ofInstance("foo"), Suppliers.ofInstance("bar")).get(), "foo");
+   }
+
+   @Test
+   public void testOnThrowableWhenFirstThrowsMatchingException() {
+      assertEquals(Suppliers2.onThrowable(new Supplier<String>() {
+
+         @Override
+         public String get() {
+            throw new NoSuchElementException();
+         }
+
+      }, NoSuchElementException.class, Suppliers.ofInstance("foo")).get(), "foo");
+   }
+
+   @Test(expectedExceptions = RuntimeException.class)
+   public void testOnThrowableWhenFirstThrowsUnmatchingException() {
+      Suppliers2.onThrowable(new Supplier<String>() {
+
+         @Override
+         public String get() {
+            throw new RuntimeException();
+         }
+
+      }, NoSuchElementException.class, Suppliers.ofInstance("foo")).get();
+   }
+
+   @Test
+   public void testOnThrowableWhenFirstIsFine() {
+      assertEquals(
+               Suppliers2.onThrowable(Suppliers.<String> ofInstance("foo"), NoSuchElementException.class,
+                        Suppliers.ofInstance("bar")).get(), "foo");
+   }
+
    
+   @Test
+   public void testCombination() {
+      Supplier<String> alternate = Suppliers.ofInstance("bar");
+      Supplier<String> or = Suppliers2.or(Suppliers.<String> ofInstance("foo"), alternate);
+      Supplier<String> combined = Suppliers2.onThrowable(or, NoSuchElementException.class, alternate);    
+      
+      assertEquals(combined.get(), "foo");
+   }
+
 }

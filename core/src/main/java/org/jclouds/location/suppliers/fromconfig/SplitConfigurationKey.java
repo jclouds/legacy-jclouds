@@ -60,4 +60,9 @@ public class SplitConfigurationKey implements Supplier<Set<String>> {
       }
    }
 
+   @Override
+   public String toString() {
+      return "splitConfigurationKey(" + configKey + ")";
+   }
+
 }
