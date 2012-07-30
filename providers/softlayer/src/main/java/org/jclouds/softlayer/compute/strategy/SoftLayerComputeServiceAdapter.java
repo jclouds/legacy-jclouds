@@ -126,7 +126,7 @@ public class SoftLayerComputeServiceAdapter implements
 
       ProductOrder order = ProductOrder.builder().packageId(productPackageSupplier.get().getId())
             .location(template.getLocation().getId()).quantity(1).useHourlyPricing(true).prices(getPrices(template))
-            .virtualGuest(newGuest).build();
+            .virtualGuests(newGuest).build();
 
       logger.debug(">> ordering new virtualGuest domain(%s) hostname(%s)", domainName, name);
       ProductOrderReceipt productOrderReceipt = client.getVirtualGuestClient().orderVirtualGuest(order);

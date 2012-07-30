@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,10 +18,16 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import javax.ws.rs.HttpMethod;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
- * 
  * RateLimit.
  * <p/>
  * we specify rate limits in terms of both a human readable wild-card URI and a machine processable
@@ -36,8 +42,106 @@ import javax.ws.rs.HttpMethod;
  * will be returned with a Reply-After header to notify the client when theyagain.
  * 
  * @author Adrian Cole
- */
+*/
 public class RateLimit {
+
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromRateLimit(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String uri;
+      protected String regex;
+      protected int remaining;
+      protected long resetTime;
+      protected RateLimitUnit unit;
+      protected int value;
+      protected HttpMethod verb;
+   
+      /** 
+       * @see RateLimit#getUri()
+       */
+      public T uri(String uri) {
+         this.uri = uri;
+         return self();
+      }
+
+      /** 
+       * @see RateLimit#getRegex()
+       */
+      public T regex(String regex) {
+         this.regex = regex;
+         return self();
+      }
+
+      /** 
+       * @see RateLimit#getRemaining()
+       */
+      public T remaining(int remaining) {
+         this.remaining = remaining;
+         return self();
+      }
+
+      /** 
+       * @see RateLimit#getResetTime()
+       */
+      public T resetTime(long resetTime) {
+         this.resetTime = resetTime;
+         return self();
+      }
+
+      /** 
+       * @see RateLimit#getUnit()
+       */
+      public T unit(RateLimitUnit unit) {
+         this.unit = unit;
+         return self();
+      }
+
+      /** 
+       * @see RateLimit#getValue()
+       */
+      public T value(int value) {
+         this.value = value;
+         return self();
+      }
+
+      /** 
+       * @see RateLimit#getVerb()
+       */
+      public T verb(HttpMethod verb) {
+         this.verb = verb;
+         return self();
+      }
+
+      public RateLimit build() {
+         return new RateLimit(uri, regex, remaining, resetTime, unit, value, verb);
+      }
+      
+      public T fromRateLimit(RateLimit in) {
+         return this
+                  .uri(in.getUri())
+                  .regex(in.getRegex())
+                  .remaining(in.getRemaining())
+                  .resetTime(in.getResetTime())
+                  .unit(in.getUnit())
+                  .value(in.getValue())
+                  .verb(in.getVerb());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
    private final String uri;
    private final String regex;
@@ -47,43 +151,74 @@ public class RateLimit {
    private final int value;
    private final HttpMethod verb;
 
-   public RateLimit(String uri, String regex, int remaining, long resetTime, RateLimitUnit unit,
-            int value, HttpMethod verb) {
-      this.uri = uri;
-      this.regex = regex;
+   @ConstructorProperties({
+      "uri", "regex", "remaining", "resetTime", "unit", "value", "verb"
+   })
+   protected RateLimit(String uri, String regex, int remaining, long resetTime, RateLimitUnit unit, int value, HttpMethod verb) {
+      this.uri = checkNotNull(uri, "uri");
+      this.regex = checkNotNull(regex, "regex");
       this.remaining = remaining;
       this.resetTime = resetTime;
-      this.unit = unit;
+      this.unit = checkNotNull(unit, "unit");
       this.value = value;
-      this.verb = verb;
+      this.verb = checkNotNull(verb, "verb");
    }
 
    public String getUri() {
-      return uri;
+      return this.uri;
    }
 
    public String getRegex() {
-      return regex;
+      return this.regex;
    }
 
    public int getRemaining() {
-      return remaining;
+      return this.remaining;
    }
 
    public long getResetTime() {
-      return resetTime;
+      return this.resetTime;
    }
 
    public RateLimitUnit getUnit() {
-      return unit;
+      return this.unit;
    }
 
    public int getValue() {
-      return value;
+      return this.value;
    }
 
    public HttpMethod getVerb() {
-      return verb;
+      return this.verb;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(uri, regex, remaining, resetTime, unit, value, verb);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      RateLimit that = RateLimit.class.cast(obj);
+      return Objects.equal(this.uri, that.uri)
+               && Objects.equal(this.regex, that.regex)
+               && Objects.equal(this.remaining, that.remaining)
+               && Objects.equal(this.resetTime, that.resetTime)
+               && Objects.equal(this.unit, that.unit)
+               && Objects.equal(this.value, that.value)
+               && Objects.equal(this.verb, that.verb);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("uri", uri).add("regex", regex).add("remaining", remaining).add("resetTime", resetTime).add("unit", unit).add("value", value).add("verb", verb);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
 }

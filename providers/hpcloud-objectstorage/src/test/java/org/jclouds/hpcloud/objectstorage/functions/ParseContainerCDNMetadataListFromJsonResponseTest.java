@@ -31,7 +31,7 @@ import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -51,17 +51,17 @@ public class ParseContainerCDNMetadataListFromJsonResponseTest {
 
       InputStream is = getClass().getResourceAsStream("/test_list_cdn.json");
       
-      Set<ContainerCDNMetadata> expects = ImmutableSortedSet.of(
-		  new ContainerCDNMetadata("hpcloud-blobstore.testCDNOperationsContainerWithCDN", false, 3600, 
-				  URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")), 
-		  new ContainerCDNMetadata("hpcloud-blobstore5", true, 28800, 
-				  URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")),
-          new ContainerCDNMetadata("hpcloud-cfcdnint.testCDNOperationsContainerWithCDN", false, 3600, 
-        		  URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")));
+      Set<ContainerCDNMetadata> expects = ImmutableSet.of(
+         ContainerCDNMetadata.builder().name("hpcloud-blobstore.testCDNOperationsContainerWithCDN").CDNEnabled(false).ttl(3600)
+                  .CDNUri(URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")).build(),
+            ContainerCDNMetadata.builder().name("hpcloud-blobstore5").CDNEnabled(true).ttl(28800)
+                  .CDNUri(URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")).build(),
+            ContainerCDNMetadata.builder().name("hpcloud-cfcdnint.testCDNOperationsContainerWithCDN").CDNEnabled(false).ttl(3600)
+                  .CDNUri(URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")).build());
       
-      ParseJson<SortedSet<ContainerCDNMetadata>> parser = i.getInstance(Key
-               .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
-               }));
+      ParseJson<SortedSet<ContainerCDNMetadata>> parser = i.getInstance(
+            Key.get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
+            }));
       
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build()), expects);
    }

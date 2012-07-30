@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
-import java.util.HashSet;
 import java.util.List;
 
 import org.jclouds.http.HttpResponse;
@@ -44,7 +43,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseServerListFromJsonResponse}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -62,11 +61,12 @@ public class ParseServerListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_servers.json");
 
-      List<Server> expects = ImmutableList.of(new Server(1234, "sample-server"), new Server(5678, "sample-server2"));
+      List<Server> expects = ImmutableList.of(Server.builder().id(1234).name("sample-server").build(),
+            Server.builder().id(5678).name("sample-server2").build());
 
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
-               .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
-               }));
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
+            }));
       List<Server> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response, expects);
@@ -77,8 +77,8 @@ public class ParseServerListFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_list_servers_detail.json");
 
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
-               .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
-               }));
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
+            }));
       List<Server> response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
 
       assertEquals(response.get(0).getId(), 1234);
@@ -91,12 +91,11 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(0).getProgress(), Integer.valueOf(60));
 
       List<Address> publicAddresses = ImmutableList.copyOf(Iterables.transform(
-               ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
-               Address.newString2AddressFunction()));
+            ImmutableList.of("67.23.10.132", "::babe:67.23.10.132", "67.23.10.131", "::babe:4317:0A83"),
+            Address.newString2AddressFunction()));
       List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
-               ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
-      Addresses addresses1 = new Addresses(new HashSet<Address>(publicAddresses),
-               new HashSet<Address>(privateAddresses));
+            ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
+      Addresses addresses1 = Addresses.builder().publicAddresses(publicAddresses).privateAddresses(privateAddresses).build();
 
       assertEquals(response.get(0).getAddresses(), addresses1);
       assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
@@ -111,11 +110,11 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(1).getProgress(), null);
 
       List<Address> publicAddresses2 = ImmutableList.copyOf(Iterables.transform(
-               ImmutableList.of("67.23.10.133", "::babe:67.23.10.133"), Address.newString2AddressFunction()));
+            ImmutableList.of("67.23.10.133", "::babe:67.23.10.133"), Address.newString2AddressFunction()));
       List<Address> privateAddresses2 = ImmutableList.copyOf(Iterables.transform(
-               ImmutableList.of("10.176.42.17", "::babe:10.176.42.17"), Address.newString2AddressFunction()));
-      Addresses addresses2 = new Addresses(new HashSet<Address>(publicAddresses2), new HashSet<Address>(
-               privateAddresses2));
+            ImmutableList.of("10.176.42.17", "::babe:10.176.42.17"), Address.newString2AddressFunction()));
+
+      Addresses addresses2 = Addresses.builder().publicAddresses(publicAddresses2).privateAddresses(privateAddresses2).build();
 
       assertEquals(response.get(1).getAddresses(), addresses2);
       assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));

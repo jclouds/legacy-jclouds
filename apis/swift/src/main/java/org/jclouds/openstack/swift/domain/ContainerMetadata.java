@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,117 +18,163 @@
  */
 package org.jclouds.openstack.swift.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
+import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
 
 /**
- * 
+ * Class ContainerMetadata
+ *
  * @author Adrian Cole
- * 
  */
-public class ContainerMetadata implements Comparable<ContainerMetadata> {
-   private String name;
-   private long count;
-   private long bytes;
-   @SerializedName("X-Container-Read")
-   private String readACL;
-   private Map<String, String> metadata = Maps.newLinkedHashMap();
+public class ContainerMetadata {
 
-   
-   public ContainerMetadata() {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public ContainerMetadata(String name, long count, long bytes, String readACL, Map<String, String> metadata) {
-      this.name = name;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromContainerMetadata(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String name;
+      protected long count;
+      protected long bytes;
+      protected String readACL;
+      protected Map<String, String> metadata = ImmutableMap.of();
+
+      /**
+       * @see ContainerMetadata#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /**
+       * @see ContainerMetadata#getCount()
+       */
+      public T count(long count) {
+         this.count = count;
+         return self();
+      }
+
+      /**
+       * @see ContainerMetadata#getBytes()
+       */
+      public T bytes(long bytes) {
+         this.bytes = bytes;
+         return self();
+      }
+
+      /**
+       * @see ContainerMetadata#getReadACL()
+       */
+      public T readACL(String readACL) {
+         this.readACL = readACL;
+         return self();
+      }
+
+      /**
+       * @see ContainerMetadata#getMetadata()
+       */
+      public T metadata(Map<String, String> metadata) {
+         this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+         return self();
+      }
+
+      public ContainerMetadata build() {
+         return new ContainerMetadata(name, count, bytes, readACL, metadata);
+      }
+
+      public T fromContainerMetadata(ContainerMetadata in) {
+         return this
+               .name(in.getName())
+               .count(in.getCount())
+               .bytes(in.getBytes())
+               .readACL(in.getReadACL())
+               .metadata(in.getMetadata());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String name;
+   private final long count;
+   private final long bytes;
+   private final String readACL;
+   private final Map<String, String> metadata;
+
+   @ConstructorProperties({
+         "name", "count", "bytes", "X-Container-Read", "metadata"
+   })
+   protected ContainerMetadata(String name, long count, long bytes, @Nullable String readACL, @Nullable Map<String, String> metadata) {
+      this.name = checkNotNull(name, "name");
       this.count = count;
       this.bytes = bytes;
       this.readACL = readACL;
-      this.metadata = metadata;
+      this.metadata = metadata == null ? ImmutableMap.<String, String>of() : ImmutableMap.copyOf(metadata);
+   }
+
+   public String getName() {
+      return this.name;
    }
 
    public long getCount() {
-      return count;
+      return this.count;
    }
 
-   public void setCount(long count) {
-	  this.count = count;
-   }
-   
-   public String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-   
    public long getBytes() {
-      return bytes;
+      return this.bytes;
    }
-   
-   public void setBytes(long bytes) {
-      this.bytes = bytes;
+
+   @Nullable
+   public String getReadACL() {
+      return this.readACL;
    }
-   
-   public boolean isPublic() {
-	   if (readACL == null)
-		   return false;
-	   return readACL.equals(".r:*,.rlistings");
-   }
-   
-   public void setReadACL(String readACL) {
-	   this.readACL = readACL;
-	   
-   }
-   
+
    public Map<String, String> getMetadata() {
-      return metadata;
+      return this.metadata;
    }
-   
+
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (bytes ^ (bytes >>> 32));
-      result = prime * result + (int) (count ^ (count >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+      return Objects.hashCode(name, count, bytes);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ContainerMetadata other = (ContainerMetadata) obj;
-      if (bytes != other.bytes)
-         return false;
-      if (count != other.count)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ContainerMetadata that = ContainerMetadata.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+            && Objects.equal(this.count, that.count)
+            && Objects.equal(this.bytes, that.bytes);
    }
 
-   public int compareTo(ContainerMetadata o) {
-      if (getName() == null)
-         return -1;
-      return (this == o) ? 0 : getName().compareTo(o.getName());
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("name", name).add("count", count).add("bytes", bytes).add("readACL", readACL).add("metadata", metadata);
    }
 
    @Override
    public String toString() {
-		return "ContainerMetadata [name=" + name + ", count=" + count + ", bytes="
-				+ bytes + ", isPublic=" + isPublic() + "]";
+      return string().toString();
    }
 
 }

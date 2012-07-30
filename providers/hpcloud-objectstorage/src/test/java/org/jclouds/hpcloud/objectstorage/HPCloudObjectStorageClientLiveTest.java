@@ -92,7 +92,8 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
          assertTrue(cdnMetadataList.size() >= 1);
 
          final long initialTTL = cdnMetadata.getTTL();
-         assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(containerNameWithCDN, true, initialTTL, cdnUri)));
+         assertTrue(cdnMetadataList.contains(ContainerCDNMetadata.builder().name(containerNameWithCDN)
+               .CDNEnabled(true).ttl(initialTTL).CDNUri(cdnUri).build()));
 
          /*
           * Test listing with options FIXFIX cdnMetadataList =

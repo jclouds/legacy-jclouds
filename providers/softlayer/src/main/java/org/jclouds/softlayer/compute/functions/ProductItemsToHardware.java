@@ -47,7 +47,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * Converts a set of ProductItems to Hardware. All cores have a speed of 2.0Ghz The Hardware Id will
- * be a comma separated list containing the price ids: cpus,ram,volume
+ * be a comma separated list containing the prices ids: cpus,ram,volume
  * 
  * @author Jason King
  */

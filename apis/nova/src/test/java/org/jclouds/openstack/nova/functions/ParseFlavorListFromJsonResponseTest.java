@@ -50,8 +50,8 @@ public class ParseFlavorListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_flavors.json");
 
-      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server", null, null, null), new Flavor(2,
-               "512 MB Server", null, null, null));
+      List<Flavor> expects = ImmutableList.of(Flavor.builder().id(1).name("256 MB Server").build(),
+            Flavor.builder().id(2).name("512 MB Server").build());
 
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
                .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {

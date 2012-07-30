@@ -57,7 +57,7 @@ public class ProductItemsTest {
        item = ProductItem.builder().id(1)
                                    .capacity(2.0f)
                                    .description("an item")
-                                   .price(price)
+                                   .prices(price)
                                    .build();
    }
 
@@ -104,7 +104,7 @@ public class ProductItemsTest {
    @Test
    public void testItemCallGetsCategory() {
       ProductItemPrice price = ProductItemPrice.builder().id(1)
-                                                         .category(category)
+                                                         .categories(category)
                                                          .item(item)
                                                          .build();
       ProductItem newItem = item().apply(price);
@@ -114,8 +114,7 @@ public class ProductItemsTest {
    @Test
    public void testItemCallNoCategoryOnPrice() {
 
-      ProductItem item1 = ProductItem.Builder.fromProductItem(item)
-            .categories(ImmutableSet.of(category)).build();
+      ProductItem item1 = item.toBuilder().categories(ImmutableSet.of(category)).build();
 
       ProductItemPrice price = ProductItemPrice.builder().id(1)
                                                          .item(item1)
@@ -132,11 +131,10 @@ public class ProductItemsTest {
             .categoryCode("new category")
             .build();
 
-      ProductItem item1 = ProductItem.Builder.fromProductItem(item)
-            .categories(ImmutableSet.of(category2)).build();
+      ProductItem item1 = item.toBuilder().categories(ImmutableSet.of(category2)).build();
 
       ProductItemPrice price = ProductItemPrice.builder().id(1)
-                                                         .category(category)
+                                                         .categories(category)
                                                          .item(item1)
                                                          .build();
       ProductItem newItem = item().apply(price);

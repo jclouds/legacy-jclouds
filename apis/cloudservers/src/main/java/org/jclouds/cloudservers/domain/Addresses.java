@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,81 +18,128 @@
  */
 package org.jclouds.cloudservers.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+import java.util.Collection;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
+import javax.inject.Named;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
+ * Class Addresses
  * 
  * @author Adrian Cole
- */
+*/
 public class Addresses {
 
-   @SerializedName("public")
-   private Set<String> publicAddresses = Sets.newLinkedHashSet();
-   @SerializedName("private")
-   private Set<String> privateAddresses = Sets.newLinkedHashSet();
-
-   public Addresses() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromAddresses(this);
    }
 
-   public Addresses(Set<String> publicAddresses, Set<String> privateAddresses) {
-      this.publicAddresses = publicAddresses;
-      this.privateAddresses = privateAddresses;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected Set<String> publicAddresses;
+      protected Set<String> privateAddresses;
+   
+      /** 
+       * @see Addresses#getPublicAddresses()
+       */
+      public T publicAddresses(Collection<String> publicAddresses) {
+         this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));      
+         return self();
+      }
+
+      public T publicAddresses(String... in) {
+         return publicAddresses(ImmutableSet.copyOf(in));
+      }
+
+      /** 
+       * @see Addresses#getPrivateAddresses()
+       */
+      public T privateAddresses(Collection<String> privateAddresses) {
+         this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));      
+         return self();
+      }
+
+      public T privateAddresses(String... in) {
+         return privateAddresses(ImmutableSet.copyOf(in));
+      }
+
+      public Addresses build() {
+         return new Addresses(publicAddresses, privateAddresses);
+      }
+      
+      public T fromAddresses(Addresses in) {
+         return this
+                  .publicAddresses(in.getPublicAddresses())
+                  .privateAddresses(in.getPrivateAddresses());
+      }
    }
 
-   public void setPublicAddresses(Set<String> publicAddresses) {
-      this.publicAddresses = publicAddresses;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
+   @Named("public")
+   private final Set<String> publicAddresses;
+   @Named("private")
+   private final Set<String> privateAddresses;
+
+   @ConstructorProperties({
+      "public", "private"
+   })
+   protected Addresses(@Nullable Set<String> publicAddresses, @Nullable Set<String> privateAddresses) {
+      this.publicAddresses = publicAddresses == null ? null : ImmutableSet.copyOf(publicAddresses);      
+      this.privateAddresses = privateAddresses == null ? null : ImmutableSet.copyOf(privateAddresses);    
+   }
+
+   @Nullable
    public Set<String> getPublicAddresses() {
-      return publicAddresses;
+      return this.publicAddresses;
    }
 
-   public void setPrivateAddresses(Set<String> privateAddresses) {
-      this.privateAddresses = privateAddresses;
-   }
-
+   @Nullable
    public Set<String> getPrivateAddresses() {
-      return privateAddresses;
-   }
-
-   @Override
-   public String toString() {
-      return "Addresses [privateAddresses=" + privateAddresses + ", publicAddresses="
-               + publicAddresses + "]";
+      return this.privateAddresses;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
-      result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
-      return result;
+      return Objects.hashCode(publicAddresses, privateAddresses);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Addresses other = (Addresses) obj;
-      if (privateAddresses == null) {
-         if (other.privateAddresses != null)
-            return false;
-      } else if (!privateAddresses.equals(other.privateAddresses))
-         return false;
-      if (publicAddresses == null) {
-         if (other.publicAddresses != null)
-            return false;
-      } else if (!publicAddresses.equals(other.publicAddresses))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Addresses that = Addresses.class.cast(obj);
+      return Objects.equal(this.publicAddresses, that.publicAddresses)
+               && Objects.equal(this.privateAddresses, that.privateAddresses);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("publicAddresses", publicAddresses).add("privateAddresses", privateAddresses);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
 }

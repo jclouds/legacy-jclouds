@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,135 +21,156 @@ package org.jclouds.softlayer.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
- * 
+ * Class Address
+ *
  * @author Jason King
  * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Account_Address"
- *      />
+/>
  */
-public class Address implements Comparable<Address> {
-   public static Builder builder() {
-      return new Builder();
+public class Address {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int id = -1;
-      private String country;
-      private String state;
-      private String description;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromAddress(this);
+   }
 
-      public Builder id(int id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String country;
+      protected String state;
+      protected String description;
+
+      /**
+       * @see Address#getId()
+       */
+      public T id(int id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder country(String country) {
+      /**
+       * @see Address#getCountry()
+       */
+      public T country(String country) {
          this.country = country;
-         return this;
+         return self();
       }
 
-      public Builder state(String state) {
+      /**
+       * @see Address#getState()
+       */
+      public T state(String state) {
          this.state = state;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see Address#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       public Address build() {
          return new Address(id, country, state, description);
       }
 
-      public static Builder fromAddress(Address in) {
-         return Address.builder().id(in.getId())
-                                 .country(in.getCountry())
-                                 .state(in.getState())
-                                 .description(in.getDescription());
+      public T fromAddress(Address in) {
+         return this
+               .id(in.getId())
+               .country(in.getCountry())
+               .state(in.getState())
+               .description(in.getDescription());
       }
    }
 
-   private int id = -1;
-   private String country;
-   private String state;
-   private String description;
-
-   // for deserializer
-   Address() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public Address(int id, String country, String state, String description) {
+   private final int id;
+   private final String country;
+   private final String state;
+   private final String description;
+
+   @ConstructorProperties({
+         "id", "country", "state", "description"
+   })
+   protected Address(int id, String country, @Nullable String state, @Nullable String description) {
       this.id = id;
       this.country = checkNotNull(emptyToNull(country),"country cannot be null or empty:"+country);
       this.state = state;
       this.description = description;
    }
 
-   @Override
-   public int compareTo(Address arg0) {
-      return Integer.valueOf(id).compareTo(arg0.getId());
-   }
-
    /**
     * @return The unique id of the address.
     */
    public int getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return The country of the address.
     */
    public String getCountry() {
-      return country;
+      return this.country;
    }
 
    /**
     * @return The state of the address.
     */
+   @Nullable
    public String getState() {
-      return state;
+      return this.state;
    }
 
    /**
     * @return The description of the address.
     */
+   @Nullable
    public String getDescription() {
-      return description;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromAddress(this);
+      return this.description;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (id ^ (id >>> 32));
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Address other = (Address) obj;
-      if (id != other.id)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Address that = Address.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("country", country).add("state", state).add("description", description);
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", country=" + country + ", state=" + state + ", description=" + description + "]";
+      return string().toString();
    }
-   
-   
+
 }
