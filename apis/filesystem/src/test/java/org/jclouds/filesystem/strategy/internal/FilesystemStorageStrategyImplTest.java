@@ -94,12 +94,6 @@ public class FilesystemStorageStrategyImplTest {
    protected void tearDown() throws IOException {
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
    }
-
-   @DataProvider
-   public Object[][] ignoreOnWindows() {
-       return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
-                                       : TestUtils.SINGLE_NO_ARG_INVOCATION);
-   }
    
    public void testCreateDirectory() {
       storageStrategy.createDirectory(CONTAINER_NAME, null);
