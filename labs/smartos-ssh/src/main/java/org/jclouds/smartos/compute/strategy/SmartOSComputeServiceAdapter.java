@@ -20,13 +20,16 @@ package org.jclouds.smartos.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
@@ -47,10 +50,34 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, VmSpecification, DataSet, SmartOSHost> {
    private final SmartOSHost host;
+   private final Map<String, VmSpecification> specificationMap;
+
 
    @Inject
    public SmartOSComputeServiceAdapter(SmartOSHost host) {
       this.host = checkNotNull(host, "host");
+
+      Collection<VmSpecification> specifications = new ArrayList<VmSpecification>();
+
+       specifications.add(VmSpecification.builder().alias("Standard Joyent VM, 1Gb RAM / 2Gb SWAP").ram(1024).maxSwap(2048)
+               .nic(VmNIC.builder().simpleDHCPNic().build()).build());
+
+       specifications.add(VmSpecification.builder().alias("Standard Joyent VM, 2Gb RAM / 4Gb SWAP").ram(2048).maxSwap(4096)
+               .nic(VmNIC.builder().simpleDHCPNic().build()).build());
+
+       specifications.add(VmSpecification.builder().alias("Standard Joyent VM, 4Gb RAM / 8Gb SWAP").ram(4096).maxSwap(8192)
+               .nic(VmNIC.builder().simpleDHCPNic().build()).build());
+
+       specifications.add(VmSpecification.builder().alias("Standard Joyent VM, 8Gb RAM / 16Gb SWAP").ram(8192).maxSwap(16384)
+               .nic(VmNIC.builder().simpleDHCPNic().build()).build());
+
+      specificationMap = Maps.uniqueIndex(specifications, new Function<VmSpecification,String>() {
+          @Override
+          public String apply(@Nullable VmSpecification input) {
+              return input.getAlias();
+          }
+      });
+
    }
 
    private SmartOSHost getHost() {
@@ -59,9 +86,19 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
 
    @Override
    public NodeAndInitialCredentials<VM> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
-      VmSpecification specification = VmSpecification.builder().alias(name)
+
+      VmSpecification.Builder builder = VmSpecification.builder();
+      String providerId = template.getHardware().getProviderId();
+
+      if( specificationMap.containsKey(providerId) ) {
+          builder.fromVmSpecification( specificationMap.get(providerId) );
+      } else {
+          builder.nic(VmNIC.builder().simpleDHCPNic().build());
+      }
+
+      VmSpecification specification = builder.alias(name)
                .dataset(getHost().getDataSet(UUID.fromString(template.getImage().getProviderId())))
-               .nic(VmNIC.builder().simpleDHCPNic().build()).build();
+               .build();
 
       VM from = getHost().createVM(specification);
 
@@ -69,16 +106,11 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
                .password("smartos").build());
    }
 
+
+
    @Override
    public Iterable<VmSpecification> listHardwareProfiles() {
-      List<VmSpecification> specificationList = new ArrayList<VmSpecification>();
-
-      VmSpecification vs = VmSpecification.builder().alias("Standard Joyent VM")
-               .nic(VmNIC.builder().simpleDHCPNic().build()).build();
-
-      specificationList.add(vs);
-
-      return specificationList;
+      return specificationMap.values();
    }
 
    @Override
