@@ -37,10 +37,10 @@ public class VmSpecificationToHardware implements Function<VmSpecification, Hard
    @Override
    public Hardware apply(VmSpecification from) {
       HardwareBuilder builder = new HardwareBuilder();
-      builder.ids("AnID");
+      builder.ids(from.getAlias());
       builder.name(from.getAlias());
       builder.processors(ImmutableList.of(new Processor(1, 1.0)));
-      builder.ram(256);
+      builder.ram(from.getMaxPhysicalMemory());
       // builder.volumes(ImmutableList.<Volume> of(new VolumeImpl(from.disk, true, false)));
       return builder.build();
    }
