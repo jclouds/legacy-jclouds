@@ -24,9 +24,9 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
@@ -36,9 +36,9 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
@@ -50,7 +50,6 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -61,10 +60,10 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 

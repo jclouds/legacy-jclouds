@@ -23,6 +23,8 @@ import java.util.Map;
 import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.features.WindowsApi;
+import org.jclouds.ec2.features.WindowsAsyncApi;
 import org.jclouds.ec2.services.AMIAsyncClient;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
@@ -73,6 +75,7 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
                         .put(WindowsClient.class, WindowsAsyncClient.class)//
                         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
                         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+                        .put(WindowsApi.class, WindowsAsyncApi.class)//
                         .build();
    
    @SuppressWarnings("unchecked")

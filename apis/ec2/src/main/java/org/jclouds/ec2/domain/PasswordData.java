@@ -18,11 +18,26 @@
  */
 package org.jclouds.ec2.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 
+import com.google.common.base.Objects;
+
 /**
- * Holds the encrypted Windows Administrator password for an instance.
- *
+ * The encrypted administrator password for an instance running Windows.
+ * 
+ * <h4>Note</h4>
+ * 
+ * The Windows password is only generated the first time an AMI is launched. It is not generated for
+ * rebundled AMIs or after the password is changed on an instance.
+ * 
+ * The password is encrypted using the key pair that you provided.
+ * 
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-GetPasswordData.html"
+ *      >doc</a>
+ * 
  * @author Richard Downer
  */
 public class PasswordData {
@@ -31,99 +46,110 @@ public class PasswordData {
       return new Builder();
    }
 
+   public Builder toBuilder() {
+      return new Builder().fromPasswordData(this);
+   }
+
    public static class Builder {
 
-      private String requestId;
-      private String instanceId;
-      private Date timestamp;
-      private String passwordData;
+      protected String instanceId;
+      protected Date timestamp;
+      protected String passwordData;
 
-      private Builder() {}
-
-      public Builder requestId(String requestId) {
-         this.requestId = requestId;
-         return this;
-      }
-
+      /**
+       * @see PasswordData#getInstanceId()
+       */
       public Builder instanceId(String instanceId) {
          this.instanceId = instanceId;
          return this;
       }
 
+      /**
+       * @see PasswordData#getTimestamp()
+       */
       public Builder timestamp(Date timestamp) {
          this.timestamp = timestamp;
          return this;
       }
 
+      /**
+       * @see PasswordData#getPasswordData()
+       */
       public Builder passwordData(String passwordData) {
          this.passwordData = passwordData;
          return this;
       }
 
       public PasswordData build() {
-         return new PasswordData(requestId, instanceId, timestamp, passwordData);
+         return new PasswordData(instanceId, timestamp, passwordData);
+      }
+
+      public Builder fromPasswordData(PasswordData in) {
+         return this.instanceId(in.getInstanceId()).timestamp(in.getTimestamp()).passwordData(in.getPasswordData());
       }
    }
 
-   private String requestId;
-   private String instanceId;
-   private Date timestamp;
-   private String passwordData;
+   protected final String instanceId;
+   protected final Date timestamp;
+   protected final String passwordData;
 
-   public PasswordData(String requestId, String instanceId, Date timestamp, String passwordData) {
-      this.requestId = requestId;
-      this.instanceId = instanceId;
-      this.timestamp = timestamp;
-      this.passwordData = passwordData;
+   protected PasswordData(String instanceId, Date timestamp, String passwordData) {
+      this.instanceId = checkNotNull(instanceId, "instanceId");
+      this.timestamp = checkNotNull(timestamp, "timestamp");
+      this.passwordData = checkNotNull(passwordData, "passwordData");
    }
 
-   public String getRequestId() {
-      return requestId;
-   }
-
+   /**
+    * The ID of the instance.
+    */
    public String getInstanceId() {
       return instanceId;
    }
 
+   /**
+    * The time the data was last updated.
+    */
    public Date getTimestamp() {
       return timestamp;
    }
 
+   /**
+    * The password of the instance.
+    */
    public String getPasswordData() {
       return passwordData;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      PasswordData that = (PasswordData) o;
-
-      if (instanceId != null ? !instanceId.equals(that.instanceId) : that.instanceId != null) return false;
-      if (passwordData != null ? !passwordData.equals(that.passwordData) : that.passwordData != null) return false;
-      if (requestId != null ? !requestId.equals(that.requestId) : that.requestId != null) return false;
-      if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
-
-      return true;
-   }
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public int hashCode() {
-      int result = requestId != null ? requestId.hashCode() : 0;
-      result = 31 * result + (instanceId != null ? instanceId.hashCode() : 0);
-      result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
-      result = 31 * result + (passwordData != null ? passwordData.hashCode() : 0);
-      return result;
+      return Objects.hashCode(instanceId);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      PasswordData other = PasswordData.class.cast(obj);
+      return Objects.equal(this.instanceId, other.instanceId);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public String toString() {
-      return "PasswordData{" +
-         "requestId='" + requestId + '\'' +
-         ", instanceId='" + instanceId + '\'' +
-         ", timestamp=" + timestamp +
-         ", passwordData='" + passwordData + '\'' +
-         '}';
+      return Objects.toStringHelper(this).omitNullValues().add("instanceId", instanceId).add("timestamp", timestamp)
+               .add("passwordData", passwordData).toString();
    }
+
 }

@@ -31,18 +31,21 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.EC2ComputeService;
+import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.functions.PasswordCredentialsFromWindowsInstance;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
@@ -52,10 +55,10 @@ import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.compute.predicates.GetImageWhenStatusAvailablePredicateWithResult;
 import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
+import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
@@ -126,8 +129,11 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
-      bind(WindowsLoginCredentialsFromEncryptedData.class);
+      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);   
+      bind(new TypeLiteral<Function<PasswordDataAndPrivateKey, LoginCredentials>>() {
+      }).to(WindowsLoginCredentialsFromEncryptedData.class);
+      bind(new TypeLiteral<Function<RunningInstance, LoginCredentials>>() {
+      }).to(PasswordCredentialsFromWindowsInstance.class);
       bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
       }).to(EC2ImageParser.class);
       bind(new TypeLiteral<ImageExtension>() {

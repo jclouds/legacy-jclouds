@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import org.jclouds.crypto.Crypto;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.domain.PasswordData;
@@ -58,12 +60,17 @@ public class WindowsLoginCredentialsFromEncryptedDataTest {
       "-----END RSA PRIVATE KEY-----";
    private static final String ENCRYPTED_PASSWORD = "gO1oMoIjjIifv2iqcfIKiQD7ziOTVXsuaBJFEQrZdb8uJH/LsAiJXZeGKEeXlHl/oMoR3HEIoYuHxl+p5iHdrpP889RmxWBDGOWC5iTUzK6CRa5mFmF1I5Lpt7v2YeVoQWihSM8B19BEdBdY1svQp9nyhPB4AqLDrY28x/OrmRh/qYq953i6Y4Z8c76OHqqGcUYM4ePysRlcizSgQjdkEDmKC10Ak3OFRRx3/LqYsFIMiOHeg47APg+UANNTyRiTIia5FDhSeHJzaeYCBRQ7UYH0z2rg4cX3YjOz/MoznjHiaaN4MO+5N3v84VawnqwKOvlwPyI2bmz0+9Tr6DKzqA==";
 
+   protected final DateService dateService = new SimpleDateFormatDateService();
+
    @Test
    public void testApply() throws Exception {
       Crypto crypto = new BouncyCastleCrypto();
       WindowsLoginCredentialsFromEncryptedData f = new WindowsLoginCredentialsFromEncryptedData(crypto);
 
-      PasswordData passwordData = PasswordData.builder().passwordData(ENCRYPTED_PASSWORD).build();
+      PasswordData passwordData = PasswordData.builder()
+                                              .instanceId("i-2574e22a")
+                                              .timestamp(dateService.iso8601DateParse("2012-07-30T07:27:23.000+0000"))
+                                              .passwordData(ENCRYPTED_PASSWORD).build();
 
       LoginCredentials credentials = f.apply(new PasswordDataAndPrivateKey(passwordData, PRIVATE_KEY));
 

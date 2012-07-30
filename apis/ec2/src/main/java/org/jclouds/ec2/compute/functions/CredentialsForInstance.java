@@ -28,11 +28,13 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -43,27 +45,31 @@ import com.google.common.cache.LoadingCache;
  */
 @Singleton
 public class CredentialsForInstance extends CacheLoader<RunningInstance, Credentials> {
+
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
+   private final Function<RunningInstance, LoginCredentials> passwordCredentialsFromWindowsInstance;
 
    @Inject
    CredentialsForInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-         Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap) {
+            Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap, Function<RunningInstance, LoginCredentials> passwordCredentialsFromWindowsInstance) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
-      this.imageMap = imageMap;
+      this.imageMap = checkNotNull(imageMap, "imageMap");
+      this.passwordCredentialsFromWindowsInstance = checkNotNull(passwordCredentialsFromWindowsInstance, "passwordCredentialsFromWindowsInstance");
    }
 
    @Override
-   public Credentials load(RunningInstance instance) throws ExecutionException {
-      Credentials credentials = null;// default if no keypair exists
-      if (instance.getKeyName() != null) {
-         credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance));
+   public Credentials load(final RunningInstance instance) throws ExecutionException {
+      if ("windows".equals(instance.getPlatform())) {
+         return  passwordCredentialsFromWindowsInstance.apply(instance);
+      } else  if (instance.getKeyName() != null) {
+         return new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance));
       }
-      return credentials;
+      return null;
    }
 
    @VisibleForTesting
-   String getPrivateKeyOrNull(RunningInstance instance) throws ExecutionException {
+   String getPrivateKeyOrNull(RunningInstance instance) {
       KeyPair keyPair = credentialsMap.get(new RegionAndName(instance.getRegion(), instance.getKeyName()));
       return keyPair != null ? keyPair.getKeyMaterial() : null;
    }

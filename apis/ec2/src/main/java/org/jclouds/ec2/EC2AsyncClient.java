@@ -18,6 +18,11 @@
  */
 package org.jclouds.ec2;
 
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.jclouds.ec2.features.WindowsAsyncApi;
 import org.jclouds.ec2.services.AMIAsyncClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.ec2.services.ElasticBlockStoreAsyncClient;
@@ -26,7 +31,13 @@ import org.jclouds.ec2.services.InstanceAsyncClient;
 import org.jclouds.ec2.services.KeyPairAsyncClient;
 import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
+import org.jclouds.location.Region;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.common.annotations.Beta;
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to EC2 services.
@@ -35,6 +46,13 @@ import org.jclouds.rest.annotations.Delegate;
  */
 public interface EC2AsyncClient {
    public final static String VERSION = "2010-06-15";
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
 
    /**
     * Provides asynchronous access to AMI services.
@@ -84,4 +102,15 @@ public interface EC2AsyncClient {
    @Delegate
    ElasticBlockStoreAsyncClient getElasticBlockStoreServices();
 
+   /**
+    * Provides asynchronous access to Windows features.
+    */
+   @Delegate
+   @Beta
+   WindowsAsyncApi getWindowsApi();
+
+   @Delegate
+   @Beta
+   WindowsAsyncApi getWindowsApiForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

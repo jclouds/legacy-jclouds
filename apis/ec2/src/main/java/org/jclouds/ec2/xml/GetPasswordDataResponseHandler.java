@@ -46,9 +46,7 @@ public class GetPasswordDataResponseHandler extends ParseSax.HandlerWithResult<P
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("requestId")) {
-         builder.requestId(currentText.toString().trim());
-      } else if (qName.equals("instanceId")) {
+      if (qName.equals("instanceId")) {
          builder.instanceId(currentText.toString().trim());
       } else if (qName.equals("timestamp")) {
          builder.timestamp(dateCodec.toDate(currentText.toString().trim()));
