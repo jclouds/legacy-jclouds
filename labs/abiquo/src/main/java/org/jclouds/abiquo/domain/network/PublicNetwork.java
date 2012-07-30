@@ -164,7 +164,7 @@ public class PublicNetwork extends Network<PublicIp> {
          dto.setMask(mask);
          dto.setPrimaryDNS(primaryDNS);
          dto.setSecondaryDNS(secondaryDNS);
-         dto.setSufixDNS(sufixDNS);
+         dto.setSufixDNS(suffixDNS);
          dto.setDefaultNetwork(defaultNetwork);
          dto.setUnmanaged(false);
          dto.setType(NetworkType.PUBLIC);
@@ -178,7 +178,7 @@ public class PublicNetwork extends Network<PublicIp> {
       public static Builder fromPublicNetwork(final PublicNetwork in) {
          return PublicNetwork.builder(in.context, in.datacenter).name(in.getName()).tag(in.getTag())
                .gateway(in.getGateway()).address(in.getAddress()).mask(in.getMask()).primaryDNS(in.getPrimaryDNS())
-               .secondaryDNS(in.getSecondaryDNS()).sufixDNS(in.getSufixDNS()).defaultNetwork(in.getDefaultNetwork());
+               .secondaryDNS(in.getSecondaryDNS()).suffixDNS(in.getSuffixDNS()).defaultNetwork(in.getDefaultNetwork());
       }
    }
 

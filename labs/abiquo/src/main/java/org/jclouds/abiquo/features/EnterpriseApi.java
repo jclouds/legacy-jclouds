@@ -178,7 +178,7 @@ public interface EnterpriseApi {
          final DatacenterLimitsDto limits);
 
    /**
-    * Retreives the limits for the given enterprise and datacenter.
+    * Retrieves the limits for the given enterprise and datacenter.
     * 
     * @param enterprise
     *           The enterprise.
@@ -189,7 +189,7 @@ public interface EnterpriseApi {
    DatacentersLimitsDto getLimits(EnterpriseDto enterprise, DatacenterDto datacenter);
 
    /**
-    * Retreives limits for the given enterprise and any datacenter.
+    * Retrieves limits for the given enterprise and any datacenter.
     * 
     * @param enterprise
     *           The enterprise.
@@ -217,7 +217,7 @@ public interface EnterpriseApi {
    /*********************** User ********************** */
 
    /**
-    * Retreives users of the given enterprise.
+    * Retrieves users of the given enterprise.
     * 
     * @param enterprise
     *           The enterprise.
@@ -294,7 +294,7 @@ public interface EnterpriseApi {
     * @param enterpriseId
     *           Id of the enterprise which information will be refreshed.
     * @param datacenterRepositoryId
-    *           Id of the datacenter repository contaning the templates.
+    *           Id of the datacenter repository containing the templates.
     */
    @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
    void refreshTemplateRepository(Integer enterpriseId, Integer datacenterRepositoryId);
@@ -336,7 +336,7 @@ public interface EnterpriseApi {
     * 
     * @param enterprise
     *           The enterprise.
-    * @return The list of reserverd machines by the enterprise.
+    * @return The list of reserved machines by the enterprise.
     */
    MachinesDto listReservedMachines(EnterpriseDto enterprise);
 

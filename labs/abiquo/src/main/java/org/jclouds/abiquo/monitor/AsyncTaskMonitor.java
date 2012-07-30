@@ -35,7 +35,7 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(BaseAsyncTaskMonitor.class)
 public interface AsyncTaskMonitor extends MonitoringService {
    /**
-    * Monitor the given {@link AsyncTask}s and block until they finishe.
+    * Monitor the given {@link AsyncTask}s and block until they finish.
     * 
     * @param tasks
     *           The {@link AsyncTask}s to monitor.

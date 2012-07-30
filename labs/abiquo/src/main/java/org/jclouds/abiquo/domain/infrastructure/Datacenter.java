@@ -696,7 +696,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     * {@link org.jclouds.abiquo.domain.network.Network#toExternalNetwork},
     * {@link org.jclouds.abiquo.domain.network.Network#toPublicNetwork} and
     * {@link org.jclouds.abiquo.domain.network.Network#toUnmanagedNetwork} can
-    * be used to convert the Network into the appropiate domain object.
+    * be used to convert the Network into the appropriate domain object.
     * 
     * @param id
     *           Unique ID of the network in this datacenter.
@@ -1108,7 +1108,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *      VirtualMachineTemplateResource#
     *      VirtualMachineTemplateResource-Retrieveallvirtualmachinetemplates</a>
     * @return Virtual machine template with the given id in the given
-    *         enterpriess or <code>null</code> if it does not exist.
+    *         enterprise or <code>null</code> if it does not exist.
     */
    public VirtualMachineTemplate getTemplateInRepository(final Enterprise enterprise, final Integer id) {
       VirtualMachineTemplateDto template = context.getApi().getVirtualMachineTemplateApi()

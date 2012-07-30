@@ -34,7 +34,7 @@ import org.jclouds.xml.XMLParser;
 import com.abiquo.model.transport.SingleResourceTransportDto;
 
 /**
- * Binds teh given object to the payload and extracts the path parameters from
+ * Binds the given object to the payload and extracts the path parameters from
  * the edit link.
  * <p>
  * This method should be used in {@link PUT} methods to automatically extract

@@ -43,7 +43,7 @@ public class UserPredicatesTest {
          User.builder().id("random-id").apiKey("random-text").build()
       ));
       assertFalse(apiKeyEquals("something-different").apply(
-         User.builder().id("randome-id").apiKey("random-text").build()
+         User.builder().id("random-id").apiKey("random-text").build()
       ));
    }
 

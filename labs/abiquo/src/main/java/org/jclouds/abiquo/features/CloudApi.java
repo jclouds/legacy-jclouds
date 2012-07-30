@@ -523,12 +523,12 @@ public interface CloudApi {
    AcceptedRequestDto<String> deployVirtualMachine(VirtualMachineDto virtualMachine, VirtualMachineTaskDto options);
 
    /**
-    * Uneploy a virtual machine with task options.
+    * Undeploy a virtual machine with task options.
     * 
     * @param virtualMachine
     *           The virtual machine to undeploy.
     * @param options
-    *           extra deploy unoptions.
+    *           extra undeploy options.
     * @return Response message to the undeploy request.
     */
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)

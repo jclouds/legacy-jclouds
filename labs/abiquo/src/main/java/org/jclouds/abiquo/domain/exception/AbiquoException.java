@@ -42,7 +42,7 @@ public class AbiquoException extends RuntimeException {
    /** Serial UID. */
    private static final long serialVersionUID = 1L;
 
-   /** The HTTP statuc. */
+   /** The HTTP status. */
    private Status httpStatus;
 
    /** The errors. */

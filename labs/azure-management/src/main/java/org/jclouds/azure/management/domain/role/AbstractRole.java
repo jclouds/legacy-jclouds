@@ -24,7 +24,7 @@ public abstract class AbstractRole {
    private String roleType;
 
    /**
-    * Required. You must specifye either a WindowsProvisioningConfigurationSet or
+    * Required. You must specify either a WindowsProvisioningConfigurationSet or
     * LinuxProvisioningConfigurationSet configuration set.
     * 
     * Optional. You can specify a NetworkConfigurationSet which contains the metadata required to

@@ -62,7 +62,7 @@ public class BindToXMLPayloadTest {
       TestJAXBDomain obj = new TestJAXBDomain();
       obj.setElem("Hello World");
 
-      // Add teh unknown content-type header to verify it is changed by the
+      // Add the unknown content-type header to verify it is changed by the
       // binder
       Multimap<String, String> headers = ImmutableMultimap.<String, String> of("Content-type", "application/unknown");
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").headers(headers)

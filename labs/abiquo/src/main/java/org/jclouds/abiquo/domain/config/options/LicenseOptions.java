@@ -52,7 +52,7 @@ public class LicenseOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * Search inaactive licenses
+       * Search inactive licenses
        */
       public Builder inactive(final boolean inactive) {
          this.active = !inactive;

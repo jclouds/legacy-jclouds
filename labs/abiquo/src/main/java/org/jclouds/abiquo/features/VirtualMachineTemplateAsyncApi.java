@@ -171,7 +171,7 @@ public interface VirtualMachineTemplateAsyncApi {
          @BinderParam(AppendToPath.class) DiskFormatType targetFormat);
 
    /**
-    * @see VirtualMachineTemplateApi#updateConversion(ConversinoDto)
+    * @see VirtualMachineTemplateApi#updateConversion(ConversionDto)
     */
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)

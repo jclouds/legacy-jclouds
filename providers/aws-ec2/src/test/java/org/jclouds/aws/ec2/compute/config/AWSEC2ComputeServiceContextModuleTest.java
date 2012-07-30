@@ -58,7 +58,7 @@ public class AWSEC2ComputeServiceContextModuleTest {
       for (int i = 0; i < 2; i++) {
          try {
             Image image = cacheLoader.load(regionAndName);
-            fail("Expected Authrization exception, but got "+image);
+            fail("Expected Authorization exception, but got " + image);
          } catch (AuthorizationException e) {
             // success
          }

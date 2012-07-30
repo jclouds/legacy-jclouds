@@ -117,8 +117,8 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
                String hostIP = adapter.getNatDriver().getHostIP();
                if(!hostIP.isEmpty())
                   publicIpAddresses.add(hostIP);
-               for (String nameProtocolnumberAddressInboudportGuestTargetport : adapter.getNatDriver().getRedirects()) {
-                  Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+               for (String nameProtocolnumberAddressInboundportGuestTargetport : adapter.getNatDriver().getRedirects()) {
+                  Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboundportGuestTargetport);
                   String protocolNumber = Iterables.get(stuff, 1);
                   String hostAddress = Iterables.get(stuff, 2);
                   String inboundPort = Iterables.get(stuff, 3);

@@ -101,7 +101,7 @@ public class VirtualAppliance extends DomainWrapper<VirtualApplianceDto> {
    /**
     * Gets the virtual datacenter where the virtual appliance belongs to.
     * 
-    * @resturn The virtual datacenter where the virtual appliance belongs to.
+    * @return The virtual datacenter where the virtual appliance belongs to.
     * @see API: <a href=
     *      "http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#VirtualDatacenterResource-RetrieveaVirtualDatacenter"
     *      > http://community.abiquo.com/display/ABI20/Virtual+Datacenter+

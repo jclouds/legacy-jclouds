@@ -36,7 +36,7 @@ public class StringToKeyCode implements Function<String, List<Integer>> {
    
    private List<Integer> stringToKeycode(String s) {
       if (containsSpecialCharacter(s)) {
-         return transforSpecialCharIntoKeycodes(s);
+         return transformSpecialCharIntoKeycodes(s);
       } else {
          return transformStandardCharacterIntoKeycodes(s);
       }
@@ -53,7 +53,7 @@ public class StringToKeyCode implements Function<String, List<Integer>> {
       return values;
    }
 
-   private List<Integer> transforSpecialCharIntoKeycodes(String s) {
+   private List<Integer> transformSpecialCharIntoKeycodes(String s) {
       List<Integer> values = new ArrayList<Integer>();
       for (String special : s.split("<")) {
          Collection<Integer> value = KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST.get("<" + special);

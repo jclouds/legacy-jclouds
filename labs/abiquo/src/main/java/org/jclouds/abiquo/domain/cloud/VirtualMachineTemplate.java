@@ -103,7 +103,7 @@ public class VirtualMachineTemplate extends DomainWrapper<VirtualMachineTemplate
    public AsyncTask makePersistent(final VirtualDatacenter vdc, final Volume volume, final String persistentTemplateName) {
       RESTLink storageLink = volume.unwrap().getEditLink();
       storageLink.setRel("volume");
-      return makePeristent(vdc, storageLink, persistentTemplateName, null);
+      return makePersistent(vdc, storageLink, persistentTemplateName, null);
    }
 
    public AsyncTask makePersistent(final VirtualDatacenter vdc, final Tier tier, final String persistentTemplateName,
@@ -115,10 +115,10 @@ public class VirtualMachineTemplate extends DomainWrapper<VirtualMachineTemplate
          storageLink = tier.unwrap().searchLink("self");
       }
       storageLink.setRel(ParentLinkName.TIER);
-      return makePeristent(vdc, storageLink, persistentTemplateName, persistentVolumeName);
+      return makePersistent(vdc, storageLink, persistentTemplateName, persistentVolumeName);
    }
 
-   private AsyncTask makePeristent(final VirtualDatacenter vdc, final RESTLink storageLink,
+   private AsyncTask makePersistent(final VirtualDatacenter vdc, final RESTLink storageLink,
          final String persistentTemplateName, final String persistentVolumeName) {
       VirtualMachineTemplatePersistentDto persistentData = new VirtualMachineTemplatePersistentDto();
       persistentData.setPersistentTemplateName(persistentTemplateName);

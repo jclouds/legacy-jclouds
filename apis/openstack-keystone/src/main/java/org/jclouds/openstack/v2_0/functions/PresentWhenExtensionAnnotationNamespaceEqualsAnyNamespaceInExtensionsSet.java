@@ -38,7 +38,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * We use the annotation {@link org.jclouds.openstack.services.Extension} to
- * bind a class that iimplements an extension API to an {@link Extension}.
+ * bind a class that implements an extension API to an {@link Extension}.
  * 
  * @author Adrian Cole
  * 
