@@ -123,15 +123,6 @@ public class FilesystemStorageStrategyImplTest {
       storageStrategy.createDirectory(CONTAINER_NAME, null);
    }
 
-   @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
-   public void testCreateDirectory_WrongDirectoryName() {
-      try {
-         storageStrategy.createDirectory(CONTAINER_NAME, "$%&!'`\\/");
-         fail("No exception thrown");
-      } catch (Exception e) {
-      }
-   }
-
    public void testCreateContainer() {
       boolean result;
 

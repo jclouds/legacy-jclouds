@@ -349,10 +349,10 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
     * @param pathToBeNormalized
     * @return
     */
-   private String normalize(String pathToBeNormalized) {
+   private static String normalize(String pathToBeNormalized) {
       if (null != pathToBeNormalized && pathToBeNormalized.contains(BACK_SLASH)) {
          if (!BACK_SLASH.equals(File.separator)) {
-            return pathToBeNormalized.replaceAll(BACK_SLASH, File.separator);
+            return pathToBeNormalized.replace(BACK_SLASH, File.separator);
          }
       }
       return pathToBeNormalized;
