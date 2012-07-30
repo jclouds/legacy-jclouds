@@ -178,7 +178,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
       for (ProductItemPrice price : item.getPrices()) {
          // ProductItemPrice newDetails =
-         // client.getProductItemPrice(price.getId());
+         // client.getProductItemPrice(prices.getId());
          // assertEquals(item.getId(), newDetails.getId());
          checkPrice(price);
       }

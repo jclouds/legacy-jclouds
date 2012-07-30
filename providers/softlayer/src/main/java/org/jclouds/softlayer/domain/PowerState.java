@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,83 +20,98 @@ package org.jclouds.softlayer.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
- * The power state class provides a common set of values for which a guest's power state will be presented in the SoftLayer API. 
+ * The power state class provides a common set of values for which a guest's power state will be presented in the SoftLayer API.
+ *
  * @author Jason King
-    * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest_Power_State"
- *      />
+ * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest_Power_State"
+/>
  */
-public class PowerState implements Comparable<PowerState> {
-   public static Builder builder() {
-      return new Builder();
+public class PowerState {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private VirtualGuest.State keyName;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromPowerState(this);
+   }
 
-      public Builder keyName(VirtualGuest.State keyName) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected VirtualGuest.State keyName;
+
+      /**
+       * @see PowerState#getKeyName()
+       */
+      public T keyName(VirtualGuest.State keyName) {
          this.keyName = keyName;
-         return this;
+         return self();
       }
 
       public PowerState build() {
          return new PowerState(keyName);
       }
 
-      public static Builder fromAddress(PowerState in) {
-         return PowerState.builder().keyName(in.getKeyName());
+      public T fromPowerState(PowerState in) {
+         return this
+               .keyName(in.getKeyName());
       }
    }
 
-   private VirtualGuest.State keyName;
-
-   // for deserializer
-   PowerState() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
+   private final VirtualGuest.State keyName;
+
+   @ConstructorProperties("keyName")
    public PowerState(VirtualGuest.State keyName) {
       this.keyName = checkNotNull(keyName,"keyName cannot be null or empty:"+keyName);
    }
 
-   @Override
-   public int compareTo(PowerState arg0) {
-      return keyName.compareTo(arg0.keyName);
-   }
-
    /**
     * Maps onto {@code VirtualGuest.State}
-    * @return The key name of a power state.
     *
+    * @return The key name of a power state.
     */
+   @Nullable
    public VirtualGuest.State getKeyName() {
-      return keyName;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromAddress(this);
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      PowerState that = (PowerState) o;
-      if (keyName != null ? !keyName.equals(that.keyName) : that.keyName != null)
-         return false;
-
-      return true;
+      return this.keyName;
    }
 
    @Override
    public int hashCode() {
-      return keyName != null ? keyName.hashCode() : 0;
+      return Objects.hashCode(keyName);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      PowerState that = PowerState.class.cast(obj);
+      return Objects.equal(this.keyName, that.keyName);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("keyName", keyName);
    }
 
    @Override
    public String toString() {
-      return "[keyName=" + keyName + "]";
+      return string().toString();
    }
-   
-   
+
 }
