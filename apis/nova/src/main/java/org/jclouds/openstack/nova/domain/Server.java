@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,13 +18,21 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A server is a virtual machine instance in the OpenStack Nova system. Flavor and image are
@@ -33,102 +41,323 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class Server extends Resource {
-   private int id;
-   private String name;
 
-   private Map<String, String> metadata = Maps.newHashMap();
-
-   private Addresses addresses;
-   private String accessIPv4;
-   private String accessIPv6;
-   private String adminPass;
-   private String flavorRef;
-   private String hostId;
-   private String imageRef;
-   private String affinityId;
-   private String uuid;
-   private Flavor flavor;
-   private Image image;
-
-   @SerializedName(value="key_name")
-   private String keyName;
-
-	/**
-	 * Actually, security groups are not returned by nova on server query but is
-	 * needed when creating a server to specify a set of groups
-	 */
-   @SerializedName(value="security_groups")
-   private Set<SecurityGroup> securityGroups = Sets.newHashSet();
-
-   private Date created;
-   private Date updated;
-
-   public Date getCreated() {
-      return created;
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Date getUpdated() {
-      return updated;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromServer(this);
    }
 
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+      protected String name;
+      protected Map<String, String> metadata = ImmutableMap.of();
+      protected Addresses addresses;
+      protected String accessIPv4;
+      protected String accessIPv6;
+      protected String adminPass;
+      protected String flavorRef;
+      protected String hostId;
+      protected String imageRef;
+      protected String affinityId;
+      protected String uuid;
+      protected Flavor flavor;
+      protected Image image;
+      protected String keyName;
+      protected Set<SecurityGroup> securityGroups = ImmutableSet.of();
+      protected Date created;
+      protected Date updated;
+      protected Integer progress;
+      protected ServerStatus status;
 
-   private Integer progress;
-   private ServerStatus status;
+      /**
+       * @see Server#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
 
-   public Server() {
+      /**
+       * @see Server#getMetadata()
+       */
+      public T metadata(Map<String, String> metadata) {
+         this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+         return self();
+      }
+
+      /**
+       * @see Server#getAddresses()
+       */
+      public T addresses(Addresses addresses) {
+         this.addresses = addresses;
+         return self();
+      }
+
+      /**
+       * @see Server#getAccessIPv4()
+       */
+      public T accessIPv4(String accessIPv4) {
+         this.accessIPv4 = accessIPv4;
+         return self();
+      }
+
+      /**
+       * @see Server#getAccessIPv6()
+       */
+      public T accessIPv6(String accessIPv6) {
+         this.accessIPv6 = accessIPv6;
+         return self();
+      }
+
+      /**
+       * @see Server#getAdminPass()
+       */
+      public T adminPass(String adminPass) {
+         this.adminPass = adminPass;
+         return self();
+      }
+
+      /**
+       * @see Server#getFlavorRef()
+       */
+      public T flavorRef(String flavorRef) {
+         this.flavorRef = flavorRef;
+         return self();
+      }
+
+      /**
+       * @see Server#getHostId()
+       */
+      public T hostId(String hostId) {
+         this.hostId = hostId;
+         return self();
+      }
+
+      /**
+       * @see Server#getImageRef()
+       */
+      public T imageRef(String imageRef) {
+         this.imageRef = imageRef;
+         return self();
+      }
+
+      /**
+       * @see Server#getAffinityId()
+       */
+      public T affinityId(String affinityId) {
+         this.affinityId = affinityId;
+         return self();
+      }
+
+      /**
+       * @see Server#getUuid()
+       */
+      public T uuid(String uuid) {
+         this.uuid = uuid;
+         return self();
+      }
+
+      /**
+       * @see Server#getFlavor()
+       */
+      public T flavor(Flavor flavor) {
+         this.flavor = flavor;
+         return self();
+      }
+
+      /**
+       * @see Server#getImage()
+       */
+      public T image(Image image) {
+         this.image = image;
+         return self();
+      }
+
+      /**
+       * @see Server#getKeyName()
+       */
+      public T keyName(String keyName) {
+         this.keyName = keyName;
+         return self();
+      }
+
+      /**
+       * @see Server#getSecurityGroups()
+       */
+      public T securityGroups(Set<SecurityGroup> securityGroups) {
+         this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
+         return self();
+      }
+
+      public T securityGroups(SecurityGroup... in) {
+         return securityGroups(ImmutableSet.copyOf(in));
+      }
+
+      /**
+       * @see Server#getCreated()
+       */
+      public T created(Date created) {
+         this.created = created;
+         return self();
+      }
+
+      /**
+       * @see Server#getUpdated()
+       */
+      public T updated(Date updated) {
+         this.updated = updated;
+         return self();
+      }
+
+      /**
+       * @see Server#getProgress()
+       */
+      public T progress(Integer progress) {
+         this.progress = progress;
+         return self();
+      }
+
+      /**
+       * @see Server#getStatus()
+       */
+      public T status(ServerStatus status) {
+         this.status = status;
+         return self();
+      }
+
+      public Server build() {
+         return new Server(id, links, orderedSelfReferences, name, metadata, addresses, accessIPv4, accessIPv6, adminPass,
+               flavorRef, hostId, imageRef, affinityId, uuid, flavor, image, keyName, securityGroups, created, updated,
+               progress, status);
+      }
+
+      public T fromServer(Server in) {
+         return super.fromResource(in)
+               .id(in.getId())
+               .name(in.getName())
+               .metadata(in.getMetadata())
+               .addresses(in.getAddresses())
+               .accessIPv4(in.getAccessIPv4())
+               .accessIPv6(in.getAccessIPv6())
+               .adminPass(in.getAdminPass())
+               .flavorRef(in.getFlavorRef())
+               .hostId(in.getHostId())
+               .imageRef(in.getImageRef())
+               .affinityId(in.getAffinityId())
+               .uuid(in.getUuid())
+               .flavor(in.getFlavor())
+               .image(in.getImage())
+               .keyName(in.getKeyName())
+               .securityGroups(in.getSecurityGroups())
+               .created(in.getCreated())
+               .updated(in.getUpdated())
+               .progress(in.getProgress())
+               .status(in.getStatus());
+      }
    }
 
-   public Server(int id, String name) {
-      this.id = id;
-      this.name = name;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public String getAffinityId() {
-      return affinityId;
-   }
+   private final String name;
+   private final Map<String, String> metadata;
+   private final Addresses addresses;
+   private final String accessIPv4;
+   private final String accessIPv6;
+   private final String adminPass;
+   private final String flavorRef;
+   private final String hostId;
+   private final String imageRef;
+   private final String affinityId;
+   private final String uuid;
+   private final Flavor flavor;
+   private final Image image;
+   private final String keyName;
+   private final Set<SecurityGroup> securityGroups;
+   private final Date created;
+   private final Date updated;
+   private final Integer progress;
+   private final ServerStatus status;
 
-   public void setAffinityId(String affinityId) {
+   @ConstructorProperties({
+         "id", "links", "orderedSelfReferences", "name", "metadata", "addresses", "accessIPv4", "accessIPv6", "adminPass",
+         "flavorRef", "hostId", "imageRef", "affinityId", "uuid", "flavor", "image", "key_name", "security_groups",
+         "created", "updated", "progress", "status"
+   })
+   protected Server(int id, List<Map<String, String>> links, Map<LinkType, URI> orderedSelfReferences, String name,
+                    @Nullable Map<String, String> metadata, @Nullable Addresses addresses, @Nullable String accessIPv4,
+                    @Nullable String accessIPv6, @Nullable String adminPass, @Nullable String flavorRef, @Nullable String hostId,
+                    @Nullable String imageRef, @Nullable String affinityId, @Nullable String uuid, @Nullable Flavor flavor,
+                    @Nullable Image image, @Nullable String keyName, @Nullable Set<SecurityGroup> securityGroups,
+                    @Nullable Date created, @Nullable Date updated, @Nullable Integer progress, @Nullable ServerStatus status) {
+      super(id, links, orderedSelfReferences);
+      this.name = checkNotNull(name, "name");
+      this.metadata = metadata == null ? ImmutableMap.<String, String>of() : ImmutableMap.copyOf(metadata);
+      this.addresses = addresses;
+      this.accessIPv4 = accessIPv4;
+      this.accessIPv6 = accessIPv6;
+      this.adminPass = adminPass;
+      this.flavorRef = flavorRef;
+      this.hostId = hostId;
+      this.imageRef = imageRef;
       this.affinityId = affinityId;
+      this.uuid = uuid;
+      this.flavor = flavor;
+      this.image = image;
+      this.keyName = keyName;
+      this.securityGroups = securityGroups == null ? ImmutableSet.<SecurityGroup>of() : ImmutableSet.copyOf(securityGroups);
+      this.created = created;
+      this.updated = updated;
+      this.progress = progress;
+      this.status = status == null ? ServerStatus.UNKNOWN : status;
    }
 
-   public void setMetadata(Map<String, String> metadata) {
-      this.metadata = metadata;
+   public String getName() {
+      return this.name;
    }
 
    public Map<String, String> getMetadata() {
-      return metadata;
+      return this.metadata;
    }
 
-   public void setAddresses(Addresses addresses) {
-      this.addresses = addresses;
-   }
-
+   @Nullable
    public Addresses getAddresses() {
-      return addresses;
+      return this.addresses;
    }
 
-   public void setAdminPass(String adminPass) {
-      this.adminPass = adminPass;
+   /**
+    * @return the accessIPv4
+    */
+   @Nullable
+   public String getAccessIPv4() {
+      return this.accessIPv4;
    }
 
+   /**
+    * @return the accessIPv6
+    */
+   @Nullable
+   public String getAccessIPv6() {
+      return this.accessIPv6;
+   }
+
+   @Nullable
    public String getAdminPass() {
-      return adminPass;
-   }
-
-   public void setFlavorRef(String flavorRef) {
-      this.flavorRef = flavorRef;
+      return this.adminPass;
    }
 
    /**
     * @deprecated in nova 1.1 api at the Diablo release, replaced by {@link #getFlavor()}
     */
-   @Deprecated
+   @Nullable
    public String getFlavorRef() {
-      return flavorRef;
-   }
-
-   public void setHostId(String hostId) {
-      this.hostId = hostId;
+      return this.flavorRef;
    }
 
    /**
@@ -139,40 +368,64 @@ public class Server extends Resource {
     * <p/>
     * Note: hostId is unique PER ACCOUNT and is not globally unique.
     */
+   @Nullable
    public String getHostId() {
-      return hostId;
-   }
-
-   public int getId() {
-      return id;
-   }
-
-   public void setImageRef(String imageRef) {
-      this.imageRef = imageRef;
+      return this.hostId;
    }
 
    /**
     * @deprecated in nova 1.1 api at the Diablo release, replaced by {@link #getImage()}.
     */
-   @Deprecated
+   @Nullable
    public String getImageRef() {
-      return imageRef;
+      return this.imageRef;
    }
 
-   public String getName() {
-      return name;
+   @Nullable
+   public String getAffinityId() {
+      return this.affinityId;
    }
 
-   public void setProgress(Integer progress) {
-      this.progress = progress;
+   @Nullable
+   public String getUuid() {
+      return this.uuid;
    }
 
+   @Nullable
+   public Flavor getFlavor() {
+      return this.flavor;
+   }
+
+   public Image getImage() {
+      return this.image;
+   }
+
+   @Nullable
+   public String getKeyName() {
+      return this.keyName;
+   }
+
+   /**
+    * Actually, security groups are not returned by nova on server query but is
+    * needed when creating a server to specify a set of groups
+    */
+   public Set<SecurityGroup> getSecurityGroups() {
+      return this.securityGroups;
+   }
+
+   @Nullable
+   public Date getCreated() {
+      return this.created;
+   }
+
+   @Nullable
+   public Date getUpdated() {
+      return this.updated;
+   }
+
+   @Nullable
    public Integer getProgress() {
-      return progress;
-   }
-
-   public void setStatus(ServerStatus status) {
-      this.status = status;
+      return this.progress;
    }
 
    /**
@@ -180,196 +433,48 @@ public class Server extends Resource {
     * state. Servers with an ACTIVE status are available for use.
     */
    public ServerStatus getStatus() {
-      return status;
-   }
-
-   public String getUuid() {
-      return uuid;
-   }
-
-   public void setUuid(String uuid) {
-      this.uuid = uuid;
-   }
-
-   public Flavor getFlavor() {
-       return flavor;
-   }
-
-   public void setFlavor(Flavor flavor) {
-       this.flavor = flavor;
-   }
-
-   public Image getImage() {
-       return image;
-   }
-
-   public void setImage(Image image) {
-       this.image = image;
-   }
-   
-   public String getKeyName() {
-	   return keyName;
-   }
-   
-   public void setKeyName(String keyName) {
-	   this.keyName = keyName;
-   }
-   
-   public Set<SecurityGroup> getSecurityGroups() {
-	   return securityGroups;
-   }
-   
-   public void setSecurityGroups(Set<SecurityGroup> securityGroups) {
-	   this.securityGroups = securityGroups;
-   }
-   
-   /**
-    * @return the accessIPv4
-	*/
-   public String getAccessIPv4() {
-	   return accessIPv4;
-   }
-
-   /**
-    * @param accessIPv4
-    *            the accessIPv4 to set
-    */
-   public void setAccessIPv4(String accessIPv4) {
-	   this.accessIPv4 = accessIPv4;
-   }
-
-   /**
-    * @return the accessIPv6
-    */
-   public String getAccessIPv6() {
-	   return accessIPv6;
-   }
-
-   /**
-    * @param accessIPv6
-    *            the accessIPv6 to set
-    */
-   public void setAccessIPv6(String accessIPv6) {
-	   this.accessIPv6 = accessIPv6;
+      return this.status;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((addresses == null) ? 0 : addresses.hashCode());
-      result = prime * result + ((adminPass == null) ? 0 : adminPass.hashCode());
-      result = prime * result + ((flavorRef == null) ? 0 : flavorRef.hashCode());
-      result = prime * result + ((hostId == null) ? 0 : hostId.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((imageRef == null) ? 0 : imageRef.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-      result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((flavor == null) ? 0 : flavor.hashCode());
-      result = prime * result + ((image == null) ? 0 : image.hashCode());
-      result = prime * result + ((accessIPv4 == null) ? 0 : accessIPv4.hashCode());
-      result = prime * result + ((accessIPv6 == null) ? 0 : accessIPv6.hashCode());
-      return result;
+      return Objects.hashCode(super.hashCode(), name, metadata, addresses, accessIPv4, accessIPv6, adminPass, flavorRef,
+            hostId, imageRef, affinityId, uuid, flavor, image, keyName, securityGroups, created, updated);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Server other = (Server) obj;
-      if (addresses == null) {
-         if (other.addresses != null)
-            return false;
-      } else if (!addresses.equals(other.addresses))
-         return false;
-      if (adminPass == null) {
-         if (other.adminPass != null)
-            return false;
-      } else if (!adminPass.equals(other.adminPass))
-         return false;
-      if (flavorRef == null) {
-         if (other.flavorRef != null)
-            return false;
-      } else if (!flavorRef.equals(other.flavorRef))
-         return false;
-      if (hostId == null) {
-         if (other.hostId != null)
-            return false;
-      } else if (!hostId.equals(other.hostId))
-         return false;
-      if (id != other.id)
-         return false;
-      if (imageRef == null) {
-         if (other.imageRef != null)
-            return false;
-      } else if (!imageRef.equals(other.imageRef))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
-         return false;
-      if (securityGroups == null) {
-          if (other.securityGroups != null)
-             return false;
-       } else if (!securityGroups.equals(other.securityGroups))
-          return false;
-      if (uuid == null) {
-         if (other.uuid != null)
-            return false;
-      } else if (!uuid.equals(other.uuid))
-         return false;
-      if (keyName == null) {
-          if (other.keyName != null)
-             return false;
-       } else if (!keyName.equals(other.keyName))
-          return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (flavor == null) {
-         if (other.flavor != null)
-            return false;
-      } else if (!flavor.equals(other.flavor))
-         return false;
-      if (image == null) {
-         if (other.image != null)
-            return false;
-      } else if (!image.equals(other.image))
-         return false;
-      if (accessIPv4 == null) {
-          if (other.accessIPv4 != null)
-             return false;
-       } else if (!accessIPv4.equals(other.accessIPv4))
-          return false;
-      if (accessIPv6 == null) {
-          if (other.accessIPv6 != null)
-             return false;
-       } else if (!accessIPv6.equals(other.accessIPv6))
-          return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Server that = Server.class.cast(obj);
+      return super.equals(that)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.metadata, that.metadata)
+            && Objects.equal(this.addresses, that.addresses)
+            && Objects.equal(this.accessIPv4, that.accessIPv4)
+            && Objects.equal(this.accessIPv6, that.accessIPv6)
+            && Objects.equal(this.adminPass, that.adminPass)
+            && Objects.equal(this.flavorRef, that.flavorRef)
+            && Objects.equal(this.hostId, that.hostId)
+            && Objects.equal(this.imageRef, that.imageRef)
+            && Objects.equal(this.affinityId, that.affinityId)
+            && Objects.equal(this.uuid, that.uuid)
+            && Objects.equal(this.flavor, that.flavor)
+            && Objects.equal(this.image, that.image)
+            && Objects.equal(this.keyName, that.keyName)
+            && Objects.equal(this.securityGroups, that.securityGroups)
+            && Objects.equal(this.created, that.created)
+            && Objects.equal(this.updated, that.updated);
    }
 
-   public void setName(String name) {
-      this.name = name;
+   protected ToStringHelper string() {
+      return super.string()
+            .add("name", name).add("metadata", metadata).add("addresses", addresses)
+            .add("accessIPv4", accessIPv4).add("accessIPv6", accessIPv6).add("adminPass", adminPass)
+            .add("flavorRef", flavorRef).add("hostId", hostId).add("imageRef", imageRef).add("affinityId", affinityId)
+            .add("uuid", uuid).add("flavor", flavor).add("image", image).add("keyName", keyName)
+            .add("securityGroups", securityGroups).add("created", created).add("updated", updated)
+            .add("progress", progress).add("status", status);
    }
-
-	@Override
-	public String toString() {
-		return "Server [addresses=" + addresses + ", accessIPv4=" + accessIPv4
-				+ ", accessIPv6=" + accessIPv6 + ", adminPass=" + adminPass
-				+ ", flavorRef=" + flavorRef + ", hostId=" + hostId + ", id="
-				+ id + ", imageRef=" + imageRef + ", metadata=" + metadata
-				+ ", uuid=" + uuid + ", name=" + name + ", keyName=" + keyName
-				+ " , securityGroups=" + securityGroups + "]";
-	}
 
 }

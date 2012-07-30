@@ -61,7 +61,7 @@ public class ParseVirtualGuestRunningTest extends BaseItemParserTest<VirtualGues
                .primaryBackendIpAddress("10.37.102.195").primaryIpAddress("173.192.29.187").startCpus(1).statusId(1001)
                .uuid("02ddbbba-9225-3d54-6de5-fc603b309dd8")
                .operatingSystem(OperatingSystem.builder().id(913824)
-                     .password(Password.builder().id(729122).username("root").password("KnJqhC2l").build())
+                     .passwords(Password.builder().id(729122).username("root").password("KnJqhC2l").build())
                      .build())
                .datacenter(Datacenter.builder().id(3).name("dal01").longName("Dallas").build())
                //TODO: maybe powerState can be flattened like billingItemId

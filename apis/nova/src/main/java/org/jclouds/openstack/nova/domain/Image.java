@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,11 +18,19 @@
  */
 package org.jclouds.openstack.nova.domain;
 
-import java.util.Collections;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * An image is a collection of files used to create or rebuild a server. Rackspace provides a number
@@ -34,122 +42,179 @@ import com.google.common.collect.Maps;
  */
 public class Image extends Resource {
 
-   private int id;
-   private String name;
-   private Integer progress;
-   private String serverRef;
-   private ImageStatus status;
-   private Map<String, String> metadata = Maps.newHashMap();
-
-   private Date created;
-   private Date updated;
-
-   public Date getCreated() {
-      return created;
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Date getUpdated() {
-      return updated;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromImage(this);
    }
 
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+      protected String name;
+      protected Integer progress;
+      protected String serverRef;
+      protected ImageStatus status;
+      protected Map<String, String> metadata = ImmutableMap.of();
+      protected Date created;
+      protected Date updated;
 
-   public Image() {
+      /**
+       * @see Image#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /**
+       * @see Image#getProgress()
+       */
+      public T progress(Integer progress) {
+         this.progress = progress;
+         return self();
+      }
+
+      /**
+       * @see Image#getServerRef()
+       */
+      public T serverRef(String serverRef) {
+         this.serverRef = serverRef;
+         return self();
+      }
+
+      /**
+       * @see Image#getStatus()
+       */
+      public T status(ImageStatus status) {
+         this.status = status;
+         return self();
+      }
+
+      /**
+       * @see Image#getMetadata()
+       */
+      public T metadata(Map<String, String> metadata) {
+         this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+         return self();
+      }
+
+      /**
+       * @see Image#getCreated()
+       */
+      public T created(Date created) {
+         this.created = created;
+         return self();
+      }
+
+      /**
+       * @see Image#getUpdated()
+       */
+      public T updated(Date updated) {
+         this.updated = updated;
+         return self();
+      }
+
+      public Image build() {
+         return new Image(id, links, orderedSelfReferences, name, progress, serverRef, status, metadata, created, updated);
+      }
+
+      public T fromImage(Image in) {
+         return super.fromResource(in)
+               .id(in.getId())
+               .name(in.getName())
+               .progress(in.getProgress())
+               .serverRef(in.getServerRef())
+               .status(in.getStatus())
+               .metadata(in.getMetadata())
+               .created(in.getCreated())
+               .updated(in.getUpdated());
+      }
    }
 
-   public Image(int id, String name) {
-      this.id = id;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String name;
+   private final Integer progress;
+   private final String serverRef;
+   private final ImageStatus status;
+   private final Map<String, String> metadata;
+   private final Date created;
+   private final Date updated;
+
+   @ConstructorProperties({
+        "id", "links", "orderedSelfReferences", "name", "progress", "serverRef", "status", "metadata", "created", "updated"
+   })
+   protected Image(int id, List<Map<String, String>> links, @Nullable Map<LinkType, URI> orderedSelfReferences, @Nullable String name,
+                   @Nullable Integer progress, @Nullable String serverRef, @Nullable ImageStatus status, @Nullable Map<String, String> metadata,
+                   @Nullable Date created, @Nullable Date updated) {
+      super(id, links, orderedSelfReferences);
       this.name = name;
-   }
-
-
-   public void setId(int id) {
-      this.id = id;
-   }
-
-   public int getId() {
-      return id;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public void setProgress(Integer progress) {
       this.progress = progress;
-   }
-
-   public Integer getProgress() {
-      return progress;
-   }
-
-   public void setServerRef(String serverRef) {
       this.serverRef = serverRef;
+      this.status = status == null ? ImageStatus.UNKNOWN : status;
+      this.metadata = metadata == null ? ImmutableMap.<String, String>of() : ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+      this.created = created;
+      this.updated = updated;
    }
 
+   @Nullable
+   public String getName() {
+      return this.name;
+   }
+
+   @Nullable
+   public Integer getProgress() {
+      return this.progress;
+   }
+
+   @Nullable
    public String getServerRef() {
-      return serverRef;
+      return this.serverRef;
    }
 
-   public void setStatus(ImageStatus status) {
-      this.status = status;
-   }
-
+   @Nullable
    public ImageStatus getStatus() {
-      return status;
+      return this.status;
    }
-
 
    public Map<String, String> getMetadata() {
-      return Collections.unmodifiableMap(metadata);
+      return this.metadata;
    }
 
-   public void setMetadata(Map<String, String> metadata) {
-      this.metadata = Maps.newHashMap(metadata);
+   @Nullable
+   public Date getCreated() {
+      return this.created;
    }
 
-   /**
-    * note that this ignores some fields
-    */
+   @Nullable
+   public Date getUpdated() {
+      return this.updated;
+   }
+
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + id;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((serverRef == null) ? 0 : serverRef.hashCode());
-      return result;
+      return Objects.hashCode(super.hashCode(), name, serverRef);
    }
 
-   /**
-    * note that this ignores some fields
-    */
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Image other = (Image) obj;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Image that = Image.class.cast(obj);
+      return super.equals(that)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.serverRef, that.serverRef);
    }
 
-   @Override
-   public String toString() {
-      return "Image [created=" + getCreated() + ", id=" + id + ", name=" + name + ", serverRef="
-            + serverRef + "]";
+   protected ToStringHelper string() {
+      return super.string().add("name", name).add("progress", progress).add("serverRef", serverRef).add("status", status)
+            .add("metadata", metadata).add("created", created).add("updated", updated);
    }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,60 +18,27 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
-import com.google.gson.annotations.SerializedName;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * @author Dmitri Babaev
- */
+*/
 public class Address {
-   @SerializedName("addr")
-   private String address;
-   private int version;
 
-   //for de-serialization
-   @SuppressWarnings("unused")
-   private Address() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
    }
-
-   public Address(String address, int version) {
-      this.address = address;
-      this.version = version;
-   }
-
-   public String getAddress() {
-      return address;
-   }
-
-   public int getVersion() {
-      return version;
-   }
-
-   @Override
-   public String toString() {
-      return address;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Address address1 = (Address) o;
-
-      if (version != address1.version) return false;
-      if (address != null ? !address.equals(address1.address) : address1.address != null) return false;
-
-      return true;
-   }
-
-   @Override
-   public int hashCode() {
-      int result = address != null ? address.hashCode() : 0;
-      result = 31 * result + version;
-      return result;
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromAddress(this);
    }
 
    public static Function<Address, String> newAddress2StringFunction() {
@@ -95,4 +62,88 @@ public class Address {
          }
       };
    }
+   
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String address;
+      protected int version;
+   
+      /** 
+       * @see Address#getAddress()
+       */
+      public T address(String address) {
+         this.address = address;
+         return self();
+      }
+
+      /** 
+       * @see Address#getVersion()
+       */
+      public T version(int version) {
+         this.version = version;
+         return self();
+      }
+
+      public Address build() {
+         return new Address(address, version);
+      }
+      
+      public T fromAddress(Address in) {
+         return this
+                  .address(in.getAddress())
+                  .version(in.getVersion());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String address;
+   private final int version;
+
+   @ConstructorProperties({
+      "addr", "version"
+   })
+   protected Address(String address, int version) {
+      this.address = checkNotNull(address, "address");
+      this.version = version;
+   }
+
+   public String getAddress() {
+      return this.address;
+   }
+
+   public int getVersion() {
+      return this.version;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(address, version);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Address that = Address.class.cast(obj);
+      return Objects.equal(this.address, that.address)
+               && Objects.equal(this.version, that.version);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("address", address).add("version", version);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

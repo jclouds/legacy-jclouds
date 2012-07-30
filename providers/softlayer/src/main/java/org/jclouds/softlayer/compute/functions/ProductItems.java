@@ -56,7 +56,7 @@ public class ProductItems {
 
    /**
     * Creates a function to get the ProductItemPrice for the ProductItem. Currently returns the
-    * first price. This will need to be changed if more than one price is returned.
+    * first prices. This will need to be changed if more than one prices is returned.
     */
    public static Function<ProductItem, ProductItemPrice> price() {
       return new Function<ProductItem, ProductItemPrice>() {
@@ -71,7 +71,7 @@ public class ProductItems {
 
    /**
     * Creates a function to get the ProductItem for the ProductItemPrice. Copies the category
-    * information from the price to the item if necessary The ProductItemPrices must have
+    * information from the prices to the item if necessary The ProductItemPrices must have
     * ProductItems.
     */
    public static Function<ProductItemPrice, ProductItem> item() {
@@ -80,7 +80,7 @@ public class ProductItems {
          public ProductItem apply(ProductItemPrice productItemPrice) {
             Set<ProductItemCategory> categories = productItemPrice.getCategories();
             ProductItem item = productItemPrice.getItem();
-            ProductItem.Builder builder = ProductItem.Builder.fromProductItem(productItemPrice.getItem());
+            ProductItem.Builder builder = productItemPrice.getItem().toBuilder();
             if (item.getCategories().size() == 0 && categories.size() != 0) {
                builder.categories(categories);
             }

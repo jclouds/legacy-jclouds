@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,42 +18,144 @@
  */
 package org.jclouds.cloudservers.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
+/**
+ * Class Version
+*/
 public class Version {
 
-   private String docURL;
-   private String id = "v1.0";
-   private VersionStatus status;
-   private String wadl;
-
-   public void setDocURL(String docURL) {
-      this.docURL = docURL;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromVersion(this);
    }
 
-   public String getDocURL() {
-      return docURL;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected String docURL;
+      protected String id;
+      protected VersionStatus status;
+      protected String wadl;
+   
+      /** 
+       * @see Version#getDocURL()
+       */
+      public T docURL(String docURL) {
+         this.docURL = docURL;
+         return self();
+      }
+
+      /** 
+       * @see Version#getId()
+       */
+      public T id(String id) {
+         this.id = id;
+         return self();
+      }
+
+      /** 
+       * @see Version#getStatus()
+       */
+      public T status(VersionStatus status) {
+         this.status = status;
+         return self();
+      }
+
+      /** 
+       * @see Version#getWadl()
+       */
+      public T wadl(String wadl) {
+         this.wadl = wadl;
+         return self();
+      }
+
+      public Version build() {
+         return new Version(docURL, id, status, wadl);
+      }
+      
+      public T fromVersion(Version in) {
+         return this
+                  .docURL(in.getDocURL())
+                  .id(in.getId())
+                  .status(in.getStatus())
+                  .wadl(in.getWadl());
+      }
    }
 
-   public void setId(String id) {
-      this.id = id;
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public String getId() {
-      return id;
-   }
+   private final String docURL;
+   private final String id;
+   private final VersionStatus status;
+   private final String wadl;
 
-   public void setStatus(VersionStatus status) {
-      this.status = status;
-   }
-
-   public VersionStatus getStatus() {
-      return status;
-   }
-
-   public void setWadl(String wadl) {
+   @ConstructorProperties({
+      "docURL", "id", "status", "wadl"
+   })
+   protected Version(String docURL, String id, @Nullable VersionStatus status, @Nullable String wadl) {
+      this.docURL = checkNotNull(docURL, "docURL");
+      this.id = checkNotNull(id, "id");
+      this.status = status == null ? VersionStatus.UNRECOGNIZED : status;
       this.wadl = wadl;
    }
 
-   public String getWadl() {
-      return wadl;
+   public String getDocURL() {
+      return this.docURL;
    }
+
+   public String getId() {
+      return this.id;
+   }
+
+   public VersionStatus getStatus() {
+      return this.status;
+   }
+
+   @Nullable
+   public String getWadl() {
+      return this.wadl;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(docURL, id, status, wadl);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Version that = Version.class.cast(obj);
+      return Objects.equal(this.docURL, that.docURL)
+               && Objects.equal(this.id, that.id)
+               && Objects.equal(this.status, that.status)
+               && Objects.equal(this.wadl, that.wadl);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("docURL", docURL).add("id", id).add("status", status).add("wadl", wadl);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

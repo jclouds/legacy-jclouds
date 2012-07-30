@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,106 +18,146 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import java.beans.ConstructorProperties;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
- * 
  * A flavor is an available hardware configuration for a server. Each flavor has a unique
  * combination of disk space and memory capacity.
- * 
+ *
  * @author Adrian Cole
  */
 public class Flavor extends Resource {
 
-   private final int id;
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromFlavor(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+      protected String name;
+      protected Integer disk;
+      protected Integer ram;
+      protected Integer vcpus;
+
+      /**
+       * @see Flavor#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /**
+       * @see Flavor#getDisk()
+       */
+      public T disk(Integer disk) {
+         this.disk = disk;
+         return self();
+      }
+
+      /**
+       * @see Flavor#getRam()
+       */
+      public T ram(Integer ram) {
+         this.ram = ram;
+         return self();
+      }
+
+      /**
+       * @see Flavor#getVcpus()
+       */
+      public T vcpus(Integer vcpus) {
+         this.vcpus = vcpus;
+         return self();
+      }
+
+      public Flavor build() {
+         return new Flavor(id, links, orderedSelfReferences, name, disk, ram, vcpus);
+      }
+
+      public T fromFlavor(Flavor in) {
+         return super.fromResource(in)
+               .name(in.getName())
+               .disk(in.getDisk())
+               .ram(in.getRam())
+               .vcpus(in.getVcpus());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
    private final String name;
    private final Integer disk;
    private final Integer ram;
    private final Integer vcpus;
 
-   //Required because of how Gson is being used to do wire marshalling with the Server class
-   private Flavor(){
-      id=0;
-      name=null;
-      disk=null;
-      ram=null;
-      vcpus=null;
-   }
-
-   public Flavor(int id, String name, Integer disk, Integer ram, Integer vcpus) {
-      this.id = id;
+   @ConstructorProperties({
+         "id", "links", "orderedSelfReferences", "name", "disk", "ram", "vcpus"
+   })
+   protected Flavor(int id, List<Map<String, String>> links, @Nullable Map<LinkType, URI> orderedSelfReferences,
+                    @Nullable String name, @Nullable Integer disk, @Nullable Integer ram, @Nullable Integer vcpus) {
+      super(id, links, orderedSelfReferences);
       this.name = name;
       this.disk = disk;
       this.ram = ram;
       this.vcpus = vcpus;
    }
 
-   public Integer getDisk() {
-      return disk;
-   }
-
-   public int getId() {
-      return id;
-   }
-
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
+   @Nullable
+   public Integer getDisk() {
+      return this.disk;
+   }
+
+   @Nullable
    public Integer getRam() {
-      return ram;
+      return this.ram;
    }
 
+   @Nullable
    public Integer getVcpus() {
-      return vcpus;
+      return this.vcpus;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((disk == null) ? 0 : disk.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((ram == null) ? 0 : ram.hashCode());
-      result = prime * result + ((vcpus == null) ? 0 : vcpus.hashCode());
-      return result;
+      return Objects.hashCode(super.hashCode(), name, disk, ram, vcpus);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Flavor other = (Flavor) obj;
-      if (disk == null) {
-         if (other.disk != null)
-            return false;
-      } else if (!disk.equals(other.disk))
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (ram == null) {
-         if (other.ram != null)
-            return false;
-      } else if (!ram.equals(other.ram))
-         return false;
-      if (vcpus == null) {
-         if (other.vcpus != null)
-            return false;
-      } else if (!vcpus.equals(other.vcpus))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Flavor that = Flavor.class.cast(obj);
+      return super.equals(that)
+            && Objects.equal(this.name, that.name)
+            && Objects.equal(this.disk, that.disk)
+            && Objects.equal(this.ram, that.ram)
+            && Objects.equal(this.vcpus, that.vcpus);
    }
 
-   @Override
-   public String toString() {
-      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + ", vcpus=" + vcpus +"]";
+   protected ToStringHelper string() {
+      return super.string().add("name", name).add("disk", disk).add("ram", ram).add("vcpus", vcpus);
    }
+
 }

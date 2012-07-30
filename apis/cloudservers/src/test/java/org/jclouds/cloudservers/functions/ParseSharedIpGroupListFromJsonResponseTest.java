@@ -49,8 +49,8 @@ public class ParseSharedIpGroupListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_sharedipgroups.json");
 
-      List<SharedIpGroup> expects = ImmutableList.of(new SharedIpGroup(1234, "Shared IP Group 1"), new SharedIpGroup(
-            5678, "Shared IP Group 2"));
+      List<SharedIpGroup> expects = ImmutableList.of(SharedIpGroup.builder().id(1234).name("Shared IP Group 1").build(),
+            SharedIpGroup.builder().id(5678).name("Shared IP Group 2").build());
 
       UnwrapOnlyJsonValue<List<SharedIpGroup>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<SharedIpGroup>>>() {

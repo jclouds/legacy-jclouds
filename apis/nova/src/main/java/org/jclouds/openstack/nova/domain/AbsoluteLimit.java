@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,30 +18,108 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * 
  * @author Adrian Cole
- */
+*/
 public class AbsoluteLimit {
 
-    protected String name;
-    protected int value;
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromAbsoluteLimit(this);
+   }
 
-    public String getName() {
-        return name;
-    }
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-    public void setName(String value) {
-        this.name = value;
-    }
+      protected String name;
+      protected int value;
+   
+      /** 
+       * @see AbsoluteLimit#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
 
-    public int getValue() {
-        return value;
-    }
+      /** 
+       * @see AbsoluteLimit#getValue()
+       */
+      public T value(int value) {
+         this.value = value;
+         return self();
+      }
 
-    public void setValue(int value) {
-        this.value = value;
-    }
+      public AbsoluteLimit build() {
+         return new AbsoluteLimit(name, value);
+      }
+      
+      public T fromAbsoluteLimit(AbsoluteLimit in) {
+         return this
+                  .name(in.getName())
+                  .value(in.getValue());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String name;
+   private final int value;
+
+   @ConstructorProperties({
+      "name", "value"
+   })
+   protected AbsoluteLimit(String name, int value) {
+      this.name = checkNotNull(name, "name");
+      this.value = value;
+   }
+
+   public String getName() {
+      return this.name;
+   }
+
+   public int getValue() {
+      return this.value;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(name, value);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      AbsoluteLimit that = AbsoluteLimit.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+               && Objects.equal(this.value, that.value);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("name", name).add("value", value);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
 
 }

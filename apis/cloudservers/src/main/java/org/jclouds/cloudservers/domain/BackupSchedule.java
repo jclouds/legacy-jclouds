@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,87 +18,131 @@
  */
 package org.jclouds.cloudservers.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * A backup schedule can be defined to create server images at regular intervals (daily and weekly).
  * Backup schedules are configurable per server.
  * 
  * @author Adrian Cole
- */
+*/
 public class BackupSchedule {
-   protected DailyBackup daily = DailyBackup.DISABLED;
-   protected boolean enabled;
-   protected WeeklyBackup weekly = WeeklyBackup.DISABLED;
 
-   public BackupSchedule() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromBackupSchedule(this);
    }
 
-   public BackupSchedule(WeeklyBackup weekly, DailyBackup daily, boolean enabled) {
-      this.weekly = weekly;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected DailyBackup daily;
+      protected boolean enabled;
+      protected WeeklyBackup weekly;
+   
+      /** 
+       * @see BackupSchedule#getDaily()
+       */
+      public T daily(DailyBackup daily) {
+         this.daily = daily;
+         return self();
+      }
+
+      /** 
+       * @see BackupSchedule#isEnabled()
+       */
+      public T enabled(boolean enabled) {
+         this.enabled = enabled;
+         return self();
+      }
+
+      /** 
+       * @see BackupSchedule#getWeekly()
+       */
+      public T weekly(WeeklyBackup weekly) {
+         this.weekly = weekly;
+         return self();
+      }
+
+      public BackupSchedule build() {
+         return new BackupSchedule(daily, enabled, weekly);
+      }
+      
+      public T fromBackupSchedule(BackupSchedule in) {
+         return this
+                  .daily(in.getDaily())
+                  .enabled(in.isEnabled())
+                  .weekly(in.getWeekly());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final DailyBackup daily;
+   private final boolean enabled;
+   private final WeeklyBackup weekly;
+
+   @ConstructorProperties({
+      "daily", "enabled", "weekly"
+   })
+   protected BackupSchedule(@Nullable DailyBackup daily, boolean enabled, @Nullable WeeklyBackup weekly) {
       this.daily = daily;
       this.enabled = enabled;
+      this.weekly = weekly;
    }
 
+   @Nullable
    public DailyBackup getDaily() {
-      return daily;
-   }
-
-   public void setDaily(DailyBackup value) {
-      this.daily = value;
+      return this.daily;
    }
 
    public boolean isEnabled() {
-      return enabled;
+      return this.enabled;
    }
 
-   public void setEnabled(boolean value) {
-      this.enabled = value;
-   }
-
+   @Nullable
    public WeeklyBackup getWeekly() {
-      return weekly;
-   }
-
-   public void setWeekly(WeeklyBackup value) {
-      this.weekly = value;
-   }
-
-   @Override
-   public String toString() {
-      return "[daily=" + daily + ", enabled=" + enabled + ", weekly=" + weekly + "]";
+      return this.weekly;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((daily == null) ? 0 : daily.hashCode());
-      result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + ((weekly == null) ? 0 : weekly.hashCode());
-      return result;
+      return Objects.hashCode(daily, enabled, weekly);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      BackupSchedule other = (BackupSchedule) obj;
-      if (daily == null) {
-         if (other.daily != null)
-            return false;
-      } else if (!daily.equals(other.daily))
-         return false;
-      if (enabled != other.enabled)
-         return false;
-      if (weekly == null) {
-         if (other.weekly != null)
-            return false;
-      } else if (!weekly.equals(other.weekly))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      BackupSchedule that = BackupSchedule.class.cast(obj);
+      return Objects.equal(this.daily, that.daily)
+               && Objects.equal(this.enabled, that.enabled)
+               && Objects.equal(this.weekly, that.weekly);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("daily", daily).add("enabled", enabled).add("weekly", weekly);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
 }

@@ -503,11 +503,8 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
    public void testBackup() throws Exception {
-      assertEquals(new BackupSchedule(), client.getBackupSchedule(serverId));
-      BackupSchedule dailyWeekly = new BackupSchedule();
-      dailyWeekly.setEnabled(true);
-      dailyWeekly.setWeekly(WeeklyBackup.FRIDAY);
-      dailyWeekly.setDaily(DailyBackup.H_0400_0600);
+      assertEquals(BackupSchedule.builder().build(), client.getBackupSchedule(serverId));
+      BackupSchedule dailyWeekly = BackupSchedule.builder().enabled(true).weekly(WeeklyBackup.FRIDAY).daily(DailyBackup.H_0400_0600).build();
       client.replaceBackupSchedule(serverId, dailyWeekly);
       client.deleteBackupSchedule(serverId);
       // disables, doesn't delete: Web Hosting #119571

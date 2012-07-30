@@ -18,19 +18,24 @@
  */
 package org.jclouds.gogrid.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Oleksiy Yarmula
@@ -49,10 +54,17 @@ public class ParseServerNameToCredentialsMapFromJsonResponse implements
    // incidental view class to assist in getting the correct data
    // deserialized from json
    private static class Password implements Comparable<Password> {
-      @SerializedName("username")
-      private String userName;
-      private String password;
-      private Server server;
+      @Named("username")
+      private final String userName;
+      private final String password;
+      private final Server server;
+
+      @ConstructorProperties({"username", "password", "server"})
+      public Password(String userName, String password, @Nullable Server server) {
+         this.userName = checkNotNull(userName, "username");
+         this.password = checkNotNull(password, "password");
+         this.server = server;
+      }
 
       public String getUserName() {
          return userName;
@@ -73,33 +85,22 @@ public class ParseServerNameToCredentialsMapFromJsonResponse implements
          if (o == null || getClass() != o.getClass())
             return false;
 
-         Password password1 = (Password) o;
-
-         if (password != null ? !password.equals(password1.password)
-               : password1.password != null)
-            return false;
-         if (server != null ? !server.equals(password1.server)
-               : password1.server != null)
-            return false;
-         if (userName != null ? !userName.equals(password1.userName)
-               : password1.userName != null)
-            return false;
-
-         return true;
+         Password other = (Password) o;
+         return Objects.equal(userName, other.userName)
+               && Objects.equal(password, other.password)
+               && Objects.equal(server, other.server);
       }
 
       @Override
       public int hashCode() {
-         int result = userName != null ? userName.hashCode() : 0;
-         result = 31 * result + (password != null ? password.hashCode() : 0);
-         result = 31 * result + (server != null ? server.hashCode() : 0);
-         return result;
+         return Objects.hashCode(userName, password, server);
       }
 
       @Override
       public int compareTo(Password o) {
-          if (null == o.getServer() || null == server) return -1;
-	return server.getName().compareTo(o.getServer().getName());
+         if (null == o.getServer()) return null == server ? 0 : -1;
+         if (server == null) return 1;
+         return server.getName().compareTo(o.getServer().getName());
       }
    }
 
@@ -107,9 +108,9 @@ public class ParseServerNameToCredentialsMapFromJsonResponse implements
    public Map<String, Credentials> apply(HttpResponse arg0) {
       Map<String, Credentials> serverNameToCredentials = Maps.newHashMap();
       for (Password password : json.apply(arg0).getList()) {
-          if( null != password.getServer())
-         serverNameToCredentials.put(password.getServer().getName(),
-               new Credentials(password.getUserName(), password.getPassword()));
+         if (null != password.getServer())
+            serverNameToCredentials.put(password.getServer().getName(),
+                  new Credentials(password.getUserName(), password.getPassword()));
       }
       return serverNameToCredentials;
    }
