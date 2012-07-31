@@ -1,0 +1,72 @@
+{"access": {
+    "token": {
+        "expires": "2012-08-01T13:08:52Z",
+        "id": "946b8ad1ede4422f87ab21dcba27896d",
+        "tenant": {
+            "enabled": true,
+            "description": null,
+            "name": "admin",
+            "id": "2fdc88ae152948c690b97ba307acae9b"
+    }},
+    "serviceCatalog": [
+        {"endpoints": [{
+            "adminURL": "http://10.0.1.13:8774/v2/2fdc88ae152948c690b97ba307acae9b",
+            "region": "RegionOne",
+            "publicURL": "http://10.0.1.13:8774/v2/2fdc88ae152948c690b97ba307acae9b",
+            "internalURL": "http://10.0.1.13:8774/v2/2fdc88ae152948c690b97ba307acae9b"}],
+            "endpoints_links": [],
+            "type": "compute",
+            "name": "Compute Service"},
+        {"endpoints": [{
+            "adminURL": "http://10.0.1.13:3333",
+            "region": "RegionOne",
+            "publicURL": "http://10.0.1.13:3333",
+            "internalURL": "http://10.0.1.13:3333"}],
+            "endpoints_links": [],
+            "type": "s3",
+            "name": "S3 Service"},
+        {"endpoints": [{
+            "adminURL": "http://10.0.1.13:9292",
+            "region": "RegionOne",
+            "publicURL": "http://10.0.1.13:9292",
+            "internalURL": "http://10.0.1.13:9292"}],
+            "endpoints_links": [],
+            "type": "image",
+            "name": "Image Service"},
+        {"endpoints": [{
+            "adminURL": "http://10.0.1.13:8776/v1/2fdc88ae152948c690b97ba307acae9b",
+            "region": "RegionOne",
+            "publicURL": "http://10.0.1.13:8776/v1/2fdc88ae152948c690b97ba307acae9b",
+            "internalURL": "http://10.0.1.13:8776/v1/2fdc88ae152948c690b97ba307acae9b"}],
+            "endpoints_links": [], "type": "volume", "name": "Volume Service"},
+        {"endpoints": [{"adminURL": "http://10.0.1.13:8773/services/Admin",
+            "region": "RegionOne",
+            "publicURL": "http://10.0.1.13:8773/services/Cloud",
+            "internalURL": "http://10.0.1.13:8773/services/Cloud"}],
+            "endpoints_links": [],
+            "type": "ec2",
+            "name": "EC2 Service"},
+        {"endpoints": [{
+            "adminURL": "http://10.0.1.13:35357/v2.0",
+            "region": "RegionOne", "publicURL":
+            "http://10.0.1.13:5000/v2.0", "internalURL": "http://10.0.1.13:5000/v2.0"}],
+            "endpoints_links": [], "type": "identity", "name": "Identity Service"}
+    ],
+    "user": {
+        "username": "admin",
+        "roles_links": [],
+        "id": "b4d134cfe3cf43ad8ba0c2fc5b5d8f91",
+        "roles": [
+            {"name": "admin"},
+            {"name": "KeystoneServiceAdmin"},
+            {"name": "KeystoneAdmin"}
+        ],
+        "name": "admin"
+    },
+    "metadata": {
+        "is_admin": 0,
+        "roles": [
+            "a2bb9cb209f14ec18d0f747ccdef4bb6", "27cb69f42476498cb11e83b7d90fc419", "7758efbae00a480385493f77f7860c29"
+        ]
+    }
+}}
