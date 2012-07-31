@@ -5,13 +5,16 @@ Have vSphere 5 installed.
 It is required to have a vCenter server running: the jclouds-vsphere has to point to vcenter endpoint
 Obviously it could also be a virtual appliance deployed on ESXi.
 
-That's it! 
+You should have 1 Datacenter created in vSphere
+You should have at least 1 Datastore created in this Datacenter
+You should have user with right necessary to execute Virtual Machine tasks created
+You should mark at least 1 Ubuntu 12.04 server vm as a Template in order to be able to clone it
 
 --------------
 
 #Running a local cloud
 
-Enjoy local cloud goodness by running:
+Enjoy vsphere cloud by running:
 
 "mvn clean install clojure:repl"
 
@@ -19,6 +22,13 @@ Enjoy local cloud goodness by running:
 > (import 'org.jclouds.scriptbuilder.statements.login.AdminAccess)  
 > (def compute (compute-service "vsphere" "root" "password" :sshj :slf4j))  
 > (create-nodes compute "local-cluster" 2 (build-template compute { :run-script (AdminAccess/standard) } ))  
+
+By default, the chosen cloning strategy is [Linked](http://www.vmware.com/support/developer/vc-sdk/linked_vms_note.pdf)
+If you want to override this default please specify
+
+-Dtest.vsphere.cloning=full
+
+to create cloned vms completely indipendent.
 
 --------------
 

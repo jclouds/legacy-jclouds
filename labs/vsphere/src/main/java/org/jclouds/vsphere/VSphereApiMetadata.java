@@ -1,6 +1,7 @@
 package org.jclouds.vsphere;
 
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
+import static org.jclouds.vsphere.config.VSphereConstants.CLONING;
 
 import java.net.URI;
 import java.util.Properties;
@@ -34,6 +35,10 @@ public class VSphereApiMetadata extends BaseApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseApiMetadata.defaultProperties();
+      
+      String cloneStrategy = System.getProperty("test.vsphere.cloning", "linked");
+      properties.setProperty(CLONING, cloneStrategy);
+      
       properties.setProperty(TEMPLATE,
                         "osFamily=UBUNTU,osVersionMatches=12.04,os64Bit=true,osArchMatches=x86,loginUser=toor:password,authenticateSudo=true");
       return properties;
