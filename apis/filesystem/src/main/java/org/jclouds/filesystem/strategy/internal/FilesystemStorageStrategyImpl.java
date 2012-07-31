@@ -358,6 +358,15 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       return pathToBeNormalized;
    }
 
+   private static String denormalize(String pathToDenormalize) {
+      if (null != pathToDenormalize && pathToDenormalize.contains("/")) {
+         if (BACK_SLASH.equals(File.separator)) {
+              return pathToDenormalize.replace("/", BACK_SLASH);
+         }
+      }
+      return pathToDenormalize;
+   }
+
    /**
     * Remove leading and trailing {@link File.separator} character from the string.
     * 
@@ -392,7 +401,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
     * @param normalizedKey
     */
    private void removeDirectoriesTreeOfBlobKey(String container, String blobKey) {
-      String normalizedBlobKey = normalize(blobKey);
+      String normalizedBlobKey = denormalize(blobKey);
       // exists is no path is present in the blobkey
       if (!normalizedBlobKey.contains(File.separator))
          return;

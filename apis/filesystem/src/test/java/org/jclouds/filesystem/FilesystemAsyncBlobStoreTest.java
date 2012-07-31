@@ -121,12 +121,6 @@ public class FilesystemAsyncBlobStoreTest {
         }
     }
 
-    @DataProvider
-    public Object[][] ignoreOnWindows() {
-        return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
-                                        : TestUtils.SINGLE_NO_ARG_INVOCATION);
-    }
-
     /**
      * Checks if context parameters are managed in the correct way
      */
@@ -407,7 +401,7 @@ public class FilesystemAsyncBlobStoreTest {
     /**
      * Test of removeBlob method, with only one blob with a complex path as key
      */
-    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
+    @Test
     public void testRemoveBlob_ComplexBlobKey() throws IOException {
         final String BLOB_KEY = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
         boolean result;
@@ -438,7 +432,7 @@ public class FilesystemAsyncBlobStoreTest {
      * when first blob is removed, not all of its key's path is removed, because
      * it is shared with the second blob's key
      */
-    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
+    @Test
     public void testRemoveBlob_TwoComplexBlobKeys() throws IOException {
         final String BLOB_KEY1 = TestUtils.createRandomBlobKey("aa/bb/cc/dd/", null);
         final String BLOB_KEY2 = TestUtils.createRandomBlobKey("aa/bb/ee/ff/", null);
@@ -720,35 +714,31 @@ public class FilesystemAsyncBlobStoreTest {
         TestUtils.directoryExists(TARGET_CONTAINER_NAME2, false);
     }
 
-    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
+    @Test
     public void testInvalidContainerName() {
+	String containerName = "file" + File.separator + "system";
         try {
-            blobStore.createContainerInLocation(null, "file/system");
+            blobStore.createContainerInLocation(null, containerName);
             fail("Wrong container name not recognized");
         } catch (IllegalArgumentException e) {
         }
         try {
-            blobStore.containerExists("file/system");
+            blobStore.containerExists(containerName);
             fail("Wrong container name not recognized");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testRanges() throws IOException {
-        /*
-         * Using CONTAINER_NAME here breaks tests on Windows because the container
-         * can't be deleted. See http://code.google.com/p/jclouds/issues/detail?id=737
-         */
-        final String containerName = "containerWithRanges";
-        blobStore.createContainerInLocation(null, containerName);
+        blobStore.createContainerInLocation(null, CONTAINER_NAME);
         String payload = "abcdefgh";
         InputStream is;
         Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(payload)).build();
-        blobStore.putBlob(containerName, blob);
+        blobStore.putBlob(CONTAINER_NAME, blob);
 
         GetOptions getOptionsRangeStartAt = new GetOptions();
         getOptionsRangeStartAt.startAt(1);
-        Blob blobRangeStartAt = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeStartAt);
+        Blob blobRangeStartAt = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeStartAt);
         is = blobRangeStartAt.getPayload().getInput();
         try {
             assertEquals("bcdefgh", IOUtils.toString(is));
@@ -758,7 +748,7 @@ public class FilesystemAsyncBlobStoreTest {
 
         GetOptions getOptionsRangeTail = new GetOptions();
         getOptionsRangeTail.tail(3);
-        Blob blobRangeTail = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsRangeTail);
+        Blob blobRangeTail = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeTail);
         is = blobRangeTail.getPayload().getInput();
         try {
             assertEquals("fgh", IOUtils.toString(is));
@@ -768,7 +758,7 @@ public class FilesystemAsyncBlobStoreTest {
 
         GetOptions getOptionsFragment = new GetOptions();
         getOptionsFragment.range(4, 6);
-        Blob blobFragment = blobStore.getBlob(containerName, blob.getMetadata().getName(), getOptionsFragment);
+        Blob blobFragment = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsFragment);
         is = blobFragment.getPayload().getInput();
         try {
             assertEquals("efg", IOUtils.toString(is));
