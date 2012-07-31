@@ -484,7 +484,7 @@ public class QueryResultAdminVdcRecord extends QueryResultRecordType {
    }
 
    /**
-    * Shows wheter it is a system vDC
+    * Shows whether it is a system vDC
     */
    public Boolean isSystemVdc() {
       return isSystemVdc;

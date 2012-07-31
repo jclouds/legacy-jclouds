@@ -145,7 +145,12 @@ public class LocationModule extends AbstractModule {
       public Set<String> apply(Set<String> input) {
          return Sets.filter(input, filter);
       }
-      
+
+      @Override
+      public String toString() {
+         return "filterStrings(" + filter + ")";
+      }
+
    }
    
    @Provides

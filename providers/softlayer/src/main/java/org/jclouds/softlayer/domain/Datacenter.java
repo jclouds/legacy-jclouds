@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,161 +20,186 @@ package org.jclouds.softlayer.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
- * 
+ * Class Datacenter
+ *
  * @author Adrian Cole
  * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Location_Datacenter"
- *      />
+/>
  */
-public class Datacenter implements Comparable<Datacenter> {
-   public static Builder builder() {
-      return new Builder();
+public class Datacenter {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int id = -1;
-      private String name;
-      private String longName;
-      private Address locationAddress;
-      private Set<Region> regions = Sets.newLinkedHashSet();
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromDatacenter(this);
+   }
 
-      public Builder id(int id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String name;
+      protected String longName;
+      protected Address locationAddress;
+      protected Set<Region> regions = ImmutableSet.of();
+
+      /**
+       * @see Datacenter#getId()
+       */
+      public T id(int id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see Datacenter#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder longName(String longName) {
+      /**
+       * @see Datacenter#getLongName()
+       */
+      public T longName(String longName) {
          this.longName = longName;
-         return this;
+         return self();
       }
 
-      public Builder locationAddress(Address locationAddress) {
+      /**
+       * @see Datacenter#getLocationAddress()
+       */
+      public T locationAddress(Address locationAddress) {
          this.locationAddress = locationAddress;
-         return this;
+         return self();
       }
 
-      public Builder region(Region regions) {
-         this.regions.add(checkNotNull(regions, "regions"));
-         return this;
+      /**
+       * @see Datacenter#getRegions()
+       */
+      public T regions(Set<Region> regions) {
+         this.regions = ImmutableSet.copyOf(checkNotNull(regions, "regions"));
+         return self();
       }
 
-      public Builder regions(Iterable<Region> regions) {
-         this.regions = ImmutableSet.<Region> copyOf(checkNotNull(regions, "regions"));
-         return this;
+      public T regions(Region... in) {
+         return regions(ImmutableSet.copyOf(in));
       }
 
       public Datacenter build() {
          return new Datacenter(id, name, longName, locationAddress, regions);
       }
 
-      public static Builder fromDatacenter(Datacenter in) {
-         return Datacenter.builder().id(in.getId()).name(in.getName())
-               .longName(in.getLongName()).locationAddress(in.getLocationAddress())
+      public T fromDatacenter(Datacenter in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .longName(in.getLongName())
+               .locationAddress(in.getLocationAddress())
                .regions(in.getRegions());
       }
    }
 
-   private int id = -1;
-   private String name;
-   private String longName;
-   private Address locationAddress;
-   private Set<Region> regions = Sets.newLinkedHashSet();
-   // for deserializer
-   Datacenter() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public Datacenter(int id, String name, String longName, Address locationAddress, Iterable<Region> regions) {
+   private final int id;
+   private final String name;
+   private final String longName;
+   private final Address locationAddress;
+   private final Set<Region> regions;
+
+   @ConstructorProperties({
+         "id", "name", "longName", "locationAddress", "regions"
+   })
+   protected Datacenter(int id, @Nullable String name, @Nullable String longName, @Nullable Address locationAddress, @Nullable Set<Region> regions) {
       this.id = id;
       this.name = name;
       this.longName = longName;
       this.locationAddress = locationAddress;
-      this.regions = ImmutableSet.<Region> copyOf(checkNotNull(regions, "regions"));
-   }
-
-   @Override
-   public int compareTo(Datacenter arg0) {
-      return Integer.valueOf(id).compareTo(arg0.getId());
+      this.regions = regions == null ? ImmutableSet.<Region>of() : ImmutableSet.copyOf(regions);
    }
 
    /**
     * @return The unique identifier of a specific location.
     */
    public int getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return A short location description.
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return A longer location description.
     */
+   @Nullable
    public String getLongName() {
-      return longName;
+      return this.longName;
    }
 
    /**
     * @return A location's physical address (optional).
     */
+   @Nullable
    public Address getLocationAddress() {
-      return locationAddress;
+      return this.locationAddress;
    }
 
    /**
     * A location can be a member of 1 or more regions.
     * Sometimes the list of regions is empty, for example as a new Datacenter is being added.
     * The list of regions usually contains one with keyName=FIRST_AVAILABLE which should be ignored.
+    *
     * @return The regions to which a location belongs.
     */
    public Set<Region> getRegions() {
-      return regions;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromDatacenter(this);
+      return this.regions;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (id ^ (id >>> 32));
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Datacenter other = (Datacenter) obj;
-      if (id != other.id)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Datacenter that = Datacenter.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("longName", longName).add("locationAddress", locationAddress).add("regions", regions);
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", country=" + name + ", state=" + longName + "], locationAddress=" + locationAddress + ", regions="+regions+"]";
+      return string().toString();
    }
-   
-   
+
 }

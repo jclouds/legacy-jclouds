@@ -59,7 +59,7 @@ public abstract class ForwardingCacheLoader<K, V> extends CacheLoader<K, V> {
 
    /**
     * A simplified version of {@link ForwardingCacheLoader} where subclasses can pass in an already
-    * constructed {@link CacheLoader} as the delegete.
+    * constructed {@link CacheLoader} as the delegate.
     * 
     */
    @Beta

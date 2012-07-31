@@ -61,11 +61,6 @@ public interface KeystoneProperties {
    public static final String REQUIRES_TENANT = "jclouds.keystone.requires-tenant";
    
    /**
-    * version of the keystone service
-    */
-   public static final String VERSION = "jclouds.keystone.version";
-
-   /**
     * type of the keystone service. ex. {@code compute}
     * 
     * @see ServiceType

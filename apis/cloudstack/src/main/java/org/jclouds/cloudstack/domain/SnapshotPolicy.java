@@ -150,7 +150,7 @@ public class SnapshotPolicy {
    }
 
    /**
-    * @return valid types are hourly, daily, weekly, monthy, template, and none.
+    * @return valid types are hourly, daily, weekly, monthly, template, and none.
     */
    @Nullable
    public Snapshot.Interval getInterval() {

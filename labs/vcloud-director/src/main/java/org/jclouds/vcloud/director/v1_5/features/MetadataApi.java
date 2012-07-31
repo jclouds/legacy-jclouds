@@ -27,7 +27,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
- * Provides synchronous access to {@linkl Metadata}.
+ * Provides synchronous access to {@link Metadata}.
  * 
  * @see MetadataAsyncApi
  * @author danikov

@@ -53,7 +53,8 @@ public class ParseServerListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_servers.json");
 
-      List<Server> expects = ImmutableList.of(new Server(1234, "sample-server"), new Server(5678, "sample-server2"));
+      List<Server> expects = ImmutableList.of(Server.builder().id(1234).name("sample-server").build(),
+            Server.builder().id(5678).name("sample-server2").build());
 
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
@@ -80,9 +81,7 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(0).getProgress(), Integer.valueOf(60));
       List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
       List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
-      Addresses addresses1 = new Addresses();
-      addresses1.getPrivateAddresses().addAll(privateAddresses);
-      addresses1.getPublicAddresses().addAll(publicAddresses);
+      Addresses addresses1 = Addresses.builder().privateAddresses(privateAddresses).publicAddresses(publicAddresses).build();
       assertEquals(response.get(0).getAddresses(), addresses1);
       assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
       assertEquals(response.get(1).getId(), 5678);
@@ -94,9 +93,7 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(1).getProgress(), null);
       List<String> publicAddresses2 = Lists.newArrayList("67.23.10.133");
       List<String> privateAddresses2 = Lists.newArrayList("10.176.42.17");
-      Addresses addresses2 = new Addresses();
-      addresses2.getPrivateAddresses().addAll(privateAddresses2);
-      addresses2.getPublicAddresses().addAll(publicAddresses2);
+      Addresses addresses2 = Addresses.builder().privateAddresses(privateAddresses2).publicAddresses(publicAddresses2).build();
       assertEquals(response.get(1).getAddresses(), addresses2);
       assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));
 

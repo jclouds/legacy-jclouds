@@ -233,7 +233,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       File fileToBeDeleted = new File(fileName);
       fileToBeDeleted.delete();
 
-      // now examins if the key of the blob is a complex key (with a directory structure)
+      // now examine if the key of the blob is a complex key (with a directory structure)
       // and eventually remove empty directory
       removeDirectoriesTreeOfBlobKey(container, blobKey);
    }
@@ -349,13 +349,22 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
     * @param pathToBeNormalized
     * @return
     */
-   private String normalize(String pathToBeNormalized) {
+   private static String normalize(String pathToBeNormalized) {
       if (null != pathToBeNormalized && pathToBeNormalized.contains(BACK_SLASH)) {
          if (!BACK_SLASH.equals(File.separator)) {
-            return pathToBeNormalized.replaceAll(BACK_SLASH, File.separator);
+            return pathToBeNormalized.replace(BACK_SLASH, File.separator);
          }
       }
       return pathToBeNormalized;
+   }
+
+   private static String denormalize(String pathToDenormalize) {
+      if (null != pathToDenormalize && pathToDenormalize.contains("/")) {
+         if (BACK_SLASH.equals(File.separator)) {
+              return pathToDenormalize.replace("/", BACK_SLASH);
+         }
+      }
+      return pathToDenormalize;
    }
 
    /**
@@ -392,7 +401,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
     * @param normalizedKey
     */
    private void removeDirectoriesTreeOfBlobKey(String container, String blobKey) {
-      String normalizedBlobKey = normalize(blobKey);
+      String normalizedBlobKey = denormalize(blobKey);
       // exists is no path is present in the blobkey
       if (!normalizedBlobKey.contains(File.separator))
          return;

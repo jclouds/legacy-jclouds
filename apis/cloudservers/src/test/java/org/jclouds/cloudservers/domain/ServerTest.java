@@ -30,18 +30,14 @@ import org.testng.annotations.Test;
 @Test(groups = "unit")
 public class ServerTest {
    public void testStatusDoesntAffectEquals() {
-      Server server1 = new Server(1, "hello");
-      server1.setStatus(ServerStatus.ACTIVE);
-      Server server2 = new Server(1, "hello");
-      server2.setStatus(ServerStatus.BUILD);
+      Server server1 = Server.builder().id(1).name("hello").status(ServerStatus.ACTIVE).build();
+      Server server2 = Server.builder().id(1).name("hello").status(ServerStatus.BUILD).build();
       assertEquals(server1, server2);
    }
 
    public void testProgressDoesntAffectEquals() {
-      Server server1 = new Server(1, "hello");
-      server1.setProgress(1);
-      Server server2 = new Server(1, "hello");
-      server2.setProgress(2);
+      Server server1 = Server.builder().id(1).name("hello").progress(1).build();
+      Server server2 = Server.builder().id(1).name("hello").progress(2).build();
       assertEquals(server1, server2);
    }
 

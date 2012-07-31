@@ -65,7 +65,7 @@ public interface CommonSwiftClient {
     * are supported with this request.
     * <ul>
     * <li>limit - For an integer value N, limits the number of results to at most N values.</li>
-    * <li>marker - Given a string value X, return Object names greater in value than the specied
+    * <li>marker - Given a string value X, return Object names greater in value than the specified
     * marker.</li>
     * <li>format - Specify either json or xml to return the respective serialized response.</li>
     * </ul>

@@ -145,7 +145,7 @@ public class Throwables2 {
       if (aex != null)
          throw aex;
       propagate(e);
-      assert false : "exception should have propogated " + e;
+      assert false : "exception should have propagated " + e;
       return null;
    }
 

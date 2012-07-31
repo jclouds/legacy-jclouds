@@ -142,7 +142,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @Singleton
    @org.jclouds.trmk.vcloud_0_8.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(
-         Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgNameToOrgSuppier) {
+         Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgNameToOrgSupplier) {
       return Suppliers2.compose(
             new Function<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>, Map<String, String>>() {
 
@@ -156,7 +156,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
                   }
                   return returnVal.build();
                }
-            }, orgNameToOrgSuppier);
+            }, orgNameToOrgSupplier);
 
    }
 

@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,6 +42,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.primitives.Bytes;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on
@@ -88,7 +90,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    private Set<String> groupNames = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
-   private byte[] userData;
+   private List<Byte> userData;
    private ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.builder();
 
    @Override
@@ -151,7 +153,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    public EC2TemplateOptions userData(byte[] unencodedData) {
       checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
             "userData cannot be larger than 16kb");
-      this.userData = unencodedData;
+      this.userData = Bytes.asList(unencodedData);
       return this;
    }
 
@@ -509,7 +511,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
     * @return unencoded user data.
     */
    public byte[] getUserData() {
-      return userData;
+      return userData == null ? null : Bytes.toArray(userData);
    }
 
    /**

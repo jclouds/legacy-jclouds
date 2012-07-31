@@ -53,7 +53,7 @@ public class ResizeResult {
    /**
     * true if we made the resource changes.&nbsp; False if we did not
     * make them, e.g. if we hit a billing issue, or if the host server
-    * did not have the resources to accomodate the change.
+    * did not have the resources to accommodate the change.
     */
    @SerializedName("were_resources_changed")
    private Boolean success;

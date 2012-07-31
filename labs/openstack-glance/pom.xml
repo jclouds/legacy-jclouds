@@ -35,7 +35,7 @@
 
   <properties>
     <!-- keystone endpoint -->
-    <test.openstack-glance.endpoint>http://localhost:5000</test.openstack-glance.endpoint>
+    <test.openstack-glance.endpoint>http://localhost:5000/v2.0/</test.openstack-glance.endpoint>
     <!-- keystone version -->
     <test.openstack-glance.api-version>1.0</test.openstack-glance.api-version>
     <test.openstack-glance.build-version></test.openstack-glance.build-version>

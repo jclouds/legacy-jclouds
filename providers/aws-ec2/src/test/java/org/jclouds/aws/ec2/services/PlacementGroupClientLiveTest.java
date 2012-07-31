@@ -24,6 +24,7 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +37,6 @@ import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -63,6 +63,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true, testName = "PlacementGroupClientLiveTest")
 public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveTest {
+   ArrayList<String> supportedRegions = newArrayList(Region.US_EAST_1, Region.EU_WEST_1);
+
    public PlacementGroupClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -71,7 +73,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
    private RetryablePredicate<PlacementGroup> availableTester;
    private RetryablePredicate<PlacementGroup> deletedTester;
    private PlacementGroup group;
-   
+
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
@@ -79,21 +81,21 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
       client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-            TimeUnit.SECONDS);
+               TimeUnit.SECONDS);
 
       deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
    }
 
    @Test
    void testDescribe() {
-      for (String region : newArrayList(Region.US_EAST_1)) {
+      for (String region : supportedRegions) {
          SortedSet<PlacementGroup> allResults = newTreeSet(client.getPlacementGroupServices()
-               .describePlacementGroupsInRegion(region));
+                  .describePlacementGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PlacementGroup group = allResults.last();
             SortedSet<PlacementGroup> result = newTreeSet(client.getPlacementGroupServices()
-                  .describePlacementGroupsInRegion(region, group.getName()));
+                     .describePlacementGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             PlacementGroup compare = result.last();
             assertEquals(compare, group);
@@ -101,10 +103,10 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
       }
 
       for (String region : client.getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
-         if (!region.equals(Region.US_EAST_1))
+         if (!supportedRegions.contains(region))
             try {
                client.getPlacementGroupServices().describePlacementGroupsInRegion(region);
-               assert false : "should be unsupported";
+               assert false : "should be unsupported for region: " + region;
             } catch (UnsupportedOperationException e) {
             }
       }
@@ -113,16 +115,19 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
    @Test
    void testCreatePlacementGroup() {
       String groupName = PREFIX + "1";
-      client.getPlacementGroupServices().deletePlacementGroupInRegion(null, groupName);
-      client.getPlacementGroupServices().createPlacementGroupInRegion(null, groupName);
+      for (String region : supportedRegions) {
 
-      verifyPlacementGroup(groupName);
+         client.getPlacementGroupServices().deletePlacementGroupInRegion(region, groupName);
+         client.getPlacementGroupServices().createPlacementGroupInRegion(region, groupName);
+
+         verifyPlacementGroup(region, groupName);
+      }
    }
 
-   private void verifyPlacementGroup(String groupName) {
-      assert availableTester.apply(new PlacementGroup(Region.US_EAST_1, groupName, "cluster", State.PENDING)) : group;
-      Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(null,
-            groupName);
+   private void verifyPlacementGroup(String region, String groupName) {
+      assert availableTester.apply(new PlacementGroup(region, groupName, "cluster", State.PENDING)) : group;
+      Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(region,
+               groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       group = oneResult.iterator().next();
@@ -133,15 +138,15 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
 
    public void testStartCCInstance() throws Exception {
 
-      Template template = view.getComputeService().templateBuilder().fromHardware(EC2HardwareBuilder.cc2_8xlarge().build()).osFamily(OsFamily.AMZN_LINUX).build();
+      Template template = view.getComputeService().templateBuilder()
+               .fromHardware(EC2HardwareBuilder.cc2_8xlarge().build()).osFamily(OsFamily.AMZN_LINUX).build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(template.getImage().getUserMetadata().get("virtualizationType"), "hvm");
       assertEquals(template.getImage().getUserMetadata().get("hypervisor"), "xen");
-      
-      template.getOptions().runScript(
-               Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromOpenJDK()));
+
+      template.getOptions().runScript(Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromOpenJDK()));
 
       String group = PREFIX + "cccluster";
       view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
@@ -153,7 +158,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
          NodeMetadata node = getOnlyElement(nodes);
 
          getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
-               node.getProviderId())));
+                  node.getProviderId())));
 
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());
@@ -174,7 +179,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
       }
       super.tearDownContext();
    }
-   
+
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();

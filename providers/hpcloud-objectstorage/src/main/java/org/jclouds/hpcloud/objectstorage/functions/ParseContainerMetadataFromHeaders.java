@@ -20,6 +20,7 @@ package org.jclouds.hpcloud.objectstorage.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.http.HttpRequest;
@@ -31,9 +32,10 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 /**
- * This parses @{link {@link org.jclouds.hpcloud.objectstorage.domain.ContainerMetadata} from
+ * This parses @{link {@link org.jclouds.openstack.swift.domain.ContainerMetadata} from
  * HTTP headers.
  * 
  * @author Jeremy Daggett
@@ -43,28 +45,23 @@ public class ParseContainerMetadataFromHeaders implements Function<HttpResponse,
    private GeneratedHttpRequest request;
 
    public ContainerMetadata apply(HttpResponse from) {
-      ContainerMetadata to = new ContainerMetadata();
-      
-      to.setName(request.getArgs().get(0).toString());
-      
-      to.setReadACL(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_READ));
- 
-      to.setBytes(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_BYTES_USED)));
-      to.setCount(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_OBJECT_COUNT)));
-      
-      addUserMetadataTo(from, to);
-      
-      return to;
+      return ContainerMetadata.builder().name(request.getArgs().get(0).toString())
+            .readACL(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_READ))
+            .bytes(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_BYTES_USED)))
+            .count(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_OBJECT_COUNT)))
+            .metadata(extractUserMetadata(from)).build();
    }
 
    
    @VisibleForTesting
-   void addUserMetadataTo(HttpResponse from, ContainerMetadata metadata) {
+   Map<String, String> extractUserMetadata(HttpResponse from) {
+      Map<String, String> metadata = Maps.newHashMap();
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(SwiftHeaders.CONTAINER_METADATA_PREFIX))
-            metadata.getMetadata().put((header.getKey().substring(SwiftHeaders.CONTAINER_METADATA_PREFIX.length())).toLowerCase(),
+            metadata.put((header.getKey().substring(SwiftHeaders.CONTAINER_METADATA_PREFIX.length())).toLowerCase(),
                   header.getValue());
       }
+      return metadata;
    }
    
    @Override

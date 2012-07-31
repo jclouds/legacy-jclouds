@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.quantum.v1_0.config.QuantumRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
@@ -68,9 +67,6 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.NETWORK);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
-
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
       return properties;
    }
 
@@ -80,11 +76,12 @@ public class QuantumApiMetadata extends BaseRestApiMetadata {
          super(QuantumApi.class, QuantumAsyncApi.class);
           id("openstack-quantum")
          .name("OpenStack Quantum API")
-         .identityName("tenantName:user or user")
-         .credentialName("password")
+         .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
+         .credentialName("${password}")
+         .endpointName("KeyStone base url ending in /v2.0/")
          .documentation(URI.create("http://docs.openstack.org/api/openstack-network/1.0/content/"))
          .version("1.0")
-         .defaultEndpoint("http://localhost:5000")
+         .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(QuantumApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(KeystoneAuthenticationModule.class)

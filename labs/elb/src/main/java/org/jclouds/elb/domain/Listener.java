@@ -154,7 +154,7 @@ public class Listener {
    }
 
    /**
-    * pecifies the protocol to use for routing traffic to back-end instances - HTTP, HTTPS, TCP, or
+    * Specifies the protocol to use for routing traffic to back-end instances - HTTP, HTTPS, TCP, or
     * SSL. This property cannot be modified for the life of the LoadBalancer.
     */
    public Protocol getInstanceProtocol() {

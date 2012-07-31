@@ -20,8 +20,6 @@ package org.jclouds.hpcloud.compute;
 
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
-import static org.jclouds.openstack.keystone.v2_0.config.CredentialTypes.API_ACCESS_KEY_CREDENTIALS;
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.REQUIRES_TENANT;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
@@ -68,11 +66,10 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = new Properties();
+      Properties properties = NovaApiMetadata.defaultProperties();
       // deallocating ip addresses can take a while
       properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
 
-      properties.setProperty(CREDENTIAL_TYPE, API_ACCESS_KEY_CREDENTIALS);
       properties.setProperty(REQUIRES_TENANT, "true");
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
@@ -86,8 +83,8 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
          id("hpcloud-compute")
          .name("HP Cloud Compute Services")
          .apiMetadata(new NovaApiMetadata().toBuilder()
-                  .identityName("yourTenantName:yourAccessKey")
-                  .credentialName("secretKey")
+                  .endpointName("identity service url ending in /v2.0/")
+                  .defaultEndpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/")
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                               .add(KeystoneAuthenticationModule.class)
                                               .add(ZoneModule.class)
@@ -98,7 +95,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
          .console(URI.create("https://manage.hpcloud.com/compute"))
          .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
          .iso3166Codes("US-NV")
-         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357")
+         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/")
          .defaultProperties(HPCloudComputeProviderMetadata.defaultProperties());
       }
 

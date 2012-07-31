@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.jclouds.javax.annotation.Nullable;
 
@@ -134,6 +135,7 @@ public class ClassMethodArgs {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("clazz", clazz).add("method", method).add("args", args);
+      return Objects.toStringHelper("").omitNullValues().add("clazz", clazz).add("method", method)
+               .add("args", args != null ? Arrays.asList(args) : null);
    }
 }

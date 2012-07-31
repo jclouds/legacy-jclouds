@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,103 +18,148 @@
  */
 package org.jclouds.cloudservers.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
- * 
  * A flavor is an available hardware configuration for a server. Each flavor has a unique
  * combination of disk space and memory capacity.
  * 
  * @author Adrian Cole
- */
+*/
 public class Flavor {
 
-   public Flavor() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromFlavor(this);
    }
 
-   @Override
-   public String toString() {
-      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + "]";
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String name;
+      protected Integer disk;
+      protected Integer ram;
+   
+      /** 
+       * @see Flavor#getId()
+       */
+      public T id(int id) {
+         this.id = id;
+         return self();
+      }
+
+      /** 
+       * @see Flavor#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /** 
+       * @see Flavor#getDisk()
+       */
+      public T disk(Integer disk) {
+         this.disk = disk;
+         return self();
+      }
+
+      /** 
+       * @see Flavor#getRam()
+       */
+      public T ram(Integer ram) {
+         this.ram = ram;
+         return self();
+      }
+
+      public Flavor build() {
+         return new Flavor(id, name, disk, ram);
+      }
+      
+      public T fromFlavor(Flavor in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .disk(in.getDisk())
+                  .ram(in.getRam());
+      }
    }
 
-   public Flavor(int id, String name) {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final int id;
+   private final String name;
+   private final Integer disk;
+   private final Integer ram;
+
+   @ConstructorProperties({
+      "id", "name", "disk", "ram"
+   })
+   protected Flavor(int id, String name, @Nullable Integer disk, @Nullable Integer ram) {
       this.id = id;
-      this.name = name;
-   }
-
-   private int id;
-   private String name;
-   private Integer disk;
-   private Integer ram;
-
-   public Integer getDisk() {
-      return disk;
-   }
-
-   public void setDisk(Integer value) {
-      this.disk = value;
+      this.name = checkNotNull(name, "name");
+      this.disk = disk;
+      this.ram = ram;
    }
 
    public int getId() {
-      return id;
-   }
-
-   public void setId(int value) {
-      this.id = value;
+      return this.id;
    }
 
    public String getName() {
-      return name;
+      return this.name;
    }
 
-   public void setName(String value) {
-      this.name = value;
+   @Nullable
+   public Integer getDisk() {
+      return this.disk;
    }
 
+   @Nullable
    public Integer getRam() {
-      return ram;
-   }
-
-   public void setRam(Integer value) {
-      this.ram = value;
+      return this.ram;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((disk == null) ? 0 : disk.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((ram == null) ? 0 : ram.hashCode());
-      return result;
+      return Objects.hashCode(id, name, disk, ram);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Flavor other = (Flavor) obj;
-      if (disk == null) {
-         if (other.disk != null)
-            return false;
-      } else if (!disk.equals(other.disk))
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (ram == null) {
-         if (other.ram != null)
-            return false;
-      } else if (!ram.equals(other.ram))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Flavor that = Flavor.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.disk, that.disk)
+               && Objects.equal(this.ram, that.ram);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("disk", disk).add("ram", ram);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
 }

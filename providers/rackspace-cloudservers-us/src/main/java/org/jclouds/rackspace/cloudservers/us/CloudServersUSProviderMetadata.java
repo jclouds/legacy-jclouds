@@ -74,9 +74,11 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
          id("rackspace-cloudservers-us")
          .name("Rackspace Next Generation Cloud Servers")
          .apiMetadata(new NovaApiMetadata().toBuilder()
-                  .identityName("username")
-                  .credentialName("API Key")
+                  .identityName("${userName}")
+                  .credentialName("${apiKey}")
                   .version("2")
+                  .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
+                  .endpointName("identity service url ending in /v2.0/")
                   .documentation(URI.create("http://docs.rackspace.com/servers/api/v2/cs-devguide/content/ch_preface.html#webhelp-currentid"))
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                               .add(CloudIdentityAuthenticationModule.class)
@@ -88,7 +90,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
          .console(URI.create("https://mycloud.rackspace.com"))
          .linkedServices("rackspace-cloudservers-us", "cloudfiles-swift-us")
          .iso3166Codes("US-TX")
-         .endpoint("https://identity.api.rackspacecloud.com")
+         .endpoint("https://identity.api.rackspacecloud.com/v2.0/")
          .defaultProperties(CloudServersUSProviderMetadata.defaultProperties());
       }
 

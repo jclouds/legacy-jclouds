@@ -52,7 +52,7 @@ public class ParseBackupScheduleFromJsonResponseTest {
                .get(new TypeLiteral<UnwrapOnlyJsonValue<BackupSchedule>>() {
                }));
       BackupSchedule response = parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload(is).build());
-      assertEquals(new BackupSchedule(WeeklyBackup.THURSDAY, DailyBackup.H_0400_0600, true), response);
+      assertEquals(BackupSchedule.builder().weekly(WeeklyBackup.THURSDAY).daily(DailyBackup.H_0400_0600).enabled(true).build(), response);
    }
 
    public void testNoSchedule() throws UnknownHostException {
@@ -63,6 +63,6 @@ public class ParseBackupScheduleFromJsonResponseTest {
       BackupSchedule response = parser.apply(HttpResponse.builder()
                                                          .statusCode(200).message("ok")
                                                          .payload("{\"backupSchedule\":{\"enabled\" : false}}").build());
-      assertEquals(new BackupSchedule(), response);
+      assertEquals(BackupSchedule.builder().build(), response);
    }
 }

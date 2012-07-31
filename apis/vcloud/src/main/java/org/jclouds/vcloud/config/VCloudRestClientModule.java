@@ -223,7 +223,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Provides
    @Singleton
    @org.jclouds.vcloud.endpoints.VDC
-   protected Supplier<Map<String, String>> provideVDCtoORG(Supplier<Map<String, Org>> orgNameToOrgSuppier) {
+   protected Supplier<Map<String, String>> provideVDCtoORG(Supplier<Map<String, Org>> orgNameToOrgSupplier) {
       return Suppliers2.compose(new Function<Map<String, Org>, Map<String, String>>() {
 
          @Override
@@ -236,7 +236,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
             }
             return returnVal.build();
          }
-      }, orgNameToOrgSuppier);
+      }, orgNameToOrgSupplier);
 
    }
 

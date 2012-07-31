@@ -58,11 +58,12 @@ public class ParseContainerCDNMetadataFromHeaders implements
          // CDN is not enabled for this container.
          return null;
       } else {
-    	 // just need the name from the path
-    	 List<String> parts = newArrayList(Splitter.on('/').split(request.getEndpoint().getPath()));
+         // just need the name from the path
+         List<String> parts = newArrayList(Splitter.on('/').split(request.getEndpoint().getPath()));
 
-         return new ContainerCDNMetadata(parts.get(parts.size()-1), Boolean
-                  .parseBoolean(cdnEnabled), Long.parseLong(cdnTTL), URI.create(cdnUri));
+         return ContainerCDNMetadata.builder().name(parts.get(parts.size() - 1))
+               .CDNEnabled(Boolean.parseBoolean(cdnEnabled)).ttl(Long.parseLong(cdnTTL)).CDNUri(URI.create(cdnUri))
+               .build();
       }
    }
 

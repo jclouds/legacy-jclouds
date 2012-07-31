@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Billing data. Need to make it inteface with jclouds.
+ * Billing data. Need to make it interface with jclouds.
  * TODO: test
  *
  * @author Ivan Meredith

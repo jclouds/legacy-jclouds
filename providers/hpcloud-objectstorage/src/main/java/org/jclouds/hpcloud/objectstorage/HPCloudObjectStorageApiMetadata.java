@@ -18,21 +18,14 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
-
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
-import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.services.ServiceType;
-import org.jclouds.openstack.swift.SwiftApiMetadata;
+import org.jclouds.openstack.swift.SwiftKeystoneApiMetadata;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.rest.RestContext;
 
@@ -44,7 +37,7 @@ import com.google.inject.Module;
  * 
  * @author Jeremy Daggett
  */
-public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
+public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 820062881469203616L;
@@ -71,22 +64,17 @@ public class HPCloudObjectStorageApiMetadata extends SwiftApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = SwiftApiMetadata.defaultProperties();
-      properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
-      // TODO: this doesn't actually do anything yet.
-      properties.setProperty(KeystoneProperties.VERSION, "2.0");
-      properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
-      properties.remove(PROPERTY_REGIONS);
+      Properties properties = SwiftKeystoneApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder extends SwiftApiMetadata.Builder {
+   public static class Builder extends SwiftKeystoneApiMetadata.Builder {
       protected Builder(){
          super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
          id("hpcloud-objectstorage")
+         .endpointName("identity service url ending in /v2.0/")
+         .defaultEndpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/")
          .name("HP Cloud Services Object Storage API")
-         .identityName("yourTenantName:yourAccessKey")
-         .credentialName("secretKey")
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
          .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)

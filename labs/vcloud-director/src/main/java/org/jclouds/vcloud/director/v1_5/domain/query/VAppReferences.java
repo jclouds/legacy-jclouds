@@ -74,5 +74,5 @@ public class VAppReferences extends QueryResultReferences {
       return super.equals(that);
    }
    
-   // NOTE hashcode inheritted from QueryResultReferences
+   // NOTE hashcode inherited from QueryResultReferences
 }

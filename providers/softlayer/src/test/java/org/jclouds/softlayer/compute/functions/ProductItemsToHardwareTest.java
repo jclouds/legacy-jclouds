@@ -67,26 +67,26 @@ public class ProductItemsToHardwareTest {
             .id(1)
             .description("2 x 2.0 GHz Cores")
             .capacity(2F)
-            .category(ProductItemCategory.builder().categoryCode("guest_core").build())
-            .price(ProductItemPrice.builder().id(123).build())
+            .categories(ProductItemCategory.builder().categoryCode("guest_core").build())
+            .prices(ProductItemPrice.builder().id(123).build())
             .build();
 
-      ramItem = ProductItem.builder().id(2).description("2GB ram").capacity(2F).category(
-               ProductItemCategory.builder().categoryCode("ram").build()).price(
-               ProductItemPrice.builder().id(456).build()).build();
+      ramItem = ProductItem.builder().id(2).description("2GB ram").capacity(2F).categories(
+            ProductItemCategory.builder().categoryCode("ram").build()).prices(
+            ProductItemPrice.builder().id(456).build()).build();
 
-      volumeItem = ProductItem.builder().id(3).description("100 GB (SAN)").capacity(100F).price(
-               ProductItemPrice.builder().id(789).build()).category(
-               ProductItemCategory.builder().categoryCode("guest_disk0").build()).build();
+      volumeItem = ProductItem.builder().id(3).description("100 GB (SAN)").capacity(100F).prices(
+            ProductItemPrice.builder().id(789).build()).categories(
+            ProductItemCategory.builder().categoryCode("guest_disk0").build()).build();
 
 
    }
 
    @Test
    public void testHardwareId() {
-      ProductItem item1 = ProductItem.builder().price(ProductItemPrice.builder().id(123).build()).build();
-      ProductItem item2 = ProductItem.builder().price(ProductItemPrice.builder().id(456).build()).build();
-      ProductItem item3 = ProductItem.builder().price(ProductItemPrice.builder().id(789).build()).build();
+      ProductItem item1 = ProductItem.builder().prices(ProductItemPrice.builder().id(123).build()).build();
+      ProductItem item2 = ProductItem.builder().prices(ProductItemPrice.builder().id(456).build()).build();
+      ProductItem item3 = ProductItem.builder().prices(ProductItemPrice.builder().id(789).build()).build();
 
       String id = hardwareId().apply(ImmutableList.of(item1, item2, item3));
       assertEquals("123,456,789", id);
@@ -138,9 +138,9 @@ public class ProductItemsToHardwareTest {
 
    @Test
    public void testHardwareWithTwoDisks() {
-      ProductItem localVolumeItem = ProductItem.builder().id(4).description("25 GB").capacity(25F).price(
-               ProductItemPrice.builder().id(987).build()).category(
-               ProductItemCategory.builder().categoryCode("guest_disk1").build()).build();
+      ProductItem localVolumeItem = ProductItem.builder().id(4).description("25 GB").capacity(25F).prices(
+            ProductItemPrice.builder().id(987).build()).categories(
+            ProductItemCategory.builder().categoryCode("guest_disk1").build()).build();
 
       Hardware hardware = toHardware.apply(ImmutableSet.of(cpuItem, ramItem, volumeItem,localVolumeItem));
 

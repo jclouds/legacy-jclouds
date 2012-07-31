@@ -143,7 +143,7 @@ public class InstanceRequest extends BaseInstance {
       /**
        * @see InstanceRequest#getSecurityGroups()
        */
-      public T securityGroups(String securityGroupName) {
+      public T securityGroup(String securityGroupName) {
          this.securityGroups.add(checkNotNull(securityGroupName, "securityGroupName"));
          return self();
       }

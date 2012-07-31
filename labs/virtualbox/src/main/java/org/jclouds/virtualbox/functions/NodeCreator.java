@@ -242,11 +242,11 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    private String createHostOnlyIf() {
       final String hostOnlyIfName;
-      ExecResponse createHostOnyResponse = runScriptOnNodeFactory
+      ExecResponse createHostOnlyResponse = runScriptOnNodeFactory
                .create(host.get(), Statements.exec("VBoxManage hostonlyif create"),
                         runAsRoot(false).wrapInInitScript(false)).init().call();
-      String output = createHostOnyResponse.getOutput();
-      checkState(createHostOnyResponse.getExitStatus()==0);
+      String output = createHostOnlyResponse.getOutput();
+      checkState(createHostOnlyResponse.getExitStatus()==0);
       checkState(output.contains("'"), "cannot create hostonlyif");
       hostOnlyIfName = output.substring(output.indexOf("'") + 1, output.lastIndexOf("'"));
       return hostOnlyIfName;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,63 +18,86 @@
  */
 package org.jclouds.softlayer.domain;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
- * 
+ * Class ProductOrderReceipt
+ *
  * @author Jason King
  * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Receipt"
- *      />
+/>
  */
-public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
-   public static Builder builder() {
-      return new Builder();
+public class ProductOrderReceipt {
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int orderId = -1;
-      private ProductOrder orderDetails;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromProductOrderReceipt(this);
+   }
 
-      public Builder orderId(int orderId) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int orderId;
+      protected ProductOrder orderDetails;
+
+      /**
+       * @see ProductOrderReceipt#getOrderId()
+       */
+      public T orderId(int orderId) {
          this.orderId = orderId;
-         return this;
+         return self();
       }
 
-      public Builder orderDetails(ProductOrder orderDetails) {
+      /**
+       * @see ProductOrderReceipt#getOrderDetails()
+       */
+      public T orderDetails(ProductOrder orderDetails) {
          this.orderDetails = orderDetails;
-         return this;
+         return self();
       }
 
       public ProductOrderReceipt build() {
-         return new ProductOrderReceipt(orderId,orderDetails);
+         return new ProductOrderReceipt(orderId, orderDetails);
       }
 
-      public static Builder fromAddress(ProductOrderReceipt in) {
-         return ProductOrderReceipt.builder().orderId(in.getOrderId()).orderDetails(in.getOrderDetails());
+      public T fromProductOrderReceipt(ProductOrderReceipt in) {
+         return this
+               .orderId(in.getOrderId())
+               .orderDetails(in.getOrderDetails());
       }
    }
 
-   private int orderId = -1;
-   private ProductOrder orderDetails;
-
-   // for deserializer
-   ProductOrderReceipt() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public ProductOrderReceipt(int orderId,ProductOrder orderDetails) {
+   private final int orderId;
+   private final ProductOrder orderDetails;
+
+   @ConstructorProperties({
+         "orderId", "orderDetails"
+   })
+   protected ProductOrderReceipt(int orderId, @Nullable ProductOrder orderDetails) {
       this.orderId = orderId;
       this.orderDetails = orderDetails;
-   }
-
-   @Override
-   public int compareTo(ProductOrderReceipt arg0) {
-      return Integer.valueOf(orderId).compareTo(arg0.getOrderId());
    }
 
    /**
     * @return unique identifier for the order.
     */
    public int getOrderId() {
-      return orderId;
+      return this.orderId;
    }
 
    /**
@@ -83,40 +106,33 @@ public class ProductOrderReceipt implements Comparable<ProductOrderReceipt> {
     * This will only return when an order is processed successfully.
     * It will contain all the items in an order as well as the order totals.
     */
+   @Nullable
    public ProductOrder getOrderDetails() {
-      return orderDetails;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromAddress(this);
+      return this.orderDetails;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (orderId ^ (orderId >>> 32));
-      return result;
+      return Objects.hashCode(orderId, orderDetails);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ProductOrderReceipt other = (ProductOrderReceipt) obj;
-      if (orderId != other.orderId)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ProductOrderReceipt that = ProductOrderReceipt.class.cast(obj);
+      return Objects.equal(this.orderId, that.orderId)
+            && Objects.equal(this.orderDetails, that.orderDetails);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("orderId", orderId).add("orderDetails", orderDetails);
    }
 
    @Override
    public String toString() {
-      return "[orderId=" + orderId + ", orderDetails="+orderDetails+"]";
+      return string().toString();
    }
-   
-   
+
 }

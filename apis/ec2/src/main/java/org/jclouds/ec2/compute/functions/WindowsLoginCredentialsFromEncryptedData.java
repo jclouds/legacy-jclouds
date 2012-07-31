@@ -54,7 +54,7 @@ public class WindowsLoginCredentialsFromEncryptedData implements Function<Passwo
 
    @Override
    public LoginCredentials apply(@Nullable PasswordDataAndPrivateKey dataAndKey) {
-      if(dataAndKey == null)
+      if (dataAndKey == null)
          return null;
 
       try {
@@ -69,10 +69,10 @@ public class WindowsLoginCredentialsFromEncryptedData implements Function<Passwo
          String password = new String(plainText, Charset.forName("ASCII"));
 
          return LoginCredentials.builder()
-            .user("Administrator")
-            .password(password)
-            .noPrivateKey()
-            .build();
+                                .user("Administrator")
+                                .password(password)
+                                .noPrivateKey()
+                                .build();
       } catch(Exception e) {
          throw Throwables.propagate(e);
       }

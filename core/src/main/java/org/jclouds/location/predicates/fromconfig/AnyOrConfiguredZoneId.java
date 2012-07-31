@@ -52,5 +52,10 @@ public class AnyOrConfiguredZoneId implements ZoneIdFilter {
          return true;
       return idsInConfig.contains(input);
    }
+   
+   @Override
+   public String toString() {
+      return "anyOrConfiguredZoneId(" + idsInConfigSupplier + ")";
+   }
 
 }

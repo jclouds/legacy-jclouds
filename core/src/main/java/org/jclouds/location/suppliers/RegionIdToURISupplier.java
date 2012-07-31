@@ -20,6 +20,7 @@ package org.jclouds.location.suppliers;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.suppliers.fromconfig.RegionIdToURIFromConfigurationOrDefaultToProvider;
@@ -44,9 +45,10 @@ public interface RegionIdToURISupplier extends Supplier<Map<String, Supplier<URI
        * @param apiVersion
        *           version of the api, or null if not available
        * @return regions mapped to default uri
+       * @throws NoSuchElementException if the {@code apiType} is not present in the catalog
        */
       RegionIdToURISupplier createForApiTypeAndVersion(@Assisted("apiType") String apiType,
-               @Nullable @Assisted("apiVersion") String apiVersion);
+               @Nullable @Assisted("apiVersion") String apiVersion) throws NoSuchElementException;
    }
 
 }

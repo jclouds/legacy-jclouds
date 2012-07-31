@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,118 +20,123 @@ package org.jclouds.softlayer.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Extends the SoftLayer_Software_Component data type to include operating system specific properties.
- * 
+ *
  * @author Jason King
  * @see <a href=
- *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Software_Component_OperatingSystem"
- *      />
+"http://sldn.softlayer.com/reference/datatypes/SoftLayer_Software_Component_OperatingSystem"
+/>
  */
-public class OperatingSystem implements Comparable<OperatingSystem> {
+public class OperatingSystem {
 
-   // There are other properties
-
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int id = -1;
-      private Set<Password> passwords = Sets.newLinkedHashSet();
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromOperatingSystem(this);
+   }
 
-      public Builder id(int id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected Set<Password> passwords = ImmutableSet.of();
+
+      /**
+       * @see OperatingSystem#getId()
+       */
+      public T id(int id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder password(Password password) {
-         this.passwords.add(checkNotNull(password, "password"));
-         return this;
+      /**
+       * @see OperatingSystem#getPasswords()
+       */
+      public T passwords(Set<Password> passwords) {
+         this.passwords = ImmutableSet.copyOf(checkNotNull(passwords, "passwords"));
+         return self();
       }
 
-      public Builder passwords(Iterable<Password> passwords) {
-         this.passwords = ImmutableSet.<Password> copyOf(checkNotNull(passwords, "passwords"));
-         return this;
+      public T passwords(Password... in) {
+         return passwords(ImmutableSet.copyOf(in));
       }
 
       public OperatingSystem build() {
          return new OperatingSystem(id, passwords);
       }
 
-      public static Builder fromOperatingSystem(OperatingSystem in) {
-         return OperatingSystem.builder()
-                               .id(in.getId())
-                               .passwords(in.getPasswords());
+      public T fromOperatingSystem(OperatingSystem in) {
+         return this
+               .id(in.getId())
+               .passwords(in.getPasswords());
       }
    }
 
-   private int id = -1;
-   private Set<Password> passwords = Sets.newLinkedHashSet();
-
-   // for deserializer
-   OperatingSystem() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public OperatingSystem(int id,Iterable<Password> passwords) {
+   private final int id;
+   private final Set<Password> passwords;
+
+   @ConstructorProperties({
+         "id", "passwords"
+   })
+   protected OperatingSystem(int id, @Nullable Set<Password> passwords) {
       this.id = id;
-      this.passwords = ImmutableSet.<Password> copyOf(checkNotNull(passwords, "passwords"));
-   }
-
-   @Override
-   public int compareTo(OperatingSystem arg0) {
-      return Integer.valueOf(id).compareTo(arg0.getId());
+      this.passwords = passwords == null ? ImmutableSet.<Password>of() : ImmutableSet.copyOf(passwords);
    }
 
    /**
     * @return An ID number identifying this Software Component (Software Installation)
     */
    public int getId() {
-      return id;
+      return this.id;
    }
 
    /**
-    * 
     * @return Username/Password pairs used for access to this Software Installation.
     */
    public Set<Password> getPasswords() {
-      return passwords;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromOperatingSystem(this);
+      return this.passwords;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (id ^ (id >>> 32));
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      OperatingSystem other = (OperatingSystem) obj;
-      if (id != other.id)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      OperatingSystem that = OperatingSystem.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("passwords", passwords);
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", passwords=" + passwords + "]";
+      return string().toString();
    }
+
 }

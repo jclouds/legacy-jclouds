@@ -35,7 +35,7 @@
 
   <properties>
     <!-- keystone endpoint -->
-    <test.openstack-quantum.endpoint>http://localhost:5000</test.openstack-quantum.endpoint>
+    <test.openstack-quantum.endpoint>http://localhost:5000/v2.0/</test.openstack-quantum.endpoint>
     <!-- keystone version -->
     <test.openstack-quantum.api-version>1.0</test.openstack-quantum.api-version>
     <test.openstack-quantum.build-version></test.openstack-quantum.build-version>

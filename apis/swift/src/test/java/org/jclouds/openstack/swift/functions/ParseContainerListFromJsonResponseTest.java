@@ -53,8 +53,8 @@ public class ParseContainerListFromJsonResponseTest {
                .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
       Map<String, String> meta = new HashMap<String, String>();
 
-      List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata("test_container_1", 2, 78, null, meta),
-               new ContainerMetadata("test_container_2", 1, 17, null, meta));
+      List<ContainerMetadata> expects = ImmutableList.of(ContainerMetadata.builder().name("test_container_1").count( 2).bytes(78).metadata(meta).build(),
+               ContainerMetadata.builder().name("test_container_2").count(1).bytes(17).metadata(meta).build());
       ParseJson<List<ContainerMetadata>> parser = i.getInstance(Key
                .get(new TypeLiteral<ParseJson<List<ContainerMetadata>>>() {
                }));
