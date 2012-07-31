@@ -1,0 +1,13 @@
+#listing of all classes in the xml.internal package (at this time of writing)
+CreateVSYSResponse
+GetDiskImageAttributesResponse
+GetVServerAttributesResponse
+GetVServerConfigurationResponse
+GetVServerInitialPasswordResponse
+GetVServerStatusResponse
+GetVSYSAttributesResponse
+GetVSYSConfigurationResponse
+ListDiskImageResponse
+ListPublicIPResponse
+ListServerTypeResponse
+ListVSYSResponse
