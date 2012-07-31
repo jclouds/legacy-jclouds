@@ -31,7 +31,6 @@ public class VSphereConstants {
    public static final String VSPHERE_SEPARATOR = "-0x0-";
 
    public static final String VSPHERE_PREFIX = "jclouds-";
-<<<<<<< HEAD
    
    public static final String CLONING = "jclouds.vsphere.cloning";
 
@@ -39,7 +38,4 @@ public class VSphereConstants {
 
    public static final String VSPHERE_SNAPSHOT_DESCRITPION = "automatically created by Jclouds";
    
-=======
-
->>>>>>> a337b6ca8e4b24dee2f093235a7291fc83b31b3f
 }
