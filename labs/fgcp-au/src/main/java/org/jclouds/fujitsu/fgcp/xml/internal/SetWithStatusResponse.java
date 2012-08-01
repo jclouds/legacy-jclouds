@@ -42,16 +42,8 @@ public abstract class SetWithStatusResponse<T> extends ForwardingSet<T>
         return responseMessage;
     }
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
-
     public String getResponseStatus() {
         return responseStatus;
-    }
-
-    public void setResponseStatus(String responseStatus) {
-        this.responseStatus = responseStatus;
     }
 
     public boolean isError() {

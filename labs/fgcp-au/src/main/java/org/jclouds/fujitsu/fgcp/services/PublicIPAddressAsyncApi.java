@@ -70,14 +70,13 @@ public interface PublicIPAddressAsyncApi {
     @QueryParams(keys = "Action", values = "GetPublicIPStatus")
     @Transform(SingleElementResponseToElement.class)
     ListenableFuture<PublicIPStatus> getStatus(
-            @QueryParam("vsysId") String systemId,
             @QueryParam("publicIp") String ip);
 
     @GET
     @JAXBResponseParser
     @QueryParams(keys = "Action", values = "GetPublicIPAttributes")
-    ListenableFuture<Set<PublicIP>> get(@QueryParam("vsysId") String systemId,
-            @QueryParam("publicIp") String ip);
+    @Transform(SingleElementResponseToElement.class)
+    ListenableFuture<PublicIP> get(@QueryParam("publicIp") String ip);
 
     @GET
     @JAXBResponseParser

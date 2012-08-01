@@ -18,11 +18,14 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Holds the statistics of a virtual server.
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "performanceinfo")
 public class PerformanceInfo {
     private long recordTime;
     private double cpuUtilization;

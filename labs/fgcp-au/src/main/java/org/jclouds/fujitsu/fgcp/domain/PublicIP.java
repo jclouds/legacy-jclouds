@@ -18,7 +18,11 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.xml.bind.annotation.XmlElement;
+
+import com.google.common.base.CaseFormat;
 
 /**
  * Represents a public IP address.
@@ -29,65 +33,38 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author Dies Koper
  */
-@XmlRootElement(name = "publicip")
 public class PublicIP {
-    private String address;
-    private String v4v6Flag;
-    private String vsysId;
+
+    public static enum Version {
+        IPv4, IPv6, UNRECOGNIZED;
+
+        @Override
+        public String toString() {
+            return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,
+                    name());
+        }
+
+        public static Version fromValue(String version) {
+            try {
+                return valueOf(CaseFormat.UPPER_CAMEL.to(
+                        CaseFormat.UPPER_UNDERSCORE,
+                        checkNotNull(version, "version")));
+            } catch (IllegalArgumentException e) {
+                return UNRECOGNIZED;
+            }
+        }
+
+    }
+
+    protected String address;
+    @XmlElement(name = "v4v6Flag")
+    protected Version version;
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getV4v6Flag() {
-        return v4v6Flag;
-    }
-
-    public void setV4v6Flag(String v4v6Flag) {
-        this.v4v6Flag = v4v6Flag;
-    }
-
-    public String getVsysId() {
-        return vsysId;
-    }
-
-    public void setVsysId(String vsysId) {
-        this.vsysId = vsysId;
-    }
-
-    @Override
-    public String toString() {
-        return "PublicIP{" + "address='" + address + '\'' + ", v4v6Flag='"
-                + v4v6Flag + '\'' + ", vsysId='" + vsysId + '\'' + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof PublicIP))
-            return false;
-
-        PublicIP publicIP = (PublicIP) o;
-
-        if (address != null ? !address.equals(publicIP.address)
-                : publicIP.address != null)
-            return false;
-        if (v4v6Flag != null ? !v4v6Flag.equals(publicIP.v4v6Flag)
-                : publicIP.v4v6Flag != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = address != null ? address.hashCode() : 0;
-        result = 31 * result + (v4v6Flag != null ? v4v6Flag.hashCode() : 0);
-        return result;
+    public Version getVersion() {
+        return version;
     }
 }

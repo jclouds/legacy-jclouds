@@ -46,6 +46,34 @@ public class VirtualServerApiExpectTest extends BaseFGCPRestApiExpectTest {
         serverApi.start("CONTRACT-VSYS00001-S-0001");
     }
 
+    public void testStop() {
+        HttpRequest request = buildGETWithQuery("Action=StopVServer"
+                + "&vserverId=CONTRACT-VSYS00001-S-0001"
+                + "&vsysId=CONTRACT-VSYS00001");
+        HttpResponse response = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/StopVServer-response.xml"))
+                .build();
+
+        VirtualServerApi serverApi = requestSendsResponse(request, response)
+                .getVirtualServerApi();
+
+        serverApi.stop("CONTRACT-VSYS00001-S-0001");
+    }
+
+    public void testDestroy() {
+        HttpRequest request = buildGETWithQuery("Action=DestroyVServer"
+                + "&vserverId=CONTRACT-VSYS00001-S-0001"
+                + "&vsysId=CONTRACT-VSYS00001");
+        HttpResponse response = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/DestroyVServer-response.xml"))
+                .build();
+
+        VirtualServerApi serverApi = requestSendsResponse(request, response)
+                .getVirtualServerApi();
+
+        serverApi.destroy("CONTRACT-VSYS00001-S-0001");
+    }
+
     public void testGet() {
         HttpRequest request = buildGETWithQuery("Action=GetVServerAttributes"
                 + "&vserverId=CONTRACT-VSYS00001-S-0001"
@@ -113,4 +141,58 @@ public class VirtualServerApiExpectTest extends BaseFGCPRestApiExpectTest {
 
         assertEquals(serverApi.getInitialPassword("CONTRACT-VSYS00001-S-0001"), "mySecretpwd1");
     }
+
+    public void testUpdate() {
+        HttpRequest request = buildGETWithQuery("Action=UpdateVServerAttribute"
+                + "&vserverId=CONTRACT-VSYS00001-S-0001"
+                + "&attributeValue=new%20name"
+                + "&attributeName=vserverName"
+                + "&vsysId=CONTRACT-VSYS00001");
+        HttpResponse response = HttpResponse
+                .builder()
+                .statusCode(200)
+                .payload(
+                        payloadFromResource("/UpdateVServerAttribute-response.xml"))
+                .build();
+
+        VirtualServerApi serverApi = requestSendsResponse(request, response)
+                .getVirtualServerApi();
+
+        serverApi.update("CONTRACT-VSYS00001-S-0001", "vserverName", "new name");
+    }
+
+    public void testAttachDisk() {
+        HttpRequest request = buildGETWithQuery("Action=AttachVDisk"
+                + "&vserverId=CONTRACT-VSYS00001-S-0001"
+                + "&vdiskId=CONTRACT-VSYS00001-D-0001"
+                + "&vsysId=CONTRACT-VSYS00001");
+        HttpResponse response = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/AttachVDisk-response.xml"))
+                .build();
+
+        VirtualServerApi serverApi = requestSendsResponse(request, response)
+                .getVirtualServerApi();
+
+        serverApi.attachDisk("CONTRACT-VSYS00001-S-0001", "CONTRACT-VSYS00001-D-0001");
+    }
+
+/*    public void testGetPerformanceInformation() {
+        HttpRequest request = buildGETWithQuery("Action=GetPerformanceInformation"
+                + "&serverId=CONTRACT-VSYS00001-S-0001"
+                + "&interval=10minute"
+                + "&vsysId=CONTRACT-VSYS00001");
+        HttpResponse response = HttpResponse
+                .builder()
+                .statusCode(200)
+                .payload(
+                        payloadFromResource("/GetPerformanceInformation-response.xml"))
+                .build();
+
+        VirtualServerApi serverApi = requestSendsResponse(request, response)
+                .getVirtualServerApi();
+
+        assertNotNull(serverApi.getPerformanceInformation(
+                "CONTRACT-VSYS00001-S-0001", "10minute"));
+    }
+*/
 }

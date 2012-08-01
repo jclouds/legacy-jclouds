@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "cpu")
 public class CPU {
     @XmlElement(name = "cpuArch")
     private String arch;

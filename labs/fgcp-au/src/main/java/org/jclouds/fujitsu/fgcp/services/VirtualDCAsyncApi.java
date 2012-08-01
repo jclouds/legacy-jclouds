@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -105,11 +106,15 @@ public interface VirtualDCAsyncApi {
             @Nullable @QueryParam("serverCategory") String serverCategory,
             @Nullable @QueryParam("vsysDescriptorId") String vsysDescriptorId);
 
+    /**
+     *
+     * @return
+     * @see VirtualSystemAsyncApi#listPublicIPs(String)
+     */
     @GET
     @JAXBResponseParser
-    // add optional vsysId or use separate method?
     @QueryParams(keys = "Action", values = "ListPublicIP")
-    ListenableFuture<Set<PublicIP>> listPublicIPs();
+    ListenableFuture<Map<PublicIP, String>> listPublicIPs();
 
     @GET
     @JAXBResponseParser

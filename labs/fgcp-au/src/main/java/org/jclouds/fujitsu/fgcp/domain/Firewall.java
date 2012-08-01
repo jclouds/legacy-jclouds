@@ -20,11 +20,14 @@ package org.jclouds.fujitsu.fgcp.domain;
 
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Represents a firewall (FW).
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "fw")
 public class Firewall {
     private NAT nat;
     private Set<Direction> directions;

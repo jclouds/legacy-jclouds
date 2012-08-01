@@ -22,10 +22,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
+import java.util.Map;
 import java.util.Set;
-
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 import org.jclouds.fujitsu.fgcp.domain.PublicIP;
@@ -34,8 +32,6 @@ import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Dies Koper
@@ -50,9 +46,9 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .payload(payloadFromResource("/ListVSYS-response.xml"))
                 .build();
 
-        VirtualDCApi client = requestSendsResponse(request, response).getVirtualDCApi();
+        VirtualDCApi api = requestSendsResponse(request, response).getVirtualDCApi();
 
-        Set<? extends VSystem> vsysSet = client.listVirtualSystems();
+        Set<VSystem> vsysSet = api.listVirtualSystems();
         assertEquals(vsysSet.size(), 2);
     }
 
@@ -62,10 +58,10 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .statusCode(200)
                 .payload(payloadFromResource("/CreateVSYS-response.xml"))
                 .build();
-        VirtualDCApi client = requestSendsResponse(request, response)
+        VirtualDCApi api = requestSendsResponse(request, response)
                 .getVirtualDCApi();
 
-        String vsysId = client.createVirtualSystem("myDescId", "myVSYS");
+        String vsysId = api.createVirtualSystem("myDescId", "myVSYS");
         assertEquals(vsysId, "CONTRACT-VSYS00001", "vsysId: " + vsysId);
     }
 
@@ -76,14 +72,13 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .statusCode(200)
                 .payload(payloadFromResource("/ListServerType-response.xml"))
                 .build();
-        VirtualDCApi client = requestSendsResponse(request, response)
+        VirtualDCApi api = requestSendsResponse(request, response)
                 .getVirtualDCApi();
 
-        Set<ServerType> serverTypes = client.listServerTypes();
+        Set<ServerType> serverTypes = api.listServerTypes();
         assertNotNull(serverTypes, "serverTypes");
         assertEquals(serverTypes.size(), 4,
                 "Unexpected number of server types: " + serverTypes.size());
-//        System.out.println("return val: " + serverTypes);
     }
 
     public void testListPublicIPs() {
@@ -92,13 +87,16 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .statusCode(200)
                 .payload(payloadFromResource("/ListPublicIP-response.xml"))
                 .build();
-        VirtualDCApi client = requestSendsResponse(request, response)
+        VirtualDCApi api = requestSendsResponse(request, response)
                 .getVirtualDCApi();
 
-        Set<? extends PublicIP> ips = client.listPublicIPs();
+        Map<PublicIP, String> ips = api.listPublicIPs();
+
         assertNotNull(ips, "ips");
-        assertTrue(ips.size() > 1, "Unexpected number of ips: " + ips.size());
-//        System.out.println("return val: " + ips);
+        assertEquals(ips.size(), 2, "Unexpected number of ips: " + ips.size());
+        assertEquals(ips.keySet().size(), 2, "Unexpected number of ips: " + ips.size());
+        assertTrue(ips.containsValue("ABCDEFGH-A123B456CE"), "missing system id");
+        assertEquals(ips.keySet().iterator().next().getVersion(), PublicIP.Version.IPv4);
     }
 
     public void testListDiskImages() {
@@ -107,10 +105,10 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .statusCode(200)
                 .payload(payloadFromResource("/ListDiskImages-response.xml"))
                 .build();
-        VirtualDCApi client = requestSendsResponse(request, response)
+        VirtualDCApi api = requestSendsResponse(request, response)
                 .getVirtualDCApi();
 
-        Set<? extends DiskImage> images = client.listDiskImages();
+        Set<DiskImage> images = api.listDiskImages();
         assertNotNull(images, "images");
         assertTrue(images.size() > 5, "Unexpected number of images: " + images.size());
 //        System.out.println("return val: " + images);
@@ -122,10 +120,10 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .statusCode(200)
                 .payload(payloadFromResource("/ListDiskImage-response.xml"))
                 .build();
-        VirtualDCApi client = requestSendsResponse(request, response)
+        VirtualDCApi api = requestSendsResponse(request, response)
                 .getVirtualDCApi();
 
-        Set<? extends DiskImage> images = client.listDiskImages(null, "IMG_A1B2C3_1234567890ABCD");
+        Set<DiskImage> images = api.listDiskImages(null, "IMG_A1B2C3_1234567890ABCD");
         assertNotNull(images, "images");
         assertTrue(images.size() == 1, "Unexpected number of images: " + images.size());
 //        System.out.println("return val: " + images);
@@ -137,29 +135,14 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
                 .statusCode(200)
                 .payload(payloadFromResource("/GetDiskImageAttributes-response.xml"))
                 .build();
-        client client = requestSendsResponse(request, response)
+        VirtualDCApi api = requestSendsResponse(request, response)
                 .getVirtualDataCenter();
 
-        DiskImage image = client.getDiskImageAttributes("IMG_A1B2C3_1234567890ABCD");
+        DiskImage image = api.getDiskImageAttributes("IMG_A1B2C3_1234567890ABCD");
 
         assertNotNull(image, "image");
         System.out.println("return val: " + image);
     }
 */
-    protected HttpRequest preparePOSTForAction(String action) {
-        return HttpRequest
-                .builder()
-                .method("POST")
-                .endpoint(
-                        URI.create("https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint"))
-                .payload(
-                        payloadFromResourceWithContentType(
-                                "/" + action.toLowerCase() + "-request.xml",
-                                MediaType.TEXT_XML))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "text/xml")
-                                .put("User-Agent", "OViSS-API-CLIENT").build())
-                .build();
-    }
+
 }

@@ -21,6 +21,7 @@ package org.jclouds.fujitsu.fgcp.services;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.domain.*;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +48,7 @@ public interface VirtualDCApi {
     Set<DiskImage> listDiskImages(@Nullable String serverCategory,
             @Nullable String vsysDescriptorId);
 
-    Set<PublicIP> listPublicIPs();
+    Map<PublicIP, String> listPublicIPs();
 
     void addAddressRange(String pipFrom, String pipTo);
 

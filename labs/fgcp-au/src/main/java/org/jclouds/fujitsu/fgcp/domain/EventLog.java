@@ -18,11 +18,14 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Represents an entry in the event log.
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "errorlog")
 public class EventLog {
     private String title;
     private String message;

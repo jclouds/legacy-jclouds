@@ -20,11 +20,14 @@ package org.jclouds.fujitsu.fgcp.domain;
 
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Holds statistics of errors reported by a load balancer (SLB).
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "errorstatistics")
 public class ErrorStatistics {
     private Period period;
     private Set<Group> groups;

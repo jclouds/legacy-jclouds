@@ -18,11 +18,14 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Describes a server certificate for use with a load balancer (SLB).
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "servercert")
 public class ServerCert {
     private String certNum;
 

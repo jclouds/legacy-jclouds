@@ -18,6 +18,8 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.google.common.base.CaseFormat;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -27,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "vdiskStatus")
 public enum VDiskStatus {
 
     NORMAL, BACKUP_ING, DEPLOYING, DETACHING, ATTACHING, RESTORING, ERROR, UNRECOGNIZED;

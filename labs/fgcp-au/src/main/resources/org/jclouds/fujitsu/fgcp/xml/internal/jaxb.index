@@ -1,6 +1,8 @@
 #listing of all classes in the xml.internal package (at this time of writing)
 CreateVSYSResponse
 GetDiskImageAttributesResponse
+GetPublicIPAttributesResponse
+GetPublicIPStatusResponse
 GetVServerAttributesResponse
 GetVServerConfigurationResponse
 GetVServerInitialPasswordResponse
@@ -11,3 +13,4 @@ ListDiskImageResponse
 ListPublicIPResponse
 ListServerTypeResponse
 ListVSYSResponse
+PublicIPWithSystemId
