@@ -124,7 +124,19 @@
             <version>2.4</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jclouds.labs</groupId>
+            <artifactId>fgcp</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.labs</groupId>
+            <artifactId>fgcp</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
