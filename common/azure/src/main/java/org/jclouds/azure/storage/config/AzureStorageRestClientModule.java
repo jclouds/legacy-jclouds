@@ -20,6 +20,7 @@ package org.jclouds.azure.storage.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -52,6 +53,10 @@ public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
 
    }
 
+   public AzureStorageRestClientModule(Map<Class<?>, Class<?>> delegate) {
+	      super(delegate);
+	   }
+   
    public AzureStorageRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }

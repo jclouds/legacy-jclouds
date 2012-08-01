@@ -56,5 +56,6 @@
        <module>rds</module>
        <module>aws-rds</module>
        <module>smartos-ssh</module>
+	   <module>azure-servicemanagement</module>
     </modules>
 </project>
