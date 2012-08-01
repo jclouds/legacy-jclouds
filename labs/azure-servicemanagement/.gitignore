@@ -1,9 +1,0 @@
-# use glob syntax.
-syntax: glob
-target
-.settings
-.classpath
-.project
-jclouds-azure-servicemanagement.iml
-jclouds-azure-servicemanagement.ipr
-jclouds-azure-servicemanagement.iws

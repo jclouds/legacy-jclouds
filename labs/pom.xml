@@ -58,5 +58,6 @@
        <module>smartos-ssh</module>
 	   <module>azure-servicemanagement</module>
        <module>cloudstack-ec2</module>
+       <module>azure-management</module>
     </modules>
 </project>
