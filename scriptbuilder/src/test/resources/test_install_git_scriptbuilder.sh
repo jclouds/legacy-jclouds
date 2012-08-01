@@ -123,9 +123,9 @@ function ensure_can_resolve_public_dns() {
 
 function setupPublicCurl() {
   ensure_hostname_in_hosts
-  if hash apt-get 2>/dev/null; then
+  if which dpkg &> /dev/null; then
     ensure_netutils_apt
-  elif hash yum 2>/dev/null; then
+  elif which rpm &> /dev/null; then
     ensure_netutils_yum
   else
     abort "we only support apt-get and yum right now... please contribute!"
@@ -135,9 +135,9 @@ function setupPublicCurl() {
   return 0  
 }
 function installGit() {
-  if hash apt-get 2>/dev/null; then
+  if which dpkg &> /dev/null; then
     ensure_cmd_or_install_package_apt git git-core
-  elif hash yum 2>/dev/null; then
+  elif which rpm &> /dev/null; then
     ensure_cmd_or_install_package_yum git git-core
   else
     abort "we only support apt-get and yum right now... please contribute!"
