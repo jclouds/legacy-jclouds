@@ -19,12 +19,14 @@
 package org.jclouds.fujitsu.fgcp.domain;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Represents attachable storage in the form of a virtual disk.
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "vdisk")
 public class VDisk {
     @XmlElement(name = "diskId")
     private String id;

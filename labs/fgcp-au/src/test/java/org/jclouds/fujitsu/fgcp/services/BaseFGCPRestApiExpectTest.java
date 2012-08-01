@@ -26,6 +26,8 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.fujitsu.fgcp.FGCPApi;
 import org.jclouds.fujitsu.fgcp.FGCPProviderMetadata;
 import org.jclouds.fujitsu.fgcp.compute.FGCPRestClientModule;
@@ -100,4 +102,20 @@ public class BaseFGCPRestApiExpectTest extends
                 .build();
     }
 
+    protected HttpRequest preparePOSTForAction(String action) {
+        return HttpRequest
+                .builder()
+                .method("POST")
+                .endpoint(
+                        URI.create("https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint"))
+                .payload(
+                        payloadFromResourceWithContentType(
+                                "/" + action.toLowerCase() + "-request.xml",
+                                MediaType.TEXT_XML))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "text/xml")
+                                .put("User-Agent", "OViSS-API-CLIENT").build())
+                .build();
+    }
 }

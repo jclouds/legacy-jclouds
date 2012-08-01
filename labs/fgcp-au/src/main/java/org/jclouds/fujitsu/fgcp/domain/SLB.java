@@ -20,11 +20,14 @@ package org.jclouds.fujitsu.fgcp.domain;
 
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Represents a software load balancer.
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "slb")
 public class SLB {
     private String ipAddress;
 

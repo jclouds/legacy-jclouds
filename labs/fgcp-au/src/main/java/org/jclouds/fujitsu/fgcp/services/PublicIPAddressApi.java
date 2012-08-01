@@ -38,12 +38,7 @@ public interface PublicIPAddressApi {
 
     void free(String systemId, String ip);
 
-    PublicIPStatus getStatus(String systemId, String ip);
+    PublicIPStatus getStatus(String ip);
 
-    PublicIP get(String systemId, String ip);
-
-    /*
-     * AttachPublicIP DetachPublicIP FreePublicIP GetPublicIPAttributes
-     * GetPublicIPStatus
-     */
+    PublicIP get(String ip);
 }

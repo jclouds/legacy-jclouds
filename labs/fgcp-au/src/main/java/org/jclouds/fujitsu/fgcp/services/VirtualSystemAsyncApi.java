@@ -127,9 +127,15 @@ public interface VirtualSystemAsyncApi {
     @QueryParams(keys = "Action", values = "AllocatePublicIP")
     ListenableFuture<Void> allocatePublicIP(@QueryParam("vsysId") String id);
 
+    /**
+     *
+     * @return
+     * @see VirtualDCAsyncApi#listPublicIPs()
+     */
     @GET
     @JAXBResponseParser
     @QueryParams(keys = "Action", values = "ListPublicIP")
+    @Transform(SingleElementResponseToElement.class)
     ListenableFuture<Set<PublicIP>> listPublicIPs(
             @QueryParam("vsysId") String id);
 

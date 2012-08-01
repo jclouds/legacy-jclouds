@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -66,7 +67,8 @@ public class VirtualSystemApiExpectTest extends BaseFGCPRestApiExpectTest {
     }
 
     public void testListPublicIPs() {
-        HttpRequest request = buildGETWithQuery("Action=ListPublicIP&vsysId=ABCDEFGH-A123B456CE");
+        HttpRequest request = buildGETWithQuery("Action=ListPublicIP"
+                + "&vsysId=ABCDEFGH-A123B456CE");
         HttpResponse response = HttpResponse
                 .builder()
                 .statusCode(200)
@@ -79,6 +81,7 @@ public class VirtualSystemApiExpectTest extends BaseFGCPRestApiExpectTest {
         Set<PublicIP> ips = client.listPublicIPs("ABCDEFGH-A123B456CE");
         assertNotNull(ips, "ips");
         assertTrue(ips.size() == 2, "Unexpected number of ips: " + ips.size());
+        assertEquals(ips.iterator().next().getVersion(), PublicIP.Version.IPv4);
     }
 
 }

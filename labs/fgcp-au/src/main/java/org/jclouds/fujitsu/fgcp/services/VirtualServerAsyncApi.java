@@ -118,14 +118,22 @@ public interface VirtualServerAsyncApi {
     @QueryParams(keys = "Action", values = "AttachVDisk")
     ListenableFuture<Void> attachDisk(
             @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String serverId,
-            @QueryParam("diskId") String diskId);
+            @QueryParam("vdiskId") String diskId);
 
     @GET
     @JAXBResponseParser
     @QueryParams(keys = "Action", values = "GetPerformanceInformation")
     ListenableFuture<Set<PerformanceInfo>> getPerformanceInformation(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id,
-            String interval);
+            @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
+            @QueryParam("interval") String interval);
+
+    @GET
+    @JAXBResponseParser
+    @QueryParams(keys = "Action", values = "GetPerformanceInformation")
+    ListenableFuture<Set<PerformanceInfo>> getPerformanceInformation(
+            @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
+            @QueryParam("dataType") String dataType,
+            @QueryParam("interval") String interval);
 
     @POST
     @JAXBResponseParser

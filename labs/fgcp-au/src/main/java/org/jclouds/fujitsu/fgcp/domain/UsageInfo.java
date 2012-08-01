@@ -22,12 +22,14 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Describes the usage by a virtual system.
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "usageinfo")
 public class UsageInfo {
     @XmlElement(name = "vsysId")
     private String systemId;

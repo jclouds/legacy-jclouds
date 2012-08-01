@@ -18,15 +18,19 @@
  */
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.fujitsu.fgcp.domain.PublicIP;
-import org.jclouds.fujitsu.fgcp.domain.ServerType;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collections;
-import java.util.Set;
+
+import org.jclouds.fujitsu.fgcp.domain.PublicIP;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Wrapper for ListPublicIPResponse.
@@ -34,24 +38,33 @@ import java.util.Set;
  * @author Dies Koper
  */
 @XmlRootElement(name = "ListPublicIPResponse")
-public class ListPublicIPResponse extends SetWithStatusResponse<PublicIP> {
+public class ListPublicIPResponse extends
+        MapWithStatusResponse<PublicIP, String> implements
+        SingleElementResponse {
     @XmlElementWrapper(name = "publicips")
     @XmlElement(name = "publicip")
-    private Set<PublicIP> publicIPs;
-
-    public void setPublicIPs(Set<PublicIP> publicIPs) {
-        this.publicIPs = publicIPs;
-    }
+    private Set<PublicIPWithSystemId> ips;
 
     @Override
     public String toString() {
-        return "ListPublicIPResponse{" + "publicIPs=" + publicIPs + "} "
-                + super.toString();
+        return "ListPublicIPResponse{" + "ips=" + ips + "} " + super.toString();
     }
 
     @Override
-    protected Set<PublicIP> delegate() {
-        return publicIPs == null ? ImmutableSet.<PublicIP> of() : Collections
-                .unmodifiableSet(publicIPs);
+    protected Map<PublicIP, String> delegate() {
+        Builder<PublicIP, String> returnVal = ImmutableMap.builder();
+        if (ips != null) {
+
+            for (PublicIPWithSystemId ip : ips) {
+                returnVal.put(ip, ip.getVsysId());
+            }
+        }
+        return returnVal.build();
+    }
+
+    @Override
+    public Set<? extends PublicIP> getElement() {
+        return ips == null ? ImmutableSet.<PublicIP> of() : Collections
+                .unmodifiableSet(ips);
     }
 }

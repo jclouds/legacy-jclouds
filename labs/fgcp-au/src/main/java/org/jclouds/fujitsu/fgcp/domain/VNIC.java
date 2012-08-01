@@ -18,11 +18,14 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Represents a virtual network interface card (NIC).
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "vnic")
 public class VNIC {
     private String networkId;
 

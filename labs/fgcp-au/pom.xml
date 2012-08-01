@@ -36,6 +36,19 @@
 
     <packaging>bundle</packaging>
 
+    <developers>
+        <developer>
+            <name>Dies Koper</name>
+            <id>dkoper</id>
+            <email>diesk -at- fast -dot- au -dot- fujitsu -dot- com</email>
+            <organization>Fujitsu</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+            <timezone>+10</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.fgcp-au.endpoint>https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint</test.fgcp-au.endpoint>

@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+
 /**
  * Represents a load balancer (SLB) log entry.
  * 

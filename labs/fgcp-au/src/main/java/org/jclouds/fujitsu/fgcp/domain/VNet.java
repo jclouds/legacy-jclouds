@@ -18,11 +18,14 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Represents a virtual network.
  * 
  * @author Dies Koper
  */
+@XmlRootElement(name = "vnet")
 public class VNet {
 
     private String networkId;
