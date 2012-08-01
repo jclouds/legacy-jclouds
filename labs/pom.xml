@@ -56,5 +56,7 @@
        <module>rds</module>
        <module>aws-rds</module>
        <module>smartos-ssh</module>
+       <module>fgcp</module>
+       <module>fgcp-au</module>
     </modules>
 </project>
