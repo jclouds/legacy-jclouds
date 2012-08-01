@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudservers.us;
+package org.jclouds.rackspace.cloudservers.uk;
 
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
@@ -33,7 +33,7 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rackspace.cloudservers.us.config.CloudServersUSComputeServiceContextModule;
+import org.jclouds.rackspace.cloudservers.uk.config.CloudServersUKComputeServiceContextModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -43,7 +43,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
+public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -300987074165012648L;
@@ -57,52 +57,51 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
       return builder().fromProviderMetadata(this);
    }
    
-   public CloudServersUSProviderMetadata() {
+   public CloudServersUKProviderMetadata() {
       super(builder());
    }
 
-   public CloudServersUSProviderMetadata(Builder builder) {
+   public CloudServersUKProviderMetadata(Builder builder) {
       super(builder);
    }
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
-      properties.setProperty(PROPERTY_ZONES, "ORD,DFW");
-      properties.setProperty(PROPERTY_ZONE + ".ORD." + ISO3166_CODES, "US-IL");
-      properties.setProperty(PROPERTY_ZONE + ".DFW." + ISO3166_CODES, "US-TX");
+      properties.setProperty(PROPERTY_ZONES, "LON");
+      properties.setProperty(PROPERTY_ZONE + ".LON." + ISO3166_CODES, "GB-SLG");
       return properties;
    }
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
-         id("rackspace-cloudservers-us")
-         .name("Rackspace Next Generation Cloud Servers US")
+         id("rackspace-cloudservers-uk")
+         .name("Rackspace Next Generation Cloud Servers UK")
          .apiMetadata(new NovaApiMetadata().toBuilder()
                   .identityName("${userName}")
                   .credentialName("${apiKey}")
                   .version("2")
-                  .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
+                  .defaultEndpoint("https://lon.identity.api.rackspacecloud.com/v2.0/")
                   .endpointName("identity service url ending in /v2.0/")
                   .documentation(URI.create("http://docs.rackspace.com/servers/api/v2/cs-devguide/content/ch_preface.html#webhelp-currentid"))
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                               .add(CloudIdentityAuthenticationModule.class)
                                               .add(ZoneModule.class)
                                               .add(NovaRestClientModule.class)
-                                              .add(CloudServersUSComputeServiceContextModule.class).build())
+                                              .add(CloudServersUKComputeServiceContextModule.class).build())
                   .build())
-         .homepage(URI.create("http://www.rackspace.com/cloud/nextgen"))
-         .console(URI.create("https://mycloud.rackspace.com"))
-         .linkedServices("rackspace-cloudservers-us", "cloudfiles-swift-us")
-         .iso3166Codes("US-IL", "US-TX")
-         .endpoint("https://identity.api.rackspacecloud.com/v2.0/")
-         .defaultProperties(CloudServersUSProviderMetadata.defaultProperties());
+         .homepage(URI.create("http://www.rackspace.co.uk/opencloud"))
+         .console(URI.create("https://mycloud.rackspace.co.uk/"))
+         .linkedServices("rackspace-cloudservers-uk", "cloudfiles-swift-uk")
+         .iso3166Codes("GB-SLG")
+         .endpoint("https://lon.identity.api.rackspacecloud.com/v2.0/")
+         .defaultProperties(CloudServersUKProviderMetadata.defaultProperties());
       }
 
       @Override
-      public CloudServersUSProviderMetadata build() {
-         return new CloudServersUSProviderMetadata(this);
+      public CloudServersUKProviderMetadata build() {
+         return new CloudServersUKProviderMetadata(this);
       }
 
       @Override

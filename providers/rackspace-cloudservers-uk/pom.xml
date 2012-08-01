@@ -28,18 +28,18 @@
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
-  <artifactId>rackspace-cloudservers-us</artifactId>
-  <name>jclouds Rackspace Next Generation Cloud Servers US provider</name>
-  <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers US</description>
+  <artifactId>rackspace-cloudservers-uk</artifactId>
+  <name>jclouds Rackspace Next Generation Cloud Servers provider</name>
+  <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers</description>
   <packaging>bundle</packaging>
 
   <properties>
-    <test.rackspace-cloudservers-us.endpoint>https://identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudservers-us.endpoint>
-    <test.rackspace-cloudservers-us.api-version>2</test.rackspace-cloudservers-us.api-version>
-    <test.rackspace-cloudservers-us.build-version></test.rackspace-cloudservers-us.build-version>
-    <test.rackspace-cloudservers-us.identity>${test.rackspace-us.identity}</test.rackspace-cloudservers-us.identity>
-    <test.rackspace-cloudservers-us.credential>${test.rackspace-us.credential}</test.rackspace-cloudservers-us.credential>
-    <test.rackspace-cloudservers-us.template></test.rackspace-cloudservers-us.template>
+    <test.rackspace-cloudservers-uk.endpoint>https://lon.identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudservers-uk.endpoint>
+    <test.rackspace-cloudservers-uk.api-version>2</test.rackspace-cloudservers-uk.api-version>
+    <test.rackspace-cloudservers-uk.build-version></test.rackspace-cloudservers-uk.build-version>
+    <test.rackspace-cloudservers-uk.identity>${test.rackspace-uk.identity}</test.rackspace-cloudservers-uk.identity>
+    <test.rackspace-cloudservers-uk.credential>${test.rackspace-uk.credential}</test.rackspace-cloudservers-uk.credential>
+    <test.rackspace-cloudservers-uk.template></test.rackspace-cloudservers-uk.template>
     <jclouds.osgi.export>org.jclouds.rackspace.cloudservers.us*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
@@ -126,12 +126,12 @@
                 <configuration>
                   <threadCount>1</threadCount>
                   <systemPropertyVariables>
-                    <test.rackspace-cloudservers-us.endpoint>${test.rackspace-cloudservers-us.endpoint}</test.rackspace-cloudservers-us.endpoint>
-                    <test.rackspace-cloudservers-us.api-version>${test.rackspace-cloudservers-us.api-version}</test.rackspace-cloudservers-us.api-version>
-                    <test.rackspace-cloudservers-us.build-version>${test.rackspace-cloudservers-us.build-version}</test.rackspace-cloudservers-us.build-version>
-                    <test.rackspace-cloudservers-us.identity>${test.rackspace-cloudservers-us.identity}</test.rackspace-cloudservers-us.identity>
-                    <test.rackspace-cloudservers-us.credential>${test.rackspace-cloudservers-us.credential}</test.rackspace-cloudservers-us.credential>
-                    <test.rackspace-cloudservers-us.template>${test.rackspace-cloudservers-us.template}</test.rackspace-cloudservers-us.template>
+                    <test.rackspace-cloudservers-uk.endpoint>${test.rackspace-cloudservers-uk.endpoint}</test.rackspace-cloudservers-uk.endpoint>
+                    <test.rackspace-cloudservers-uk.api-version>${test.rackspace-cloudservers-uk.api-version}</test.rackspace-cloudservers-uk.api-version>
+                    <test.rackspace-cloudservers-uk.build-version>${test.rackspace-cloudservers-uk.build-version}</test.rackspace-cloudservers-uk.build-version>
+                    <test.rackspace-cloudservers-uk.identity>${test.rackspace-cloudservers-uk.identity}</test.rackspace-cloudservers-uk.identity>
+                    <test.rackspace-cloudservers-uk.credential>${test.rackspace-cloudservers-uk.credential}</test.rackspace-cloudservers-uk.credential>
+                    <test.rackspace-cloudservers-uk.template>${test.rackspace-cloudservers-uk.template}</test.rackspace-cloudservers-uk.template>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
