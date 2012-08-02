@@ -266,7 +266,7 @@ public class TemplateBuilderSpec implements Serializable {
          builder.osArchMatches(osArchMatches);
       }
       if (osDescriptionMatches != null) {
-         builder.osArchMatches(osDescriptionMatches);
+         builder.osDescriptionMatches(osDescriptionMatches);
       }
       if (loginUser != null) {
          Builder loginBuilder = LoginCredentials.builder();
@@ -541,6 +541,7 @@ public class TemplateBuilderSpec implements Serializable {
          spec.osDescriptionMatches = value;
       }
    }
+   
    /** Parse loginUser */
    static class LoginUserParser extends StringParser {
       @Override
