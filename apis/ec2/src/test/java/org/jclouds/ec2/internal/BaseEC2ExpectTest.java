@@ -19,6 +19,7 @@
 package org.jclouds.ec2.internal;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.core.MediaType;
 
@@ -34,17 +35,21 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected static final String CONSTANT_DATE = "2012-04-16T15:54:08.897Z";
    
    protected DateService dateService = new SimpleDateFormatDateService();
    
+   protected FormSigner formSigner;
+
    protected HttpRequest describeRegionsRequest = HttpRequest.builder()
          .method("POST")
          .endpoint("https://ec2.us-east-1.amazonaws.com/")
@@ -52,15 +57,17 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
          .payload(payloadFromStringWithContentType(
                   "Action=DescribeRegions&Signature=s5OXKqaaeKhJW5FVrRntuMsUL4Ed5fjzgUWeukU96ko%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                   MediaType.APPLICATION_FORM_URLENCODED)).build();
+   
    protected HttpResponse describeRegionsResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/regionEndpoints-all.xml", MediaType.APPLICATION_XML))
          .build();
    
    protected final Map<HttpRequest, HttpResponse> describeAvailabilityZonesRequestResponse;
 
+
    public BaseEC2ExpectTest() {
       provider = "ec2";
-      FormSigner formSigner = createInjector(Functions.forMap(ImmutableMap.<HttpRequest, HttpResponse> of()),
+      formSigner = createInjector(Functions.forMap(ImmutableMap.<HttpRequest, HttpResponse> of()),
             createModule(), setupProperties()).getInstance(FormSigner.class);
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse> builder();
       for (String region : ImmutableSet.of("ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1", "us-east-1", "us-west-1", "us-west-2")){
@@ -81,7 +88,24 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
    }
 
    @ConfiguresRestClient
-   private static final class TestEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
+   protected static class TestEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
+
+      @Override
+      protected void configure() {
+         super.configure();
+         // predicatable node names
+         final AtomicInteger suffix = new AtomicInteger();
+         bind(new TypeLiteral<Supplier<String>>() {
+         }).toInstance(new Supplier<String>() {
+
+            @Override
+            public String get() {
+               return suffix.getAndIncrement() + "";
+            }
+
+         });
+      }
+
       @Override
       @Provides
       protected String provideTimeStamp(DateService dateService) {

@@ -157,20 +157,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Supplier<String> provideSuffix() {
-      return new Supplier<String>() {
-         final SecureRandom random = new SecureRandom();
-
-         @Override
-         public String get() {
-            return random.nextInt(100) + "";
-         }
-      };
-
-   }
-
-   @Provides
-   @Singleton
    protected LoadingCache<RunningInstance, Credentials> credentialsMap(CacheLoader<RunningInstance, Credentials> in) {
       return CacheBuilder.newBuilder().build(in);
    }
