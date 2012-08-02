@@ -20,7 +20,7 @@
             <privateDnsName/>
             <dnsName/>
             <reason/>
-            <keyName>jclouds#test#1</keyName>
+            <keyName>jclouds#test#0</keyName>
             <amiLaunchIndex>0</amiLaunchIndex>
             <productCodes/>
             <instanceType>t1.micro</instanceType>

@@ -20,7 +20,6 @@ package org.jclouds.ec2.compute.config;
 
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT;
 
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,6 @@ import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
@@ -67,7 +65,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -120,7 +117,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
-      bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
+      bind(new TypeLiteral<CacheLoader<RunningInstance, LoginCredentials>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
@@ -157,7 +154,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected LoadingCache<RunningInstance, Credentials> credentialsMap(CacheLoader<RunningInstance, Credentials> in) {
+   protected LoadingCache<RunningInstance, LoginCredentials> credentialsMap(CacheLoader<RunningInstance, LoginCredentials> in) {
       return CacheBuilder.newBuilder().build(in);
    }
 
