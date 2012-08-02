@@ -38,8 +38,9 @@ import org.jclouds.rest.annotations.Credential;
 import com.google.common.base.Supplier;
 
 /**
- * WARNING : COPIED FROM FG !
  * 
+ * TODO copied from FGCP, should be put in a common place
+ *  
  * SSLContext supplier with a configured key manager to enable client
  * authentication with certificates.
  * 

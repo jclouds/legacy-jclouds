@@ -16,28 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.azure.servicemanagement.features;
+@XmlSchema(namespace = "http://schemas.microsoft.com/windowsazure", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlAccessorType(XmlAccessType.FIELD)
+package org.jclouds.azure.servicemanagement.domain;
 
-import java.util.concurrent.TimeUnit;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlSchema;
 
-import org.jclouds.azure.servicemanagement.domain.Role;
-import org.jclouds.concurrent.Timeout;
-
-/**
- * Provides synchronous access to Role.
- * <p/>
- * 
- * @author Gerald Pereira
- * @see RoleAsyncClient
- * @see <a href="http://msdn.microsoft.com/en-us/library/jj157206">api doc</a>
- */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface RoleClient {
-
-	Role getRole(String subscriptionId,
-			String serviceName,
-			String deploymentName,
-			String roleName);
-
-
-}

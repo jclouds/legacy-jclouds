@@ -25,11 +25,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.azure.servicemanagement.domain.Role;
-import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -45,7 +44,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 
 @SkipEncoding('/')
-@RequestFilters(SharedKeyLiteAuthentication.class)
 //TODO We should rename this AzureStorageHeaders to AzureHeaders 
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2012-03-01")
 @Path("/")
@@ -53,9 +51,10 @@ public interface RoleAsyncClient {
 
 	@GET
 	@Path("{subscription-id}/services/hostedservices/{service-name}/deployments/{deployment-name}/roles/{role-name}")
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_ATOM_XML)
+	@JAXBResponseParser
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	ListenableFuture<String> getRole(@PathParam("subscription-id") String subscriptionId,
+	ListenableFuture<Role> getRole(@PathParam("subscription-id") String subscriptionId,
 			@PathParam("service-name") String serviceName,
 			@PathParam("deployment-name") String deploymentName,
 			@PathParam("role-name") String roleName);
