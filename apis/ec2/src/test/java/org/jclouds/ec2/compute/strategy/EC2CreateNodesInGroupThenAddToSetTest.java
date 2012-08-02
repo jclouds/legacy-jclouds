@@ -33,10 +33,10 @@ import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeUtils;
@@ -44,6 +44,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
@@ -116,13 +117,17 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
             Reservation.class.cast(reservation));
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
-      Credentials creds = new Credentials("foo", "bar");
+      LoginCredentials creds = LoginCredentials.builder().user("foo").privateKey("bar").build();
       expect(strategy.instanceToCredentials.apply(instance)).andReturn(creds);
       expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
       expect(strategy.instancePresent.apply(new RegionAndName(region, instanceCreatedId))).andReturn(true);
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
+      expect(input.options.getLoginUser()).andReturn(null);
+      expect(input.options.getLoginPassword()).andReturn(null);
+      expect(input.options.getLoginPrivateKey()).andReturn(null);
+      expect(input.options.shouldAuthenticateSudo()).andReturn(null);
 
       expect(
             strategy.utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(eq(input.options),
@@ -213,13 +218,18 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
             Reservation.class.cast(reservation));
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
-      Credentials creds = new Credentials("foo", "bar");
+      LoginCredentials creds = LoginCredentials.builder().user("foo").privateKey("bar").build();
       expect(strategy.instanceToCredentials.apply(instance)).andReturn(creds);
       expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
       expect(strategy.instancePresent.apply(new RegionAndName(region, instanceCreatedId))).andReturn(true);
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
+      expect(input.options.getLoginUser()).andReturn(null);
+      expect(input.options.getLoginPassword()).andReturn(null);
+      expect(input.options.getLoginPrivateKey()).andReturn(null);
+      expect(input.options.shouldAuthenticateSudo()).andReturn(null);
+
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
       expect(
@@ -310,7 +320,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       InstancePresent instancePresent = createMock(InstancePresent.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
-      LoadingCache<RunningInstance, Credentials> instanceToCredentials = createMock(LoadingCache.class);
+      LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials = createMock(LoadingCache.class);
       LoadingCache<RegionAndName, String> elasticIpCache = createMock(LoadingCache.class);
       GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
 

@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
@@ -44,7 +43,7 @@ import com.google.common.cache.LoadingCache;
  * @author Adrian Cole
  */
 @Singleton
-public class CredentialsForInstance extends CacheLoader<RunningInstance, Credentials> {
+public class CredentialsForInstance extends CacheLoader<RunningInstance, LoginCredentials> {
 
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
@@ -59,11 +58,11 @@ public class CredentialsForInstance extends CacheLoader<RunningInstance, Credent
    }
 
    @Override
-   public Credentials load(final RunningInstance instance) throws ExecutionException {
+   public LoginCredentials load(final RunningInstance instance) throws ExecutionException {
       if ("windows".equals(instance.getPlatform())) {
-         return  passwordCredentialsFromWindowsInstance.apply(instance);
+         return passwordCredentialsFromWindowsInstance.apply(instance);
       } else  if (instance.getKeyName() != null) {
-         return new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance));
+         return LoginCredentials.builder().user(getLoginAccountFor(instance)).privateKey(getPrivateKeyOrNull(instance)).build();
       }
       return null;
    }
