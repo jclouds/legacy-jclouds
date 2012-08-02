@@ -39,10 +39,13 @@ import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import static org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials.*;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.predicates.InstancePresent;
@@ -57,9 +60,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * creates futures that correlate to
@@ -91,11 +94,9 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @VisibleForTesting
    final ComputeUtils utils;
    final InstancePresent instancePresent;
-   final LoadingCache<RunningInstance, Credentials> instanceToCredentials;
+   final LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials;
    final Map<String, Credentials> credentialStore;
    final Provider<TemplateBuilder> templateBuilderProvider;
-
-
 
    @Inject
    protected EC2CreateNodesInGroupThenAddToSet(
@@ -106,7 +107,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            LoadingCache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils) {
       this.client = checkNotNull(client, "client");
       this.elasticIpCache = checkNotNull(elasticIpCache, "elasticIpCache");
@@ -147,7 +148,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          logger.debug("<< started instances(%s)", idsString);
          all(ids, instancePresent);
          logger.debug("<< present instances(%s)", idsString);
-         populateCredentials(started);
+         populateCredentials(started, template.getOptions());
       }
       
       assignElasticIpsToInstances(ips, started);
@@ -156,13 +157,14 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
                runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
    }
 
-   protected void populateCredentials(Iterable<? extends RunningInstance> started) {
-      Credentials credentials = null;
+   protected void populateCredentials(Iterable<? extends RunningInstance> started, TemplateOptions options) {
+      LoginCredentials credentials = null;
       for (RunningInstance instance : started) {
          credentials = instanceToCredentials.apply(instance);
          if (credentials != null)
             break;
       }
+      credentials = overrideDefaultCredentialsWithOptionsIfPresent(credentials, options);
       if (credentials != null)
          for (RunningInstance instance : started)
             credentialStore.put("node#" + instance.getRegion() + "/" + instance.getId(), credentials);
