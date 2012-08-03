@@ -23,14 +23,13 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.SortedSet;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -44,19 +43,20 @@ public class ElasticIPAddressClientLiveTest extends BaseComputeServiceContextLiv
       provider = "ec2";
    }
 
+   private EC2Client ec2Client;
    private ElasticIPAddressClient client;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticIPAddressServices();
+      ec2Client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi();
+      client = ec2Client.getElasticIPAddressServices();
    }
 
    @Test
    void testDescribeAddresses() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : ec2Client.getConfiguredRegions()) {
          SortedSet<PublicIpInstanceIdPair> allResults = Sets.newTreeSet(client.describeAddressesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
