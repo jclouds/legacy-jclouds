@@ -31,7 +31,7 @@ public class CarrenzaVCloudDirectorComputeServiceContextModule extends AbstractM
    @Override
    protected void configure() {
       
-   } // FIXME: enable when compute serivce done
+   } // FIXME: enable when compute service done
 //extends VCloudDirectorComputeServiceContextModule {
 //
 //   @Override

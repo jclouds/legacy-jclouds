@@ -34,7 +34,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.elastichosts-tor-p.endpoint>https://api.tor-p.elastichosts.com</test.elastichosts-tor-p.endpoint>
+        <test.elastichosts-tor-p.endpoint>https://api-tor-p.elastichosts.com</test.elastichosts-tor-p.endpoint>
         <test.elastichosts-tor-p.api-version>2.0</test.elastichosts-tor-p.api-version>
         <test.elastichosts-tor-p.build-version />
         <test.elastichosts-tor-p.identity>FIXME_IDENTITY</test.elastichosts-tor-p.identity>

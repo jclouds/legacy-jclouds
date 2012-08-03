@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.ec2.compute.BaseEC2ComputeServiceExpectTest;
+import org.jclouds.ec2.compute.internal.BaseEC2ComputeServiceContextExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.predicates.PredicateWithResult;
@@ -42,7 +42,7 @@ import com.google.inject.Injector;
  * @author David Alves
  */
 @Test(groups = "unit", testName = "GetImageWhenStatusAvailablePredicateWithResultExpectTest")
-public class GetImageWhenStatusAvailablePredicateWithResultExpectTest extends BaseEC2ComputeServiceExpectTest<Injector> {
+public class GetImageWhenStatusAvailablePredicateWithResultExpectTest extends BaseEC2ComputeServiceContextExpectTest<Injector> {
 
    protected HttpRequest describeRegionsRequest = HttpRequest.builder()
             .method("POST")

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,123 +18,139 @@
  */
 package org.jclouds.softlayer.domain;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * The SoftLayer_Product_Item_Category data type contains
  * general category information for prices.
- * 
+ *
  * @author Jason King
  * @see <a href=
- *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Item_Category"
- *      />
+"http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Item_Category"
+/>
  */
-public class ProductItemCategory implements Comparable<ProductItemCategory> {
+public class ProductItemCategory {
 
-   // TODO there are more elements than this.
-
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int id = -1;
-      private String name;
-      private String categoryCode;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromProductItemCategory(this);
+   }
 
-      public Builder id(int id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String name;
+      protected String categoryCode;
+
+      /**
+       * @see ProductItemCategory#getId()
+       */
+      public T id(int id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see ProductItemCategory#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder categoryCode(String categoryCode) {
+      /**
+       * @see ProductItemCategory#getCategoryCode()
+       */
+      public T categoryCode(String categoryCode) {
          this.categoryCode = categoryCode;
-         return this;
+         return self();
       }
 
       public ProductItemCategory build() {
          return new ProductItemCategory(id, name, categoryCode);
       }
 
-      public static Builder fromProductItemCategory(ProductItemCategory in) {
-         return ProductItemCategory.builder().id(in.getId())
-                                             .name(in.getName())
-                                             .categoryCode(in.getCategoryCode());
+      public T fromProductItemCategory(ProductItemCategory in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .categoryCode(in.getCategoryCode());
       }
    }
 
-   private int id = -1;
-   private String name;
-   private String categoryCode;
-
-   // for deserializer
-   ProductItemCategory() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public ProductItemCategory(int id, String name, String categoryCode) {
+   private final int id;
+   private final String name;
+   private final String categoryCode;
+
+   @ConstructorProperties({
+         "id", "name", "categoryCode"
+   })
+   protected ProductItemCategory(int id, @Nullable String name, @Nullable String categoryCode) {
       this.id = id;
       this.name = name;
       this.categoryCode = categoryCode;
-   }
-
-   @Override
-   public int compareTo(ProductItemCategory arg0) {
-      return Integer.valueOf(id).compareTo(arg0.getId());
    }
 
    /**
     * @return The unique identifier of a specific location.
     */
    public int getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return The friendly, descriptive name of the category as seen on the order forms and on invoices.
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return The code used to identify this category.
     */
+   @Nullable
    public String getCategoryCode() {
-      return categoryCode;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromProductItemCategory(this);
+      return this.categoryCode;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (id ^ (id >>> 32));
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ProductItemCategory other = (ProductItemCategory) obj;
-      if (id != other.id)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ProductItemCategory that = ProductItemCategory.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("categoryCode", categoryCode);
    }
 
    @Override
    public String toString() {
-      return "ProductItemCategory [id=" + id + ", name=" + name + ", categoryCode=" + categoryCode + "]";
+      return string().toString();
    }
+
 }

@@ -69,13 +69,18 @@ public class BindAsHostPrefixIfConfigured implements Binder {
          return (R) request.toBuilder().replaceHeader(HttpHeaders.HOST, host).build();
       } else {
          StringBuilder path = new StringBuilder(request.getEndpoint().getPath());
-         int indexToInsert = 0;
-         if (!servicePath.equals("/")) {
+         if (servicePath.equals("/")) {
+            if (path.toString().equals("/"))
+               path.append(payloadAsString);
+            else 
+               path.insert(0, "/" + payloadAsString);
+         } else {
+            int indexToInsert = 0;
             indexToInsert = path.indexOf(servicePath);
             indexToInsert = indexToInsert == -1 ? 0 : indexToInsert;
             indexToInsert += servicePath.length();
+            path.insert(indexToInsert, "/" + payloadAsString);
          }
-         path.insert(indexToInsert, "/" + payloadAsString);
          return (R) request.toBuilder().replacePath(path.toString()).build();
       }
    }

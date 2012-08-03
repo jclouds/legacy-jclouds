@@ -23,13 +23,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Objects;
 
 /**
- *  
+ * 
  * @see <a href="http://docs.amazonwebservices.com/AmazonRDS/latest/APIReference/API_IPRange.html"
  *      >doc</a>
  * 
  * @author Adrian Cole
  */
-public class IPRange {
+public class IPRange extends Authorization {
 
    public static Builder builder() {
       return new Builder();
@@ -39,42 +39,37 @@ public class IPRange {
       return new Builder().fromIPRange(this);
    }
 
-   public static class Builder {
+   public static class Builder extends Authorization.Builder<Builder> {
 
       protected String cidrIp;
-      protected String status;
 
       /**
-       * @see IPRange#getAvailabilityZone()
+       * @see IPRange#getCidrIp()
        */
       public Builder cidrIp(String cidrIp) {
          this.cidrIp = cidrIp;
          return this;
       }
 
-      /**
-       * @see IPRange#getStatus()
-       */
-      public Builder status(String status) {
-         this.status = status;
-         return this;
-      }
-
       public IPRange build() {
-         return new IPRange(cidrIp, status);
+         return new IPRange(cidrIp, rawStatus, status);
       }
 
       public Builder fromIPRange(IPRange in) {
-         return this.cidrIp(in.getCIDRIP()).status(in.getStatus());
+         return fromAuthorization(in).cidrIp(in.getCIDRIP());
+      }
+
+      @Override
+      protected Builder self() {
+         return this;
       }
    }
 
    protected final String cidrIp;
-   protected final String status;
 
-   protected IPRange(String cidrIp, String status) {
+   protected IPRange(String cidrIp, String rawStatus, Status status) {
+      super(rawStatus, status);
       this.cidrIp = checkNotNull(cidrIp, "cidrIp");
-      this.status = checkNotNull(status, "status");
    }
 
    /**
@@ -85,18 +80,11 @@ public class IPRange {
    }
 
    /**
-    * Specifies the status of the IP range.
-    */
-   public String getStatus() {
-      return status;
-   }
-
-   /**
     * {@inheritDoc}
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(cidrIp, status);
+      return Objects.hashCode(cidrIp, rawStatus);
    }
 
    /**
@@ -111,7 +99,7 @@ public class IPRange {
       if (getClass() != obj.getClass())
          return false;
       IPRange other = IPRange.class.cast(obj);
-      return Objects.equal(this.cidrIp, other.cidrIp) && Objects.equal(this.status, other.status);
+      return Objects.equal(this.cidrIp, other.cidrIp) && Objects.equal(this.rawStatus, other.rawStatus);
    }
 
    /**
@@ -119,8 +107,7 @@ public class IPRange {
     */
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().add("cidrIp", cidrIp)
-               .add("status", status).toString();
+      return Objects.toStringHelper(this).omitNullValues().add("cidrIp", cidrIp).add("status", rawStatus).toString();
    }
 
 }

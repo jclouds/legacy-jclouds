@@ -65,7 +65,6 @@ public class JoyentCloudRestClientModule extends RestClientModule<JoyentCloudApi
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-      install(new JoyentCloudParserModule());
       super.configure();
    }
 

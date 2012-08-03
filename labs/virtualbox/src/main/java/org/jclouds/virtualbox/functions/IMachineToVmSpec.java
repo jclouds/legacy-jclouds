@@ -75,22 +75,22 @@ public class IMachineToVmSpec implements Function<IMachine, VmSpec> {
       List<StorageController> controllers = Lists.newArrayList();
       for (IStorageController iStorageController : machine.getStorageControllers()) {
 
-         Builder storageControlleBuiler = StorageController.builder();
+         Builder storageControllerBuilder = StorageController.builder();
          for (IMediumAttachment iMediumAttachment : machine.getMediumAttachmentsOfController(iStorageController
                   .getName())) {
             IMedium iMedium = iMediumAttachment.getMedium();
             if(iMedium != null) {
                if (iMedium.getDeviceType().equals(DeviceType.HardDisk)) {
-                  storageControlleBuiler.attachHardDisk(HardDisk.builder().diskpath(iMedium.getLocation())
+                  storageControllerBuilder.attachHardDisk(HardDisk.builder().diskpath(iMedium.getLocation())
                            .autoDelete(true).controllerPort(iMediumAttachment.getPort())
                            .deviceSlot(iMediumAttachment.getDevice().intValue()).build());
                } else if (iMedium.getDeviceType().equals(DeviceType.DVD)) {
-                  storageControlleBuiler.attachISO(iMediumAttachment.getPort(), iMediumAttachment.getDevice().intValue(),
+                  storageControllerBuilder.attachISO(iMediumAttachment.getPort(), iMediumAttachment.getDevice().intValue(),
                            iMedium.getLocation());
                }
             }
          }
-         controllers.add(storageControlleBuiler.name(iStorageController.getName()).bus(iStorageController.getBus())
+         controllers.add(storageControllerBuilder.name(iStorageController.getName()).bus(iStorageController.getBus())
                   .build());
       }
       return controllers;

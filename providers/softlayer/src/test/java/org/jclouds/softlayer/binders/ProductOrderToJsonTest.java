@@ -82,7 +82,7 @@ public class ProductOrderToJsonTest {
                                        .quantity(99)
                                        .useHourlyPricing(true)
                                        .prices(ImmutableSet.of(price1,price2))
-                                       .virtualGuest(guest)
+                                       .virtualGuests(guest)
                                        .build();
       
       String expected = String.format(FORMAT.replaceAll("'","\""),

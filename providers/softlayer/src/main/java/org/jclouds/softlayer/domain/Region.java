@@ -21,6 +21,12 @@ package org.jclouds.softlayer.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+
 /**
  * A region is made up of a keyname and a description of that region.
  * A region keyname can be used as part of an order.
@@ -50,28 +56,25 @@ public class Region implements Comparable<Region> {
       }
 
       public Region build() {
-         return new Region(keyname, description);
+         return new Region(0, keyname, description);
       }
 
       public static Builder fromAddress(Region in) {
          return Region.builder().keyname(in.getKeyname())
-                                .description(in.getDescription());
+               .description(in.getDescription());
       }
    }
 
    /* An integer representing the order in which this element is displayed */
-   private int sortOrder = 0;
-   private String keyname;
-   private String description;
+   private final int sortOrder;
+   private final String keyname;
+   private final String description;
 
-   // for deserializer
-   Region() {
-
-   }
-
-   public Region(String keyname, String description) {
-      this.keyname = checkNotNull(emptyToNull(keyname),"keyname cannot be null or empty:"+keyname);
-      this.description = checkNotNull(emptyToNull(description),"country cannot be null or empty:"+description);
+   @ConstructorProperties({"sortOrder", "keyname", "description"})
+   public Region(int sortOrder, String keyname, String description) {
+      this.sortOrder = sortOrder;
+      this.keyname = checkNotNull(emptyToNull(keyname), "keyname cannot be null or empty:" + keyname);
+      this.description = description;
    }
 
    @Override
@@ -89,6 +92,7 @@ public class Region implements Comparable<Region> {
    /**
     * @return A short description of a region's name. This description is seen on the order forms.
     */
+   @Nullable
    public String getDescription() {
       return description;
    }
@@ -103,26 +107,19 @@ public class Region implements Comparable<Region> {
       if (o == null || getClass() != o.getClass()) return false;
 
       Region region = (Region) o;
-
-      if (sortOrder != region.sortOrder) return false;
-      if (!description.equals(region.description)) return false;
-      if (!keyname.equals(region.keyname)) return false;
-
-      return true;
+      return Objects.equal(keyname, region.keyname)
+            && Objects.equal(description, region.description);
    }
 
    @Override
    public int hashCode() {
-      int result = sortOrder;
-      result = 31 * result + keyname.hashCode();
-      result = 31 * result + description.hashCode();
-      return result;
+      return Objects.hashCode(keyname, description);
    }
 
    @Override
    public String toString() {
       return "[keyname=" + keyname + ", description=" + description + "]";
    }
-   
-   
+
+
 }

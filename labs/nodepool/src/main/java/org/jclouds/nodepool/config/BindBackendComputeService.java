@@ -51,10 +51,12 @@ import org.jclouds.location.Provider;
 import org.jclouds.nodepool.Backend;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.BuildVersion;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
@@ -96,14 +98,9 @@ public class BindBackendComputeService extends BindJcloudsModules {
       });
    }
 
-   private static final Predicate<String> keys = new Predicate<String>() {
-
-      @Override
-      public boolean apply(String input) {
-         return !input.startsWith("jclouds.nodepool") && !input.startsWith("nodepool");
-      }
-
-   };
+   private static final Predicate<String> keys = Predicates.<String>and(
+      Predicates.not(Predicates2.startsWith("jclouds.nodepool")),
+      Predicates.not(Predicates2.startsWith("nodepool")));
 
    @Provides
    @Singleton

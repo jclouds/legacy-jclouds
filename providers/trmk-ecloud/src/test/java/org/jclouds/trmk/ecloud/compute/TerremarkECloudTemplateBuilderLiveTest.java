@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "TerremarkECloudTemplateBuilderLiveTest")
 public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Override
    protected Properties setupProperties() {

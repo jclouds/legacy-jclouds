@@ -126,7 +126,7 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
                TEST_HOSTNAME_PREFIX + new Random().nextInt()).build();
 
       ProductOrder order = ProductOrder.builder().packageId(pkgId).quantity(1).useHourlyPricing(true).prices(
-               prices.build()).virtualGuest(guest).build();
+               prices.build()).virtualGuests(guest).build();
 
       ProductOrderReceipt receipt = socontext.getApi().getVirtualGuestClient().orderVirtualGuest(order);
       ProductOrder order2 = receipt.getOrderDetails();

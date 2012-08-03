@@ -34,7 +34,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.elastichosts-lax-p.endpoint>https://api.lax-p.elastichosts.com</test.elastichosts-lax-p.endpoint>
+        <test.elastichosts-lax-p.endpoint>https://api-lax-p.elastichosts.com</test.elastichosts-lax-p.endpoint>
         <test.elastichosts-lax-p.api-version>2.0</test.elastichosts-lax-p.api-version>
         <test.elastichosts-lax-p.build-version />
         <test.elastichosts-lax-p.identity>FIXME_IDENTITY</test.elastichosts-lax-p.identity>

@@ -23,10 +23,12 @@ import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 
 import java.net.URI;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -57,6 +59,7 @@ import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
@@ -189,8 +192,10 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
 
       String description = VCloudTemplateOptions.class.cast(template.getOptions()).getDescription();
-      if (description == null)
-         description = vAppTemplate.getName();
+      if (description == null) {
+         Map<String, String> md = metadataAndTagsAsCommaDelimitedValue(template.getOptions());
+         description = Joiner.on('\n').withKeyValueSeparator("=").join(md);
+      }
 
       options.description(description);
       options.deploy(false);

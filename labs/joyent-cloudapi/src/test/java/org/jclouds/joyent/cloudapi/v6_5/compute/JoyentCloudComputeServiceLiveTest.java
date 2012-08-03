@@ -21,6 +21,5 @@ public class JoyentCloudComputeServiceLiveTest extends BaseComputeServiceLiveTes
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-   
 
 }

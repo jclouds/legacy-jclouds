@@ -22,13 +22,12 @@ import java.util.Properties;
 
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.swift.v1.SwiftApi;
 import org.jclouds.openstack.swift.v1.SwiftApiMetadata;
 import org.jclouds.openstack.swift.v1.SwiftAsyncApi;
-import org.jclouds.openstack.swift.v1.SwiftApi;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
 
 import com.google.common.reflect.TypeToken;
 
@@ -37,7 +36,6 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
 public class BaseSwiftApiLiveTest extends BaseContextLiveTest<RestContext<SwiftApi, SwiftAsyncApi>> {
 
    public BaseSwiftApiLiveTest() {

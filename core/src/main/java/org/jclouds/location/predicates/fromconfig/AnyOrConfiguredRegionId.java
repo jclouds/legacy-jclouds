@@ -52,5 +52,10 @@ public class AnyOrConfiguredRegionId implements RegionIdFilter {
          return true;
       return idsInConfig.contains(input);
    }
+   
+   @Override
+   public String toString() {
+      return "anyOrConfiguredRegionId(" + idsInConfigSupplier + ")";
+   }
 
 }

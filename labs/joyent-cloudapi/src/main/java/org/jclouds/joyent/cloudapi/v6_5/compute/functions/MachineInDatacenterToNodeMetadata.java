@@ -94,7 +94,7 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
       builder.id(machineInDatacenter.slashEncode());
       builder.providerId(from.getId());
       builder.name(from.getName());
-      builder.hostname(from.getName());
+      builder.hostname(from.getId());
       builder.location(zone);
       addMetadataAndParseTagsFromCommaDelimitedValue(builder, filterKeys(from.getMetadata(), new Predicate<String>() {
 
@@ -109,7 +109,7 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
 
       }));
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
-      builder.imageId(DatacenterAndName.fromDatacenterAndName(machineInDatacenter.getDatacenter(), from.get())
+      builder.imageId(DatacenterAndName.fromDatacenterAndName(machineInDatacenter.getDatacenter(), from.getDatasetURN())
             .slashEncode());
       builder.operatingSystem(findOperatingSystemForMachineOrNull(machineInDatacenter));
       builder.hardware(findHardwareForMachineOrNull(machineInDatacenter));
@@ -132,7 +132,7 @@ public class MachineInDatacenterToNodeMetadata implements Function<MachineInData
 
    protected OperatingSystem findOperatingSystemForMachineOrNull(MachineInDatacenter machineInDatacenter) {
       Image image = findObjectOfTypeForMachineOrNull(images.get(), "image", machineInDatacenter.get()
-            .get(), machineInDatacenter);
+            .getDatasetURN(), machineInDatacenter);
       return (image != null) ? image.getOperatingSystem() : null;
    }
 

@@ -78,7 +78,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
             case DEBIAN:
                return true;
             case RHEL:
-               return input.version.matches("5.[06]") || input.version.equals("");
+                  return input.version.equals("5.6") || input.version.equals("")
+                           || (input.version.equals("5.0") && input.is64Bit);
             case CENTOS:
                return input.version.matches("5.[0246]") || (input.version.equals("6.0") && input.is64Bit)
                      || input.version.equals("");
@@ -199,26 +200,26 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       Template fastestTemplate = view.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX)
             .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
-      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.2");
+      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.HI1_4XLARGE);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.03.3");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
-      assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
+      assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
       assertEquals(getCores(fastestTemplate.getHardware()), 16.0d);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "paravirtual");
 
       fastestTemplate = view.getComputeService().templateBuilder().fastest().build();
       System.out.println(fastestTemplate.getImage());
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
-      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
+      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.HI1_4XLARGE);
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
+      assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
       assertEquals(getCores(fastestTemplate.getHardware()), 16.0d);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
    @Test

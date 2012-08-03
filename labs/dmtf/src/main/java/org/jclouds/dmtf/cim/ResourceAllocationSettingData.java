@@ -808,12 +808,12 @@ public class ResourceAllocationSettingData {
 
    /**
     * This property exposes specific assignment of resources. Each non-null
-    * value of the HostResource property shall be formated as a URI per RFC3986.
+    * value of the HostResource property shall be formatted as a URI per RFC3986.
     * If this resource is modeled then a value should be a WBEM URI (DSP0207).
     * If the resource is not modeled then see the appropriate profile. Profiles
     * may further constrain the type of URI. A NULL value or empty array
     * requests the implementation decide the kind of host resource. If the
-    * virtual resource is mapped to more than oneunderlying resource, this
+    * virtual resource is mapped to more than one underlying resource, this
     * property may be left NULL. If NULL, the DeviceAllocatedFromPool or
     * ResourceAllocationFromPool associations may be used to determine the pool
     * of host resources this virtual resource may use. If specific assignment is

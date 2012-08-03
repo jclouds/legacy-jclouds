@@ -94,12 +94,6 @@ public class FilesystemStorageStrategyImplTest {
    protected void tearDown() throws IOException {
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
    }
-
-   @DataProvider
-   public Object[][] ignoreOnWindows() {
-       return (TestUtils.isWindowsOs() ? TestUtils.NO_INVOCATIONS 
-                                       : TestUtils.SINGLE_NO_ARG_INVOCATION);
-   }
    
    public void testCreateDirectory() {
       storageStrategy.createDirectory(CONTAINER_NAME, null);
@@ -121,15 +115,6 @@ public class FilesystemStorageStrategyImplTest {
    public void testCreateDirectory_DirectoryAlreadyExists() {
       storageStrategy.createDirectory(CONTAINER_NAME, null);
       storageStrategy.createDirectory(CONTAINER_NAME, null);
-   }
-
-   @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=737")
-   public void testCreateDirectory_WrongDirectoryName() {
-      try {
-         storageStrategy.createDirectory(CONTAINER_NAME, "$%&!'`\\/");
-         fail("No exception thrown");
-      } catch (Exception e) {
-      }
    }
 
    public void testCreateContainer() {

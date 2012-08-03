@@ -11,7 +11,7 @@ import org.jclouds.concurrent.Timeout;
  * 
  * @author Gerald Pereira
  * @see PackageAsyncApi
- * @see <a href="http://apidocs.joyent.com/cloudApiapidoc/cloudapi">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#packages">api doc</a>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface PackageApi {

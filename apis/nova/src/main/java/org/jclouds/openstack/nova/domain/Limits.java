@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,29 +18,114 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 
 public class Limits {
 
-   private List<RateLimit> rate = Lists.newArrayList();
-   private List<AbsoluteLimit> absolute = Lists.newArrayList();
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromLimits(this);
+   }
 
-   public void setRate(List<RateLimit> rate) {
-      this.rate = rate;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected List<RateLimit> rate = ImmutableList.of();
+      protected List<AbsoluteLimit> absolute = ImmutableList.of();
+   
+      /** 
+       * @see Limits#getRate()
+       */
+      public T rate(List<RateLimit> rate) {
+         this.rate = ImmutableList.copyOf(checkNotNull(rate, "rate"));     
+         return self();
+      }
+
+      public T rate(RateLimit... in) {
+         return rate(ImmutableList.copyOf(in));
+      }
+
+      /** 
+       * @see Limits#getAbsolute()
+       */
+      public T absolute(List<AbsoluteLimit> absolute) {
+         this.absolute = ImmutableList.copyOf(checkNotNull(absolute, "absolute"));     
+         return self();
+      }
+
+      public T absolute(AbsoluteLimit... in) {
+         return absolute(ImmutableList.copyOf(in));
+      }
+
+      public Limits build() {
+         return new Limits(rate, absolute);
+      }
+      
+      public T fromLimits(Limits in) {
+         return this
+                  .rate(in.getRate())
+                  .absolute(in.getAbsolute());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final List<RateLimit> rate;
+   private final List<AbsoluteLimit> absolute;
+
+   @ConstructorProperties({
+      "rate", "absolute"
+   })
+   protected Limits(List<RateLimit> rate, List<AbsoluteLimit> absolute) {
+      this.rate = ImmutableList.copyOf(checkNotNull(rate, "rate"));     
+      this.absolute = ImmutableList.copyOf(checkNotNull(absolute, "absolute"));     
    }
 
    public List<RateLimit> getRate() {
-      return rate;
-   }
-
-   public void setAbsolute(List<AbsoluteLimit> absolute) {
-      this.absolute = absolute;
+      return this.rate;
    }
 
    public List<AbsoluteLimit> getAbsolute() {
-      return absolute;
+      return this.absolute;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(rate, absolute);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Limits that = Limits.class.cast(obj);
+      return Objects.equal(this.rate, that.rate)
+               && Objects.equal(this.absolute, that.absolute);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("rate", rate).add("absolute", absolute);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
 }

@@ -69,7 +69,7 @@ public class NewServerData implements PostData {
    private String hostServerId;
    /**
     * These are the instantiation options.&nbsp; e.g. domain name, password, etc.&nbsp; Only provide
-    * these if you are not cloning a VPS (the vps_order_oid_to_clone setting). i.e. utually
+    * these if you are not cloning a VPS (the vps_order_oid_to_clone setting). i.e. mutually
     * exclusive to instantiation_via_clone_options
     */
    @SerializedName("instantiation_options")

@@ -34,7 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.hpcloud-compute.endpoint>https://region-a.geo-1.identity.hpcloudsvc.com:35357</test.hpcloud-compute.endpoint>
+    <test.hpcloud-compute.endpoint>https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/</test.hpcloud-compute.endpoint>
     <test.hpcloud-compute.api-version>1.1</test.hpcloud-compute.api-version>
     <test.hpcloud-compute.build-version />
     <test.hpcloud-compute.identity>FIXME_IDENTITY</test.hpcloud-compute.identity>

@@ -102,7 +102,7 @@ public class EC2ComputeService extends BaseComputeService {
             CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
             DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy startNodeStrategy,
             SuspendNodeStrategy stopNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<TemplateOptions> templateOptionsProvider,
+            @Named("DEFAULT") Provider<TemplateOptions> templateOptionsProvider,
             @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             @Named(TIMEOUT_NODE_TERMINATED) Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
             @Named(TIMEOUT_NODE_SUSPENDED) Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
@@ -223,7 +223,7 @@ public class EC2ComputeService extends BaseComputeService {
       // resources existing.
 
       // Also in #445, in aws-ec2 the deleteSecurityGroup sometimes fails after terminating the final VM using a 
-      // given security group, if called very soon after the VM's state reports terminated. Emprically, it seems that
+      // given security group, if called very soon after the VM's state reports terminated. Empirically, it seems that
       // waiting a small time (e.g. enabling logging or debugging!) then the tests pass. We therefore retry.
       final int maxAttempts = 3;
       Retryables.retryNumTimes(new Predicate<Void>() {

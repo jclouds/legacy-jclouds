@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,10 +20,14 @@ package org.jclouds.softlayer.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * The SoftLayer_Product_Package data type contains information about packages
@@ -33,156 +37,174 @@ import com.google.common.collect.Sets;
  *
  * @author Adrian Cole
  * @see <a href=
- *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Package"
- *      />
+"http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Package"
+/>
  */
-public class ProductPackage implements Comparable<ProductPackage> {
+public class ProductPackage {
 
-   // TODO there are more elements than this.
-
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int id = -1;
-      private String name;
-      private String description;
-      private Set<ProductItem> items = Sets.newLinkedHashSet();
-      private Set<Datacenter> datacenters = Sets.newLinkedHashSet();
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromProductPackage(this);
+   }
 
-      public Builder id(int id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String name;
+      protected String description;
+      protected Set<ProductItem> items = ImmutableSet.of();
+      protected Set<Datacenter> locations = ImmutableSet.of();
+
+      /**
+       * @see ProductPackage#getId()
+       */
+      public T id(int id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder name(String name) {
+      /**
+       * @see ProductPackage#getName()
+       */
+      public T name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see ProductPackage#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder items(Iterable<ProductItem> items) {
-         this.items = ImmutableSet.<ProductItem> copyOf(checkNotNull(items, "items"));
-         return this;
+      /**
+       * @see ProductPackage#getItems()
+       */
+      public T items(Set<ProductItem> items) {
+         this.items = ImmutableSet.copyOf(checkNotNull(items, "items"));
+         return self();
       }
 
-      public Builder datacenters(Iterable<Datacenter> datacenters) {
-         this.datacenters = ImmutableSet.<Datacenter> copyOf(checkNotNull(datacenters, "datacenters"));
-         return this;
+      public T items(ProductItem... in) {
+         return items(ImmutableSet.copyOf(in));
+      }
+
+      /**
+       * @see ProductPackage#getDatacenters()
+       */
+      public T datacenters(Set<Datacenter> locations) {
+         this.locations = ImmutableSet.copyOf(checkNotNull(locations, "locations"));
+         return self();
+      }
+
+      public T datacenters(Datacenter... in) {
+         return datacenters(ImmutableSet.copyOf(in));
       }
 
       public ProductPackage build() {
-         return new ProductPackage(id, name, description, items, datacenters);
+         return new ProductPackage(id, name, description, items, locations);
       }
 
-      public static Builder fromProductPackage(ProductPackage in) {
-         return ProductPackage.builder().id(in.getId())
-                                        .name(in.getName())
-                                        .description(in.getDescription())
-                                        .items(in.getItems())
-                                        .datacenters(in.getDatacenters());
+      public T fromProductPackage(ProductPackage in) {
+         return this
+               .id(in.getId())
+               .name(in.getName())
+               .description(in.getDescription())
+               .items(in.getItems())
+               .datacenters(in.getDatacenters());
       }
    }
 
-   private int id = -1;
-   private String name;
-   private String description;
-   private Set<ProductItem> items = Sets.newLinkedHashSet();
-   private Set<Datacenter> locations = Sets.newLinkedHashSet();
-
-   // for deserializer
-   ProductPackage() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public ProductPackage(int id, String name, String description, Iterable<ProductItem> items, Iterable<Datacenter> datacenters) {
+   private final int id;
+   private final String name;
+   private final String description;
+   private final Set<ProductItem> items;
+   private final Set<Datacenter> locations;
+
+   @ConstructorProperties({
+         "id", "name", "description", "items", "locations"
+   })
+   protected ProductPackage(int id, @Nullable String name, @Nullable String description, @Nullable Set<ProductItem> items, Set<Datacenter> locations) {
       this.id = id;
       this.name = name;
       this.description = description;
-      this.items = ImmutableSet.<ProductItem> copyOf(checkNotNull(items, "items"));
-      this.locations = ImmutableSet.<Datacenter> copyOf(checkNotNull(datacenters, "datacenters"));
-   }
-
-   @Override
-   public int compareTo(ProductPackage arg0) {
-      return Integer.valueOf(id).compareTo(arg0.getId());
+      this.items = items == null ? ImmutableSet.<ProductItem>of() : ImmutableSet.copyOf(items);
+      this.locations = locations == null ? ImmutableSet.<Datacenter>of() : ImmutableSet.copyOf(locations);
    }
 
    /**
     * @return A package's internal identifier. Everything regarding a
-    *         SoftLayer_Product_Package is tied back to this id.
+   SoftLayer_Product_Package is tied back to this id.
     */
    public int getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return The description of the package. For server packages, this is
-    *         usually a detailed description of processor type and count.
+   usually a detailed description of processor type and count.
     */
+   @Nullable
    public String getName() {
-      return name;
+      return this.name;
    }
 
    /**
     * @return A generic description of the processor type and count. This
-    *         includes HTML, so you may want to strip these tags if you plan to
-    *         use it.
+   includes HTML, so you may want to strip these tags if you plan to
+   use it.
     */
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    /**
-    *
     * @return A collection of valid items available for purchase in this
-    *         package.
+   package.
     */
    public Set<ProductItem> getItems() {
-      return items;
+      return this.items;
    }
 
-   /**
-    *
-    * @return A collection of valid locations for this package.
-    */
    public Set<Datacenter> getDatacenters() {
-      return locations;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromProductPackage(this);
+      return this.locations;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (id ^ (id >>> 32));
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ProductPackage other = (ProductPackage) obj;
-      if (id != other.id)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ProductPackage that = ProductPackage.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("description", description).add("items", items).add("locations", locations);
    }
 
    @Override
    public String toString() {
-      return "ProductPackage [id=" + id + ", name=" + name + ", description=" + description + ", items=" + items + ", datacenters=" + locations + "]";
+      return string().toString();
    }
+
 }

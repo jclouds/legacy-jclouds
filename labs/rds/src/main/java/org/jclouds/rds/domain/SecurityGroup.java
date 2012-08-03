@@ -23,8 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -52,7 +52,6 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class SecurityGroup {
-
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }

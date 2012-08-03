@@ -31,7 +31,6 @@ import org.jclouds.crypto.SshKeys;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Machine;
-import org.jclouds.joyent.cloudapi.v6_5.features.MachineApi;
 import org.jclouds.joyent.cloudapi.v6_5.internal.BaseJoyentCloudApiLiveTest;
 import org.jclouds.joyent.cloudapi.v6_5.options.CreateMachineOptions;
 import org.jclouds.joyent.cloudapi.v6_5.reference.Metadata;
@@ -41,7 +40,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -68,7 +67,7 @@ public class MachineApiLiveTest extends BaseJoyentCloudApiLiveTest {
             assertEquals(newDetails.getName(), machine.getName());
             assertEquals(newDetails.getType(), machine.getType());
             assertEquals(newDetails.getState(), machine.getState());
-            assertEquals(newDetails.get(), machine.get());
+            assertEquals(newDetails.getDatasetURN(), machine.getDatasetURN());
             assertEquals(newDetails.getMemorySizeMb(), machine.getMemorySizeMb());
             assertEquals(newDetails.getDiskSizeGb(), machine.getDiskSizeGb());
             assertEquals(newDetails.getIps(), machine.getIps());
@@ -88,7 +87,7 @@ public class MachineApiLiveTest extends BaseJoyentCloudApiLiveTest {
    protected String datasetURN = System.getProperty("test." + provider + ".image-id", "sdc:sdc:ubuntu-10.04:1.0.1");
    private String name;
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setupContext() {
       super.setupContext();
@@ -98,14 +97,6 @@ public class MachineApiLiveTest extends BaseJoyentCloudApiLiveTest {
       api = cloudApiContext.getApi().getMachineApiForDatacenter(
             Iterables.get(cloudApiContext.getApi().getConfiguredDatacenters(), 0));
       socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
-      machineRunning = new RetryablePredicate<Machine>(new Predicate<Machine>() {
-
-         @Override
-         public boolean apply(Machine input) {
-            return api.get(input.getId()).getState() == Machine.State.RUNNING;
-         }
-
-      }, 600, 5, 5, TimeUnit.SECONDS);
       machineRunning = new RetryablePredicate<Machine>(new Predicate<Machine>() {
 
          @Override

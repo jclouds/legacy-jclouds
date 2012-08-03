@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,9 +18,16 @@
  */
 package org.jclouds.cloudservers.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.beans.ConstructorProperties;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A shared IP group is a collection of servers that can share IPs with other members of the group.
@@ -29,83 +36,120 @@ import com.google.common.collect.Lists;
  * groups. A server may only be a member of one shared IP group.
  * 
  * @author Adrian Cole
- */
+*/
 public class SharedIpGroup {
 
-   private int id;
-   private String name;
-
-   private List<Integer> servers = Lists.newArrayList();
-
-   public SharedIpGroup() {
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromSharedIpGroup(this);
    }
 
-   public SharedIpGroup(int id, String name) {
-      this.id = id;
-      this.name = name;
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String name;
+      protected List<Integer> servers = null;
+   
+      /** 
+       * @see SharedIpGroup#getId()
+       */
+      public T id(int id) {
+         this.id = id;
+         return self();
+      }
+
+      /** 
+       * @see SharedIpGroup#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /** 
+       * @see SharedIpGroup#getServers()
+       */
+      public T servers(List<Integer> servers) {
+         this.servers = ImmutableList.copyOf(checkNotNull(servers, "servers"));     
+         return self();
+      }
+
+      public T servers(Integer... in) {
+         return servers(ImmutableList.copyOf(in));
+      }
+
+      public SharedIpGroup build() {
+         return new SharedIpGroup(id, name, servers);
+      }
+      
+      public T fromSharedIpGroup(SharedIpGroup in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .servers(in.getServers());
+      }
    }
 
-   public void setId(int id) {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final int id;
+   private final String name;
+   private final List<Integer> servers;
+
+   @ConstructorProperties({
+      "id", "name", "servers"
+   })
+   protected SharedIpGroup(int id, String name, @Nullable List<Integer> servers) {
       this.id = id;
+      this.name = checkNotNull(name, "name");
+      this.servers = servers == null ? null : ImmutableList.copyOf(servers);     
    }
 
    public int getId() {
-      return id;
-   }
-
-   public void setName(String name) {
-      this.name = name;
+      return this.id;
    }
 
    public String getName() {
-      return name;
+      return this.name;
    }
 
-   public void setServers(List<Integer> servers) {
-      this.servers = servers;
-   }
-
+   @Nullable
    public List<Integer> getServers() {
-      return servers;
+      return this.servers;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + id;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((servers == null) ? 0 : servers.hashCode());
-      return result;
+      return Objects.hashCode(id, name, servers);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SharedIpGroup other = (SharedIpGroup) obj;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (servers == null) {
-         if (other.servers != null)
-            return false;
-      } else if (!servers.equals(other.servers))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      SharedIpGroup that = SharedIpGroup.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.servers, that.servers);
    }
-
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("servers", servers);
+   }
+   
    @Override
    public String toString() {
-      return "SharedIpGroup [id=" + id + ", name=" + name + ", servers=" + servers + "]";
+      return string().toString();
    }
 
 }

@@ -23,6 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.rds.domain.internal.BaseInstance;
+
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
@@ -57,7 +60,41 @@ import com.google.common.net.HostAndPort;
  * 
  * @author Adrian Cole
  */
-public class Instance {
+public class Instance extends BaseInstance {
+   public static enum Status {
+
+      /**
+       * the instance is in the process of being created
+       */
+      CREATING,
+
+      /**
+       * the instance is available
+       */
+      AVAILABLE, STORAGE_FULL, INCOMPATIBLE_OPTION_GROUP, INCOMPATIBLE_PARAMETERS, INCOMPATIBLE_RESTORE, FAILED,
+      /**
+       * the instance is deleting
+       */
+      DELETING, UNRECOGNIZED;
+
+      public String value() {
+         return name().toLowerCase();
+      }
+
+      @Override
+      public String toString() {
+         return value();
+      }
+
+      public static Status fromValue(String status) {
+         try {
+            return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(status, "status")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
+
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
@@ -66,22 +103,17 @@ public class Instance {
       return new ConcreteBuilder().fromInstance(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
-      protected abstract T self();
+   public static abstract class Builder<T extends Builder<T>> extends BaseInstance.Builder<T> {
 
       protected String id;
-      protected Optional<String> name = Optional.absent();
-      protected String instanceClass;
-      protected HostAndPort endpoint;
-      protected String status;
-      protected String availabilityZone;
-      protected boolean multiAZ;
-      protected String engine;
+      protected Optional<HostAndPort> endpoint = Optional.absent();
       protected String engineVersion;
+      protected String rawStatus;
+      protected Status status;
+      protected Optional<Date> createdTime = Optional.absent();
       protected String licenseModel;
-      protected String masterUsername;
-      protected int allocatedStorageGB;
-      protected Date createdTime;
+      protected Optional<String> availabilityZone = Optional.absent();
+      protected boolean multiAZ;
       protected Optional<SubnetGroup> subnetGroup = Optional.absent();
       protected ImmutableMap.Builder<String, String> securityGroupNameToStatus = ImmutableMap
                .<String, String> builder();
@@ -95,58 +127,26 @@ public class Instance {
       }
 
       /**
-       * @see Instance#getName()
-       */
-      public T name(String name) {
-         this.name = Optional.fromNullable(name);
-         return self();
-      }
-
-      /**
-       * @see Instance#getInstanceClass()
-       */
-      public T instanceClass(String instanceClass) {
-         this.instanceClass = instanceClass;
-         return self();
-      }
-
-      /**
        * @see Instance#getEndpoint()
        */
       public T endpoint(HostAndPort endpoint) {
-         this.endpoint = endpoint;
+         this.endpoint = Optional.fromNullable(endpoint);
+         return self();
+      }
+
+      /**
+       * @see Instance#getRawStatus()
+       */
+      public T rawStatus(String rawStatus) {
+         this.rawStatus = rawStatus;
          return self();
       }
 
       /**
        * @see Instance#getStatus()
        */
-      public T status(String status) {
+      public T status(Status status) {
          this.status = status;
-         return self();
-      }
-
-      /**
-       * @see Instance#getAvailabilityZone()
-       */
-      public T availabilityZone(String availabilityZone) {
-         this.availabilityZone = availabilityZone;
-         return self();
-      }
-
-      /**
-       * @see Instance#isMultiAZ()
-       */
-      public T multiAZ(boolean multiAZ) {
-         this.multiAZ = multiAZ;
-         return self();
-      }
-
-      /**
-       * @see Instance#getEngine()
-       */
-      public T engine(String engine) {
-         this.engine = engine;
          return self();
       }
 
@@ -167,26 +167,26 @@ public class Instance {
       }
 
       /**
-       * @see Instance#getMasterUsername()
-       */
-      public T masterUsername(String masterUsername) {
-         this.masterUsername = masterUsername;
-         return self();
-      }
-
-      /**
-       * @see Instance#getAllocatedStorageGB()
-       */
-      public T allocatedStorageGB(int allocatedStorageGB) {
-         this.allocatedStorageGB = allocatedStorageGB;
-         return self();
-      }
-
-      /**
        * @see Instance#getCreatedTime()
        */
       public T createdTime(Date createdTime) {
-         this.createdTime = createdTime;
+         this.createdTime = Optional.fromNullable(createdTime);
+         return self();
+      }
+
+      /**
+       * @see Instance#getAvailabilityZone()
+       */
+      public T availabilityZone(String availabilityZone) {
+         this.availabilityZone = Optional.fromNullable(availabilityZone);
+         return self();
+      }
+
+      /**
+       * @see Instance#isMultiAZ()
+       */
+      public T multiAZ(boolean multiAZ) {
+         this.multiAZ = multiAZ;
          return self();
       }
 
@@ -216,18 +216,16 @@ public class Instance {
       }
 
       public Instance build() {
-         return new Instance(id, name, instanceClass, endpoint, status, availabilityZone, multiAZ, engine,
+         return new Instance(id, name, instanceClass, endpoint, rawStatus, status, availabilityZone, multiAZ, engine,
                   engineVersion, licenseModel, masterUsername, allocatedStorageGB, createdTime, subnetGroup,
                   securityGroupNameToStatus.build());
       }
 
       public T fromInstance(Instance in) {
-         return this.id(in.getId()).name(in.getName().orNull()).instanceClass(in.getInstanceClass())
-                  .endpoint(in.getEndpoint()).status(in.getStatus()).availabilityZone(in.getAvailabilityZone())
-                  .multiAZ(in.isMultiAZ()).engine(in.getEngine()).engineVersion(in.getEngineVersion())
-                  .licenseModel(in.getLicenseModel()).masterUsername(in.getMasterUsername())
-                  .allocatedStorageGB(in.getAllocatedStorageGB()).createdTime(in.getCreatedTime())
-                  .subnetGroup(in.getSubnetGroup().orNull())
+         return fromBaseInstance(in).id(in.getId()).endpoint(in.getEndpoint().orNull()).status(in.getStatus())
+                  .createdTime(in.getCreatedTime().orNull()).engineVersion(in.getEngineVersion())
+                  .licenseModel(in.getLicenseModel()).availabilityZone(in.getAvailabilityZone().orNull())
+                  .multiAZ(in.isMultiAZ()).subnetGroup(in.getSubnetGroup().orNull())
                   .securityGroupNameToStatus(in.getSecurityGroupNameToStatus());
       }
    }
@@ -240,37 +238,30 @@ public class Instance {
    }
 
    protected final String id;
-   protected final Optional<String> name;
-   protected final String instanceClass;
-   protected final HostAndPort endpoint;
-   protected final String status;
-   protected final String availabilityZone;
-   protected final boolean multiAZ;
-   protected final String engine;
+   protected final Optional<HostAndPort> endpoint;
+   protected final String rawStatus;
+   protected final Status status;
+   protected final Optional<Date> createdTime;
    protected final String engineVersion;
    protected final String licenseModel;
-   protected final String masterUsername;
-   protected int allocatedStorageGB;
-   protected final Date createdTime;
+   protected final Optional<String> availabilityZone;
+   protected final boolean multiAZ;
    protected final Optional<SubnetGroup> subnetGroup;
    protected final Map<String, String> securityGroupNameToStatus;
 
-   protected Instance(String id, Optional<String> name, String instanceClass, HostAndPort endpoint, String status,
-            String availabilityZone, boolean multiAZ, String engine, String engineVersion, String licenseModel,
-            String masterUsername, int allocatedStorageGB, Date createdTime, Optional<SubnetGroup> subnetGroup,
-            Map<String, String> securityGroupNameToStatus) {
+   protected Instance(String id, Optional<String> name, String instanceClass, Optional<HostAndPort> endpoint,
+            String rawStatus, Status status, Optional<String> availabilityZone, boolean multiAZ, String engine,
+            String engineVersion, String licenseModel, String masterUsername, int allocatedStorageGB,
+            Optional<Date> createdTime, Optional<SubnetGroup> subnetGroup, Map<String, String> securityGroupNameToStatus) {
+      super(name, instanceClass, engine, masterUsername, allocatedStorageGB);
       this.id = checkNotNull(id, "id");
-      this.name = checkNotNull(name, "name of %s", id);
-      this.endpoint = checkNotNull(endpoint, "endpoint of %s", id);
-      this.status = checkNotNull(status, "status of %s", id);
-      this.instanceClass = checkNotNull(instanceClass, "instanceClass of %s", id);
       this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone of %s", id);
       this.multiAZ = multiAZ;
-      this.engine = checkNotNull(engine, "engine of %s", id);
+      this.endpoint = checkNotNull(endpoint, "endpoint of %s", id);
+      this.rawStatus = checkNotNull(rawStatus, "rawStatus of %s", id);
+      this.status = checkNotNull(status, "status of %s", id);
       this.engineVersion = checkNotNull(engineVersion, "engineVersion of %s", id);
       this.licenseModel = checkNotNull(licenseModel, "licenseModel of %s", id);
-      this.masterUsername = checkNotNull(masterUsername, "masterUsername of %s", id);
-      this.allocatedStorageGB = allocatedStorageGB;
       this.createdTime = checkNotNull(createdTime, "createdTime of %s", id);
       this.subnetGroup = checkNotNull(subnetGroup, "subnetGroup of %s", id);
       this.securityGroupNameToStatus = ImmutableMap.copyOf(checkNotNull(securityGroupNameToStatus,
@@ -286,62 +277,32 @@ public class Instance {
    }
 
    /**
-    * The meaning of this parameter differs according to the database engine you use.
-    * 
-    * <h4>MySQL</h4>
-    * 
-    * Contains the name of the initial database of this instance that was provided at create time,
-    * if one was specified when the DB Instance was created. This same name is returned for the life
-    * of the DB Instance.
-    * 
-    * <h4>Oracle</h4>
-    * 
-    * Contains the Oracle System ID (SID) of the created DB Instance.
-    */
-   public Optional<String> getName() {
-      return name;
-   }
-
-   /**
     * Specifies the current state of this database.
     */
-   public String getStatus() {
+   public Status getStatus() {
       return status;
    }
 
    /**
-    * Contains the name of the compute and memory capacity class of the DB Instance.
+    * Specifies the current state of this database unparsed.
     */
-   public String getInstanceClass() {
-      return instanceClass;
+   public String getRawStatus() {
+      return rawStatus;
    }
 
    /**
-    * Specifies the connection endpoint.
+    * Specifies the connection endpoint, or absent if the database is in {@link Status#CREATING} or {@link Status#DELETING} states
     */
-   public HostAndPort getEndpoint() {
+   public Optional<HostAndPort> getEndpoint() {
       return endpoint;
    }
 
    /**
-    * Specifies the name of the Availability Zone the DB Instance is located in.
+    * Provides the date and time the DB Instance was created, or absent if the database is in
+    * {@code creating} state
     */
-   public String getAvailabilityZone() {
-      return availabilityZone;
-   }
-
-   /**
-    * Specifies the name of the Availability Zone the DB Instance is located in.
-    */
-   public boolean isMultiAZ() {
-      return multiAZ;
-   }
-
-   /**
-    * Provides the name of the database engine to be used for this DB Instance.
-    */
-   public String getEngine() {
-      return engine;
+   public Optional<Date> getCreatedTime() {
+      return createdTime;
    }
 
    /**
@@ -359,24 +320,18 @@ public class Instance {
    }
 
    /**
-    * Contains the master username for the DB Instance.
+    * Specifies the name of the Availability Zone the DB Instance is located in, or absent if the
+    * database is in {@code creating} state
     */
-   public String getMasterUsername() {
-      return masterUsername;
+   public Optional<String> getAvailabilityZone() {
+      return availabilityZone;
    }
 
    /**
-    * Specifies the allocated storage size specified in gigabytes.
+    * Specifies the name of the Availability Zone the DB Instance is located in.
     */
-   public int getAllocatedStorageGB() {
-      return allocatedStorageGB;
-   }
-
-   /**
-    * Provides the date and time the DB Instance was created.
-    */
-   public Date getCreatedTime() {
-      return createdTime;
+   public boolean isMultiAZ() {
+      return multiAZ;
    }
 
    /**
@@ -394,27 +349,19 @@ public class Instance {
       return securityGroupNameToStatus;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, createdTime);
+      return Objects.hashCode(id);
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (obj == null || getClass() != obj.getClass())
          return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Instance other = (Instance) obj;
-      return Objects.equal(this.id, other.id) && Objects.equal(this.createdTime, other.createdTime);
+      Instance that = Instance.class.cast(obj);
+      return Objects.equal(this.id, that.id);
    }
 
    /**
@@ -423,11 +370,11 @@ public class Instance {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("id", id).add("name", name.orNull())
-               .add("instanceClass", instanceClass).add("endpoint", endpoint).add("status", status)
-               .add("availabilityZone", availabilityZone).add("multiAZ", multiAZ).add("engine", engine)
+               .add("instanceClass", instanceClass).add("endpoint", endpoint.orNull()).add("status", rawStatus)
+               .add("availabilityZone", availabilityZone.orNull()).add("multiAZ", multiAZ).add("engine", engine)
                .add("engineVersion", engineVersion).add("licenseModel", licenseModel)
                .add("masterUsername", masterUsername).add("allocatedStorageGB", allocatedStorageGB)
-               .add("createdTime", createdTime).add("subnetGroup", subnetGroup.orNull())
+               .add("createdTime", createdTime.orNull()).add("subnetGroup", subnetGroup.orNull())
                .add("securityGroupNameToStatus", securityGroupNameToStatus).toString();
    }
 

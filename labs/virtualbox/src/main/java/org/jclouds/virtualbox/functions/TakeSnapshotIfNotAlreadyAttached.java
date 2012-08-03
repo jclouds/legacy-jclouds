@@ -91,14 +91,14 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
                      retries--;
                      if (retries == 0) {
                         logger.error(e,
-                                 "Problem creating snapshot (too many retries) %s (descripton: %s) from machine %s",
+                                 "Problem creating snapshot (too many retries) %s (description: %s) from machine %s",
                                  snapshotName, snapshotDesc, machine.getName());
                         throw Throwables.propagate(e);
                      }
                      Thread.sleep(1000L);
                      continue;
                   }
-                  logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName,
+                  logger.error(e, "Problem creating snapshot %s (description: %s) from machine %s", snapshotName,
                            snapshotDesc, machine.getName());
                   throw Throwables.propagate(e);
                }

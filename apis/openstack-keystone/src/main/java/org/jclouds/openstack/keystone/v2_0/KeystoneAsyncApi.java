@@ -20,10 +20,8 @@ package org.jclouds.openstack.keystone.v2_0;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncApi;
@@ -53,7 +51,6 @@ public interface KeystoneAsyncApi {
    @GET
    @SelectJson("version")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/v{" + Constants.PROPERTY_API_VERSION + "}/")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ApiMetadata> getApiMetadata();
    

@@ -20,7 +20,6 @@ package org.jclouds.joyent.cloudapi.v6_5.compute.config;
 
 import static org.jclouds.joyent.cloudapi.v6_5.config.JoyentCloudProperties.AUTOGENERATE_KEYS;
 
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,9 +118,9 @@ public class JoyentCloudComputeServiceContextModule extends
    
    @Override
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
-      return options.as(JoyentCloudTemplateOptions.class)
-                    .generateKey(injector.getInstance(
-                          com.google.inject.Key.get(boolean.class, Names.named(AUTOGENERATE_KEYS))));
+      boolean generateKey = injector.getInstance(com.google.inject.Key.get(boolean.class,
+               Names.named(AUTOGENERATE_KEYS)));
+      return options.as(JoyentCloudTemplateOptions.class).generateKey(generateKey);
    }
 
    @Provides
@@ -130,6 +129,7 @@ public class JoyentCloudComputeServiceContextModule extends
          CacheLoader<DatacenterAndName, KeyAndPrivateKey> in) {
       return CacheBuilder.newBuilder().build(in);
    }
+   
    @Provides
    @Singleton
    protected Supplier<Map<String, Location>> createLocationIndexedById(
@@ -149,12 +149,6 @@ public class JoyentCloudComputeServiceContextModule extends
          }
       }, locations);
 
-   }
-   
-   @Provides
-   @Singleton
-   protected SecureRandom provideSecureRandom() {
-      return new SecureRandom();
    }
 
    @VisibleForTesting

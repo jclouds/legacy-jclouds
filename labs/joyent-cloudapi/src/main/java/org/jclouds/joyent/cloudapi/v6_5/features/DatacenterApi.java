@@ -29,7 +29,7 @@ import org.jclouds.concurrent.Timeout;
  * 
  * @see DatacenterAsyncApi
  * @author Adrian Cole
- * @see <a href="http://cloudApi.joyent.org/cloudApiapi.html">api doc</a>
+ * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datacenters">api doc</a>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface DatacenterApi {

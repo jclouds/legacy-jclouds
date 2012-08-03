@@ -25,7 +25,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -46,7 +45,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adam Lowe
  */
-@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
 @SkipEncoding( { '/', '=' })
 public interface ServiceAsyncApi {
 

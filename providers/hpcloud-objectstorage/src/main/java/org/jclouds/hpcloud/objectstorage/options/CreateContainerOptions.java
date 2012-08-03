@@ -27,7 +27,7 @@ import org.jclouds.openstack.swift.reference.SwiftHeaders;
 /**
  * Contains options supported in the REST API for the Create Container operation.
  * 
- * This specifically enabes the Swift ACL for public reads using the 'X-Container-Read'
+ * This specifically enables the Swift ACL for public reads using the 'X-Container-Read'
  * header. This should be refactored into the Swift API.
  * 
  * @author Jeremy Daggett

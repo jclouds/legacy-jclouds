@@ -22,9 +22,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.joyent.cloudapi.v6_5.config.JoyentCloudParserModule;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Dataset;
-import org.jclouds.joyent.cloudapi.v6_5.domain.Type;
+import org.jclouds.joyent.cloudapi.v6_5.domain.Machine.Type;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -46,13 +45,20 @@ public class ParseDatasetTest extends BaseItemParserTest<Dataset> {
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
    public Dataset expected() {
-      return Dataset.builder().id("e4cd7b9e-4330-11e1-81cf-3bb50a972bda").name("centos-6")
-            .urn("sdc:sdc:centos-6:1.0.1").type(Type.VIRTUALMACHINE).version("1.0.1").isDefault(false)
-            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-02-13T06:30:33+00:00")).build();
+      return Dataset.builder()
+                    .id("e4cd7b9e-4330-11e1-81cf-3bb50a972bda")
+                    .urn("sdc:sdc:centos-6:1.0.1")
+                    .name("centos-6")
+                    .os("linux")
+                    .type(Type.VIRTUALMACHINE)
+                    .description("Centos 6 VM 1.0.1")
+                    .isDefault(false)
+                    .version("1.0.1")
+                    .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-02-13T06:30:33+00:00")).build();
    }
 
    protected Injector injector() {
-      return Guice.createInjector(new JoyentCloudParserModule(), new GsonModule() {
+      return Guice.createInjector(new GsonModule() {
 
          @Override
          protected void configure() {

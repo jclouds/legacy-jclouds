@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,106 +18,203 @@
  */
 package org.jclouds.hpcloud.objectstorage.domain;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
 
-import com.google.gson.annotations.SerializedName;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
  * @author James Murty
- * 
  */
 public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
-   
-   protected ContainerCDNMetadata() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   private String name;
-   private boolean cdn_enabled;
-   private long ttl;
-   @SerializedName("x-cdn-uri")
-   private URI cdn_uri;
-   private String referrer_acl;
-   private String useragent_acl;
-   private boolean log_retention;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromContainerCDNMetadata(this);
+   }
 
-   public ContainerCDNMetadata(String name, boolean cdnEnabled, long ttl, URI cdnUri) {
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected String name;
+      protected boolean cdnEnabled;
+      protected long ttl;
+      protected URI CDNUri;
+      protected String referrerAcl;
+      protected String useragentAcl;
+      protected boolean logRetention;
+
+      /**
+       * @see ContainerCDNMetadata#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /**
+       * @see ContainerCDNMetadata#isCDNEnabled()
+       */
+      public T CDNEnabled(boolean cdnEnabled) {
+         this.cdnEnabled = cdnEnabled;
+         return self();
+      }
+
+      /**
+       * @see ContainerCDNMetadata#getTTL
+       */
+      public T ttl(long ttl) {
+         this.ttl = ttl;
+         return self();
+      }
+
+      /**
+       * @see ContainerCDNMetadata#getCDNUri()
+       */
+      public T CDNUri(URI CDNUri) {
+         this.CDNUri = CDNUri;
+         return self();
+      }
+
+      /**
+       * @see ContainerCDNMetadata#getReferrerAcl()
+       */
+      public T referrerAcl(String referrerAcl) {
+         this.referrerAcl = referrerAcl;
+         return self();
+      }
+
+      /**
+       * @see ContainerCDNMetadata#getUseragentAcl()
+       */
+      public T useragent_acl(String useragentAcl) {
+         this.useragentAcl = useragentAcl;
+         return self();
+      }
+
+      /**
+       * @see ContainerCDNMetadata#isLogRetention()
+       */
+      public T logRetention(boolean logRetention) {
+         this.logRetention = logRetention;
+         return self();
+      }
+
+      public ContainerCDNMetadata build() {
+         return new ContainerCDNMetadata(name, cdnEnabled, ttl, CDNUri, referrerAcl, useragentAcl, logRetention);
+      }
+
+      public T fromContainerCDNMetadata(ContainerCDNMetadata in) {
+         return this
+               .name(in.getName())
+               .CDNEnabled(in.isCDNEnabled())
+               .ttl(in.getTTL())
+               .CDNUri(in.getCDNUri())
+               .referrerAcl(in.getReferrerAcl())
+               .useragent_acl(in.getUseragentAcl())
+               .logRetention(in.isLogRetention());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final String name;
+   private final boolean cdnEnabled;
+   private final long ttl;
+   private final URI CDNUri;
+   private final String referrerAcl;
+   private final String useragentAcl;
+   private final boolean logRetention;
+
+   @ConstructorProperties({
+         "name", "cdn_enabled", "ttl", "x-cdn-uri", "referrer_acl", "useragent_acl", "log_retention"
+   })
+   protected ContainerCDNMetadata(@Nullable String name, boolean cdnEnabled, long ttl, @Nullable URI CDNUri,
+                                  @Nullable String referrerAcl, @Nullable String useragentAcl, boolean logRetention) {
       this.name = name;
-      this.cdn_enabled = cdnEnabled;
+      this.cdnEnabled = cdnEnabled;
       this.ttl = ttl;
-      this.cdn_uri = cdnUri;
+      this.CDNUri = CDNUri;
+      this.referrerAcl = referrerAcl;
+      this.useragentAcl = useragentAcl;
+      this.logRetention = logRetention;
    }
 
    /**
-    * Beware: The container name is not available from HEAD CDN responses and will be null. return
-    * the name of the container to which these CDN settings apply.
+    * Beware: The container name is not available from HEAD CDN responses and will be null.
+    *
+    * @return the name of the container to which these CDN settings apply.
     */
+   @Nullable
    public String getName() {
-      return name;
-   }
-
-   public URI getCDNUri() {
-      return cdn_uri;
-   }
-
-   public long getTTL() {
-      return ttl;
+      return this.name;
    }
 
    public boolean isCDNEnabled() {
-      return cdn_enabled;
+      return this.cdnEnabled;
+   }
+
+   public long getTTL() {
+      return this.ttl;
+   }
+
+   @Nullable
+   public URI getCDNUri() {
+      return this.CDNUri;
+   }
+
+   @Nullable
+   public String getReferrerAcl() {
+      return this.referrerAcl;
+   }
+
+   @Nullable
+   public String getUseragentAcl() {
+      return this.useragentAcl;
+   }
+
+   public boolean isLogRetention() {
+      return this.logRetention;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(name, CDNUri);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ContainerCDNMetadata that = ContainerCDNMetadata.class.cast(obj);
+      return Objects.equal(this.name, that.name) && Objects.equal(this.CDNUri, that.CDNUri);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("name", name).add("cdnEnabled", cdnEnabled).add("ttl", ttl).add("CDNUri", CDNUri)
+            .add("referrerAcl", referrerAcl).add("useragentAcl", useragentAcl).add("logRetention", logRetention);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
    public int compareTo(ContainerCDNMetadata o) {
       if (getName() == null)
          return -1;
       return (this == o) ? 0 : getName().compareTo(o.getName());
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((cdn_uri == null) ? 0 : cdn_uri.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ContainerCDNMetadata other = (ContainerCDNMetadata) obj;
-      if (cdn_uri == null) {
-         if (other.cdn_uri != null)
-            return false;
-      } else if (!cdn_uri.equals(other.cdn_uri))
-         return false;
-      return true;
-   }
-
-   public String getReferrerACL() {
-      return referrer_acl;
-   }
-
-   public String getUseragentACL() {
-      return useragent_acl;
-   }
-
-   public boolean isLogRetention() {
-      return log_retention;
-   }
-
-   @Override
-   public String toString() {
-      return String.format(
-               "[name=%s, cdn_uri=%s, cdn_enabled=%s, log_retention=%s, referrer_acl=%s, ttl=%s, useragent_acl=%s]",
-               name, cdn_uri, cdn_enabled, log_retention, referrer_acl, ttl, useragent_acl);
    }
 }

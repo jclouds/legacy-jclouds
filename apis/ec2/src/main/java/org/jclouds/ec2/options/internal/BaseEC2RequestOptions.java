@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -52,13 +53,7 @@ public class BaseEC2RequestOptions extends BaseHttpRequestOptions {
 
    protected Set<String> getFormValuesWithKeysPrefixedBy(final String prefix) {
       Builder<String> values = ImmutableSet.builder();
-      for (String key : Iterables.filter(formParameters.keySet(), new Predicate<String>() {
-
-         public boolean apply(String input) {
-            return input.startsWith(prefix);
-         }
-
-      })) {
+      for (String key : Iterables.filter(formParameters.keySet(), Predicates2.startsWith(prefix))) {
          values.add(Iterables.get(formParameters.get(key), 0));
       }
       return values.build();

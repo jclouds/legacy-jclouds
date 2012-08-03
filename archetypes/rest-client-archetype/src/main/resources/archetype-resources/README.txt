@@ -5,4 +5,4 @@ properties:
    * test.${lcaseProviderName}.credential
 
 Note that this module is intentionally incomplete.  You should global replace and create your own client from this example.  Make sure that you use tests propertly.  For
-example, the test ending in *AsyncClientTest will help ensure that your annotations parse in the way you expect.
+example, tests ending in *ExpectTest will help ensure that your annotations parse in the way you expect.

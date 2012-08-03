@@ -37,6 +37,7 @@ public class DescribeSnapshotsResponseHandler extends ParseSax.HandlerWithResult
 
    private Set<Snapshot> snapshots = Sets.newLinkedHashSet();
    private final SnapshotHandler snapshotHandler;
+   private int itemDepth = 0;
 
    @Inject
    public DescribeSnapshotsResponseHandler(SnapshotHandler snapshotHandler) {
@@ -50,13 +51,16 @@ public class DescribeSnapshotsResponseHandler extends ParseSax.HandlerWithResult
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
+      itemDepth++;
       snapshotHandler.startElement(uri, localName, qName, attributes);
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       snapshotHandler.endElement(uri, localName, qName);
-      if (qName.equals("item")) {
+      itemDepth--;
+
+      if (qName.equals("item") && itemDepth == 2) {
          this.snapshots.add(snapshotHandler.getResult());
       }
    }

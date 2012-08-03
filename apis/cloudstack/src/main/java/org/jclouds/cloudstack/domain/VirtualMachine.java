@@ -940,7 +940,7 @@ public class VirtualMachine {
    }
 
    /**
-    * @return the ID of the availablility zone for the virtual machine
+    * @return the ID of the availability zone for the virtual machine
     */
    @Nullable
    public String getZoneId() {

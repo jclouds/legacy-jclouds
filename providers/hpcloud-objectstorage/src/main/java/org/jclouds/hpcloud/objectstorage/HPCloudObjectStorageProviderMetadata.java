@@ -72,7 +72,7 @@ public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
          .console(URI.create("https://manage.hpcloud.com/objects/us-west"))
          .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
          .iso3166Codes("US-NV")
-         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357")
+         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/")
          .defaultProperties(HPCloudObjectStorageProviderMetadata.defaultProperties());
       }
 

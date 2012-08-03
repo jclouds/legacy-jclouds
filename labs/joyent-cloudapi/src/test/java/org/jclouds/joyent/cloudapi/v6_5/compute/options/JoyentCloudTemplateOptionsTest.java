@@ -47,19 +47,19 @@ public class JoyentCloudTemplateOptionsTest {
    @Test
    public void testGenerateKeyDefault() {
       JoyentCloudTemplateOptions options = new JoyentCloudTemplateOptions();
-      assert !options.shouldGenerateKey();
+      assert !options.shouldGenerateKey().isPresent();
    }
 
    @Test
    public void testGenerateKey() {
       JoyentCloudTemplateOptions options = new JoyentCloudTemplateOptions().generateKey(true);
-      assert options.shouldGenerateKey();
+      assert options.shouldGenerateKey().get();
    }
 
    @Test
    public void testGenerateKeyStatic() {
       JoyentCloudTemplateOptions options = generateKey(true);
-      assert options.shouldGenerateKey();
+      assert options.shouldGenerateKey().get();
    }
 
    // superclass tests

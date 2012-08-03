@@ -18,11 +18,14 @@
  */
 package org.jclouds.compute.domain;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Running Operating system
@@ -94,6 +97,33 @@ public class OperatingSystem {
    protected String version;
    protected String description;
    protected boolean is64Bit;
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      OperatingSystem that = OperatingSystem.class.cast(o);
+      return equal(this.family, that.family) && equal(this.name, that.name) && equal(this.arch, that.arch)
+               && equal(this.version, that.version) && equal(this.description, that.description)
+               && equal(this.is64Bit, that.is64Bit);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(family, name, arch, version, description, is64Bit);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").omitNullValues().add("family", family).add("name", name).add("arch", arch)
+               .add("version", version).add("description", description).add("is64Bit", is64Bit);
+   }
 
    // for serialization/deserialization
    protected OperatingSystem() {
@@ -192,66 +222,8 @@ public class OperatingSystem {
       return is64Bit;
    }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((arch == null) ? 0 : arch.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((family == null) ? 0 : family.hashCode());
-      result = prime * result + (is64Bit ? 1231 : 1237);
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((version == null) ? 0 : version.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (!(obj instanceof OperatingSystem))
-         return false;
-      OperatingSystem other = (OperatingSystem) obj;
-      if (arch == null) {
-         if (other.arch != null)
-            return false;
-      } else if (!arch.equals(other.arch))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (family == null) {
-         if (other.family != null)
-            return false;
-      } else if (!family.equals(other.family))
-         return false;
-      if (is64Bit != other.is64Bit)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (version == null) {
-         if (other.version != null)
-            return false;
-      } else if (!version.equals(other.version))
-         return false;
-      return true;
-   }
-
    public Builder toBuilder() {
       return builder().fromOperatingSystem(this);
-   }
-
-   @Override
-   public String toString() {
-      return "[name=" + name + ", family=" + family + ", version=" + version + ", arch=" + arch + ", is64Bit="
-               + is64Bit + ", description=" + description + "]";
    }
 
 }

@@ -54,7 +54,7 @@ public class DhcpService {
    }
 
    /**
-    * default duration of a DCHP address lease
+    * default duration of a DHCP address lease
     * 
     * @since vcloud api 0.9
     */
@@ -64,7 +64,7 @@ public class DhcpService {
    }
 
    /**
-    * maximum duration of a DCHP address lease.
+    * maximum duration of a DHCP address lease.
     * 
     * @since vcloud api 0.9
     */

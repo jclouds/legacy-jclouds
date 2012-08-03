@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,118 +20,135 @@ package org.jclouds.softlayer.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
- * 
+ * Class ProductOrder
+ *
  * @author Jason King
  * @see <a href= "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Virtual_Guest"
- *      />
+/>
  */
 public class ProductOrder {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int packageId = -1;
-      private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
-      private Set<VirtualGuest> virtualGuests = Sets.newLinkedHashSet();
-      private String location;
-      private int quantity;
-      private boolean useHourlyPricing;
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromProductOrder(this);
+   }
 
-      public Builder packageId(int packageId) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int packageId;
+      protected String location;
+      protected Set<ProductItemPrice> prices = ImmutableSet.of();
+      protected Set<VirtualGuest> virtualGuests = ImmutableSet.of();
+      protected int quantity;
+      protected boolean useHourlyPricing;
+
+      /**
+       * @see ProductOrder#getPackageId()
+       */
+      public T packageId(int packageId) {
          this.packageId = packageId;
-         return this;
+         return self();
       }
 
       /**
-       * Adds a price to the order
-       * All that is required to send in is the price ID of each item desired to be ordered.
-       * @param prices
-       *                The Prices of the item desired to be ordered
+       * @see ProductOrder#getLocation()
        */
-      public Builder price(ProductItemPrice prices) {
-         this.prices.add(checkNotNull(prices, "prices"));
-         return this;
-      }
-
-      /**
-       * Adds multiple prices to the order, overwriting any existing ones
-       * All that is required to send in is the price ID of each item desired to be ordered.
-       * @param prices
-       *                The Prices of the items desired to be ordered
-       */
-      public Builder prices(Iterable<ProductItemPrice> prices) {
-         this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
-         return this;
-      }
-
-       /**
-       * Adds a virtualGuest to the order
-       * @param virtualGuest
-       *                The virtualGuest to add. Needs domain and hostname.
-       */
-      public Builder virtualGuest(VirtualGuest virtualGuest) {
-         this.virtualGuests.add(checkNotNull(virtualGuest, "virtualGuest"));
-         return this;
-      }
-
-      public Builder virtualGuests(Iterable<VirtualGuest> virtualGuests) {
-         this.virtualGuests = ImmutableSet.<VirtualGuest> copyOf(checkNotNull(virtualGuests, "virtualGuests"));
-         return this;
-      }
-
-      public Builder location(String location) {
+      public T location(String location) {
          this.location = location;
-         return this;
+         return self();
       }
 
-      public Builder quantity(int quantity) {
+      /**
+       * @see ProductOrder#getPrices()
+       */
+      public T prices(Iterable<ProductItemPrice> prices) {
+         this.prices = ImmutableSet.copyOf(checkNotNull(prices, "prices"));
+         return self();
+      }
+
+      public T prices(ProductItemPrice... in) {
+         return prices(ImmutableSet.copyOf(in));
+      }
+
+      /**
+       * @see ProductOrder#getVirtualGuests()
+       */
+      public T virtualGuests(Set<VirtualGuest> virtualGuests) {
+         this.virtualGuests = ImmutableSet.copyOf(checkNotNull(virtualGuests, "virtualGuests"));
+         return self();
+      }
+
+      public T virtualGuests(VirtualGuest... in) {
+         return virtualGuests(ImmutableSet.copyOf(in));
+      }
+
+      /**
+       * @see ProductOrder#getQuantity()
+       */
+      public T quantity(int quantity) {
          this.quantity = quantity;
-         return this;
+         return self();
       }
 
-      public Builder useHourlyPricing(Boolean useHourlyPricing) {
+      /**
+       * @see ProductOrder#getUseHourlyPricing()
+       */
+      public T useHourlyPricing(boolean useHourlyPricing) {
          this.useHourlyPricing = useHourlyPricing;
-         return this;
+         return self();
       }
 
       public ProductOrder build() {
-         return new ProductOrder(packageId, location,prices, virtualGuests, quantity, useHourlyPricing);
+         return new ProductOrder(packageId, location, prices, virtualGuests, quantity, useHourlyPricing);
       }
 
-      public static Builder fromProductOrder(ProductOrder in) {
-         return ProductOrder.builder().packageId(in.getPackageId())
-                                 .location(in.getLocation())
-                                 .prices(in.getPrices())
-                                 .virtualGuests(in.getVirtualGuests())
-                                 .quantity(in.getQuantity())
-                                 .useHourlyPricing(in.getUseHourlyPricing());
+      public T fromProductOrder(ProductOrder in) {
+         return this
+               .packageId(in.getPackageId())
+               .location(in.getLocation())
+               .prices(in.getPrices())
+               .virtualGuests(in.getVirtualGuests())
+               .quantity(in.getQuantity())
+               .useHourlyPricing(in.getUseHourlyPricing());
       }
    }
 
-   private int packageId = -1;
-   private String location;
-   private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
-   private Set<VirtualGuest> virtualGuests = Sets.newLinkedHashSet();
-   private int quantity;
-   private boolean useHourlyPricing;
-
-   // for deserializer
-   ProductOrder() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public ProductOrder(int packageId, String location, Iterable<ProductItemPrice> prices, Iterable<VirtualGuest> virtualGuest, int quantity, boolean useHourlyPricing) {
+   private final int packageId;
+   private final String location;
+   private final Set<ProductItemPrice> prices;
+   private final Set<VirtualGuest> virtualGuests;
+   private final int quantity;
+   private final boolean useHourlyPricing;
+
+   @ConstructorProperties({
+         "packageId", "location", "prices", "virtualGuest", "quantity", "useHourlyPricing"
+   })
+   protected ProductOrder(int packageId, @Nullable String location, @Nullable Set<ProductItemPrice> prices, @Nullable Set<VirtualGuest> virtualGuests, int quantity, boolean useHourlyPricing) {
       this.packageId = packageId;
       this.location = location;
-      this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
-      this.virtualGuests = ImmutableSet.<VirtualGuest> copyOf(checkNotNull(virtualGuest, "virtualGuest"));
+      this.prices = prices == null ? ImmutableSet.<ProductItemPrice>of() : ImmutableSet.copyOf(prices);
+      this.virtualGuests = virtualGuests == null ? ImmutableSet.<VirtualGuest>of() : ImmutableSet.copyOf(virtualGuests);
       this.quantity = quantity;
       this.useHourlyPricing = useHourlyPricing;
    }
@@ -140,79 +157,70 @@ public class ProductOrder {
     * @return The package id of an order. This is required.
     */
    public int getPackageId() {
-      return packageId;
+      return this.packageId;
    }
 
    /**
     * @return The region keyname or specific location keyname where the order should be provisioned.
     */
+   @Nullable
    public String getLocation() {
-      return location;
+      return this.location;
    }
 
    /**
     * Gets the item prices in this order.
-    * All that is required to be present is the price ID
+    * All that is required to be present is the prices ID
+    *
     * @return the prices.
     */
    public Set<ProductItemPrice> getPrices() {
-      return prices;
+      return this.prices;
    }
 
    /**
     * Gets the virtual guests in this order.
+    *
     * @return the the virtual guests.
     */
    public Set<VirtualGuest> getVirtualGuests() {
-      return virtualGuests;
+      return this.virtualGuests;
    }
 
    public int getQuantity() {
-      return quantity;
+      return this.quantity;
    }
 
    public boolean getUseHourlyPricing() {
-      return useHourlyPricing;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromProductOrder(this);
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ProductOrder that = (ProductOrder) o;
-
-      if (packageId != that.packageId) return false;
-      if (quantity != that.quantity) return false;
-      if (useHourlyPricing != that.useHourlyPricing) return false;
-      if (location != null ? !location.equals(that.location) : that.location != null)
-         return false;
-      if (prices != null ? !prices.equals(that.prices) : that.prices != null)
-         return false;
-      if (virtualGuests != null ? !virtualGuests.equals(that.virtualGuests) : that.virtualGuests != null)
-         return false;
-
-      return true;
+      return this.useHourlyPricing;
    }
 
    @Override
    public int hashCode() {
-      int result = (packageId ^ (packageId >>> 32));
-      result = 31 * result + (location != null ? location.hashCode() : 0);
-      result = 31 * result + (prices != null ? prices.hashCode() : 0);
-      result = 31 * result + (virtualGuests != null ? virtualGuests.hashCode() : 0);
-      result = 31 * result + (quantity ^ (quantity >>> 32));
-      result = 31 * result + (useHourlyPricing ? 1 : 0);
-      return result;
+      return Objects.hashCode(packageId, location, prices, virtualGuests, quantity, useHourlyPricing);
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ProductOrder that = ProductOrder.class.cast(obj);
+      return Objects.equal(this.packageId, that.packageId)
+            && Objects.equal(this.location, that.location)
+            && Objects.equal(this.prices, that.prices)
+            && Objects.equal(this.virtualGuests, that.virtualGuests)
+            && Objects.equal(this.quantity, that.quantity)
+            && Objects.equal(this.useHourlyPricing, that.useHourlyPricing);
+   }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("packageId", packageId).add("location", location).add("prices", prices).add("virtualGuests", virtualGuests).add("quantity", quantity).add("useHourlyPricing", useHourlyPricing);
+   }
+
+   @Override
    public String toString() {
-      return "[packageId=" + packageId + ", location=" + location + ", prices=" + prices
-           + ", virtualGuests=" + virtualGuests +", quantity=" + quantity + ", useHourlyPricing=" + useHourlyPricing + "]";
+      return string().toString();
    }
+
 }

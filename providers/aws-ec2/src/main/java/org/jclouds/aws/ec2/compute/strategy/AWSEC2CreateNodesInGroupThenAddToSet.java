@@ -47,6 +47,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -88,7 +89,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             AWSEC2InstancePresent instancePresent,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            LoadingCache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils, SpotInstanceRequestToAWSRunningInstance spotConverter) {
       super(client, elasticIpCache, nodeRunning, templateBuilderProvider, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
                instancePresent, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);

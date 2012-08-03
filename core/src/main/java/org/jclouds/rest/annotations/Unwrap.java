@@ -25,7 +25,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Unwraps the only value in a nested json reponse
+ * Unwraps the only value in a nested json response
  * 
  * ex. { "foo" :"bar" } becomes "bar"
  * 

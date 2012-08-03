@@ -353,7 +353,7 @@ public interface IBMSmartCloudClient {
     * @param size
     *           The size of the new storage volume. Valid values may include
     *           SMALL, MEDIUM, and LARGE. Actual values may depend on the
-    *           location used and may be discov- ered via the location service
+    *           location used and may be discovered via the location service
     * @param offeringID
     *           The offeringID which can be obtained from
     *           {@link #listStorageOfferings}

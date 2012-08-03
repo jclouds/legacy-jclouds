@@ -37,6 +37,38 @@ import org.jclouds.rds.options.ListSecurityGroupsOptions;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface SecurityGroupApi {
+   /**
+    * Creates a new DB Security Group. DB Security Groups control access to a DB Instance.
+    * 
+    * @param name
+    *           The name for the DB Security Group. This value is stored as a lowercase string.
+    * 
+    *           Constraints: Must contain no more than 255 alphanumeric characters or hyphens. Must
+    *           not be "Default".
+    * @param description
+    *           The description for the DB Security Group.
+    * 
+    * @return the new security group
+    */
+   SecurityGroup createWithNameAndDescription(String name, String description);
+
+   /**
+    * Creates a new DB Security Group. DB Security Groups control access to a DB Instance.
+    * 
+    * @param vpcId
+    *           The Id of VPC. Indicates which VPC this DB Security Group should belong to. Must be
+    *           specified to create a DB Security Group for a VPC; may not be specified otherwise.
+    * 
+    * @param name
+    *           The name for the DB Security Group. This value is stored as a lowercase string.
+    * 
+    *           Constraints: Must contain no more than 255 alphanumeric characters or hyphens. Must
+    *           not be "Default".
+    * @param description
+    *           The description for the DB Security Group.
+    * @return the new security group
+    */
+   SecurityGroup createInVPCWithNameAndDescription(String vpcId, String name, String description);
 
    /**
     * Retrieves information about the specified {@link SecurityGroup}.
@@ -67,6 +99,93 @@ public interface SecurityGroupApi {
     * @return the response object
     */
    PagedIterable<SecurityGroup> list();
+
+   /**
+    * Enables ingress to a DBSecurityGroup to an IP range, if the application accessing your
+    * database is running on the Internet.
+    * 
+    * @param name
+    *           The name of the DB Security Group to add authorization to.
+    * @param CIDR
+    *           The IP range to authorize.
+    * @return updated security group, noting the authorization status may not be complete
+    */
+   SecurityGroup authorizeIngressToIPRange(String name, String CIDR);
+
+   /**
+    * Enables ingress to a DBSecurityGroup if the application using the database is running on EC2
+    * instances.
+    * 
+    * <h4>Note</h4>
+    * 
+    * You cannot authorize ingress from an EC2 security group in one Region to an Amazon RDS DB
+    * Instance in another.
+    * 
+    * @param name
+    *           The name of the DB Security Group to add authorization to.
+    * @param ec2SecurityGroupName
+    *           Name of the EC2 Security Group to authorize.
+    * @param ec2SecurityGroupOwnerId
+    *           AWS Account Number of the owner of the EC2 Security Group specified in the
+    *           EC2SecurityGroupName parameter. The AWS Access Key ID is not an acceptable value.
+    * @return updated security group, noting the authorization status may not be complete
+    */
+   SecurityGroup authorizeIngressToEC2SecurityGroupOfOwner(String name, String ec2SecurityGroupName,
+            String ec2SecurityGroupOwnerId);
+
+   /**
+    * Enables ingress to a DBSecurityGroup if the application using the database is running on VPC
+    * instances.
+    * 
+    * <h4>Note</h4>
+    * 
+    * You cannot authorize ingress from a VPC security group in one VPC to an Amazon RDS DB Instance
+    * in another.
+    * 
+    * @param name
+    *           The name of the DB Security Group to add authorization to.
+    * @param vpcSecurityGroupId
+    *           Id of the EC2 Security Group to authorize.
+    * @return updated security group, noting the authorization status may not be complete
+    */
+   SecurityGroup authorizeIngressToVPCSecurityGroup(String name, String vpcSecurityGroupId);
+
+   /**
+    * Revokes ingress from a DBSecurityGroup for previously authorized IP range. 
+    * 
+    * @param name
+    *           The name of the DB Security Group to revoke ingress from.
+    * @param CIDR
+    *           The IP range to revoke.
+    * @return updated security group, noting the authorization status may not be complete
+    */
+   SecurityGroup revokeIngressFromIPRange(String name, String CIDR);
+
+   /**
+    * Revokes ingress from a DBSecurityGroup for previously authorized EC2 Security Group. 
+    * 
+    * @param name
+    *           The name of the DB Security Group to revoke ingress from.
+    * @param ec2SecurityGroupName
+    *           Name of the EC2 Security Group to revoke.
+    * @param ec2SecurityGroupOwnerId
+    *           AWS Account Number of the owner of the EC2 Security Group specified in the
+    *           EC2SecurityGroupName parameter. The AWS Access Key ID is not an acceptable value.
+    * @return updated security group, noting the authorization status may not be complete
+    */
+   SecurityGroup revokeIngressFromEC2SecurityGroupOfOwner(String name, String ec2SecurityGroupName,
+            String ec2SecurityGroupOwnerId);
+
+   /**
+    * Revokes ingress from a DBSecurityGroup for previously authorized VPC Security Group. 
+    * 
+    * @param name
+    *           The name of the DB Security Group to revoke ingress from.
+    * @param vpcSecurityGroupId
+    *           Id of the EC2 Security Group to revoke.
+    * @return updated security group, noting the authorization status may not be complete
+    */
+   SecurityGroup revokeIngressFromVPCSecurityGroup(String name, String vpcSecurityGroupId);
 
    /**
     * Deletes a DB security group.

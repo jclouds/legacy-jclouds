@@ -25,11 +25,13 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.io.OutputSupplier;
 
@@ -44,7 +46,8 @@ public class Suppliers2 {
 
          @Override
          public V apply(Map<K, Supplier<V>> input) {
-            return Iterables.getLast(input.values()).get();
+            Supplier<V> last = Iterables.getLast(input.values());
+            return last.get();
          }
 
          @Override
@@ -78,6 +81,56 @@ public class Suppliers2 {
       return new OutputSupplier<OutputStream>() {
          public OutputStream getOutput() throws IOException {
             return output;
+         }
+      };
+   }
+
+   /**
+    * returns the value of the first supplier, or the value of the fallback, if the unlessNull is
+    * null.
+    */
+   @Beta
+   public static <T> Supplier<T> or(final Supplier<T> unlessNull, final Supplier<T> fallback) {
+      return new Supplier<T>() {
+
+         @Override
+         public T get() {
+            T val = unlessNull.get();
+            if (val != null)
+               return val;
+            return fallback.get();
+         }
+
+         @Override
+         public String toString() {
+            return Objects.toStringHelper(this).add("unlessNull", unlessNull).add("fallback", fallback).toString();
+         }
+      };
+   }
+
+   /**
+    * if a throwable of certain type is encountered on getting the first value, use the fallback.
+    */
+   @Beta
+   public static <T, X extends Throwable> Supplier<T> onThrowable(final Supplier<T> unlessThrowable,
+            final Class<X> throwable, final Supplier<T> fallback) {
+      return new Supplier<T>() {
+
+         @Override
+         public T get() {
+            try {
+               return unlessThrowable.get();
+            } catch (Throwable t) {
+               if (Throwables2.getFirstThrowableOfType(t, throwable) != null)
+                  return fallback.get();
+               throw Throwables.propagate(t);
+            }
+         }
+
+         @Override
+         public String toString() {
+            return Objects.toStringHelper(this).add("unlessThrowable", unlessThrowable)
+                     .add("throwable", throwable.getSimpleName()).add("fallback", fallback).toString();
          }
       };
    }

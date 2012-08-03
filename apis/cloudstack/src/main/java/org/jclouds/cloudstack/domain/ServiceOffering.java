@@ -30,6 +30,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -259,7 +260,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    private final int memory;
    private final boolean haSupport;
    private final StorageType storageType;
-   private final String tags;
+   private final Set<String> tags;
    private final boolean defaultUse;
    private final String hostTags;
    private final boolean systemOffering;
@@ -285,7 +286,8 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       this.memory = memory;
       this.haSupport = haSupport;
       this.storageType = storageType;
-      this.tags = tags;
+      this.tags = !(Strings.emptyToNull(tags) == null) ? ImmutableSet.copyOf(Splitter.on(',').split(tags))
+               : ImmutableSet.<String> of();
       this.defaultUse = defaultUse;
       this.hostTags = hostTags;
       this.systemOffering = systemOffering;
@@ -377,7 +379,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
     * @return the tags for the service offering
     */
    public Set<String> getTags() {
-      return tags == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(Splitter.on(',').split(tags));
+      return tags;
    }
 
    /**

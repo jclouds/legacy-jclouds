@@ -36,6 +36,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
@@ -111,14 +112,15 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName() + ", processors="
-               + processors + ", ram=" + ram + ", volumes=" + volumes + ", hypervisor=" + hypervisor
-               + ", supportsImage=" + supportsImage + ", tags=" + tags + "]";
+   protected ToStringHelper string() {
+      ToStringHelper helper = computeToStringPrefix();
+      helper.add("processors", processors).add("ram", ram);
+      if (volumes.size() > 0)
+         helper.add("volumes", volumes);
+      helper.add("hypervisor", hypervisor);
+      helper.add("supportsImage", supportsImage);
+      return addComputeToStringSuffix(helper);
    }
 
    /**

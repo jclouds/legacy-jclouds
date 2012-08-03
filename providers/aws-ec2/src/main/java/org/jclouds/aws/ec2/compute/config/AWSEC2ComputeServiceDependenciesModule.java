@@ -45,13 +45,16 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
+import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.functions.PasswordCredentialsFromWindowsInstance;
+import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
@@ -86,12 +89,16 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(AWSEC2TemplateOptions.class);
       bind(ComputeService.class).to(AWSEC2ComputeService.class);
-      bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
+      bind(new TypeLiteral<CacheLoader<RunningInstance, LoginCredentials>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);    
+      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);   
+      bind(new TypeLiteral<Function<PasswordDataAndPrivateKey, LoginCredentials>>() {
+      }).to(WindowsLoginCredentialsFromEncryptedData.class);
+      bind(new TypeLiteral<Function<RunningInstance, LoginCredentials>>() {
+      }).to(PasswordCredentialsFromWindowsInstance.class);
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<Function<RegionNameAndPublicKeyMaterial, KeyPair>>() {

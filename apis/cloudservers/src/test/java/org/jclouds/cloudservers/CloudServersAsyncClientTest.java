@@ -502,8 +502,8 @@ public class CloudServersAsyncClientTest extends BaseAsyncClientTest<CloudServer
 
    public void testReplaceBackupSchedule() throws IOException, SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("replaceBackupSchedule", int.class, BackupSchedule.class);
-      HttpRequest request = processor.createRequest(method, 2, new BackupSchedule(WeeklyBackup.MONDAY,
-            DailyBackup.H_0800_1000, true));
+      HttpRequest request = processor.createRequest(method, 2, BackupSchedule.builder().weekly(WeeklyBackup.MONDAY)
+            .daily(DailyBackup.H_0800_1000).enabled(true).build());
 
       assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/backup_schedule HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");

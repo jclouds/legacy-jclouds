@@ -150,7 +150,7 @@ public interface ServerApi {
     * @param id
     *           id of the server
     * @param options
-    *           Optional paramaters to the rebuilding operation.
+    *           Optional parameters to the rebuilding operation.
     */
    void rebuildServer(String id, RebuildServerOptions... options);
 

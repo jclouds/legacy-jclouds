@@ -23,9 +23,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.JsonBall;
-import org.jclouds.joyent.cloudapi.v6_5.config.JoyentCloudParserModule;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Machine;
-import org.jclouds.joyent.cloudapi.v6_5.domain.Type;
+import org.jclouds.joyent.cloudapi.v6_5.domain.Machine.Type;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -68,7 +67,7 @@ public class ParseCreatedMachineTest extends BaseItemParserTest<Machine> {
    }
 
    protected Injector injector() {
-      return Guice.createInjector(new JoyentCloudParserModule(), new GsonModule() {
+      return Guice.createInjector(new GsonModule() {
 
           @Override
           protected void configure() {

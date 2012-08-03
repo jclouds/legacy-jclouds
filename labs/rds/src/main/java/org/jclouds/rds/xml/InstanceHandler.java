@@ -94,9 +94,11 @@ public class InstanceHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    @Override
    public void endElement(String uri, String name, String qName) throws SAXException {
 
-      if (equalsOrSuffix(qName, "SubnetGroup")) {
+      if (equalsOrSuffix(qName, "DBSubnetGroup")) {
          builder.subnetGroup(subnetGroupHandler.getResult());
          inSubnetGroup = false;
+      } else if (inSubnetGroup) {
+         subnetGroupHandler.endElement(uri, name, qName);
       } else if (equalsOrSuffix(qName, "DBInstanceIdentifier")) {
          builder.id(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "InstanceCreateTime")) {
@@ -106,13 +108,17 @@ public class InstanceHandler extends ParseSax.HandlerForGeneratedRequestWithResu
       } else if (equalsOrSuffix(qName, "AllocatedStorage")) {
          builder.allocatedStorageGB(Integer.parseInt(currentOrNull(currentText)));
       } else if (equalsOrSuffix(qName, "DBInstanceStatus")) {
-         builder.status(currentOrNull(currentText));
+         String rawStatus = currentOrNull(currentText);
+         builder.rawStatus(rawStatus);
+         builder.status(Instance.Status.fromValue(rawStatus));
       } else if (equalsOrSuffix(qName, "Address")) {
          address = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "Port")) {
          port = Integer.valueOf(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Endpoint")) {
-         builder.endpoint(HostAndPort.fromParts(address, port));
+         // sometimes in deleting state, address is null while port isn't
+         if (address != null && port != null)
+            builder.endpoint(HostAndPort.fromParts(address, port));
          address = null;
          port = null;
       } else if (equalsOrSuffix(qName, "DBSecurityGroupName")) {
@@ -139,8 +145,6 @@ public class InstanceHandler extends ParseSax.HandlerForGeneratedRequestWithResu
          builder.licenseModel(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "MasterUsername")) {
          builder.masterUsername(currentOrNull(currentText));
-      } else if (inSubnetGroup) {
-         subnetGroupHandler.endElement(uri, name, qName);
       }
       currentText = new StringBuilder();
    }

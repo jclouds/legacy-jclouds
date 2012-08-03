@@ -22,12 +22,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
@@ -39,12 +41,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
- * 
  */
 public class CreateServerOptions implements MapBinder {
    @Inject
@@ -73,24 +72,30 @@ public class CreateServerOptions implements MapBinder {
 
    }
 
-   @SuppressWarnings("unused")
    private class ServerRequest {
       final String name;
       final String imageRef;
       final String flavorRef;
-      String adminPass;
-      Map<String, String> metadata;
-      List<File> personality;
-      String key_name;
-      @SerializedName(value="security_groups")
-      Set<SecurityGroup> securityGroups;
+      final String adminPass;
+      final Map<String, String> metadata;
+      final List<File> personality;
+      @Named("key_name")
+      final String keyName;
+      @Named("security_groups")
+      final Set<SecurityGroup> securityGroups;
 
-      private ServerRequest(String name, String imageRef, String flavorRef) {
+      @ConstructorProperties({"name", "imageRef", "flavorRef", "adminPass", "metadata", "personality", "key_name", "security_groups"})
+      private ServerRequest(String name, String imageRef, String flavorRef, String adminPass, Map<String, String> metadata,
+                            List<File> personality, String keyName, Set<SecurityGroup> securityGroups) {
          this.name = name;
          this.imageRef = imageRef;
          this.flavorRef = flavorRef;
+         this.adminPass = adminPass;
+         this.metadata = metadata.isEmpty() ? null : metadata;
+         this.personality = personality.isEmpty() ? null : personality;
+         this.keyName = keyName;
+         this.securityGroups = securityGroups.isEmpty() ? null : securityGroups;
       }
-
    }
 
    private Map<String, String> metadata = Maps.newHashMap();
@@ -101,26 +106,19 @@ public class CreateServerOptions implements MapBinder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present").toString(),
-               checkNotNull(postParams.get("imageRef"), "imageRef parameter not present").toString(), 
-               checkNotNull(postParams.get("flavorRef"), "flavorRef parameter not present").toString());
-      if (metadata.size() > 0)
-         server.metadata = metadata;
-      if (files.size() > 0)
-         server.personality = files;
-      if (keyName != null)
-    	  server.key_name = keyName;
-      if (securityGroups.size() > 0) {
-    	  server.securityGroups = Sets.newHashSet();
-    	  for (String groupName : securityGroups) {
-    		  SecurityGroup group = new SecurityGroup();
-        	  group.setName(groupName);
-        	  server.securityGroups.add(group);
-    	  }
+      Set<SecurityGroup> groups = Sets.newLinkedHashSet();
+      for (String groupName : securityGroups) {
+         groups.add(SecurityGroup.builder().name(groupName).build());
       }
-      if (adminPass != null) {
-    	  server.adminPass = adminPass;
-      }
+      ServerRequest server = new ServerRequest(
+            checkNotNull(postParams.get("name"), "name parameter not present").toString(),
+            checkNotNull(postParams.get("imageRef"), "imageRef parameter not present").toString(),
+            checkNotNull(postParams.get("flavorRef"), "flavorRef parameter not present").toString(),
+            adminPass,
+            metadata,
+            files,
+            keyName,
+            groups);
 
       return bindToRequest(request, ImmutableMap.of("server", server));
    }

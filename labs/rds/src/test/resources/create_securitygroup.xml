@@ -1,0 +1,15 @@
+<CreateDBSecurityGroupResponse xmlns="http://rds.amazonaws.com/doc/2012-04-23/">
+    <CreateDBSecurityGroupResult>
+        <DBSecurityGroup>
+            <EC2SecurityGroups/>
+            <DBSecurityGroupDescription>My new DBSecurityGroup</DBSecurityGroupDescription>
+            <IPRanges/>
+            <OwnerId>565419523791</OwnerId>
+            <DBSecurityGroupName>mydbsecuritygroup</DBSecurityGroupName>
+            <VpcId>vpc-1a2b3c4d</VpcId>
+        </DBSecurityGroup>
+    </CreateDBSecurityGroupResult>
+    <ResponseMetadata>
+        <RequestId>ed662948-a57b-11df-9e38-7ffab86c801f</RequestId>
+    </ResponseMetadata>
+</CreateDBSecurityGroupResponse>

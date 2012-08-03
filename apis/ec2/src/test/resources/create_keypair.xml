@@ -1,6 +1,6 @@
 <CreateKeyPairResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
     <requestId>bb5e3a3c-e254-454d-ba29-d607cdf6357a</requestId>
-    <keyName>adriancole-ec21</keyName>
+    <keyName>jclouds#test#0</keyName>
     <keyFingerprint>13:36:74:b9:56:bb:07:96:c0:19:ab:00:7f:9f:06:d2:16:a0:45:32</keyFingerprint>
     <keyMaterial>-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEA0CbFlhSdbMdad2ux2BVqk6Ut5fLKb0CdbqubGcEBfwsSz9Rp4Ile76P90MpV

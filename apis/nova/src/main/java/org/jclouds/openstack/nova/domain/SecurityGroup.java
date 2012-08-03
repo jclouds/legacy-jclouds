@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,148 +18,159 @@
  */
 package org.jclouds.openstack.nova.domain;
 
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Defines a security group
  * 
  * @author chamerling
- *
- */
+*/
 public class SecurityGroup {
-	
-	private int id;
-	
-	private String name;
-	
-	private String description;
 
-	@SerializedName(value="tenant_id")
-	private String tenantId;
-	
-	public SecurityGroup() {
-	}
+   public static Builder<?> builder() { 
+      return new ConcreteBuilder();
+   }
+   
+   public Builder<?> toBuilder() { 
+      return new ConcreteBuilder().fromSecurityGroup(this);
+   }
 
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
+      protected int id;
+      protected String name;
+      protected String description;
+      protected String tenantId;
+   
+      /** 
+       * @see SecurityGroup#getId()
+       */
+      public T id(int id) {
+         this.id = id;
+         return self();
+      }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+      /** 
+       * @see SecurityGroup#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+      /** 
+       * @see SecurityGroup#getDescription()
+       */
+      public T description(String description) {
+         this.description = description;
+         return self();
+      }
 
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
+      /** 
+       * @see SecurityGroup#getTenantId()
+       */
+      public T tenantId(String tenantId) {
+         this.tenantId = tenantId;
+         return self();
+      }
 
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+      public SecurityGroup build() {
+         return new SecurityGroup(id, name, description, tenantId);
+      }
+      
+      public T fromSecurityGroup(SecurityGroup in) {
+         return this
+                  .id(in.getId())
+                  .name(in.getName())
+                  .description(in.getDescription())
+                  .tenantId(in.getTenantId());
+      }
+   }
 
-	/**
-	 * @return the tenantId
-	 */
-	public String getTenantId() {
-		return tenantId;
-	}
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 
-	/**
-	 * @param tenantId the tenantId to set
-	 */
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+   private final int id;
+   private final String name;
+   private final String description;
+   private final String tenantId;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("SecurityGroup [id=");
-		builder.append(id);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", description=");
-		builder.append(description);
-		builder.append(", tenantId=");
-		builder.append(tenantId);
-		builder.append("]");
-		return builder.toString();
-	}
+   @ConstructorProperties({
+      "id", "name", "description", "tenant_id"
+   })
+   protected SecurityGroup(int id, String name, @Nullable String description, @Nullable String tenantId) {
+      this.id = id;
+      this.name = checkNotNull(name, "name");
+      this.description = description;
+      this.tenantId = tenantId;
+   }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((tenantId == null) ? 0 : tenantId.hashCode());
-		return result;
-	}
+   /**
+    * @return the id
+    */
+   public int getId() {
+      return this.id;
+   }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SecurityGroup other = (SecurityGroup) obj;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id != other.id)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (tenantId == null) {
-			if (other.tenantId != null)
-				return false;
-		} else if (!tenantId.equals(other.tenantId))
-			return false;
-		return true;
-	}
+   /**
+    * @return the name
+    */
+   public String getName() {
+      return this.name;
+   }
+
+   /**
+    * @return the description
+    */
+   @Nullable
+   public String getDescription() {
+      return this.description;
+   }
+
+   /**
+    * @return the tenantId
+    */
+   @Nullable
+   public String getTenantId() {
+      return this.tenantId;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, name, description, tenantId);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      SecurityGroup that = SecurityGroup.class.cast(obj);
+      return Objects.equal(this.id, that.id)
+               && Objects.equal(this.name, that.name)
+               && Objects.equal(this.description, that.description)
+               && Objects.equal(this.tenantId, that.tenantId);
+   }
+   
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("name", name).add("description", description).add("tenantId", tenantId);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
 }

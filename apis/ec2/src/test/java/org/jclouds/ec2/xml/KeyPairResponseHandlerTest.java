@@ -46,7 +46,7 @@ public class KeyPairResponseHandlerTest extends BaseEC2HandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/create_keypair.xml");
 
-      KeyPair expected = KeyPair.builder().region(defaultRegion).keyName("adriancole-ec21").sha1OfPrivateKey(
+      KeyPair expected = KeyPair.builder().region(defaultRegion).keyName("jclouds#test#0").sha1OfPrivateKey(
                "13:36:74:b9:56:bb:07:96:c0:19:ab:00:7f:9f:06:d2:16:a0:45:32").keyMaterial(
                "-----BEGIN RSA PRIVATE KEY-----\n"
                         + "MIIEowIBAAKCAQEA0CbFlhSdbMdad2ux2BVqk6Ut5fLKb0CdbqubGcEBfwsSz9Rp4Ile76P90MpV\n"

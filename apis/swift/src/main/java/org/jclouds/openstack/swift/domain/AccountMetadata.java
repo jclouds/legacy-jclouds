@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,6 +18,11 @@
  */
 package org.jclouds.openstack.swift.domain;
 
+import java.beans.ConstructorProperties;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * 
  * @author James Murty
@@ -25,64 +30,94 @@ package org.jclouds.openstack.swift.domain;
  */
 public class AccountMetadata {
 
-   public AccountMetadata(long containerCount, long bytes) {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromAccountMetadata(this);
+   }
+
+   public static abstract class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
+      protected long containerCount;
+      protected long bytes;
+
+      /**
+       * @see AccountMetadata#getContainerCount()
+       */
+      public T containerCount(long containerCount) {
+         this.containerCount = containerCount;
+         return self();
+      }
+
+      /**
+       * @see AccountMetadata#getBytes()
+       */
+      public T bytes(long bytes) {
+         this.bytes = bytes;
+         return self();
+      }
+
+      public AccountMetadata build() {
+         return new AccountMetadata(containerCount, bytes);
+      }
+
+      public T fromAccountMetadata(AccountMetadata in) {
+         return this
+               .containerCount(in.getContainerCount())
+               .bytes(in.getBytes());
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+
+   private final long containerCount;
+   private final long bytes;
+
+   @ConstructorProperties({
+         "containerCount", "bytes"
+   })
+   protected AccountMetadata(long containerCount, long bytes) {
       this.containerCount = containerCount;
       this.bytes = bytes;
    }
 
-   public AccountMetadata() {
+   public long getContainerCount() {
+      return this.containerCount;
    }
 
-   @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("ResourceMetadata [bytes=").append(bytes)
-               .append(", containerCount=").append(containerCount).append("]");
-      return builder.toString();
+   public long getBytes() {
+      return this.bytes;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (bytes ^ (bytes >>> 32));
-      result = prime * result + (int) (containerCount ^ (containerCount >>> 32));
-      return result;
+      return Objects.hashCode(containerCount, bytes);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      AccountMetadata other = (AccountMetadata) obj;
-      if (bytes != other.bytes)
-         return false;
-      if (containerCount != other.containerCount)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      AccountMetadata that = AccountMetadata.class.cast(obj);
+      return Objects.equal(this.containerCount, that.containerCount)
+            && Objects.equal(this.bytes, that.bytes);
    }
 
-   private long containerCount;
-   private long bytes;
-
-   public void setContainerCount(long count) {
-      this.containerCount = count;
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("containerCount", containerCount).add("bytes", bytes);
    }
 
-   public long getContainerCount() {
-      return containerCount;
+   @Override
+   public String toString() {
+      return string().toString();
    }
-
-   public void setBytes(long bytes) {
-      this.bytes = bytes;
-   }
-
-   public long getBytes() {
-      return bytes;
-   }
-
 }

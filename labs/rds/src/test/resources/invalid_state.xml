@@ -1,0 +1,8 @@
+<ErrorResponse xmlns="http://rds.amazonaws.com/doc/2012-04-23/">
+  <Error>
+    <Type>Sender</Type>
+    <Code>InvalidDBInstanceState</Code>
+    <Message>Can only delete db instances with state in: available, failed, storage-full, incompatible-option-group, incompatible-parameters, incompatible-restore, incompatible-network.  Instance adriancole-jclouds has state: deleting.</Message>
+  </Error>
+  <RequestId>77db43a3-d6d2-11e1-aaa2-59d4ca8d1ef6</RequestId>
+</ErrorResponse>

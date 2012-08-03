@@ -48,7 +48,7 @@ public class BindVMSpecsToXmlPayload extends BaseBindVMSpecToXmlPayload<Iterable
             return specs;
          }
       }
-      throw new IllegalArgumentException("Iterbable<VMSpec> must be included in the argument list");
+      throw new IllegalArgumentException("Iterable<VMSpec> must be included in the argument list");
    }
 
    @Override

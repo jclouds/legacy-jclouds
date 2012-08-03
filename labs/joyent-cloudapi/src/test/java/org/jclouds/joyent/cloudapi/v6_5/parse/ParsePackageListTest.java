@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.joyent.cloudapi.v6_5.config.JoyentCloudParserModule;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Package;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
@@ -57,7 +56,7 @@ public class ParsePackageListTest extends BaseSetParserTest<Package> {
    }
 
    protected Injector injector() {
-      return Guice.createInjector(new JoyentCloudParserModule(), new GsonModule() {
+      return Guice.createInjector(new GsonModule() {
 
          @Override
          protected void configure() {

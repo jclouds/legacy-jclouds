@@ -9,6 +9,12 @@
             <ownerId>218213537122</ownerId>
             <volumeSize>10</volumeSize>
             <description>Daily Backup</description>
+            <tagSet>
+                <item>
+                    <key>Name</key>
+                    <value>example_name_tag</value>
+                </item>
+            </tagSet>
         </item>
     </snapshotSet>
 </DescribeSnapshotsResponse>

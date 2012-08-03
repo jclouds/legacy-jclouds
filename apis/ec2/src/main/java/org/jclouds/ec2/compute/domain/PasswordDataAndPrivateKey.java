@@ -20,9 +20,11 @@ package org.jclouds.ec2.compute.domain;
 
 import org.jclouds.ec2.domain.PasswordData;
 
+import com.google.common.base.Objects;
+
 /**
  * An encrypted Windows Administrator password, and the private key that can decrypt it.
- *
+ * 
  * @author Richard Downer
  */
 public class PasswordDataAndPrivateKey {
@@ -41,5 +43,36 @@ public class PasswordDataAndPrivateKey {
 
    public String getPrivateKey() {
       return privateKey;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(passwordData, privateKey);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      PasswordDataAndPrivateKey other = PasswordDataAndPrivateKey.class.cast(obj);
+      return Objects.equal(this.passwordData, other.passwordData) && Objects.equal(this.privateKey, other.privateKey);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("passwordData", passwordData).toString();
    }
 }

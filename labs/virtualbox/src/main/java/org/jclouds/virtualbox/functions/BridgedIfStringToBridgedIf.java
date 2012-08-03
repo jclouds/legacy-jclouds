@@ -51,18 +51,18 @@ public class BridgedIfStringToBridgedIf implements Function<String, BridgedIf> {
 		checkNotNull(rawBridgedIf, "rawBridgedIf");
 
 		String transformedBridgedIf = transformRawBridgedIf(rawBridgedIf);
-		Map<String, String> bridegedIfMap = Splitter.on("\n")
+		Map<String, String> bridgedIfMap = Splitter.on("\n")
 				.omitEmptyStrings().withKeyValueSeparator("=")
 				.split(transformedBridgedIf);
 
 		return BridgedIf
 				.builder()
-				.name(getValueFromMap(bridegedIfMap, BRIDGED_IF_NAME))
-				.guid(getValueFromMap(bridegedIfMap, BRIDGED_IF_GUID))
-				.ip(getValueFromMap(bridegedIfMap, BRIDGED_IF_IP_ADDRESS))
-				.networkMask(getValueFromMap(bridegedIfMap, BRIDGED_IF_NETWORK_MASK))
-				.mediumType(getValueFromMap(bridegedIfMap, BRIDGED_IF_MEDIUM_TYPE))
-				.status(getValueFromMap(bridegedIfMap, BRIDGED_IF_STATUS))
+				.name(getValueFromMap(bridgedIfMap, BRIDGED_IF_NAME))
+				.guid(getValueFromMap(bridgedIfMap, BRIDGED_IF_GUID))
+				.ip(getValueFromMap(bridgedIfMap, BRIDGED_IF_IP_ADDRESS))
+				.networkMask(getValueFromMap(bridgedIfMap, BRIDGED_IF_NETWORK_MASK))
+				.mediumType(getValueFromMap(bridgedIfMap, BRIDGED_IF_MEDIUM_TYPE))
+				.status(getValueFromMap(bridgedIfMap, BRIDGED_IF_STATUS))
 				.build();
 	}
 

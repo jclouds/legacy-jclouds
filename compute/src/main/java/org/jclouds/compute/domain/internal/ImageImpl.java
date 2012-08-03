@@ -32,7 +32,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
@@ -124,11 +123,11 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    // equals and toString from super are sufficient to establish identity equivalence
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", getId()).add("providerId", getProviderId()).add("name", getName())
-               .add("os", getOperatingSystem()).add("description", getDescription()).add("version", getVersion()).add(
-                        "location", getLocation()).add("status", formatStatus(this)).add("loginUser",
-                        ((defaultCredentials != null) ? defaultCredentials.identity : null)).add("tags", getTags())
-               .add("userMetadata", getUserMetadata());
+      ToStringHelper helper = computeToStringPrefix();
+      helper.add("os", getOperatingSystem()).add("description", getDescription()).add("version", getVersion())
+               .add("status", formatStatus(this))
+               .add("loginUser", ((defaultCredentials != null) ? defaultCredentials.identity : null));
+      return addComputeToStringSuffix(helper);
    }
 
 }

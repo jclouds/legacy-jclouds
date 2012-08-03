@@ -43,7 +43,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adrian Cole
  */
-@Path("/v2.0")
 public interface CloudIdentityAuthenticationAsyncApi extends AuthenticationAsyncApi {
 
    /**

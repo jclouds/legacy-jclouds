@@ -29,12 +29,12 @@
   </parent>
   <groupId>org.jclouds.provider</groupId>
   <artifactId>rackspace-cloudservers-us</artifactId>
-  <name>jclouds Rackspace Next Generation Cloud Servers provider</name>
-  <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers</description>
+  <name>jclouds Rackspace Next Generation Cloud Servers US provider</name>
+  <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers US</description>
   <packaging>bundle</packaging>
 
   <properties>
-    <test.rackspace-cloudservers-us.endpoint>https://identity.api.rackspacecloud.com</test.rackspace-cloudservers-us.endpoint>
+    <test.rackspace-cloudservers-us.endpoint>https://identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudservers-us.endpoint>
     <test.rackspace-cloudservers-us.api-version>2</test.rackspace-cloudservers-us.api-version>
     <test.rackspace-cloudservers-us.build-version />
     <test.rackspace-cloudservers-us.identity>${test.rackspace-us.identity}</test.rackspace-cloudservers-us.identity>

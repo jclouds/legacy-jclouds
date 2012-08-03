@@ -28,6 +28,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 
 /**
  * Contains options supported in the {@code ComputeService#createNodesInGroup} operation on the
@@ -48,6 +49,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  */
 public class JoyentCloudTemplateOptions extends TemplateOptions implements Cloneable {
+   
    @Override
    public JoyentCloudTemplateOptions clone() {
       JoyentCloudTemplateOptions options = new JoyentCloudTemplateOptions();
@@ -60,11 +62,11 @@ public class JoyentCloudTemplateOptions extends TemplateOptions implements Clone
       super.copyTo(to);
       if (to instanceof JoyentCloudTemplateOptions) {
          JoyentCloudTemplateOptions eTo = JoyentCloudTemplateOptions.class.cast(to);
-         eTo.generateKey(shouldGenerateKey());
+         eTo.generateKey = generateKey;
       }
    }
 
-   protected boolean generateKey = false;
+   protected Optional<Boolean> generateKey = Optional.absent();
 
    @Override
    public boolean equals(Object o) {
@@ -83,17 +85,14 @@ public class JoyentCloudTemplateOptions extends TemplateOptions implements Clone
 
    @Override
    public ToStringHelper string() {
-      ToStringHelper toString = super.string();
-      if (generateKey)
-         toString.add("generateKey", generateKey);
-      return toString;
+      return super.string().add("generateKey", generateKey.orNull());
    }
 
    /**
     * @see #shouldGenerateKey()
     */
    public JoyentCloudTemplateOptions generateKey(boolean enable) {
-      this.generateKey = enable;
+      this.generateKey = Optional.of(enable);
       return this;
    }
    
@@ -101,7 +100,7 @@ public class JoyentCloudTemplateOptions extends TemplateOptions implements Clone
     *
     * @return true if auto generation of keys is enabled
     */
-   public boolean shouldGenerateKey() {
+   public Optional<Boolean> shouldGenerateKey() {
       return generateKey;
    }
    

@@ -51,7 +51,7 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
    @BeforeMethod
    public void grabToken() {
       AuthenticateRequest ar = keystoneContext.getUtils().getInjector().getInstance(AuthenticateRequest.class);
-      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(endpoint).build());
+      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(context.getProviderMetadata().getEndpoint()).build());
       token = Iterables.getOnlyElement(test.getHeaders().get("X-Auth-Token"));
    }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,131 +20,154 @@ package org.jclouds.softlayer.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * The SoftLayer_Product_Item data type contains general information relating to
  * a single SoftLayer product.
- * 
+ *
  * @author Adrian Cole
  * @see <a href=
- *      "http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Item"
- *      />
+"http://sldn.softlayer.com/reference/datatypes/SoftLayer_Product_Item"
+/>
  */
-public class ProductItem implements Comparable<ProductItem> {
+public class ProductItem {
 
-   // TODO there are more elements than this.
-
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
-      private int id = -1;
-      private String description;
-      private String units;
-      private Float capacity;
-      private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
-      private Set<ProductItemCategory> categories = Sets.newLinkedHashSet();
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromProductItem(this);
+   }
 
-      public Builder id(int id) {
+   public static abstract class Builder<T extends Builder<T>>  {
+      protected abstract T self();
+
+      protected int id;
+      protected String description;
+      protected String units;
+      protected Float capacity;
+      protected Set<ProductItemPrice> prices = ImmutableSet.of();
+      protected Set<ProductItemCategory> categories = ImmutableSet.of();
+
+      /**
+       * @see ProductItem#getId()
+       */
+      public T id(int id) {
          this.id = id;
-         return this;
+         return self();
       }
 
-      public Builder description(String description) {
+      /**
+       * @see ProductItem#getDescription()
+       */
+      public T description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
-      public Builder units(String units) {
+      /**
+       * @see ProductItem#getUnits()
+       */
+      public T units(String units) {
          this.units = units;
-         return this;
+         return self();
       }
 
-      public Builder capacity(Float capacity) {
+      /**
+       * @see ProductItem#getCapacity()
+       */
+      public T capacity(Float capacity) {
          this.capacity = capacity;
-         return this;
+         return self();
       }
 
-      public Builder price(ProductItemPrice prices) {
-         this.prices.add(checkNotNull(prices, "prices"));
-         return this;
+      /**
+       * @see ProductItem#getPrices()
+       */
+      public T prices(Set<ProductItemPrice> prices) {
+         this.prices = ImmutableSet.copyOf(checkNotNull(prices, "prices"));
+         return self();
       }
 
-      public Builder prices(Iterable<ProductItemPrice> prices) {
-         this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
-         return this;
+      public T prices(ProductItemPrice... in) {
+         return prices(ImmutableSet.copyOf(in));
+      }
+      
+      /**
+       * @see ProductItem#getCategories()
+       */
+      public T categories(Set<ProductItemCategory> categories) {
+         this.categories = ImmutableSet.copyOf(checkNotNull(categories, "categories"));
+         return self();
       }
 
-      public Builder category(ProductItemCategory categories) {
-         this.categories.add(checkNotNull(categories, "categories"));
-         return this;
-      }
-
-      public Builder categories(Iterable<ProductItemCategory> categories) {
-         this.categories = ImmutableSet.<ProductItemCategory> copyOf(checkNotNull(categories, "categories"));
-         return this;
+      public T categories(ProductItemCategory... in) {
+         return categories(ImmutableSet.copyOf(in));
       }
 
       public ProductItem build() {
          return new ProductItem(id, description, units, capacity, prices, categories);
       }
 
-      public static Builder fromProductItem(ProductItem in) {
-         return ProductItem.builder().id(in.getId())
-                 .description(in.getDescription())
-                 .units(in.getUnits())
-                 .capacity(in.getCapacity())
-                 .prices(in.getPrices())
-                 .categories(in.getCategories());
+      public T fromProductItem(ProductItem in) {
+         return this
+               .id(in.getId())
+               .description(in.getDescription())
+               .units(in.getUnits())
+               .capacity(in.getCapacity())
+               .prices(in.getPrices())
+               .categories(in.getCategories());
       }
    }
 
-   private int id = -1;
-   private String description;
-   private String units;
-   private Float capacity;
-   private Set<ProductItemPrice> prices = Sets.newLinkedHashSet();
-   private Set<ProductItemCategory> categories = Sets.newLinkedHashSet();
-
-   // for deserializer
-   ProductItem() {
-
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
    }
 
-   public ProductItem(int id, String description, String units, Float capacity,
-                      Iterable<ProductItemPrice> prices, Iterable<ProductItemCategory> categories) {
+   private final int id;
+   private final String description;
+   private final String units;
+   private final Float capacity;
+   private final Set<ProductItemPrice> prices;
+   private final Set<ProductItemCategory> categories;
+
+   @ConstructorProperties({
+         "id", "description", "units", "capacity", "prices", "categories"
+   })
+   protected ProductItem(int id, @Nullable String description, @Nullable String units, @Nullable Float capacity, @Nullable Set<ProductItemPrice> prices, @Nullable Set<ProductItemCategory> categories) {
       this.id = id;
       this.description = description;
       this.units = units;
       this.capacity = capacity;
-      this.prices = ImmutableSet.<ProductItemPrice> copyOf(checkNotNull(prices, "prices"));
-      this.categories = ImmutableSet.<ProductItemCategory> copyOf(checkNotNull(categories, "categories"));
-   }
-
-   @Override
-   public int compareTo(ProductItem arg0) {
-      return Integer.valueOf(id).compareTo(arg0.getId());
+      this.prices = prices == null ? ImmutableSet.<ProductItemPrice>of() : ImmutableSet.copyOf(prices);
+      this.categories = categories == null ? ImmutableSet.<ProductItemCategory>of() : ImmutableSet.copyOf(categories);
    }
 
    /**
     * @return The unique identifier of a specific location.
     */
    public int getId() {
-      return id;
+      return this.id;
    }
 
    /**
     * @return A product's description
     */
+   @Nullable
    public String getDescription() {
-      return description;
+      return this.description;
    }
 
    /**
@@ -152,64 +175,54 @@ public class ProductItem implements Comparable<ProductItem> {
     */
    @Nullable
    public String getUnits() {
-      return units;
+      return this.units;
    }
 
    /**
     * @return Some Product Items have capacity information such as RAM and
-    *         bandwidth, and others. This provides the numerical representation
-    *         of the capacity given in the description of this product item.
+   bandwidth, and others. This provides the numerical representation
+   of the capacity given in the description of this product item.
     */
    @Nullable
    public Float getCapacity() {
-      return capacity;
+      return this.capacity;
    }
 
    /**
-    * 
     * @return A product item's prices.
     */
    public Set<ProductItemPrice> getPrices() {
-      return prices;
+      return this.prices;
    }
 
    /**
-    *
     * @return An item's associated item categories.
     */
    public Set<ProductItemCategory> getCategories() {
-      return categories;
-   }
-
-   public Builder toBuilder() {
-      return Builder.fromProductItem(this);
+      return this.categories;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (id ^ (id >>> 32));
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ProductItem other = (ProductItem) obj;
-      if (id != other.id)
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      ProductItem that = ProductItem.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("description", description).add("units", units).add("capacity", capacity).add("prices", prices).add("categories", categories);
    }
 
    @Override
    public String toString() {
-      return "ProductItem [id=" + id + ", description=" + description + ", units=" + units + ", capacity=" + capacity
-            + ", prices=" + prices + ", categories=" + categories + "]";
+      return string().toString();
    }
+
 }

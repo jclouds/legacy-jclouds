@@ -19,7 +19,6 @@
 package org.jclouds.trystack.nova;
 
 import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 
 import java.net.URI;
@@ -64,7 +63,6 @@ public class TryStackNovaProviderMetadata extends BaseProviderMetadata {
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
-      properties.setProperty(CREDENTIAL_TYPE, "passwordCredentials");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
       return properties;
    }
@@ -81,7 +79,7 @@ public class TryStackNovaProviderMetadata extends BaseProviderMetadata {
          .homepage(URI.create("https://trystack.org"))
          .console(URI.create("https://trystack.org/dash"))
          .iso3166Codes("US-CA")
-         .endpoint("https://nova-api.trystack.org:5443")
+         .endpoint("https://nova-api.trystack.org:5443/v2.0/")
          .defaultProperties(TryStackNovaProviderMetadata.defaultProperties());
       }
 

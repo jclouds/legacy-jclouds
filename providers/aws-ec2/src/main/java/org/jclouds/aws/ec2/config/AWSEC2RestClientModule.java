@@ -46,6 +46,8 @@ import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.features.WindowsApi;
+import org.jclouds.ec2.features.WindowsAsyncApi;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.services.AMIAsyncClient;
 import org.jclouds.ec2.services.AMIClient;
@@ -88,6 +90,7 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
          .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
          .put(SpotInstanceClient.class, SpotInstanceAsyncClient.class)//
          .put(TagClient.class, TagAsyncClient.class)//
+         .put(WindowsApi.class, WindowsAsyncApi.class)//
          .build();
 
    public AWSEC2RestClientModule() {

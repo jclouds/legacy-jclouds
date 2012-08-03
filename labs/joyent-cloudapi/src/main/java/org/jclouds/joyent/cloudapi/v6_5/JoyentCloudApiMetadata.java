@@ -63,6 +63,10 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      // auth fail sometimes happens, as the rc.local script that injects the
+      // authorized key executes after ssh has started.  
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(JoyentCloudProperties.AUTOGENERATE_KEYS, "true");
       return properties;
    }

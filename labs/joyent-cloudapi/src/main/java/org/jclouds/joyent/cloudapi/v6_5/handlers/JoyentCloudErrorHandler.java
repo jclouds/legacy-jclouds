@@ -35,7 +35,6 @@ import org.jclouds.rest.ResourceNotFoundException;
  * @author Adrian Cole
  * 
  */
-// TODO: is there error spec someplace? let's type errors, etc.
 @Singleton
 public class JoyentCloudErrorHandler implements HttpErrorHandler {
    public void handleError(HttpCommand command, HttpResponse response) {
@@ -44,21 +43,24 @@ public class JoyentCloudErrorHandler implements HttpErrorHandler {
       String message = data != null ? new String(data) : null;
 
       Exception exception = message != null ? new HttpResponseException(command, response, message)
-            : new HttpResponseException(command, response);
+               : new HttpResponseException(command, response);
       message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-            response.getStatusLine());
+               response.getStatusLine());
       switch (response.getStatusCode()) {
-      case 400:
-         break;
-      case 401:
-      case 403:
-         exception = new AuthorizationException(message, exception);
-         break;
-      case 404:
-         if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-            exception = new ResourceNotFoundException(message, exception);
-         }
-         break;
+         case 400:
+            break;
+         case 401:
+         case 403:
+            exception = new AuthorizationException(message, exception);
+            break;
+         case 404:
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               exception = new ResourceNotFoundException(message, exception);
+            }
+            break;
+         case 409:
+            exception = new IllegalStateException(message, exception);
+            break;
       }
       command.setException(exception);
    }

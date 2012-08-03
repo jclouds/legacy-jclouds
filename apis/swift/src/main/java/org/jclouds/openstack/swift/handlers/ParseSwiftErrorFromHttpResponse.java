@@ -43,7 +43,7 @@ import org.jclouds.rest.AuthorizationException;
 public class ParseSwiftErrorFromHttpResponse implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
-   public static final String PREFIX = "^/v[0-9][^/]*/[a-zA-Z]+_[^/]+/";
+   public static final String PREFIX = "^/v[0-9][^/]*/[^/]+/";
    public static final Pattern CONTAINER_PATH = Pattern.compile(PREFIX + "([^/]+)$");
    public static final Pattern CONTAINER_KEY_PATH = Pattern.compile(PREFIX + "([^/]+)/(.*)");
 

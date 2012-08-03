@@ -24,7 +24,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
                           greenhousedata-element-vcloud, softlayer, cloudsigma (generic),
                           cloudstack (generic), ninefold-compute, openstack-nov (keystone),
                           hpcloud-compute, trystack-nova, openstack-nova-ec2,
-                          rackspace-cloudservers-us (next gen)
+                          rackspace-cloudservers-us (next gen), rackspace-cloudservers-uk (next gen)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers

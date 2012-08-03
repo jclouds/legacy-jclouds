@@ -73,10 +73,10 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
 
       @Override
       public URI load(String container) {
-         Optional<HPCloudCDNClient> cdnExension = client.getCDNExtension();
-         checkArgument(cdnExension.isPresent(), "CDN is required, but the extension is not available!");
+         Optional<HPCloudCDNClient> cdnExtension = client.getCDNExtension();
+         checkArgument(cdnExtension.isPresent(), "CDN is required, but the extension is not available!");
          try {
-            ContainerCDNMetadata md = cdnExension.get().getCDNMetadata(container);
+            ContainerCDNMetadata md = cdnExtension.get().getCDNMetadata(container);
             return md != null ? md.getCDNUri() : null;
          } catch (HttpResponseException e) {
             // TODO: this is due to beta status

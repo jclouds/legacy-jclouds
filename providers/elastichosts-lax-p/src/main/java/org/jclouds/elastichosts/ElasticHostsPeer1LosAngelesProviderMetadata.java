@@ -69,7 +69,7 @@ public class ElasticHostsPeer1LosAngelesProviderMetadata extends BaseProviderMet
          .homepage(URI.create("https://lax-p.elastichosts.com"))
          .console(URI.create("https://lax-p.elastichosts.com/accounts"))
          .iso3166Codes("US-CA")
-         .endpoint("https://api.lax-p.elastichosts.com")
+         .endpoint("https://api-lax-p.elastichosts.com")
          .defaultProperties(ElasticHostsPeer1LosAngelesProviderMetadata.defaultProperties());
       }
 

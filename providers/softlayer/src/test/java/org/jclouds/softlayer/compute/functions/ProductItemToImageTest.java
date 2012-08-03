@@ -107,7 +107,7 @@ public class ProductItemToImageTest {
       {
          ProductItem item = ProductItem.builder()
                                        .description(description)
-                                       .price(ProductItemPrice.builder().id(1234).build())
+                                       .prices(ProductItemPrice.builder().id(1234).build())
                                        .build();
          Image i = new ProductItemToImage().apply(item);
          OperatingSystem os = i.getOperatingSystem();
@@ -122,7 +122,7 @@ public class ProductItemToImageTest {
    public void testUbuntu() {
          ProductItem item = ProductItem.builder()
                                        .description("Ubuntu Linux 10.04 LTS Lucid Lynx - Minimal Install (64 bit)")
-                                       .price(ProductItemPrice.builder().id(1234).build())
+                                       .prices(ProductItemPrice.builder().id(1234).build())
                                        .build();
          Image i = new ProductItemToImage().apply(item);
          OperatingSystem os = i.getOperatingSystem();
@@ -136,7 +136,7 @@ public class ProductItemToImageTest {
    public void testUbuntuNoBitCount() {
       ProductItem item = ProductItem.builder()
             .description("Ubuntu Linux 10.04 LTS Lucid Lynx - Minimal Install")
-            .price(ProductItemPrice.builder().id(1234).build())
+            .prices(ProductItemPrice.builder().id(1234).build())
             .build();
       Image i = new ProductItemToImage().apply(item);
       OperatingSystem os = i.getOperatingSystem();
@@ -151,7 +151,7 @@ public class ProductItemToImageTest {
    public void testCompletelyUnknown() {
       ProductItem item = ProductItem.builder()
             .description("This fails to match anything!!!")
-            .price(ProductItemPrice.builder().id(1234).build())
+            .prices(ProductItemPrice.builder().id(1234).build())
             .build();
       Image i = new ProductItemToImage().apply(item);
       OperatingSystem os = i.getOperatingSystem();
@@ -165,7 +165,7 @@ public class ProductItemToImageTest {
    public void test64BitUnknown() {
       ProductItem item = ProductItem.builder()
             .description("This only has the bit-count (64 bit)")
-            .price(ProductItemPrice.builder().id(1234).build())
+            .prices(ProductItemPrice.builder().id(1234).build())
             .build();
       Image i = new ProductItemToImage().apply(item);
       OperatingSystem os = i.getOperatingSystem();
@@ -183,7 +183,7 @@ public class ProductItemToImageTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testNoDescription() {
       ProductItem item = ProductItem.builder()
-            .price(ProductItemPrice.builder().id(1234).build())
+            .prices(ProductItemPrice.builder().id(1234).build())
             .build();
       new ProductItemToImage().apply(item);
    }
@@ -191,7 +191,7 @@ public class ProductItemToImageTest {
    @Test
    public void testId() {
       ProductItemPrice price = ProductItemPrice.builder().id(1234).build();
-      ProductItem item = ProductItem.builder().price(price).build();
+      ProductItem item = ProductItem.builder().prices(price).build();
       assertEquals("1234",imageId().apply(item));
    }
 

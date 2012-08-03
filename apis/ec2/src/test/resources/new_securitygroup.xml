@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+    <requestId>6df3e2a6-76c0-414b-89ff-9318144e0bbe</requestId>
+    <securityGroupInfo>
+        <item>
+            <ownerId>993194456877</ownerId>
+            <groupId>sg-3c6ef654</groupId>
+            <groupName>jclouds#test</groupName>
+            <groupDescription>jclouds#test</groupDescription>
+            <ipPermissions/>
+            <ipPermissionsEgress/>
+        </item>
+    </securityGroupInfo>
+</DescribeSecurityGroupsResponse>

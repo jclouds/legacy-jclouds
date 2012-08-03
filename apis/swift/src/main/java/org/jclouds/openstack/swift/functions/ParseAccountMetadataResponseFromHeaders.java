@@ -28,7 +28,7 @@ import com.google.common.base.Function;
 
 /**
  * This parses {@link AccountMetadata} from HTTP headers.
- * 
+ *
  * @author James Murty
  */
 public class ParseAccountMetadataResponseFromHeaders implements Function<HttpResponse, AccountMetadata> {
@@ -38,9 +38,10 @@ public class ParseAccountMetadataResponseFromHeaders implements Function<HttpRes
     */
    public AccountMetadata apply(final HttpResponse from) {
       String bytesString = checkNotNull(from.getFirstHeaderOrNull(SwiftHeaders.ACCOUNT_BYTES_USED),
-               SwiftHeaders.ACCOUNT_BYTES_USED);
+            SwiftHeaders.ACCOUNT_BYTES_USED);
       String containersCountString = checkNotNull(from.getFirstHeaderOrNull(SwiftHeaders.ACCOUNT_CONTAINER_COUNT),
-               SwiftHeaders.ACCOUNT_CONTAINER_COUNT);
-      return new AccountMetadata(Long.parseLong(containersCountString), Long.parseLong(bytesString));
+            SwiftHeaders.ACCOUNT_CONTAINER_COUNT);
+      return AccountMetadata.builder().containerCount(Long.parseLong(containersCountString))
+            .bytes(Long.parseLong(bytesString)).build();
    }
 }
