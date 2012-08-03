@@ -18,9 +18,12 @@
  */
 @XmlSchema(namespace = "http://schemas.microsoft.com/windowsazure", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 @XmlAccessorType(XmlAccessType.FIELD)
-package org.jclouds.azure.servicemanagement.domain;
+@XmlJavaTypeAdapters({@XmlJavaTypeAdapter(NetworkConfigurationSetAdapter.class),@XmlJavaTypeAdapter(LinuxProvisioningConfigurationSetAdapter.class)})
+package org.jclouds.azure.servicemanagement.domain.role;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 

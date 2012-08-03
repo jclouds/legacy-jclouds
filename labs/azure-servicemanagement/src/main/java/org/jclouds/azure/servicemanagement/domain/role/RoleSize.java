@@ -1,4 +1,4 @@
-package org.jclouds.azure.servicemanagement.domain;
+package org.jclouds.azure.servicemanagement.domain.role;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

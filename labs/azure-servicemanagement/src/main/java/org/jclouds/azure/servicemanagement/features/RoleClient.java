@@ -20,7 +20,7 @@ package org.jclouds.azure.servicemanagement.features;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.azure.servicemanagement.domain.Role;
+import org.jclouds.azure.servicemanagement.domain.role.Role;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -34,10 +34,20 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface RoleClient {
 
+
+	/**
+	 *  http://msdn.microsoft.com/en-us/library/jj157193
+	 */
 	Role getRole(String subscriptionId,
 			String serviceName,
 			String deploymentName,
 			String roleName);
 
+	/**
+	 * http://msdn.microsoft.com/en-us/library/jj157186
+	 */
+	String addRole(String subscriptionId,
+			String serviceName,
+			String deploymentName,Role role);
 
 }

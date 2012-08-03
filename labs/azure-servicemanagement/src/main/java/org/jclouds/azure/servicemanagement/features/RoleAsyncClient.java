@@ -20,16 +20,20 @@ package org.jclouds.azure.servicemanagement.features;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.azure.servicemanagement.domain.Role;
+import org.jclouds.azure.servicemanagement.domain.role.Role;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -58,5 +62,17 @@ public interface RoleAsyncClient {
 			@PathParam("service-name") String serviceName,
 			@PathParam("deployment-name") String deploymentName,
 			@PathParam("role-name") String roleName);
+	
+	
+	@POST
+	@Path("{subscription-id}/services/hostedservices/{service-name}/deployments/{deployment-name}/roles")
+	@Produces(MediaType.APPLICATION_ATOM_XML)
+	@Consumes(MediaType.TEXT_PLAIN)
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	ListenableFuture<String> addRole(@PathParam("subscription-id") String subscriptionId,
+			@PathParam("service-name") String serviceName,
+			@PathParam("deployment-name") String deploymentName,
+			@BinderParam(BindToXMLPayload.class) Role role);
+	
 	
 }
