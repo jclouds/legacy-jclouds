@@ -56,5 +56,6 @@
        <module>rds</module>
        <module>aws-rds</module>
        <module>smartos-ssh</module>
+       <module>cloudstack-ec2</module>
     </modules>
 </project>
