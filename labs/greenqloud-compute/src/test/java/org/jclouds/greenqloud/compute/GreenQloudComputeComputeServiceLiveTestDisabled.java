@@ -26,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "GreenQloudComputeComputeServiceLiveTest")
-public class GreenQloudComputeComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
+public class GreenQloudComputeComputeServiceLiveTestDisabled extends EC2ComputeServiceLiveTest {
 
-   public GreenQloudComputeComputeServiceLiveTest() {
+   public GreenQloudComputeComputeServiceLiveTestDisabled() {
       provider = "greenqloud-compute";
    }
 }

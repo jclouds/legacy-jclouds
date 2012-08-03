@@ -41,9 +41,9 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "GreenQloudComputeTemplateBuilderLiveTest")
-public class GreenQloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class GreenQloudComputeTemplateBuilderLiveTestDisabled extends BaseTemplateBuilderLiveTest {
 
-   public GreenQloudComputeTemplateBuilderLiveTest() {
+   public GreenQloudComputeTemplateBuilderLiveTestDisabled() {
       provider = "greenqloud-compute";
    }
 
