@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2.services;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.snapshotIds;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -26,9 +27,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.predicates.SnapshotCompleted;
@@ -38,8 +40,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -52,8 +54,13 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
    public ElasticBlockStoreClientLiveTest() {
       provider = "ec2";
    }
-   
+
+   private EC2Client ec2Client;
    private ElasticBlockStoreClient client;
+
+   private String defaultRegion;
+   private String defaultZone;
+
    private String volumeId;
    private Snapshot snapshot;
 
@@ -61,12 +68,17 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices();
+      ec2Client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi();
+      client = ec2Client.getElasticBlockStoreServices();
+      AvailabilityZoneInfo info = Iterables.get(ec2Client.getAvailabilityZoneAndRegionServices()
+            .describeAvailabilityZonesInRegion(defaultRegion), 0);
+      defaultRegion = checkNotNull(Strings.emptyToNull(info.getRegion()), "region of " + info);
+      defaultZone = checkNotNull(Strings.emptyToNull(info.getZone()), "zone of " + info);
    }
 
    @Test
    void testDescribeVolumes() {
-      for (String region : view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : ec2Client.getConfiguredRegions()) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -81,14 +93,13 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
 
    @Test
    void testCreateVolumeInAvailabilityZone() {
-      Volume expected = client.createVolumeInAvailabilityZone(getDefaultAvailabilityZone(), 1);
+      Volume expected = client.createVolumeInAvailabilityZone(defaultZone, 1);
       assertNotNull(expected);
-      System.out.println(expected);
-      assertEquals(expected.getAvailabilityZone(), getDefaultAvailabilityZone());
+      assertEquals(expected.getAvailabilityZone(), defaultZone);
 
       this.volumeId = expected.getId();
 
-      Set<Volume> result = Sets.newLinkedHashSet(client.describeVolumesInRegion(null, expected.getId()));
+      Set<Volume> result = Sets.newLinkedHashSet(client.describeVolumesInRegion(defaultRegion, expected.getId()));
       assertNotNull(result);
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();
@@ -97,7 +108,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
 
    @Test(dependsOnMethods = "testCreateVolumeInAvailabilityZone")
    void testCreateSnapshotInRegion() {
-      Snapshot snapshot = client.createSnapshotInRegion(null, volumeId);
+      Snapshot snapshot = client.createSnapshotInRegion(defaultRegion, volumeId);
       Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(client), 600, 10,
             TimeUnit.SECONDS);
       assert snapshotted.apply(snapshot);
@@ -109,13 +120,9 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
       this.snapshot = result;
    }
 
-   protected  String getDefaultAvailabilityZone(){
-      return "us-east-1a";
-   }
-   
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZone() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(getDefaultAvailabilityZone(), snapshot.getId());
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(defaultZone, snapshot.getId());
       assertNotNull(volume);
 
       Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
@@ -125,7 +132,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
       assertEquals(volume.getId(), result.getId());
       assertEquals(volume.getSnapshotId(), snapshot.getId());
-      assertEquals(volume.getAvailabilityZone(), getDefaultAvailabilityZone());
+      assertEquals(volume.getAvailabilityZone(), defaultZone);
       assertEquals(result.getStatus(), Volume.Status.AVAILABLE);
 
       client.deleteVolumeInRegion(snapshot.getRegion(), volume.getId());
@@ -133,8 +140,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZoneWithSize() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(getDefaultAvailabilityZone(), 2,
-            snapshot.getId());
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(defaultZone, 2, snapshot.getId());
       assertNotNull(volume);
 
       Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
@@ -144,7 +150,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
       assertEquals(volume.getId(), result.getId());
       assertEquals(volume.getSnapshotId(), snapshot.getId());
-      assertEquals(volume.getAvailabilityZone(), getDefaultAvailabilityZone());
+      assertEquals(volume.getAvailabilityZone(), defaultZone);
       assertEquals(volume.getSize(), 2);
       assertEquals(result.getStatus(), Volume.Status.AVAILABLE);
 
@@ -163,8 +169,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
 
    @Test
    void testDescribeSnapshots() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
+      for (String region : ec2Client.getConfiguredRegions()) {
          SortedSet<Snapshot> allResults = Sets.newTreeSet(client.describeSnapshotsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -179,32 +184,37 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
 
    @Test(enabled = false)
    public void testAddCreateVolumePermissionsToSnapshot() {
-      // TODO client.addCreateVolumePermissionsToSnapshotInRegion(null, userIds,
+      // TODO client.addCreateVolumePermissionsToSnapshotInRegion(defaultRegion,
+      // userIds,
       // userGroups,
       // snapshotId);
    }
 
    @Test(enabled = false)
    public void testRemoveCreateVolumePermissionsFromSnapshot() {
-      // TODO client.removeCreateVolumePermissionsFromSnapshotInRegion(null, userIds,
+      // TODO
+      // client.removeCreateVolumePermissionsFromSnapshotInRegion(defaultRegion,
+      // userIds,
       // userGroups,
       // snapshotId);
    }
 
    @Test(enabled = false)
    public void testResetCreateVolumePermissionsOnSnapshot() {
-      // TODO client.resetCreateVolumePermissionsOnSnapshotInRegion(null, snapshotId);
+      // TODO
+      // client.resetCreateVolumePermissionsOnSnapshotInRegion(defaultRegion,
+      // snapshotId);
    }
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    public void testGetCreateVolumePermissionForSnapshot() {
-      System.out.println(client.getCreateVolumePermissionForSnapshotInRegion(snapshot.getRegion(), snapshot.getId()));
+      client.getCreateVolumePermissionForSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
    }
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testDeleteVolumeInRegion() {
-      client.deleteVolumeInRegion(null, volumeId);
-      Set<Volume> result = Sets.newLinkedHashSet(client.describeVolumesInRegion(null, volumeId));
+      client.deleteVolumeInRegion(defaultRegion, volumeId);
+      Set<Volume> result = Sets.newLinkedHashSet(client.describeVolumesInRegion(defaultRegion, volumeId));
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();
       assertEquals(volume.getStatus(), Volume.Status.DELETING);

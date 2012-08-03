@@ -25,9 +25,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
@@ -41,7 +41,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Tests behavior of {@code SecurityGroupClient}
@@ -54,19 +53,20 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
       provider = "ec2";
    }
 
+   private EC2Client ec2Client;
    protected SecurityGroupClient client;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices();
+      ec2Client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi();
+      client = ec2Client.getSecurityGroupServices();
    }
 
    @Test
    void testDescribe() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1, Region.AP_NORTHEAST_1)) {
+      for (String region : ec2Client.getConfiguredRegions()) {
          SortedSet<SecurityGroup> allResults = ImmutableSortedSet.<SecurityGroup> copyOf(client
                .describeSecurityGroupsInRegion(region));
          assertNotNull(allResults);
