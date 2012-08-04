@@ -22,8 +22,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.fujitsu.fgcp.FGCPApiMetadata;
-import org.jclouds.fujitsu.fgcp.FGCPProviderMetadata;
-import org.jclouds.providers.internal.BaseProviderMetadataTest;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
