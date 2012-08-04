@@ -46,7 +46,7 @@ public class BaseFGCPRestApiExpectTest extends
 		BaseRestClientExpectTest<FGCPApi> {
 
     public BaseFGCPRestApiExpectTest() {
-		provider = "fgcp-au";
+		provider = "fgcp";
 
         // self-signed dummy cert:
         // keytool -genkey -alias test-fgcp -keyalg RSA -keysize 1024 -validity 5475 -dname "CN=localhost" -keystore jclouds-test-fgcp.p12 -storepass jcloudsjclouds -storetype pkcs12

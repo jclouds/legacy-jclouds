@@ -61,9 +61,7 @@
         <test.fgcp-au.image.authenticate-sudo />
         <jclouds.osgi.export>org.jclouds.fujitsu.fgcp*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
-          org.jclouds.compute.internal;version="${project.version}",
-          org.jclouds.rest.internal;version="${project.version}",
-          org.jclouds*;version="${project.version}",
+          org.jclouds.providers*;version="${project.version}",
           *
         </jclouds.osgi.import>
     </properties>

@@ -21,6 +21,7 @@ package org.jclouds.fujitsu.fgcp;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.fujitsu.fgcp.FGCPProviderMetadata.Builder;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -29,29 +30,18 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Dies Koper
  */
-public class FGCPProviderMetadata extends BaseProviderMetadata {
-
+public class FGCPAUProviderMetadata extends FGCPProviderMetadata {
+/*
     public static Builder builder() {
         return new Builder();
     }
 
-    @Override
-    public Builder toBuilder() {
-        return builder().fromProviderMetadata(this);
-    }
-
-    public FGCPProviderMetadata() {
+    public FGCPAUProviderMetadata() {
         super(builder());
     }
 
-    public FGCPProviderMetadata(Builder builder) {
+    public FGCPAUProviderMetadata(Builder builder) {
         super(builder);
-    }
-
-    public static Properties defaultProperties() {
-        Properties properties = new Properties();
-
-        return properties;
     }
 
     public static class Builder extends BaseProviderMetadata.Builder {
@@ -67,12 +57,11 @@ public class FGCPProviderMetadata extends BaseProviderMetadata {
                     .iso3166Codes("AU-NSW")
                     .endpoint(
                             "https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint")
-                    .defaultProperties(FGCPProviderMetadata.defaultProperties());
+                    .defaultProperties(FGCPAUProviderMetadata.defaultProperties());
         }
-
         @Override
-        public FGCPProviderMetadata build() {
-            return new FGCPProviderMetadata(this);
+        public FGCPAUProviderMetadata build() {
+            return new FGCPAUProviderMetadata(this);
         }
 
         @Override
@@ -82,4 +71,5 @@ public class FGCPProviderMetadata extends BaseProviderMetadata {
         }
 
     }
+*/
 }

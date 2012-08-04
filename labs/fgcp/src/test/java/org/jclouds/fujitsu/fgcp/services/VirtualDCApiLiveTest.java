@@ -18,18 +18,15 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import com.google.common.io.Closeables;
-import org.jclouds.ContextBuilder;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.fujitsu.fgcp.FGCPProviderMetadata;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.jclouds.fujitsu.fgcp.domain.ServerType;
 import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import java.util.Set;
-
-import static org.testng.Assert.*;
 
 /**
  * @author Dies Koper
@@ -37,64 +34,12 @@ import static org.testng.Assert.*;
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "VirtualDCApiLiveTest")
 public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
 
-    private VirtualDCApi client;
+    private VirtualDCApi api;
 
     @BeforeGroups(groups = { "live" })
     public void setupContext() {
         super.setupContext();
-        client = fgcpContext.getApi().getVirtualDCApi();
-    }
-
-
-    @Test
-    public void testAssignableLocations() {
-        ComputeServiceContext context = null;
-        try {
-
-            context = ContextBuilder
-                    .newBuilder(new FGCPProviderMetadata())
-                    .overrides(setupProperties())
-                    .modules(setupModules()).build(ComputeServiceContext.class);
-
-            assertTrue(context.getComputeService().listAssignableLocations().size() > 5);
-
-        } finally {
-            Closeables.closeQuietly(context);
-        }
-    }
-
-    @Test
-    public void testListHardwareProfiles() {
-        ComputeServiceContext context = null;
-        try {
-
-            context = ContextBuilder
-                    .newBuilder(new FGCPProviderMetadata())
-                    .overrides(setupProperties())
-                    .modules(setupModules()).build(ComputeServiceContext.class);
-
-            assertEquals(context.getComputeService().listHardwareProfiles().size(), 4);
-
-        } finally {
-            Closeables.closeQuietly(context);
-        }
-    }
-
-    @Test
-    public void testListNodes() {
-        ComputeServiceContext context = null;
-        try {
-
-            context = ContextBuilder
-                    .newBuilder(new FGCPProviderMetadata())
-                    .overrides(setupProperties())
-                    .modules(setupModules()).build(ComputeServiceContext.class);
-
-            assertEquals(context.getComputeService().listNodes().size(), 4);
-
-        } finally {
-            Closeables.closeQuietly(context);
-        }
+        api = fgcpContext.getApi().getVirtualDCApi();
     }
 
     public void testListVirtualSystems() {
@@ -102,7 +47,7 @@ public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
         RestContext<FGCPClient, FGCPAsyncClientTest> context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
                 overrides);*/
 
-        Set<VSystem> vsysSet = client.listVirtualSystems();
+        Set<VSystem> vsysSet = api.listVirtualSystems();
         assertNotNull(vsysSet, "vsysSet");
         assertTrue(vsysSet.size() > 0, "vsysSet.size() should be greater than 0");
         for (VSystem vsys : vsysSet) {
@@ -111,7 +56,7 @@ public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
     }
 
 /*    public void testCreateVirtualSystem() {
-        String vsysId = client.createVirtualSystem("abc", "def");
+        String vsysId = api.createVirtualSystem("abc", "def");
 
         assertNotNull(vsysId, "vsysId");
         assertFalse(vsysId.equals(""), "vsysId is empty (\"\")");
@@ -119,7 +64,7 @@ public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
     }*/
 
     public void testListServerTypes() {
-        Set<ServerType> serverTypes = client.listServerTypes();
+        Set<ServerType> serverTypes = api.listServerTypes();
 
         assertNotNull(serverTypes, "serverTypes");
         assertTrue(serverTypes.size() == 4, "serverTypes.size should return 4, not " + serverTypes.size());

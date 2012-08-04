@@ -38,7 +38,7 @@ public class BaseFGCPApiLiveTest extends BaseComputeServiceContextLiveTest {
     protected RestContext<FGCPApi, FGCPAsyncApi> fgcpContext;
 
     public BaseFGCPApiLiveTest() {
-        provider = "fgcp-au";
+        provider = "fgcp";
     }
 
     @Override
