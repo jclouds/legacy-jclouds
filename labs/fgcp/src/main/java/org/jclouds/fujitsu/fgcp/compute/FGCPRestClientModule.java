@@ -54,10 +54,12 @@ import org.jclouds.io.InputSuppliers;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.fujitsu.fgcp.location.FirstNetwork;
 import org.jclouds.fujitsu.fgcp.location.SystemAndNetworkSegmentToLocationSupplier;
 import org.jclouds.xml.XMLParser;
 
@@ -123,6 +125,8 @@ public class FGCPRestClientModule extends
     @Override
     protected void installLocations() {
         super.installLocations();
+        bind(ImplicitLocationSupplier.class).to(FirstNetwork.class).in(
+                Scopes.SINGLETON);
         bind(LocationsSupplier.class).to(
                 SystemAndNetworkSegmentToLocationSupplier.class).in(
                 Scopes.SINGLETON);
@@ -195,152 +199,160 @@ public class FGCPRestClientModule extends
     @Provides
     @Singleton
     protected KeyStore provideKeyStore(Crypto crypto, @Identity String cert,
-            @Credential String keyStorePassword) throws KeyStoreException,
-            IOException, NoSuchAlgorithmException, CertificateException,
-            InvalidKeySpecException {
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            @Credential String keyStorePassword) {
+        KeyStore keyStore = null;
+        try {
+            keyStore = KeyStore.getInstance("PKCS12");
 
-        // System.out.println("cert: " + cert);
-        // System.out.println("pwd : " + keyStorePassword);
-        File certFile = new File(checkNotNull(cert));
-        if (certFile.isFile()) { // cert is path to pkcs12 file
+            // System.out.println("cert: " + cert);
+            // System.out.println("pwd : " + keyStorePassword);
+            File certFile = new File(checkNotNull(cert));
+            if (certFile.isFile()) { // cert is path to pkcs12 file
 
-            keyStore.load(new FileInputStream(certFile),
-                    keyStorePassword.toCharArray());
-        } else { // cert is PEM encoded, containing private key and certs
+                keyStore.load(new FileInputStream(certFile),
+                        keyStorePassword.toCharArray());
+            } else { // cert is PEM encoded, containing private key and certs
 
-            // System.out.println("cert:\n" + cert);
-            // split in private key and certs
-            int privateKeyBeginIdx = cert.indexOf("-----BEGIN PRIVATE KEY");
-            int privateKeyEndIdx = cert.indexOf("-----END PRIVATE KEY");
-            String pemPrivateKey = cert.substring(privateKeyBeginIdx,
-                    privateKeyEndIdx + 26);
-            // System.out.println("***************");
-            // System.out.println("pemPrivateKey:\n" + pemPrivateKey);
-            // System.out.println("***************");
+                // System.out.println("cert:\n" + cert);
+                // split in private key and certs
+                int privateKeyBeginIdx = cert.indexOf("-----BEGIN PRIVATE KEY");
+                int privateKeyEndIdx = cert.indexOf("-----END PRIVATE KEY");
+                String pemPrivateKey = cert.substring(privateKeyBeginIdx,
+                        privateKeyEndIdx + 26);
+                // System.out.println("***************");
+                // System.out.println("pemPrivateKey:\n" + pemPrivateKey);
+                // System.out.println("***************");
 
-            String pemCerts = "";
-            int certsBeginIdx = 0;
+                String pemCerts = "";
+                int certsBeginIdx = 0;
 
-            do {
-                certsBeginIdx = cert.indexOf("-----BEGIN CERTIFICATE",
-                        certsBeginIdx);
-                // System.out.println("begin:" + certsBeginIdx);
+                do {
+                    certsBeginIdx = cert.indexOf("-----BEGIN CERTIFICATE",
+                            certsBeginIdx);
+                    // System.out.println("begin:" + certsBeginIdx);
 
-                if (certsBeginIdx >= 0) {
-                    int certsEndIdx = cert.indexOf("-----END CERTIFICATE",
-                            certsBeginIdx) + 26;
-                    // System.out.println("end  :" + certsEndIdx);
-                    pemCerts += cert.substring(certsBeginIdx, certsEndIdx);
-                    certsBeginIdx = certsEndIdx;
-                }
-            } while (certsBeginIdx != -1);
-            // System.out.println("***************");
-            // System.out.println("pemCerts:\n" + pemCerts);
-            // System.out.println("***************");
+                    if (certsBeginIdx >= 0) {
+                        int certsEndIdx = cert.indexOf("-----END CERTIFICATE",
+                                certsBeginIdx) + 26;
+                        // System.out.println("end  :" + certsEndIdx);
+                        pemCerts += cert.substring(certsBeginIdx, certsEndIdx);
+                        certsBeginIdx = certsEndIdx;
+                    }
+                } while (certsBeginIdx != -1);
+                // System.out.println("***************");
+                // System.out.println("pemCerts:\n" + pemCerts);
+                // System.out.println("***************");
 
+                /*
+                 * String pemCerts = "-----BEGIN "; Splitter pemSplitter =
+                 * Splitter.on("-----BEGIN ");
+                 * 
+                 * for (String part : pemSplitter.split(cert)) {
+                 * System.out.println("***************");
+                 * System.out.println("Part:\n" + part);
+                 * System.out.println("***************");
+                 * 
+                 * if (part.startsWith("PRIVATE KEY")
+                 */
+                /* || part.startsWith("RSA PRIVATE KEY)" *//*
+                                                            * ) {
+                                                            * 
+                                                            * int certEndIdx =
+                                                            * part.lastIndexOf
+                                                            * ("-----END");
+                                                            * pemPrivateKey +=
+                                                            * part.substring(0,
+                                                            * certEndIdx + 26); //
+                                                            * take up to next
+                                                            * "-----" (i.e.
+                                                            * "-----END") //
+                                                            * Splitter keySplitter =
+                                                            * Splitter.on("-----").
+                                                            * omitEmptyStrings
+                                                            * ().trimResults(); //
+                                                            * Iterator<String> iter
+                                                            * =
+                                                            * keySplitter.split(part
+                                                            * ).iterator(); //
+                                                            * String keyName =
+                                                            * iter.next() +
+                                                            * "-----\n"; //
+                                                            * pemPrivateKey +=
+                                                            * keyName; ////
+                                                            * System.out
+                                                            * .println("Skipping: '"
+                                                            * + iter.next() + "'");
+                                                            * // pemPrivateKey +=
+                                                            * iter.next(); //
+                                                            * pemPrivateKey +=
+                                                            * "\n-----END " +
+                                                            * keyName;
+                                                            * System.out.println
+                                                            * ("/////////////////");
+                                                            * System.out.println(
+                                                            * "pemPrivateKey:\n" +
+                                                            * pemPrivateKey);
+                                                            * System.out.println(
+                                                            * "/////////////////");
+                                                            * } else if
+                                                            * (part.startsWith
+                                                            * ("CERTIFICATE")) {
+                                                            * 
+                                                            * // take up to next
+                                                            * "-----" (i.e.
+                                                            * "-----END") // or take
+                                                            * up to last END
+                                                            * CERTIFICATE? int
+                                                            * certEndIdx =
+                                                            * part.lastIndexOf
+                                                            * ("----- END CERTIFICATE"
+                                                            * ); // pemCerts +=
+                                                            * part. // Splitter
+                                                            * keySplitter =
+                                                            * Splitter.on("-----").
+                                                            * omitEmptyStrings(); //
+                                                            * pemCerts +=
+                                                            * keySplitter
+                                                            * .split(part)
+                                                            * .iterator().next(); //
+                                                            * pemCerts +=
+                                                            * "-----BEGIN "; } else
+                                                            * { // ignore the fluff
+                                                            * in between (Bag
+                                                            * Attributes, etc.) } }
+                                                            */
+
+                // parse private key
+                KeySpec keySpec = Pems.privateKeySpec(InputSuppliers
+                        .of(pemPrivateKey));
+                PrivateKey privateKey = crypto.rsaKeyFactory().generatePrivate(
+                        keySpec);
+
+                // populate keystore with private key and certs
+                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                @SuppressWarnings("unchecked")
+                Collection<Certificate> certs = (Collection<Certificate>) cf
+                        .generateCertificates(new ByteArrayInputStream(pemCerts
+                                .getBytes("UTF-8")));
+                keyStore.load(null);
+                keyStore.setKeyEntry("dummy", privateKey,
+                        keyStorePassword.toCharArray(),
+                        certs.toArray(new java.security.cert.Certificate[0]));
+
+                // System.out.println("private key: " + privateKey.getFormat() +
+                // "; "
+                // + privateKey.getAlgorithm() + "; class: " +
+                // privateKey.getClass().getName());// + "; " + new
+                // String(privateKey.getEncoded()));
+
+            }
+        } catch (Exception e) {
             /*
-             * String pemCerts = "-----BEGIN "; Splitter pemSplitter =
-             * Splitter.on("-----BEGIN ");
-             * 
-             * for (String part : pemSplitter.split(cert)) {
-             * System.out.println("***************");
-             * System.out.println("Part:\n" + part);
-             * System.out.println("***************");
-             * 
-             * if (part.startsWith("PRIVATE KEY")
+             * KeyStoreException,
+            IOException, NoSuchAlgorithmException, CertificateException,
+            InvalidKeySpecException
              */
-            /* || part.startsWith("RSA PRIVATE KEY)" *//*
-                                                        * ) {
-                                                        * 
-                                                        * int certEndIdx =
-                                                        * part.lastIndexOf
-                                                        * ("-----END");
-                                                        * pemPrivateKey +=
-                                                        * part.substring(0,
-                                                        * certEndIdx + 26); //
-                                                        * take up to next
-                                                        * "-----" (i.e.
-                                                        * "-----END") //
-                                                        * Splitter keySplitter =
-                                                        * Splitter.on("-----").
-                                                        * omitEmptyStrings
-                                                        * ().trimResults(); //
-                                                        * Iterator<String> iter
-                                                        * =
-                                                        * keySplitter.split(part
-                                                        * ).iterator(); //
-                                                        * String keyName =
-                                                        * iter.next() +
-                                                        * "-----\n"; //
-                                                        * pemPrivateKey +=
-                                                        * keyName; ////
-                                                        * System.out
-                                                        * .println("Skipping: '"
-                                                        * + iter.next() + "'");
-                                                        * // pemPrivateKey +=
-                                                        * iter.next(); //
-                                                        * pemPrivateKey +=
-                                                        * "\n-----END " +
-                                                        * keyName;
-                                                        * System.out.println
-                                                        * ("/////////////////");
-                                                        * System.out.println(
-                                                        * "pemPrivateKey:\n" +
-                                                        * pemPrivateKey);
-                                                        * System.out.println(
-                                                        * "/////////////////");
-                                                        * } else if
-                                                        * (part.startsWith
-                                                        * ("CERTIFICATE")) {
-                                                        * 
-                                                        * // take up to next
-                                                        * "-----" (i.e.
-                                                        * "-----END") // or take
-                                                        * up to last END
-                                                        * CERTIFICATE? int
-                                                        * certEndIdx =
-                                                        * part.lastIndexOf
-                                                        * ("----- END CERTIFICATE"
-                                                        * ); // pemCerts +=
-                                                        * part. // Splitter
-                                                        * keySplitter =
-                                                        * Splitter.on("-----").
-                                                        * omitEmptyStrings(); //
-                                                        * pemCerts +=
-                                                        * keySplitter
-                                                        * .split(part)
-                                                        * .iterator().next(); //
-                                                        * pemCerts +=
-                                                        * "-----BEGIN "; } else
-                                                        * { // ignore the fluff
-                                                        * in between (Bag
-                                                        * Attributes, etc.) } }
-                                                        */
-
-            // parse private key
-            KeySpec keySpec = Pems.privateKeySpec(InputSuppliers
-                    .of(pemPrivateKey));
-            PrivateKey privateKey = crypto.rsaKeyFactory().generatePrivate(
-                    keySpec);
-
-            // populate keystore with private key and certs
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            @SuppressWarnings("unchecked")
-            Collection<Certificate> certs = (Collection<Certificate>) cf
-                    .generateCertificates(new ByteArrayInputStream(pemCerts
-                            .getBytes("UTF-8")));
-            keyStore.load(null);
-            keyStore.setKeyEntry("dummy", privateKey,
-                    keyStorePassword.toCharArray(),
-                    certs.toArray(new java.security.cert.Certificate[0]));
-
-            // System.out.println("private key: " + privateKey.getFormat() +
-            // "; "
-            // + privateKey.getAlgorithm() + "; class: " +
-            // privateKey.getClass().getName());// + "; " + new
-            // String(privateKey.getEncoded()));
-
+            throw new AuthorizationException("Error loading certificate", e);
         }
 
         return keyStore;

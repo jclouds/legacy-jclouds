@@ -27,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.FGCPAsyncApi;
+import org.jclouds.fujitsu.fgcp.compute.functions.SingleElementResponseToElement;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 import org.jclouds.fujitsu.fgcp.filters.RequestAuthenticator;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
@@ -34,6 +35,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -52,6 +54,7 @@ public interface DiskImageAsyncApi {
     @GET
     @JAXBResponseParser
     @QueryParams(keys = "Action", values = "GetDiskImageAttributes")
+    @Transform(SingleElementResponseToElement.class)
     ListenableFuture<DiskImage> get(@QueryParam("diskImageId") String id);
 
     @GET

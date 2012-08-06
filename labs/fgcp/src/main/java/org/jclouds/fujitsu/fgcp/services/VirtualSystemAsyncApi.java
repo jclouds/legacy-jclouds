@@ -100,6 +100,7 @@ public interface VirtualSystemAsyncApi {
     @GET
     @JAXBResponseParser
     @QueryParams(keys = "Action", values = "CreateVServer")
+    @Transform(SingleElementResponseToElement.class)
     ListenableFuture<String> createServer(
             @QueryParam("vserverName") String name,
             @QueryParam("vserverType") String type,

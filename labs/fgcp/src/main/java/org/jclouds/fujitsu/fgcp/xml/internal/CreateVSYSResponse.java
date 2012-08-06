@@ -42,11 +42,11 @@ public class CreateVSYSResponse extends StatusResponse implements
 
     @Override
     public String toString() {
-        return vsysId;
+        return getElement();
     }
 
     @Override
-    public Object getElement() {
+    public String getElement() {
         return vsysId;
     }
 }

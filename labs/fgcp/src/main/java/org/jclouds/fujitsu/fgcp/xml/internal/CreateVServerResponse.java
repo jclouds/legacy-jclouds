@@ -18,41 +18,31 @@
  */
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.fujitsu.fgcp.domain.ServerType;
-
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collections;
-import java.util.Set;
 
 /**
- * Wrapper for GetPerformanceInformationResponse.
- * <p>
- * TODO: not simply a Set!!
+ * Wrapper for CreateVServerResponse.
  * 
  * @author Dies Koper
  */
-@XmlRootElement(name = "GetPerformanceInformationResponse")
-public class GetPerformanceInformationResponse extends SetWithStatusResponse<ServerType> {
-    @XmlElementWrapper(name = "performance")
-    @XmlElement(name = "servertype")
-    private Set<ServerType> serverTypes;
+@XmlRootElement(name = "CreateVServerResponse")
+public class CreateVServerResponse extends StatusResponse implements
+        SingleElementResponse {
+    @XmlElement(required = true)
+    private String vserverId;
 
-    public void setServerTypes(Set<ServerType> serverTypes) {
-        this.serverTypes = serverTypes;
+    public String getVsysId() {
+        return vserverId;
     }
 
     @Override
     public String toString() {
-        return "ListServerTypeResponse{" + "serverTypes=" + serverTypes + "} "
-                + super.toString();
+        return getElement();
     }
 
     @Override
-    protected Set<ServerType> delegate() {
-        return serverTypes == null ? ImmutableSet.<ServerType> of()
-                : Collections.unmodifiableSet(serverTypes);
+    public String getElement() {
+        return vserverId;
     }
 }

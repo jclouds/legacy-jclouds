@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Wrapper for GetDiskImageAttributes.
+ * Wrapper for GetDiskImageAttributesResponse.
  * 
  * @author Dies Koper
  */
-@XmlRootElement(name = "GetDiskImageAttributes")
+@XmlRootElement(name = "GetDiskImageAttributesResponse")
 public class GetDiskImageAttributesResponse extends StatusResponse implements
         SingleElementResponse {
     @XmlElement(name = "diskimage")
@@ -49,7 +49,7 @@ public class GetDiskImageAttributesResponse extends StatusResponse implements
     }
 
     @Override
-    public Object getElement() {
+    public DiskImage getElement() {
         return diskImage;
     }
 }

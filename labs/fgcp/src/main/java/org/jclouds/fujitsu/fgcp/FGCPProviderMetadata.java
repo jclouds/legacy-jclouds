@@ -18,6 +18,8 @@
  */
 package org.jclouds.fujitsu.fgcp;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -50,6 +52,8 @@ public class FGCPProviderMetadata extends BaseProviderMetadata {
 
     public static Properties defaultProperties() {
         Properties properties = new Properties();
+
+        properties.setProperty(TEMPLATE, "osFamily=CENTOS,os64Bit=true");
 
         return properties;
     }
