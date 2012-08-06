@@ -49,24 +49,10 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRule;
-import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRuleProtocols;
-import org.jclouds.vcloud.director.v1_5.domain.network.FirewallService;
-import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
-import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
-import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.network.NatOneToOneVmRule;
-import org.jclouds.vcloud.director.v1_5.domain.network.NatRule;
-import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
-import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
-import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
-import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -256,27 +242,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       api.relocateVm(uri, params);
    }
 
-   @Test
-   public void testCustomizationSection() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/customizationSection").acceptMedia(CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/customizationSection.xml", CUSTOMIZATION_SECTION).httpResponseBuilder().build(),
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/customizationSection").xmlFilePayload("/vapptemplate/customizationSection.xml", CUSTOMIZATION_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
-      ).getVAppTemplateApi();
-
-      assertNotNull(api);
-      CustomizationSection section = api.getCustomizationSection(uri);
-
-      assertEquals(section, exampleCustomizationSection());
-
-      Task task = api.modifyCustomizationSection(uri, exampleCustomizationSection());
-      assertNotNull(task);
-   }
-
    public void testErrorGetCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -286,18 +251,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
       assertNull(api.getCustomizationSection(uri));
-   }
-   
-   @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void testErrorEditCustomizationSection() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/customizationSection").xmlFilePayload("/vapptemplate/customizationSection.xml", CUSTOMIZATION_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
-
-      api.modifyCustomizationSection(uri, exampleCustomizationSection());
    }
    
    public void testGuestCustomizationSection() {
@@ -490,27 +443,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
 
       api.getMetadataApi().deleteMetadataEntry(uri, "12345");
    }
-   
-   public void testNetworkConfigSection() throws ParseException {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/networkConfigSection").acceptMedia(NETWORK_CONFIG_SECTION).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/networkConfigSection.xml", NETWORK_CONFIG_SECTION).httpResponseBuilder().build(),
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/networkConfigSection").xmlFilePayload("/vapptemplate/networkConfigSection.xml", NETWORK_CONFIG_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
-      ).getVAppTemplateApi();
-
-      assertNotNull(api);
-
-      NetworkConfigSection section = api.getNetworkConfigSection(uri);
-
-      assertEquals(section, exampleNetworkConfigSection());
-
-      Task task = api.modifyNetworkConfigSection(uri, exampleNetworkConfigSection());
-      assertNotNull(task);
-   }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
    public void testErrorGetNetworkConfigSection() {
@@ -522,18 +454,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
       api.getNetworkConfigSection(uri);
-   }
-
-   @Test(expectedExceptions = VCloudDirectorException.class)
-   public void testErrorEditNetworkConfigSection() throws ParseException {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/networkConfigSection").xmlFilePayload("/vapptemplate/networkConfigSection.xml", NETWORK_CONFIG_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
-
-      api.modifyNetworkConfigSection(uri, exampleNetworkConfigSection());
    }
 
    private VAppTemplate exampleTemplate() {
@@ -572,20 +492,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             .owner(owner)
             .ovfDescriptorUploaded(true)
             .goldMaster(false)
-            .build();
-   }
-
-   private CustomizationSection exampleCustomizationSection() {
-      return CustomizationSection.builder()
-            .links(ImmutableSet.of(
-                  Link.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9/customizationSection/"))
-                        .type("application/vnd.vmware.vcloud.customizationSection+xml").rel("edit").build()
-            ))
-            .type("application/vnd.vmware.vcloud.customizationSection+xml")
-            .info("VApp template customization section")
-            .customizeOnInstantiate(true)
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9/customizationSection/"))
-            .required(false)
             .build();
    }
 
@@ -640,59 +546,4 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       return MetadataValue.builder().value("some value").build();
    }
 
-   private NetworkConfigSection exampleNetworkConfigSection() throws ParseException {
-      
-      FirewallService firewallService =
-            FirewallService.builder()
-                  .enabled(true)
-                  .firewallRules(
-                  ImmutableSet.of(
-                        FirewallRule.builder()
-                              .isEnabled(true)
-                              .description("FTP Rule")
-                              .policy("allow")
-                              .protocols(FirewallRuleProtocols.builder().tcp(true).build())
-                              .port(21)
-                              .destinationIp("10.147.115.1")
-                              .build(),
-                        FirewallRule.builder()
-                              .isEnabled(true)
-                              .description("SSH Rule")
-                              .policy("allow")
-                              .protocols(FirewallRuleProtocols.builder().tcp(true).build())
-                              .port(22)
-                              .destinationIp("10.147.115.1")
-                              .build())).build();
-
-      NatService natService = NatService.builder().enabled(true).natType("ipTranslation").policy("allowTraffic")
-            .natRules(ImmutableSet.of(NatRule.builder().oneToOneVmRule(
-                  NatOneToOneVmRule.builder().mappingMode("manual").externalIpAddress("64.100.10.1").vAppScopedVmId("20ea086f-1a6a-4fb2-8e2e-23372facf7de").vmNicId(0).build()).build()
-            )).build();
-
-      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder().ipScope(
-            IpScope.builder()
-                  .isInherited(false)
-                  .gateway("10.147.56.253")
-                  .netmask("255.255.255.0")
-                  .dns1("10.147.115.1")
-                  .dns2("10.147.115.2")
-                  .dnsSuffix("example.com")
-                  .ipRanges(IpRanges.builder().ipRange(IpRange.builder().startAddress("10.147.56.1").endAddress("10.147.56.1").build()).build())
-                  .build())
-            .parentNetwork(Reference.builder().href(URI.create("http://vcloud.example.com/api/v1.0/network/54")).type("application/vnd.vmware.vcloud.network+xml").name("Internet").build())
-            .fenceMode(FenceMode.NAT_ROUTED)
-            .features(NetworkFeatures.builder().services(ImmutableSet.of(firewallService, natService)).build())
-            .build();
-      
-      return NetworkConfigSection.builder()
-            .info("Configuration parameters for logical networks")
-            .networkConfigs(
-                  ImmutableSet.of(
-                        VAppNetworkConfiguration.builder()
-                              .networkName("vAppNetwork")
-                              .configuration(
-                                    networkConfiguration
-                              ).build()
-                  )).build();
-   }
 }

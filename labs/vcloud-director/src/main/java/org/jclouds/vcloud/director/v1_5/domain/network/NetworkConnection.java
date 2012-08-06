@@ -222,8 +222,8 @@ public class NetworkConnection {
       this.externalIpAddress = externalIpAddress;
       this.isConnected = connected;
       this.macAddress = macAddress;
-      this.ipAddressAllocationMode = ipAddressAllocationMode;
-      this.network = network;
+      this.ipAddressAllocationMode = checkNotNull(ipAddressAllocationMode, "ipAddressAllocationMode");
+      this.network = checkNotNull(network, "network");
       this.needsCustomization = needsCustomization;
    }
 

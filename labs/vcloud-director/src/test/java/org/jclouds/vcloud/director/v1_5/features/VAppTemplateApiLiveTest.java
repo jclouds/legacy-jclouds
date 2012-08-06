@@ -26,7 +26,6 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataKeyAbsentFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConfigSection;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOvfEnvelope;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOvfNetworkSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOwner;
@@ -60,8 +59,6 @@ import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
-import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
@@ -89,7 +86,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
 
    private String key;
    private String val;
-   
+
    @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
    protected void tidyUp() {
       if (key != null) {
@@ -101,11 +98,12 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
          }
       }
    }
-
-   // FIXME cloneVAppTemplate is giving back 500 error
+   
    private VAppTemplate cloneVAppTemplate(boolean waitForTask) throws Exception {
       CloneVAppTemplateParams cloneVAppTemplateParams = CloneVAppTemplateParams.builder()
                .source(Reference.builder().href(vAppTemplateURI).build())
+               .isSourceDelete(false)
+               .name("clone")
                .build();
       VAppTemplate clonedVappTemplate = vdcApi.cloneVAppTemplate(vdcURI, cloneVAppTemplateParams);
       
@@ -114,7 +112,6 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
          assertNotNull(cloneTask, "vdcApi.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
          assertTaskSucceeds(cloneTask);
       }
-
       return clonedVappTemplate;
    }
 
@@ -306,34 +303,15 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified.getComputerName(), computerName);
    }
    
-   @Test(description = "PUT /vAppTemplate/{id}/customizationSection")
-   public void testEditCustomizationSection() {
-      boolean oldVal = vAppTemplateApi.getCustomizationSection(vAppTemplateURI).isCustomizeOnInstantiate();
-      boolean newVal = !oldVal;
-      
-      CustomizationSection customizationSection = CustomizationSection.builder()
-               .info("")
-               .customizeOnInstantiate(newVal)
-               .build();
-      
-      final Task task = vAppTemplateApi.modifyCustomizationSection(vAppTemplateURI, customizationSection);
-      assertTaskSucceeds(task);
-
-      CustomizationSection newCustomizationSection = vAppTemplateApi.getCustomizationSection(vAppTemplateURI);
-      assertEquals(newCustomizationSection.isCustomizeOnInstantiate(), newVal);
-   }
-
-   // FIXME deploymentLeaseInSeconds returned is null
+   // NOTE vAppTemplate supports only storageLease (deployment lease applies to vApp too)
    @Test(description = "PUT /vAppTemplate/{id}/leaseSettingsSection")
    public void testEditLeaseSettingsSection() throws Exception {
-      int deploymentLeaseInSeconds = random.nextInt(10000)+1;
       // NOTE use smallish number for storageLeaseInSeconds; it seems to be capped at 5184000?
       int storageLeaseInSeconds = random.nextInt(10000)+1;
 
       LeaseSettingsSection leaseSettingSection = LeaseSettingsSection.builder()
                .info("my info")
                .storageLeaseInSeconds(storageLeaseInSeconds)
-               .deploymentLeaseInSeconds(deploymentLeaseInSeconds)
                .build();
       
       final Task task = vAppTemplateApi.modifyLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
@@ -341,65 +319,8 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       
       LeaseSettingsSection newLeaseSettingsSection = vAppTemplateApi.getLeaseSettingsSection(vAppTemplateURI);
       assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer) storageLeaseInSeconds);
-      assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer) deploymentLeaseInSeconds);
    }
 
-   @Test(description = "PUT /vAppTemplate/{id}/networkConfigSection")
-   public void testEditNetworkConfigSection() {
-      // TODO What to modify?
-      
-      NetworkConfigSection oldSection = vAppTemplateApi.getNetworkConfigSection(vApp.getHref());
-      NetworkConfigSection newSection = oldSection.toBuilder().build();
-      
-//      String networkName = ""+random.nextInt();
-//      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
-//               .fenceMode("isolated")
-//               .build();
-//      VAppNetworkConfiguration vappNetworkConfiguration = VAppNetworkConfiguration.builder()
-//               .networkName(networkName)
-//               .configuration(networkConfiguration)
-//               .build();
-//      Set<VAppNetworkConfiguration> vappNetworkConfigurations = ImmutableSet.of(vappNetworkConfiguration);
-//      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
-//               .info("my info")
-//               .networkConfigs(vappNetworkConfigurations)
-//               .build();
-      
-      final Task task = vAppTemplateApi.modifyNetworkConfigSection(vApp.getHref(), newSection);
-      assertTaskSucceeds(task);
-
-      NetworkConfigSection modified = vAppTemplateApi.getNetworkConfigSection(vAppTemplateURI);
-      checkNetworkConfigSection(modified);
-
-//      assertEquals(modified§.getNetworkConfigs().size(), 1);
-//      
-//      VAppNetworkConfiguration newVAppNetworkConfig = Iterables.get(modified§.getNetworkConfigs(), 0);
-//      assertEquals(newVAppNetworkConfig.getNetworkName(), networkName);
-   }
-
-   @Test(description = "PUT /vAppTemplate/{id}/networkConnectionSection")
-   public void testEditNetworkConnectionSection() {
-      // Look up a network in the Vdc
-      Set<Reference> networks = vdc.getAvailableNetworks();
-      Reference network = Iterables.getLast(networks);
-
-      // Copy existing section and update fields
-      NetworkConnectionSection oldSection = vAppTemplateApi.getNetworkConnectionSection(vm.getHref());
-      NetworkConnectionSection newSection = oldSection.toBuilder()
-            .networkConnection(NetworkConnection.builder()
-                  .ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())
-                  .network(network.getName())
-                  .build())
-            .build();
-      
-      Task task = vAppTemplateApi.modifyNetworkConnectionSection(vm.getHref(), newSection);
-      assertTaskSucceeds(task);
-
-      NetworkConnectionSection modified = vAppTemplateApi.getNetworkConnectionSection(vm.getHref());
-      checkNetworkConnectionSection(modified);
-   }
-   
-   // FIXME cloneVAppTemplate is giving back 500 error
    @Test(description = "DELETE /vAppTemplate/{id}", dependsOnMethods = { "testGetVAppTemplate" }) 
    public void testDeleteVAppTemplate() throws Exception {
       VAppTemplate clonedVappTemplate = cloneVAppTemplate(true);

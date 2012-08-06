@@ -166,20 +166,6 @@ public interface VAppTemplateApi {
    CustomizationSection getCustomizationSection(URI templateUri);
 
    /**
-    * Modifies the vApp template customization information.
-    * 
-    * <pre>
-    * PUT /vAppTemplate/{id}/customizationSection
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @param section the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
-    */
-   Task modifyCustomizationSection(URI templateUri, CustomizationSection section);
-
-   /**
     * Retrieves the Guest Customization Section of a VM
     * 
     * <pre>
@@ -244,20 +230,6 @@ public interface VAppTemplateApi {
    NetworkConfigSection getNetworkConfigSection(URI templateUri);
 
    /**
-    * Modifies the network config section of a vApp.
-    * 
-    * <pre>
-    * PUT /vAppTemplate/{id}/networkConfigSection
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @param section the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
-    */
-   Task modifyNetworkConfigSection(URI templateUri, NetworkConfigSection section);
-
-   /**
     * Retrieves the network connection section of a VM
     * 
     * <pre>
@@ -268,20 +240,6 @@ public interface VAppTemplateApi {
     * @return the network connection section requested
     */
    NetworkConnectionSection getNetworkConnectionSection(URI templateUri);
-
-   /**
-    * Modifies the network connection section of a VM.
-    * 
-    * <pre>
-    * PUT /vAppTemplate/{id}/networkConnectionSection
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @param section the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
-    */
-   Task modifyNetworkConnectionSection(URI templateUri, NetworkConnectionSection section);
 
    /**
     * Retrieves the network section of a vApp or vApp template.
