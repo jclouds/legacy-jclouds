@@ -86,7 +86,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Server>> listServersInDetail();
+   ListenableFuture<? extends Set<? extends Server>> listServersInDetail();
 
    /**
     * @see ServerApi#getServer
@@ -96,7 +96,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Server> getServer(@PathParam("id") String id);
+   ListenableFuture<? extends Server> getServer(@PathParam("id") String id);
 
    /**
     * @see ServerApi#deleteServer
