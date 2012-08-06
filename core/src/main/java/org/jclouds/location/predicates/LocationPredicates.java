@@ -86,6 +86,40 @@ public class LocationPredicates {
       }
    }
 
+   public static Predicate<Location> isSystem() {
+       return IsSystem.INSTANCE;
+    }
+
+    static enum IsSystem implements Predicate<Location> {
+       INSTANCE;
+       @Override
+       public boolean apply(Location input) {
+          return input.getScope() == LocationScope.SYSTEM;
+       }
+
+       @Override
+       public String toString() {
+          return "isSystem()";
+       }
+    }
+
+    public static Predicate<Location> isNetwork() {
+        return IsNetwork.INSTANCE;
+     }
+
+     static enum IsNetwork implements Predicate<Location> {
+        INSTANCE;
+        @Override
+        public boolean apply(Location input) {
+           return input.getScope() == LocationScope.NETWORK;
+        }
+
+        @Override
+        public String toString() {
+           return "isNetwork()";
+        }
+     }
+
    public static Predicate<Location> idEquals(String id) {
       return new IdEquals(id);
    }
