@@ -121,7 +121,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    private boolean mediaCreated = false;
    private boolean testUserCreated = false;
    
-   @BeforeClass(alwaysRun = true, dependsOnMethods = { "setupRequiredApis" })
+   @BeforeClass(alwaysRun = true)
    protected void setupRequiredEntities() {
       Set<Link> links = vdcApi.getVdc(vdcURI).getLinks();
 
@@ -280,23 +280,20 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       assertVmStatus(vmURI, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVm" })
+   @Test(description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testInstallVMwareTools" })
    public void testShutdown() {
       // Power on Vm
       vm = powerOnVm(vm.getHref());
 
       // The method under test
-      Task shutdown = vmApi.shutdown(vmURI);
+      Task shutdown = vmApi.shutdown(vm.getHref());
       assertTaskSucceedsLong(shutdown);
 
       // Get the updated Vm
-      vm = vmApi.getVm(vmURI);
+      vm = vmApi.getVm(vm.getHref());
 
       // Check status
-      assertVmStatus(vmURI, Status.POWERED_OFF);
-
-      // Power on the Vm again
-      vm = powerOnVm(vm.getHref());
+      assertVmStatus(vm.getHref(), Status.POWERED_OFF);
    }
 
    @Test(description = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVm" })
@@ -359,6 +356,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       vm = powerOnVm(vm.getHref());
       
       // The method under test
+      // NB this will put the vm in partially powered off state
       Task powerOffVm = vmApi.powerOff(vm.getHref());
       assertTrue(retryTaskSuccess.apply(powerOffVm), String.format(TASK_COMPLETE_TIMELY, "powerOffVm"));
 
@@ -391,8 +389,8 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testDeployVm" })
    public void testInstallVMwareTools() {
-      // First ensure the vApp is powered n
-      vm = powerOnVm(vm.getHref());
+      // First ensure the vApp is powered on
+     vm = powerOnVm(vm.getHref());
 
       // The method under test
       Task installVMwareTools = vmApi.installVMwareTools(vm.getHref());
@@ -420,6 +418,9 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       // The method under test
       Task upgradeHardwareVersion = vmApi.upgradeHardwareVersion(vm.getHref());
       assertTrue(retryTaskSuccess.apply(upgradeHardwareVersion), String.format(TASK_COMPLETE_TIMELY, "upgradeHardwareVersion"));
+      
+      // Power on the Vm again
+      vm = powerOnVm(vm.getHref());
    }
 
    @Test(description = "GET /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetVm" })
@@ -438,7 +439,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       GuestCustomizationSection oldSection = vmApi.getGuestCustomizationSection(vm.getHref());
       GuestCustomizationSection newSection = oldSection.toBuilder()
             .computerName(name("n"))
-            .enabled(Boolean.FALSE)
+            .enabled(Boolean.TRUE)
             .adminPassword(null) // Not allowed
             .build();
 
@@ -454,7 +455,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
       // Check the modified section fields are set correctly
       assertEquals(modified.getComputerName(), newSection.getComputerName());
-      assertFalse(modified.isEnabled());
+      assertTrue(modified.isEnabled());
 
       // Reset the admin password in the retrieved GuestCustomizationSection for equality check
       modified = modified.toBuilder().adminPassword(null).build();
@@ -499,8 +500,9 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    }
 
    // FIXME "Task error: Unable to perform this action. Contact your cloud administrator."
-   @Test(description = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
+   @Test(description = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testModifyGuestCustomizationSection" })
    public void testModifyNetworkConnectionSection() {
+      powerOffVm(vm.getHref());
       // Look up a network in the Vdc
       Set<Reference> networks = vdc.getAvailableNetworks();
       Reference network = Iterables.getLast(networks);
@@ -574,6 +576,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testModifyProductSections() {
+      powerOffVm(vm.getHref());
       // Copy existing section and update fields
       ProductSectionList oldSections = vmApi.getProductSections(vm.getHref());
       ProductSectionList newSections = oldSections.toBuilder()
@@ -600,7 +603,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified.getProductSections().size(), oldSections.getProductSections().size() + 1);
 
       // Check the section was modified correctly
-      assertEquals(modified, newSections, String.format(ENTITY_EQUAL, "ProductSectionList"));
+      assertEquals(modified, newSections);
    }
 
    // FIXME How do we force it to ask a question?
@@ -646,7 +649,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    }
 
    // FIXME If still failing, consider escalating?
-   @Test(description = "GET /vApp/{id}/screen", dependsOnMethods = { "testDeployVm" })
+   @Test(description = "GET /vApp/{id}/screen", dependsOnMethods = { "testInstallVMwareTools" })
    public void testGetScreenImage() {
       // Power on Vm
       vm = powerOnVm(vm.getHref());
@@ -933,18 +936,23 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       checkMetadata(metadata);
       
       // Check requirements for this test
-      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vm"));
+      assertTrue(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vm"));
    }
    
    @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
+      key = name("key-");
+      String value = name("value-");
+      metadataValue = MetadataValue.builder().value(value).build();
+      vmApi.getMetadataApi().setMetadata(vm.getHref(), key, metadataValue);
+      
       // Call the method being tested
-      MetadataValue value = vmApi.getMetadataApi().getMetadataValue(vm.getHref(), key);
+      MetadataValue metadataValue = vmApi.getMetadataApi().getMetadataValue(vm.getHref(), key);
       
       String expected = metadataValue.getValue();
 
-      checkMetadataValue(value);
-      assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+      checkMetadataValue(metadataValue);
+      assertEquals(metadataValue.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, metadataValue.getValue()));
    }
 
    @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
@@ -1002,11 +1010,17 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
       // Get the updated VApp and the Vm
       delete = vAppApi.getVApp(delete.getHref());
-      Vm temp = Iterables.getOnlyElement(delete.getChildren().getVms());
+      List<Vm> vms = delete.getChildren().getVms();
+      Vm temp = Iterables.get(vms, 0);
 
-      // Power off the Vm
-      temp = powerOffVm(temp.getHref());
-
+      // otherwise it's impossible to stop a running vApp with no vms 
+      if(vms.size() == 1) {
+         UndeployVAppParams undeployParams = UndeployVAppParams.builder().build();
+         Task shutdownVapp = vAppApi.undeploy(delete.getHref(), undeployParams);
+         assertTaskSucceedsLong(shutdownVapp);
+      } else {
+         powerOffVm(temp.getHref());
+      }
       // The method under test
       Task deleteVm = vmApi.deleteVm(temp.getHref());
       assertTrue(retryTaskSuccess.apply(deleteVm), String.format(TASK_COMPLETE_TIMELY, "deleteVm"));
