@@ -54,7 +54,7 @@ public interface ServerApi {
     * 
     * @return all servers (all details)
     */
-   Set<Server> listServersInDetail();
+   Set<? extends Server> listServersInDetail();
 
    /**
     * List details of the specified server
