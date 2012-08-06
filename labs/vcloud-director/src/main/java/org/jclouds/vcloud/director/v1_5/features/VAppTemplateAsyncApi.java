@@ -148,17 +148,6 @@ public interface VAppTemplateAsyncApi {
    ListenableFuture<CustomizationSection> getCustomizationSection(@EndpointParam URI templateURI);
 
    /**
-    * @see VAppTemplateApi#modifyCustomizationSection(URI, CustomizationSection)
-    */
-   @PUT
-   @Produces(CUSTOMIZATION_SECTION)
-   @Consumes(TASK)
-   @Path("/customizationSection")
-   @JAXBResponseParser
-   ListenableFuture<Task> modifyCustomizationSection(@EndpointParam URI templateURI,
-                                                     @BinderParam(BindToXMLPayload.class) CustomizationSection sectionType);
-
-   /**
     * @see VAppTemplateApi#getGuestCustomizationSection(URI)
     */
    @GET
@@ -221,17 +210,6 @@ public interface VAppTemplateAsyncApi {
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(@EndpointParam URI templateURI);
 
    /**
-    * @see VAppTemplateApi#modifyNetworkConfigSection(URI, NetworkConfigSection)
-    */
-   @PUT
-   @Produces(NETWORK_CONFIG_SECTION)
-   @Consumes(TASK)
-   @Path("/networkConfigSection")
-   @JAXBResponseParser
-   ListenableFuture<Task> modifyNetworkConfigSection(@EndpointParam URI templateURI,
-                                                     @BinderParam(BindToXMLPayload.class) NetworkConfigSection section);
-
-   /**
     * @see VAppTemplateApi#getNetworkConnectionSection(URI)
     */
    @GET
@@ -240,17 +218,6 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<NetworkConnectionSection> getVAppTemplateNetworkConnectionSection(@EndpointParam URI templateURI);
-
-   /**
-    * @see VAppTemplateApi#modifyNetworkConnectionSection(URI, NetworkConnectionSection)
-    */
-   @PUT
-   @Produces(NETWORK_CONNECTION_SECTION)
-   @Consumes(TASK)
-   @Path("/networkConnectionSection")
-   @JAXBResponseParser
-   ListenableFuture<Task> modifyNetworkConnectionSection(@EndpointParam URI templateURI,
-                                                         @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
    /**
     * @see VAppTemplateApi#getNetworkSection(URI)

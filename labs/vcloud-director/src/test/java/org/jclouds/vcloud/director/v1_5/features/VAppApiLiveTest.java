@@ -103,7 +103,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    private boolean mediaCreated = false;
    private boolean testUserCreated = false;
    
-   @BeforeClass(alwaysRun = true, dependsOnMethods = { "setupRequiredApis" })
+   @BeforeClass(alwaysRun = true)
    protected void setupRequiredEntities() {
       Set<Link> links = vdcApi.getVdc(vdcURI).getLinks();
 
