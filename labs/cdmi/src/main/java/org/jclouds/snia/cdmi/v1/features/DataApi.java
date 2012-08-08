@@ -19,10 +19,16 @@
 package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.PathParam;
+
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.io.Payload;
+//import org.jclouds.io.Payload;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
 
 /**
  * Data Object Resource Operations
@@ -38,8 +44,15 @@ public interface DataApi {
 	 
 	void createDataObjectNonCDMI(String containerName, String dataObjectName, 
 			CreateDataObjectNonCDMIOptions... options );
+	
+	void createDataObjectNonCDMI(String containerName, String dataObjectName, 
+			Payload payload);
+
 
 	DataObject getDataObject(String containerName, String dataObjectName);
+	
+	DataObject getDataObject(String containerName, String dataObjectName,
+			GetDataObjectOptions... options);
 
 	void deleteDataObject(String containerName, String dataObjectName);
 

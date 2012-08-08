@@ -20,9 +20,13 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.PathParam;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
+import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
+
 
 /**
  * Container Object Resource Operations
@@ -37,6 +41,12 @@ public interface ContainerApi {
 			CreateContainerOptions... options);
 
 	Container getContainer(String containerName);
+	
+	Container getContainer(String containerName, GetContainerOptions... options);
+	
+	Container getContainer(String containerName, String queryParams);
+	
+	Container getContainer(String containerName, String queryParam1, String queryParam2);
 
 	void deleteContainer(String containerName);
 
