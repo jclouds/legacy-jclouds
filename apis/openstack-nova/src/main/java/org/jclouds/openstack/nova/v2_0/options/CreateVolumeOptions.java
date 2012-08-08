@@ -46,12 +46,12 @@ public class CreateVolumeOptions implements MapBinder {
    @Inject
    private BindToJsonPayload jsonBinder;
 
-   private String name;
-   private String description;
-   private String volumeType;
-   private String availabilityZone;
-   private String snapshotId;
-   private Map<String, String> metadata = ImmutableMap.of();
+   protected String name;
+   protected String description;
+   protected String volumeType;
+   protected String availabilityZone;
+   protected String snapshotId;
+   protected Map<String, String> metadata = ImmutableMap.of();
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
@@ -61,6 +61,12 @@ public class CreateVolumeOptions implements MapBinder {
          image.put("display_name", name);
       if (description != null)
          image.put("display_description", description);
+      if (volumeType != null)
+         image.put("volume_type", volumeType);
+      if (availabilityZone != null)
+         image.put("availability_zone", availabilityZone);
+      if (snapshotId != null)
+         image.put("snapshot_id", snapshotId);
       if (!metadata.isEmpty())
          image.put("metadata", metadata);
       return jsonBinder.bindToRequest(request, ImmutableMap.of("volume", image));
