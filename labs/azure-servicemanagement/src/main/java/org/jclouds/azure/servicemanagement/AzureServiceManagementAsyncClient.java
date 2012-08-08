@@ -18,25 +18,30 @@
  */
 package org.jclouds.azure.servicemanagement;
 
-import org.jclouds.azure.servicemanagement.features.RoleAsyncClient;
+import org.jclouds.azure.servicemanagement.features.HostedServiceAsyncClient;
+import org.jclouds.azure.servicemanagement.features.VirtualMachineAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides asynchronous access to Azure Service Management via their REST API.
  * <p/>
- *
+ * 
  * @see AzureServiceManagementClient
  * @see <a href="TODO: insert URL of provider documentation" />
  * @author Gerald Pereira
  */
 
 public interface AzureServiceManagementAsyncClient {
-	
+
 	/**
-	    * Provides asynchronous access to Role features.
-	    */
-	   @Delegate
-	   RoleAsyncClient getRoleClient();
+	 * Provides asynchronous access to Role features.
+	 */
+	@Delegate
+	VirtualMachineAsyncClient getRoleClient();
+
+	/**
+	 * Provides asynchronous access to Hosted Service features.
+	 */
+	@Delegate
+	HostedServiceAsyncClient getHostedServiceClient();
 }
-
-

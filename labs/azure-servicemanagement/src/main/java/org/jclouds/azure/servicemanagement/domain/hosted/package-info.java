@@ -16,13 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.azure.servicemanagement.config;
+@XmlSchema(namespace = "http://schemas.microsoft.com/windowsazure", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlAccessorType(XmlAccessType.FIELD)
+package org.jclouds.azure.servicemanagement.domain.hosted;
 
-/**
- * Configuration properties and constants used in Azure Service Management connections.
- *
- * @author Gerald Pereira
- */
-public class AzureServiceManagementProperties {
-	public final static String SUBSCRIPTION_ID="jclouds.azure.management.subscription-id";
-}
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlSchema;
+

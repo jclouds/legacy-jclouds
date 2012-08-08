@@ -20,7 +20,8 @@ package org.jclouds.azure.servicemanagement;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.azure.servicemanagement.features.RoleClient;
+import org.jclouds.azure.servicemanagement.features.HostedServiceClient;
+import org.jclouds.azure.servicemanagement.features.VirtualMachineClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -39,6 +40,12 @@ public interface AzureServiceManagementClient {
 	 * Provides synchronous access to Role features.
 	 */
 	@Delegate
-	RoleClient getRoleClient();
+	VirtualMachineClient getRoleClient();
+	
+	/**
+	 * Provides synchronous access to Hosted service features.
+	 */
+	@Delegate
+	HostedServiceClient getHostedServiceClient();
 
 }

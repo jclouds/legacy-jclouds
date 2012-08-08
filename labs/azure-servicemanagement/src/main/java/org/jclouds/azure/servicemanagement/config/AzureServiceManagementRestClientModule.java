@@ -41,8 +41,10 @@ import javax.net.ssl.SSLContext;
 
 import org.jclouds.azure.servicemanagement.AzureServiceManagementAsyncClient;
 import org.jclouds.azure.servicemanagement.AzureServiceManagementClient;
-import org.jclouds.azure.servicemanagement.features.RoleAsyncClient;
-import org.jclouds.azure.servicemanagement.features.RoleClient;
+import org.jclouds.azure.servicemanagement.features.HostedServiceAsyncClient;
+import org.jclouds.azure.servicemanagement.features.HostedServiceClient;
+import org.jclouds.azure.servicemanagement.features.VirtualMachineAsyncClient;
+import org.jclouds.azure.servicemanagement.features.VirtualMachineClient;
 import org.jclouds.azure.servicemanagement.http.SSLContextWithKeysSupplier;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.crypto.Crypto;
@@ -68,7 +70,8 @@ public class AzureServiceManagementRestClientModule
 		AzureStorageRestClientModule<AzureServiceManagementClient, AzureServiceManagementAsyncClient> {
 	public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
 			.<Class<?>, Class<?>> builder()
-			.put(RoleClient.class, RoleAsyncClient.class).build();
+			.put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)
+			.put(HostedServiceClient.class, HostedServiceAsyncClient.class).build();
 
 	public AzureServiceManagementRestClientModule() {
 		super(DELEGATE_MAP);
