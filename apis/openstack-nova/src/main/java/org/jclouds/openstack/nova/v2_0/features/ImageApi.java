@@ -50,7 +50,7 @@ public interface ImageApi {
     * 
     * @return all images (all details)
     */
-   Set<Image> listImagesInDetail();
+   Set<? extends Image> listImagesInDetail();
 
    /**
     * List details of the specified image
