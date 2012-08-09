@@ -180,5 +180,4 @@ public interface VdcApi {
     */
    @Delegate
    MetadataApi.Readable getMetadataApi();
-
 }
