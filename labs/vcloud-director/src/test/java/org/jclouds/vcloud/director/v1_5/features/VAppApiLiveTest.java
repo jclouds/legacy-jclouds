@@ -51,6 +51,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -75,19 +76,36 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkAssignment;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.SourcedCompositionItemParam;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of the {@link VAppApi}.
@@ -190,7 +208,63 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       // Check status
       assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
+   
+   @Test(description = "POST /vApp/{id}/action/recomposeVApp")
+   public void testRecomposeVApp() {
+      Set<Vm> vms = getAvailableVMsFromVAppTemplates();
+  
+      VApp composedVApp = vdcApi.composeVApp(vdcURI, ComposeVAppParams.builder()
+            .name(name("composed-"))
+            .instantiationParams(instantiationParams())
+            .build());
+      
+      // get the first vm to be added to vApp
+      Vm toAddVm = Iterables.get(vms, 0);
+      RecomposeVAppParams params = createRecomposeParams(composedVApp, toAddVm); 
+      
+      // The method under test
+      Task recomposeVApp = vAppApi.recompose(composedVApp.getHref(), params);
+      assertTaskSucceedsLong(recomposeVApp);
+      
+      // add another vm instance to vApp
+      params = createRecomposeParams(composedVApp, toAddVm); 
+      recomposeVApp = vAppApi.recompose(composedVApp.getHref(), params);
+      assertTaskSucceedsLong(recomposeVApp);
+      
+      // delete a vm
+      VApp configured = vAppApi.getVApp(composedVApp.getHref());
+      List<Vm> vmsToBeDeleted = configured.getChildren().getVms();
+      Vm toBeDeleted = Iterables.get(vmsToBeDeleted, 0);
+      Task deleteVm = vmApi.deleteVm(toBeDeleted.getHref());
+      assertTaskSucceedsLong(deleteVm);
+      
+      Task deleteVApp = vAppApi.deleteVApp(composedVApp.getHref());
+      assertTaskSucceedsLong(deleteVApp);
+   }
 
+   private Set<Vm> getAvailableVMsFromVAppTemplates() {
+      Set<Vm> vms = Sets.newLinkedHashSet();
+      QueryResultRecords templatesRecords = queryApi.vAppTemplatesQueryAll();
+      for (QueryResultRecordType templateRecord : templatesRecords.getRecords()) {
+         VAppTemplate vAppTemplate = vAppTemplateApi.getVAppTemplate(templateRecord.getHref());
+         vms.addAll(vAppTemplate.getChildren());
+      }
+      return Sets.newLinkedHashSet(Iterables.filter(vms, new Predicate<Vm>() {
+         // http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2007019
+         @Override
+         public boolean apply(Vm input) {
+            GuestCustomizationSection guestCustomizationSection = vmApi.getGuestCustomizationSection(input.getHref());
+            String computerName = guestCustomizationSection.getComputerName();
+            String retainComputerName = CharMatcher.inRange('0', '9')
+                     .or(CharMatcher.inRange('a', 'z'))
+                     .or(CharMatcher.inRange('A', 'Z'))
+                     .or(CharMatcher.is('-'))
+                     .retainFrom(computerName);
+            return computerName.equals(retainComputerName);
+         }
+      }));
+   }
+   
    /**
     * @see VAppApi#modifyVApp(URI, VApp)
     */
@@ -217,7 +291,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
    public void testDeployVApp() {
       DeployVAppParams params = DeployVAppParams.builder()
-            .deploymentLeaseSeconds((int)TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
+            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
             .notForceCustomization()
             .notPowerOn()
             .build();
@@ -274,14 +348,14 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       vApp = powerOnVApp(vApp.getHref());
 
       // The method under test
-      Task shutdown = vAppApi.shutdown(vAppURI);
+      Task shutdown = vAppApi.shutdown(vApp.getHref());
       assertTaskSucceedsLong(shutdown);
 
       // Get the updated VApp
-      vApp = vAppApi.getVApp(vAppURI);
+      vApp = vAppApi.getVApp(vApp.getHref());
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_OFF);
+      assertVAppStatus(vApp.getHref(), Status.POWERED_OFF);
 
       // Power on the VApp again
       vApp = powerOnVApp(vApp.getHref());
@@ -378,11 +452,12 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
    public void testControlAccessEveryone() {
+      
       ControlAccessParams params = ControlAccessParams.builder()
             .sharedToEveryone()
             .everyoneAccessLevel("FullControl")
             .build();
-
+      
       // The method under test
       ControlAccessParams modified = vAppApi.modifyControlAccess(vApp.getHref(), params);
 
@@ -404,8 +479,9 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertTrue(retryTaskSuccess.apply(discardSuspendedState), String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/enterMaintenanceMode")
+   @Test(description = "POST /vApp/{id}/action/enterMaintenanceMode", groups = {"systemAdmin"})
    public void testEnterMaintenanceMode() {
+
       // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
       VApp temp = instantiateVApp();
       DeployVAppParams params = DeployVAppParams.builder()
@@ -430,7 +506,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       }
    }
 
-   @Test(description = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" })
+   @Test(description = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" }, groups = {"systemAdmin"})
    public void testExitMaintenanceMode() {
       // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
       VApp temp = instantiateVApp();
@@ -454,18 +530,6 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       } finally {
          cleanUpVApp(temp);
       }
-   }
-
-   // FIXME "Could not bind object to request[method=POST, endpoint=https://mycloud.greenhousedata.com/api/vApp/vapp-e124f3f0-adb9-4268-ad49-e54fb27e40af/action/recomposeVApp,
-   //    headers={Accept=[application/vnd.vmware.vcloud.task+xml]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null,
-   //    contentLength=0, contentMD5=null, contentType=application/vnd.vmware.vcloud.recomposeVAppParams+xml], written=false]]: Could not marshall object"
-   @Test(description = "POST /vApp/{id}/action/recomposeVApp", dependsOnMethods = { "testGetVApp" })
-   public void testRecomposeVApp() {
-      RecomposeVAppParams params = RecomposeVAppParams.builder().build();
-
-      // The method under test
-      Task recomposeVApp = vAppApi.recompose(vApp.getHref(), params);
-      assertTrue(retryTaskSuccess.apply(recomposeVApp), String.format(TASK_COMPLETE_TIMELY, "recomposeVApp"));
    }
 
    @Test(description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
@@ -640,7 +704,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified.getProductSections().size(), oldSections.getProductSections().size() + 1);
 
       // Check the section was modified correctly
-      assertEquals(modified, newSections, String.format(ENTITY_EQUAL, "ProductSectionList"));
+      assertEquals(modified, newSections);
    }
 
    @Test(description = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
@@ -689,6 +753,11 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    
    @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadata() {
+      key = name("key-");
+      String value = name("value-");
+      metadataValue = MetadataValue.builder().value(value).build();
+      vAppApi.getMetadataApi().setMetadata(vApp.getHref(), key, metadataValue);
+      
       // Call the method being tested
       Metadata metadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
       
@@ -762,4 +831,73 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       VApp deleted = vAppApi.getVApp(temp.getHref());
       assertNull(deleted, "The VApp "+temp.getName()+" should have been deleted");
    }
+   
+   /**
+    * Create the recompose vapp params.
+    *
+    * @param vappTemplateRef
+    * @param vdc
+    * @return
+    * @throws VCloudException
+    */
+   public RecomposeVAppParams createRecomposeParams(VApp vApp, Vm vm) {
+
+      // creating an item element. this item will contain the vm which should be added to the vapp.
+      Reference reference = Reference.builder().name(name("vm-")).href(vm.getHref()).type(vm.getType()).build();
+      SourcedCompositionItemParam vmItem = SourcedCompositionItemParam.builder().source(reference).build();
+
+      InstantiationParams vmInstantiationParams = null;
+
+      // if the vm contains a network connection and the vApp does not contain any configured network
+      if (vmHasNetworkConnectionConfigured(vm) && vAppHasNetworkConfigured(vApp)) {
+         // creating empty network connection section for the vm.
+         NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder()
+                  .info("Empty network configuration parameters")
+                  .build();
+         
+         // adding the network connection section to the instantiation params of the vapp.
+         vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection)).build();
+      }
+
+      // if the vm already contains a network connection section and if the vapp contains a configured network -> vm could be mapped to that network.
+      NetworkAssignment networkAssignment = null;
+      if (vmHasNetworkConnectionConfigured(vm) && !vAppHasNetworkConfigured(vApp)) {
+         for (NetworkConnection networkConnection : vmApi.getNetworkConnectionSection(vm.getHref())
+                  .getNetworkConnections()) {
+            if (networkConnection.getNetworkConnectionIndex() == vmApi.getNetworkConnectionSection(vm.getHref())
+                     .getPrimaryNetworkConnectionIndex()) {
+               networkAssignment = NetworkAssignment.builder().innerNetwork(networkConnection.getNetwork())
+                        .containerNetwork(getVAppNetworkConfig(vApp).getNetworkName()).build();
+            }
+         }
+      }
+
+      if (vmInstantiationParams != null)
+         vmItem = SourcedCompositionItemParam.builder().fromSourcedCompositionItemParam(vmItem)
+                  .instantiationParams(vmInstantiationParams)
+                  .build();
+      
+      if (networkAssignment != null)
+         vmItem = SourcedCompositionItemParam.builder().fromSourcedCompositionItemParam(vmItem)
+                  .networkAssignment(ImmutableSet.of(networkAssignment))
+                  .build();
+      
+      return RecomposeVAppParams.builder().name(name("recompose-"))
+               // adding the vm item.
+               .sourcedItems(ImmutableList.of(vmItem)).build();
+   }
+
+   private VAppNetworkConfiguration getVAppNetworkConfig(VApp vApp) {
+      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
+      return Iterables.tryFind(vAppNetworkConfigs, Predicates.notNull()).orNull();
+   }
+   
+   private boolean vAppHasNetworkConfigured(VApp vApp) {
+      return getVAppNetworkConfig(vApp) != null;
+   }
+
+   private boolean vmHasNetworkConnectionConfigured(Vm vm) {
+      return vmApi.getNetworkConnectionSection(vm.getHref()).getNetworkConnections().size() > 0;
+   }
+
 }
