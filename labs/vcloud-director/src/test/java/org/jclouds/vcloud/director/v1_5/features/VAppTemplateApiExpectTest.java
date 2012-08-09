@@ -49,6 +49,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
@@ -482,7 +483,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
 
       return VAppTemplate.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
             .links(ImmutableSet.of(aLink, bLink))
-            .children(ImmutableSet.<VAppTemplate>of())
+            .children(ImmutableSet.<Vm>of())
             .type("application/vnd.vmware.vcloud.vAppTemplate+xml")
             .description("For testing")
             .id("urn:vcloud:vapptemplate:ef4415e6-d413-4cbb-9262-f9bbec5f2ea9")

@@ -23,6 +23,9 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -32,6 +35,9 @@ import org.jclouds.vcloud.director.v1_5.domain.ComputeCapacity;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.Media.ImageType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
@@ -39,6 +45,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.params.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppParams;
@@ -217,11 +224,11 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testComposeVApp() {
+   public void testComposeVApp() throws ParseException {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/composeVApp")
-               .xmlFilePayload("/vdc/params/composeVApp.xml", VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
+               .xmlFilePayload("/vdc/composeVAppParams.xml", VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
@@ -513,11 +520,58 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return null;
    }
    
-   private VApp composeVApp() {
-      // TODO Auto-generated method stub
-      return null;
+   private VApp composeVApp() throws ParseException {
+
+      return VApp
+               .builder()
+               .status(0)
+               .name("test-vapp")
+               .id("urn:vcloud:vapp:d0e2b6b9-4381-4ddc-9572-cdfae54059be")
+               .type("application/vnd.vmware.vcloud.vApp+xml")
+               .description("Test VApp")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be"))
+               .link(Link
+                        .builder()
+                        .name("orgNet-cloudsoft-External")
+                        .rel("down")
+                        .type("application/vnd.vmware.vcloud.vAppNetwork+xml")
+                        .href(URI.create("https://mycloud.greenhousedata.com/api/network/2a2e2da4-446a-4ebc-a086-06df7c9570f0"))
+                        .build())
+               .link(Link
+                        .builder()
+                        .rel("down")
+                        .type("application/vnd.vmware.vcloud.controlAccess+xml")
+                        .href(URI.create("https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/controlAccess/"))
+                        .build())
+               .link(Link
+                        .builder()
+                        .rel("up")
+                        .type("application/vnd.vmware.vcloud.vdc+xml")
+                        .href(URI.create("https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"))
+                        .build())
+               .link(Link
+                        .builder()
+                        .rel("down")
+                        .type("application/vnd.vmware.vcloud.owner+xml")
+                        .href(URI.create("https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/owner"))
+                        .build())
+               .link(Link
+                        .builder()
+                        .rel("down")
+                        .type("application/vnd.vmware.vcloud.metadata+xml")
+                        .href(URI.create("https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/metadata"))
+                        .build())
+               .owner(Owner
+                        .builder()
+                        .type("application/vnd.vmware.vcloud.owner+xml")
+                        .user(User
+                                 .builder()
+                                 .type("application/vnd.vmware.admin.user+xml")
+                                 .name("acole")
+                                 .href(URI.create("https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"))
+                                 .build().getRole()).build()).build();
    }
-   
+
    private VApp instantiateVAppTemplate() {
       // TODO Auto-generated method stub
       return null;
@@ -537,4 +591,5 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       // TODO Auto-generated method stub
       return null;
    }
+   
 }
