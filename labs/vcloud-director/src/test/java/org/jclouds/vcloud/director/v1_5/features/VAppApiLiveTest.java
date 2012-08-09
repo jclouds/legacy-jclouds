@@ -249,8 +249,8 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
          VAppTemplate vAppTemplate = vAppTemplateApi.getVAppTemplate(templateRecord.getHref());
          vms.addAll(vAppTemplate.getChildren());
       }
-      return Sets.newLinkedHashSet(Iterables.filter(vms, new Predicate<Vm>() {
-         // http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2007019
+      return ImmutableSet.copyOf(Iterables.filter(vms, new Predicate<Vm>() {
+         // filter out vms in the vApp template with computer name that contains underscores, dots, or both.
          @Override
          public boolean apply(Vm input) {
             GuestCustomizationSection guestCustomizationSection = vmApi.getGuestCustomizationSection(input.getHref());
