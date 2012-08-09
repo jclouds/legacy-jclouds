@@ -50,7 +50,7 @@ public interface FlavorApi {
     * 
     * @return all flavors (all details)
     */
-   Set<Flavor> listFlavorsInDetail();
+   Set<? extends Flavor> listFlavorsInDetail();
 
    /**
     * List details of the specified flavor

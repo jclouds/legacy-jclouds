@@ -159,12 +159,12 @@ public class NovaComputeServiceAdapter implements
       Set<String> zones = zoneIds.get();
       checkState(zones.size() > 0, "no zones found in supplier %s", zoneIds);
       for (final String zoneId : zones) {
-         Set<Image> images = novaApi.getImageApiForZone(zoneId).listImagesInDetail();
+         Set<? extends Image> images = novaApi.getImageApiForZone(zoneId).listImagesInDetail();
          if (images.size() == 0) {
             logger.debug("no images found in zone %s", zoneId);
             continue;
          }
-         Iterable<Image> active = filter(images, ImagePredicates.statusEquals(Image.Status.ACTIVE));
+         Iterable<? extends Image> active = filter(images, ImagePredicates.statusEquals(Image.Status.ACTIVE));
          if (images.size() == 0) {
             logger.debug("no images with status active in zone %s; non-active: %s", zoneId,
                      transform(active, new Function<Image, String>() {
