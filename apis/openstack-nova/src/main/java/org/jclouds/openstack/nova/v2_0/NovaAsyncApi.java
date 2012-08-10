@@ -98,49 +98,49 @@ public interface NovaAsyncApi {
     * Provides asynchronous access to Floating IP features.
     */
    @Delegate
-   Optional<FloatingIPAsyncApi> getFloatingIPExtensionForZone(
+   Optional<? extends FloatingIPAsyncApi> getFloatingIPExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Security Group features.
     */
    @Delegate
-   Optional<SecurityGroupAsyncApi> getSecurityGroupExtensionForZone(
+   Optional<? extends SecurityGroupAsyncApi> getSecurityGroupExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Key Pair features.
     */
    @Delegate
-   Optional<KeyPairAsyncApi> getKeyPairExtensionForZone(
+   Optional<? extends KeyPairAsyncApi> getKeyPairExtensionForZone(
             @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Host Administration features.
     */
    @Delegate
-   Optional<HostAdministrationAsyncApi> getHostAdministrationExtensionForZone(
+   Optional<? extends HostAdministrationAsyncApi> getHostAdministrationExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Simple Tenant Usage features.
     */
    @Delegate
-   Optional<SimpleTenantUsageAsyncApi> getSimpleTenantUsageExtensionForZone(
+   Optional<? extends SimpleTenantUsageAsyncApi> getSimpleTenantUsageExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Volume features.
     */
    @Delegate
-   Optional<VolumeAsyncApi> getVolumeExtensionForZone(
+   Optional<? extends VolumeAsyncApi> getVolumeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Virtual Interface features.
     */
    @Delegate
-   Optional<VirtualInterfaceAsyncApi> getVirtualInterfaceExtensionForZone(
+   Optional<? extends VirtualInterfaceAsyncApi> getVirtualInterfaceExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 
@@ -148,49 +148,49 @@ public interface NovaAsyncApi {
     * Provides asynchronous access to Server Extra Data features.
     */
    @Delegate
-   Optional<ServerWithSecurityGroupsAsyncApi> getServerWithSecurityGroupsExtensionForZone(
+   Optional<? extends ServerWithSecurityGroupsAsyncApi> getServerWithSecurityGroupsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Server Admin Actions features.
     */
    @Delegate
-   Optional<AdminActionsAsyncApi> getAdminActionsExtensionForZone(
+   Optional<? extends AdminActionsAsyncApi> getAdminActionsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to HostAggregate features.
     */
    @Delegate
-   Optional<HostAggregateAsyncApi> getHostAggregateExtensionForZone(
+   Optional<? extends HostAggregateAsyncApi> getHostAggregateExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Flavor extra specs features.
     */
    @Delegate
-   Optional<FlavorExtraSpecsAsyncApi> getFlavorExtraSpecsExtensionForZone(
+   Optional<? extends FlavorExtraSpecsAsyncApi> getFlavorExtraSpecsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Quota features.
     */
    @Delegate
-   Optional<QuotaAsyncApi> getQuotaExtensionForZone(
+   Optional<? extends QuotaAsyncApi> getQuotaExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Quota Classes features.
     */
    @Delegate
-   Optional<QuotaClassAsyncApi> getQuotaClassExtensionForZone(
+   Optional<? extends QuotaClassAsyncApi> getQuotaClassExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Volume Type features.
     */
    @Delegate
-   Optional<VolumeTypeAsyncApi> getVolumeTypeExtensionForZone(
+   Optional<? extends VolumeTypeAsyncApi> getVolumeTypeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

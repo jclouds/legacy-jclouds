@@ -36,7 +36,7 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", testName = "QuotaClassApiLiveTest", singleThreaded = true)
 public class QuotaClassApiLiveTest extends BaseNovaApiLiveTest {
-   private Optional<QuotaClassApi> apiOption;
+   private Optional<? extends QuotaClassApi> apiOption;
    private String zone;
 
    @BeforeClass(groups = {"integration", "live"})

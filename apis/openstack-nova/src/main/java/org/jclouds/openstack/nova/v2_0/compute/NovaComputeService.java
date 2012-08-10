@@ -135,7 +135,7 @@ public class NovaComputeService extends BaseComputeService {
    }
 
    private void cleanupOrphanedSecurityGroupsInZone(Set<String> groups, String zoneId) {
-      Optional<SecurityGroupApi> securityGroupApi = novaApi.getSecurityGroupExtensionForZone(zoneId);
+      Optional<? extends SecurityGroupApi> securityGroupApi = novaApi.getSecurityGroupExtensionForZone(zoneId);
       if (securityGroupApi.isPresent()) {
          for (String group : groups) {
             for (SecurityGroup securityGroup : Iterables.filter(securityGroupApi.get().listSecurityGroups(),
@@ -152,7 +152,7 @@ public class NovaComputeService extends BaseComputeService {
    }
 
    private void cleanupOrphanedKeyPairsInZone(Set<String> groups, String zoneId) {
-      Optional<KeyPairApi> keyPairApi = novaApi.getKeyPairExtensionForZone(zoneId);
+      Optional<? extends KeyPairApi> keyPairApi = novaApi.getKeyPairExtensionForZone(zoneId);
       if (keyPairApi.isPresent()) {
          for (String group : groups) {
             for (Map<String, KeyPair> view : keyPairApi.get().listKeyPairs()) {

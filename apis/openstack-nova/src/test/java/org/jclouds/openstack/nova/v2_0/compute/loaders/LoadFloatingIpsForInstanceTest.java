@@ -46,7 +46,7 @@ public class LoadFloatingIpsForInstanceTest {
       FloatingIPApi ipApi = createMock(FloatingIPApi.class);
       FloatingIP testIp = FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build();
 
-      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipApi)).atLeastOnce();
+      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
       expect(ipApi.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
 
       replay(api);
@@ -65,7 +65,7 @@ public class LoadFloatingIpsForInstanceTest {
       NovaApi api = createMock(NovaApi.class);
       FloatingIPApi ipApi = createMock(FloatingIPApi.class);
 
-      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipApi)).atLeastOnce();
+      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
 
       expect(ipApi.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of()).atLeastOnce();
 
@@ -86,7 +86,7 @@ public class LoadFloatingIpsForInstanceTest {
       NovaApi api = createMock(NovaApi.class);
       FloatingIPApi ipApi = createMock(FloatingIPApi.class);
 
-      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipApi)).atLeastOnce();
+      expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
 
       expect(ipApi.listFloatingIPs()).andReturn(
             ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").build()))

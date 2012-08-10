@@ -53,7 +53,7 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
    private ImageApi imageApi;
    private ServerApi serverApi;
    private ExtensionApi extensionApi;
-   private Optional<AdminActionsApi> apiOption;
+   private Optional<? extends AdminActionsApi> apiOption;
    private String zone;
 
    private String testServerId;

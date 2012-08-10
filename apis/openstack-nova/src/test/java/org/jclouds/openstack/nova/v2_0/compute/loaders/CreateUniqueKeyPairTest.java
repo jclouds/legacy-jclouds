@@ -52,7 +52,9 @@ public class CreateUniqueKeyPairTest {
 
       KeyPair pair = createMock(KeyPair.class);
 
-      expect(api.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyApi)).atLeastOnce();
+      Optional optKeyApi = Optional.of(keyApi);
+      
+      expect(api.getKeyPairExtensionForZone("zone")).andReturn(optKeyApi).atLeastOnce();
 
       expect(keyApi.createKeyPair("group-1")).andReturn(pair);
 
@@ -83,7 +85,7 @@ public class CreateUniqueKeyPairTest {
 
       KeyPair pair = createMock(KeyPair.class);
 
-      expect(api.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyApi)).atLeastOnce();
+      expect(api.getKeyPairExtensionForZone("zone")).andReturn((Optional) Optional.of(keyApi)).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
       expect(keyApi.createKeyPair("group-1")).andThrow(new IllegalStateException());
