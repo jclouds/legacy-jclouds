@@ -144,7 +144,7 @@ public interface ServerAsyncApi {
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"resize\":%7B\"flavorId\":{flavorId}%7D%7D")
+   @Payload("%7B\"resize\":%7B\"flavorRef\":{flavorId}%7D%7D")
    ListenableFuture<Void> resizeServer(@PathParam("id") String id, @PayloadParam("flavorId") String flavorId);
 
    /**
