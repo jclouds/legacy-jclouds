@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
@@ -68,7 +67,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
 
       request.setPayload(listOfMapsToListOfKeyValuesDelimitedByBlankLines.apply(ImmutableSet.of(Maps.transformValues(postParams, new Function<Object, String>() {
          @Override
-         public String apply(@Nullable Object input) {
+         public String apply(Object input) {
             return input == null ? null : input.toString();
          }
       }))));

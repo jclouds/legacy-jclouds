@@ -9,10 +9,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;

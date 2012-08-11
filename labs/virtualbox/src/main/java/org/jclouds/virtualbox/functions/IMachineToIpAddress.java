@@ -21,8 +21,6 @@ package org.jclouds.virtualbox.functions;
 
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -49,7 +47,7 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
    }
 
    @Override
-   public String apply(@Nullable IMachine machine) {
+   public String apply(IMachine machine) {
 
       String macAddress = machine.getNetworkAdapter(0l).getMACAddress();
       int offset = 0, step = 2;

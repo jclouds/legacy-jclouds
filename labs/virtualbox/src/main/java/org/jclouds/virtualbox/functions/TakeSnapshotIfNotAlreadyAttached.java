@@ -19,8 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -52,7 +50,7 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
    }
 
    @Override
-   public ISnapshot apply(@Nullable IMachine machine) {
+   public ISnapshot apply(IMachine machine) {
       // Snapshot a machine
       ISession session = null;
       ISnapshot snap = machine.getCurrentSnapshot();

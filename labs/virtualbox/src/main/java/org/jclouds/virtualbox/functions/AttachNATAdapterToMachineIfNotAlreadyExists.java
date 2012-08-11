@@ -21,8 +21,6 @@ package org.jclouds.virtualbox.functions;
 
 import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.RedirectRule;
 import org.virtualbox_4_1.IMachine;
@@ -43,7 +41,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMa
    }
 
    @Override
-   public Void apply(@Nullable IMachine machine) {
+   public Void apply(IMachine machine) {
       INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
       iNetworkAdapter.setAttachmentType(NAT);
       for (RedirectRule rule : networkInterfaceCard.getNetworkAdapter().getRedirectRules()) {

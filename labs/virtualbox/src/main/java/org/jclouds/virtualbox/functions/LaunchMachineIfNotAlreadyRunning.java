@@ -20,7 +20,6 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Throwables.propagate;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -70,7 +69,7 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, ISes
    }
 
    @Override
-   public ISession apply(@Nullable IMachine machine) {
+   public ISession apply(IMachine machine) {
       ISession session = manager.getSessionObject();
       try {
          final IProgress progress = machine

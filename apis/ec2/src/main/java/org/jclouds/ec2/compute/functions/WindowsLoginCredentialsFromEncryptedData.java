@@ -23,7 +23,6 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.KeySpec;
 
-import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.inject.Inject;
 
@@ -32,6 +31,7 @@ import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.encryption.internal.Base64;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;

@@ -21,13 +21,12 @@ package org.jclouds.elb;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.elb.features.AvailabilityZoneApi;
 import org.jclouds.elb.features.InstanceApi;
 import org.jclouds.elb.features.LoadBalancerApi;
 import org.jclouds.elb.features.PolicyApi;
-import org.jclouds.elb.features.AvailabilityZoneApi;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;

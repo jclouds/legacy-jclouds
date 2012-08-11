@@ -22,7 +22,6 @@ package org.jclouds.virtualbox.functions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -62,7 +61,7 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
    public static final Pattern ATTACHED_PATTERN = Pattern.compile(".*is still attached.*: ([-0-9a-f]+) .*");
 
    @Override
-   public IMedium apply(@Nullable HardDisk hardDisk) {
+   public IMedium apply(HardDisk hardDisk) {
       IVirtualBox vBox = manager.get().getVBox();
       try {
          String diskPath = hardDisk.getDiskPath();
