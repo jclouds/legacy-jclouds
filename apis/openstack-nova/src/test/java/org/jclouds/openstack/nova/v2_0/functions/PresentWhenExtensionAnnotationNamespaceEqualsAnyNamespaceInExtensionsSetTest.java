@@ -32,7 +32,7 @@ import com.google.inject.Provides;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSetTest")
+@Test(groups = "unit", singleThreaded = true, testName = "PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSetTest")
 public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSetTest {
 
    Extension keypairs = Extension.builder().alias("os-keypairs").name("Keypairs").namespace(
