@@ -58,5 +58,8 @@
        <module>smartos-ssh</module>
        <module>cloudstack-ec2</module>
        <module>azure-management</module>
+       <module>fgcp</module>
+       <module>fgcp-au</module>
+       <module>fgcp-de</module>
     </modules>
 </project>
