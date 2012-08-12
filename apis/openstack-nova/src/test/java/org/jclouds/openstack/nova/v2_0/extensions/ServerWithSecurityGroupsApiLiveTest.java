@@ -41,7 +41,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", testName = "ServerWithSecurityGroupsApiLiveTest", singleThreaded = true)
 public class ServerWithSecurityGroupsApiLiveTest extends BaseNovaApiLiveTest {
    private ServerApi serverApi;
-   private Optional<ServerWithSecurityGroupsApi> apiOption;
+   private Optional<? extends ServerWithSecurityGroupsApi> apiOption;
    private String zone;
 
    @BeforeGroups(groups = {"integration", "live"})

@@ -43,7 +43,7 @@ public interface FlavorApi {
     * 
     * @return all flavors (IDs, names, links)
     */
-   Set<Resource> listFlavors();
+   Set<? extends Resource> listFlavors();
 
    /**
     * List all flavors (all details)

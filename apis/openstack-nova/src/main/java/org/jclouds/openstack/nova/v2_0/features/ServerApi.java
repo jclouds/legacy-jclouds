@@ -47,7 +47,7 @@ public interface ServerApi {
     * 
     * @return all servers (IDs, names, links)
     */
-   Set<Resource> listServers();
+   Set<? extends Resource> listServers();
 
    /**
     * List all servers (all details)

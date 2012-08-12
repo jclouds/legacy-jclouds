@@ -49,7 +49,7 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
    public void testList() throws Exception {
       for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
          ImageApi api = glanceContext.getApi().getImageApiForRegion(zoneId);
-         Set<Image> response = api.list(ListImageOptions.Builder.limit(100));
+         Set<? extends Image> response = api.list(ListImageOptions.Builder.limit(100));
          assert null != response;
          for (Image image : response) {
             checkImage(image);
@@ -67,7 +67,7 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
    public void testListInDetail() throws Exception {
       for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
          ImageApi api = glanceContext.getApi().getImageApiForRegion(zoneId);
-         Set<ImageDetails> response = api.listInDetail();
+         Set<? extends ImageDetails> response = api.listInDetail();
          assert null != response;
          for (ImageDetails image : response) {
             checkImage(image);

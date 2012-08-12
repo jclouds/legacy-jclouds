@@ -64,7 +64,7 @@ public interface PortAsyncApi {
    @GET
    @SelectJson("ports")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Reference>> listReferences();
+   ListenableFuture<? extends Set<? extends Reference>> listReferences();
 
    /**
     * @see PortApi#list
@@ -73,7 +73,7 @@ public interface PortAsyncApi {
    @SelectJson("ports")
    @Path("/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Port>> list();
+   ListenableFuture<? extends Set<? extends Port>> list();
 
    /**
     * @see PortApi#get
@@ -82,7 +82,7 @@ public interface PortAsyncApi {
    @SelectJson("port")
    @Path("/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Port> get(@PathParam("id") String id);
+   ListenableFuture<? extends Port> get(@PathParam("id") String id);
 
    /**
     * @see PortApi#getDetails
@@ -92,14 +92,14 @@ public interface PortAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/{id}/detail")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PortDetails> getDetails(@PathParam("id") String id);
+   ListenableFuture<? extends PortDetails> getDetails(@PathParam("id") String id);
 
    /**
     * @see PortApi#create()
     */
    @POST
    @SelectJson("port")
-   ListenableFuture<Reference> create();
+   ListenableFuture<? extends Reference> create();
 
    /**
     * @see PortApi#create(org.jclouds.openstack.quantum.v1_0.domain.Port.State) 
@@ -131,7 +131,7 @@ public interface PortAsyncApi {
    @SelectJson("attachment")
    @Path("/{id}/attachment")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)   
-   ListenableFuture<Attachment> showAttachment(@PathParam("id") String portId);
+   ListenableFuture<? extends Attachment> showAttachment(@PathParam("id") String portId);
 
    /**
     * @see PortApi#plugAttachment

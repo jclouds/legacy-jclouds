@@ -41,7 +41,7 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testListImages() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<Resource> response = api.listImages();
+         Set<? extends Resource> response = api.listImages();
          assertNotNull(response);
          assertTrue(response.size() >= 0);
          for (Resource image : response) {

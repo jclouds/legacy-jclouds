@@ -47,7 +47,7 @@ public interface AccountApi {
    /**
     * @see #listContainers(ListContainersOptions)
     */
-   Set<ContainerMetadata> listContainers();
+   Set<? extends ContainerMetadata> listContainers();
 
    /**
     * retrieve a list of existing storage containers ordered by name. The sort order for the name is
@@ -57,6 +57,6 @@ public interface AccountApi {
     * @param options
     * @return a list of existing storage containers ordered by name.
     */
-   Set<ContainerMetadata> listContainers(ListContainersOptions options);
+   Set<? extends ContainerMetadata> listContainers(ListContainersOptions options);
 
 }

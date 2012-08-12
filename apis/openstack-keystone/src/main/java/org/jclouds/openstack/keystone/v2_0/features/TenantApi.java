@@ -40,7 +40,7 @@ public interface TenantApi {
    /**
     * The operation returns a list of tenants which the current token provides access to.
     */
-   Set<Tenant> list();
+   Set<? extends Tenant> list();
 
    /**
     * Retrieve information about a tenant, by tenant ID

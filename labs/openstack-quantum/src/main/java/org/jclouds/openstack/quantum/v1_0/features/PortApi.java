@@ -44,12 +44,12 @@ public interface PortApi {
    /**
     * Returns the list of all ports currently defined in Quantum for the requested network
     */
-   Set<Reference> listReferences();
+   Set<? extends Reference> listReferences();
 
    /**
     * Returns the set of ports currently defined in Quantum for the requested network.
     */
-   Set<Port> list();
+   Set<? extends Port> list();
 
    /**
     * Returns a specific port.

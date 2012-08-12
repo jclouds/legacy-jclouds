@@ -48,7 +48,7 @@ public interface UserApi {
     * 
     * @return the list of users
     */
-   Set<User> list();
+   Set<? extends User> list();
 
    /**
     * Retrieve information about a user, by user ID
@@ -73,13 +73,13 @@ public interface UserApi {
     * 
     * @return the set of Roles granted to the user
     */
-   Set<Role> listRolesOfUser(String userId);
+   Set<? extends Role> listRolesOfUser(String userId);
 
    /**
     * List the roles a user has been granted on a specific tenant
     * 
     * @return the set of roles
     */
-   Set<Role> listRolesOfUserOnTenant(String userId, String tenantId);
+   Set<? extends Role> listRolesOfUserOnTenant(String userId, String tenantId);
 
 }
