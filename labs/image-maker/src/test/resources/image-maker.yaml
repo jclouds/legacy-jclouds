@@ -1,0 +1,8 @@
+images: 
+    - id: test
+      cached_packages: 
+        apt: 
+          - nginx
+      installed_packages: 
+        apt: 
+          - vi

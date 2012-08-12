@@ -40,6 +40,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-multibindings</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-compute</artifactId>
       <version>${project.version}</version>
