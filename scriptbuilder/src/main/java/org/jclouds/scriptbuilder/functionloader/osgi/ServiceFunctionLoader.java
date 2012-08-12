@@ -55,13 +55,15 @@ public class ServiceFunctionLoader implements FunctionLoader {
       String filter = String.format("(function=*%s.%s*)", function, ShellToken.SH.to(family));
       try {
          references = bundleContext.getServiceReferences(FunctionLoader.class.getName(), filter);
-         for (ServiceReference reference : references) {
+        if (references != null) {
+          for (ServiceReference reference : references) {
             FunctionLoader loader = (FunctionLoader) bundleContext.getService(reference);
             String f = loader.loadFunction(function, family);
             if (!Strings.isNullOrEmpty(f)) {
-               return f;
+              return f;
             }
-         }
+          }
+        }
       } catch (InvalidSyntaxException e) {
          throw new FunctionNotFoundException(function, family, e);
       } finally {
