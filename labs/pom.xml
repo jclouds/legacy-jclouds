@@ -57,5 +57,8 @@
        <module>aws-rds</module>
        <module>smartos-ssh</module>
        <module>cloudstack-ec2</module>
+       <module>fgcp</module>
+       <module>fgcp-au</module>
+       <module>fgcp-de</module>
     </modules>
 </project>
